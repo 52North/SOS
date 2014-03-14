@@ -49,7 +49,7 @@ certain functionality added, let us know at:
  - Eike Hinderk Juerrens (e.h.juerrens@52north.org)
 
 The Sensor Web Community
-52�North Inititative for Geospatial Open Source Software GmbH, Germany
+52°North Inititative for Geospatial Open Source Software GmbH, Germany
 
 -- 
 [1] http://52north.org/communities/sensorweb/sos/index.html

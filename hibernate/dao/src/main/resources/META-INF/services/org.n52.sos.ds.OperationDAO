@@ -1,0 +1,12 @@
+org.n52.sos.ds.hibernate.DescribeSensorDAO
+org.n52.sos.ds.hibernate.GetObservationDAO
+org.n52.sos.ds.hibernate.GetFeatureOfInterestDAO
+org.n52.sos.ds.hibernate.GetObservationByIdDAO
+org.n52.sos.ds.hibernate.InsertResultTemplateDAO
+org.n52.sos.ds.hibernate.InsertResultDAO
+org.n52.sos.ds.hibernate.GetResultTemplateDAO
+org.n52.sos.ds.hibernate.GetResultDAO
+org.n52.sos.ds.hibernate.DeleteSensorDAO
+org.n52.sos.ds.hibernate.InsertSensorDAO
+org.n52.sos.ds.hibernate.UpdateSensorDescriptionDAO
+org.n52.sos.ds.hibernate.InsertObservationDAO

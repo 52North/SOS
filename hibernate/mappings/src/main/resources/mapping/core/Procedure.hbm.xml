@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.Procedure" table="procedure">
+        <id name="procedureId" type="long">
+            <column name="procedureId" />
+            <generator class="native">
+            	<param name="sequence">procedureId_seq</param>
+            </generator>
+        </id>
+        <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
+        <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" fetch="select" lazy="no-proxy" foreign-key="procProcDescFormatFk">
+            <column name="procedureDescriptionFormatId" not-null="true" />
+        </many-to-one>
+        <property name="identifier" type="string">
+            <column name="identifier" not-null="true" unique="true" />
+        </property>
+        <property name="deleted" type="org.hibernate.type.TrueFalseType">
+            <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
+        </property>
+        <property name="descriptionFile" type="org.hibernate.type.StringClobType">
+            <column name="descriptionFile" />
+        </property>
+        <!-- optional properties, used for automatic sensor description creation if available -->
+        <!-- remove the comments around the property "geom" if the procedures have a geometry column -->
+        <!--
+        <property name="geom" type="org.hibernate.spatial.GeometryType">
+            <column name="geom" unique="true" />
+        </property>
+        -->
+        <!-- supports types bigDecimal and string -->
+        <!-- remove the comments around the next properties as need (leave altitude if only 2d coordinates are required) -->
+        <!--  
+        <property name="longitude" type="bigDecimal">
+           <column name="longitude" unique="true" />
+        </property>
+        <property name="latitude" type="bigDecimal">
+        	<column name="latitude" unique="true" />
+        </property>
+        <property name="srid" type="integer">
+        	<column name="srid" unique="true" />
+        </property> 
+        -->
+        <!--
+        <property name="altitude" type="bigDecimal">
+        	<column name="altitude" unique="true" />
+        </property>
+        -->
+    </class>
+</hibernate-mapping>

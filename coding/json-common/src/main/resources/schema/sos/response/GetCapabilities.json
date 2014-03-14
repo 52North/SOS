@@ -1,0 +1,310 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://www.52north.org/schema/json/sos/response/GetCapabilities#",
+  "allOf": [
+    {
+      "$ref": "http://www.52north.org/schema/json/sos/response/Response#"
+    },
+    {
+      "properties": {
+        "request": {
+          "enum": [
+            "GetCapabilities"
+          ]
+        }
+      },
+      "serviceIdentification": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "abstract": {
+            "type": "string"
+          },
+          "accessConstraints": {
+            "type": "string"
+          },
+          "fees": {
+            "type": "string"
+          },
+          "serviceType": {
+            "type": "string"
+          },
+          "keywords": {
+            "$ref": "#/definitions/stringList"
+          },
+          "profiles": {
+            "$ref": "#/definitions/stringList"
+          },
+          "versions": {
+            "$ref": "#/definitions/stringList"
+          }
+        }
+      },
+      "serviceProvider": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "site": {
+            "type": "string",
+            "format": "uri"
+          },
+          "contact": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "position": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "address": {
+                "type": "object",
+                "properties": {
+                  "deliveryPoint": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "administrativeArea": {
+                    "type": "string"
+                  },
+                  "postalCode": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "updateSequence": {
+        "type": "string"
+      },
+      "operationsMetadata": {
+        "type": "object",
+        "properties": {
+          "commonParameters": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/definitions/parameterValues"
+            }
+          },
+          "operations": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "parameters": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/definitions/parameterValues"
+                  }
+                },
+                "dcp": {
+                  "type": "array",
+                  "items": {
+                    "required": [
+                      "methods",
+                      "href"
+                    ],
+                    "properties": {
+                      "method": {
+                        "type": "string"
+                      },
+                      "href": {
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "constraints": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "$ref": "#/definitions/parameterValues"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "contents": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "procedure": {
+              "$ref": "#/definitions/stringList"
+            },
+            "observableProperty": {
+              "$ref": "#/definitions/stringList"
+            },
+            "relatedFeature": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "featureOfInterest",
+                  "role"
+                ],
+                "properties": {
+                  "featureOfInterest": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "$ref": "#/definitions/stringList"
+                  }
+                }
+              }
+            },
+            "observedArea": {
+              "$ref": "http://www.52north.org/schema/json/Envelope#"
+            },
+            "phenomenonTime": {
+              "$ref": "http://www.52north.org/schema/json/TimePrimitive#"
+            },
+            "resultTime": {
+              "$ref": "http://www.52north.org/schema/json/TimePrimitive#"
+            },
+            "responseFormat": {
+              "$ref": "#/definitions/stringList"
+            },
+            "observationType": {
+              "$ref": "#/definitions/stringList"
+            },
+            "featureOfInterestType": {
+              "$ref": "#/definitions/stringList"
+            },
+            "procedureDescriptionFormat": {
+              "$ref": "#/definitions/stringList"
+            }
+          }
+        }
+      },
+      "filterCapabilities": {
+        "type": "object",
+        "properties": {
+          "scalar": {
+            "note": "TODO"
+          },
+          "spatial": {
+            "$ref": "#/definitions/filterCapabilities"
+          },
+          "temporal": {
+            "$ref": "#/definitions/filterCapabilities"
+          }
+        }
+      }
+    }
+  ],
+  "definitions": {
+    "stringList": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "filterCapabilities": {
+      "required": [
+        "operands",
+        "operators"
+      ],
+      "operands": {
+        "type": "array",
+        "items": {
+          "$ref": "http://json-schema.org/draft-04/schema#"
+        }
+      },
+      "operators": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "array",
+          "items": {
+            "$ref": "http://json-schema.org/draft-04/schema#"
+          }
+        }
+      }
+    },
+    "parameterValue": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "none",
+            "any"
+          ]
+        },
+        {
+          "type": "object",
+          "required": [
+            "min",
+            "max"
+          ],
+          "properties": {
+            "min": {
+              "type": "string"
+            },
+            "max": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "dataType"
+          ],
+          "properties": {
+            "dataType": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "allowedValues"
+          ],
+          "properties": {
+            "allowedValues": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "parameterValues": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/parameterValue"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/parameterValue"
+          }
+        }
+      ]
+    }
+  }
+}

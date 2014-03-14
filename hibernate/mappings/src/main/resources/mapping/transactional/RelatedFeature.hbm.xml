@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.RelatedFeature" table="relatedFeature">
+        <id name="relatedFeatureId" type="long">
+            <column name="relatedFeatureId" />
+            <generator class="native">
+            	<param name="sequence">relatedFeatureId_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.TFeatureOfInterest" fetch="select" lazy="no-proxy" foreign-key="relatedFeatureFeatureFk">
+            <column name="featureOfInterestId" not-null="true" />
+        </many-to-one>
+        <set name="relatedFeatureRoles" table="relatedFeatureHasRole" inverse="false" fetch="select" lazy="false">
+            <key>
+                <column name="relatedFeatureId" not-null="true" />
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.RelatedFeatureRole" foreign-key="relatedFeatRelatedFeatRoleFk">
+                <column name="relatedFeatureRoleId" not-null="true" />
+            </many-to-many>
+        </set>
+        <set name="offerings" table="offeringHasRelatedFeature" inverse="true" fetch="select" lazy="false">
+            <key>
+                <column name="relatedFeatureId" not-null="true" />
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.TOffering" foreign-key="relatedFeatureOfferingFk">
+                <column name="offeringId" not-null="true" />
+            </many-to-many>
+        </set>
+    </class>
+</hibernate-mapping>

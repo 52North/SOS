@@ -1,0 +1,4 @@
+org.n52.sos.request.operator.SosDeleteSensorOperatorV20
+org.n52.sos.request.operator.SosInsertSensorOperatorV20
+org.n52.sos.request.operator.SosUpdateSensorDescriptionOperatorV20
+org.n52.sos.request.operator.SosInsertObservationOperatorV20

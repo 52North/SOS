@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://www.52north.org/schema/json/sos/response/GetResultTemplate#",
+  "allOf": [
+    {
+      "$ref": "http://www.52north.org/schema/json/sos/response/Response#"
+    },
+    {
+      "required": [
+        "resultEncoding",
+        "resultStructure"
+      ],
+      "properties": {
+        "request": {
+          "enum": [
+            "GetResultTemplate"
+          ]
+        },
+        "resultStructure": {
+          "type": "object",
+          "properties": {
+            "fields": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "$ref": "http://www.52north.org/schema/json/Field#"
+              }
+            }
+          }
+        },
+        "resultEncoding": {
+          "required": [
+            "tokenSeparator",
+            "blockSeparator"
+          ],
+          "properties": {
+            "tokenSeparator": {
+              "type": "string"
+            },
+            "blockSeparator": {
+              "type": "string"
+            },
+            "decimalSeparator": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

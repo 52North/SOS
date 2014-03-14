@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile:SosProfile xmlns:profile="http://www.52north.org/sensorweb/sos/profile"
+	xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.52north.org/sensorweb/sos/profile sos-profile.xsd">
+	<profile:identifier>SOS_20_PROFILE</profile:identifier>
+	<profile:activeProfile>true</profile:activeProfile>
+	<profile:observationResponseFormat>http://www.opengis.net/om/2.0</profile:observationResponseFormat>
+	<profile:encodeFeatureOfInterestInObservations>false</profile:encodeFeatureOfInterestInObservations>
+	<profile:encodingNamespaceForFeatureOfInterestEncoding></profile:encodingNamespaceForFeatureOfInterestEncoding>
+	<profile:showMetadataOfEmptyObservations>false</profile:showMetadataOfEmptyObservations>
+	<profile:listFeatureOfInterestsInOfferings>true</profile:listFeatureOfInterestsInOfferings>
+	<profile:encodeChildProcedureDescriptions>false</profile:encodeChildProcedureDescriptions>
+	<profile:showFullOperationsMetadata>true</profile:showFullOperationsMetadata>
+	<profile:showFullOperationsMetadataForObservations>true</profile:showFullOperationsMetadataForObservations>
+	<profile:allowSubsettingForSOS20OM20>false</profile:allowSubsettingForSOS20OM20>
+	<profile:mergeValues>false</profile:mergeValues>
+	<profile:NoDataPlaceholder>
+		<profile:responsePlaceholder>noData</profile:responsePlaceholder>
+		<profile:placeholder>noData</profile:placeholder>
+	</profile:NoDataPlaceholder>
+	<profile:returnLatestValueIfTemporalFilterIsMissingInGetObservation>false</profile:returnLatestValueIfTemporalFilterIsMissingInGetObservation>
+</profile:SosProfile>

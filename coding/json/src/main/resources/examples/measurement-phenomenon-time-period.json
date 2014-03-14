@@ -1,0 +1,19 @@
+{
+  "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+  "procedure": "http://52north.org/example/procedure/1",
+  "observedProperty": "http://52north.org/example/observedProperty/1",
+  "featureOfInterest": "http://52north.org/example/feature/1",
+  "phenomenonTime": [
+    "2013-01-01T00:00:00+02:00",
+    "2013-01-01T01:00:00+02:00"
+  ],
+  "resultTime": "2013-01-01T00:00:00+02:00",
+  "validTime": [
+    "2013-01-01T00:00:00+02:00",
+    "2013-01-01T01:00:00+02:00"
+  ],
+  "result": {
+    "uom": "testunit1",
+    "value": 123123
+  }
+}

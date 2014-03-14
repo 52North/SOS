@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope 
+	xmlns:soap="http://www.w3.org/2003/05/soap-envelope" 
+	xmlns:wsa="http://www.w3.org/2005/08/addressing">
+	<soap:Header>
+		<wsa:To>http://www.ogc.org/SOS</wsa:To>
+		<wsa:Action>http://www.opengis.net/def/serviceOperation/sos/daRetrieval/2.0/GetDataAvailability</wsa:Action>
+		<wsa:ReplyTo>
+			<wsa:Address>http://www.w3.org/2005/08/addressing/anonymous</wsa:Address>
+		</wsa:ReplyTo>
+		<wsa:MessageID>0</wsa:MessageID>
+	</soap:Header>
+	<soap:Body>
+		<sos:GetDataAvailability service="SOS" version="2.0.0" xmlns:sos="http://www.opengis.net/sos/2.0">
+			<sos:observedProperty>http://www.52north.org/test/observableProperty/1</sos:observedProperty>
+			<sos:observedProperty>http://www.52north.org/test/observableProperty/2</sos:observedProperty>
+			<sos:observedProperty>http://www.52north.org/test/observableProperty/3</sos:observedProperty>
+			<sos:observedProperty>http://www.52north.org/test/observableProperty/4</sos:observedProperty>
+			<sos:observedProperty>http://www.52north.org/test/observableProperty/5</sos:observedProperty>
+			<sos:featureOfInterest>http://www.52north.org/test/featureOfInterest/1</sos:featureOfInterest>
+			<sos:featureOfInterest>http://www.52north.org/test/featureOfInterest/4</sos:featureOfInterest>
+			<sos:procedure>http://www.52north.org/test/procedure/1</sos:procedure>
+			<sos:procedure>http://www.52north.org/test/procedure/4</sos:procedure>
+		</sos:GetDataAvailability>
+	</soap:Body>
+</soap:Envelope>

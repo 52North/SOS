@@ -1,0 +1,252 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://www.52north.org/schema/json/TemporalFilter#",
+  "type": "object",
+  "oneOf": [
+    {
+      "$ref": "#/definitions/logical"
+    },
+    {
+      "$ref": "#/definitions/after"
+    },
+    {
+      "$ref": "#/definitions/before"
+    },
+    {
+      "$ref": "#/definitions/begins"
+    },
+    {
+      "$ref": "#/definitions/begunBy"
+    },
+    {
+      "$ref": "#/definitions/contains"
+    },
+    {
+      "$ref": "#/definitions/during"
+    },
+    {
+      "$ref": "#/definitions/endedBy"
+    },
+    {
+      "$ref": "#/definitions/ends"
+    },
+    {
+      "$ref": "#/definitions/equals"
+    },
+    {
+      "$ref": "#/definitions/meets"
+    },
+    {
+      "$ref": "#/definitions/metBy"
+    },
+    {
+      "$ref": "#/definitions/overlaps"
+    },
+    {
+      "$ref": "#/definitions/overlappedBy"
+    }
+  ],
+  "definitions": {
+    "logical": {
+      "oneOf": [
+        {
+          "required": [
+            "and"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "and": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "$ref": "#"
+              }
+            }
+          }
+        },
+        {
+          "required": [
+            "or"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "or": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "$ref": "#"
+              }
+            }
+          }
+        },
+        {
+          "required": [
+            "not"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "not": {
+              "$ref": "#"
+            }
+          }
+        }
+      ]
+    },
+    "after": {
+      "required": [
+        "after"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "after": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "before": {
+      "required": [
+        "before"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "before": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "begins": {
+      "required": [
+        "begins"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "begins": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "begunBy": {
+      "required": [
+        "begunBy"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "begunBy": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "contains": {
+      "required": [
+        "contains"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "contains": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "during": {
+      "required": [
+        "during"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "during": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "endedBy": {
+      "required": [
+        "endedBy"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "endedBy": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "ends": {
+      "required": [
+        "ends"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "ends": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "equals": {
+      "required": [
+        "equals"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "equals": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "meets": {
+      "required": [
+        "meets"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "meets": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "metBy": {
+      "required": [
+        "metBy"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "metBy": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "overlaps": {
+      "required": [
+        "overlaps"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "overlaps": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "overlappedBy": {
+      "required": [
+        "overlappedBy"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "overlappedBy": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "filter": {
+      "type": "object",
+      "properties": {
+        "ref": {
+          "type": "string"
+        },
+        "value": {
+          "$ref": "http://www.52north.org/schema/json/TimePrimitive#"
+        }
+      }
+    }
+  }
+}

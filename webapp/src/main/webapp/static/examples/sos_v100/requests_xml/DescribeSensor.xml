@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DescribeSensor version="1.0.0" service="SOS"
+	xmlns="http://www.opengis.net/sos/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/sos/1.0
+	http://schemas.opengis.net/sos/1.0.0/sosDescribeSensor.xsd"
+	outputFormat="text/xml;subtype=&quot;sensorML/1.0.1&quot;">
+	
+	<procedure>http://www.52north.org/test/procedure/6</procedure>
+	
+</DescribeSensor>

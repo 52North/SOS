@@ -1,0 +1,7 @@
+org.n52.sos.encode.OmEncoderv100
+org.n52.sos.encode.SamplingEncoderv100
+org.n52.sos.encode.sos.v1.DescribeSensorResponseEncoder
+org.n52.sos.encode.sos.v1.GetCapabilitiesResponseEncoder
+org.n52.sos.encode.sos.v1.GetFeatureOfInterestResponseEncoder
+org.n52.sos.encode.sos.v1.GetObservationByIdResponseEncoder
+org.n52.sos.encode.sos.v1.GetObservationResponseEncoder

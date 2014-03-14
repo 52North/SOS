@@ -1,0 +1,226 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://www.52north.org/schema/json/SpatialFilter#",
+  "type": "object",
+  "oneOf": [
+    {
+      "$ref": "#/definitions/logical"
+    },
+    {
+      "$ref": "#/definitions/equals"
+    },
+    {
+      "$ref": "#/definitions/disjoint"
+    },
+    {
+      "$ref": "#/definitions/touches"
+    },
+    {
+      "$ref": "#/definitions/within"
+    },
+    {
+      "$ref": "#/definitions/overlaps"
+    },
+    {
+      "$ref": "#/definitions/crosses"
+    },
+    {
+      "$ref": "#/definitions/intersects"
+    },
+    {
+      "$ref": "#/definitions/contains"
+    },
+    {
+      "$ref": "#/definitions/dWithin"
+    },
+    {
+      "$ref": "#/definitions/beyond"
+    },
+    {
+      "$ref": "#/definitions/bbox"
+    }
+  ],
+  "definitions": {
+    "logical": {
+      "oneOf": [
+        {
+          "required": [
+            "and"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "and": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "$ref": "#"
+              }
+            }
+          }
+        },
+        {
+          "required": [
+            "or"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "or": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "$ref": "#"
+              }
+            }
+          }
+        },
+        {
+          "required": [
+            "not"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "not": {
+              "$ref": "#"
+            }
+          }
+        }
+      ]
+    },
+    "equals": {
+      "required": [
+        "equals"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "equals": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "disjoint": {
+      "required": [
+        "disjoint"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "disjoint": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "touches": {
+      "required": [
+        "touches"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "touches": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "within": {
+      "required": [
+        "within"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "within": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "overlaps": {
+      "required": [
+        "overlaps"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "overlaps": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "crosses": {
+      "required": [
+        "crosses"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "crosses": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "intersects": {
+      "required": [
+        "intersects"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "intersects": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "contains": {
+      "required": [
+        "contains"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "contains": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "dWithin": {
+      "required": [
+        "dWithin"
+      ],
+      "additionalProperties": false,
+      "note": "TODO requires distance",
+      "properties": {
+        "dWithin": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "beyond": {
+      "required": [
+        "beyond"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "beyond": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "bbox": {
+      "required": [
+        "bbox"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "bbox": {
+          "$ref": "#/definitions/filter"
+        }
+      }
+    },
+    "filter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ref": {
+          "type": "string"
+        },
+        "value": {
+          "$ref": "http://www.52north.org/schema/json/Geometry#"
+        }
+      }
+    }
+  }
+}

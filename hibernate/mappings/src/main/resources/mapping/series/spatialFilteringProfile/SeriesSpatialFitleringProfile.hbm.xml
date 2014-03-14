@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.series.SeriesSpatialFilteringProfile" table="spatialFilteringProfile">
+        <id name="spatialFilteringProfileId" type="long">
+            <column name="spatialFilteringProfileId" />
+            <generator class="native">
+            	<param name="sequence">spatialFilteringProfileId_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="observation" class="org.n52.sos.ds.hibernate.entities.series.SeriesObservation" fetch="select" lazy="no-proxy" foreign-key="sfpObservationFK">
+           	<column index="sfpObservationIdx" name="observation" not-null="true" />
+        </many-to-one>
+         <!--<property name="observationId" type="long">
+            <column name="observationId" not-null="true"/>
+        </property> -->
+        <property name="definition" type="string">
+            <column name="definition" not-null="true"/>
+        </property>
+        <property name="title" type="string">
+            <column name="title" />
+        </property>
+        <property name="geom" type="org.hibernate.spatial.GeometryType">
+            <column name="geom" not-null="true"/>
+        </property>
+        <!-- supports types bigDecimal and string -->
+        <!-- remove the comments around the next properties as need (leave altitude if only 2d coordinates are required)
+        	 and comment out the geom property
+         -->
+        <!--  
+        <property name="longitude" type="bigDecimal">
+           <column name="longitude" unique="true" />
+        </property>
+        <property name="latitude" type="bigDecimal">
+        	<column name="latitude" unique="true" />
+        </property>
+        <property name="srid" type="integer">
+        	<column name="srid" unique="true" />
+        </property> 
+        -->
+        <!--
+        <property name="altitude" type="bigDecimal">
+        	<column name="altitude" unique="true" />
+        </property>
+        -->
+    </class>
+</hibernate-mapping>

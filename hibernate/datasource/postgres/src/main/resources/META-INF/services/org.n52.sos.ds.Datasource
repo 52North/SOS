@@ -1,0 +1,3 @@
+org.n52.sos.ds.datasource.PostgresDatasource
+org.n52.sos.ds.datasource.PostgresCoreDatasource
+org.n52.sos.ds.datasource.PostgresCustomDatasource

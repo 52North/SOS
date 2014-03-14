@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterestType" table="featureOfInterestType">
+        <id name="featureOfInterestTypeId" type="long">
+            <column name="featureOfInterestTypeId" />
+            <generator class="native">
+            	<param name="sequence">featureOfInterestTypeId_seq</param>
+            </generator>
+        </id>
+        <property name="featureOfInterestType" type="string">
+            <column name="featureOfInterestType" not-null="true" unique="true" />
+        </property>
+    </class>
+</hibernate-mapping>

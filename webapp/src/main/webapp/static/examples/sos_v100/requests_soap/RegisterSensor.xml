@@ -1,0 +1,174 @@
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope" 
+xmlns:ows="http://www.opengis.net/ows/1.1">
+	<env:Body>
+		<sos:RegisterSensor service="SOS" version="1.0.0"
+			xmlns:sos="http://www.opengis.net/sos/1.0" xmlns:swe="http://www.opengis.net/swe/1.0.1"
+			xmlns:ows="http://www.opengeospatial.net/ows" xmlns:xlink="http://www.w3.org/1999/xlink"
+			xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc"
+			xmlns:om="http://www.opengis.net/om/1.0" xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:schemaLocation="http://www.opengis.net/sos/1.0
+	http://schemas.opengis.net/sos/1.0.0/sosRegisterSensor.xsd
+	http://www.opengis.net/om/1.0
+	http://schemas.opengis.net/om/1.0.0/extensions/observationSpecialization_override.xsd">
+			<!--
+				Sensor Description parameter; Currently, this has to be a sml:System
+			-->
+			<sos:SensorDescription>
+				<sml:SensorML version="1.0.1">
+					<sml:member>
+						<sml:System xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+							<!--sml:identification element must contain the ID of the sensor-->
+							<sml:identification>
+								<sml:IdentifierList>
+									<sml:identifier>
+										<sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">
+											<sml:value>http://www.52north.org/test/procedure/106
+											</sml:value>
+										</sml:Term>
+									</sml:identifier>
+								</sml:IdentifierList>
+							</sml:identification>
+							<!--
+								sml:capabilities element has to contain status and mobility
+								information
+							-->
+							<sml:capabilities>
+								<swe:SimpleDataRecord>
+									<!--
+										status indicates, whether sensor is collecting data at the
+										moment (true) or not (false)
+									-->
+									<swe:field name="status">
+										<swe:Boolean>
+											<swe:value>true</swe:value>
+										</swe:Boolean>
+									</swe:field>
+									<!--
+										status indicates, whether sensor is mobile (true) or fixed
+										(false)
+									-->
+									<swe:field name="mobile">
+										<swe:Boolean>
+											<swe:value>false</swe:value>
+										</swe:Boolean>
+									</swe:field>
+								</swe:SimpleDataRecord>
+							</sml:capabilities>
+
+							<!-- last measured position of sensor -->
+							<sml:position name="sensorPosition">
+								<swe:Position referenceFrame="urn:ogc:def:crs:EPSG::4326">
+									<swe:location>
+										<swe:Vector gml:id="STATION_LOCATION">
+											<swe:coordinate name="easting">
+												<swe:Quantity>
+													<swe:uom code="degree" />
+													<swe:value>7.52</swe:value>
+												</swe:Quantity>
+											</swe:coordinate>
+											<swe:coordinate name="northing">
+												<swe:Quantity>
+													<swe:uom code="degree" />
+													<swe:value>52.90</swe:value>
+												</swe:Quantity>
+											</swe:coordinate>
+											<swe:coordinate name="altitude">
+												<swe:Quantity>
+													<swe:uom code="m" />
+													<swe:value>52.0</swe:value>
+												</swe:Quantity>
+											</swe:coordinate>
+										</swe:Vector>
+									</swe:location>
+								</swe:Position>
+							</sml:position>
+
+							<!-- list containing the input phenomena for this sensor system -->
+							<sml:inputs>
+								<sml:InputList>
+									<sml:input name="waterlevel">
+										<swe:ObservableProperty
+											definition="http://www.52north.org/test/observableProperty/6" />
+									</sml:input>
+								</sml:InputList>
+							</sml:inputs>
+							<!--
+								list containing the output phenomena of this sensor system;
+								ATTENTION: these phenomena are parsed and inserted into the
+								database; they have to contain offering elements to determine
+								the correct offering for the sensors and measured phenomena
+							-->
+							<sml:outputs>
+								<sml:OutputList>
+									<sml:output name="waterlevel">
+										<swe:Quantity definition="http://www.52north.org/test/observableProperty/6">
+											<swe:uom code="cm" />
+										</swe:Quantity>
+									</sml:output>
+								</sml:OutputList>
+							</sml:outputs>
+							<!--
+								description of components of this sensor system; these are
+								currently not used by the 52N SOS
+							-->
+							<sml:components>
+								<sml:ComponentList>
+									<sml:component name="gaugeSensor">
+										<sml:Component>
+											<sml:identification>
+												<sml:IdentifierList>
+													<sml:identifier>
+														<sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">
+															<sml:value>http://www.52north.org/test/procedure/water_level_sensor
+															</sml:value>
+														</sml:Term>
+													</sml:identifier>
+												</sml:IdentifierList>
+											</sml:identification>
+											<sml:inputs>
+												<sml:InputList>
+													<sml:input name="gaugeHeight">
+														<swe:ObservableProperty
+															definition="http://www.52north.org/test/observableProperty/6" />
+													</sml:input>
+												</sml:InputList>
+											</sml:inputs>
+											<sml:outputs>
+												<sml:OutputList>
+													<sml:output name="gaugeHeight">
+														<swe:Quantity
+															definition="http://www.52north.org/test/observableProperty/6">
+															<swe:uom code="cm" />
+														</swe:Quantity>
+													</sml:output>
+												</sml:OutputList>
+											</sml:outputs>
+										</sml:Component>
+									</sml:component>
+								</sml:ComponentList>
+							</sml:components>
+						</sml:System>
+					</sml:member>
+				</sml:SensorML>
+			</sos:SensorDescription>
+			<!--
+				ObservationTemplate parameter; this has to be an empty measurement
+				at the moment, as the 52N SOS only supports Measurements to be
+				inserted
+			-->
+			<sos:ObservationTemplate>
+				<om:Measurement>
+					<om:samplingTime />
+					<om:procedure />
+					<om:observedProperty />
+					<om:featureOfInterest></om:featureOfInterest>
+					<om:result uom="">0.0</om:result>
+				</om:Measurement>
+			</sos:ObservationTemplate>
+		</sos:RegisterSensor>
+	</env:Body>
+</env:Envelope>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GetFeatureOfInterest xmlns="http://www.opengis.net/sos/1.0"
+	service="SOS" version="1.0.0"
+	xmlns:ows="http://www.opengeospatial.net/ows"
+	xmlns:gml="http://www.opengis.net/gml"
+	xmlns:ogc="http://www.opengis.net/ogc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/sos/1.0
+	http://schemas.opengis.net/sos/1.0.0/sosGetFeatureOfInterest.xsd">
+  
+    <!-- mandatory -->
+	<location>
+		<ogc:BBOX>
+			<ogc:PropertyName>urn:ogc:data:location</ogc:PropertyName>
+			<gml:Envelope srsName="urn:ogc:def:crs:EPSG::4326">
+				<gml:lowerCorner>50.0 7.0</gml:lowerCorner>
+				<gml:upperCorner>53.0 10.0</gml:upperCorner>
+			</gml:Envelope>
+		</ogc:BBOX>
+	</location>
+	  
+</GetFeatureOfInterest>

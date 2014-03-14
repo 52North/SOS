@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.Parameter" table="Parameter">
+        <id name="parameterId" type="long">
+            <column name="parameterId" />
+            <generator class="native">
+            	<param name="sequence">parameterId_seq</param>
+            </generator>
+        </id>
+        <property name="observationId" type="long">
+            <column name="observationId" not-null="true"/>
+        </property>
+        <property name="definition" type="string">
+            <column name="definition" not-null="true"/>
+        </property>
+        <property name="title" type="string">
+            <column name="title"/>
+        </property>
+        <property name="value" type="blob">
+            <column name="value" not-null="true"/>
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,106 @@
+#ja-cssmenu {
+	margin: 0; /* all lists */
+	padding: 0;
+	background: url(../images/52n-cssmenu/mainnav-sep.gif) no-repeat left;
+}
+
+#ja-cssmenu ul {
+	margin: 0; /* all lists */
+	padding: 0;
+}
+
+#ja-cssmenu li {
+	margin: 0; /* all list items */
+	padding: 0;
+	float: left;
+	display: block;
+	background: none;
+	background: url(../images/52n-cssmenu/mainnav-sep.gif) no-repeat right;
+	cursor: pointer;
+}
+
+#ja-cssmenu li ul {
+	width: 18.4em;
+	position: absolute; /* second-level lists */
+	z-index: 99;
+	left: -999em; /* using left instead of display to hide menus because display: none isn't read by screen readers */
+	height: auto;
+	width: 17.9em;
+}
+
+#ja-cssmenu li ul ul {
+	margin: -2em 0 0 15em; /* third-and-above-level lists */
+}
+
+#ja-cssmenu li li {
+	padding: 0 1em 0 0;
+	margin: 0;
+	width: 16.9em;
+}
+
+#ja-cssmenu ul a {
+	width: 16.8em;
+	width: 12.8em;
+}
+/* STYLING THE MENU
+-----------------------------------*/
+/* 1st level */
+#ja-cssmenu li a {
+	display: block;
+	text-decoration: none;
+	line-height: 40px;
+	padding: 0 20px 4px;
+	color: #fff;
+	font-size: 100%;
+	/*font-weight: bold;*/
+	letter-spacing: 1px;
+}
+
+#ja-cssmenu li a.active {
+	background: url(../images/52n-cssmenu/mainnav-active.gif) no-repeat center bottom;
+	color: #fff;
+}
+
+/* 2nd level and above */
+#ja-cssmenu li ul {
+	/*border: 2px solid #626250;*/
+	/*border-bottom-width: 1px;*/
+	/*background: url(../images/52n-cssmenu/trans-bg.png);*/
+        background-color: #626250;
+        /*filter:alpha(opacity=95); /* Internet Explorer */
+        /*-moz-opacity: 0.95; /* Mozilla Browser */
+        /*opacity: 0.95; /* Opera */
+}
+
+#ja-cssmenu li ul li {
+	border-bottom: 1px solid #6e6e5a;
+	border-right: none;
+	background: none;
+}
+
+#ja-cssmenu li ul a {
+	border-right: none;
+	margin: 0;
+	padding: 7px 10px;
+	line-height: normal;
+	height: auto;
+	background: none;
+	color: #fff;
+	font-weight: normal;
+	font-size: 92%;
+        width: 17.4em;
+	width: 16.9em;
+}
+
+#ja-cssmenu li.havesubchild,
+#ja-cssmenu li.havesubchild-active {
+	/*background: url(../images/52n-cssmenu/arrow3.png) no-repeat 94% 50%;*/
+}
+
+
+#ja-cssmenu ul li a.active {
+	background: none !important;
+	color: #66c5e4;
+	/*font-weight: bold;*/
+}
+

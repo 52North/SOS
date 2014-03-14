@@ -1,0 +1,14 @@
+General Infos:
+==============
+project = 52North SOS Reference Implementation (${artifactId})
+version = ${project.version}
+builddate = ${timestamp}
+
+Subversion Infos:
+=================
+repository = ${svn.info.repository}
+path = ${svn.info.path}
+revision = ${svn.info.revision}
+mixedRevisions = ${svn.info.mixedRevisions}
+committedRevision = ${svn.info.committedRevision}
+committedDate = ${svn.info.committedDate}

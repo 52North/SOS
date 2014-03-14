@@ -1,0 +1,88 @@
+{
+  "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation",
+  "procedure": "http://52north.org/example/procedure/1",
+  "observedProperty": "http://52north.org/example/observedProperty/1",
+  "featureOfInterest": "http://52north.org/example/feature/1",
+  "phenomenonTime": "2013-01-01T00:00:00+02:00",
+  "resultTime": "2013-01-01T00:00:00+02:00",
+  "validTime": [
+    "2013-01-01T00:00:00+02:00",
+    "2013-01-01T01:00:00+02:00"
+  ],
+  "result": [
+    {
+      "type": "quantity",
+      "name": "quantityField",
+      "definition": "urn:ogc:def:quantityField",
+      "uom": "testunit1",
+      "value": 51.2
+    },
+    {
+      "type": "quantityRange",
+      "name": "quantityRangeField",
+      "definition": "urn:ogc:def:quantityRangeField",
+      "uom": "testunit1",
+      "value": [
+        51.2,
+        51.3
+      ]
+    },
+    {
+      "type": "time",
+      "name": "timeField",
+      "definition": "urn:ogc:def:timeField",
+      "uom": "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian",
+      "value": "2013-01-01T00:00:00+02:00"
+    },
+    {
+      "type": "timeRange",
+      "name": "timeRangeField",
+      "definition": "urn:ogc:def:timeRangeField",
+      "uom": "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian",
+      "value": [
+        "2013-01-01T00:00:00+02:00",
+        "2013-01-01T01:00:00+02:00"
+      ]
+    },
+    {
+      "type": "count",
+      "name": "countField",
+      "definition": "urn:ogc:def:countField",
+      "value": 2
+    },
+    {
+      "type": "countRange",
+      "name": "countRangeField",
+      "definition": "urn:ogc:def:countRangeField",
+      "value": [
+        2,
+        3
+      ]
+    },
+    {
+      "type": "observableProperty",
+      "name": "observablePropertyField",
+      "definition": "urn:ogc:def:observablePropertyField",
+      "value": "http://52north.org/example/observableProperty/1"
+    },
+    {
+      "name": "qualityField",
+      "definition": "urn:ogc:def:qualityField",
+      "type": "quality",
+      "value": "?????"
+    },
+    {
+      "type": "text",
+      "name": "textField",
+      "definition": "urn:ogc:def:textField",
+      "value": "Some Value"
+    },
+    {
+      "type": "category",
+      "name": "categoryField",
+      "definition": "urn:ogc:def:categoryField",
+      "codespace": "http://52north.org/",
+      "value": "Some Value"
+    }
+  ]
+}

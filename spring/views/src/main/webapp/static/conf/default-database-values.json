@@ -1,0 +1,7 @@
+{
+	"jdbc_uri": "jdbc:postgresql://localhost:5432/sos?user=postgres&password=postgres",
+    "connection_pool": "org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider",
+    "dialect": "org.hibernate.spatial.dialect.postgis.PostgisDialect52N",
+	"driver": "org.postgresql.Driver",
+    "schema": "public"
+}

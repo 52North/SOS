@@ -1,0 +1,14 @@
+{
+  "service": "SOS",
+  "request": "GetCapabilities",
+  "acceptFormats": [
+    "application/json",
+    "application/xml",
+    "text/xml"
+  ],
+  "acceptVersions": [
+    "2.0.0",
+    "1.0.0"
+  ],
+  "sections": "Contents"
+}

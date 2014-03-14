@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<InsertObservation
+	xmlns="http://www.opengis.net/sos/1.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:ogc="http://www.opengis.net/ogc"
+	xmlns:om="http://www.opengis.net/om/1.0"
+	xmlns:sos="http://www.opengis.net/sos/1.0"
+	xmlns:sa="http://www.opengis.net/sampling/1.0"
+	xmlns:n52="http://www.52north.org/1.0"
+	xmlns:gml="http://www.opengis.net/gml"
+	xmlns:swe="http://www.opengis.net/swe/1.0.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/sos/1.0
+	http://schemas.opengis.net/sos/1.0.0/sosInsert.xsd
+	http://www.opengis.net/sampling/1.0
+	http://schemas.opengis.net/sampling/1.0.0/sampling.xsd
+	http://www.opengis.net/om/1.0
+	http://schemas.opengis.net/om/1.0.0/extensions/observationSpecialization_override.xsd"
+	service="SOS" version="1.0.0">
+
+	<AssignedSensorId>http://www.52north.org/test/procedure/patient_059345457</AssignedSensorId>
+	
+	<om:CategoryObservation>
+	
+	     <om:samplingTime>
+	          <gml:TimeInstant>
+	               <gml:timePosition>2008-04-02T17:44:15+02:00</gml:timePosition>
+	          </gml:TimeInstant>
+	     </om:samplingTime>
+	     
+	     <om:procedure xlink:href="http://www.52north.org/test/procedure/patient_059345457"/>
+	     <om:observedProperty xlink:href="http://www.52north.org/test/observableProperty/patientCondition"/>
+	     
+	     <om:featureOfInterest>
+	         <!-- a sampling feature is needed to insert CategoryObservations -->
+	         <sa:SamplingPoint gml:id="http://www.52north.org/test/featureOfInterest/2001">
+	             <gml:name>PADER</gml:name>
+	             <sa:sampledFeature xlink:href=""/>
+	             <sa:position>
+	                 <gml:Point>
+	                     <gml:pos srsName="urn:ogc:def:crs:EPSG::4326">51.7167 8.76667</gml:pos>
+					 </gml:Point>
+	             </sa:position>
+	         </sa:SamplingPoint>
+	     </om:featureOfInterest>
+	     
+	     <om:result codeSpace="">My leg hurts</om:result>
+	     
+	</om:CategoryObservation>
+</InsertObservation>

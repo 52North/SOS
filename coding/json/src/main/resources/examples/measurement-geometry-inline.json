@@ -1,0 +1,69 @@
+{
+  "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+  "procedure": "http://52north.org/example/procedure/1",
+  "observedProperty": "http://52north.org/example/observedProperty/1",
+  "identifier": {
+    "value": "measurement1",
+    "codespace": "http://www.opengis.net/def/nil/OGC/0/unknown"
+  },
+  "featureOfInterest": {
+    "identifier": {
+      "value": "feature1",
+      "codespace": "http://www.opengis.net/def/nil/OGC/0/unknown"
+    },
+    "name": [
+      {
+        "value": "feature1",
+        "codespace": "http://x.y/z"
+      },
+      "othername1",
+      {
+        "value": "othername2"
+      }
+    ],
+    "sampledFeature": [
+      "sampledFeature1",
+      {
+        "identifier": "sampledFeature2",
+        "name": "sampledFeature2",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            51,
+            8
+          ],
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "EPSG:4326"
+            }
+          }
+        }
+      },
+      "sampledFeature3"
+    ],
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        52,
+        7
+      ],
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "EPSG:4326"
+        }
+      }
+    }
+  },
+  "phenomenonTime": "2013-01-01T00:00:00+02:00",
+  "resultTime": "2013-01-01T00:00:00+02:00",
+  "validTime": [
+    "2013-01-01T00:00:00+02:00",
+    "2013-01-01T01:00:00+02:00"
+  ],
+  "result": {
+    "uom": "testunit1",
+    "value": 123123
+  }
+}

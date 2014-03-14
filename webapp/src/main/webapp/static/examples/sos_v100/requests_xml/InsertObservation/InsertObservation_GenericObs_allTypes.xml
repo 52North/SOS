@@ -1,0 +1,119 @@
+<InsertObservation xmlns="http://www.opengis.net/sos/1.0"
+  xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:ogc="http://www.opengis.net/ogc"
+  xmlns:om="http://www.opengis.net/om/1.0" xmlns:sos="http://www.opengis.net/sos/1.0"
+  xmlns:sa="http://www.opengis.net/sampling/1.0" xmlns:gml="http://www.opengis.net/gml"
+  xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosInsert.xsd http://www.opengis.net/sampling/1.0 http://schemas.opengis.net/sampling/1.0.0/sampling.xsd http://www.opengis.net/om/1.0 http://schemas.opengis.net/om/1.0.0/extensions/observationSpecialization_override.xsd"
+  service="SOS" version="1.0.0">
+  
+ <AssignedSensorId>http://www.52north.org/test/procedure/All-Types-Station</AssignedSensorId>
+  
+ <om:Observation>
+  
+  <om:samplingTime>
+   <gml:TimePeriod xsi:type="gml:TimePeriodType">
+    <gml:beginPosition>2008-04-03T04:44:15+11:00</gml:beginPosition>
+    <gml:endPosition>2008-04-03T04:48:15+11:00</gml:endPosition>
+   </gml:TimePeriod>
+  </om:samplingTime>
+    
+  <om:procedure xlink:href="http://www.52north.org/test/procedure/All-Types-Station" />
+    
+  <om:observedProperty>
+   <swe:CompositePhenomenon gml:id="cpid0" dimension="1">
+    <gml:name>resultComponents</gml:name>
+    <swe:component xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian" />
+    <swe:component xlink:href="http://www.52north.org/test/observableProperty/active" />
+    <swe:component xlink:href="http://www.52north.org/test/observableProperty/sensors" />
+    <swe:component xlink:href="http://www.52north.org/test/observableProperty/temperature" />
+    <swe:component xlink:href="http://www.52north.org/test/observableProperty/lastCheck" />
+    <swe:component xlink:href="http://www.52north.org/test/observableProperty/conditions" />
+    <swe:component xlink:href="http://www.52north.org/test/observableProperty/position" />
+    <swe:component xlink:href="http://www.52north.org/test/observableProperty/lastCheckDescription" />
+    <swe:component xlink:href="http://www.52north.org/test/observableProperty/positionText" />
+    <swe:component xlink:href="http://www.52north.org/test/observableProperty/location" />
+    <swe:component xlink:href="http://www.52north.org/test/observableProperty/WKT" />
+   </swe:CompositePhenomenon>
+  </om:observedProperty>
+    
+  <om:featureOfInterest>
+     <sa:SamplingPoint gml:id="http://www.52north.org/test/featureOfInterest/AllTypesFoi">
+      <gml:name>AllTypesFoi</gml:name>
+      <sa:sampledFeature xlink:href=""/>
+      <sa:position>
+       <gml:Point>
+        <gml:pos srsName="urn:ogc:def:crs:EPSG::4326">52.9 7.52</gml:pos>
+       </gml:Point>
+      </sa:position>
+     </sa:SamplingPoint>
+  </om:featureOfInterest>
+    
+  <om:result>
+   <swe:DataArray>
+      
+    <swe:elementCount>
+     <swe:Count>
+      <swe:value>5</swe:value>
+     </swe:Count>
+    </swe:elementCount>
+        
+    <swe:elementType name="Components">
+     <swe:DataRecord>
+      <swe:field name="Time">
+       <swe:Time definition="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian" />
+      </swe:field>
+      <swe:field name="feature">
+       <swe:Text definition="http://www.opengis.net/def/property/OGC/0/FeatureOfInterest" />
+      </swe:field>
+      <swe:field name="active">
+       <swe:Boolean definition="http://www.52north.org/test/observableProperty/active" />
+      </swe:field>
+      <swe:field name="sensors">
+       <swe:Count definition="http://www.52north.org/test/observableProperty/sensors" />
+      </swe:field>
+      <swe:field name="temperature">
+       <swe:Quantity definition="http://www.52north.org/test/observableProperty/temperature">
+        <swe:uom code="Cel" />
+       </swe:Quantity>
+      </swe:field>
+      <swe:field name="lastCheck">
+       <swe:Time definition="http://www.52north.org/test/observableProperty/lastCheck" />
+      </swe:field>
+      <swe:field name="conditions">
+       <swe:Category definition="http://www.52north.org/test/observableProperty/conditions" />
+      </swe:field>
+      <swe:field name="position">
+       <swe:Position definition="http://www.52north.org/test/observableProperty/position" />
+      </swe:field>
+      <swe:field name="lastCheckDescription">
+       <swe:Text definition="http://www.52north.org/test/observableProperty/lastCheckDescription" />
+      </swe:field>
+      <swe:field name="positionText">
+       <swe:Text definition="http://www.52north.org/test/observableProperty/positionText" />
+      </swe:field>
+      <swe:field name="location">
+       <swe:Text definition="http://www.52north.org/test/observableProperty/location" />
+      </swe:field>
+      <swe:field name="WKT">
+       <swe:Text definition="http://www.52north.org/test/observableProperty/WKT" />
+      </swe:field>
+     </swe:DataRecord>
+    </swe:elementType>
+        
+    <swe:encoding>
+     <swe:TextBlock decimalSeparator="." tokenSeparator=","  blockSeparator=";" />
+    </swe:encoding>
+        
+    <swe:values>
+    2011-04-03T04:44:15+00,AllTypesFoi,true,5,6.0,2011-04-01T10:20:00+00,sunny,POINT(52.9 7.52)#4326,no incidents,POINT(52.9 7.52)#4326,POINT(52.9 7.52)#4326,POINT(52.9 7.52)#4326;
+    2011-04-03T04:45:15+00,AllTypesFoi,true,5,6.1,2011-04-01T10:20:00+00,sunny,POINT(52.9 7.52)#4326,no incidents,POINT(52.9 7.52)#4326,POINT(52.9 7.52)#4326,POINT(52.9 7.52)#4326;
+    2011-04-03T04:46:15+00,AllTypesFoi,true,5,6.2,2011-04-03T14:46:00+00,sunny,POINT(52.9 7.52)#4326,reset,POINT(52.9 7.52)#4326,POINT(52.9 7.52)#4326,POINT(52.9 7.52)#4326;
+    2011-04-03T04:47:15+00,AllTypesFoi,true,5,6.0,2011-04-03T14:46:00+00,sunny,POINT(52.9 7.52)#4326,reset,POINT(52.9 7.52)#4326,POINT(52.9 7.52)#4326,POINT(52.9 7.52)#4326;
+    2011-04-03T04:48:15+00,AllTypesFoi,true,5,6.1,2011-04-03T14:46:00+00,sunny,POINT(52.9 7.52)#4326,reset,POINT(52.9 7.52)#4326,POINT(52.9 7.52)#4326,POINT(52.9 7.52)#4326;
+    </swe:values>
+        
+   </swe:DataArray>
+  </om:result>
+ </om:Observation>
+</InsertObservation>

@@ -1,0 +1,19 @@
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope"
+	xmlns:sos="http://www.opengis.net/sos/1.0" xmlns:ows="http://www.opengis.net/ows/1.1">
+	<env:Body>
+		<sos:GetCapabilities service="SOS" >
+			<ows:AcceptVersions>
+				<ows:Version>1.0.0</ows:Version>
+			</ows:AcceptVersions>
+			<ows:Sections>
+				<ows:Section>OperationsMetadata</ows:Section>
+				<ows:Section>ServiceIdentification</ows:Section>
+				<ows:Section>ServiceProvider</ows:Section>
+				<ows:Section>Filter_Capabilities</ows:Section>
+				<ows:Section>Contents</ows:Section>
+			</ows:Sections>
+		</sos:GetCapabilities>
+	</env:Body>
+</env:Envelope>

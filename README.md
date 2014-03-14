@@ -1,4 +1,4 @@
-# 52°North SOS [![Build Status](https://travis-ci.org/52North/SOS.png)](https://travis-ci.org/52North/SOS)
+# 52°North SOS
 
 README file for 52°North Sensor Observation Service (SOS) version 2.0.0
 
@@ -10,6 +10,10 @@ The 52°North SOS is a reference implementation of the
 implemented during the [OGC Web Services Testbed,  Phase 9 (OWS-9)][3] and
 tested  to be compliant to this specification within the [OGC CITE testing][4]
 in December of 2012.
+
+## Build Status
+* Master: [![Master Build Status](https://travis-ci.org/52North/SOS.png?branch=master)](https://travis-ci.org/52North/SOS)
+* Develop: [![Develop Build Status](https://travis-ci.org/52North/SOS.png?branch=develop)](https://travis-ci.org/52North/SOS)
 
 ## Contents
   * `/src` :			     The source files of 52°North SOS modules

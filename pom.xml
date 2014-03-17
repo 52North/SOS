@@ -953,8 +953,9 @@
         </pluginManagement>
     </build>
     <scm>
-        <developerConnection>scm:svn:https://52north.org/svn/swe/main/SOS/Service/branches/52n-sos-400-refactored</developerConnection>
-        <url>https://52north.org/svn/swe/main/SOS/Service/branches/52n-sos-400-refactored</url>
+    	<connection>scm:git:git://github.com/52North/SOS.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/52North/SOS.git</developerConnection>
+		<url>https://github.com/52North/SOS</url>
     </scm>
     <repositories>
         <repository>

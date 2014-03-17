@@ -1,9 +1,8 @@
 # 52°North SOS
 
-README file for 52°North Sensor Observation Service (SOS) version 2.0.0
+README file for the 52°North Sensor Observation Service (SOS) version 4.0.0
 
-This is the distribution of the [52°North Sensor Observation Service (SOS)][1].
-Before installing the SOS, please note the following information.
+This is the repository of the [52°North Sensor Observation Service (SOS)][1].
 
 The 52°North SOS is a reference implementation of the
 [OGC Sensor Observation Service specification (version 2.0)][2]. It was
@@ -15,7 +14,28 @@ in December of 2012.
 * Master: [![Master Build Status](https://travis-ci.org/52North/SOS.png?branch=master)](https://travis-ci.org/52North/SOS)
 * Develop: [![Develop Build Status](https://travis-ci.org/52North/SOS.png?branch=develop)](https://travis-ci.org/52North/SOS)
 
-## Contents
+## Branches
+
+This project follows the  [Gitflow branching model](http://nvie.com/posts/a-successful-git-branching-model/). "master" reflects the latest stable release.
+Ongoing development is done in branch [develop](../../tree/develop) and dedicated feature branches (feature-*).
+
+## Code Compilation
+
+This project is managed with Maven3. Simply run `mvn clean install`
+to create a deployable .WAR file. `mvn clean install -Pdevelop`
+additionally enables integration tests.
+
+## Distributions
+
+Here xou can find some information that relates to the distributions of the 52°North SOS.
+
+### Download
+
+The latest release of 52°North SOS can be downloaded from this website:
+
+    http://52north.org/downloads/sensor-web/sos
+
+### Contents
   * `/src` :			     The source files of 52°North SOS modules
   * `/bin` :			     Executable binary of 52°North SOS webapp module
   * `LICENSE` :		     The license of 52°North SOS
@@ -25,15 +45,11 @@ in December of 2012.
 
 No printer friendly documentation exist for this release. Instead, refer to the [wiki documentation][5].
 
-## Installation
+### Installation
 
 No printer friendly installation guide exist for this release. Instead, refer to the [wiki documentation][5].
 
-## Download, Support and Contact
-
-The latest release of 52°North SOS can be downloaded from this website:
-
-    http://52north.org/downloads/sensor-web/sos
+## Support and Contact
 
 You can get support in the community mailing list and forums:
 

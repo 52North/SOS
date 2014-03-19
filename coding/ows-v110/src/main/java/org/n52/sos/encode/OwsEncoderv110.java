@@ -29,6 +29,7 @@
 package org.n52.sos.encode;
 
 import java.io.PrintStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -107,7 +108,6 @@ import org.w3.x1999.xlink.ShowType;
 import org.w3.x1999.xlink.TypeType;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -368,18 +368,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
             exceptionText.append("\n");
         }
         if (owsException.getCause() != null) {
-            exceptionText.append("[EXEPTION]: \n");
-            final String localizedMessage = owsException.getCause().getLocalizedMessage();
-            final String message = owsException.getCause().getMessage();
-            if (localizedMessage != null && message != null) {
-                if (!message.equals(localizedMessage)) {
-                    JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, message);
-                }
-                JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, localizedMessage);
-            } else {
-                JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, localizedMessage);
-                JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, message);
-            }
+            addExceptionMessages(exceptionText, owsException.getCause());
             if (includeStackTraceInExceptionReport) {
                 final ByteArrayOutputStream os = new ByteArrayOutputStream();
                 owsException.getCause().printStackTrace(new PrintStream(os));
@@ -390,6 +379,29 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
         return exceptionDoc;
     }
 
+    private void addExceptionMessages(StringBuilder exceptionText, Throwable exception) {
+        exceptionText.append("[EXCEPTION]: \n");
+        final String localizedMessage = exception.getLocalizedMessage();
+        final String message = exception.getMessage();
+        if (localizedMessage != null && message != null) {
+            if (!message.equals(localizedMessage)) {
+                JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, message);
+            }
+            JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, localizedMessage);
+        } else {
+            JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, localizedMessage);
+            JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, message);
+        }
+        
+        //recurse SQLException if necessary
+        if (exception instanceof SQLException) {
+            SQLException sqlException = (SQLException) exception;
+            if (sqlException.getNextException() != null) {
+                addExceptionMessages(exceptionText, sqlException.getNextException());
+            }
+        }
+    }
+    
     private ExceptionReportDocument encodeOwsExceptionReport(final OwsExceptionReport owsExceptionReport) {
         final ExceptionReportDocument erd =
                 ExceptionReportDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());

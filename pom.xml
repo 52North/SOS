@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.1.0-SNAPSHOT" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.1.0-SNAPSHOT http://maven.apache.org/maven-v4_0_0.xsd">
     <!-- Remove the parent in the case of 52°North repos are not available -->
     <parent>
         <groupId>org.n52</groupId>
@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
-    <version>4.0.0</version>
+    <version>4.1.0-SNAPSHOT</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation</url>
@@ -76,9 +76,9 @@
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
         <!-- managed dependencies with ${project.version} will be wrong in submodules
             with different versions -->
-        <sos.version>4.0.0</sos.version>
-        <do.version>0.1.1</do.version>
-        <rest-binding.version>0.1.1</rest-binding.version>
+        <sos.version>4.1.0-SNAPSHOT</sos.version>
+        <do.version>0.2.0-SNAPSHOT</do.version>
+        <rest-binding.version>0.2.0-SNAPSHOT</rest-binding.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -953,8 +953,9 @@
         </pluginManagement>
     </build>
     <scm>
-        <developerConnection>scm:svn:https://52north.org/svn/swe/main/SOS/Service/branches/52n-sos-400-refactored</developerConnection>
-        <url>https://52north.org/svn/swe/main/SOS/Service/branches/52n-sos-400-refactored</url>
+    	<connection>scm:git:git://github.com/52North/SOS.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/52North/SOS.git</developerConnection>
+		<url>https://github.com/52North/SOS</url>
     </scm>
     <repositories>
         <repository>

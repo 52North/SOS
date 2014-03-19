@@ -19,4 +19,12 @@
             <comments>This license type is derived from the term "Aduna BSD like license".</comments>
     </license>
   </licenses>
+  <dependencies>
+      <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>4.11</version>
+          <scope>test</scope>
+      </dependency>   
+  </dependencies>  
 </project>

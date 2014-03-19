@@ -173,7 +173,6 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
             final SFSpatialSamplingFeatureType xbSampFeature = xbSampFeatDoc.addNewSFSpatialSamplingFeature();
             // TODO: CHECK for all fields set gml:id
             xbSampFeature.setId(absFeature.getGmlId());
-
             if (sampFeat.isSetIdentifier()
                     && SosHelper.checkFeatureOfInterestIdentifierForSosV2(sampFeat.getIdentifier().getValue(),
                             Sos2Constants.SERVICEVERSION)) {
@@ -222,7 +221,7 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
             if (sampFeat.isSetParameter()) {
                 addParameter(xbSampFeature, sampFeat);
             }
-
+            
             // set position
             encodeShape(xbSampFeature.addNewShape(), sampFeat);
             return xbSampFeatDoc;

@@ -141,7 +141,7 @@
 		<td style="padding:3px;width:70%;">The <a target="_blank" href="http://www.smart-project.info">SMART</a> Project, funded by the <a target="_blank" href="http://www.msi.govt.nz/">Ministry of Business, Innovation and Employment</a> (07/2011 &ndash; 06/2017): <br/> Experts in the Smart Project will develop, apply, and validate pioneering new techniques for understanding New Zealand&lsquo;s groundwater resources. Satellite and airborne remote sensing techniques and Sensor Observation Services including seismic signals from earthquakes are used for rapid and costeffective characterisation and mapping of New Zealand&lsquo;s aquifer systems. Together with a stakeholder network the research team will use new methods to overcome the current time- and resourceconsuming challenges of in-time data acquisition. Special spatial skills in hydrogeology, geology, satellite remote sensing, geophysics, seismology, uncertainty mathematics and spatial information technology will be developed to assist with improvement of New Zealand&lsquo;s freshwater management.</td>
 	</tr>
 	<tr>
-		<td align="center" style="padding:3px;width:30%;"></td>
+		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.dlz-it.de/cln_008/DE/Home/home_node.html"><img alt="DLZ-IT" align="middle" width="140" src="static/images/funding/dlz-it-logo.jpg" /></a></td>
 		<td style="padding:3px;width:70%;">The <a target="_blank" href="http://www.dlz-it.de/">DLZ-IT</a> BMVBS Information Technology Services Centre of Federal Ministry of Transport, Building and Urban Development (Germany)</td>
 	</tr>
 	<tr>

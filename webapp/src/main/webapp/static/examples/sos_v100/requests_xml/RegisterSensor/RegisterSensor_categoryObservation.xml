@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RegisterSensor service="SOS" version="1.0.0"
+	xmlns="http://www.opengis.net/sos/1.0"
+	xmlns:swe="http://www.opengis.net/swe/1.0.1"
+	xmlns:ows="http://www.opengeospatial.net/ows"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:gml="http://www.opengis.net/gml"
+	xmlns:ogc="http://www.opengis.net/ogc"
+	xmlns:om="http://www.opengis.net/om/1.0"
+	xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/sos/1.0
+	http://schemas.opengis.net/sos/1.0.0/sosRegisterSensor.xsd
+	http://www.opengis.net/om/1.0
+	http://schemas.opengis.net/om/1.0.0/extensions/observationSpecialization_override.xsd">
+
+	<!-- Sensor Description parameter; Currently, this has to be a sml:System -->
+	<SensorDescription>
+	<sml:SensorML version="1.0.1">
+	<sml:member>
+		<sml:System xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+		
+			  <!--sml:identification element must contain the ID of the sensor-->
+		     <sml:identification>
+		          <sml:IdentifierList>
+		               <sml:identifier>
+		                    <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">
+		                         <sml:value>http://www.52north.org/test/procedure/patient_059345457</sml:value>
+		                    </sml:Term>
+		               </sml:identifier>
+		          </sml:IdentifierList>
+		     </sml:identification>
+		     
+			<!-- optional; generated if not present -->
+			<sml:identification xlink:title="offerings">
+				<sml:IdentifierList>
+					<sml:identifier name="Offering for sensor patient">
+						<sml:Term definition="urn:ogc:def:identifier:OGC:offeringID">
+							<sml:value>http://www.52north.org/test/offering/PatientCondition</sml:value>
+						</sml:Term>
+					</sml:identifier>
+				</sml:IdentifierList>
+			</sml:identification>
+		
+		     <!-- last measured position of sensor -->
+		     <sml:position name="sensorPosition">
+		          <swe:Position referenceFrame="urn:ogc:def:crs:EPSG::4326">
+		               <swe:location>
+		                    <swe:Vector gml:id="SENSOR_LOCATION">
+		                         <swe:coordinate name="longitude">
+		                              <swe:Quantity>
+		                                   <swe:uom code="degree"/>
+		                                   <swe:value>7.52</swe:value>
+		                              </swe:Quantity>
+		                         </swe:coordinate>
+		                         <swe:coordinate name="latitude">
+		                              <swe:Quantity>
+		                                   <swe:uom code="degree"/>
+		                                   <swe:value>52.90</swe:value>
+		                              </swe:Quantity>
+		                         </swe:coordinate>
+		                         <swe:coordinate name="altitude">
+		                              <swe:Quantity>
+		                                   <swe:uom code="m"/>
+		                                   <swe:value>52.0</swe:value>
+		                              </swe:Quantity>
+		                         </swe:coordinate>
+		                    </swe:Vector>
+		               </swe:location>
+		          </swe:Position>
+		     </sml:position>
+		
+		     <!-- list containing the input phenomena for this sensor system -->
+		     <sml:inputs>
+		          <sml:InputList>
+		               <sml:input name="text">
+		                    <swe:ObservableProperty definition="http://www.52north.org/test/observableProperty/mood"/>
+		               </sml:input>
+		          </sml:InputList>
+		     </sml:inputs>
+		
+		     <!-- list containing the output phenomena of this sensor system; ATTENTION: these phenomena are parsed and inserted into the database; they have to contain offering elements to determine the correct offering for the sensors and measured phenomena -->
+		      <sml:outputs>
+		           <sml:OutputList>
+		                <sml:output name="text">
+		                     <swe:Category definition="http://www.52north.org/test/observableProperty/patientCondition" />
+		                </sml:output>
+		           </sml:OutputList>
+		      </sml:outputs>
+		      
+		</sml:System>
+	</sml:member>
+	</sml:SensorML>
+	</SensorDescription>
+	
+	<!-- ObservationTemplate parameter; this has to be an empty measurement at the moment, as the 52N SOS only supports Measurements to be inserted -->
+	<ObservationTemplate>
+	     <om:CategoryObservation>
+	          <om:samplingTime/>
+	          <om:procedure/>
+	          <om:observedProperty/>
+	          <om:featureOfInterest></om:featureOfInterest>
+	          <om:result codeSpace=""></om:result>
+	     </om:CategoryObservation>
+	</ObservationTemplate>
+
+</RegisterSensor>

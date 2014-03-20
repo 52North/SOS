@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+		xmlns="http://www.w3.org/2001/XMLSchema"
+		xmlns:gml="http://www.opengis.net/gml/3.2"
+		xmlns:om="http://www.opengis.net/om/2.0"
+		xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+		xmlns:sos="http://www.opengis.net/sos/2.0"
+		xmlns:sosREST="http://www.opengis.net/sosREST/1.0"
+		targetNamespace="http://www.opengis.net/sosREST/1.0"
+		elementFormDefault="qualified"
+		attributeFormDefault="unqualified">
+	<import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+	<import namespace="http://www.opengis.net/om/2.0" schemaLocation="http://schemas.opengis.net/om/2.0/observation.xsd"/>
+	<import namespace="http://www.opengis.net/sensorML/1.0.1" schemaLocation="http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd"/>
+	<import namespace="http://www.opengis.net/sos/2.0" schemaLocation="http://schemas.opengis.net/sos/2.0/sos.xsd"/>
+	<complexType name="SensorType">
+		<sequence>
+			<element ref="sml:_Process"/>
+			<element ref="sosREST:link" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<element name="Sensor" type="sosREST:SensorType">
+		<annotation>
+			<documentation>TBD</documentation>
+		</annotation>
+	</element>
+	<complexType name="ResourceCollectionType">
+		<sequence>
+			<element ref="sosREST:link" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<element name="SensorCollection" type="sosREST:ResourceCollectionType">
+		<annotation>
+			<documentation>TBD</documentation>
+		</annotation>
+	</element>
+	<complexType name="ObservationType">
+		<sequence>
+			<element ref="om:OM_Observation"/>
+			<element ref="sosREST:link" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<element name="Observation" type="sosREST:ObservationType">
+		<annotation>
+			<documentation>TBD</documentation>
+		</annotation>
+	</element>
+	<complexType name="ObservationCollectionType">
+		<sequence>
+			<element ref="sosREST:Observation" minOccurs="0" maxOccurs="unbounded"/>
+			<element ref="sosREST:link" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<element name="ObservationCollection" type="sosREST:ObservationCollectionType">
+		<annotation>
+			<documentation>TBD</documentation>
+		</annotation>
+	</element>
+	<complexType name="CapabilitiesType">
+		<sequence>
+			<element ref="sos:Capabilities"/>
+			<element ref="sosREST:link" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<element name="Capabilities" type="sosREST:CapabilitiesType">
+		<annotation>
+			<documentation>TBD</documentation>
+		</annotation>
+	</element>
+	<complexType name="ObservationOfferingType">
+		<sequence>
+			<element ref="sos:ObservationOffering"/>
+			<element ref="sosREST:link" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<element name="ObservationOffering" type="sosREST:ObservationOfferingType">
+		<annotation>
+			<documentation>TBD</documentation>
+		</annotation>
+	</element>
+	<element name="OfferingCollection" type="sosREST:ResourceCollectionType">
+		<annotation>
+			<documentation>TBD</documentation>
+		</annotation>
+	</element>
+	<complexType name="linkType">
+		<attribute name="rel" type="anyURI" use="required"/>
+		<attribute name="href" type="anyURI" use="required"/>
+		<attribute name="type" type="string" use="required"/>
+	</complexType>
+	<element name="link" type="sosREST:linkType"/>
+	<complexType name="FeatureType">
+		<sequence>
+			<element ref="gml:AbstractFeature"/>
+			<element ref="sosREST:link" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<element name="Feature" type="sosREST:FeatureType"/>
+	<element name="FeatureCollection" type="sosREST:ResourceCollectionType"/>
+</schema>

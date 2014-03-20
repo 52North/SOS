@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<swes:DeleteSensor service="SOS" version="2.0.0" xmlns:swes="http://www.opengis.net/swes/2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd">
+	<swes:procedure>http://www.52north.org/test/procedure/9</swes:procedure>
+</swes:DeleteSensor>

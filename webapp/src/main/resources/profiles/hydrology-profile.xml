@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile:SosProfile xmlns:profile="http://www.52north.org/sensorweb/sos/profile"
+	xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.52north.org/sensorweb/sos/profile sos-profile.xsd">
+	<!-- 
+	NOTE: If you use this Hydrology-Profile with the old concept (not the series concept) and without the SOS 
+	transactional profile the ObservationConstellation and ObservationType tables and mapping files are required to work!
+	You can find the ObservationConstellation and ObservationType tables in the 
+	[TOMCAT_HOME]\webapps\52n-sos-webapp\WEB-INF\classes\mapping\transactional folder of the deployed SOS.
+	 -->
+	<profile:identifier>hydrology</profile:identifier>
+	<profile:activeProfile>false</profile:activeProfile>
+	<profile:observationResponseFormat>http://www.opengis.net/waterml/2.0</profile:observationResponseFormat>
+	<profile:encodeFeatureOfInterestInObservations>false</profile:encodeFeatureOfInterestInObservations>
+	<profile:encodingNamespaceForFeatureOfInterestEncoding>http://www.opengis.net/waterml/2.0</profile:encodingNamespaceForFeatureOfInterestEncoding>
+	<profile:showMetadataOfEmptyObservations>true</profile:showMetadataOfEmptyObservations>
+	<profile:listFeatureOfInterestsInOfferings>true</profile:listFeatureOfInterestsInOfferings>
+	<profile:encodeChildProcedureDescriptions>false</profile:encodeChildProcedureDescriptions>
+	<profile:showFullOperationsMetadata>true</profile:showFullOperationsMetadata>
+	<profile:showFullOperationsMetadataForObservations>true</profile:showFullOperationsMetadataForObservations>
+	<profile:allowSubsettingForSOS20OM20>true</profile:allowSubsettingForSOS20OM20>
+	<profile:mergeValues>true</profile:mergeValues>
+	<profile:NoDataPlaceholder>
+		<profile:responsePlaceholder>noData</profile:responsePlaceholder>
+		<profile:placeholder>noData</profile:placeholder>
+	</profile:NoDataPlaceholder>
+	<profile:returnLatestValueIfTemporalFilterIsMissingInGetObservation>true</profile:returnLatestValueIfTemporalFilterIsMissingInGetObservation>
+	<profile:EncodeProcedure>
+		<profile:namespace>http://www.opengis.net/waterml/2.0/observationProcess</profile:namespace>
+		<profile:encode>true</profile:encode>
+	</profile:EncodeProcedure>
+	<profile:DefaultObservationTypesForEncoding>
+		<profile:namespace>http://www.opengis.net/waterml/2.0</profile:namespace>
+		<profile:observationType>http://www.opengis.net/def/observationType/waterml/2.0/MeasurementTimeseriesTVPObservation</profile:observationType>
+	</profile:DefaultObservationTypesForEncoding>
+</profile:SosProfile>

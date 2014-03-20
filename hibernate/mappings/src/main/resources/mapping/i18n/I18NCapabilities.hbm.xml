@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.i18n.I18NCapabilities" table="i18ncapabilities">
+        <id name="id" type="long">
+            <column name="id" />
+            <generator class="native">
+            	<param name="sequence">i18ncapabilitiesId_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="i18ncapsCodespaceFk">
+            <column name="codespace" not-null="true" unique-key="uniqueCodespace"/>
+        </many-to-one>
+        <property name="title" type="string">
+            <column name="title"/>
+        </property>
+        <property name="abstract" type="string">
+            <column name="abstract"/>
+        </property>
+    </class>
+</hibernate-mapping>

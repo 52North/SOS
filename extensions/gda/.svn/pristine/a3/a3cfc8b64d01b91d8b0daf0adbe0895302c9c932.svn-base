@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope 
+	xmlns:soap="http://www.w3.org/2003/05/soap-envelope" 
+	xmlns:wsa="http://www.w3.org/2005/08/addressing">
+	<soap:Header>
+		<wsa:To>http://www.ogc.org/SOS</wsa:To>
+		<wsa:Action>http://www.opengis.net/def/serviceOperation/sos/daRetrieval/2.0/GetDataAvailability</wsa:Action>
+		<wsa:ReplyTo>
+			<wsa:Address>http://www.w3.org/2005/08/addressing/anonymous</wsa:Address>
+		</wsa:ReplyTo>
+		<wsa:MessageID>0</wsa:MessageID>
+	</soap:Header>
+	<soap:Body>
+		<sos:GetDataAvailability service="SOS" version="2.0.0" xmlns:sos="http://www.opengis.net/sos/2.0">
+			<sos:observedProperty>test_observable_property_1</sos:observedProperty>
+			<sos:observedProperty>test_observable_property_2</sos:observedProperty>
+			<sos:observedProperty>test_observable_property_3</sos:observedProperty>
+			<sos:observedProperty>test_observable_property_4</sos:observedProperty>
+			<sos:observedProperty>test_observable_property_5</sos:observedProperty>
+			<sos:featureOfInterest>test_feature_1</sos:featureOfInterest>
+			<sos:featureOfInterest>test_feature_4</sos:featureOfInterest>
+			<sos:procedure>http://www.example.org/sensors/101</sos:procedure>
+			<sos:procedure>http://www.example.org/sensors/104</sos:procedure>
+		</sos:GetDataAvailability>
+	</soap:Body>
+</soap:Envelope>

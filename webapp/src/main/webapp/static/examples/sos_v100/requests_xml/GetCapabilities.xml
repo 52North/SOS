@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GetCapabilities xmlns="http://www.opengis.net/sos/1.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:ogc="http://www.opengis.net/ogc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/sos/1.0
+	http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd"
+	service="SOS">
+	
+	<ows:AcceptVersions>
+		<ows:Version>1.0.0</ows:Version>
+	</ows:AcceptVersions>
+	
+	<ows:Sections>	
+		<ows:Section>OperationsMetadata</ows:Section>	
+		<ows:Section>ServiceIdentification</ows:Section>
+		<ows:Section>ServiceProvider</ows:Section>
+		<ows:Section>Filter_Capabilities</ows:Section>
+		<ows:Section>Contents</ows:Section>
+	</ows:Sections>
+
+</GetCapabilities>
+

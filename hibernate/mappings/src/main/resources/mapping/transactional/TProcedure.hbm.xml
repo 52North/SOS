@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<subclass name="org.n52.sos.ds.hibernate.entities.TProcedure" extends="org.n52.sos.ds.hibernate.entities.Procedure" discriminator-value="true">
+	<set name="validProcedureTimes" table="validProcedureTime" inverse="true" fetch="join">
+		<key>
+		    <column name="procedureId" not-null="true" />
+		</key>
+		<one-to-many class="org.n52.sos.ds.hibernate.entities.ValidProcedureTime" />
+	</set>
+	<set name="childs" table="sensorSystem" inverse="false" fetch="join">
+	    <key>
+	        <column name="parentSensorId" not-null="true" />
+	    </key>
+	    <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.TProcedure" foreign-key="procedureChildFk">
+	        <column name="childSensorId" not-null="true" />
+	    </many-to-many>
+	</set>
+	<set name="parents" table="sensorSystem" inverse="false" fetch="join">
+	    <key>
+	        <column name="childSensorId" not-null="true" />
+	    </key>
+	    <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.TProcedure" foreign-key="procedureParenfFk">
+	        <column name="parentSensorId" not-null="true" />
+	    </many-to-many>
+	</set>
+</subclass>
+</hibernate-mapping>

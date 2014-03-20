@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GetObservation xmlns="http://www.opengis.net/sos/1.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:gml="http://www.opengis.net/gml"
+	xmlns:ogc="http://www.opengis.net/ogc"
+	xmlns:om="http://www.opengis.net/om/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/sos/1.0
+	http://schemas.opengis.net/sos/1.0.0/sosGetObservation.xsd"
+	service="SOS" version="1.0.0" srsName="urn:ogc:def:crs:EPSG::4326">
+	
+	<!-- mandatory -->
+	<offering>http://www.52north.org/test/offering/6</offering>
+	
+	<!-- optional -->
+	<eventTime>
+		<ogc:TM_During>
+			<ogc:PropertyName>om:samplingTime</ogc:PropertyName>
+			<gml:TimePeriod>
+				<gml:beginPosition>2012-11-19T14:00:00.000+01:00</gml:beginPosition>
+				<gml:endPosition>2012-11-19T15:00:00.000+01:00</gml:endPosition>
+			</gml:TimePeriod>
+		</ogc:TM_During>
+	</eventTime>
+	<!-- optional
+	<eventTime>
+		<ogc:TM_Equals>
+			<ogc:PropertyName>om:samplingTime</ogc:PropertyName>
+			<gml:TimeInstant>
+				<gml:timePosition>2012-11-19T14:00:00.000+01:00</gml:timePosition>
+			</gml:TimeInstant>
+		</ogc:TM_Equals>
+	</eventTime>
+	
+	<eventTime>
+		<ogc:TM_Equals>
+			<ogc:PropertyName>om:samplingTime</ogc:PropertyName>
+			<gml:TimeInstant>
+				<gml:timePosition>first</gml:timePosition>
+			</gml:TimeInstant>
+		</ogc:TM_Equals>
+	</eventTime>
+	
+	<eventTime>
+		<ogc:TM_Equals>
+			<ogc:PropertyName>om:samplingTime</ogc:PropertyName>
+			<gml:TimeInstant>
+				<gml:timePosition>latest</gml:timePosition>
+			</gml:TimeInstant>
+		</ogc:TM_Equals>
+	</eventTime>
+	-->
+	
+	<!-- optional, multiple values possible -->
+	<procedure>http://www.52north.org/test/procedure/6</procedure>
+	
+	<!-- mandatory, multiple values possible -->
+	<observedProperty>http://www.52north.org/test/observableProperty/6</observedProperty>
+	
+	<!-- optional, multiple values possible -->
+	<featureOfInterest>
+		<ObjectID>http://www.52north.org/test/featureOfInterest/6</ObjectID>
+	</featureOfInterest>
+	<!-- or optional
+	<featureOfInterest>
+		<ogc:BBOX>
+			<ogc:PropertyName>urn:ogc:data:location</ogc:PropertyName>
+			<gml:Envelope srsName="urn:ogc:def:crs:EPSG::4326">
+				<gml:lowerCorner>50.0 7.0</gml:lowerCorner>
+				<gml:upperCorner>53.0 10.0</gml:upperCorner>
+			</gml:Envelope>
+		</ogc:BBOX>
+	</featureOfInterest>
+	 -->
+	
+	<!-- mandatory -->
+	<responseFormat>text/xml;subtype=&quot;om/1.0.0&quot;</responseFormat>
+	<!-- optional -->
+	<resultModel>om:Measurement</resultModel>
+	<!-- optional -->
+	<responseMode>inline</responseMode>
+
+</GetObservation>

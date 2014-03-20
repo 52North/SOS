@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://www.52north.org/schema/json/sos/request/GetFeatureOfInterest#",
+  "allOf": [
+    {
+      "$ref": "http://www.52north.org/schema/json/sos/request/Request#"
+    },
+    {
+      "required": [
+        "version"
+      ],
+      "properties": {
+        "request": {
+          "enum": [
+            "GetFeatureOfInterest"
+          ]
+        },
+        "featureOfInterest": {
+          "$ref": "#/definitions/stringOrStringList"
+        },
+        "observedProperty": {
+          "$ref": "#/definitions/stringOrStringList"
+        },
+        "procedure": {
+          "$ref": "#/definitions/stringOrStringList"
+        },
+        "spatialFilter": {
+          "oneOf": [
+            {
+              "$ref": "http://www.52north.org/schema/json/SpatialFilter#"
+            },
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "http://www.52north.org/schema/json/SpatialFilter#"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "definitions": {
+    "stringOrStringList": {
+      "type": [
+        "string",
+        "array"
+      ],
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

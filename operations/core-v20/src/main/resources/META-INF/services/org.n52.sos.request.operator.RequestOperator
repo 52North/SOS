@@ -1,0 +1,3 @@
+org.n52.sos.request.operator.SosGetCapabilitiesOperatorV20
+org.n52.sos.request.operator.SosDescribeSensorOperatorV20
+org.n52.sos.request.operator.SosGetObservationOperatorV20

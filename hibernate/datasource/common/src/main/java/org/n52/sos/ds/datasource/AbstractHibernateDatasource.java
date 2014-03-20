@@ -1,0 +1,1076 @@
+/**
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ *
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+ *
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+ *
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
+package org.n52.sos.ds.datasource;
+
+import java.io.File;
+import java.net.URISyntaxException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import org.hibernate.HibernateException;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.mapping.Table;
+import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+import org.n52.sos.config.SettingDefinitionProvider;
+import org.n52.sos.config.settings.BooleanSettingDefinition;
+import org.n52.sos.config.settings.IntegerSettingDefinition;
+import org.n52.sos.config.settings.StringSettingDefinition;
+import org.n52.sos.ds.Datasource;
+import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.sos.ds.hibernate.SessionFactoryProvider;
+import org.n52.sos.ds.hibernate.util.HibernateConstants;
+import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.util.SQLConstants;
+import org.n52.sos.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
+
+/**
+ * @author Christian Autermann <c.autermann@52north.org>
+ * 
+ * @since 4.0.0
+ */
+public abstract class AbstractHibernateDatasource implements Datasource, SQLConstants, HibernateDatasourceConstants {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractHibernateDatasource.class);
+
+    protected static final String USERNAME_TITLE = "User Name";
+
+    protected static final String PASSWORD_TITLE = "Password";
+
+    protected static final String DATABASE_KEY = "jdbc.database";
+
+    protected static final String DATABASE_TITLE = "Database";
+
+    protected static final String DATABASE_DESCRIPTION =
+            "Set this to the name of the database you want to use for SOS.";
+
+    protected static final String DATABASE_DEFAULT_VALUE = "sos";
+
+    protected static final String HOST_KEY = "jdbc.host";
+
+    protected static final String HOST_TITLE = "Host";
+
+    protected static final String HOST_DESCRIPTION =
+            "Set this to the IP/net location of the database server. The default value for is \"localhost\".";
+
+    protected static final String HOST_DEFAULT_VALUE = "localhost";
+
+    protected static final String PORT_KEY = "jdbc.port";
+
+    protected static final String PORT_TITLE = "Database Port";
+
+    protected static final String SCHEMA_KEY = HibernateConstants.DEFAULT_SCHEMA;
+
+    protected static final String SCHEMA_TITLE = "Schema";
+
+    protected static final String SCHEMA_DESCRIPTION =
+            "Qualifies unqualified table names with the given schema in generated SQL.";
+
+    protected static final String SCHMEA_DEFAULT_VALUE = "public";
+
+    protected static final String OLD_CONCEPT_TITLE = "Old observation concept";
+
+    protected static final String OLD_CONCEPT_DESCRIPTION =
+            "Should the database support the old observation concept or exists the older database model? The new default concept uses series in the observation table instead of direct relations to procedure, observedProperty and featureOfInterest!";
+
+    protected static final String OLD_CONCEPT_KEY = "sos.oldConcept";
+
+    protected static final boolean OLD_CONCEPT_DEFAULT_VALUE = false;
+
+    protected static final String TRANSACTIONAL_TITLE = "Transactional Profile";
+
+    protected static final String TRANSACTIONAL_DESCRIPTION = "Should the database support the transactional profile?";
+
+    protected static final String TRANSACTIONAL_KEY = "sos.transactional";
+
+    protected static final boolean TRANSACTIONAL_DEFAULT_VALUE = true;
+
+    protected static final String SPATIAL_FILTERING_PROFILE_TITLE = "Spatial Filtering Profile";
+
+    protected static final String SPATIAL_FILTERING_PROFILE_DESCRIPTION =
+            "Should the database support the Spatial Filtering Profile?";
+
+    protected static final String SPATIAL_FILTERING_PROFILE_KEY = "sos.spatialFilteringProfile";
+
+    protected static final boolean SPATIAL_FILTERING_PROFILE_DEFAULT_VALUE = true;
+
+    protected static final String MULTI_LANGUAGE_TITLE = "Multi language support";
+
+    protected static final String MULTI_LANGUAGE_DESCRIPTION = "Should the database support multi language?";
+
+    protected static final String MULTI_LANGUAGE_KEY = "sos.language";
+
+    protected static final boolean MULTI_LANGUAGE_DEFAULT_VALUE = false;
+
+    protected static final String USERNAME_KEY = HibernateConstants.CONNECTION_USERNAME;
+
+    protected static final String PASSWORD_KEY = HibernateConstants.CONNECTION_PASSWORD;
+
+    protected static final String C3P0_CONNECTION_POOL =
+            "org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider";
+
+    protected static final Boolean PROVIDED_JDBC_DRIVER_DEFAULT_VALUE = false;
+
+    protected static final String PROVIDED_JDBC_DRIVER_TITLE = "Provided JDBC driver";
+
+    protected static final String PROVIDED_JDBC_DRIVER_DESCRIPTION =
+            "Is the JDBC driver provided and should not be derigistered during shutdown?";
+
+    protected static final String PROVIDED_JDBC_DRIVER_KEY = "sos.jdbc.provided";
+
+    protected static final String MIN_POOL_SIZE_KEY = "jdbc.pool.min";
+
+    protected static final String MIN_POOL_SIZE_TITLE = "Minimum ConnectionPool size";
+
+    protected static final String MIN_POOL_SIZE_DESCRIPTION = "Minimum size of the ConnectionPool";
+
+    protected static final Integer MIN_POOL_SIZE_DEFAULT_VALUE = 10;
+
+    protected static final String MAX_POOL_SIZE_KEY = "jdbc.pool.max";
+
+    protected static final String MAX_POOL_SIZE_TITLE = "Maximum ConnectionPool size";
+
+    protected static final String MAX_POOL_SIZE_DESCRIPTION = "Maximum size of the ConnectionPool";
+
+    protected static final Integer MAX_POOL_SIZE_DEFAULT_VALUE = 30;
+
+    protected static final String BATCH_SIZE_KEY = "jdbc.batch.size";
+
+    protected static final String BATCH_SIZE_TITLE = "Batch size";
+
+    protected static final String BATCH_SIZE_DESCRIPTION = "Database insert/update batch size";
+
+    protected static final Integer BATCH_SIZE_DEFAULT_VALUE = 20;
+
+    private Dialect dialect;
+
+    private final BooleanSettingDefinition oldConceptDefiniton = createOldConceptDefinition();
+
+    private final BooleanSettingDefinition transactionalDefiniton = createTransactionalDefinition();
+
+    private boolean transactionalDatasource = true;
+
+    private final BooleanSettingDefinition spatialFilteringProfileDefinition =
+            createSpatialFilteringProfileDefinition();
+
+    private boolean spatialFilteringProfileDatasource = true;
+
+    private final BooleanSettingDefinition mulitLanguageDefinition = createMultiLanguageDefinition();
+
+    private boolean multiLanguageDatasource = true;
+
+    /**
+     * Create settings definition for username
+     * 
+     * @return Username settings definition
+     */
+    protected StringSettingDefinition createUsernameDefinition() {
+        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
+                .setKey(USERNAME_KEY).setTitle(USERNAME_TITLE);
+    }
+
+    /**
+     * Create settings definition for password
+     * 
+     * @return Password settings definition
+     */
+    protected StringSettingDefinition createPasswordDefinition() {
+        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_2)
+                .setKey(PASSWORD_KEY).setTitle(PASSWORD_TITLE);
+    }
+
+    /**
+     * Create settings definition for database name
+     * 
+     * @return database name settings definition
+     */
+    protected StringSettingDefinition createDatabaseDefinition() {
+        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_3)
+                .setKey(DATABASE_KEY).setTitle(DATABASE_TITLE).setDescription(DATABASE_DESCRIPTION)
+                .setDefaultValue(DATABASE_DEFAULT_VALUE);
+    }
+
+    /**
+     * Create settings definition for host
+     * 
+     * @return Host settings definition
+     */
+    protected StringSettingDefinition createHostDefinition() {
+        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
+                .setKey(HOST_KEY).setTitle(HOST_TITLE).setDescription(HOST_DESCRIPTION)
+                .setDefaultValue(HOST_DEFAULT_VALUE);
+    }
+
+    /**
+     * Create settings definition for port
+     * 
+     * @return Port settings definition
+     */
+    protected IntegerSettingDefinition createPortDefinition() {
+        return new IntegerSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_5)
+                .setKey(PORT_KEY).setTitle(PORT_TITLE);
+    }
+
+    /**
+     * Create settings definition for database schema
+     * 
+     * @return Database schema settings definition
+     */
+    protected StringSettingDefinition createSchemaDefinition() {
+        return new StringSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
+                .setKey(SCHEMA_KEY).setTitle(SCHEMA_TITLE).setDescription(SCHEMA_DESCRIPTION)
+                .setDefaultValue(SCHMEA_DEFAULT_VALUE);
+    }
+
+    /**
+     * Create settings definition for old concept
+     * 
+     * @return Old concept settings definition
+     */
+    protected BooleanSettingDefinition createOldConceptDefinition() {
+        return new BooleanSettingDefinition().setDefaultValue(OLD_CONCEPT_DEFAULT_VALUE).setTitle(OLD_CONCEPT_TITLE)
+                .setDescription(OLD_CONCEPT_DESCRIPTION).setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_2).setKey(OLD_CONCEPT_KEY);
+    }
+
+    /**
+     * Create settings definition for transactional support
+     * 
+     * @return Transactional support settings definition
+     */
+    protected BooleanSettingDefinition createTransactionalDefinition() {
+        return new BooleanSettingDefinition().setDefaultValue(TRANSACTIONAL_DEFAULT_VALUE)
+                .setTitle(TRANSACTIONAL_TITLE).setDescription(TRANSACTIONAL_DESCRIPTION).setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_3).setKey(TRANSACTIONAL_KEY);
+    }
+
+    /**
+     * Create settings definition for Spatial Filtering Profile support
+     * 
+     * @return Spatial Filtering Profile support settings definition
+     */
+    protected BooleanSettingDefinition createSpatialFilteringProfileDefinition() {
+        return new BooleanSettingDefinition().setDefaultValue(SPATIAL_FILTERING_PROFILE_DEFAULT_VALUE)
+                .setTitle(SPATIAL_FILTERING_PROFILE_TITLE).setDescription(SPATIAL_FILTERING_PROFILE_DESCRIPTION)
+                .setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
+                .setKey(SPATIAL_FILTERING_PROFILE_KEY);
+    }
+
+    protected BooleanSettingDefinition createMultiLanguageDefinition() {
+        return new BooleanSettingDefinition().setDefaultValue(MULTI_LANGUAGE_DEFAULT_VALUE)
+                .setTitle(MULTI_LANGUAGE_TITLE).setDescription(MULTI_LANGUAGE_DESCRIPTION).setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_3).setKey(MULTI_LANGUAGE_KEY);
+    }
+
+    /**
+     * Create settings definition for JDBC driver
+     * 
+     * @return JDBC driver settings definition
+     */
+    protected BooleanSettingDefinition createProvidedJdbcDriverDefinition() {
+        return new BooleanSettingDefinition().setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE)
+                .setTitle(PROVIDED_JDBC_DRIVER_TITLE).setDescription(PROVIDED_JDBC_DRIVER_DESCRIPTION)
+                .setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE).setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_5).setKey(PROVIDED_JDBC_DRIVER_KEY);
+    }
+
+    /**
+     * Create settings definition for minimal connection pool size
+     * 
+     * @return Minimal connection pool size settings definition
+     */
+    protected IntegerSettingDefinition createMinPoolSizeDefinition() {
+        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_6)
+                .setKey(MIN_POOL_SIZE_KEY).setTitle(MIN_POOL_SIZE_TITLE).setDescription(MIN_POOL_SIZE_DESCRIPTION)
+                .setDefaultValue(MIN_POOL_SIZE_DEFAULT_VALUE);
+    }
+
+    /**
+     * Create settings definition for maximal connection pool size
+     * 
+     * @return Maximal connection pool size settings definition
+     */
+    protected IntegerSettingDefinition createMaxPoolSizeDefinition() {
+        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_7)
+                .setKey(MAX_POOL_SIZE_KEY).setTitle(MAX_POOL_SIZE_TITLE).setDescription(MAX_POOL_SIZE_DESCRIPTION)
+                .setDefaultValue(MAX_POOL_SIZE_DEFAULT_VALUE);
+    }
+
+    /**
+     * Create settings definition for JDBC batch size
+     * 
+     * @return JDBC batch size settings definition
+     */
+    protected IntegerSettingDefinition createBatchSizeDefinition() {
+        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_8)
+                .setKey(BATCH_SIZE_KEY).setTitle(BATCH_SIZE_TITLE).setDescription(BATCH_SIZE_DESCRIPTION)
+                .setDefaultValue(BATCH_SIZE_DEFAULT_VALUE);
+    }
+
+    /**
+     * Get custom configuration from datasource settings
+     * 
+     * @param settings
+     *            Datasource settings to create custom configuration from
+     * @return Custom configuration from datasource settings
+     */
+    public CustomConfiguration getConfig(Map<String, Object> settings) {
+        CustomConfiguration config = new CustomConfiguration();
+        config.configure("/sos-hibernate.cfg.xml");
+        config.addDirectory(resource(HIBERNATE_MAPPING_CORE_PATH));
+        if (isOldConceptDatasource(settings)) {
+            config.addDirectory(resource(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH));
+            addSpatialFilteringProfilePathToConfig(config, settings,
+                    HIBERNATE_MAPPING_OLD_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH);
+        } else if (isSeriesConceptDatasource(settings)) {
+            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH));
+            addSpatialFilteringProfilePathToConfig(config, settings,
+                    HIBERNATE_MAPPING_SERIES_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH);
+        }
+        if (isTransactionalDatasource()) {
+            Boolean transactional = (Boolean) settings.get(this.transactionalDefiniton.getKey());
+            if (transactional != null && transactional.booleanValue()) {
+                config.addDirectory(resource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH));
+            }
+        }
+        if (isMultiLanguageDatasource()) {
+            Boolean multiLanguage = (Boolean) settings.get(this.mulitLanguageDefinition.getKey());
+            if (multiLanguage != null && multiLanguage.booleanValue()) {
+                config.addDirectory(resource(HIBERNATE_MAPPING_I18N_PATH));
+            }
+        }
+        if (isSetSchema(settings)) {
+            Properties properties = new Properties();
+            properties.put(HibernateConstants.DEFAULT_SCHEMA, settings.get(HibernateConstants.DEFAULT_SCHEMA));
+            config.addProperties(properties);
+        }
+        config.buildMappings();
+        return config;
+    }
+
+    /**
+     * Check if this datasource supported the series concept
+     * 
+     * @param settings
+     *            Datasource settings
+     * @return <code>true</code>, if this datasource supported the series
+     *         concept
+     */
+    private boolean isSeriesConceptDatasource(Map<String, Object> settings) {
+        return !isOldConceptDatasource(settings);
+    }
+
+    /**
+     * Check if this datasource supported the old concept
+     * 
+     * @param settings
+     *            Datasource settings
+     * @return <code>true</code>, if this datasource supported the old concept
+     */
+    private boolean isOldConceptDatasource(Map<String, Object> settings) {
+        Boolean oldConcept = (Boolean) settings.get(this.oldConceptDefiniton.getKey());
+        return oldConcept != null && oldConcept.booleanValue();
+    }
+
+    /**
+     * Add Spatial Filtering Profile mapping files path to configuration if this
+     * is a Spatial Filtering Profile datasource and Spatial Filtering Profile
+     * is activated in the settings
+     * 
+     * @param config
+     *            Datasource configuration
+     * @param settings
+     *            Datasource settings
+     * @param spatialFilteringProfilePath
+     *            Spatial Filtering Profile mapping files path
+     */
+    private void addSpatialFilteringProfilePathToConfig(CustomConfiguration config, Map<String, Object> settings,
+            String spatialFilteringProfilePath) {
+        if (isSpatialFilteringProfileDatasource()) {
+            Boolean spatialFilteringProfile = (Boolean) settings.get(this.spatialFilteringProfileDefinition.getKey());
+            if (spatialFilteringProfile != null && spatialFilteringProfile.booleanValue()) {
+                config.addDirectory(resource(spatialFilteringProfilePath));
+            }
+        }
+    }
+
+    /**
+     * Get File from resource String
+     * 
+     * @param resource
+     *            Resource String
+     * @return File from resource String
+     */
+    protected File resource(String resource) {
+        try {
+            return new File(getClass().getResource(resource).toURI());
+        } catch (URISyntaxException ex) {
+            throw new ConfigurationException(ex);
+        }
+    }
+
+    @Override
+    public String[] createSchema(Map<String, Object> settings) {
+        String[] script = getConfig(settings).generateSchemaCreationScript(getDialectInternal());
+        String[] pre = getPreSchemaScript();
+        String[] post = getPostSchemaScript();
+
+        script =
+                (pre == null) ? (post == null) ? script : concat(script, post) : (post == null) ? concat(pre, script)
+                        : concat(pre, script, post);
+
+        return checkCreateSchema(script);
+    }
+
+    @Override
+    public String[] dropSchema(Map<String, Object> settings) {
+        Connection conn = null;
+        try {
+            conn = openConnection(settings);
+            DatabaseMetadata metadata = new DatabaseMetadata(conn, getDialectInternal(), true);
+            String[] dropScript =
+                    checkDropSchema(getConfig(settings).generateDropSchemaScript(getDialectInternal(), metadata));
+            return dropScript;
+        } catch (SQLException ex) {
+            throw new ConfigurationException(ex);
+        } finally {
+            close(conn);
+        }
+    }
+
+    @Override
+    public String[] updateSchema(Map<String, Object> settings) {
+        Connection conn = null;
+        try {
+            conn = openConnection(settings);
+            DatabaseMetadata metadata = new DatabaseMetadata(conn, getDialectInternal(), true);
+            String[] dropScript = getConfig(settings).generateSchemaUpdateScript(getDialectInternal(), metadata);
+            return dropScript;
+        } catch (SQLException ex) {
+            throw new ConfigurationException(ex);
+        } finally {
+            close(conn);
+        }
+    }
+
+    @Override
+    public void validateSchema(Map<String, Object> settings) {
+        Connection conn = null;
+        try {
+            conn = openConnection(settings);
+            DatabaseMetadata metadata = new DatabaseMetadata(conn, getDialectInternal(), true);
+            getConfig(settings).validateSchema(getDialectInternal(), metadata);
+        } catch (SQLException ex) {
+            throw new ConfigurationException(ex);
+        } catch (HibernateException ex) {
+            throw new ConfigurationException(ex);
+        } finally {
+            close(conn);
+        }
+    }
+
+    @Override
+    public boolean checkIfSchemaExists(Map<String, Object> settings) {
+        Connection conn = null;
+        try {
+            /* check if any of the needed tables is existing */
+            conn = openConnection(settings);
+            DatabaseMetadata metadata = new DatabaseMetadata(conn, getDialectInternal(), true);
+            Iterator<Table> iter = getConfig(settings).getTableMappings();
+            String schema = (String) settings.get(SCHEMA_KEY);
+            String catalog = conn.getCatalog();
+            while (iter.hasNext()) {
+                Table table = iter.next();
+                // check if table is a physical table, tables is a table and if
+                // table is contained in the defined schema
+                if (table.isPhysicalTable() && metadata.isTable(table.getName())
+                        && metadata.getTableMetadata(table.getName(), schema, catalog, false) != null) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (SQLException ex) {
+            throw new ConfigurationException(ex);
+        } finally {
+            close(conn);
+        }
+    }
+
+    @Override
+    public void execute(String[] sql, Map<String, Object> settings) throws HibernateException {
+        Connection conn = null;
+        try {
+            conn = openConnection(settings);
+            execute(sql, conn);
+        } catch (SQLException ex) {
+            throw new ConfigurationException(ex);
+        } finally {
+            close(conn);
+        }
+    }
+
+    @Override
+    public void validateConnection(Map<String, Object> settings) {
+        Connection conn = null;
+        try {
+            conn = openConnection(settings);
+        } catch (SQLException ex) {
+            throw new ConfigurationException(ex);
+        } finally {
+            close(conn);
+        }
+    }
+
+    @Override
+    public boolean needsSchema() {
+        return true;
+    }
+
+    @Override
+    public void validatePrerequisites(Map<String, Object> settings) {
+        Connection conn = null;
+        try {
+            conn = openConnection(settings);
+            DatabaseMetadata metadata = new DatabaseMetadata(conn, getDialectInternal(), true);
+            validatePrerequisites(conn, metadata, settings);
+        } catch (SQLException ex) {
+            throw new ConfigurationException(ex);
+        } finally {
+            close(conn);
+        }
+    }
+
+    @Override
+    public void validateConnection(Properties current, Map<String, Object> changed) {
+        validateConnection(mergeProperties(current, changed));
+    }
+
+    @Override
+    public void validatePrerequisites(Properties current, Map<String, Object> changed) {
+        validatePrerequisites(mergeProperties(current, changed));
+    }
+
+    @Override
+    public void validateSchema(Properties current, Map<String, Object> changed) {
+        validateSchema(mergeProperties(current, changed));
+    }
+
+    @Override
+    public boolean checkIfSchemaExists(Properties current, Map<String, Object> changed) {
+        return checkIfSchemaExists(mergeProperties(current, changed));
+    }
+
+    @Override
+    public Properties getDatasourceProperties(Properties current, Map<String, Object> changed) {
+        return getDatasourceProperties(mergeProperties(current, changed));
+    }
+
+    /**
+     * Get internal Hibernate dialect
+     * 
+     * @return Hibernate dialect
+     */
+    protected Dialect getDialectInternal() {
+        if (dialect == null) {
+            dialect = createDialect();
+        }
+        return dialect;
+    }
+
+    /**
+     * Execute SQL script
+     * 
+     * @param sql
+     *            SQL script to execute
+     * @param conn
+     *            SQL connection
+     * @throws HibernateException
+     *             If an error occurs
+     */
+    protected void execute(String[] sql, Connection conn) throws HibernateException {
+        Statement stmt = null;
+        String lastCmd = null;
+        try {
+            stmt = conn.createStatement();
+            LOG.debug("Start executing SQL commands: ");
+            for (String cmd : sql) {
+                lastCmd = cmd;
+                LOG.debug("Execute: {}", cmd);
+                stmt.execute(cmd);
+            }
+        } catch (SQLException ex) {
+            if (lastCmd != null) {
+                throw new ConfigurationException(ex.getMessage() + ". Command: " + lastCmd, ex);
+            } else {
+                throw new ConfigurationException(ex);
+            }
+        } finally {
+            close(stmt);
+        }
+    }
+
+    /**
+     * Close SQL connection
+     * 
+     * @param conn
+     *            SQL connection to close
+     */
+    protected void close(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                LOG.error("Error closing connection", e);
+            }
+        }
+    }
+
+    /**
+     * Close SQL statement
+     * 
+     * @param stmt
+     *            SQL statement to close
+     */
+    protected void close(Statement stmt) {
+        if (stmt != null) {
+            try {
+                stmt.close();
+            } catch (SQLException e) {
+                LOG.error("Error closing statement", e);
+            }
+        }
+    }
+
+    /**
+     * Merge current properties with changed settings
+     * 
+     * @param current
+     *            Current properties
+     * @param changed
+     *            Changed settings
+     * @return Updated settings
+     */
+    protected Map<String, Object> mergeProperties(Properties current, Map<String, Object> changed) {
+        Map<String, Object> settings = parseDatasourceProperties(current);
+        settings.putAll(changed);
+        return settings;
+    }
+
+    /**
+     * Add mapping files directories to properties
+     * 
+     * @param settings
+     *            Datasource settings
+     * @param p
+     *            Datasource properties
+     */
+    protected void addMappingFileDirectories(Map<String, Object> settings, Properties p) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(HIBERNATE_MAPPING_CORE_PATH);
+        if (isOldConceptDatasource(settings)) {
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
+                    HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH);
+            addSpatialFilteringProfilePathToDirList(builder, settings,
+                    HIBERNATE_MAPPING_OLD_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH);
+        } else if (isSeriesConceptDatasource(settings)) {
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
+                    HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
+            addSpatialFilteringProfilePathToDirList(builder, settings,
+                    HIBERNATE_MAPPING_SERIES_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH);
+        }
+        if (isTransactionalDatasource()) {
+            Boolean t = (Boolean) settings.get(transactionalDefiniton.getKey());
+            if (t != null && t.booleanValue()) {
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
+                        HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
+            }
+        }
+        if (isMultiLanguageDatasource()) {
+            Boolean t = (Boolean) settings.get(mulitLanguageDefinition.getKey());
+            if (t.booleanValue()) {
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
+                        resource(HIBERNATE_MAPPING_I18N_PATH).getAbsolutePath());
+            } 
+        }
+        p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
+    }
+
+    /**
+     * Add Spatial Filtering Profile mapping files path to directory String if
+     * this is a Spatial Filtering Profile datasource and Spatial Filtering
+     * Profile is activated in the settings
+     * 
+     * @param builder
+     *            Mapping files directories String
+     * @param settings
+     *            Datasource settings
+     * @param spatialFilteringProfilePath
+     *            Spatial Filtering Profile mapping files path
+     */
+    private void addSpatialFilteringProfilePathToDirList(final StringBuilder builder, Map<String, Object> settings,
+            final String spatialFilteringProfilePath) {
+        if (isSpatialFilteringProfileDatasource()) {
+            Boolean spatialFilteringProfile = (Boolean) settings.get(spatialFilteringProfileDefinition.getKey());
+            if (spatialFilteringProfile != null && spatialFilteringProfile.booleanValue()) {
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(spatialFilteringProfilePath);
+            }
+        }
+    }
+
+    /**
+     * Get the old database schema concept
+     * 
+     * @return Old database schema concept
+     */
+    protected BooleanSettingDefinition getOldConceptDefiniton() {
+        return oldConceptDefiniton;
+    }
+
+    /**
+     * Check if properties contains transactional mapping path
+     * 
+     * @param properties
+     *            Datasource properties
+     * @return <code>true</code>, if properties contains transactional mapping
+     *         path
+     */
+    protected boolean isTransactional(Properties properties) {
+        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
+        return p == null || p.contains(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
+    }
+
+    /**
+     * Get transactional setting definition
+     * 
+     * @return Transactional setting definition
+     */
+    protected BooleanSettingDefinition getTransactionalDefiniton() {
+        return transactionalDefiniton;
+    }
+
+    /**
+     * Check if properties contains Spatial Filtering Profile mapping path
+     * 
+     * @param properties
+     *            Datasource properties
+     * @return <code>true</code>, if properties contains Spatial Filtering
+     *         Profile mapping path
+     */
+    protected boolean isSpatialFilteringProfile(Properties properties) {
+        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
+        return p == null || p.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)
+                || p.contains(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
+    }
+
+    /**
+     * Get Spatial Filtering Profile setting definition
+     * 
+     * @return Spatial Filtering Profile setting definition
+     */
+    protected BooleanSettingDefinition getSpatialFilteringProfileDefiniton() {
+        return spatialFilteringProfileDefinition;
+    }
+
+    protected boolean isMultiLanguage(Properties properties) {
+        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
+        return p == null || p.contains(HIBERNATE_MAPPING_I18N_PATH);
+    }
+
+    protected BooleanSettingDefinition getMulitLanguageDefiniton() {
+        return mulitLanguageDefinition;
+    }
+
+    /**
+     * Concatenate two arrays
+     * 
+     * @param first
+     *            First array
+     * @param rest
+     *            The other array
+     * @return Concatenated array
+     */
+    private <T> T[] concat(T[] first, T[]... rest) {
+        int length = first.length;
+        for (int i = 0; i < rest.length; ++i) {
+            length += rest[i].length;
+        }
+        T[] result = Arrays.copyOf(first, length);
+        int offset = first.length;
+        for (int i = 0; i < rest.length; ++i) {
+            System.arraycopy(rest[i], 0, result, offset, rest[i].length);
+            offset += rest[i].length;
+        }
+        return result;
+    }
+
+    /**
+     * Get the schema script before the database schema is created
+     * 
+     * @return script to run before the schema creation
+     */
+    protected String[] getPreSchemaScript() {
+        return null;
+    }
+
+    /**
+     * Get the schema script after the database schema is created
+     * 
+     * @return script to run after the schema creation
+     */
+    protected String[] getPostSchemaScript() {
+        return null;
+    }
+
+    protected boolean isSetSchema(Map<String, Object> settings) {
+        if (settings.containsKey(HibernateConstants.DEFAULT_SCHEMA)) {
+            return StringHelper.isNotEmpty((String) settings.get(HibernateConstants.DEFAULT_SCHEMA));
+        }
+        return false;
+    }
+
+    protected String getSchema(Map<String, Object> settings) {
+        if (isSetSchema(settings)) {
+            return (String) settings.get(HibernateConstants.DEFAULT_SCHEMA) + ".";
+        }
+        return "";
+    }
+
+    /**
+     * Check if the datasource is transactional
+     * 
+     * @return <code>true</code>, if it is a transactionalDatasource
+     */
+    public boolean isTransactionalDatasource() {
+        return transactionalDatasource;
+    }
+
+    /**
+     * Set transactional datasource flag
+     * 
+     * @param transactionalDatasource
+     *            the transactionalDatasource flag to set
+     */
+    public void setTransactional(boolean transactionalDatasource) {
+        this.transactionalDatasource = transactionalDatasource;
+    }
+
+    /**
+     * Check if the datasource has Spatial Filtering Profile
+     * 
+     * @return <code>true</code>, if it has Spatial Filtering Profile
+     */
+    public boolean isSpatialFilteringProfileDatasource() {
+        return spatialFilteringProfileDatasource;
+    }
+
+    /**
+     * Set Spatial Filtering Profile datasource flag
+     * 
+     * @param spatialFilteringProfileDatasource
+     *            the spatialFilteringProfileDatasource to set
+     */
+    public void setSpatialFilteringProfile(boolean spatialFilteringProfileDatasource) {
+        this.spatialFilteringProfileDatasource = spatialFilteringProfileDatasource;
+    }
+
+    /**
+     * @return the multi language
+     */
+    public boolean isMultiLanguageDatasource() {
+        return multiLanguageDatasource;
+    }
+
+    /**
+     * @param multi
+     *            language the multi language to set
+     */
+    public void setMultiLangugage(boolean multiLanguageDatasource) {
+        this.multiLanguageDatasource = multiLanguageDatasource;
+    }
+
+    /**
+     * Remove duplicated foreign key definition for table observationHasOffering
+     * otherwise database model creation fails in Oracle
+     * 
+     * @param script
+     *            Create and not checked script.
+     * @return Checked script without duplicate foreign key for
+     *         observationHasOffering
+     */
+    private String[] checkCreateSchema(String[] script) {
+        // creates upper case hexString form table name 'observationHasOffering'
+        // hashCode() with prefix 'FK'
+        String hexStringToCheck =
+                new StringBuilder("FK").append(Integer.toHexString("observationHasOffering".hashCode()).toUpperCase())
+                        .toString();
+        boolean duplicate = false;
+        List<String> checkedSchema = Lists.newLinkedList();
+        for (String string : script) {
+            if (string.contains(hexStringToCheck)) {
+                if (!duplicate) {
+                    checkedSchema.add(string);
+                    duplicate = true;
+                }
+            } else {
+                checkedSchema.add(string);
+            }
+        }
+        return checkedSchema.toArray(new String[checkedSchema.size()]);
+    }
+
+    /**
+     * Gets the qualified name of the driver class.
+     * 
+     * @return the driver class.
+     */
+    protected abstract String getDriverClass();
+
+    /**
+     * Parse datasource properties to map
+     * 
+     * @param current
+     *            Current datasource properties
+     * @return Map with String key and Object value
+     */
+    protected abstract Map<String, Object> parseDatasourceProperties(Properties current);
+
+    /**
+     * Check if the required extensions are available
+     * 
+     * @param con
+     *            SQL connection
+     * @param metadata
+     *            Current database metadata
+     * @param settings
+     *            Datasource settings
+     */
+    protected abstract void validatePrerequisites(Connection con, DatabaseMetadata metadata,
+            Map<String, Object> settings);
+
+    /**
+     * Create a new Hibernate dialect
+     * 
+     * @return Hibernate dialect
+     */
+    protected abstract Dialect createDialect();
+
+    /**
+     * Open a new SQL connection
+     * 
+     * @param settings
+     *            Datasource setting: URL, username, passsword, database, ...
+     * @return New SQL connection
+     * @throws SQLException
+     *             If the SQL connection creation fails
+     */
+    protected abstract Connection openConnection(Map<String, Object> settings) throws SQLException;
+
+    /**
+     * Check if drop schema contains alter table ... drop constraint ... . Due
+     * to dynamic generation some constraints are generated and differ.
+     * 
+     * @param dropSchema
+     *            Schema to check
+     * @return Checked schema
+     */
+    protected abstract String[] checkDropSchema(String[] dropSchema);
+}

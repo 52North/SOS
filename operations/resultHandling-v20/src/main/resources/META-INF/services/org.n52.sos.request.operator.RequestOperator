@@ -1,0 +1,4 @@
+org.n52.sos.request.operator.SosInsertResultTemplateOperatorV20
+org.n52.sos.request.operator.SosInsertResultOperatorV20
+org.n52.sos.request.operator.SosGetResultTemplateOperatorV20
+org.n52.sos.request.operator.SosGetResultOperatorV20

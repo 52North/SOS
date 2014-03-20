@@ -1,0 +1,3 @@
+String href = new String("http://localhost:8080/52nSOSv4.0.0/rest/features/foi_1");
+int lastSlashIndex = href.lastIndexOf("/");
+href.substring(lastSlashIndex+1);(java.lang.String) foi_1

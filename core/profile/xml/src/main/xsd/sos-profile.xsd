@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<schema xmlns:profile="http://www.52north.org/sensorweb/sos/profile"
+	xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd"
+	targetNamespace="http://www.52north.org/sensorweb/sos/profile"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<element name="SosProfile" type="profile:SosProfileType" >
+		<annotation>
+			<documentation>Profile for the 52°North Sensor Observation Service</documentation>
+		</annotation>
+	</element>
+	<complexType name="SosProfileType">
+		<sequence>
+			<element name="identifier" type="string" nillable="false">
+				<annotation>
+					<documentation>Identifier for the profile, if duplicated profiles will be overwritten.</documentation>
+				</annotation>
+			</element>
+			<element name="activeProfile" type="boolean" default="false">
+				<annotation>
+					<documentation>Indicator if the profile is the default one. If more than one profile is defined as default, active profile will be overwritten. Default is 'false'.</documentation>
+				</annotation>
+			</element>
+			<element name="observationResponseFormat" type="anyURI" nillable="false" default="http://www.opengis.net/om/2.0">
+				<annotation>
+					<documentation>Default responseFormat for observations. Default is 'http://www.opengis.net/om/2.0'.</documentation>
+				</annotation>
+			</element>
+			<element name="encodeFeatureOfInterestInObservations" type="boolean" default="true">
+				<annotation>
+					<documentation>Indicator if features of interest should be encoded in observation. Default is 'true'.</documentation>
+				</annotation>
+			</element>
+			<element name="encodingNamespaceForFeatureOfInterestEncoding" type="anyURI" minOccurs="0" >
+				<annotation>
+					<documentation>Namespace definition for feature of interest. If set, the features of interest are encoded in this namespace.</documentation>
+				</annotation>
+			</element>
+			<element name="showMetadataOfEmptyObservations" type="boolean" default="false">
+				<annotation>
+					<documentation>Indicator for showing the metadata of an empty observation. Default is 'false'.</documentation>
+				</annotation>
+			</element>
+		    <element name="listFeatureOfInterestsInOfferings" type="boolean" default="true">
+				<annotation>
+					<documentation>Indicator for listing the feature of interst in the offerings of the Capabilities contents section. Default is 'true'.</documentation>
+				</annotation>
+			</element>
+			<element name="encodeChildProcedureDescriptions" type="boolean" default="false">
+				<annotation>
+					<documentation>Indicator for encoding the child procedure description in a DescribeSensor response. Default is 'false'.</documentation>
+				</annotation>
+			</element>
+			<element name="showFullOperationsMetadata" type="boolean" default="true">
+				<annotation>
+					<documentation>Indicator for showing full operations metadata in Capabilities. Default is 'true'.</documentation>
+				</annotation>
+			</element>
+			<element name="showFullOperationsMetadataForObservations" type="boolean" default="true">
+				<annotation>
+					<documentation>Indicator for showing full GetObservation operation metadata in Capabilities.  Default is 'true'.</documentation>
+				</annotation>
+			</element>
+			<element name="allowSubsettingForSOS20OM20" type="boolean" default="false">
+				<annotation>
+					<documentation>Indicator to allow subsetting of observation for SOS 2.0 and Observation and Measurement 2.0 encoded observations. Default is 'false'.</documentation>
+				</annotation>
+			</element>
+			<element name="mergeValues" type="boolean" default="false">
+				<annotation>
+					<documentation>Indicator to merge of observations of a GetObservation response.  Default is 'false'.</documentation>
+				</annotation>
+			</element>
+			<element ref="profile:NoDataPlaceholder">
+				<annotation>
+					<documentation>Definition of placeholder for no data values</documentation>
+				</annotation>
+			</element>
+			<element name="returnLatestValueIfTemporalFilterIsMissingInGetObservation" type="boolean" default="false"> 
+				<annotation>
+					<documentation>Indicator for returning the latest observations if the temporal filter is missing in GetObservation. Default is 'false'.</documentation>
+				</annotation>
+			</element>
+			<element ref="profile:EncodeProcedure" minOccurs="0" maxOccurs="unbounded">
+				<annotation>
+					<documentation>Definition for procedure encoding in observations. Can be defined dependent on namespace.</documentation>
+				</annotation>
+			</element>
+			<element  ref="profile:DefaultObservationTypesForEncoding" minOccurs="0" maxOccurs="unbounded">
+				<annotation>
+					<documentation>Define the default observation types for observation encoding. If the responseFormat differs from inserted.</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	<element name="NoDataPlaceholder">
+		<annotation>
+			<documentation>Definition of placeholder for no data values. One for response and multiple for insertion</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element name="responsePlaceholder" type="string" nillable="false" default="noData">
+					<annotation>
+						<documentation>Definition of the placeholder for not existing values in the responses.</documentation>
+					</annotation>
+				</element>
+				<element name="placeholder" type="string" nillable="false" minOccurs="0" maxOccurs="unbounded">
+					<annotation>
+						<documentation>Definition of placeholders for no data.</documentation>
+					</annotation>
+				</element>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="EncodeProcedure">
+		<annotation>
+			<documentation>Definition for procedure encoding in observations. Can be defined dependent on namespace.</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element name="namespace" type="anyURI" nillable="false" >
+					<annotation>
+						<documentation>Namespace for which the procedure should be encoded or not</documentation>
+					</annotation>
+				</element>
+				<element name="encode" type="boolean" default="true">
+					<annotation>
+						<documentation>Indicator for encoding the procedure. Default is 'true'.</documentation>
+					</annotation>
+				</element>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="DefaultObservationTypesForEncoding">
+		<annotation>
+			<documentation>Define the default observation types for observation encoding. If the responseFormat differs from inserted.</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element name="namespace" type="anyURI" nillable="false" >
+					<annotation>
+						<documentation>TBD</documentation>
+					</annotation>
+				</element>
+				<element name="observationType" type="anyURI" nillable="false">
+					<annotation>
+						<documentation>TBD</documentation>
+					</annotation>
+				</element>
+			</sequence>
+		</complexType>
+	</element>
+</schema>

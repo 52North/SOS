@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.series.Series" table="series">
+        <id name="seriesId" type="long">
+            <column name="seriesId" />
+            <generator class="native">
+            	<param name="sequence">seriesId_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" fetch="select" lazy="no-proxy" foreign-key="seriesFeatureFk">
+           	<column index="seriesFeatureIdx" name="featureOfInterestId" not-null="true" unique-key="seriesIdentity" />
+        </many-to-one>
+        <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" fetch="select" lazy="no-proxy" foreign-key="seriesObPropFk">
+            <column index="seriesObsPropIdx" name="observablePropertyId" not-null="true" unique-key="seriesIdentity"/>
+        </many-to-one>
+        <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="select" lazy="no-proxy" foreign-key="seriesProcedureFk">
+            <column index="seriesProcedureIdx" name="procedureId" not-null="true" unique-key="seriesIdentity" />
+        </many-to-one>
+        <property name="deleted" type="org.hibernate.type.TrueFalseType">
+            <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
+        </property>
+        <property name="disabled" type="org.hibernate.type.TrueFalseType">
+            <column name="disabled" not-null="true" default="'F'" check="disabled in ('T','F')"/>
+        </property>
+    </class>
+</hibernate-mapping>

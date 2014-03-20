@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.ObservationConstellation" table="observationConstellation" >
+        <id name="observationConstellationId" type="long">
+            <column name="observationConstellationId" />
+            <generator class="native">
+            	<param name="sequence">observationConstellationId_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" fetch="select" lazy="no-proxy" foreign-key="obsConstObsPropFk" unique-key="obsnConstellationIdentity">
+            <column index="obsConstObsPropIdx" name="observablePropertyId" not-null="true" />
+        </many-to-one>
+        <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="select" lazy="no-proxy" foreign-key="obsnConstProcedureFk" unique-key="obsnConstellationIdentity">
+            <column index="obsConstProcedureIdx" name="procedureId" not-null="true" />
+        </many-to-one>
+        <many-to-one name="observationType" class="org.n52.sos.ds.hibernate.entities.ObservationType" fetch="select" lazy="no-proxy" foreign-key="obsConstObservationIypeFk" >
+            <column name="observationTypeId" />
+        </many-to-one>
+        <many-to-one name="offering" class="org.n52.sos.ds.hibernate.entities.Offering" fetch="select" lazy="no-proxy" foreign-key="obsConstOfferingFk" unique-key="obsnConstellationIdentity">
+            <column index="obsConstOfferingIdx" name="offeringId" not-null="true" />
+        </many-to-one>
+        <property name="deleted" type="org.hibernate.type.TrueFalseType">
+            <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
+        </property>
+        <property name="hiddenChild" type="org.hibernate.type.TrueFalseType">
+            <column name="hiddenChild" not-null="true" default="'F'" check="hiddenChild in ('T','F')"/>
+        </property>
+    </class>
+</hibernate-mapping>

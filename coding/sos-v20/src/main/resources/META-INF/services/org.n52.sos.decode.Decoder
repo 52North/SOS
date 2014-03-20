@@ -1,0 +1,8 @@
+org.n52.sos.decode.FesDecoderv20
+org.n52.sos.decode.GmlDecoderv321
+org.n52.sos.decode.SosDecoderv20
+org.n52.sos.decode.SwesDecoderv20
+org.n52.sos.decode.SweCommonDecoderV20
+org.n52.sos.decode.OmDecoderv20
+org.n52.sos.decode.SamplingDecoderv20
+org.n52.sos.decode.SwesExtensionDecoderv20

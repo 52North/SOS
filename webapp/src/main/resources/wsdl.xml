@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://www.opengis.net/sos/2.0/wsdl" xmlns:swes="http://www.opengis.net/swes/2.0" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:sosw="http://www.opengis.net/sos/2.0/wsdl" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:sos="http://www.opengis.net/sos/2.0" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+  <wsdl:types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://www.opengis.net/sos/2.0"><xsd:include schemaLocation="http://schemas.opengis.net/sos/2.0/sos.xsd"/></xsd:schema>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://www.opengis.net/ows/1.1"><xsd:include schemaLocation="http://schemas.opengis.net/ows/1.1.0/owsAll.xsd"/></xsd:schema>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://www.opengis.net/swes/2.0"><xsd:include schemaLocation="http://schemas.opengis.net/swes/2.0/swes.xsd"/></xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="GetResultTemplate200RequestMessage">
+    <wsdl:part name="body" element="sos:GetResultTemplate">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="UpdateSensorDescription200RequestMessage">
+    <wsdl:part name="body" element="swes:UpdateSensorDescription">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetObservation200RequestMessage">
+    <wsdl:part name="body" element="sos:GetObservation">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="InsertResultTemplate200RequestMessage">
+    <wsdl:part name="body" element="sos:InsertResultTemplate">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetObservation200ResponseMessage">
+    <wsdl:part name="body" element="sos:GetObservationResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetFeatureOfInterest200ResponseMessage">
+    <wsdl:part name="body" element="sos:GetFeatureOfInterestResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetObservationById200RequestMessage">
+    <wsdl:part name="body" element="sos:GetObservationById">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetFeatureOfInterest200RequestMessage">
+    <wsdl:part name="body" element="sos:GetFeatureOfInterest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="InsertResultTemplate200ResponseMessage">
+    <wsdl:part name="body" element="sos:InsertResultTemplateResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="UpdateSensorDescription200ResponseMessage">
+    <wsdl:part name="body" element="swes:UpdateSensorDescriptionResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="InsertSensor200ResponseMessage">
+    <wsdl:part name="body" element="swes:InsertSensorResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetObservationById200ResponseMessage">
+    <wsdl:part name="body" element="sos:GetObservationByIdResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="DeleteSensor200ResponseMessage">
+    <wsdl:part name="body" element="swes:DeleteSensorResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="DeleteSensor200RequestMessage">
+    <wsdl:part name="body" element="swes:DeleteSensor">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetCapabilities200ResponseMessage">
+    <wsdl:part name="body" element="sos:Capabilities">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="DescribeSensor200ResponseMessage">
+    <wsdl:part name="body" element="swes:DescribeSensorResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetResult200RequestMessage">
+    <wsdl:part name="body" element="sos:GetResult">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="DescribeSensor200RequestMessage">
+    <wsdl:part name="body" element="swes:DescribeSensor">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="InsertSensor200RequestMessage">
+    <wsdl:part name="body" element="swes:InsertSensor">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetResult200ResponseMessage">
+    <wsdl:part name="body" element="sos:GetResultResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetCapabilities200RequestMessage">
+    <wsdl:part name="body" element="sos:GetCapabilities">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="InsertObservation200RequestMessage">
+    <wsdl:part name="body" element="sos:InsertObservation">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="InsertResult200ResponseMessage">
+    <wsdl:part name="body" element="sos:InsertResultResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="InsertResult200RequestMessage">
+    <wsdl:part name="body" element="sos:InsertResult">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="InsertObservation200ResponseMessage">
+    <wsdl:part name="body" element="sos:InsertObservationResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ExceptionMessage">
+    <wsdl:part name="fault" element="ows:Exception">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetResultTemplate200ResponseMessage">
+    <wsdl:part name="body" element="sos:GetResultTemplateResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="SosGetPortType">
+    <wsdl:operation name="DescribeSensor200">
+      <wsdl:input name="DescribeSensor200RequestMessage" message="sosw:DescribeSensor200RequestMessage">
+    </wsdl:input>
+      <wsdl:output name="DescribeSensor200ResponseMessage" message="sosw:DescribeSensor200ResponseMessage">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSensor200">
+      <wsdl:input name="DeleteSensor200RequestMessage" message="sosw:DeleteSensor200RequestMessage">
+    </wsdl:input>
+      <wsdl:output name="DeleteSensor200ResponseMessage" message="sosw:DeleteSensor200ResponseMessage">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetObservation200">
+      <wsdl:input name="GetObservation200RequestMessage" message="sosw:GetObservation200RequestMessage">
+    </wsdl:input>
+      <wsdl:output name="GetObservation200ResponseMessage" message="sosw:GetObservation200ResponseMessage">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetResult200">
+      <wsdl:input name="GetResult200RequestMessage" message="sosw:GetResult200RequestMessage">
+    </wsdl:input>
+      <wsdl:output name="GetResult200ResponseMessage" message="sosw:GetResult200ResponseMessage">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetFeatureOfInterest200">
+      <wsdl:input name="GetFeatureOfInterest200RequestMessage" message="sosw:GetFeatureOfInterest200RequestMessage">
+    </wsdl:input>
+      <wsdl:output name="GetFeatureOfInterest200ResponseMessage" message="sosw:GetFeatureOfInterest200ResponseMessage">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetCapabilities200">
+      <wsdl:input name="GetCapabilities200RequestMessage" message="sosw:GetCapabilities200RequestMessage">
+    </wsdl:input>
+      <wsdl:output name="GetCapabilities200ResponseMessage" message="sosw:GetCapabilities200ResponseMessage">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetResultTemplate200">
+      <wsdl:input name="GetResultTemplate200RequestMessage" message="sosw:GetResultTemplate200RequestMessage">
+    </wsdl:input>
+      <wsdl:output name="GetResultTemplate200ResponseMessage" message="sosw:GetResultTemplate200ResponseMessage">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="SosPostPortType">
+    <wsdl:operation name="UpdateSensorDescription200">
+      <wsdl:input name="UpdateSensorDescription200RequestMessage" message="sosw:UpdateSensorDescription200RequestMessage" wsam:Action="http://www.opengis.net/swes/2.0/UpdateSensorDescription">
+    </wsdl:input>
+      <wsdl:output name="UpdateSensorDescription200ResponseMessage" message="sosw:UpdateSensorDescription200ResponseMessage" wsam:Action="http://www.opengis.net/swes/2.0/UpdateSensorDescriptionResponse">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DescribeSensor200">
+      <wsdl:input name="DescribeSensor200RequestMessage" message="sosw:DescribeSensor200RequestMessage" wsam:Action="http://www.opengis.net/swes/2.0/DescribeSensor">
+    </wsdl:input>
+      <wsdl:output name="DescribeSensor200ResponseMessage" message="sosw:DescribeSensor200ResponseMessage" wsam:Action="http://www.opengis.net/swes/2.0/DescribeSensorResponse">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSensor200">
+      <wsdl:input name="DeleteSensor200RequestMessage" message="sosw:DeleteSensor200RequestMessage" wsam:Action="http://www.opengis.net/swes/2.0/DeleteSensor">
+    </wsdl:input>
+      <wsdl:output name="DeleteSensor200ResponseMessage" message="sosw:DeleteSensor200ResponseMessage" wsam:Action="http://www.opengis.net/swes/2.0/DeleteSensorResponse">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="InsertSensor200">
+      <wsdl:input name="InsertSensor200RequestMessage" message="sosw:InsertSensor200RequestMessage" wsam:Action="http://www.opengis.net/swes/2.0/InsertSensor">
+    </wsdl:input>
+      <wsdl:output name="InsertSensor200ResponseMessage" message="sosw:InsertSensor200ResponseMessage" wsam:Action="http://www.opengis.net/swes/2.0/InsertSensorResponse">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetObservation200">
+      <wsdl:input name="GetObservation200RequestMessage" message="sosw:GetObservation200RequestMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/core/2.0/GetObservation">
+    </wsdl:input>
+      <wsdl:output name="GetObservation200ResponseMessage" message="sosw:GetObservation200ResponseMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/obsInsertion/2.0/InsertObservation">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetResult200">
+      <wsdl:input name="GetResult200RequestMessage" message="sosw:GetResult200RequestMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/resultRetrieval/2.0/GetResult">
+    </wsdl:input>
+      <wsdl:output name="GetResult200ResponseMessage" message="sosw:GetResult200ResponseMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/resultRetrieval/2.0/GetResultResponse">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="InsertObservation200">
+      <wsdl:input name="InsertObservation200RequestMessage" message="sosw:InsertObservation200RequestMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/obsInsertion/2.0/InsertObservation">
+    </wsdl:input>
+      <wsdl:output name="InsertObservation200ResponseMessage" message="sosw:InsertObservation200ResponseMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/obsInsertion/2.0/InsertObservation">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="InsertResult200">
+      <wsdl:input name="InsertResult200RequestMessage" message="sosw:InsertResult200RequestMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/resultInsertion/2.0/InsertResultTemplate">
+    </wsdl:input>
+      <wsdl:output name="InsertResult200ResponseMessage" message="sosw:InsertResult200ResponseMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/resultInsertion/2.0/InsertResultTemplateResponse">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetFeatureOfInterest200">
+      <wsdl:input name="GetFeatureOfInterest200RequestMessage" message="sosw:GetFeatureOfInterest200RequestMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/foiRetrieval/2.0/GetFeatureOfInterest">
+    </wsdl:input>
+      <wsdl:output name="GetFeatureOfInterest200ResponseMessage" message="sosw:GetFeatureOfInterest200ResponseMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/foiRetrieval/2.0/GetFeatureOfInterestResponse">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetObservationById200">
+      <wsdl:input name="GetObservationById200RequestMessage" message="sosw:GetObservationById200RequestMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/obsByIdRetrieval/2.0/GetObservationById">
+    </wsdl:input>
+      <wsdl:output name="GetObservationById200ResponseMessage" message="sosw:GetObservationById200ResponseMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/obsByIdRetrieval/2.0/GetObservationByIdResponse">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetCapabilities200">
+      <wsdl:input name="GetCapabilities200RequestMessage" message="sosw:GetCapabilities200RequestMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/core/2.0/GetCapabilities">
+    </wsdl:input>
+      <wsdl:output name="GetCapabilities200ResponseMessage" message="sosw:GetCapabilities200ResponseMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/core/2.0/GetCapabilitiesResponse">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="InsertResultTemplate200">
+      <wsdl:input name="InsertResultTemplate200RequestMessage" message="sosw:InsertResultTemplate200RequestMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/resultInsertion/2.0/InsertResultTemplate">
+    </wsdl:input>
+      <wsdl:output name="InsertResultTemplate200ResponseMessage" message="sosw:InsertResultTemplate200ResponseMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/resultInsertion/2.0/InsertResultTemplateResponse">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetResultTemplate200">
+      <wsdl:input name="GetResultTemplate200RequestMessage" message="sosw:GetResultTemplate200RequestMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/resultRetrieval/2.0/GetResultTemplate">
+    </wsdl:input>
+      <wsdl:output name="GetResultTemplate200ResponseMessage" message="sosw:GetResultTemplate200ResponseMessage" wsam:Action="http://www.opengis.net/def/serviceOperation/sos/resultRetrieval/2.0/GetResultTemplateResponse">
+    </wsdl:output>
+      <wsdl:fault name="ExceptionMessage" message="sosw:ExceptionMessage" wsam:Action="http://www.opengis.net/ows/1.1/Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SosPoxBinding" type="sosw:SosPostPortType">
+    <http:binding verb="POST"/>
+    <wsdl:operation name="UpdateSensorDescription200">
+      <http:operation location=""/>
+      <wsdl:input>
+        <mime:mimeXml/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DescribeSensor200">
+      <http:operation location=""/>
+      <wsdl:input>
+        <mime:mimeXml/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSensor200">
+      <http:operation location=""/>
+      <wsdl:input>
+        <mime:mimeXml/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="InsertSensor200">
+      <http:operation location=""/>
+      <wsdl:input>
+        <mime:mimeXml/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetObservation200">
+      <http:operation location=""/>
+      <wsdl:input>
+        <mime:mimeXml/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetResult200">
+      <http:operation location=""/>
+      <wsdl:input>
+        <mime:mimeXml/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="InsertObservation200">
+      <http:operation location=""/>
+      <wsdl:input>
+        <mime:mimeXml/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="InsertResult200">
+      <http:operation location=""/>
+      <wsdl:input>
+        <mime:mimeXml/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetFeatureOfInterest200">
+      <http:operation location=""/>
+      <wsdl:input>
+        <mime:mimeXml/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetObservationById200">
+      <http:operation location=""/>
+      <wsdl:input>
+        <mime:mimeXml/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetCapabilities200">
+      <http:operation location=""/>
+      <wsdl:input>
+        <mime:mimeXml/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="InsertResultTemplate200">
+      <http:operation location=""/>
+      <wsdl:input>
+        <mime:mimeXml/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetResultTemplate200">
+      <http:operation location=""/>
+      <wsdl:input>
+        <mime:mimeXml/>
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="SosSoapBinding" type="sosw:SosPostPortType">
+    <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="UpdateSensorDescription200">
+      <soap12:operation soapAction="http://www.opengis.net/swes/2.0/UpdateSensorDescription" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+        <soap12:fault name="ExceptionMessage" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DescribeSensor200">
+      <soap12:operation soapAction="http://www.opengis.net/swes/2.0/DescribeSensor" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+        <soap12:fault name="ExceptionMessage" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSensor200">
+      <soap12:operation soapAction="http://www.opengis.net/swes/2.0/DeleteSensor" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+        <soap12:fault name="ExceptionMessage" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="InsertSensor200">
+      <soap12:operation soapAction="http://www.opengis.net/swes/2.0/InsertSensor" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+        <soap12:fault name="ExceptionMessage" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetObservation200">
+      <soap12:operation soapAction="http://www.opengis.net/def/serviceOperation/sos/core/2.0/GetObservation" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+        <soap12:fault name="ExceptionMessage" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetResult200">
+      <soap12:operation soapAction="http://www.opengis.net/def/serviceOperation/sos/resultRetrieval/2.0/GetResult" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+        <soap12:fault name="ExceptionMessage" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="InsertObservation200">
+      <soap12:operation soapAction="http://www.opengis.net/def/serviceOperation/sos/obsInsertion/2.0/InsertObservation" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+        <soap12:fault name="ExceptionMessage" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="InsertResult200">
+      <soap12:operation soapAction="http://www.opengis.net/def/serviceOperation/sos/resultInsertion/2.0/InsertResultTemplate" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+        <soap12:fault name="ExceptionMessage" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetFeatureOfInterest200">
+      <soap12:operation soapAction="http://www.opengis.net/def/serviceOperation/sos/foiRetrieval/2.0/GetFeatureOfInterest" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+        <soap12:fault name="ExceptionMessage" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetObservationById200">
+      <soap12:operation soapAction="http://www.opengis.net/def/serviceOperation/sos/obsByIdRetrieval/2.0/GetObservationById" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+        <soap12:fault name="ExceptionMessage" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetCapabilities200">
+      <soap12:operation soapAction="http://www.opengis.net/def/serviceOperation/sos/core/2.0/GetCapabilities" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+        <soap12:fault name="ExceptionMessage" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="InsertResultTemplate200">
+      <soap12:operation soapAction="http://www.opengis.net/def/serviceOperation/sos/resultInsertion/2.0/InsertResultTemplate" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+        <soap12:fault name="ExceptionMessage" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetResultTemplate200">
+      <soap12:operation soapAction="http://www.opengis.net/def/serviceOperation/sos/resultRetrieval/2.0/GetResultTemplate" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ExceptionMessage">
+        <soap12:fault name="ExceptionMessage" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SOS">
+    <wsdl:port name="SosSoap12Port" binding="sosw:SosSoapBinding">
+      <soap12:address location="SOAP_ENDPOINT_URL"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

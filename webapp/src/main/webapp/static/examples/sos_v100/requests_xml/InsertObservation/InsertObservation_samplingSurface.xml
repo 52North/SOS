@@ -1,0 +1,54 @@
+<InsertObservation xmlns="http://www.opengis.net/sos/1.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:ogc="http://www.opengis.net/ogc"
+	xmlns:om="http://www.opengis.net/om/1.0"
+	xmlns:sos="http://www.opengis.net/sos/1.0"
+	xmlns:sa="http://www.opengis.net/sampling/1.0"
+	xmlns:gml="http://www.opengis.net/gml"
+	xmlns:swe="http://www.opengis.net/swe/1.0.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/sos/1.0
+	http://schemas.opengis.net/sos/1.0.0/sosInsert.xsd
+	http://www.opengis.net/sampling/1.0
+	http://schemas.opengis.net/sampling/1.0.0/sampling.xsd
+	http://www.opengis.net/om/1.0
+	http://schemas.opengis.net/om/1.0.0/extensions/observationSpecialization_override.xsd"
+	service="SOS" version="1.0.0">
+	
+	<AssignedSensorId>http://www.52north.org/test/procedure/sensor-1</AssignedSensorId>
+	
+	<om:Measurement>
+	
+		<om:samplingTime>
+			<gml:TimeInstant>
+				<gml:timePosition>2008-04-01T17:44:15+00:00</gml:timePosition>
+			</gml:TimeInstant>
+		</om:samplingTime>
+		
+		<om:procedure xlink:href="http://www.52north.org/test/procedure/sensor-1" />
+		<om:observedProperty xlink:href="http://www.52north.org/test/observableProperty/6" />
+		
+		<om:featureOfInterest>
+			<sa:SamplingSurface gml:id="http://www.52north.org/test/featureOfInterest/sampSur_1001">
+				<gml:name>SamplingSurface 1</gml:name>
+				<sa:sampledFeature xlink:href="" />
+				<sa:shape>
+					<gml:Polygon srsName="urn:ogc:def:crs:EPSG::4326"
+						xsi:type="gml:PolygonType">
+						<gml:exterior>
+							<gml:LinearRing xsi:type="gml:LinearRingType">
+								<gml:posList>52.90 7.52 52.7167 8.76667
+									 52.7167 9.76667 51.7167 9.76667 52.90 7.52
+								</gml:posList>>
+							</gml:LinearRing>
+						</gml:exterior>
+					</gml:Polygon>
+				</sa:shape>
+			</sa:SamplingSurface>
+		</om:featureOfInterest>
+		
+		<om:result uom="cm">10.0</om:result>
+	</om:Measurement>
+	
+</InsertObservation>

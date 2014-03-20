@@ -1,0 +1,20 @@
+<inspire_dls:ExtendedCapabilities xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:inspire_dls="http://inspire.ec.europa.eu/schemas/inspire_dls/1.0"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd"  >
+  <inspire_common:MetadataUrl>
+    <inspire_common:URL>http://localhost:8080/52n-sos-webapp/sos</inspire_common:URL>
+    <inspire_common:MediaType>application/soap+xml</inspire_common:MediaType>
+  </inspire_common:MetadataUrl>
+  <inspire_common:SupportedLanguages>
+    <inspire_common:DefaultLanguage>
+      <inspire_common:Language>eng</inspire_common:Language>
+    </inspire_common:DefaultLanguage>
+  </inspire_common:SupportedLanguages>
+  <inspire_common:ResponseLanguage>
+    <inspire_common:Language>eng</inspire_common:Language>
+  </inspire_common:ResponseLanguage>
+  <inspire_dls:SpatialDataSetIdentifier>
+    <inspire_common:Code>test</inspire_common:Code>
+    <inspire_common:Namespace>http://test.org</inspire_common:Namespace>
+  </inspire_dls:SpatialDataSetIdentifier>
+</inspire_dls:ExtendedCapabilities>

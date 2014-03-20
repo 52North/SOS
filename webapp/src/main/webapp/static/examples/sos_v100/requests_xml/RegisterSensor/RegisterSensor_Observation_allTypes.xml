@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RegisterSensor service="SOS" version="1.0.0"
+	xmlns="http://www.opengis.net/sos/1.0" xmlns:swe="http://www.opengis.net/swe/1.0.1"
+	xmlns:ows="http://www.opengeospatial.net/ows" xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc"
+	xmlns:om="http://www.opengis.net/om/1.0" xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/sos/1.0
+http://schemas.opengis.net/sos/1.0.0/sosRegisterSensor.xsd http://www.opengis.net/om/1.0 http://schemas.opengis.net/om/1.0.0/extensions/observationSpecialization_override.xsd">
+
+	<!-- Sensor Description parameter; Currently, this has to be a sml:System -->
+	<SensorDescription>
+		<sml:SensorML version="1.0.1">
+			<sml:member>
+				<sml:System xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+					<!--sml:identification element must contain the ID of the sensor -->
+					<sml:identification>
+						<sml:IdentifierList>
+							<sml:identifier>
+								<sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">
+									<sml:value>http://www.52north.org/test/procedure/All-Types-Station</sml:value>
+								</sml:Term>
+							</sml:identifier>
+						</sml:IdentifierList>
+					</sml:identification>
+					
+					<!-- optional; generated if not present -->
+					<sml:identification xlink:title="offerings">
+						<sml:IdentifierList>
+							<sml:identifier name="Offering for sensor All-Types-Station">
+								<sml:Term definition="urn:ogc:def:identifier:OGC:offeringID">
+									<sml:value>http://www.52north.org/test/offering/ALL_TYPES</sml:value>
+								</sml:Term>
+							</sml:identifier>
+						</sml:IdentifierList>
+					</sml:identification>
+
+					<!-- last measured position of sensor -->
+					<sml:position name="sensorPosition">
+						<swe:Position referenceFrame="urn:ogc:def:crs:EPSG::4326">
+							<swe:location>
+								<swe:Vector gml:id="STATION_LOCATION">
+									<swe:coordinate name="easting">
+										<swe:Quantity>
+											<swe:uom code="degree" />
+											<swe:value>7.52</swe:value>
+										</swe:Quantity>
+									</swe:coordinate>
+									<swe:coordinate name="northing">
+										<swe:Quantity>
+											<swe:uom code="degree" />
+											<swe:value>52.9</swe:value>
+										</swe:Quantity>
+									</swe:coordinate>
+									<swe:coordinate name="altitude">
+										<swe:Quantity>
+											<swe:uom code="m" />
+											<swe:value>52.0</swe:value>
+										</swe:Quantity>
+									</swe:coordinate>
+								</swe:Vector>
+							</swe:location>
+						</swe:Position>
+					</sml:position>
+
+					<!-- list containing the input phenomena for this sensor system -->
+					<sml:inputs>
+						<sml:InputList>
+							<sml:input name="Temperature">
+								<swe:ObservableProperty
+									definition="http://www.52north.org/test/observableProperty/temperature" />
+							</sml:input>
+							<sml:input name="Sunny">
+								<swe:ObservableProperty
+									definition="http://www.52north.org/test/observableProperty/conditions" />
+							</sml:input>
+							<sml:input name="Position">
+								<swe:ObservableProperty
+									definition="http://www.52north.org/test/observableProperty/position" />
+							</sml:input>
+						</sml:InputList>
+					</sml:inputs>
+
+					<!-- list containing the output phenomena of this sensor system; ATTENTION: 
+						these phenomena are parsed and inserted into the database; they have to contain 
+						offering elements to determine the correct offering for the sensors and measured 
+						phenomena -->
+					<sml:outputs>
+						<sml:OutputList>
+							<sml:output name="active">
+								<swe:Boolean definition="http://www.52north.org/test/observableProperty/active">
+								</swe:Boolean>
+							</sml:output>
+							<sml:output name="sensors">
+								<swe:Count definition="http://www.52north.org/test/observableProperty/sensors">
+								</swe:Count>
+							</sml:output>
+							<sml:output name="temperature">
+								<swe:Quantity definition="http://www.52north.org/test/observableProperty/temperature">
+									<swe:uom code="Cel" />
+								</swe:Quantity>
+							</sml:output>
+							<sml:output name="lastCheck">
+								<swe:Time definition="http://www.52north.org/test/observableProperty/lastCheck">
+									<swe:uom code="ISO-8601" />
+								</swe:Time>
+							</sml:output>
+							<sml:output name="conditions">
+								<swe:Category definition="http://www.52north.org/test/observableProperty/conditions">
+								</swe:Category>
+							</sml:output>
+							<sml:output name="position">
+								<swe:Position definition="http://www.52north.org/test/observableProperty/position">
+								</swe:Position>
+							</sml:output>
+							<sml:output name="lastCheckDescription">
+								<swe:Text
+									definition="http://www.52north.org/test/observableProperty/lastCheckDescription">
+								</swe:Text>
+							</sml:output>
+							<sml:output name="positionText">
+								<swe:Text
+									definition="http://www.52north.org/test/observableProperty/positionText">
+								</swe:Text>
+							</sml:output>
+							<sml:output name="location">
+								<swe:Text
+									definition="http://www.52north.org/test/observableProperty/location">
+								</swe:Text>
+							</sml:output>
+							<sml:output name="WKT">
+								<swe:Text
+									definition="http://www.52north.org/test/observableProperty/WKT">
+								</swe:Text>
+							</sml:output>
+						</sml:OutputList>
+					</sml:outputs>
+				</sml:System>
+			</sml:member>
+		</sml:SensorML>
+	</SensorDescription>
+
+	<!-- ObservationTemplate parameter; this has to be an empty measurement 
+		or category at the moment, as the 52N SOS only supports Measurements or CategoryObservations 
+		to be inserted -->
+	<ObservationTemplate>
+		<om:Observation>
+			<om:samplingTime />
+			<om:procedure />
+			<om:observedProperty />
+			<om:featureOfInterest></om:featureOfInterest>
+			<om:result/>
+		</om:Observation>
+	</ObservationTemplate>
+</RegisterSensor>

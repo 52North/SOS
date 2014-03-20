@@ -1,0 +1,5 @@
+org.n52.sos.request.operator.SosGetCapabilitiesOperatorV100
+org.n52.sos.request.operator.SosDescribeSensorOperatorV100
+org.n52.sos.request.operator.SosGetObservationOperatorV100
+org.n52.sos.request.operator.SosGetObservationByIdOperatorV100
+org.n52.sos.request.operator.SosGetFeatureOfInterestOperatorV100

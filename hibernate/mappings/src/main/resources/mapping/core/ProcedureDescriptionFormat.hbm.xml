@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" table="procedureDescriptionFormat">
+        <id name="procedureDescriptionFormatId" type="long">
+            <column name="procedureDescriptionFormatId" />
+            <generator class="native">
+            	<param name="sequence">procDescFormatId_seq</param>
+            </generator>
+        </id>
+        <property name="procedureDescriptionFormat" type="string">
+        	<!-- TODO set unique="true" to avoid duplicate entries -->
+            <column name="procedureDescriptionFormat" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

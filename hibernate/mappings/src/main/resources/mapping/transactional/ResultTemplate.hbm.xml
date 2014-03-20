@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.ResultTemplate" table="resultTemplate">
+        <id name="resultTemplateId" type="long">
+            <column name="resultTemplateId" />
+            <generator class="native">
+            	<param name="sequence">resultTemplateId_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="offering" class="org.n52.sos.ds.hibernate.entities.Offering" fetch="select" lazy="no-proxy" foreign-key="resultTemplateOfferingIdx">
+            <column index="resultTempOfferingIdx" name="offeringId" not-null="true" />
+        </many-to-one>
+        <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" fetch="select" lazy="no-proxy" foreign-key="resultTemplateObsPropFk">
+            <column index="resultTempeObsPropIdx" name="observablePropertyId" not-null="true" />
+        </many-to-one>
+        <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="select" lazy="no-proxy" foreign-key="resultTemplateProcedureFk">
+            <column index="resultTempProcedureIdx" name="procedureId" not-null="true" />
+        </many-to-one>
+        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" fetch="select" lazy="no-proxy" foreign-key="resultTemplateFeatureIdx">
+            <column name="featureOfInterestId" not-null="true" />
+        </many-to-one>
+        <property name="identifier" type="string">
+            <column index="resultTempIdentifierIdx" name="identifier" not-null="true" />
+        </property>
+        <property name="resultStructure" type="org.hibernate.type.StringClobType">
+            <column name="resultStructure" not-null="true" />
+        </property>
+        <property name="resultEncoding" type="org.hibernate.type.StringClobType">
+            <column name="resultEncoding" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,21 @@
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope http://www.opengis.net/sos/1.0
+	http://schemas.opengis.net/sos/1.0.0/sosGetFeatureOfInterest.xsd"
+	xmlns:sos="http://www.opengis.net/sos/1.0" xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc">
+	<env:Body>
+		<sos:GetFeatureOfInterest service="SOS" version="1.0.0">
+			<!-- mandatory, multiple values possible -->
+			<sos:location>
+				<ogc:BBOX>
+					<ogc:PropertyName>urn:ogc:data:location</ogc:PropertyName>
+					<gml:Envelope srsName="urn:ogc:def:crs:EPSG::4326">
+						<gml:lowerCorner>50.0 7.0</gml:lowerCorner>
+						<gml:upperCorner>53.0 10.0</gml:upperCorner>
+					</gml:Envelope>
+				</ogc:BBOX>
+			</sos:location>
+		</sos:GetFeatureOfInterest>
+	</env:Body>
+</env:Envelope>

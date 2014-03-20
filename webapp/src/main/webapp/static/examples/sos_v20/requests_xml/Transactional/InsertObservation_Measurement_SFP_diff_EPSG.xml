@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sos:InsertObservation service="SOS" version="2.0.0"
+	xmlns:sos="http://www.opengis.net/sos/2.0" xmlns:swes="http://www.opengis.net/swes/2.0"
+	xmlns:swe="http://www.opengis.net/swe/2.0" xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+	xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:om="http://www.opengis.net/om/2.0" xmlns:sams="http://www.opengis.net/samplingSpatial/2.0"
+	xmlns:sf="http://www.opengis.net/sampling/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd
+											http://www.opengis.net/samplingSpatial/2.0 http://schemas.opengis.net/samplingSpatial/2.0/spatialSamplingFeature.xsd">
+	<!-- multiple offerings are possible -->
+	<sos:offering>http://www.52north.org/test/offering/9</sos:offering>
+	<sos:observation>
+		<om:OM_Observation gml:id="o1">
+			<om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"/>
+			<om:phenomenonTime>
+				<gml:TimeInstant gml:id="phenomenonTime">
+					<gml:timePosition>2012-11-19T17:48:15.000+00:00</gml:timePosition>
+				</gml:TimeInstant>
+			</om:phenomenonTime>
+			<om:resultTime xlink:href="#phenomenonTime"/>
+			<om:procedure xlink:href="http://www.52north.org/test/procedure/9"/>
+			<om:parameter>
+				<om:NamedValue>
+				<om:name xlink:href="http://www.opengis.net/def/param-name/OGC-OM/2.0/samplingGeometry"/>
+					<om:value xsi:type="gml:GeometryPropertyType">
+						<gml:Point gml:id="SamplingPoint1">
+							<gml:pos srsName="http://www.opengis.net/def/crs/EPSG/0/31467">5864076.886 3400487.026</gml:pos>
+						</gml:Point>
+					</om:value>
+				</om:NamedValue>
+			</om:parameter>
+			<om:observedProperty xlink:href="http://www.52north.org/test/observableProperty/9_3"/>
+			<om:featureOfInterest>
+				<sams:SF_SpatialSamplingFeature gml:id="ssf_test_feature_9"> 
+					<gml:identifier codeSpace="">http://www.52north.org/test/featureOfInterest/9</gml:identifier> 
+					<gml:name>52°North</gml:name>
+					<sf:type xlink:href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"/> 
+					<sf:sampledFeature xlink:href="http://www.52north.org/test/featureOfInterest/9_31467"/> 
+					<sams:shape> 
+						<gml:Point gml:id="test_feature_9"> 
+							<gml:pos srsName="http://www.opengis.net/def/crs/EPSG/0/31467">5756540.788 3407364.580</gml:pos> 
+						</gml:Point> 
+					</sams:shape> 
+				</sams:SF_SpatialSamplingFeature>
+			</om:featureOfInterest>
+			<om:result xsi:type="gml:MeasureType" uom="test_unit_9_3">0.29</om:result>
+		</om:OM_Observation>
+	</sos:observation>
+</sos:InsertObservation>

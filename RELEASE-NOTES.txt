@@ -1,0 +1,267 @@
+RELEASE NOTES
+
+ The Sensor Observation Service (SOS) aggregates readings from live sensors as well as 
+ sensor archives. The service provides an interface to get the pure data (encoded 
+ in Observation&Measurement), information about the sensor itself (encoded in a 
+ SensorML instance document), and information about the sensor mounting platform 
+ (SensorML as well).
+
+Release 52n-sos-4.0.0
+==================================
+
+ --- New features ---
+
+    * Series observation concept is now supported for transactional operations. 
+      * This means that the observation table contains a seriesId column and references to the new series table.
+      * FeatureOfInterest, procedure and observableProperty moved from observation to series table
+      * Convert SQL scripts for PostgreSQL, MySQL and Oracle are available
+      * DaoFactory for Hibernate DAOs to get  supported, old or series, observation DAO
+    * SQL scripts for PostgreSQL, MySQL and Oracle are available to:
+      * create database model (old and series concept)
+      * clear tables (old and series concept)
+      * drop database model (old and series concept)
+    * SOS Administrator extended
+      * Renaming of observed properties/phenomena
+      * Beta: Static Capabilities incl. online editor and validator
+      * Beta: Capabilities Extensions incl. online editor and validator
+      * Beta: Offering Extensions incl. online editor and validator
+
+ --- Changes ---
+
+    * Default database model is now the series observation concept, the old observation concept is still 
+         supported and can be activated during the installation by checking "Old observation concept".
+
+ --- Fixed bugs ---
+
+    * [Bug 976] Schema location for SML uses prefix instead of namespace
+    * [Bug 977] Cannot add <swe:quality> elements in sml:output/swe:Quantity
+    * [Bug 980] envelope is missing definition attribute
+    * [Bug 981] CPU load issue after some days in operation
+    * [Bug 982] NullPointer Error Inserting a ProcessModel
+    * [Bug 983] InsertObservation fails because of root namespaces with "Invalid xsi:type qname: 'gml:MeasureType' in element..."
+    * [Bug 987] Series-Concept: GetObservation response contains deleted observations
+    * [Bug 990] Hibernate directories in datasource.properties should be able to be relative paths in classpath
+    * [Bug 993] Cache Update blocks all operations
+    * [Bug 996] Installer finishes smoothly when "PostgreSQL/PostGIS Core" datasource is selected but not tables exists
+    * [Bug 997] FeatureOfInterest JSON Encoding with wrong "name"
+    * [Bug 1001] Could not finish set-up using installer: Could not connect to the database: ERROR: relation "codespaceid_seq" already exists. Command: create sequence public.codespaceId_seq
+    * [Bug 1005] Spatial Filtering Profile filtering does not work after refactoring the Hibernate GetObservation request processing (r22393)
+    
+Release 52n-sos-4.0.0-RC6
+==================================
+
+ --- New features ---
+
+    * Update database model during installation process if needed (EXPERIMENTAL)
+
+ --- Changes ---
+
+    * Added description column to observation table: !!! UPDATE of database model is required !!!
+      - see file update_obs_add_description.sql in [SOS]\misc\db\[DBMS]
+     
+ --- Fixed bugs ---
+
+    * [Bug 975] NPE in TimeInstant.compareTo() when time value is null
+
+Release 52n-sos-4.0.0-RC5
+==================================
+
+ --- New features ---
+
+    * SQLScriptGenerator-Tool supports schema definition
+    * Create/Clear/Drop SQL scripts for PostgreSQL and Oracle added
+    * Include defined schema when checking if the tables still exists
+
+ --- Changes ---
+
+    * GML-Encoder TimePosition: set "unknown" as IndeterminateValue if time and indeterminate value 
+      are not set in SOS object instead of 0000-01-01... time stamp
+    * Move hibernate dialect to own project
+
+ --- Fixed bugs ---
+
+    * [Bug 951] JSON GetObservation with no temporal filters throws a NPE
+
+
+Release 52n-sos-4.0.0-RC4
+==================================
+
+ --- New features ---
+
+    * OGC FES 2.0 ComparisonOp and LogicOp filter encoding
+
+ --- Changes ---
+
+
+
+ --- Fixed bugs ---
+
+    * [Bug 943] Race condition between offering cache update task and GeometryHandler settings on startup
+    * [Bug 944] Intermittent cache update SQLite error (commit failed)
+    * [Bug 937] SOS returns not-well-formed response (since RC1)
+    * [Bug 953] Invalid xsi:type qname when inserting an SWEDataArray observation with SOAP binding
+    * [Bug 964] KVP requests should require the service parameter
+    * [Bug 965] KVP: The  position after decimal point of spatial filter values are ignored
+
+Release 52n-sos-4.0.0-RC3
+==================================
+
+ --- New features ---
+
+    * Setting to enable response validation if debug mode is disabled.
+
+ --- Changes ---
+
+
+
+ --- Fixed bugs ---
+
+    * Double call of om:result element content creation
+
+Release 52n-sos-4.0.0-RC2
+==================================
+
+ --- New features ---
+
+    * Initial series support for custom database models with series (procedure, observableProperty, featureOfInterest):
+        * Supported operations are GetObservation and GetDataAvailability
+
+ --- Changes ---
+
+    * Update sensor description enrichment to comply with SensorML for Discovery Profile (OGC 09-163r2)
+
+ --- Fixed bugs ---
+
+    * [Bug 942] NPE when inserting external referenced feature
+        * NPE when a referenced featureOfInterest (no geometry) was inserted via InsertObservation and the feature does not exists in the SOS 
+
+Release 52n-sos-4.0.0-RC1
+==================================
+
+ --- New features ---
+
+    * JSON-Binding for SOS 2.0 and O&M 2.0 (not yet supported: SensorML 1.0.1 (contained as XML string))
+    * Oracle database support
+    * Simple security solution: IP and token based
+    * SOS 2.0 Spatial Filtering Profile support
+    * Support for 'validTime' parameter in DescribeSensor requests
+
+ --- Changes ---
+
+    * Database model: divided into Core and Transactional model
+    * Example data insertion: use JSON encoded request
+    * Test Client modified
+      * all example queries are listed
+      * apply filter to reduce number of queries
+    * Rename column 'names' to 'name' in featureOfInterest table (update script)
+
+ --- Fixed bugs ---
+
+    * [Bug 860] - Dynamic generation of sensor description if descriptionURL and descriptionXml are not set
+    * [Bug 919] - InvalidRequest exception when send SOAP-InsertObservation request with OM_SWEArrayObservation type
+    * [Bug 920] - org.hibernate.LazyInitializationException: illegal access to loading collection in OfferingCacheUpdateTask's getRelatedFeatureIdentifiersFrom(TOffering offering)
+    * [Bug 922] - Implement Related Feature Handling
+    * [Bug 929] - Reload Capabilities Cache fails if there is a deleted procedure in the database 
+    * [Bug 930] - Extension "SplitDataArrayIntoObservations"
+    * [Bug 931] - Extension "MergeObservationsIntoDataArray"
+    * [Bug 932] - Child procedure is shown in parent procedure offering after InsertSensor.
+    * [Bug 933] - InsertSensor with not defined offering can be inserted multiple times without exceptions
+    * [Bug 934] - Flexible test data insertion with JSON files
+    * [Bug 935] - SOS 1.0.0 DescribeSensor request throws invalid outputFormat exception
+    * [Bug 941] - CapabilitiesCache setMaxResultTime() and setMinResultTime() changes global phenomenonTime
+
+Release 52n-sos-4.0.0-Beta2
+===================================
+
+--- New features ---
+
+    * Related Feature Support in InsertSensor, InsertObservation, GetObservation, GetFeatureOfInterest (see #922 or Documentation->Features->Related Features for more details) 
+    * Dynamic WSDL generation, query via http://[HOST]:[PORT]/[WEBAPP_NAME]/wsdl, e.g. http://localhost:8080/52n-sos-webapp-4.0.0-SNAPSHOT/wsdl
+    * InsertSensor: 
+        * for more than one offering
+        * again for another offering
+        * again for the same offering if the procedure was deleted before, observations inserted before deletion are not provided
+    * Serialization of cache: serialize cache to file after updates and during shutdown, load cache from file during startup if exist (fast startup)
+    * Administrator: 
+        * GUI to en-/disable single operations
+        * GUI to en-/disable single encodings
+        * GUI to en-/disable single bindings
+        * Clear database, insert test data, remove test data, reload cache
+    * Sort elements in GetCapabilities response by A-Z, 0-9,...
+    * Storing codespace of gml:identifier for featureOfInterest and observation in DB
+    * RESTful Binding
+    * POX Binding
+    * DeleteObservation operation
+    * SOS 1.0.0 support:
+        * GetCapabilities (KVP,POX,SOAP)
+        * DescribeSensor (KVP,POX,SOAP)
+        * GetObservation (KVP,POX,SOAP)
+        * GetFeatureOfInterest (POX,SOAP)
+    * WaterML 2.0 Encoding
+    * GetDataAvailability operation, de-/encoding
+    * Additional Supported filter (need more tests regarding correct behavior):
+        * temporal:	After, Before, Begins, Ends, EndedBy, BegunBy, TContains, Overlaps, Meets, MetBy, OverlappedBy
+
+--- Changes ---
+
+    * Database model has changed:
+        * observation are not inserted twice if they relate to a different offering but same procedure, observedProperty and featureOfInterest
+        * store procedure- and observableProperty-id in observation table
+    * Change coordinate order handling from de-/encoder to DAOs
+    * Exception and Response Code handling
+    * SosEventBus: fire and listen for events, currently used by cache updates after transactions
+    * Cache:
+        * switch from database updates to in memory updates
+        * update cache after transactional operation directly
+    * The settings are saved in a separate, independent database
+    * Database queries for Observation returning specialized types depending on stored value
+
+--- Fixed bugs ---
+
+    * Insert an observation again without an error.
+    * [Bug 800] Missing operation metadata parameter for operation InsertResultTemplate and InsertResult
+    * [Bug 805] InsertSensor request is not parsed correct: InsertSensorRequest.getProcedureDescription().getOfferingIdentifiers() returns empty list
+    * [Bug 811] ClassCastException when inserting observation with TimePeriod phenomenonTime and referenced resultTime
+    * [Bug 834] Administrator: Reset using reset_admin.sql does not work
+    * [Bug 843] Check hasCode() implementations for resetting hash
+    * [Bug 847] Useless error message when sending POX to SOAP endpoint
+    * [Bug 883] When single observation with resultTime are merged, the returned resultTime is not the latest
+
+
+Release 52n-sos-webapp-4.0.0-Beta1
+===================================
+
+--- New features ---
+
+    * Reference implementation of the OGS SOS 2.0 specification
+    * Supported operations and extensions: 
+       * Core:                          GetCapabilities, DescribeSensor, GetObservation
+       * Enhanced Operations Extension: GetFeatureOfInterest, GetObservationById
+       * Transactional Extension:       InsertSesnsor, InsertObservation, DeleteSensor
+       * ResultHandling Extension:      InsertResultTemplate, InsertResult, GetResultTemplate, GetResult
+       * Further operations:            UpdateSensorDescription
+    * Supported bindings:               KVP and SOAP
+    * Supported filter:
+       * temporal:                      During, T_Equals
+       * spatial:                       BBOX
+    * Supported codings:                O&M 2.0, SWES 2.0, SWECommon 2.0, SensorML 1.0.1, FES 2.0, Sampling 2.0, GML 3.2.1
+    * Supported feature types:          SamplingPoint, SamplingCurve, SamplingSurface
+    * Supported observation types:      OM_Measurement, OM_CountObservation, OM_CategoryObservation, OM_TruthObservation,
+                                        OM_TextObservation, OM_SWEArrayObservation
+   * new database model: use integer values as ids, necessary to map the SOS 2.0
+   * Hibernate + Hibernate Spatial for database connection, 
+   * Easy integration of new bindings, encodings and operations without changing the core sources
+   * Simple installation of the 52North SOS: step by step installation
+   * Administration GUI: change setting, clear database, add example data, change log levels
+   * New TestClient
+
+
+--- Changes ---
+
+
+--- Fixed bugs ---
+
+
+
+For more detailed information about the bugs look at https://52north.org/bugzilla/
+

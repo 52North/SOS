@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:sosdo="http://www.opengis.net/sosdo/1.0" xmlns:swes="http://www.opengis.net/swes/2.0" targetNamespace="http://www.opengis.net/sosdo/1.0" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<import namespace="http://www.opengis.net/swes/2.0" schemaLocation="http://schemas.opengis.net/swes/2.0/swes.xsd"/>
+	<import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+	<!-- ================================================= -->
+	<element name="DeleteObservation" type="sosdo:DeleteObservationType"/>
+	<complexType name="DeleteObservationType">
+		<complexContent>
+			<extension base="swes:ExtensibleRequestType">
+				<sequence>
+					<element name="observation" type="anyURI">
+						<annotation>
+							<appinfo>
+								<gml:targetElement>unknown</gml:targetElement>
+							</appinfo>
+							<documentation>Pointer to the observation that shall be deleted.</documentation>
+						</annotation>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<!-- ================================================= -->
+	<element name="DeleteObservationResponse" type="sosdo:DeleteObservationResponseType"/>
+	<complexType name="DeleteObservationResponseType">
+		<complexContent>
+			<extension base="swes:ExtensibleResponseType">
+				<sequence>
+					<element name="deletedObservation" type="anyURI">
+						<annotation>
+							<appinfo>
+								<gml:targetElement>unknown</gml:targetElement>
+							</appinfo>
+							<documentation>Pointer used to reference the observation that has been deleted by the service.</documentation>
+						</annotation>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+</schema>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope
+	xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope">
+	<soap:Body>
+		<sos:GetDataAvailabilityResponse
+			xmlns:sos="http://www.opengis.net/sos/2.0"
+			xmlns:gml="http://www.opengis.net/gml"
+			xmlns:om="http://www.opengis.net/om/2.0"
+			xmlns:xlink="http://www.w3.org/1999/xlink">
+			<sos:dataAvailabilityMember gml:id="dam_1">
+				<om:featureOfInterest xlink:href="test_feature_4"/>
+				<om:procedure xlink:href="http://www.example.org/sensors/104"/>
+				<om:observedProperty xlink:href="test_observable_property_4"/>
+				<om:phenomenonTime>
+					<gml:TimePeriod gml:id="tp_1">
+						<gml:beginPosition>2012-07-31T19:45:15.000+02:00</gml:beginPosition>
+						<gml:endPosition>2012-11-19T13:09:00.000+01:00</gml:endPosition>
+					</gml:TimePeriod>
+				</om:phenomenonTime>
+			</sos:dataAvailabilityMember>
+			<sos:dataAvailabilityMember gml:id="dam_2">
+				<om:featureOfInterest xlink:href="test_feature_1"/>
+				<om:procedure xlink:href="http://www.example.org/sensors/101"/>
+				<om:observedProperty xlink:href="test_observable_property_1"/>
+				<om:phenomenonTime>
+					<gml:TimePeriod gml:id="tp_2">
+						<gml:beginPosition>2012-07-31T19:45:15.000+02:00</gml:beginPosition>
+						<gml:endPosition>2012-11-19T13:20:00.000+01:00</gml:endPosition>
+					</gml:TimePeriod>
+				</om:phenomenonTime>
+			</sos:dataAvailabilityMember>
+		</sos:GetDataAvailabilityResponse>
+	</soap:Body>
+</soap:Envelope>

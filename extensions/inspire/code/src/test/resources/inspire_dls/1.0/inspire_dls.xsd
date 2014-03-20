@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+12-JUN-2012 1.0.4 Renamed SpatialDataUniqueResourceIdentifier element to SpatialDataSetIdentifier.
+                                   Added elements used in the Atom implementation and attributes used in the Opensearch
+08-JUN-2012 1.0.3 Added SpatialDataUniqueResourceIdentifier element
+03-FEB-2012 1.0.2 Created for Download Services ISO 19142/WFS 2.0
+-->
+<schema xmlns:inspire_dls="http://inspire.ec.europa.eu/schemas/inspire_dls/1.0" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" targetNamespace="http://inspire.ec.europa.eu/schemas/inspire_dls/1.0" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0.4">
+	<import namespace="http://www.opengis.net/ows/1.1" schemaLocation="http://schemas.opengis.net/ows/1.1.0/owsAll.xsd"/>
+	<!--For JAXB Binding we use the local schema
+	<import namespace="http://www.opengis.net/ows/1.1" schemaLocation="../../ows/1.1.0/owsAll.xsd"/>
+-->
+	<import namespace="http://inspire.ec.europa.eu/schemas/common/1.0" schemaLocation="../../common/1.0/common.xsd"/>
+	<element name="ExtendedCapabilities" type="inspire_dls:ExtendedCapabilitiesType"/>
+	<complexType name="ExtendedCapabilitiesType">
+		<annotation>
+			<documentation>Extended capabilities for OGC WFS 2.0 services</documentation>
+		</annotation>
+		<complexContent>
+			<extension base="inspire_common:ExtendedCapabilitiesType">
+				<sequence>
+					<element name="SpatialDataSetIdentifier" type="inspire_common:uniqueResourceIdentifier" minOccurs="1" maxOccurs="unbounded">
+						<annotation>
+							<documentation>For each spatial data resource served by the Download Service, the most current Unique Resource Identifier shall be listed here </documentation>
+						</annotation>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<annotation>
+		<documentation>
+			<!--Elements referenced in the Atom implementation of Download Services-->
+		</documentation>
+	</annotation>
+	<element name="spatial_dataset_identifier_code" type="inspire_common:notEmptyString"/>
+	<element name="spatial_dataset_identifier_namespace" type="anyURI"/>
+	
+	<annotation>
+		<documentation>
+			<!--Attributes referenced in the OpenSearch implementation of Download Services-->
+		</documentation>
+	</annotation>
+	<attribute name="spatial_dataset_identifier_code" type="string"/>
+	<attribute name="spatial_dataset_identifier_namespace" type="anyURI"/>
+	<attribute name="crs" type="anyURI"/>
+	
+</schema>

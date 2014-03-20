@@ -31,7 +31,6 @@
 -- # !!! Before you execute this scricpt we recommend to create a dump from the current database #
 -- ###############################################################################################
 
-create table Parameter (parameterId bigint not null auto_increment, observationId bigint not null, definition varchar(255) not null, title varchar(255), value longblob not null, primary key (parameterId)) ENGINE=InnoDB;
 create table blobValue (observationId bigint not null, value longblob, primary key (observationId)) ENGINE=InnoDB;
 create table booleanValue (observationId bigint not null, value char(1), primary key (observationId), check (value in ('T','F'))) ENGINE=InnoDB;
 create table categoryValue (observationId bigint not null, value varchar(255), primary key (observationId)) ENGINE=InnoDB;
@@ -52,6 +51,7 @@ create table offering (offeringId bigint not null auto_increment, hibernateDiscr
 create table offeringAllowedFeatureType (offeringId bigint not null, featureOfInterestTypeId bigint not null, primary key (offeringId, featureOfInterestTypeId)) ENGINE=InnoDB;
 create table offeringAllowedObservationType (offeringId bigint not null, observationTypeId bigint not null, primary key (offeringId, observationTypeId)) ENGINE=InnoDB;
 create table offeringHasRelatedFeature (relatedFeatureId bigint not null, offeringId bigint not null, primary key (offeringId, relatedFeatureId)) ENGINE=InnoDB;
+create table parameter (parameterId bigint not null auto_increment, observationId bigint not null, definition varchar(255) not null, title varchar(255), value longblob not null, primary key (parameterId)) ENGINE=InnoDB;
 create table`procedure`(procedureId bigint not null auto_increment, hibernateDiscriminator char(1) not null, procedureDescriptionFormatId bigint not null, identifier varchar(255) not null unique, deleted char(1) default 'F' not null, descriptionFile longtext, disabled char(1) not null default 'F', primary key (procedureId), check (disabled in ('T','F'))) ENGINE=InnoDB;
 create table procedureDescriptionFormat (procedureDescriptionFormatId bigint not null auto_increment, procedureDescriptionFormat varchar(255) not null, primary key (procedureDescriptionFormatId)) ENGINE=InnoDB;
 create table relatedFeature (relatedFeatureId bigint not null auto_increment, featureOfInterestId bigint not null, primary key (relatedFeatureId)) ENGINE=InnoDB;
@@ -105,7 +105,8 @@ alter table offeringAllowedObservationType add index offeringObservationTypeFk (
 alter table offeringAllowedObservationType add index FK28E66A64E4EF3005 (offeringId), add constraint FK28E66A64E4EF3005 foreign key (offeringId) references offering (offeringId);
 alter table offeringHasRelatedFeature add index relatedFeatureOfferingFk (offeringId), add constraint relatedFeatureOfferingFk foreign key (offeringId) references offering (offeringId);
 alter table offeringHasRelatedFeature add index offeringRelatedFeatureFk (relatedFeatureId), add constraint offeringRelatedFeatureFk foreign key (relatedFeatureId) references relatedFeature (relatedFeatureId);
-alter table`procedure`add index procProcDescFormatFk (procedureDescriptionFormatId), add constraint procProcDescFormatFk foreign key (procedureDescriptionFormatId) references procedureDescriptionFormat (procedureDescriptionFormatId);
+alter table parameter add index parameterObservationFk (observationId), add constraint parameterObservationFk foreign key (observationId) references observation (observationId);
+alter table `procedure` add index procProcDescFormatFk (procedureDescriptionFormatId), add constraint procProcDescFormatFk foreign key (procedureDescriptionFormatId) references procedureDescriptionFormat (procedureDescriptionFormatId);
 alter table relatedFeature add index relatedFeatureFeatureFk (featureOfInterestId), add constraint relatedFeatureFeatureFk foreign key (featureOfInterestId) references featureOfInterest (featureOfInterestId);
 alter table relatedFeatureHasRole add index relatedFeatRelatedFeatRoleFk (relatedFeatureRoleId), add constraint relatedFeatRelatedFeatRoleFk foreign key (relatedFeatureRoleId) references relatedFeatureRole (relatedFeatureRoleId);
 alter table relatedFeatureHasRole add index FK5643E7654A79987 (relatedFeatureId), add constraint FK5643E7654A79987 foreign key (relatedFeatureId) references relatedFeature (relatedFeatureId);

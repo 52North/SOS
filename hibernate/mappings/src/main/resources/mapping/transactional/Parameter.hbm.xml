@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.Parameter" table="Parameter">
+    <class name="org.n52.sos.ds.hibernate.entities.Parameter" table="parameter">
         <id name="parameterId" type="long">
             <column name="parameterId" />
             <generator class="native">

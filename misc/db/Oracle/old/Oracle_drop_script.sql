@@ -27,7 +27,6 @@
 -- Public License for more details.
 --
 
-drop table Parameter cascade constraints;
 drop table blobValue cascade constraints;
 drop table booleanValue cascade constraints;
 drop table categoryValue cascade constraints;
@@ -48,6 +47,7 @@ drop table offering cascade constraints;
 drop table offeringAllowedFeatureType cascade constraints;
 drop table offeringAllowedObservationType cascade constraints;
 drop table offeringHasRelatedFeature cascade constraints;
+drop table parameter cascade constraints;
 drop table procedure cascade constraints;
 drop table procedureDescriptionFormat cascade constraints;
 drop table relatedFeature cascade constraints;

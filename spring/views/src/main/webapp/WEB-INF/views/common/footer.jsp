@@ -60,9 +60,7 @@
             <div class="fn_box">
                 <h3>Affiliations</h3>
                 <p>The 52&deg;North affiliations:</p>
-                <a href="http://www.opengeospatial.org/" target="_blank" title="OGC Assiciate Members"><img border="0" alt="" src="http://52north.org/images/logos/ogc.gif" /></a>
-                <br />
-                <a href="http://www.sensorweb-alliance.org/" target="_blank" title="Sensor Web Alliance"><img border="0" alt="" src="http://52north.org/images/logos/swa.gif" /></a>
+                <a href="http://www.opengeospatial.org/" target="_blank" title="OGC Assiciate Members"><img border="0" alt="" src="static/images/logos/ogc.gif" /></a>
             </div>
             <div class="fn_box">
                 <h3>Cooperation partners</h3>

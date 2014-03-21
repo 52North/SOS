@@ -3,9 +3,9 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:ctx="http://www.springframework.org/schema/context"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-                           http://www.springframework.org/schema/security 
+                           http://www.springframework.org/schema/security
                            http://www.springframework.org/schema/security/spring-security-3.1.xsd
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context-3.2.xsd">
@@ -14,7 +14,7 @@
 
     <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
     <bean id="authenticationProvider" class="org.n52.sos.web.auth.UserService"/>
-    	
+
     <sec:authentication-manager alias="authenticationManager">
         <sec:authentication-provider ref="authenticationProvider" />
     </sec:authentication-manager>
@@ -31,6 +31,7 @@
     <sec:http pattern="/static/**" security="none" />
     <sec:http pattern="/install/**" security="none" />
     <sec:http pattern="/sos" security="none" />
+    <sec:http pattern="/service" security="none" />
 
     <sec:http auto-config="true" use-expressions="true" disable-url-rewriting="true">
         <sec:intercept-url pattern="/index" access="hasRole('ROLE_ADMIN') or hasRole('ROLE_ANONYMOUS')" />
@@ -42,7 +43,7 @@
         <sec:form-login username-parameter="username"
                         password-parameter="password"
                         login-page="/login"
-                        default-target-url="/admin/index" 
+                        default-target-url="/admin/index"
                         authentication-failure-url="/login?error=true"
                         login-processing-url="/j_spring_security_check" />
         <sec:logout logout-success-url="/index" />

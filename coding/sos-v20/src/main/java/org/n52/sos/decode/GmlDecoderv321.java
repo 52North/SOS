@@ -143,7 +143,7 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
         if (xmlObject instanceof FeaturePropertyType) {
             return parseFeaturePropertyType((FeaturePropertyType) xmlObject);
         } else if (xmlObject instanceof EnvelopeDocument) {
-            return getGeometry4BBOX((EnvelopeDocument) xmlObject);
+            return parseEnvelope((EnvelopeDocument) xmlObject);
         } else if (xmlObject instanceof TimeInstantType) {
             return parseTimeInstant((TimeInstantType) xmlObject);
         } else if (xmlObject instanceof TimePeriodType) {
@@ -239,7 +239,7 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
      * @throws OwsExceptionReport
      *             * if parsing the BBOX element failed
      */
-    private Geometry getGeometry4BBOX(EnvelopeDocument envelopeDocument) throws OwsExceptionReport {
+    private Geometry parseEnvelope(EnvelopeDocument envelopeDocument) throws OwsExceptionReport {
         EnvelopeType envelopeType = envelopeDocument.getEnvelope();
         int srid = SosHelper.parseSrsName(envelopeType.getSrsName());
         String lowerCorner = envelopeType.getLowerCorner().getStringValue();

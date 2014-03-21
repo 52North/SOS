@@ -48,6 +48,7 @@ TRUNCATE
  offeringAllowedFeatureType,
  offeringAllowedObservationType,
  offeringHasRelatedFeature,
+ parameter,
  procedure,
  procedureDescriptionFormat,
  relatedFeature,

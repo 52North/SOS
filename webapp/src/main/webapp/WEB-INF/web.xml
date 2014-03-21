@@ -127,6 +127,10 @@
 		<servlet-name>SOS</servlet-name>
 		<url-pattern>/sos/*</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SOS</servlet-name>
+		<url-pattern>/service/*</url-pattern>
+	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>dispatcher</servlet-name>

@@ -197,7 +197,7 @@ public class SosService extends ConfiguratedHttpServlet {
     private Binding getBinding(HttpServletRequest request) throws HTTPException {
         final String requestURI = request.getPathInfo();
         final BindingRepository repo = BindingRepository.getInstance();
-        if (requestURI == null) {
+        if (requestURI == null || requestURI.isEmpty() || requestURI.equals("/")) {
             MediaType contentType = getContentType(request);
             // strip of the parameters to get rid of things like encoding
             Binding binding = repo.getBinding(contentType.withoutParameters());

@@ -16,7 +16,7 @@
         <databaseConfigurationFile>${project.parent.basedir}/misc/conf/datasource.properties</databaseConfigurationFile>
         <!-- do not overwrite this one! -->
         <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/configuration.db</sqliteSettingDatabaseTargetFile>
-        <sos.test.suite.version>1.0.0-M2</sos.test.suite.version>
+        <sos.test.suite.version>1.0.0-M3</sos.test.suite.version>
     </properties>
     <build>
         <finalName>${conf.sos.name}</finalName>

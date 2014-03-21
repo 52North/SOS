@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.ds.hibernate;
 
 import static org.n52.sos.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
@@ -58,6 +123,7 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.response.DescribeSensorResponse;
+import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.service.operator.ServiceOperatorKey;
 
 import com.google.common.collect.Lists;
@@ -111,6 +177,15 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
         }
     }
 
+    @Override
+    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
+            throws OwsExceptionReport {
+        super.setOperationsMetadata(opsMeta, service, version);
+        if (version.equals(Sos2Constants.SERVICEVERSION)) {
+            opsMeta.addAnyParameterValue(Sos2Constants.DescribeSensorParams.validTime);
+        }
+    }
+
     /**
      * Get procedure description for non transactional SOS
      * 
@@ -132,8 +207,13 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
                     new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
                     INTERNAL_SERVER_ERROR);
         }
-        return convertProcedureDescription(procedureConverter.createSosProcedureDescription(procedure, request.getProcedureDescriptionFormat(),
-                request.getVersion(), session), request);
+        if (request.isSetRequestedLanguage()) {
+            return procedureConverter.createSosProcedureDescription(procedure, request.getProcedureDescriptionFormat(),
+                    request.getVersion(), request.getRequestedLanguage(), session);
+        } else {
+            return procedureConverter.createSosProcedureDescription(procedure, request.getProcedureDescriptionFormat(),
+                    request.getVersion(), session);
+        }
     }
 
     /**
@@ -159,29 +239,29 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
             List<ValidProcedureTime> validProcedureTimes =
                     new ValidProcedureTimeDAO().getValidProcedureTimes(procedure, possibleProcedureDescriptionFormats,
                             request.getValidTime(), session);
+            String requestedLanguage = ServiceConfiguration.getInstance().getDefaultLanguage();
+            if (request.isSetRequestedLanguage()) {
+                requestedLanguage = request.getRequestedLanguage();
+            }
             for (ValidProcedureTime validProcedureTime : validProcedureTimes) {
                 SosProcedureDescription sosProcedureDescription =
                         procedureConverter.createSosProcedureDescriptionFromValidProcedureTime(procedure,
-                                validProcedureTime, request.getVersion(), session);
+                                validProcedureTime, request.getVersion(), requestedLanguage, session);
                 list.add(convertProcedureDescription(sosProcedureDescription, request));
             }
         } else {
-            if (!request.isSetValidTime()) {
-                throw new NoApplicableCodeException().causedBy(
-                        new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
-                        INTERNAL_SERVER_ERROR);
+            SosProcedureDescription procedureDescription = getProcedureDescription(request, session);
+            if (procedureDescription != null) {
+                list.add(procedureDescription);
+            } else {
+                if (!request.isSetValidTime()) {
+                    throw new NoApplicableCodeException().causedBy(
+                            new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
+                            INTERNAL_SERVER_ERROR);
+                }
             }
         }
         return list;
-    }
-
-    @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
-            throws OwsExceptionReport {
-        super.setOperationsMetadata(opsMeta, service, version);
-        if (version.equals(Sos2Constants.SERVICEVERSION)) {
-            opsMeta.addAnyParameterValue(Sos2Constants.DescribeSensorParams.validTime);
-        }
     }
 
     /**

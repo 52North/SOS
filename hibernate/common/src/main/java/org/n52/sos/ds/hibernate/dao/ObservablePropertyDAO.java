@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * @author CarstenHollmann
  * @since 4.0.0
  */
-public class ObservablePropertyDAO {
+public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservablePropertyDAO.class);
 
@@ -238,21 +238,20 @@ public class ObservablePropertyDAO {
             final Session session) {
         final List<String> identifiers = new ArrayList<String>(observableProperty.size());
         for (final OmObservableProperty sosObservableProperty : observableProperty) {
-            identifiers.add(sosObservableProperty.getIdentifier());
+            identifiers.add(sosObservableProperty.getIdentifierCodeWithAuthority().getValue());
         }
         final List<ObservableProperty> obsProps = getObservableProperties(identifiers, session);
         for (final OmObservableProperty sosObsProp : observableProperty) {
             boolean exists = false;
             for (final ObservableProperty obsProp : obsProps) {
-                if (obsProp.getIdentifier().equals(sosObsProp.getIdentifier())) {
+                if (obsProp.getIdentifier().equals(sosObsProp.getIdentifierCodeWithAuthority())) {
                     exists = true;
                     break;
                 }
             }
             if (!exists) {
                 final ObservableProperty obsProp = new ObservableProperty();
-                obsProp.setIdentifier(sosObsProp.getIdentifier());
-                obsProp.setDescription(sosObsProp.getDescription());
+                addIdentifierNameDescription(sosObsProp, obsProp, session);
                 session.save(obsProp);
                 session.flush();
                 session.refresh(obsProp);

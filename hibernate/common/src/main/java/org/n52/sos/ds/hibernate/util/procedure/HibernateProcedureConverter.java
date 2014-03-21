@@ -26,15 +26,77 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.ds.hibernate.util.procedure;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Map;
 
 import org.hibernate.Session;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.n52.sos.convert.Converter;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.convert.ConverterRepository;
@@ -50,7 +112,6 @@ import org.n52.sos.ds.hibernate.util.procedure.create.XmlStringDescriptionCreati
 import org.n52.sos.ds.hibernate.util.procedure.enrich.ProcedureDescriptionEnrichments;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
@@ -117,7 +178,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
     public SosProcedureDescription createSosProcedureDescription(
             Procedure procedure,
             String requestedDescriptionFormat, String requestedServiceVersion,
-            Map<String, Procedure> loadedProcedures, Session session) throws
+            Map<String, Procedure> loadedProcedures, String i18n, Session session) throws
             OwsExceptionReport {
         if (procedure == null) {
             throw new NoApplicableCodeException()
@@ -127,10 +188,10 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
         final String descriptionFormat = getFormat(procedure);
         checkOutputFormatWithDescriptionFormat(procedure, requestedDescriptionFormat, descriptionFormat);
 
-        SosProcedureDescription desc = create(procedure, null, session).orNull();
+        SosProcedureDescription desc = create(procedure, null, i18n, session).orNull();
         if (desc != null) {
             enrich(desc, procedure, requestedServiceVersion,
-                   descriptionFormat, null, loadedProcedures, session);
+                   descriptionFormat, null, loadedProcedures, i18n, session);
             if (!requestedDescriptionFormat.equals(descriptionFormat)) {
                 desc = convert(descriptionFormat, requestedDescriptionFormat, desc);
             }
@@ -153,16 +214,26 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      * @throws OwsExceptionReport If an error occurs
      */
     public SosProcedureDescription createSosProcedureDescriptionFromValidProcedureTime(
-            Procedure procedure, ValidProcedureTime vpt, String version, Session session)
+            Procedure procedure, ValidProcedureTime vpt, String version, String i18n, Session session)
             throws OwsExceptionReport {
         String descriptionFormat = getFormat(vpt);
-        Optional<SosProcedureDescription> description = create(procedure, vpt, session);
+        Optional<SosProcedureDescription> description = create(procedure, vpt, i18n, session);
         if (description.isPresent()) {
             enrich(description.get(), procedure, version, descriptionFormat,
-                   getValidTime(vpt), null, session);
+                   getValidTime(vpt), null, i18n, session);
             description.get().setDescriptionFormat(descriptionFormat);
         }
         return description.orNull();
+    }
+
+    public SosProcedureDescription createSosProcedureDescription(Procedure procedure,
+            String requestedDescriptionFormat, String requestedServiceVersion, String i18n, Session session) throws OwsExceptionReport {
+        return createSosProcedureDescription(procedure,
+                requestedDescriptionFormat,
+                requestedServiceVersion,
+                null,
+                i18n,
+                session);
     }
 
     protected TimePeriod getValidTime(ValidProcedureTime validProcedureTime) {
@@ -213,10 +284,10 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
         return ConverterRepository.getInstance().hasConverter(from, to);
     }
 
-    private Optional<SosProcedureDescription> create(Procedure procedure, ValidProcedureTime vpt, Session session) throws OwsExceptionReport {
+    private Optional<SosProcedureDescription> create(Procedure procedure, ValidProcedureTime vpt, String i18n, Session session) throws OwsExceptionReport {
         Optional<DescriptionCreationStrategy> strategy = getCreationStrategy(procedure, vpt);
         if (strategy.isPresent()) {
-            return Optional.fromNullable(strategy.get().create(procedure, session));
+            return Optional.fromNullable(strategy.get().create(procedure, i18n, session));
         } else {
             return Optional.absent();
         }
@@ -246,25 +317,27 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      * @param version   the version
      * @param format    the format
      * @param cache     the procedure cache
+     * @param language  the language
      * @param session   the session
      *
      * @see HibernateProcedureEnrichment
      * @throws OwsExceptionReport if the enrichment fails
      */
     private void enrich(SosProcedureDescription desc, Procedure procedure,
-                        String version, String format, TimePeriod validTime,
-                        Map<String, Procedure> cache,
-                        Session session) throws OwsExceptionReport {
+                String version, String format, TimePeriod validTime,
+                Map<String, Procedure> cache, String language,
+                Session session) throws OwsExceptionReport {
         ProcedureDescriptionEnrichments enrichments
-                = ProcedureDescriptionEnrichments.create()
-                .setIdentifier(procedure.getIdentifier())
-                .setVersion(version)
-                .setDescription(desc)
-                .setProcedureDescriptionFormat(format)
-                .setSession(session)
-                .setValidTime(validTime)
-                .setProcedureCache(cache)
-                .setConverter(this);
+            = ProcedureDescriptionEnrichments.create()
+            .setIdentifier(procedure.getIdentifier())
+            .setVersion(version)
+            .setDescription(desc)
+            .setProcedureDescriptionFormat(format)
+            .setSession(session)
+            .setValidTime(validTime)
+            .setProcedureCache(cache)
+            .setConverter(this)
+            .setLanguage(language);
         if (desc instanceof SensorML && ((SensorML) desc).isWrapper()) {
             enrichments.setDescription(desc).createValidTimeEnrichment().enrich();
             for (AbstractProcess abstractProcess : ((SensorML) desc).getMembers()) {

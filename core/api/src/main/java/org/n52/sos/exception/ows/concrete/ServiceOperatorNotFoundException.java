@@ -47,7 +47,7 @@ public class ServiceOperatorNotFoundException extends NoApplicableCodeException 
      * @param request
      *            The class of the request that could not be handled
      */
-    public ServiceOperatorNotFoundException(final AbstractServiceRequest request) {
+    public ServiceOperatorNotFoundException(final AbstractServiceRequest<?> request) {
         withMessage("Submission of SOS core request '%s' failed. Could not get request operator for request type.",
                 request != null ? request.getClass().getName() : null);
         setStatus(INTERNAL_SERVER_ERROR);

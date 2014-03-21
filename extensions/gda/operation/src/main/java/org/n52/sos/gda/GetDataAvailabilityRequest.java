@@ -31,6 +31,7 @@ package org.n52.sos.gda;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.util.CollectionHelper;
 
@@ -41,7 +42,7 @@ import org.n52.sos.util.CollectionHelper;
  * 
  * @since 4.0.0
  */
-public class GetDataAvailabilityRequest extends AbstractServiceRequest {
+public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAvailabilityResponse> {
 
     private final List<String> procedures = new LinkedList<String>();
 
@@ -138,5 +139,10 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest {
     
     public boolean isSetOfferings() {
         return CollectionHelper.isNotEmpty(getOfferings());
+    }
+
+    @Override
+    public GetDataAvailabilityResponse getResponse() throws OwsExceptionReport {
+        return (GetDataAvailabilityResponse) new GetDataAvailabilityResponse().set(this);
     }
 }

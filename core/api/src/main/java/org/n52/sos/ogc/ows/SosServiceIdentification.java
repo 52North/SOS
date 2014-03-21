@@ -30,12 +30,16 @@ package org.n52.sos.ogc.ows;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
@@ -44,8 +48,12 @@ import org.n52.sos.util.StringHelper;
 public class SosServiceIdentification {
     private XmlObject serviceIdentification;
 
-    private String title;
+    private List<OwsLanguageString> titles = Lists.newArrayList();
 
+    private List<OwsLanguageString> abstracts = Lists.newArrayList();
+    
+    private String title;
+    
     private String abstrakt;
 
     private String serviceType;
@@ -54,7 +62,7 @@ public class SosServiceIdentification {
 
     private String fees;
 
-    private String accessConstraints;
+    private SortedSet<String> accessConstraints = new TreeSet<String>();
 
     private final SortedSet<String> versions = new TreeSet<String>();
 
@@ -116,27 +124,75 @@ public class SosServiceIdentification {
     }
 
     public String getTitle() {
+        if (Strings.isNullOrEmpty(title) && hasTitles()) {
+            return getTitles().iterator().next().getValue();
+        }
         return title;
     }
 
     public boolean hasTitle() {
-        return StringHelper.isNotEmpty(getTitle());
+        return StringHelper.isNotEmpty(getTitle()) || hasTitles();
     }
 
     public void setTitle(final String title) {
         this.title = title;
+        addTitle(new OwsLanguageString(title));
     }
 
     public String getAbstract() {
+        if (Strings.isNullOrEmpty(abstrakt) && hasAbstracts()) {
+            return getAbstracts().iterator().next().getValue();
+        }
         return abstrakt;
     }
 
     public boolean hasAbstract() {
-        return StringHelper.isNotEmpty(getAbstract());
+        return StringHelper.isNotEmpty(getAbstract()) || hasAbstracts();
     }
 
     public void setAbstract(final String abstrakt) {
         this.abstrakt = abstrakt;
+        addAbstract(new OwsLanguageString(abstrakt));
+    }
+    
+    public List<OwsLanguageString> getTitles() {
+        return titles;
+    }
+
+    public boolean hasTitles() {
+        return CollectionHelper.isNotEmpty(getTitles());
+    }
+    
+    public void setTitles(List<OwsLanguageString> titles) {
+        getTitles().addAll(titles);
+    }
+    
+    public void addTitle(OwsLanguageString title) {
+        getTitles().add(title);
+    }
+    
+    public void clearTitles() {
+        getTitles().clear();
+    }
+ 
+    public List<OwsLanguageString> getAbstracts() {
+        return abstracts;
+    }
+
+    public boolean hasAbstracts() {
+        return CollectionHelper.isNotEmpty(getAbstracts());
+    }
+    
+    public void setAbstracts(List<OwsLanguageString> abstrakts) {
+        getAbstracts().addAll(abstrakts);
+    }
+    
+    public void addAbstract(OwsLanguageString abstrakt) {
+        getAbstracts().add(abstrakt);
+    }
+    
+    public void clearAbstracts() {
+        getAbstracts().clear();
     }
 
     public String getServiceType() {
@@ -175,15 +231,19 @@ public class SosServiceIdentification {
         this.fees = fees;
     }
 
-    public String getAccessConstraints() {
+    public SortedSet<String> getAccessConstraints() {
         return accessConstraints;
     }
 
     public boolean hasAccessConstraints() {
-        return StringHelper.isNotEmpty(getAccessConstraints());
+        return CollectionHelper.isNotEmpty(getAccessConstraints());
     }
 
-    public void setAccessConstraints(final String accessConstraints) {
-        this.accessConstraints = accessConstraints;
+    public void setAccessConstraints(Collection<String> accessConstraints) {
+        this.accessConstraints.addAll(accessConstraints);
+    }
+    
+    public void addAccessConstraint(final String accessConstraints) {
+        this.accessConstraints.add(accessConstraints);
     }
 }

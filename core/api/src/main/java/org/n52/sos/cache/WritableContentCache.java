@@ -69,7 +69,7 @@ public interface WritableContentCache extends ContentCache {
      *            the observation types
      */
     void addAllowedObservationTypesForOffering(String offering, Collection<String> allowedObservationTypes);
-    
+
     /**
      * Allow the specified featureOfInterest type for the passed offering.
      * 
@@ -242,9 +242,10 @@ public interface WritableContentCache extends ContentCache {
      *            the observation type
      */
     void addObservationTypesForOffering(String offering, String observationType);
-    
+
     /**
-     * Associate the specified featureOfInterest type with the specified offering.
+     * Associate the specified featureOfInterest type with the specified
+     * offering.
      * 
      * @param offering
      *            the offering
@@ -608,6 +609,28 @@ public interface WritableContentCache extends ContentCache {
     void removeNameForOffering(String offering);
 
     /**
+     * Remove the name for the specified language (not null) and the specified
+     * offering or all names for the specified offering.
+     * 
+     * @param offering
+     *            the offering
+     * @param i18n
+     *            the language
+     */
+    void removeI18nNameForOffering(String offering, String i18n);
+
+    /**
+     * Remove the description for the specified language (not null) and the
+     * specified offering or all descriptions for the specified offering.
+     * 
+     * @param offering
+     *            the offering
+     * @param i18n
+     *            the language
+     */
+    void removeI18nDescriptionForOffering(String offering, String i18n);
+
+    /**
      * Dissociate all observable properties with the specified composite
      * phenomenon.
      * 
@@ -719,7 +742,8 @@ public interface WritableContentCache extends ContentCache {
     void removeObservationIdentifiersForProcedure(String procedure);
 
     /**
-     * Dissociate the specified featureOfInterest type with the specified offering.
+     * Dissociate the specified featureOfInterest type with the specified
+     * offering.
      * 
      * @param offering
      *            the offering
@@ -735,7 +759,7 @@ public interface WritableContentCache extends ContentCache {
      *            the offering
      */
     void removeFeatureOfInterestTypesForOffering(String offering);
-    
+
     /**
      * Dissociate the specified observation type with the specified offering.
      * 
@@ -961,7 +985,7 @@ public interface WritableContentCache extends ContentCache {
      *            the allowed observation types
      */
     void setAllowedObservationTypeForOffering(String offering, Collection<String> allowedObservationTypes);
-    
+
     /**
      * Sets the allowed featureOfInterest types for the specified offering.
      * 
@@ -1264,6 +1288,31 @@ public interface WritableContentCache extends ContentCache {
     void setNameForOffering(String offering, String name);
 
     /**
+     * Sets the name of the specified language and the specified offering.
+     * 
+     * @param offering
+     *            the offering
+     * @param name
+     *            the name
+     * @param i18n
+     *            the language
+     */
+    void setI18nNameForOffering(String offering, String name, String i18n);
+
+    /**
+     * Sets the description of the specified language and the specified
+     * offering.
+     * 
+     * @param offering
+     *            the offering
+     * @param name
+     *            the description
+     * @param i18n
+     *            the language
+     */
+    void setI18nDescriptionForOffering(String offering, String description, String i18n);
+
+    /**
      * Sets the observable properties for the specified composite phenomenon.
      * 
      * @param compositePhenomenon
@@ -1331,7 +1380,7 @@ public interface WritableContentCache extends ContentCache {
      *            the observation types
      */
     void setObservationTypesForOffering(String offering, Collection<String> observationTypes);
-    
+
     /**
      * Sets the featureOfInterest types for the specified offering.
      * 
@@ -1477,6 +1526,16 @@ public interface WritableContentCache extends ContentCache {
     void clearNameForOfferings();
 
     /**
+     * Reset the offering to language and offering name relation.
+     */
+    void clearI18nNamesForOfferings();
+
+    /**
+     * Reset the offering to language offering description relation.
+     */
+    void clearI18nDescriptionsNameForOfferings();
+
+    /**
      * Reset the offering to observable property relation.
      */
     void clearObservablePropertiesForOfferings();
@@ -1580,4 +1639,34 @@ public interface WritableContentCache extends ContentCache {
      *            the offerings
      */
     void removeOfferings(Collection<String> offerings);
+
+    /**
+     * Add the specified language.
+     * 
+     * @param language
+     *            the new language
+     */
+    void addSupportedLanguage(String language);
+
+    /**
+     * Add the specified languages.
+     * 
+     * @param languages
+     *            the new languages
+     */
+    void addSupportedLanguage(Collection<String> languages);
+
+    /**
+     * Clear the specified languages.
+     * 
+     */
+    void clearSupportedLanguage();
+
+    /**
+     * Remove the specified language.
+     * 
+     * @param language
+     *            the new language to remove
+     */
+    void removeSupportedLanguage(String language);
 }

@@ -26,28 +26,91 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
 
 /**
  * @since 4.0.0
  * 
  */
-public class Offering implements Serializable, HasIdentifier, HasName {
+public class Offering extends AbstractIdentifierNameDescriptionEntity implements Serializable,
+        HasDisabledFlag {
 
     private static final long serialVersionUID = 6512574941388917166L;
 
     public static final String ID = "offeringId";
 
     private long offeringId;
-
-    private String identifier;
-
-    private String name;
+    
+    private Boolean disabled = false;
 
     public long getOfferingId() {
         return this.offeringId;
@@ -56,30 +119,21 @@ public class Offering implements Serializable, HasIdentifier, HasName {
     public void setOfferingId(long offeringId) {
         this.offeringId = offeringId;
     }
-
+    
     @Override
-    public String getIdentifier() {
-        return this.identifier;
-    }
-
-    @Override
-    public Offering setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public HasDisabledFlag setDisabled(final boolean disabled) {
+        this.disabled = disabled;
         return this;
     }
 
     @Override
-    public String getName() {
-        return this.name;
+    public boolean getDisabled() {
+        return disabled;
     }
 
     @Override
-    public void setName(String name) {
-        this.name = name;
+    public boolean isDisabled() {
+        return getDisabled();
     }
 
-    @Override
-    public String toString() {
-        return "Offering [identifier=" + identifier + "]";
-    }
 }

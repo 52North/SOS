@@ -390,10 +390,10 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
             assertTrue(
                     "single \"offering -> related features relation\" NOT in cache",
                     getCache().getRelatedFeaturesForOffering(getAssignedOfferingId()).contains(
-                            relatedFeature.getFeature().getIdentifier().getValue()));
+                            relatedFeature.getFeature().getIdentifierCodeWithAuthority().getValue()));
 
             assertTrue("single \"related feature -> role relation\" NOT in cache",
-                    getCache().getRolesForRelatedFeature(relatedFeature.getFeature().getIdentifier().getValue())
+                    getCache().getRolesForRelatedFeature(relatedFeature.getFeature().getIdentifierCodeWithAuthority().getValue())
                             .contains(relatedFeature.getRole()));
         }
     }
@@ -978,7 +978,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
     private String getFoiIdFromInsertObservationRequest() {
         return ((InsertObservationRequest) request).getObservations().get(0).getObservationConstellation()
-                .getFeatureOfInterest().getIdentifier().getValue();
+                .getFeatureOfInterest().getIdentifierCodeWithAuthority().getValue();
     }
 
     private void insertObservationRequestExample(String procedure) {

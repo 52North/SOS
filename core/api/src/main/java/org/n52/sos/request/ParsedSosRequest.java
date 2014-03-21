@@ -28,16 +28,21 @@
  */
 package org.n52.sos.request;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.sos.response.DummyResponse;
+
 /**
  * Parsed SOS request, used for GetResult requests
  * 
  * @since 4.0.0
  */
-public class ParsedSosRequest extends AbstractServiceRequest {
+public class ParsedSosRequest extends AbstractServiceRequest<AbstractServiceResponse> {
 
     /**
      * The SOS request
      */
+    @SuppressWarnings("rawtypes")
     private AbstractServiceRequest request;
 
     /**
@@ -50,6 +55,7 @@ public class ParsedSosRequest extends AbstractServiceRequest {
      * 
      * @return SOS request
      */
+    @SuppressWarnings("rawtypes")
     public AbstractServiceRequest getRequest() {
         return request;
     }
@@ -60,6 +66,7 @@ public class ParsedSosRequest extends AbstractServiceRequest {
      * @param request
      *            SOS request
      */
+    @SuppressWarnings("rawtypes")
     public void setRequest(AbstractServiceRequest request) {
         this.request = request;
     }
@@ -78,13 +85,20 @@ public class ParsedSosRequest extends AbstractServiceRequest {
      * 
      * @param version
      *            SOS version
+     * @return this
      */
-    public void setVersion(String version) {
+    public ParsedSosRequest setVersion(String version) {
         this.version = version;
+        return this;
     }
 
     @Override
     public String getOperationName() {
         return request.getOperationName();
+    }
+
+    @Override
+    public AbstractServiceResponse getResponse() throws OwsExceptionReport {
+        return (AbstractServiceResponse) new DummyResponse().setOperationName(getOperationName()).set(this).setVersion(getVersion());
     }
 }

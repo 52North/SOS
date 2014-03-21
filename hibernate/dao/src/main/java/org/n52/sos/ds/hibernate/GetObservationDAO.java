@@ -246,7 +246,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         
         int metadataObservationsCount = 0;
         
-        List<OmObservation> result = toSosObservation(observations, request.getVersion(), request.getResultModel(), session);
+        List<OmObservation> result = toSosObservation(observations, request.getVersion(), request.getResultModel(), getLanguage(request), session);
         Set<OmObservationConstellation> timeSeries = Sets.newHashSet();
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowMetadataOfEmptyObservations() || Integer.MAX_VALUE != ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries()) {
             for (OmObservation omObservation : result) {
@@ -259,7 +259,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             for (ObservationConstellation oc : getAndCheckObservationConstellationSize(request, session)) {
                 final List<String> featureIds = getAndCheckFeatureOfInterest(oc, features, session);
                 for (OmObservation omObservation : HibernateObservationUtilities.createSosObservationFromObservationConstellation(oc,
-                        featureIds, request.getVersion(), session)) {
+                        featureIds, request.getVersion(), getLanguage(request), session)) {
                     if (!timeSeries.contains(omObservation.getObservationConstellation())) {
                         result.add(omObservation);
                         timeSeries.add(omObservation.getObservationConstellation());
@@ -267,7 +267,6 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                 }
             }
         }
-        
         checkMaxNumberOfReturnedSeriesSize(timeSeries.size() +  metadataObservationsCount);
         checkMaxNumberOfReturnedValues(observations.size());
         LOGGER.debug("Time to query observations needed {} ms!", (System.currentTimeMillis() - start));
@@ -358,7 +357,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             metadataObservationsCount = seriesToCheckMap.size();
             for (Series series : seriesToCheckMap.values()) {
                 result.addAll(HibernateObservationUtilities.createSosObservationFromSeries(series,
-                        request.getVersion(), session));
+                        request.getVersion(), getLanguage(request), session));
             }
         }
         checkMaxNumberOfReturnedTimeSeries(seriesObservations, metadataObservationsCount);
@@ -367,7 +366,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
         Collection<AbstractObservation> abstractObservations = Lists.newArrayList();
         abstractObservations.addAll(seriesObservations);
-        result.addAll(toSosObservation(abstractObservations, request.getVersion(), request.getResultModel(), session));
+        result.addAll(toSosObservation(abstractObservations, request.getVersion(), request.getResultModel(), getLanguage(request), session));
         return result;
     }
 
@@ -446,7 +445,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
      *             If an error occurs during the conversion
      */
     protected List<OmObservation> toSosObservation(final Collection<AbstractObservation> observations,
-            final String version, final String resultModel, final Session session) throws OwsExceptionReport,
+            final String version, final String resultModel, final String language ,final Session session) throws OwsExceptionReport,
             ConverterException {
         if (!observations.isEmpty()) {
             Map<Long, AbstractSpatialFilteringProfile> spatialFilteringProfile = Maps.newHashMap();
@@ -461,7 +460,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             final List<OmObservation> sosObservations =
                     HibernateObservationUtilities.createSosObservationsFromObservations(
                             new HashSet<AbstractObservation>(observations), spatialFilteringProfile, version,
-                            resultModel, session);
+                            resultModel, language, session);
             LOGGER.debug("Time to process observations needs {} ms!", (System.currentTimeMillis() - startProcess));
             return sosObservations;
         } else {

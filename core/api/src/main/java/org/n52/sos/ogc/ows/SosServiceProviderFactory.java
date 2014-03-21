@@ -183,4 +183,10 @@ public class SosServiceProviderFactory extends LazyThreadSafeProducer<SosService
         }
         return serviceProvider;
     }
+
+    @Override
+    protected SosServiceProvider create(String language) throws ConfigurationException {
+        // No language support
+        return create();
+    }
 }

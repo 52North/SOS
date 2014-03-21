@@ -204,7 +204,7 @@ public interface SosConstants {
     enum DescribeSensorParams {
         procedure;
     }
-
+    
     enum SosIndeterminateTime {
         first, latest;
 

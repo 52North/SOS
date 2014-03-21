@@ -47,7 +47,7 @@ public class SoapChain {
 
     private final HttpServletResponse httpResponse;
 
-    private AbstractServiceRequest bodyRequest;
+    private AbstractServiceRequest<?> bodyRequest;
 
     private AbstractServiceResponse bodyResponse;
 
@@ -60,7 +60,7 @@ public class SoapChain {
         this.httpResponse = httpResponse;
     }
 
-    public AbstractServiceRequest getBodyRequest() {
+    public AbstractServiceRequest<?> getBodyRequest() {
         return bodyRequest;
     }
 
@@ -68,7 +68,7 @@ public class SoapChain {
         return getBodyRequest() != null;
     }
 
-    public void setBodyRequest(AbstractServiceRequest bodyRequest) {
+    public void setBodyRequest(AbstractServiceRequest<?> bodyRequest) {
         this.bodyRequest = bodyRequest;
     }
 

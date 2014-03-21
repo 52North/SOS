@@ -26,9 +26,83 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.ogc.swe;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.StringHelper;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
@@ -47,6 +121,11 @@ public abstract class SweAbstractDataComponent {
      * optional: swe:label [0..1]
      */
     private String label;
+    
+    /**
+     * optional: gml:name [0..*] (SweCommon 1.0.1)
+     */
+    private List<CodeType> names = Lists.newArrayList();
 
     /**
      * optional: swe:identifier [0..1]
@@ -67,7 +146,25 @@ public abstract class SweAbstractDataComponent {
     }
 
     public String getLabel() {
-        return label;
+        if (StringHelper.isNotEmpty(label)) {
+            return label;   
+        } else if (isSetNames()) {
+           return getName().getValue();
+        }
+        return null;
+    }
+    
+    public CodeType getName() {
+        if (isSetNames()) {
+            return getNames().iterator().next();
+        } else if (StringHelper.isNotEmpty(label)) {
+            return new CodeType(getLabel());   
+        }
+        return null;
+    }
+    
+    public List<CodeType> getNames() {
+        return names;
     }
 
     public String getIdentifier() {
@@ -86,6 +183,39 @@ public abstract class SweAbstractDataComponent {
 
     public SweAbstractDataComponent setLabel(final String label) {
         this.label = label;
+        return this;
+    }
+    
+    public SweAbstractDataComponent addName(final String name) {
+        getNames().add(new CodeType(name));
+        return this;
+    }
+    
+    public SweAbstractDataComponent addName(final CodeType name) {
+        getNames().add(name);
+        return this;
+    }
+    
+    public SweAbstractDataComponent addName(final Collection<CodeType> names) {
+        getNames().addAll(names);
+        return this;
+    }
+    
+    public SweAbstractDataComponent setName(final String name) {
+        getNames().clear();
+        getNames().add(new CodeType(name));
+        return this;
+    }
+    
+    public SweAbstractDataComponent setName(final CodeType name) {
+        getNames().clear();
+        getNames().add(name);
+        return this;
+    }
+    
+    public SweAbstractDataComponent setName(final Collection<CodeType> names) {
+        getNames().clear();
+        getNames().addAll(names);
         return this;
     }
 
@@ -112,7 +242,15 @@ public abstract class SweAbstractDataComponent {
     }
 
     public boolean isSetLabel() {
-        return label != null && !label.isEmpty();
+        return StringHelper.isNotEmpty(getLabel());
+    }
+    
+    public boolean isSetName() {
+        return getName() != null && getName().isSetValue();
+    }
+    
+    public boolean isSetNames() {
+        return CollectionHelper.isNotEmpty(getNames());
     }
 
     public boolean isSetIdentifier() {
@@ -125,12 +263,7 @@ public abstract class SweAbstractDataComponent {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int hash = 7;
-        hash = prime * hash + (getDefinition() != null ? getDefinition().hashCode() : 0);
-        hash = prime * hash + (getDescription() != null ? getDescription().hashCode() : 0);
-        hash = prime * hash + (getIdentifier() != null ? getIdentifier().hashCode() : 0);
-        return hash;
+        return Objects.hashCode(31, 7, getDefinition(), getDescription(), getIdentifier());
     }
 
     @Override

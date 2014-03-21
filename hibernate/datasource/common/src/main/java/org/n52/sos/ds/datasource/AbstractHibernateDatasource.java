@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.ds.datasource;
 
 import java.io.File;
@@ -128,6 +193,14 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     protected static final boolean SPATIAL_FILTERING_PROFILE_DEFAULT_VALUE = true;
 
+    protected static final String MULTI_LANGUAGE_TITLE = "Multi language support";
+
+    protected static final String MULTI_LANGUAGE_DESCRIPTION = "Should the database support multi language?";
+
+    protected static final String MULTI_LANGUAGE_KEY = "sos.language";
+
+    protected static final boolean MULTI_LANGUAGE_DEFAULT_VALUE = false;
+
     protected static final String USERNAME_KEY = HibernateConstants.CONNECTION_USERNAME;
 
     protected static final String PASSWORD_KEY = HibernateConstants.CONNECTION_PASSWORD;
@@ -180,6 +253,10 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
             createSpatialFilteringProfileDefinition();
 
     private boolean spatialFilteringProfileDatasource = true;
+
+    private final BooleanSettingDefinition mulitLanguageDefinition = createMultiLanguageDefinition();
+
+    private boolean multiLanguageDatasource = true;
 
     /**
      * Create settings definition for username
@@ -278,6 +355,12 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
                 .setKey(SPATIAL_FILTERING_PROFILE_KEY);
     }
 
+    protected BooleanSettingDefinition createMultiLanguageDefinition() {
+        return new BooleanSettingDefinition().setDefaultValue(MULTI_LANGUAGE_DEFAULT_VALUE)
+                .setTitle(MULTI_LANGUAGE_TITLE).setDescription(MULTI_LANGUAGE_DESCRIPTION).setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_3).setKey(MULTI_LANGUAGE_KEY);
+    }
+
     /**
      * Create settings definition for JDBC driver
      * 
@@ -347,6 +430,12 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
             Boolean transactional = (Boolean) settings.get(this.transactionalDefiniton.getKey());
             if (transactional != null && transactional.booleanValue()) {
                 config.addDirectory(resource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH));
+            }
+        }
+        if (isMultiLanguageDatasource()) {
+            Boolean multiLanguage = (Boolean) settings.get(this.mulitLanguageDefinition.getKey());
+            if (multiLanguage != null && multiLanguage.booleanValue()) {
+                config.addDirectory(resource(HIBERNATE_MAPPING_I18N_PATH));
             }
         }
         if (isSetSchema(settings)) {
@@ -695,6 +784,13 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
                         HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
             }
         }
+        if (isMultiLanguageDatasource()) {
+            Boolean t = (Boolean) settings.get(mulitLanguageDefinition.getKey());
+            if (t.booleanValue()) {
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
+                        resource(HIBERNATE_MAPPING_I18N_PATH).getAbsolutePath());
+            } 
+        }
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
     }
 
@@ -772,6 +868,15 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
      */
     protected BooleanSettingDefinition getSpatialFilteringProfileDefiniton() {
         return spatialFilteringProfileDefinition;
+    }
+
+    protected boolean isMultiLanguage(Properties properties) {
+        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
+        return p == null || p.contains(HIBERNATE_MAPPING_I18N_PATH);
+    }
+
+    protected BooleanSettingDefinition getMulitLanguageDefiniton() {
+        return mulitLanguageDefinition;
     }
 
     /**
@@ -865,6 +970,21 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
      */
     public void setSpatialFilteringProfile(boolean spatialFilteringProfileDatasource) {
         this.spatialFilteringProfileDatasource = spatialFilteringProfileDatasource;
+    }
+
+    /**
+     * @return the multi language
+     */
+    public boolean isMultiLanguageDatasource() {
+        return multiLanguageDatasource;
+    }
+
+    /**
+     * @param multi
+     *            language the multi language to set
+     */
+    public void setMultiLangugage(boolean multiLanguageDatasource) {
+        this.multiLanguageDatasource = multiLanguageDatasource;
     }
 
     /**

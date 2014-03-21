@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.cache;
 
 import static org.n52.sos.util.MultiMaps.newSynchronizedSetMultiMap;
@@ -362,9 +427,13 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     private Map<String, SosEnvelope> envelopeForOfferings = newSynchronizedMap();
 
     private Map<String, String> nameForOfferings = newSynchronizedMap();
+    
+    private Map<String, Map<String, String>> i18nNameForOfferings = newSynchronizedMap();
+    
+    private Map<String, Map<String, String>> i18nDescriptionForOfferings = newSynchronizedMap();
 
     private Set<Integer> epsgCodes = newSynchronizedSet();
-
+    
     private Set<String> featuresOfInterest = newSynchronizedSet();
 
     private Set<String> observationIdentifiers = newSynchronizedSet();
@@ -382,6 +451,8 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     private TimePeriod globalResultTimeEnvelope = new TimePeriod();
 
     private Map<String, SosEnvelope> spatialFilteringProfileEnvelopeForOfferings = newSynchronizedMap();
+    
+    private Set<String> supportedLanguages = newSynchronizedSet();
 
     /**
      * @return the relating offering -> max phenomenon time
@@ -599,6 +670,20 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     protected Map<String, String> getNameForOfferingsMap() {
         return this.nameForOfferings;
     }
+    
+    /**
+     * @return the relating offering -> language / offering name 
+     */
+    protected Map<String,  Map<String, String>> getI18nNameForOfferingsMap() {
+        return this.i18nNameForOfferings;
+    }
+    
+    /**
+     * @return the relating offering -> language / offering description
+     */
+    protected Map<String,  Map<String, String>> getI18nDescriptionForOfferingsMap() {
+        return this.i18nDescriptionForOfferings;
+    }
 
     /**
      * @return the relating procedure -> observable properties
@@ -627,7 +712,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     protected Set<Integer> getEpsgCodesSet() {
         return this.epsgCodes;
     }
-
+    
     /**
      * @return the features of interest
      */
@@ -694,6 +779,10 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
         }
         this.globalEnvelope = envelope;
     }
+    
+    protected Set<String> getSupportedLanguageSet() {
+        return this.supportedLanguages;
+    }
 
     /**
      * @param defaultEpsgCode
@@ -707,6 +796,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     public int getDefaultEPSGCode() {
         return this.defaultEpsgCode;
     }
+    
 
     @Override
     public int hashCode() {
@@ -721,9 +811,9 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                 parentFeaturesForFeaturesOfInterest, parentProceduresForProcedures, proceduresForFeaturesOfInterest,
                 proceduresForObservableProperties, proceduresForOfferings, hiddenChildProceduresForOfferings,
                 relatedFeaturesForOfferings, resultTemplatesForOfferings, rolesForRelatedFeatures,
-                envelopeForOfferings, nameForOfferings, epsgCodes, featuresOfInterest, observationIdentifiers,
+                envelopeForOfferings, nameForOfferings, i18nNameForOfferings, i18nDescriptionForOfferings, epsgCodes, featuresOfInterest, observationIdentifiers,
                 procedures, resultTemplates, offerings, globalEnvelope, globalResultTimeEnvelope,
-                globalPhenomenonTimeEnvelope);
+                globalPhenomenonTimeEnvelope, supportedLanguages);
     }
 
     @Override
@@ -778,6 +868,8 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                     && Objects.equal(this.rolesForRelatedFeatures, other.getRolesForRelatedFeaturesMap())
                     && Objects.equal(this.envelopeForOfferings, other.getEnvelopeForOfferingsMap())
                     && Objects.equal(this.nameForOfferings, other.getNameForOfferingsMap())
+                    && Objects.equal(this.i18nNameForOfferings, other.getI18nNameForOfferingsMap())
+                    && Objects.equal(this.i18nDescriptionForOfferings, other.getI18nDescriptionForOfferingsMap())
                     && Objects.equal(this.epsgCodes, other.getEpsgCodesSet())
                     && Objects.equal(this.featuresOfInterest, other.getFeaturesOfInterestSet())
                     && Objects.equal(this.observationIdentifiers, other.getObservationIdentifiersSet())
@@ -786,7 +878,8 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                     && Objects.equal(this.globalEnvelope, other.getGlobalEnvelope())
                     && Objects.equal(this.globalPhenomenonTimeEnvelope, other.getGlobalPhenomenonTimeEnvelope())
                     && Objects.equal(this.globalResultTimeEnvelope, other.getGlobalResultTimeEnvelope())
-                    && Objects.equal(this.offerings, other.getOfferingsSet());
+                    && Objects.equal(this.offerings, other.getOfferingsSet())
+                    && Objects.equal(this.supportedLanguages, other.getSupportedLanguages());
         }
         return false;
     }

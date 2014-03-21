@@ -26,10 +26,89 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.service;
 
-import static org.n52.sos.service.MiscSettings.*;
-import static org.n52.sos.service.ServiceSettings.*;
+import static org.n52.sos.service.MiscSettings.CHARACTER_ENCODING;
+import static org.n52.sos.service.MiscSettings.DEFAULT_FEATURE_PREFIX;
+import static org.n52.sos.service.MiscSettings.DEFAULT_OBSERVABLEPROPERTY_PREFIX;
+import static org.n52.sos.service.MiscSettings.DEFAULT_OFFERING_PREFIX;
+import static org.n52.sos.service.MiscSettings.DEFAULT_PROCEDURE_PREFIX;
+import static org.n52.sos.service.MiscSettings.GML_DATE_FORMAT;
+import static org.n52.sos.service.MiscSettings.HTTP_STATUS_CODE_USE_IN_KVP_POX_BINDING;
+import static org.n52.sos.service.MiscSettings.SRS_NAME_PREFIX_SOS_V1;
+import static org.n52.sos.service.MiscSettings.SRS_NAME_PREFIX_SOS_V2;
+import static org.n52.sos.service.ServiceSettings.ADD_OUTPUTS_TO_SENSOR_ML;
+import static org.n52.sos.service.ServiceSettings.ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR;
+import static org.n52.sos.service.ServiceSettings.SENSOR_DIRECTORY;
+import static org.n52.sos.service.ServiceSettings.SERVICE_URL;
+import static org.n52.sos.service.ServiceSettings.STRICT_SPATIAL_FILTERING_PROFILE;
+import static org.n52.sos.service.ServiceSettings.USE_DEFAULT_PREFIXES;
+import static org.n52.sos.service.ServiceSettings.VALIDATE_RESPONSE;
 
 import java.net.URI;
 
@@ -37,6 +116,7 @@ import org.n52.sos.config.SettingsManager;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.i18n.I18NSettings;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.Validation;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -131,6 +211,10 @@ public class ServiceConfiguration {
     private String tupleSeparator;
 
     private boolean deregisterJdbcDriver;
+    
+    private String defaultLanguage;
+    
+    private boolean showAllLanguageValues;
 
     private int maxNumberOfReturnedTimeSeries = Integer.MAX_VALUE;
 
@@ -358,6 +442,30 @@ public class ServiceConfiguration {
 
     public boolean isDeregisterJdbcDriver() {
         return deregisterJdbcDriver;
+    }
+    
+    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
+    public void setDefaultLanguage(final String defaultLanguage) {
+        Validation.notNullOrEmpty("Default language as three character string", defaultLanguage);
+        this.defaultLanguage = defaultLanguage;
+    }
+    
+    public String getDefaultLanguage() {
+        return defaultLanguage;
+    }
+    
+    @Setting(I18NSettings.I18N_SHOW_ALL_LANGUAGE_VALUES)
+    public void setShowAllLanguageValues(final boolean showAllLanguageValues) {
+        this.showAllLanguageValues = showAllLanguageValues;
+    }
+    
+    public boolean isShowAllLanguageValues() {
+        return showAllLanguageValues;
+    }
+
+    public boolean isSetDefaultLanguage() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
     @Setting(MiscSettings.HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES)

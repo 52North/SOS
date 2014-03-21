@@ -26,8 +26,74 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.ogc.swes;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -64,15 +130,44 @@ public class SwesExtensions {
         return false;
     }
 
-    private boolean isExtensionNameEquals(final String extensionName, final SwesExtension<?> swesExtension) {
-        return swesExtension.getDefinition().equalsIgnoreCase(extensionName)
-                || (swesExtension.getValue() instanceof SweAbstractDataComponent
-                        && ((SweAbstractDataComponent) swesExtension.getValue()).isSetDefinition() && ((SweAbstractDataComponent) swesExtension
-                            .getValue()).getDefinition().equalsIgnoreCase(extensionName));
+    public boolean addSwesExtension(final SwesExtension<?> extension) {
+        return getExtensions().add(extension);
+    }
+    
+    public boolean addSwesExtension(final Collection<SwesExtension<?>> extensions) {
+       return getExtensions().addAll(extensions);
     }
 
-    public boolean addSwesExtension(final SwesExtension<?> extension) {
-        return extensions.add(extension);
+    public Set<SwesExtension<?>> getExtensions() {
+        return extensions;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public boolean containsExtension(Enum identifier) {
+        return containsExtension(identifier.name());
+    }
+
+    public boolean containsExtension(String identifier) {
+        for (SwesExtension<?> extension : getExtensions()) {
+            if (isExtensionNameEquals(identifier, extension)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public SwesExtension<?> getExtension(Enum identifier) {
+        return getExtension(identifier.name());
+    }
+
+    public SwesExtension<?> getExtension(String identifier) {
+        for (SwesExtension<?> extension : getExtensions()) {
+            if (isExtensionNameEquals(identifier, extension)) {
+                return extension;
+            }
+        }
+        return null;
     }
 
     public boolean isEmpty() {
@@ -82,6 +177,37 @@ public class SwesExtensions {
     @Override
     public String toString() {
         return String.format("SwesExtensions [extensions=%s]", extensions);
+    }
+
+    private boolean isExtensionNameEquals(final String extensionName, final SwesExtension<?> swesExtension) {
+        return checkSwesExtensionDefinition(extensionName, swesExtension)
+                || checkSwesExtensionIdentifier(extensionName, swesExtension)
+                || checkSweExtensionValue(extensionName, swesExtension);
+    }
+
+    private boolean checkSweExtensionValue(String extensionName, SwesExtension<?> swesExtension) {
+        if (swesExtension.getValue() instanceof SweAbstractDataComponent) {
+            SweAbstractDataComponent sweAbstractDataComponent = (SweAbstractDataComponent) swesExtension.getValue();
+            return (sweAbstractDataComponent.isSetDefinition() && sweAbstractDataComponent.getDefinition()
+                    .equalsIgnoreCase(extensionName))
+                    || (sweAbstractDataComponent.isSetIdentifier() && sweAbstractDataComponent.getIdentifier()
+                            .equalsIgnoreCase(extensionName));
+        }
+        return false;
+    }
+
+    private boolean checkSwesExtensionIdentifier(String extensionName, SwesExtension<?> swesExtension) {
+        if (extensionName != null && swesExtension != null) {
+            return swesExtension.isSetIdentifier() && swesExtension.getIdentifier().equalsIgnoreCase(extensionName);
+        }
+        return false;
+    }
+
+    private boolean checkSwesExtensionDefinition(String extensionName, SwesExtension<?> swesExtension) {
+        if (extensionName != null && swesExtension != null) {
+            return swesExtension.isSetDefinition() && swesExtension.getDefinition().equalsIgnoreCase(extensionName);
+        }
+        return false;
     }
 
 }

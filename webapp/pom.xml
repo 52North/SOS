@@ -206,6 +206,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-feature</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>request-response-coordinate-transformer</artifactId>
+        </dependency>
         <!-- dependencies for integration test -->
         <dependency>
             <groupId>junit</groupId>
@@ -407,6 +411,10 @@
 			<groupId>org.n52.sensorweb.sos</groupId>
 			<artifactId>third-party-ncname-resolver</artifactId>
          </dependency>
+         <dependency>
+	         <groupId>org.reflections</groupId>
+	         <artifactId>reflections</artifactId>
+	     </dependency>
     </dependencies>
     <profiles>
         <profile>
@@ -644,8 +652,16 @@
                 </dependency>
             </dependencies>
         </profile>
-        
         <profile>
+            <id>inspire</id>
+            <dependencies>
+		        <dependency>
+		            <groupId>${project.groupId}</groupId>
+		        	<artifactId>inspire-code</artifactId>
+		        </dependency>
+            </dependencies>
+        </profile>
+         <profile>
             <id>wml</id>
             <dependencies>
                 <dependency>

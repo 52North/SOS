@@ -52,7 +52,7 @@ public interface ServiceOperator {
      * 
      * @throws OwsExceptionReport
      */
-    AbstractServiceResponse receiveRequest(AbstractServiceRequest request) throws OwsExceptionReport;
+    AbstractServiceResponse receiveRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport;
 
     ServiceOperatorKey getServiceOperatorKey();
 

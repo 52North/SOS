@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Collection;
@@ -45,6 +110,7 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.service.ServiceConfiguration;
 
 import com.google.common.collect.Sets;
 
@@ -103,8 +169,13 @@ public class HibernateObservationUtilities {
     public static List<OmObservation> createSosObservationsFromObservations(Collection<AbstractObservation> o,
             Map<Long, AbstractSpatialFilteringProfile> spf, String v, String rm, Session s) throws OwsExceptionReport,
             ConverterException {
-        return new ObservationOmObservationCreator(o, spf, v, rm, s).create();
-
+        return createSosObservationsFromObservations(o, spf, v, rm, ServiceConfiguration.getInstance().getDefaultLanguage(), s);
+    }
+    
+    public static List<OmObservation> createSosObservationsFromObservations(Collection<AbstractObservation> o,
+            Map<Long, AbstractSpatialFilteringProfile> spf, String v, String rm, String lang, Session s) throws OwsExceptionReport,
+            ConverterException {
+        return new ObservationOmObservationCreator(o, spf, v, rm, lang, s).create();
     }
 
     /**
@@ -127,7 +198,13 @@ public class HibernateObservationUtilities {
     public static Collection<? extends OmObservation> createSosObservationFromObservationConstellation(
             ObservationConstellation oc, List<String> fois, String version, Session session)
             throws OwsExceptionReport, ConverterException {
-        return new ObservationConstellationOmObservationCreator(oc, fois, version, session).create();
+        return createSosObservationFromObservationConstellation(oc, fois, version, ServiceConfiguration.getInstance().getDefaultLanguage(), session);
+    }
+    
+    public static Collection<? extends OmObservation> createSosObservationFromObservationConstellation(
+            ObservationConstellation oc, List<String> fois, String version, String language, Session session)
+            throws OwsExceptionReport, ConverterException {
+        return new ObservationConstellationOmObservationCreator(oc, fois, version, language, session).create();
     }
 
     /**
@@ -147,7 +224,12 @@ public class HibernateObservationUtilities {
      */
     public static Collection<? extends OmObservation> createSosObservationFromSeries(Series series, String version,
             Session session) throws OwsExceptionReport, ConverterException {
-        return new SeriesOmObservationCreator(series, version, session).create();
+        return createSosObservationFromSeries(series, version, ServiceConfiguration.getInstance().getDefaultLanguage(), session);
+    }
+    
+    public static Collection<? extends OmObservation> createSosObservationFromSeries(Series series, String version,
+           String language, Session session) throws OwsExceptionReport, ConverterException {
+        return new SeriesOmObservationCreator(series, version, language, session).create();
     }
 
     /**

@@ -29,12 +29,13 @@
 package org.n52.sos.request;
 
 import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.response.DeleteSensorResponse;
 
 /**
  * @since 4.0.0
  * 
  */
-public class DeleteSensorRequest extends AbstractServiceRequest {
+public class DeleteSensorRequest extends AbstractServiceRequest<DeleteSensorResponse> {
 
     private String procedureIdentifier;
 
@@ -56,6 +57,11 @@ public class DeleteSensorRequest extends AbstractServiceRequest {
      */
     public String getProcedureIdentifier() {
         return procedureIdentifier;
+    }
+
+    @Override
+    public DeleteSensorResponse getResponse() {
+        return (DeleteSensorResponse ) new DeleteSensorResponse().set(this);
     }
 
 }

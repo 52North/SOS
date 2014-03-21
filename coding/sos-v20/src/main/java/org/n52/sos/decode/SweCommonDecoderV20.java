@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.decode;
 
 import java.util.ArrayList;
@@ -56,6 +121,7 @@ import net.opengis.swe.x20.QuantityRangeType;
 import net.opengis.swe.x20.QuantityType;
 import net.opengis.swe.x20.TextEncodingDocument;
 import net.opengis.swe.x20.TextEncodingType;
+import net.opengis.swe.x20.TextPropertyType;
 import net.opengis.swe.x20.TextType;
 import net.opengis.swe.x20.TimeRangeType;
 import net.opengis.swe.x20.TimeType;
@@ -112,7 +178,7 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
             DataArrayPropertyType.class, DataArrayDocument.class, DataArrayType.class, DataRecordDocument.class,
             DataRecordType.class, CountType.class, QuantityType.class, TextType.class, Coordinate[].class,
             AnyScalarPropertyType[].class, TextEncodingDocument.class, TextEncodingType.class,
-            AbstractDataComponentDocument.class, AbstractDataComponentType.class);
+            AbstractDataComponentDocument.class, AbstractDataComponentType.class, TextPropertyType.class, CountPropertyType.class);
 
     public SweCommonDecoderV20() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -160,6 +226,10 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
             final SweTextEncoding sosTextEncoding = parseTextEncoding(textEncoding);
             sosTextEncoding.setXml(textEncodingDoc.xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
             return sosTextEncoding;
+        } else if (element instanceof TextPropertyType) {
+            return parseAbstractDataComponent(((TextPropertyType)element).getText());
+        } else if (element instanceof CountPropertyType) {
+            return parseAbstractDataComponent(((CountPropertyType)element).getCount());
         } else {
             throw new UnsupportedDecoderInputException(this, element);
         }
@@ -359,7 +429,7 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
         }
         return sosCount;
     }
-
+    
     private SweCountRange parseCountRange(final CountRangeType countRange) throws OwsExceptionReport {
         throw new NotYetSupportedException(SweConstants.EN_COUNT_RANGE);
     }

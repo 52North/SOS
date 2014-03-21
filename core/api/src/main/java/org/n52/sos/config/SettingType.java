@@ -31,6 +31,8 @@ package org.n52.sos.config;
 import java.io.File;
 import java.net.URI;
 
+import org.n52.sos.ogc.gml.time.TimeInstant;
+
 /**
  * Enum to describe the type of a {@code SettingDefinition} and
  * {@code SettingValue}.
@@ -64,5 +66,9 @@ public enum SettingType {
     /**
      * Type for {@link URI}.
      */
-    URI;
+    URI,
+    /**
+     * Type for {@link TimeInstant}.
+     */
+    TIMEINSTANT;
 }

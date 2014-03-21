@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.service;
 
 import static org.n52.sos.util.ConfiguringSingletonServiceLoader.loadAndConfigure;
@@ -41,6 +106,7 @@ import org.n52.sos.cache.ContentCacheController;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.convert.ConverterRepository;
+import org.n52.sos.convert.RequestResponseModifierRepository;
 import org.n52.sos.ds.CacheFeederDAO;
 import org.n52.sos.ds.ConnectionProvider;
 import org.n52.sos.ds.DataConnectionProvider;
@@ -59,6 +125,7 @@ import org.n52.sos.ogc.ows.SosServiceIdentificationFactory;
 import org.n52.sos.ogc.ows.SosServiceProvider;
 import org.n52.sos.ogc.ows.SosServiceProviderFactory;
 import org.n52.sos.ogc.sos.CapabilitiesExtensionRepository;
+import org.n52.sos.ogc.swes.OfferingExtensionRepository;
 import org.n52.sos.request.operator.RequestOperatorRepository;
 import org.n52.sos.service.admin.operator.AdminServiceOperator;
 import org.n52.sos.service.admin.request.operator.AdminRequestOperatorRepository;
@@ -181,6 +248,18 @@ public class Configurator implements Cleanupable {
             }
         }
     }
+    
+    protected static <T> T get(final Producer<T> factory, String language) throws OwsExceptionReport {
+        try {
+            return factory.get(language);
+        } catch (final Exception e) {
+            if (e.getCause() != null && e.getCause() instanceof OwsExceptionReport) {
+                throw (OwsExceptionReport) e.getCause();
+            } else {
+                throw new NoApplicableCodeException().withMessage("Could not request object from %s", factory);
+            }
+        }
+    }
 
     /**
      * base path for configuration files.
@@ -262,10 +341,12 @@ public class Configurator implements Cleanupable {
         featureQueryHandler = loadAndConfigure(FeatureQueryHandler.class, false);
         cacheFeederDAO = loadAndConfigure(CacheFeederDAO.class, false);
         ConverterRepository.getInstance();
+        RequestResponseModifierRepository.getInstance();
         RequestOperatorRepository.getInstance();
         BindingRepository.getInstance();
         CapabilitiesExtensionRepository.getInstance();
         OwsExtendedCapabilitiesRepository.getInstance();
+        OfferingExtensionRepository.getInstance();
         adminServiceOperator = loadAndConfigure(AdminServiceOperator.class, false);
         AdminRequestOperatorRepository.getInstance();
         contentCacheController = loadAndConfigure(ContentCacheController.class, false);
@@ -283,6 +364,19 @@ public class Configurator implements Cleanupable {
      */
     public SosServiceIdentification getServiceIdentification() throws OwsExceptionReport {
         return get(serviceIdentificationFactory);
+    }
+    
+    /**
+     * @return Returns the service identification for the specific language
+     *         <p/>
+     * @throws OwsExceptionReport
+     */
+    public SosServiceIdentification getServiceIdentification(String lanugage) throws OwsExceptionReport {
+        return get(serviceIdentificationFactory, lanugage);
+    }
+    
+    public SosServiceIdentificationFactory getServiceIdentificationFactory() throws OwsExceptionReport {
+        return (SosServiceIdentificationFactory) serviceIdentificationFactory;
     }
 
     /**

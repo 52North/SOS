@@ -28,6 +28,7 @@
         <module>core</module>
         <module>bindings</module>
         <module>coding</module>
+        <module>converter</module>
         <module>operations</module>
         <module>hibernate</module>
         <module>extensions</module>
@@ -76,9 +77,10 @@
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
         <!-- managed dependencies with ${project.version} will be wrong in submodules
             with different versions -->
-        <sos.version>4.1.0-SNAPSHOT</sos.version>
-        <do.version>0.2.0-SNAPSHOT</do.version>
-        <rest-binding.version>0.2.0-SNAPSHOT</rest-binding.version>
+        <sos.version>4.0.0</sos.version>
+        <do.version>0.1.1</do.version>
+        <rest-binding.version>0.1.1</rest-binding.version>
+        <inspire.version>0.0.1-SNAPSHOT</inspire.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -266,6 +268,11 @@
                 <artifactId>profile-coding</artifactId>
                 <version>${sos.version}</version>
             </dependency>
+             <dependency>
+	            <groupId>${project.groupId}</groupId>
+	            <artifactId>request-response-coordinate-transformer</artifactId>
+	             <version>${sos.version}</version>
+	        </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>common-controller</artifactId>
@@ -309,6 +316,16 @@
                 <version>${sos.version}</version>
                 <type>war</type>
             </dependency>
+            <dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>inspire-code</artifactId>
+				<version>${inspire.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+	        	<artifactId>inspire-xml</artifactId>
+				<version>${inspire.version}</version>
+			</dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
@@ -668,6 +685,26 @@
             	<artifactId>xmlunit</artifactId>
             	<version>1.5</version>
             </dependency>
+            <dependency>
+			<groupId>org.geotools</groupId>
+				<artifactId>gt-epsg-hsql</artifactId>
+				 <version>9.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-referencing</artifactId>
+			 <version>9.5</version>
+		</dependency>
+			<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>gt-api</artifactId>
+				 <version>9.5</version>
+			</dependency>
+			<dependency>
+		         <groupId>org.reflections</groupId>
+		         <artifactId>reflections</artifactId>
+		         <version>0.9.9-RC1</version>
+		     </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
@@ -953,9 +990,8 @@
         </pluginManagement>
     </build>
     <scm>
-    	<connection>scm:git:git://github.com/52North/SOS.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/52North/SOS.git</developerConnection>
-		<url>https://github.com/52North/SOS</url>
+        <developerConnection>scm:svn:https://52north.org/svn/swe/main/SOS/Service/branches/52n-sos-400-refactored</developerConnection>
+        <url>https://52north.org/svn/swe/main/SOS/Service/branches/52n-sos-400-refactored</url>
     </scm>
     <repositories>
         <repository>

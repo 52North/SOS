@@ -49,7 +49,7 @@ public abstract class AbstractInsertObservationDAO extends AbstractOperationDAO 
     @Override
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
-        opsMeta.addPossibleValuesParameter(Sos2Constants.InsertObservationParams.offering, getCache().getOfferings());
+        addOfferingParameter(opsMeta);
         opsMeta.addAnyParameterValue(Sos2Constants.InsertObservationParams.observation);
         opsMeta.addDataTypeParameter(Sos2Constants.InsertObservationParams.observation,
                 OmConstants.SCHEMA_LOCATION_URL_OM_20_OM_OBSERVATION);

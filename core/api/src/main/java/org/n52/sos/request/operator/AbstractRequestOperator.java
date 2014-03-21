@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.request.operator;
 
 import java.util.Arrays;
@@ -35,6 +100,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.sos.cache.ContentCache;
+import org.n52.sos.convert.RequestResponseModifierRepository;
 import org.n52.sos.ds.OperationDAO;
 import org.n52.sos.ds.OperationDAORepository;
 import org.n52.sos.event.SosEventBus;
@@ -56,6 +122,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.response.AbstractObservationResponse;
@@ -83,12 +150,13 @@ import com.google.common.collect.Sets;
  * 
  * @since 4.0.0
  */
-public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest, A extends AbstractServiceResponse>
+public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
         implements RequestOperator {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRequestOperator.class);
-    
+
     // TODO make supported ValueReferences dynamic
-    private static final Set<String> validTemporalFilterValueReferences = Sets.newHashSet("phenomenonTime", "om:phenomenonTime", "resultTime", "om:resultTime", "validTime", "om:validTime");
+    private static final Set<String> validTemporalFilterValueReferences = Sets.newHashSet("phenomenonTime",
+            "om:phenomenonTime", "resultTime", "om:resultTime", "validTime", "om:validTime");
 
     private final D dao;
 
@@ -136,16 +204,35 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
     }
 
     @Override
-    public AbstractServiceResponse receiveRequest(final AbstractServiceRequest abstractRequest)
+    public AbstractServiceResponse receiveRequest(final AbstractServiceRequest<?> abstractRequest)
             throws OwsExceptionReport {
         SosEventBus.fire(new RequestEvent(abstractRequest));
         if (requestType.isAssignableFrom(abstractRequest.getClass())) {
             Q request = requestType.cast(abstractRequest);
+            checkForModifierAndProcess(request);
             checkParameters(request);
-            return receive(request);
+            A response = receive(request);
+            return checkForModifierAndProcess(request, response);
         } else {
             throw new OperationNotSupportedException(abstractRequest.getOperationName());
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void checkForModifierAndProcess(AbstractServiceRequest<?> request) throws OwsExceptionReport {
+        if (RequestResponseModifierRepository.getInstance().hasRequestResponseModifier(request)) {
+            RequestResponseModifierRepository.getInstance().getRequestResponseModifier(request)
+                    .modifyRequest(request);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private AbstractServiceResponse checkForModifierAndProcess(AbstractServiceRequest<?> request, AbstractServiceResponse response) throws OwsExceptionReport {
+        if (RequestResponseModifierRepository.getInstance().hasRequestResponseModifier(request, response)) {
+            return RequestResponseModifierRepository.getInstance().getRequestResponseModifier(request, response)
+                    .modifyResponse(request, response);
+        }
+        return response;
     }
 
     protected abstract A receive(Q request) throws OwsExceptionReport;
@@ -205,7 +292,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
      * @throws OwsExceptionReport
      *             * if this SOS does not support the requested versions
      */
-    protected void checkSingleVersionParameter(final AbstractServiceRequest request) throws OwsExceptionReport {
+    protected void checkSingleVersionParameter(final AbstractServiceRequest<?> request) throws OwsExceptionReport {
 
         // if version is incorrect, throw exception
         if (request.getVersion() == null
@@ -451,7 +538,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
             }
         }
     }
-    
+
     protected void checkTemporalFilter(final List<TemporalFilter> temporalFilters, final Enum<?> name)
             throws OwsExceptionReport {
         checkTemporalFilter(temporalFilters, name.name());
@@ -515,6 +602,33 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         }
     }
 
+    protected boolean hasLanguageExtension(SwesExtensions extensions) {
+        return extensions != null && extensions.containsExtension(OWSConstants.AdditionalRequestParams.language);
+    }
+
+//    protected void checkLanguageExtension(SwesExtensions extensions) throws OwsExceptionReport {
+//        checkLanguageExtension(extensions, ServiceConfiguration.getInstance().getSupportedLanguages());
+//    }
+//
+//    protected void checkLanguageExtension(SwesExtensions extensions, Set<String> supportedLanguages)
+//            throws OwsExceptionReport {
+//        if (hasLanguageExtension(extensions)) {
+//            SwesExtension<?> extension = extensions.getExtension(SosConstants.InspireParams.language);
+//            String value = Constants.EMPTY_STRING;
+//            if (extension.getValue() instanceof String) {
+//                value = (String) extension.getValue();
+//            } else if (extension.getValue() instanceof SweText) {
+//                value = ((SweText) extension.getValue()).getValue();
+//            } else {
+//                throw new MissingParameterValueException(SosConstants.InspireParams.language)
+//                        .withMessage("The language extension value should be of type 'swe:TextPropertytype'");
+//            }
+//            if (!supportedLanguages.contains(value)) {
+//                throw new InvalidParameterValueException(SosConstants.InspireParams.language, value);
+//            }
+//        }
+//    }
+
     private boolean checkFeatureValueReference(String valueReference) {
         return "sams:shape".equals(valueReference)
                 || "om:featureOfInterest/sams:SF_SpatialSamplingFeature/sams:shape".equals(valueReference)
@@ -524,4 +638,5 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
     private boolean checkSpatialFilteringProfileValueReference(String valueReference) {
         return Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE.equals(valueReference);
     }
+
 }

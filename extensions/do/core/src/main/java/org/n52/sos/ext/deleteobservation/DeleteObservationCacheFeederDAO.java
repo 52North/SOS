@@ -150,7 +150,7 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      * @throws CodedException 
      */
     protected void updateFeatureOfInterest() throws CodedException {
-        final String feature = o.getObservationConstellation().getFeatureOfInterest().getIdentifier().getValue();
+        final String feature = o.getObservationConstellation().getFeatureOfInterest().getIdentifierCodeWithAuthority().getValue();
         final String procedure = o.getObservationConstellation().getProcedure().getIdentifier();
         final String dbFeature = CacheHelper.removePrefixAndGetFeatureIdentifier(feature);
         final String dbProcedure = CacheHelper.removePrefixAndGetProcedureIdentifier(procedure);
@@ -170,7 +170,7 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      */
     protected void updateIdentifiers() {
         final String procedure = o.getObservationConstellation().getProcedure().getIdentifier();
-        final String identifier = o.getIdentifier() == null ? null : o.getIdentifier().getValue();
+        final String identifier = o.getIdentifierCodeWithAuthority() == null ? null : o.getIdentifierCodeWithAuthority().getValue();
         if (identifier != null) {
             getCache().removeObservationIdentifier(identifier);
             getCache().removeObservationIdentifierForProcedure(procedure, identifier);

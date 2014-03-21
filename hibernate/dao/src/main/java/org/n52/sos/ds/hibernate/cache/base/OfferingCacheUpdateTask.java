@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.cache.ProcedureFlag;
@@ -44,12 +45,15 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.dao.i18n.AbstractFeatureI18NDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.i18n.AbstractFeatureI18N;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.concrete.GenericThrowableWrapperException;
+import org.n52.sos.i18n.I18NOfferingObject;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -104,11 +108,12 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
         String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
 
+        getCache().addOffering(offeringId);
+        addOfferingNamesAndDescriptionsToCache(offeringId, session);
         // only check once, check flag in other methods
         obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class, session);
-        
         // Procedures
-        final Map<ProcedureFlag, Set<String>> procedureIdentifiers = getProcedureIdentifiers(session);
+        final Map<ProcedureFlag, Set<String>> procedureIdentifiers = getProcedureIdentifier(session);
         getCache().setProceduresForOffering(prefixedOfferingId, procedureIdentifiers.get(ProcedureFlag.PARENT));
         getCache().setHiddenChildProceduresForOffering(prefixedOfferingId,
                 procedureIdentifiers.get(ProcedureFlag.HIDDEN_CHILD));
@@ -132,8 +137,27 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         // Spatial Filtering Profile Spatial Envelope
         addSpatialFilteringProfileEnvelopeForOffering(prefixedOfferingId, offeringId, session);
     }
-    
-    protected Map<ProcedureFlag, Set<String>> getProcedureIdentifiers(Session session) throws CodedException {
+
+    protected void addOfferingNamesAndDescriptionsToCache(String offeringId, Session session) {
+        AbstractFeatureI18NDAO i18ndao = DaoFactory.getInstance().getI18NDAO(I18NOfferingObject.class, session);
+        if (i18ndao != null) {
+            List<AbstractFeatureI18N> objects = i18ndao.getObjectsForIdentifier(offeringId, session);
+            if (CollectionHelper.isNotEmpty(objects)) {
+                for (AbstractFeatureI18N abstractI18N : objects) {
+                    if (abstractI18N.isSetName()) {
+                        getCache().setI18nNameForOffering(offeringId, abstractI18N.getName(),
+                                abstractI18N.getCodespace().getCodespace());
+                    }
+                    if (abstractI18N.isSetDescription()) {
+                        getCache().setI18nDescriptionForOffering(offeringId, abstractI18N.getDescription(),
+                                abstractI18N.getCodespace().getCodespace());
+                    }
+                }
+            }
+        }
+    }
+
+    protected Map<ProcedureFlag, Set<String>> getProcedureIdentifier(Session session) throws CodedException {
         Set<String> procedures = new HashSet<String>(0);
         Set<String> hiddenChilds = new HashSet<String>(0);
         if (obsConstSupported) {
@@ -247,8 +271,10 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     protected SosEnvelope getEnvelopeForOffering(Collection<String> featureOfInterestIdentifiers, Session session)
             throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(featureOfInterestIdentifiers)) {
-            return Configurator.getInstance().getFeatureQueryHandler()
-                    .getEnvelopeForFeatureIDs(featureOfInterestIdentifiers, session);
+            FeatureQueryHandlerQueryObject queryHandler =
+                    new FeatureQueryHandlerQueryObject().setFeatureIdentifiers(featureOfInterestIdentifiers)
+                            .setConnection(session);
+            return Configurator.getInstance().getFeatureQueryHandler().getEnvelopeForFeatureIDs(queryHandler);
         }
         return null;
     }

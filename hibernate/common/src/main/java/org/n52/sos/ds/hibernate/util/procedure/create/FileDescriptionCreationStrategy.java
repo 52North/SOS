@@ -55,7 +55,7 @@ public class FileDescriptionCreationStrategy implements
             .getLogger(FileDescriptionCreationStrategy.class);
 
     @Override
-    public SosProcedureDescription create(Procedure p, Session s)
+    public SosProcedureDescription create(Procedure p, String i18n, Session s)
             throws OwsExceptionReport {
         XmlObject xml = read(p.getDescriptionFile());
         SosProcedureDescription desc = decode(xml);

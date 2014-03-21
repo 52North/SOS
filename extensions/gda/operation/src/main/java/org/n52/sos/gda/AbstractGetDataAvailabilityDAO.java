@@ -31,7 +31,6 @@ package org.n52.sos.gda;
 import org.n52.sos.ds.AbstractOperationDAO;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
-import org.n52.sos.util.SosHelper;
 
 /**
  * DAO to get the DataAvailabilities out of the database.
@@ -48,12 +47,9 @@ public abstract class AbstractGetDataAvailabilityDAO extends AbstractOperationDA
     @Override
     protected void setOperationsMetadata(OwsOperation operation, String service, String version)
             throws OwsExceptionReport {
-        operation.addPossibleValuesParameter(GetDataAvailabilityConstants.GetDataAvailabilityParams.procedure,
-                getCache().getProcedures());
-        operation.addPossibleValuesParameter(GetDataAvailabilityConstants.GetDataAvailabilityParams.observedProperty,
-                getCache().getObservableProperties());
-        operation.addPossibleValuesParameter(GetDataAvailabilityConstants.GetDataAvailabilityParams.featureOfInterest,
-                SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version));
+        addProcedureParameter(operation);
+        addObservablePropertyParameter(operation);
+        addFeatureOfInterestParameter(operation, version);
     }
 
     /**

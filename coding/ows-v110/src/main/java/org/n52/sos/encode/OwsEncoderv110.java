@@ -26,10 +26,74 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.encode;
 
 import java.io.PrintStream;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,6 +113,7 @@ import net.opengis.ows.x11.ExceptionReportDocument.ExceptionReport;
 import net.opengis.ows.x11.ExceptionType;
 import net.opengis.ows.x11.HTTPDocument.HTTP;
 import net.opengis.ows.x11.KeywordsType;
+import net.opengis.ows.x11.LanguageStringType;
 import net.opengis.ows.x11.MetadataType;
 import net.opengis.ows.x11.OperationDocument.Operation;
 import net.opengis.ows.x11.OperationsMetadataDocument.OperationsMetadata;
@@ -78,6 +143,7 @@ import org.n52.sos.ogc.ows.OwsAllowedValuesValue;
 import org.n52.sos.ogc.ows.OwsAnyValue;
 import org.n52.sos.ogc.ows.OwsDomainType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.ows.OwsLanguageString;
 import org.n52.sos.ogc.ows.OwsMetadata;
 import org.n52.sos.ogc.ows.OwsNoValues;
 import org.n52.sos.ogc.ows.OwsOperation;
@@ -204,40 +270,79 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
                 throw new NoApplicableCodeException()
                         .withMessage("The service identification file is not a ServiceIdentificationDocument, ServiceIdentification or invalid! Check the file in the Tomcat webapps: /SOS_webapp/WEB-INF/conf/capabilities/.");
             }
+            if (sosServiceIdentification.hasAbstracts()) {
+                clearAbstracts(serviceIdent);
+                addAbstracts(serviceIdent, sosServiceIdentification.getAbstracts());
+            }
+            if (sosServiceIdentification.hasTitles()) {
+                clearTitles(serviceIdent);
+                addTitles(serviceIdent, sosServiceIdentification.getTitles());
+            }
         } else {
             /* TODO check for required fields and fail on missing ones */
             serviceIdent = ServiceIdentification.Factory.newInstance();
-            serviceIdent.addAccessConstraints(sosServiceIdentification.getAccessConstraints());
+            for (String accessConstraint : sosServiceIdentification.getAccessConstraints()) {
+                serviceIdent.addAccessConstraints(accessConstraint);
+            }
             serviceIdent.setFees(sosServiceIdentification.getFees());
-            serviceIdent.addNewAbstract().setStringValue(sosServiceIdentification.getAbstract());
             CodeType xbServiceType = serviceIdent.addNewServiceType();
             xbServiceType.setStringValue(sosServiceIdentification.getServiceType());
             if (sosServiceIdentification.getServiceTypeCodeSpace() != null) {
                 xbServiceType.setCodeSpace(sosServiceIdentification.getServiceTypeCodeSpace());
             }
-            serviceIdent.addNewTitle().setStringValue(sosServiceIdentification.getTitle());
+            addAbstracts(serviceIdent, sosServiceIdentification.getAbstracts());
+            addTitles(serviceIdent, sosServiceIdentification.getTitles());
         }
         // set service type versions
-        if (sosServiceIdentification.getVersions() != null && !sosServiceIdentification.getVersions().isEmpty()) {
+        if (sosServiceIdentification.hasVersions()) {
             serviceIdent.setServiceTypeVersionArray(sosServiceIdentification.getVersions().toArray(
                     new String[sosServiceIdentification.getVersions().size()]));
         }
 
         // set Profiles
-        if (sosServiceIdentification.getProfiles() != null && !sosServiceIdentification.getProfiles().isEmpty()) {
+        if (sosServiceIdentification.hasProfiles()) {
             serviceIdent.setProfileArray(sosServiceIdentification.getProfiles().toArray(
                     new String[sosServiceIdentification.getProfiles().size()]));
         }
         // set keywords if they're not already in the service identification
         // doc
-        if (sosServiceIdentification.getKeywords() != null && !sosServiceIdentification.getKeywords().isEmpty()
-                && serviceIdent.getKeywordsArray().length == 0) {
+        if (sosServiceIdentification.hasKeywords() && serviceIdent.getKeywordsArray().length == 0) {
             final KeywordsType keywordsType = serviceIdent.addNewKeywords();
             for (final String keyword : sosServiceIdentification.getKeywords()) {
                 keywordsType.addNewKeyword().setStringValue(keyword.trim());
             }
         }
         return serviceIdent;
+    }
+
+    private void addTitles(ServiceIdentification serviceIdent, List<OwsLanguageString> titles) {
+        for (OwsLanguageString owsLanguageString : titles) {
+            serviceIdent.addNewTitle().set(encodeOwsLanguageString(owsLanguageString));
+        }
+    }
+
+    private void clearTitles(ServiceIdentification serviceIdent) {
+        if (CollectionHelper.isNotNullOrEmpty(serviceIdent.getTitleArray())) {
+            for (int i = 0; i < serviceIdent.getTitleArray().length; i++) {
+                serviceIdent.removeTitle(i);
+            }
+        }
+    }
+
+    private void addAbstracts(ServiceIdentification serviceIdent, List<OwsLanguageString> abstracts) {
+        for (OwsLanguageString owsLanguageString : abstracts) {
+            if (owsLanguageString.isSetValue()) {
+                serviceIdent.addNewAbstract().set(encodeOwsLanguageString(owsLanguageString));
+            }
+        }
+    }
+
+    private void clearAbstracts(ServiceIdentification serviceIdent) {
+        if (CollectionHelper.isNotNullOrEmpty(serviceIdent.getAbstractArray())) {
+            for (int i = 0; i < serviceIdent.getAbstractArray().length; i++) {
+                serviceIdent.removeAbstract(i);
+            }
+        }
     }
 
     /**
@@ -368,7 +473,18 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
             exceptionText.append("\n");
         }
         if (owsException.getCause() != null) {
-            addExceptionMessages(exceptionText, owsException.getCause());
+            exceptionText.append("[EXEPTION]: \n");
+            final String localizedMessage = owsException.getCause().getLocalizedMessage();
+            final String message = owsException.getCause().getMessage();
+            if (localizedMessage != null && message != null) {
+                if (!message.equals(localizedMessage)) {
+                    JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, message);
+                }
+                JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, localizedMessage);
+            } else {
+                JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, localizedMessage);
+                JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, message);
+            }
             if (includeStackTraceInExceptionReport) {
                 final ByteArrayOutputStream os = new ByteArrayOutputStream();
                 owsException.getCause().printStackTrace(new PrintStream(os));
@@ -379,29 +495,6 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
         return exceptionDoc;
     }
 
-    private void addExceptionMessages(StringBuilder exceptionText, Throwable exception) {
-        exceptionText.append("[EXCEPTION]: \n");
-        final String localizedMessage = exception.getLocalizedMessage();
-        final String message = exception.getMessage();
-        if (localizedMessage != null && message != null) {
-            if (!message.equals(localizedMessage)) {
-                JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, message);
-            }
-            JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, localizedMessage);
-        } else {
-            JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, localizedMessage);
-            JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, message);
-        }
-        
-        //recurse SQLException if necessary
-        if (exception instanceof SQLException) {
-            SQLException sqlException = (SQLException) exception;
-            if (sqlException.getNextException() != null) {
-                addExceptionMessages(exceptionText, sqlException.getNextException());
-            }
-        }
-    }
-    
     private ExceptionReportDocument encodeOwsExceptionReport(final OwsExceptionReport owsExceptionReport) {
         final ExceptionReportDocument erd =
                 ExceptionReportDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
@@ -434,7 +527,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
         }
         if (supportedDcp.containsKey(HTTPMethods.POST)) {
             List<DCP> postDcps = Lists.newArrayList(supportedDcp.get(HTTPMethods.POST));
-            Collections.sort(postDcps);            
+            Collections.sort(postDcps);
             for (DCP dcp : postDcps) {
                 RequestMethodType post = http.addNewPost();
                 post.setHref(dcp.getUrl());
@@ -625,5 +718,14 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
         }
         xbMetadata.setType(TypeType.Enum.forString(owsMeatadata.getType().name()));
         return xbMetadata;
+    }
+
+    private LanguageStringType encodeOwsLanguageString(OwsLanguageString owsLanguageString) {
+        LanguageStringType languageStringType = LanguageStringType.Factory.newInstance();
+        languageStringType.setStringValue(owsLanguageString.getValue());
+        if (owsLanguageString.isSetLang()) {
+            languageStringType.setLang(owsLanguageString.getLang());
+        }
+        return languageStringType;
     }
 }

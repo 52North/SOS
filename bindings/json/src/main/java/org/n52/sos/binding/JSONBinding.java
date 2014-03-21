@@ -98,7 +98,7 @@ public class JSONBinding extends SimpleBinding {
     @Override
     public void doPostOperation(HttpServletRequest req, HttpServletResponse res)
             throws HTTPException, IOException {
-        AbstractServiceRequest request = null;
+        AbstractServiceRequest<?> request = null;
         try {
             request = parseRequest(req);
             checkServiceOperatorKeyTypes(request);
@@ -110,7 +110,7 @@ public class JSONBinding extends SimpleBinding {
         }
     }
 
-    private AbstractServiceRequest parseRequest(HttpServletRequest request)
+    private AbstractServiceRequest<?> parseRequest(HttpServletRequest request)
             throws OwsExceptionReport {
         try {
             JsonNode json = JSONUtils.loadReader(request.getReader());
@@ -122,12 +122,12 @@ public class JSONBinding extends SimpleBinding {
                     json.path(JSONConstants.VERSION).textValue(),
                     json.path(JSONConstants.REQUEST).textValue(),
                     MediaTypes.APPLICATION_JSON);
-            Decoder<AbstractServiceRequest, JsonNode> decoder =
+            Decoder<AbstractServiceRequest<?>, JsonNode> decoder =
                     getDecoder(key);
             if (decoder == null) {
                 throw new NoDecoderForKeyException(key);
             }
-            AbstractServiceRequest sosRequest = decoder.decode(json);
+            AbstractServiceRequest<?> sosRequest = decoder.decode(json);
             sosRequest.setRequestContext(getRequestContext(request));
             return sosRequest;
         } catch (IOException ioe) {

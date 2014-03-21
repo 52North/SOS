@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GetDataAvailabilityXmlEncoder extends AbstractResponseEncoder<GetDataAvailabilityResponse> {
 
+    @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(GetDataAvailabilityXmlEncoder.class);
 
     public GetDataAvailabilityXmlEncoder() {

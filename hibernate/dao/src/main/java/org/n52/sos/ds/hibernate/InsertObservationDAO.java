@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
-import org.hibernate.JDBCException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
@@ -228,17 +227,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
 
                 status = HTTPStatus.BAD_REQUEST;
             }
-
-            // if this is a JDBCException, pass the underlying SQLException as the causedBy exception
-            // so that we can show the actual error in the OwsExceptionReport when batching
-            Exception causedBy;
-            if (he instanceof JDBCException) {
-                causedBy = ((JDBCException) he).getSQLException();
-            } else {
-                causedBy = he;
-            }
-            
-            throw new NoApplicableCodeException().causedBy(causedBy).withMessage(exceptionMsg).setStatus(status);
+            throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg).setStatus(status);
         } finally {
             sessionHolder.returnSession(session);
         }

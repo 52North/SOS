@@ -38,5 +38,15 @@
             <artifactId>api</artifactId>
             <classifier>tests</classifier>
         </dependency>
+                <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sqlite-config</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

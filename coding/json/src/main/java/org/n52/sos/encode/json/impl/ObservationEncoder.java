@@ -98,12 +98,13 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
 
     private void encodeIdentifier(OmObservation o, ObjectNode json) {
         if (o.isSetIdentifier()) {
-            json.put(JSONConstants.IDENTIFIER, encodeCodeWithAuthority(o.getIdentifier()));
+            json.put(JSONConstants.IDENTIFIER, encodeCodeWithAuthority(o.getIdentifierCodeWithAuthority()));
         }
     }
 
     private void encodeProcedure(OmObservation o, ObjectNode json) {
-        json.put(JSONConstants.PROCEDURE, o.getObservationConstellation().getProcedure().getIdentifier());
+        json.put(JSONConstants.PROCEDURE,
+                 o.getObservationConstellation().getProcedure().getIdentifier());
     }
 
     private void encodeObservableProperty(OmObservation o, ObjectNode json) {

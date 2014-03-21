@@ -44,6 +44,8 @@ import org.n52.sos.config.SettingDefinitionGroup;
 import org.n52.sos.config.SettingType;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.ds.Datasource;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.util.DateTimeHelper;
 
 /**
  * TODO JavaDoc
@@ -124,6 +126,7 @@ public class SettingDefinitionEncoder {
             return JSONConstants.NUMBER_TYPE;
         case BOOLEAN:
             return JSONConstants.BOOLEAN_TYPE;
+        case TIMEINSTANT:
         case FILE:
         case STRING:
         case URI:
@@ -135,6 +138,8 @@ public class SettingDefinitionEncoder {
 
     private Object encodeValue(SettingDefinition def) {
         switch (def.getType()) {
+        case TIMEINSTANT:
+            return DateTimeHelper.format((TimeInstant)def.getDefaultValue());
         case FILE:
         case URI:
             return def.getDefaultValue().toString();

@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Collection;
@@ -40,6 +105,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.FeatureQueryHandler;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.AbstractSpatialFilteringProfile;
@@ -56,6 +122,7 @@ import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
@@ -91,6 +158,7 @@ import org.n52.sos.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -129,10 +197,10 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     private List<OmObservation> observationCollection;
 
-    private final int default3DEPSG;
+    private final int storage3DEPSG;
 
-    private final int defaultEPSG;
-
+    private final int storageEPSG;
+    
     /**
      * Constructor
      * 
@@ -167,16 +235,62 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         this.featureQueryHandler = getFeatureQueryHandler();
         this.strictSpatialFilteringProfile = ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile();
         this.encodeProcedureInObservation = getActiveProfile().isEncodeProcedureInObservation();
-        this.defaultEPSG = GeometryHandler.getInstance().getDefaultEPSG();
-        this.default3DEPSG = GeometryHandler.getInstance().getDefault3DEPSG();
+        this.storageEPSG = GeometryHandler.getInstance().getStorageEPSG();
+        this.storage3DEPSG = GeometryHandler.getInstance().getStorage3DEPSG();
+    }
+    
+    /**
+     * Constructor
+     * 
+     * @param observations
+     *            Collection of observation objects
+     * @param spatialFilteringProfile
+     *            Map with spatial filtering profile entities, key observation
+     *            entity id
+     * @param version
+     *            Service version
+     * @param resultModel
+     *            Requested result model
+     * @param session
+     *            Hibernate session
+     */
+    public ObservationOmObservationCreator(Collection<AbstractObservation> observations,
+            Map<Long, AbstractSpatialFilteringProfile> spatialFilteringProfile, String version, String resultModel,
+            String language, Session session) {
+        super(version, language, session);
+        this.resultModel = resultModel;
+        if (observations == null) {
+            this.observations = Collections.emptyList();
+        } else {
+            this.observations = observations;
+        }
+        if (spatialFilteringProfile == null) {
+            this.spatialFilteringProfile = Collections.emptyMap();
+        } else {
+            this.spatialFilteringProfile = spatialFilteringProfile;
+        }
+        this.procedureConverter = new HibernateProcedureConverter();
+        this.featureQueryHandler = getFeatureQueryHandler();
+        this.strictSpatialFilteringProfile = ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile();
+        this.encodeProcedureInObservation = getActiveProfile().isEncodeProcedureInObservation();
+        this.storageEPSG = GeometryHandler.getInstance().getStorageEPSG();
+        this.storage3DEPSG = GeometryHandler.getInstance().getStorage3DEPSG();
     }
 
-    private int getDefaultEPSG() {
-        return defaultEPSG;
+//    private int getDefaultEPSG() {
+//        return defaultEPSG;
+//    }
+//
+//    private int getDefault3DEPSG() {
+//        return default3DEPSG;
+//    }
+    
+      private int getStorageEPSG() {
+      return storageEPSG;
     }
-
-    private int getDefault3DEPSG() {
-        return default3DEPSG;
+    
+    private int getStorage3DEPSG() {
+      return storage3DEPSG;
     }
 
     private Collection<AbstractObservation> getObservations() {
@@ -279,10 +393,15 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private NamedValue<?> getSpatialFilteringProfileParameter(AbstractSpatialFilteringProfile spatialFilteringProfile)
             throws OwsExceptionReport {
         final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
-        final ReferenceType referenceType = new ReferenceType(spatialFilteringProfile.getDefinition());
-        if (spatialFilteringProfile.isSetTitle()) {
-            referenceType.setTitle(spatialFilteringProfile.getTitle());
-        }
+        final ReferenceType referenceType =
+                new ReferenceType(Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE);
+//        if (spatialFilteringProfile.isSetName()) {
+//            referenceType.setTitle(spatialFilteringProfile.getName());
+//        }
+//        final ReferenceType referenceType = new ReferenceType(spatialFilteringProfile.getDefinition());
+//        if (spatialFilteringProfile.isSetTitle()) {
+//            referenceType.setTitle(spatialFilteringProfile.getTitle());
+//        }
         namedValue.setName(referenceType);
         Geometry geometry;
         if (spatialFilteringProfile.isSetLongLat()) {
@@ -290,7 +409,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             if (spatialFilteringProfile.isSetSrid()) {
                 epsg = spatialFilteringProfile.getSrid();
             } else {
-                epsg = getDefaultEPSG();
+                epsg = getStorageEPSG();
             }
             JTSHelper.getGeometryFactoryForSRID(epsg);
             final String wktString =
@@ -301,15 +420,30 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             if (spatialFilteringProfile.isSetAltitude()) {
                 geometry.getCoordinate().z =
                         GeometryHandler.getInstance().getValueAsDouble(spatialFilteringProfile.getAltitude());
-                if (geometry.getSRID() == getDefaultEPSG()) {
-                    geometry.setSRID(getDefault3DEPSG());
+                if (geometry.getSRID() == getStorageEPSG()) {
+                    geometry.setSRID(getStorage3DEPSG());
                 }
             }
         } else {
-            geometry = spatialFilteringProfile.getGeom();
+            geometry = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(spatialFilteringProfile.getGeom());
         }
-        namedValue.setValue(new GeometryValue(GeometryHandler.getInstance()
-                .switchCoordinateAxisOrderIfNeeded(geometry)));
+        GeometryValue geometryValue = new GeometryValue(geometry);
+        CodeWithAuthority codeWithAuthority = new CodeWithAuthority(spatialFilteringProfile.getIdentifier());
+        if (spatialFilteringProfile.isSetCodespace()) {
+            codeWithAuthority.setCodeSpace(spatialFilteringProfile.getCodespace().getCodespace());
+        }
+        geometryValue.setIdentifier(codeWithAuthority);
+        if (spatialFilteringProfile.isSetName()) {
+            CodeType codeType = new CodeType(spatialFilteringProfile.getName());
+            if (spatialFilteringProfile.isSetCodespaceName()) {
+                codeType.setCodeSpace(spatialFilteringProfile.getCodespaceName().getCodespace());
+            }
+            geometryValue.setName(codeType);
+        }
+        if (spatialFilteringProfile.isSetDescription()) {
+            geometryValue.setDescription(spatialFilteringProfile.getDescription());
+        }
+        namedValue.setValue(geometryValue);
         return namedValue;
     }
 
@@ -324,7 +458,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         } else {
             final String pId = omObservationConstellation.getProcedure().getIdentifier();
             SosEnvelope offeringEnvelope = getMergedBBox(getSosOfferingsForProcedure(pId));
-            namedValue.setValue(new GeometryValue(JTSHelper.getGeometryFactoryForSRID(getDefaultEPSG()).createPoint(
+            namedValue.setValue(new GeometryValue(JTSHelper.getGeometryFactoryForSRID(getStorageEPSG()).createPoint(
                     offeringEnvelope.getEnvelope().centre())));
         }
         return namedValue;
@@ -342,7 +476,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         SosEnvelope mergedEnvelope = null;
         for (final SosOffering sosOffering : offeringsForProcedure) {
             final SosEnvelope offeringEnvelope =
-                    getCache().getEnvelopeForOffering(sosOffering.getOfferingIdentifier());
+                    getCache().getEnvelopeForOffering(sosOffering.getIdentifier());
             if (offeringEnvelope != null && offeringEnvelope.isSetEnvelope()) {
                 if (mergedEnvelope == null) {
                     mergedEnvelope = offeringEnvelope;
@@ -358,8 +492,16 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         final Collection<String> offeringIds = getCache().getOfferingsForProcedure(procedureIdentifier);
         final Collection<SosOffering> offerings = Lists.newLinkedList();
         for (final String offeringIdentifier : offeringIds) {
-            final String offeringName = getCache().getNameForOffering(offeringIdentifier);
-            offerings.add(new SosOffering(offeringIdentifier, offeringName));
+            String offeringName = getCache().getI18nNameForOffering(offeringIdentifier, getI18N());
+            if (Strings.isNullOrEmpty(offeringName)) {
+                offeringName = getCache().getNameForOffering(offeringIdentifier);
+            }
+            String description = getCache().getI18nDescriptionForOffering(offeringIdentifier, getI18N());
+            SosOffering sosOffering = new SosOffering(offeringIdentifier, offeringName);
+            if (StringHelper.isNotEmpty(description)) {
+                sosOffering.setDescription(description);
+            }
+            offerings.add(sosOffering);
         }
         return offerings;
     }
@@ -427,7 +569,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             final SosProcedureDescription procedure;
             if (encodeProcedureInObservation) {
                 procedure =
-                        procedureConverter.createSosProcedureDescription(hProcedure, pdf, getVersion(), getSession());
+                        procedureConverter.createSosProcedureDescription(hProcedure, pdf, getVersion(), getI18N(), getSession());
             } else {
                 procedure = new SosProcedureDescriptionUnknowType(procedureId, pdf, null);
             }
@@ -441,8 +583,14 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         LOGGER.trace("Creating Feature...");
         final String foiID = hObservation.getFeatureOfInterest().getIdentifier();
         if (!features.containsKey(foiID)) {
+            FeatureQueryHandlerQueryObject featureQueryHandlerQueryObject =
+                    new FeatureQueryHandlerQueryObject().addFeatureIdentifier(foiID).setVersion(getVersion())
+                            .setConnection(getSession());
             final AbstractFeature featureByID =
-                    featureQueryHandler.getFeatureByID(foiID, getSession(), getVersion(), -1);
+                    featureQueryHandler
+                    .getFeatureByID(featureQueryHandlerQueryObject);
+            //            final AbstractFeature featureByID =
+//            featureQueryHandler.getFeatureByID(foiID, getSession(), getVersion(), -1);
             features.put(foiID, featureByID);
         }
         LOGGER.trace("Creating Feature done.");
@@ -479,10 +627,12 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
         /* sfp the offerings to find the templates */
         if (obsConst.getOfferings() == null) {
-            final Set<String> offerings =
-                    Sets.newHashSet(getCache().getOfferingsForObservableProperty(
-                            obsConst.getObservableProperty().getIdentifier()));
+            final Set<String> offerings = Sets.newHashSet(getCache().getOfferingsForObservableProperty(obsConst.getObservableProperty().getIdentifier()));
             offerings.retainAll(getCache().getOfferingsForProcedure(obsConst.getProcedure().getIdentifier()));
+//            final Set<String> offerings =
+//                    Sets.newHashSet(getCache().getOfferingsForObservableProperty(
+//                            obsConst.getObservableProperty().getIdentifier()));
+//            offerings.retainAll(getCache().getOfferingsForProcedure(obsConst.getProcedure().getIdentifier()));
             obsConst.setOfferings(offerings);
         }
         if (!observationConstellations.contains(obsConst)) {

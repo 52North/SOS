@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.util;
 
 import java.util.ArrayList;
@@ -34,6 +99,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -214,6 +280,12 @@ public final class CollectionHelper {
         s1.retainAll(list2);
         return new ArrayList<T>(s1);
     }
+    
+    public static <T> Set<T> conjunctCollectionsToSet(final Collection<T> list1, final Collection<T> list2) {
+        final HashSet<T> s1 = new HashSet<T>(list1);
+        s1.retainAll(list2);
+        return s1;
+    }
 
     public static <K, V> Map<K, V> synchronizedInitialSizeMapWithLoadFactor1(final int capacity) {
         return CollectionHelper.synchronizedMap(capacity, 1.0F);
@@ -388,7 +460,7 @@ public final class CollectionHelper {
         }
         return true;
     }
-
+    
     /**
      * Check if array is not null and not empty
      * 
@@ -409,6 +481,22 @@ public final class CollectionHelper {
      */
     public static boolean isNullOrEmpty(Object[] array) {
         return !isNotNullOrEmpty(array);
+    }
+
+    public static String collectionToString(Collection<?> collection) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(Constants.OPEN_BRACE_CHAR);
+        if (isNotEmpty(collection)) {
+            Iterator<?> iterator = collection.iterator();
+            while (iterator.hasNext()) {
+                Object object = (Object) iterator.next();
+                builder.append(object.toString());
+                builder.append(Constants.COMMA_CHAR);
+            }
+            builder.deleteCharAt(builder.lastIndexOf(Constants.COMMA_STRING));
+        }
+        builder.append(Constants.CLOSE_BRACE_CHAR);
+        return builder.toString();
     }
 
     /**

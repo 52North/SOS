@@ -13,11 +13,26 @@
         <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" fetch="select" lazy="no-proxy" foreign-key="procProcDescFormatFk">
             <column name="procedureDescriptionFormatId" not-null="true" />
         </many-to-one>
-        <property name="identifier" type="string">
-            <column name="identifier" not-null="true" unique="true" />
+		<property name="identifier" type="string">
+            <column name="identifier" unique="true"/>
+        </property>
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="procCodespaceIdentifierFk">
+            <column name="codespace" />
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name" />
+        </property>
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="procCodespaceNameFk">
+            <column name="codespaceName" />
+        </many-to-one>
+        <property name="description" type="string">
+            <column name="description" />
         </property>
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
             <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
+        </property>
+        <property name="disabled" type="org.hibernate.type.TrueFalseType">
+            <column name="disabled" not-null="true" default="'F'" check="disabled in ('T','F')"/>
         </property>
         <property name="descriptionFile" type="org.hibernate.type.StringClobType">
             <column name="descriptionFile" />

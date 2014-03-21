@@ -40,6 +40,6 @@ import com.google.common.base.Predicate;
  */
 public interface DescriptionCreationStrategy
         extends Predicate<Procedure> {
-    SosProcedureDescription create(Procedure p, Session s)
+    SosProcedureDescription create(Procedure p, String i18n,Session s)
             throws OwsExceptionReport;
 }

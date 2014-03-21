@@ -105,6 +105,44 @@
 		{
 			"param":{
 				"service":"SOS",
+				"version":"2.0.0",
+				"request":"DescribeSensor",
+				"procedure":"http://www.52north.org/test/procedure/1",
+				"procedureDescriptionFormat":"http://www.opengis.net/sensorML/1.0.1",
+				"language":"ger"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"DescribeSensor",
+			"title":"language ger",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"DescribeSensor",
+				"procedure":"http://www.52north.org/test/procedure/1",
+				"procedureDescriptionFormat":"http://www.opengis.net/sensorML/1.0.1",
+				"crs":"EPSG::4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"DescribeSensor",
+			"title":"crs = EPSG::4258",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
 				"request":"GetCapabilities"
 			},
 			"service":"SOS",
@@ -112,6 +150,102 @@
 			"binding":"/kvp",
 			"operation":"GetCapabilities",
 			"title":"minimal",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"request":"GetCapabilities",
+				"language":"ger"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetCapabilities",
+			"title":"language ger",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"request":"GetCapabilities",
+				"crs":"4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetCapabilities",
+			"title":"crs = 4258",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"request":"GetCapabilities",
+				"crs":"EPSG:4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetCapabilities",
+			"title":"crs = EPSG:4258",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"request":"GetCapabilities",
+				"crs":"EPSG::4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetCapabilities",
+			"title":"crs = EPSG::4258",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"request":"GetCapabilities",
+				"crs":"http://www.opengis.net/def/crs/EPSG/0/4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetCapabilities",
+			"title":"crs = http://www.opengis.net/def/crs/EPSG/0/4258",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"request":"GetCapabilities",
+				"crs":"urn:ogc:def:crs:EPSG::4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetCapabilities",
+			"title":"crs = urn:ogc:def:crs:EPSG::4258",
 			"headers":{
 				"Accept":"application/xml"
 			},
@@ -259,6 +393,40 @@
 			"binding":"/kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"minimal",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"GetFeatureOfInterest",
+				"language":"ger"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetFeatureOfInterest",
+			"title":"language=ger",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"GetFeatureOfInterest",
+				"crs":"EPSG::4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetFeatureOfInterest",
+			"title":"crs=EPSG::4258",
 			"headers":{
 				"Accept":"application/xml"
 			},
@@ -526,6 +694,42 @@
 				"service":"SOS",
 				"version":"2.0.0",
 				"request":"GetObservation",
+				"offering":"http://www.52north.org/test/offering/1",
+				"language":"ger"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetObservation",
+			"title":"offering, language=ger",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"GetObservation",
+				"offering":"http://www.52north.org/test/offering/1",
+				"crs":"EPSG::4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetObservation",
+			"title":"offering, crs=EPSG::4258",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"GetObservation",
 				"offering":[
 					"http://www.52north.org/test/offering/1",
 					"http://www.52north.org/test/offering/3"
@@ -725,6 +929,77 @@
 			"binding":"/kvp",
 			"operation":"GetObservation",
 			"title":"temporal filter latest",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"GetObservationById",
+				"observation":"http://www.52north.org/test/observation/9"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetObservationById",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"GetObservationById",
+				"observation":"http://www.52north.org/test/observation/9",
+				"crs":"EPSG::4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetObservationById",
+			"title":"crs=EPSG::4258",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"GetObservationById",
+				"observation":"http://www.52north.org/test/observation/9",
+				"language":"ger"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetObservationById",
+			"title":"language=ger",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"GetObservationById",
+				"observation":"http://www.52north.org/test/observation/9",
+				"crs":"EPSG::4258",
+				"language":"ger"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetObservationById",
+			"title":"crs=EPSG::4258,lanuage=get",
 			"headers":{
 				"Accept":"application/xml"
 			},

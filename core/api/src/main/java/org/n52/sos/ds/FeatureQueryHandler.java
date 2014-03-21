@@ -55,6 +55,23 @@ public interface FeatureQueryHandler {
      *            Data source connection
      * @param version
      *            SOS version
+     * @return SOS representation of the FOI
+     * 
+     * 
+     * @throws OwsExceptionReport
+     */
+    @Deprecated
+    AbstractFeature getFeatureByID(String featureID, Object connection, String version) throws OwsExceptionReport;
+
+    /**
+     * Query feature data from data source for an identifier
+     * 
+     * @param featureID
+     *            FOI identifier
+     * @param connection
+     *            Data source connection
+     * @param version
+     *            SOS version
      * @param responseSrid
      *            response srid for feature geometry, if negative not
      *            transformation
@@ -63,7 +80,7 @@ public interface FeatureQueryHandler {
      * 
      * @throws OwsExceptionReport
      */
-    AbstractFeature getFeatureByID(String featureID, Object connection, String version, int responseSrid)
+    AbstractFeature getFeatureByID(FeatureQueryHandlerQueryObject queryObject)
             throws OwsExceptionReport;
 
     /**
@@ -78,7 +95,30 @@ public interface FeatureQueryHandler {
      * 
      * @throws OwsExceptionReport
      */
+    @Deprecated
     Collection<String> getFeatureIDs(SpatialFilter filter, Object connection) throws OwsExceptionReport;
+    
+    Collection<String> getFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport;
+
+    /**
+     * Get feature data for identifiers and/or for a spatial filter
+     * 
+     * @param foiIDs
+     *            FOI identifiers
+     * @param list
+     *            Spatial filter
+     * @param connection
+     *            Data source connection
+     * @param version
+     *            SOS version
+     * @return Map of identifier and SOS FOI representation
+     * 
+     * 
+     * @throws OwsExceptionReport
+     */
+    @Deprecated
+    Map<String, AbstractFeature> getFeatures(Collection<String> foiIDs, List<SpatialFilter> list, Object connection,
+            String version) throws OwsExceptionReport;
 
     /**
      * Get feature data for identifiers and/or for a spatial filter
@@ -99,8 +139,7 @@ public interface FeatureQueryHandler {
      * 
      * @throws OwsExceptionReport
      */
-    Map<String, AbstractFeature> getFeatures(Collection<String> foiIDs, List<SpatialFilter> list, Object connection,
-            String version, int responseSrid) throws OwsExceptionReport;
+    Map<String, AbstractFeature> getFeatures(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport;
 
     /**
      * Query the envelope for feature ids
@@ -109,12 +148,30 @@ public interface FeatureQueryHandler {
      *            FOI identifiers
      * @param connection
      *            Data source connection
+     * @param responseSrid
      * @return Envelope of requested FOI identifiers
-     * 
      * 
      * @throws OwsExceptionReport
      */
+    @Deprecated
     SosEnvelope getEnvelopeForFeatureIDs(Collection<String> featureIDs, Object connection) throws OwsExceptionReport;
+
+    /**
+     * Query the envelope for feature ids
+     * 
+     * @param featureIDs
+     *            FOI identifiers
+     * @param connection
+     *            Data source connection
+     * @param responseSrid
+     *            response srid for feature geometry, if negative not
+     *            transformation
+     * @return Envelope of requested FOI identifiers
+     * 
+     * @throws OwsExceptionReport
+     */
+    SosEnvelope getEnvelopeForFeatureIDs(FeatureQueryHandlerQueryObject queryObject)
+            throws OwsExceptionReport;
 
     /**
      * FIXME Add javadoc to clarify the semantics of this method
@@ -128,7 +185,17 @@ public interface FeatureQueryHandler {
      */
     String insertFeature(SamplingFeature samplingFeature, Object connection) throws OwsExceptionReport;
 
+    @Deprecated
     int getDefaultEPSG();
-
+    
+    @Deprecated
     int getDefault3DEPSG();
+    
+    int getStorageEPSG();
+
+    int getStorage3DEPSG();
+    
+    int getDefaultResponseEPSG();
+
+    int getDefaultResponse3DEPSG();
 }

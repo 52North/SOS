@@ -31,10 +31,17 @@
             </modules>
         </profile>
         <profile>
+            <id>inspire</id>
+            <modules>
+                <module>inspire</module>
+            </modules>
+        </profile>
+        <profile>
             <id>develop</id>
             <modules>
                 <module>gda</module>
                 <module>do</module>
+                <module>inspire</module>
             </modules>
         </profile>
     </profiles>

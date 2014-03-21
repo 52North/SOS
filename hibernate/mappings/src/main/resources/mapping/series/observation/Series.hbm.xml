@@ -21,5 +21,8 @@
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
             <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
         </property>
+        <property name="disabled" type="org.hibernate.type.TrueFalseType">
+            <column name="disabled" not-null="true" default="'F'" check="disabled in ('T','F')"/>
+        </property>
     </class>
 </hibernate-mapping>

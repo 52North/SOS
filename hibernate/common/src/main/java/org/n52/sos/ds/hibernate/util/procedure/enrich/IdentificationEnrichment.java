@@ -28,6 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.i18n.AbstractFeatureI18NDAO;
+import org.n52.sos.ds.hibernate.entities.i18n.I18NProcedure;
+import org.n52.sos.i18n.I18NProcedureObject;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
@@ -40,15 +44,21 @@ import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
  * @author Christian Autermann <c.autermann@52north.org>
  */
 public class IdentificationEnrichment extends SensorMLEnrichment {
+    
+    private I18NProcedure i18NProcedure = null; 
+    
     @Override
     protected void enrich(AbstractSensorML description) throws OwsExceptionReport {
         enrichUniqueId(description);
+        if (isSetI18N()) {
+            queryI18NProcedure();
+        }
         enrichShortName(description);
         enrichLongName(description);
     }
 
     private void enrichUniqueId(AbstractSensorML description) {
-        if (!description.findIdentification(uniqueIdPredicate()).isPresent()) {
+        if (procedureSettings().isEnrichWithDiscoveryInformation() && !description.findIdentification(uniqueIdPredicate()).isPresent()) {
             description.addIdentifier(createUniqueId());
         }
     }
@@ -57,11 +67,23 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
         if (!description.findIdentification(shortNamePredicate()).isPresent()) {
             description.addIdentifier(createShortName());
         }
+        if (isSetI18NProcedure() && description.findIdentification(shortNamePredicate()).isPresent()) {
+            SmlIdentifier smlIdentifier = description.findIdentification(shortNamePredicate()).get();
+            if (i18NProcedure.isSetShortname()) {
+                smlIdentifier.setValue(i18NProcedure.getShortname());
+            }
+        }
     }
 
     private void enrichLongName(AbstractSensorML description) {
         if (!description.findIdentification(longNamePredicate()).isPresent()) {
             description.addIdentifier(createLongName());
+        }
+        if (isSetI18NProcedure() && description.findIdentification(longNamePredicate()).isPresent()) {
+            SmlIdentifier smlIdentifier = description.findIdentification(longNamePredicate()).get();
+            if (i18NProcedure.isSetLongname()) {
+                smlIdentifier.setValue(i18NProcedure.getLongname());
+            }
         }
     }
 
@@ -72,20 +94,39 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
     }
 
     private SmlIdentifier createLongName() {
+        return createLongName(getIdentifier());
+    }
+    
+    private SmlIdentifier createLongName(String longName) {
         return new SmlIdentifier(SensorMLConstants.ELEMENT_NAME_LONG_NAME,
                                  procedureSettings().getIdentifierLongNameDefinition(),
-                                 getIdentifier());
+                                 longName);
     }
 
     private SmlIdentifier createShortName() {
+        return createShortName(getIdentifier());
+    }
+    
+    private SmlIdentifier createShortName(String shortName) {
         return new SmlIdentifier(SensorMLConstants.ELEMENT_NAME_SHORT_NAME,
                                  procedureSettings().getIdentifierShortNameDefinition(),
-                                 getIdentifier());
+                                 shortName);
+    }
+    
+    private void queryI18NProcedure() {
+        AbstractFeatureI18NDAO i18ndao = DaoFactory.getInstance().getI18NDAO(I18NProcedureObject.class, getSession());
+        if (i18ndao != null) {
+         i18NProcedure =  (I18NProcedure)i18ndao.getObject(getIdentifier(), getI18N(), getSession());
+        }
+    }
+
+    private boolean isSetI18NProcedure() {
+        return i18NProcedure != null;
     }
 
     @Override
     public boolean isApplicable() {
-        return super.isApplicable() && procedureSettings().isEnrichWithDiscoveryInformation();
+        return super.isApplicable() && (procedureSettings().isEnrichWithDiscoveryInformation() || isSetI18N());
     }
 
 }

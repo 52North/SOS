@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
 import java.util.Map;
@@ -36,6 +101,8 @@ import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.service.ServiceConfiguration;
+import org.n52.sos.util.StringHelper;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -54,6 +121,7 @@ public class ProcedureDescriptionEnrichments {
     private Session session;
     private HibernateProcedureConverter converter;
     private TimePeriod validTime;
+    private String language = ServiceConfiguration.getInstance().getDefaultLanguage();
 
     private ProcedureDescriptionEnrichments() {
     }
@@ -102,6 +170,13 @@ public class ProcedureDescriptionEnrichments {
         this.validTime = validTime;
         return this;
     }
+    
+    public ProcedureDescriptionEnrichments setLanguage(String language) {
+        if (StringHelper.isNotEmpty(language)) {
+            this.language = language;
+        }
+        return this;
+    }
 
     public Iterable<ProcedureDescriptionEnrichment> createAll() {
         return Iterables.filter(
@@ -115,7 +190,8 @@ public class ProcedureDescriptionEnrichments {
                         createIdentificationEnrichment(),
                         createContactsEnrichment(),
                         createKeywordEnrichment(),
-                        createValidTimeEnrichment()),
+                        createValidTimeEnrichment(),
+                        createObservablePropertyEnrichment()),
                 ProcedureDescriptionEnrichment.predicate());
     }
 
@@ -150,7 +226,7 @@ public class ProcedureDescriptionEnrichments {
     }
 
     public RelatedProceduresEnrichment createRelatedProceduresEnrichment() {
-        return setValues(new RelatedProceduresEnrichment()).setSession(session)
+        return setValues(new RelatedProceduresEnrichment())
                 .setConverter(converter).setProcedureCache(procedureCache)
                 .setProcedureDescriptionFormat(procedureDescriptionFormat)
                 .setValidTime(validTime);
@@ -164,10 +240,16 @@ public class ProcedureDescriptionEnrichments {
         return setValues(new ValidTimeEnrichment()).setValidTime(validTime);
     }
 
+    private ObservablePropertyEnrichment createObservablePropertyEnrichment() {
+        return setValues(new ObservablePropertyEnrichment());
+    }
+
     private <T extends ProcedureDescriptionEnrichment> T setValues(T enrichment) {
         enrichment.setDescription(description)
                 .setIdentifier(identifier)
-                .setVersion(version);
+                .setVersion(version)
+                .setI18n(language)
+                .setSession(session);
         return enrichment;
     }
 

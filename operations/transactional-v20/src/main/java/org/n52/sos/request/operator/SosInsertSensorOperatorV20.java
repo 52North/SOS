@@ -57,6 +57,7 @@ import org.n52.sos.response.InsertSensorResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.MiscSettings;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.Constants;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.wsdl.WSDLConstants;
@@ -230,7 +231,8 @@ public class SosInsertSensorOperatorV20 extends
                     request.getProcedureDescription().getParentProcedures(), true, true);
             for (String parentProcedure : allParentProcedures) {
                 for (String offering : cache.getOfferingsForProcedure(parentProcedure)) {
-                    SosOffering sosOffering = new SosOffering(offering,null);
+                    // TODO I18N
+                    SosOffering sosOffering = new SosOffering(offering, Constants.EMPTY_STRING);
                     sosOffering.setParentOfferingFlag(true);
                     sosOfferings.add(sosOffering);
                 }
@@ -247,12 +249,12 @@ public class SosInsertSensorOperatorV20 extends
 
     private void checkProcedureAndOfferingCombination(InsertSensorRequest request) throws OwsExceptionReport {
         for (SosOffering offering : request.getAssignedOfferings()) {
-            if (!offering.isParentOffering() && getCache().getOfferings().contains(offering.getOfferingIdentifier())) {
+            if (!offering.isParentOffering() && getCache().getOfferings().contains(offering.getIdentifier())) {
                 throw new InvalidParameterValueException()
                         .at(Sos2Constants.InsertSensorParams.offeringIdentifier)
                         .withMessage(
                                 "The offering with the identifier '%s' still exists in this service and it is not allowed to insert more than one procedure to an offering!",
-                                offering.getOfferingIdentifier());
+                                offering.getIdentifier());
             }
         }
     }

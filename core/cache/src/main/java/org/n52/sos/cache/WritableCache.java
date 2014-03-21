@@ -26,10 +26,76 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.cache;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
@@ -41,6 +107,7 @@ import org.n52.sos.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -372,6 +439,39 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         getNameForOfferingsMap().put(offering, name);
 
     }
+    
+    @Override
+    public void setI18nNameForOffering(String offering, String name, String i18n) {
+        notNullOrEmpty(OFFERING, offering);
+        notNullOrEmpty(NAME, name);
+        notNullOrEmpty(I18N, i18n);
+        LOG.trace("Setting Name of Offering {} and language {} to {}", offering, i18n, name);
+        Map<String, String> map = null;
+        if (getI18nNameForOfferingsMap().containsKey(offering)) {
+            map = getI18nNameForOfferingsMap().get(offering);
+        } else {
+            map = newSynchronizedMap();
+        }
+        map.put(i18n, name);
+        getI18nNameForOfferingsMap().put(offering, map);
+        
+    }
+
+    @Override
+    public void setI18nDescriptionForOffering(String offering, String description, String i18n) {
+        notNullOrEmpty(OFFERING, offering);
+        notNullOrEmpty(DESCRIPTION, description);
+        notNullOrEmpty(I18N, i18n);
+        LOG.trace("Setting Description of Offering {} and language {} to {}", offering, i18n, description);
+        Map<String, String> map = null;
+        if (getI18nDescriptionForOfferingsMap().containsKey(offering)) {
+            map = getI18nDescriptionForOfferingsMap().get(offering);
+        } else {
+            map = newSynchronizedMap();
+        }
+        map.put(i18n, description);
+        getI18nDescriptionForOfferingsMap().put(offering, map);
+    }
 
     @Override
     public void setEnvelopeForOffering(final String offering, final SosEnvelope envelope) {
@@ -670,6 +770,34 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         notNullOrEmpty(OFFERING, offering);
         LOG.trace("Removing name for offering {}", offering);
         getNameForOfferingsMap().remove(offering);
+    }
+
+    @Override
+    public void removeI18nNameForOffering(String offering, String i18n) {
+        notNullOrEmpty(OFFERING, offering);
+        if (Strings.isNullOrEmpty(i18n)) {
+            LOG.trace("Removing i18n names for offering {}", offering);
+            getI18nNameForOfferingsMap().remove(offering);
+        } else {
+            if (getI18nNameForOfferingsMap().containsKey(offering)) {
+                LOG.trace("Removing name for language {} and offering {}", i18n, offering);
+                getI18nNameForOfferingsMap().get(offering).remove(i18n);
+            }
+        }
+    }
+
+    @Override
+    public void removeI18nDescriptionForOffering(String offering, String i18n) {
+        notNullOrEmpty(OFFERING, offering);
+        if (Strings.isNullOrEmpty(i18n)) {
+            LOG.trace("Removing i18n names for offering {}", offering);
+            getI18nDescriptionForOfferingsMap().remove(offering);
+        } else {
+            if (getI18nDescriptionForOfferingsMap().containsKey(offering)) {
+                LOG.trace("Removing name for language {} and offering {}", i18n, offering);
+                getI18nDescriptionForOfferingsMap().get(offering).remove(i18n);
+            }
+        }
     }
 
     @Override
@@ -1279,6 +1407,19 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
+    public void clearI18nNamesForOfferings() {
+        LOG.trace("Clearing i18n names for offerings");
+        getI18nNameForOfferingsMap().clear();
+        
+    }
+
+    @Override
+    public void clearI18nDescriptionsNameForOfferings() {
+        LOG.trace("Clearing i18n descriptions for offerings");
+        getI18nDescriptionForOfferingsMap().clear();
+    }
+    
+    @Override
     public void clearObservablePropertiesForOfferings() {
         LOG.trace("Clearing observable properties for offerings");
         getObservablePropertiesForOfferingsMap().clear();
@@ -1500,5 +1641,32 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         LOG.trace("Adding AllowedFeatureOfInterestTypes {} to Offering {}", allowedFeatureOfInterestTypes, offering);
         getAllowedFeatureOfInterestTypesForOfferingsMap().addAll(offering, allowedFeatureOfInterestTypes);
     }
-
+    
+    @Override
+    public void addSupportedLanguage(String language){
+      notNullOrEmpty(SUPPORTED_LANGUAGE, language);
+      LOG.trace("Adding Language {}", language);
+      getSupportedLanguageSet().add(language);
+    }
+    
+    @Override
+    public void addSupportedLanguage(Collection<String> languages) {
+        noNullValues(SUPPORTED_LANGUAGES, languages);
+      for (final String language : languages) {
+          addSupportedLanguage(language);
+      }
+    }
+    
+    @Override
+    public void clearSupportedLanguage() {
+        LOG.trace("Clearing supported languages");
+        getSupportedLanguageSet().clear();
+    }
+    
+    @Override
+    public void removeSupportedLanguage(String language) {
+        LOG.trace("Removing Language {}", language);
+        getSupportedLanguageSet().remove(language);
+    }
+    
 }

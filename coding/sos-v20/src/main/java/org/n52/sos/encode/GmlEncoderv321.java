@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.opengis.gml.x32.AbstractGeometryType;
 import net.opengis.gml.x32.AbstractRingPropertyType;
 import net.opengis.gml.x32.AbstractRingType;
 import net.opengis.gml.x32.CodeType;
@@ -71,6 +72,7 @@ import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
@@ -81,6 +83,7 @@ import org.n52.sos.ogc.gml.time.TimePosition;
 import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
@@ -120,7 +123,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
             GmlConstants.NS_GML_32, org.n52.sos.ogc.gml.time.Time.class, com.vividsolutions.jts.geom.Geometry.class,
             org.n52.sos.ogc.om.values.CategoryValue.class, org.n52.sos.ogc.gml.ReferenceType.class,
             org.n52.sos.ogc.om.values.QuantityValue.class, org.n52.sos.ogc.gml.CodeWithAuthority.class,
-            org.n52.sos.ogc.gml.CodeType.class, SamplingFeature.class, SosEnvelope.class, FeatureCollection.class);
+            org.n52.sos.ogc.gml.CodeType.class, SamplingFeature.class, SosEnvelope.class, FeatureCollection.class, AbstractGeometry.class);
 
     public GmlEncoderv321() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
@@ -162,6 +165,8 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
             encodedObject = createCodeType((org.n52.sos.ogc.gml.CodeType) element);
         } else if (element instanceof AbstractFeature) {
             encodedObject = createFeaturePropertyType((AbstractFeature) element, additionalValues);
+        } else if (element instanceof GeometryValue) {
+            encodedObject = createGeomteryPropertyType((AbstractGeometry) element, additionalValues);
         } else if (element instanceof SosEnvelope) {
             encodedObject = createEnvelope((SosEnvelope) element);
         } else {
@@ -211,7 +216,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
         final FeaturePropertyType featurePropertyType =
                 FeaturePropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         if (isNotSamplingFeature(feature)) {
-            featurePropertyType.setHref(feature.getIdentifier().getValue());
+            featurePropertyType.setHref(feature.getIdentifierCodeWithAuthority().getValue());
             return featurePropertyType;
         } else {
             final SamplingFeature samplingFeature = (SamplingFeature) feature;
@@ -221,22 +226,22 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
             } else {
                 if (additionalValues.containsKey(HelperValues.ENCODE)
                         && additionalValues.get(HelperValues.ENCODE).equals("false") || !samplingFeature.isEncode()) {
-                    featurePropertyType.setHref(feature.getIdentifier().getValue());
-                    if (feature instanceof SamplingFeature && samplingFeature.isSetNames()) {
+                    featurePropertyType.setHref(feature.getIdentifierCodeWithAuthority().getValue());
+                    if (feature instanceof SamplingFeature && samplingFeature.isSetName()) {
                         featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());
                     }
                     return featurePropertyType;
                 }
                 if (!samplingFeature.isSetGeometry()) {
-                    featurePropertyType.setHref(samplingFeature.getIdentifier().getValue());
-                    if (samplingFeature.isSetNames()) {
+                    featurePropertyType.setHref(samplingFeature.getIdentifierCodeWithAuthority().getValue());
+                    if (samplingFeature.isSetName()) {
                         featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());
                     }
                     return featurePropertyType;
                 }
                 if (samplingFeature.getUrl() != null) {
                     featurePropertyType.setHref(samplingFeature.getUrl());
-                    if (samplingFeature.isSetNames()) {
+                    if (samplingFeature.isSetName()) {
                         featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());
                     }
                     return featurePropertyType;
@@ -262,8 +267,8 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
                                         "Error while encoding featurePropertyType!");
                             }
                         } else {
-                            featurePropertyType.setHref(samplingFeature.getIdentifier().getValue());
-                            if (samplingFeature.isSetNames()) {
+                            featurePropertyType.setHref(samplingFeature.getIdentifier());
+                            if (samplingFeature.isSetName()) {
                                 featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());
                             }
                             return featurePropertyType;
@@ -411,7 +416,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
             }
         } else {
             final String endString =
-                    DateTimeHelper.formatDateTime2String(timePosition.getTime(), timePosition.getTimeFormat());
+                    DateTimeHelper.formatDateTime2String(timePosition);
 
             // concat minutes for timeZone offset, because gml requires
             // xs:dateTime, which needs minutes in
@@ -420,6 +425,45 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
             xbTimePosition.setStringValue(endString);
         }
         return xbTimePosition;
+    }
+
+    private XmlObject createGeomteryPropertyType(AbstractGeometry element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+        GeometryPropertyType geometryPropertyType = GeometryPropertyType.Factory.newInstance();
+        if (element.isReferenced()) {
+            geometryPropertyType.setHref(element.getGmlId());
+        } else {
+            AbstractGeometryType xmlObject = createAbstractGeometry(element, additionalValues);
+            geometryPropertyType.setAbstractGeometry(xmlObject); 
+            XmlHelper.substituteElement(geometryPropertyType.getAbstractGeometry(), xmlObject);
+        }
+        
+        return geometryPropertyType;
+    }
+
+    private AbstractGeometryType createAbstractGeometry(AbstractGeometry element,
+            Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+         XmlObject xbGeometry = createPosition(element.getGeometry(), additionalValues);
+        AbstractGeometryType abstractGeometryType = null;
+        if (xbGeometry instanceof AbstractGeometryType) {
+            abstractGeometryType = (AbstractGeometryType) xbGeometry;
+        } else if (xbGeometry instanceof GeometryPropertyType) {
+            abstractGeometryType = ((GeometryPropertyType)xbGeometry).getAbstractGeometry();
+        } else {
+            throw new UnsupportedEncoderInputException(this, element); 
+        }
+        
+        if (element.isSetIdentifier()) {
+            abstractGeometryType.setIdentifier(createCodeWithAuthorityType(element.getIdentifierCodeWithAuthority()));
+        }
+        if (element.isSetName()) {
+            for (org.n52.sos.ogc.gml.CodeType codeType : element.getName()) {
+                abstractGeometryType.addNewName().set(createCodeType(codeType));
+            }
+        }
+        if (element.isSetDescription()) {
+            abstractGeometryType.addNewDescription().setStringValue(element.getDescription());
+        }
+        return abstractGeometryType;
     }
 
     private XmlObject createPosition(Geometry geom, Map<HelperValues, String> additionalValues)

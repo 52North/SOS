@@ -47,15 +47,19 @@ import org.n52.sos.config.sqlite.entities.FileSettingValue;
 import org.n52.sos.config.sqlite.entities.IntegerSettingValue;
 import org.n52.sos.config.sqlite.entities.NumericSettingValue;
 import org.n52.sos.config.sqlite.entities.ObservationEncoding;
+import org.n52.sos.config.sqlite.entities.DynamicOfferingExtension;
 import org.n52.sos.config.sqlite.entities.OfferingExtensionImpl;
 import org.n52.sos.config.sqlite.entities.Operation;
+import org.n52.sos.config.sqlite.entities.DynamicOwsExtendedCapabilities;
 import org.n52.sos.config.sqlite.entities.ProcedureEncoding;
 import org.n52.sos.config.sqlite.entities.StaticCapabilitiesImpl;
 import org.n52.sos.config.sqlite.entities.StringSettingValue;
+import org.n52.sos.config.sqlite.entities.TimeInstantSettingValue;
 import org.n52.sos.config.sqlite.entities.UriSettingValue;
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.hibernate.AbstractSessionFactoryProvider;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.service.SosContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -171,10 +175,14 @@ public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
                 .addAnnotatedClass(Operation.class)
                 .addAnnotatedClass(ProcedureEncoding.class)
                 .addAnnotatedClass(Binding.class)
-                .addAnnotatedClass(ObservationEncoding.class);
+                .addAnnotatedClass(ObservationEncoding.class)
+                .addAnnotatedClass(DynamicOfferingExtension.class)
+                .addAnnotatedClass(DynamicOwsExtendedCapabilities.class)
+                .addAnnotatedClass(TimeInstantSettingValue.class);
         
         cfg.registerTypeOverride(new HibernateFileType(), new String[] { "file", File.class.getName() });
         cfg.registerTypeOverride(new HibernateUriType(), new String[] { "uri", URI.class.getName() });
+        cfg.registerTypeOverride(new HibernateTimeInstantType(), new String[] { "timeInstant", TimeInstant.class.getName() });
 
         if (properties != null) {
             cfg.mergeProperties(properties);

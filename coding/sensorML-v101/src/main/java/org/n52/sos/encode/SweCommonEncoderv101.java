@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.encode;
 
 import static org.n52.sos.util.http.HTTPStatus.BAD_REQUEST;
@@ -77,6 +142,7 @@ import org.apache.xmlbeans.XmlString;
 import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
 import org.joda.time.DateTime;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.TimePeriod;
@@ -93,6 +159,7 @@ import org.n52.sos.ogc.swe.SweSimpleDataRecord;
 import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
@@ -152,24 +219,27 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
     public XmlObject encode(final Object element, final Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
         XmlObject encodedObject = null;
-        if (element instanceof SweBoolean) {
-            encodedObject = createBoolean((SweBoolean) element);
-        } else if (element instanceof SweCategory) {
-            encodedObject = createCategory((SweCategory) element);
-        } else if (element instanceof SweCount) {
-            encodedObject = createCount((SweCount) element);
-        } else if (element instanceof SweObservableProperty) {
-            encodedObject = createObservableProperty((SweObservableProperty) element);
-        } else if (element instanceof SweQuantity) {
-            encodedObject = createQuantity((SweQuantity) element);
-        } else if (element instanceof SweQuantityRange) {
-            encodedObject = createQuantityRange((SweQuantityRange) element);
-        } else if (element instanceof SweText) {
-            encodedObject = createText((SweText) element);
-        } else if (element instanceof SweTime) {
-            encodedObject = createTime((SweTime) element);
-        } else if (element instanceof SweTimeRange) {
-            encodedObject = createTimeRange((SweTimeRange) element);
+        if (element instanceof SweAbstractSimpleType) {
+            encodedObject = createSimpleType((SweAbstractSimpleType<?>)element, additionalValues);
+//        }
+//        if (element instanceof SweBoolean) {
+//            encodedObject = createBoolean((SweBoolean) element);
+//        } else if (element instanceof SweCategory) {
+//            encodedObject = createCategory((SweCategory) element);
+//        } else if (element instanceof SweCount) {
+//            encodedObject = createCount((SweCount) element);
+//        } else if (element instanceof SweObservableProperty) {
+//            encodedObject = createObservableProperty((SweObservableProperty) element);
+//        } else if (element instanceof SweQuantity) {
+//            encodedObject = createQuantity((SweQuantity) element);
+//        } else if (element instanceof SweQuantityRange) {
+//            encodedObject = createQuantityRange((SweQuantityRange) element);
+//        } else if (element instanceof SweText) {
+//            encodedObject = createText((SweText) element);
+//        } else if (element instanceof SweTime) {
+//            encodedObject = createTime((SweTime) element);
+//        } else if (element instanceof SweTimeRange) {
+//            encodedObject = createTimeRange((SweTimeRange) element);
         } else if (element instanceof SweCoordinate) {
             encodedObject = createCoordinate((SweCoordinate<?>) element);
         } else if (element instanceof SweDataArray) {
@@ -188,6 +258,40 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
         LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
                 XmlHelper.validateDocument(encodedObject));
         return encodedObject;
+    }
+    
+    private AbstractDataComponentType createSimpleType(final SweAbstractSimpleType<?> sosSimpleType)
+            throws OwsExceptionReport {
+        return createSimpleType(sosSimpleType, null);
+    }
+    
+    private AbstractDataComponentType createSimpleType(final SweAbstractSimpleType<?> sosSimpleType, Map<HelperValues, String> additionalValues)
+            throws OwsExceptionReport {
+        AbstractDataComponentType abstractDataComponentType = null;
+        if (sosSimpleType instanceof SweBoolean) {
+            abstractDataComponentType = createBoolean((SweBoolean) sosSimpleType);
+        } else if (sosSimpleType instanceof SweCategory) {
+            abstractDataComponentType = createCategory((SweCategory) sosSimpleType);
+        } else if (sosSimpleType instanceof SweCount) {
+            abstractDataComponentType = createCount((SweCount) sosSimpleType);
+        } else if (sosSimpleType instanceof SweObservableProperty) {
+            abstractDataComponentType = createObservableProperty((SweObservableProperty) sosSimpleType);
+        } else if (sosSimpleType instanceof SweQuantity) {
+            abstractDataComponentType = createQuantity((SweQuantity) sosSimpleType);
+        } else if (sosSimpleType instanceof SweQuantityRange) {
+            abstractDataComponentType = createQuantityRange((SweQuantityRange) sosSimpleType);
+        } else if (sosSimpleType instanceof SweText) {
+            abstractDataComponentType = createText((SweText) sosSimpleType);
+        } else if (sosSimpleType instanceof SweTimeRange) {
+            abstractDataComponentType = createTimeRange((SweTimeRange) sosSimpleType);
+        } else if (sosSimpleType instanceof SweTime) {
+            abstractDataComponentType = createTime((SweTime) sosSimpleType);
+        } else {
+            throw new NotYetSupportedException(SweAbstractSimpleType.class.getSimpleName(), sosSimpleType);
+        }
+        addAbstractDataComponentValues(abstractDataComponentType, sosSimpleType);
+        return abstractDataComponentType;
+       
     }
 
     private SimpleDataRecordType createSimpleDataRecord(final SweSimpleDataRecord simpleDataRecord)
@@ -219,28 +323,28 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
         final SweAbstractDataComponent sosElement = sweField.getElement();
         final AnyScalarPropertyType xbField =
                 AnyScalarPropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        if (sweField.getName() != null) {
-            xbField.setName(sweField.getName());
+        if (sweField.isSetName()) {
+            xbField.setName(sweField.getName().getValue());
         }
         final AbstractDataComponentType xbDCD;
         if (sosElement instanceof SweBoolean) {
             xbDCD = xbField.addNewBoolean();
-            xbDCD.set(createBoolean((SweBoolean) sosElement));
+            xbDCD.set(createSimpleType((SweBoolean) sosElement));
         } else if (sosElement instanceof SweCategory) {
             xbDCD = xbField.addNewCategory();
-            xbDCD.set(createCategory((SweCategory) sosElement));
+            xbDCD.set(createSimpleType((SweCategory) sosElement));
         } else if (sosElement instanceof SweCount) {
             xbDCD = xbField.addNewCount();
-            xbDCD.set(createCount((SweCount) sosElement));
+            xbDCD.set(createSimpleType((SweCount) sosElement));
         } else if (sosElement instanceof SweQuantity) {
             xbDCD = xbField.addNewQuantity();
-            xbDCD.set(createQuantity((SweQuantity) sosElement));
+            xbDCD.set(createSimpleType((SweQuantity) sosElement));
         } else if (sosElement instanceof SweText) {
             xbDCD = xbField.addNewText();
-            xbDCD.set(createText((SweText) sosElement));
+            xbDCD.set(createSimpleType((SweText) sosElement));
         } else if (sosElement instanceof SweTime) {
             xbDCD = xbField.addNewTime();
-            xbDCD.set(createTime((SweTime) sosElement));
+            xbDCD.set(createSimpleType((SweTime) sosElement));
         } else {
             throw new NoApplicableCodeException().withMessage(
                     "The element type '%s' of the received %s is not supported by this encoder '%s'.",
@@ -254,23 +358,23 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
         final SweAbstractDataComponent sosElement = sweField.getElement();
         final DataComponentPropertyType xbField =
                 DataComponentPropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        if (sweField.getName() != null) {
-            xbField.setName(sweField.getName());
+        if (sweField.isSetName()) {
+            xbField.setName(sweField.getName().getValue());
         }
         if (sosElement instanceof SweBoolean) {
-            xbField.addNewBoolean().set(createBoolean((SweBoolean) sosElement));
+            xbField.addNewBoolean().set(createSimpleType((SweBoolean) sosElement));
         } else if (sosElement instanceof SweCategory) {
-            xbField.addNewCategory().set(createCategory((SweCategory) sosElement));
+            xbField.addNewCategory().set(createSimpleType((SweCategory) sosElement));
         } else if (sosElement instanceof SweCount) {
-            xbField.addNewCount().set(createCount((SweCount) sosElement));
+            xbField.addNewCount().set(createSimpleType((SweCount) sosElement));
         } else if (sosElement instanceof SweQuantity) {
-            xbField.addNewQuantity().set(createQuantity((SweQuantity) sosElement));
+            xbField.addNewQuantity().set(createSimpleType((SweQuantity) sosElement));
         } else if (sosElement instanceof SweText) {
-            xbField.addNewText().set(createText((SweText) sosElement));
+            xbField.addNewText().set(createSimpleType((SweText) sosElement));
         } else if (sosElement instanceof SweTimeRange) {
-            xbField.addNewTimeRange().set(createTimeRange((SweTimeRange) sosElement));
+            xbField.addNewTimeRange().set(createSimpleType((SweTimeRange) sosElement));
         } else if (sosElement instanceof SweTime) {
-            xbField.addNewTime().set(createTime((SweTime) sosElement));
+            xbField.addNewTime().set(createSimpleType((SweTime) sosElement));
         } else if (sosElement instanceof SweEnvelope) {
             final EnvelopeType xbEnvelope = (EnvelopeType) xbField.addNewAbstractDataRecord()
                     .substitute(SweConstants.QN_ENVELOPE_SWE_101, EnvelopeType.type);
@@ -284,11 +388,10 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
         return xbField;
     }
 
-    private net.opengis.swe.x101.BooleanDocument.Boolean createBoolean(final SweBoolean bool) {
+    private net.opengis.swe.x101.BooleanDocument.Boolean createBoolean(final SweBoolean bool) throws OwsExceptionReport {
         final net.opengis.swe.x101.BooleanDocument.Boolean xbBoolean =
                 net.opengis.swe.x101.BooleanDocument.Boolean.Factory.newInstance(XmlOptionsHelper.getInstance()
                         .getXmlOptions());
-        addAbstractDataComponentValues(xbBoolean, bool);
         if (bool.isSetValue()) {
             xbBoolean.setValue(bool.getValue().booleanValue());
         }
@@ -297,35 +400,34 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
         }
         return xbBoolean;
     }
+    
+    private QualityPropertyType[] createQuality(final Collection<SweQuality> quality) throws OwsExceptionReport {
+        if (!quality.isEmpty()) {
+                final ArrayList<QualityPropertyType> xbQualities = Lists.newArrayListWithCapacity(quality.size());
+                for (final SweQuality sweQuality : quality) {
+                        final QualityPropertyType xbQuality = QualityPropertyType.Factory.newInstance();
+                        if (sweQuality instanceof SweText) {
+                                xbQuality.addNewText().set(createText((SweText) sweQuality));
+                        }
+                        else if (sweQuality instanceof SweCategory) {
+                                xbQuality.addNewCategory().set(createCategory((SweCategory) sweQuality));
+                        }
+                        else if (sweQuality instanceof SweQuantity) {
+                                xbQuality.addNewQuantity().set(createQuantity((SweQuantity) sweQuality));
+                        }
+                        else if (sweQuality instanceof SweQuantityRange) {
+                                xbQuality.addNewQuantityRange().set(createQuantityRange((SweQuantityRange) sweQuality));
+                        }
+                        xbQualities.add(xbQuality);
+                }
+                return xbQualities.toArray(new QualityPropertyType[xbQualities.size()]);
+        }
+                final QualityPropertyType[] result = {QualityPropertyType.Factory.newInstance()};
+                return result;
+        }
 
-    private QualityPropertyType[] createQuality(final Collection<SweQuality> quality) {
-    	if (!quality.isEmpty()) {
-    		final ArrayList<QualityPropertyType> xbQualities = Lists.newArrayListWithCapacity(quality.size());
-    		for (final SweQuality sweQuality : quality) {
-    			final QualityPropertyType xbQuality = QualityPropertyType.Factory.newInstance();
-    			if (sweQuality instanceof SweText) {
-    				xbQuality.addNewText().set(createText((SweText) sweQuality));
-    			}
-    			else if (sweQuality instanceof SweCategory) {
-    				xbQuality.addNewCategory().set(createCategory((SweCategory) sweQuality));
-    			}
-    			else if (sweQuality instanceof SweQuantity) {
-    				xbQuality.addNewQuantity().set(createQuantity((SweQuantity) sweQuality));
-    			}
-    			else if (sweQuality instanceof SweQuantityRange) {
-    				xbQuality.addNewQuantityRange().set(createQuantityRange((SweQuantityRange) sweQuality));
-    			}
-    			xbQualities.add(xbQuality);
-    		}
-    		return xbQualities.toArray(new QualityPropertyType[xbQualities.size()]);
-    	}
-		final QualityPropertyType[] result = {QualityPropertyType.Factory.newInstance()};
-		return result;
-	}
-
-	private Category createCategory(final SweCategory category) {
+    private Category createCategory(final SweCategory category) throws OwsExceptionReport {
         final Category xbCategory = Category.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        addAbstractDataComponentValues(xbCategory, category);
         if (category.isSetValue()) {
             xbCategory.setValue(category.getValue());
         }
@@ -338,9 +440,8 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
         return xbCategory;
     }
 
-    private Count createCount(final SweCount count) {
+    private Count createCount(final SweCount count) throws OwsExceptionReport {
         final Count xbCount = Count.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        addAbstractDataComponentValues(xbCount, count);
         if (count.isSetValue()) {
             xbCount.setValue(new BigInteger(Integer.toString(count.getValue().intValue())));
         }
@@ -350,10 +451,9 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
         return xbCount;
     }
 
-    private ObservableProperty createObservableProperty(final SweObservableProperty observableProperty) {
+    private ObservableProperty createObservableProperty(final SweObservableProperty observableProperty) throws OwsExceptionReport {
         final ObservableProperty xbObservableProperty =
                 ObservableProperty.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        addAbstractDataComponentValues(xbObservableProperty, observableProperty);
         return xbObservableProperty;
     }
 
@@ -362,10 +462,10 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
      *
      * @param quantity
      *            SOS internal representation
+     * @throws OwsExceptionReport 
      */
-    protected Quantity createQuantity(final SweQuantity quantity) {
+    protected Quantity createQuantity(final SweQuantity quantity) throws OwsExceptionReport {
         final Quantity xbQuantity = Quantity.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        addAbstractDataComponentValues(xbQuantity, quantity);
         if (quantity.isSetAxisID()) {
             xbQuantity.setAxisID(quantity.getAxisID());
         }
@@ -381,10 +481,9 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
         return xbQuantity;
     }
 
-    protected QuantityRange createQuantityRange(final SweQuantityRange quantityRange) {
+    protected QuantityRange createQuantityRange(final SweQuantityRange quantityRange) throws OwsExceptionReport {
         final QuantityRange xbQuantityRange =
                 QuantityRange.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        addAbstractDataComponentValues(xbQuantityRange, quantityRange);
         if (quantityRange.isSetAxisID()) {
             xbQuantityRange.setAxisID(quantityRange.getDescription());
         }
@@ -405,19 +504,18 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
      *
      * @param text
      *            SOS internal representation
+     * @throws OwsExceptionReport 
      */
-    private Text createText(final SweText text) {
+    private Text createText(final SweText text) throws OwsExceptionReport {
         final Text xbText = Text.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        addAbstractDataComponentValues(xbText, text);
         if (text.isSetValue()) {
             xbText.setValue(text.getValue());
         }
         return xbText;
     }
 
-    private Time createTime(final SweTime time) {
+    private Time createTime(final SweTime time) throws OwsExceptionReport {
         final Time xbTime = Time.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        addAbstractDataComponentValues(xbTime, time);
         if (time.isSetValue()) {
             final XmlDateTime xbDateTime = createDateTime(time.getValue());
             xbTime.setValue(xbDateTime);
@@ -442,7 +540,7 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
         return xbDateTime;
     }
 
-    private EnvelopeType createEnvelope(final SweEnvelope sosSweEnvelope) {
+    private EnvelopeType createEnvelope(final SweEnvelope sosSweEnvelope) throws OwsExceptionReport {
         final EnvelopeType envelopeType =
                 EnvelopeType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         addAbstractDataComponentValues(envelopeType, sosSweEnvelope);
@@ -461,20 +559,20 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
         return envelopeType;
     }
 
-    private VectorPropertyType createVectorProperty(final SweVector sosSweVector) {
+    private VectorPropertyType createVectorProperty(final SweVector sosSweVector) throws OwsExceptionReport {
         final VectorPropertyType vectorPropertyType =
                 VectorPropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         vectorPropertyType.setVector(createVector(sosSweVector.getCoordinates()));
         return vectorPropertyType;
     }
 
-    private VectorType createVector(final List<SweCoordinate<?>> coordinates) {
+    private VectorType createVector(final List<SweCoordinate<?>> coordinates) throws OwsExceptionReport {
         final VectorType vectorType = VectorType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         vectorType.setCoordinateArray(createCoordinates(coordinates));
         return vectorType;
     }
 
-    private TimeRange createTimeRange(final SweTimeRange timeRange) {
+    private TimeRange createTimeRange(final SweTimeRange timeRange) throws OwsExceptionReport {
         final TimeRange xbTimeRange = TimeRange.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         addAbstractDataComponentValues(xbTimeRange, timeRange);
         if (timeRange.isSetValue()) {
@@ -490,12 +588,15 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
     }
 
     private void addAbstractDataComponentValues(final AbstractDataComponentType xbComponent,
-            final SweAbstractDataComponent component) {
+            final SweAbstractDataComponent component) throws OwsExceptionReport {
         if (component.isSetDefinition()) {
             xbComponent.setDefinition(component.getDefinition());
         }
         if (component.isSetDescription()) {
             xbComponent.addNewDescription().setStringValue(component.getDescription());
+        }
+        if (component.isSetName()) {
+            xbComponent.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, component.getName()));
         }
     }
 
@@ -504,8 +605,9 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
      *
      * @param coordinate
      *            SOS internal representation
+     * @throws OwsExceptionReport 
      */
-    private Coordinate createCoordinate(final SweCoordinate<?> coordinate) {
+    private Coordinate createCoordinate(final SweCoordinate<?> coordinate) throws OwsExceptionReport {
         final Coordinate xbCoordinate = Coordinate.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         xbCoordinate.setName(coordinate.getName());
         xbCoordinate.setQuantity(createQuantity((SweQuantity) coordinate.getValue()));
@@ -517,8 +619,9 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
      *
      * @param coordinates
      *            SOS internal representation
+     * @throws OwsExceptionReport 
      */
-    private Coordinate[] createCoordinates(final List<SweCoordinate<?>> coordinates) {
+    private Coordinate[] createCoordinates(final List<SweCoordinate<?>> coordinates) throws OwsExceptionReport {
         if (coordinates != null) {
             final ArrayList<Coordinate> xbCoordinates = new ArrayList<Coordinate>(coordinates.size());
             for (final SweCoordinate<?> coordinate : coordinates) {

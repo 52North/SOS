@@ -38,7 +38,11 @@ import org.n52.sos.config.settings.FileSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.config.settings.NumericSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
+import org.n52.sos.config.settings.TimeInstantSettingDefinition;
 import org.n52.sos.config.settings.UriSettingDefinition;
+import org.n52.sos.exception.ows.concrete.DateTimeParseException;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.util.DateTimeHelper;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -114,6 +118,16 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
             String stringValue) {
         return newUriSettingValue().setValue(parseUri(stringValue)).setKey(setting.getKey());
     }
+    
+    @Override
+    public SettingValue<TimeInstant> newTimeInstantSettingValue(TimeInstantSettingDefinition setting, String stringValue) {
+        return newTimeInstantSettingValueFromGenericDefinition(setting, stringValue);
+    }
+
+    private SettingValue<TimeInstant> newTimeInstantSettingValueFromGenericDefinition(SettingDefinition<?, ?> setting,
+            String stringValue) {
+        return newTimeInstantSettingValue().setValue(parseTimeInstant(stringValue)).setKey(setting.getKey());
+    }
 
     @Override
     public SettingValue<?> newSettingValue(SettingDefinition<?, ?> setting, String value) {
@@ -130,6 +144,8 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
             return newStringSettingValueFromGenericDefinition(setting, value);
         case URI:
             return newUriSettingValueFromGenericDefinition(setting, value);
+        case TIMEINSTANT:
+            return newTimeInstantSettingValueFromGenericDefinition(setting, value);
         default:
             throw new IllegalArgumentException(String.format("Type %s not supported", setting.getType()));
         }
@@ -247,6 +263,30 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     protected String parseString(String stringValue) {
         return nullOrEmpty(stringValue) ? null : stringValue;
     }
+    
+    /**
+     * Parses the a string to a {@code String}.
+     * <p/>
+     * 
+     * @param stringValue
+     *            the string value
+     *            <p/>
+     * @return the parsed value
+     *         <p/>
+     * @throws IllegalArgumentException
+     *             if the string value is invalid
+     */
+    protected TimeInstant parseTimeInstant(String stringValue) {
+        if (nullOrEmpty(stringValue)) {
+            return null;
+        } else {
+            try {
+                return (TimeInstant)DateTimeHelper.parseIsoString2DateTime2Time(stringValue);
+            } catch (DateTimeParseException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+    }
 
     /**
      * @return a implementation specific instance
@@ -277,6 +317,11 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
      * @return a implementation specific instance
      */
     protected abstract SettingValue<Double> newNumericSettingValue();
+    
+    /**
+     * @return a implementation specific instance
+     */
+    protected abstract SettingValue<TimeInstant> newTimeInstantSettingValue();
 
     /**
      * @param stringValue

@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.ds.hibernate.util.procedure;
 
 import java.util.List;
@@ -39,6 +104,7 @@ import org.n52.sos.cache.ContentCache;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
+import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -50,6 +116,7 @@ import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.I18NHibernateHelper;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.CodeType;
@@ -64,6 +131,7 @@ import org.n52.sos.ogc.sensorML.System;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
+import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
@@ -104,15 +172,11 @@ public class HibernateProcedureDescriptionGenerator {
     public static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING =
             "getUnitForObservablePropertyProcedureOffering";
 
-    private static final String Y_AXIS = "y";
-
-    private static final String X_AXIS = "x";
-
-    private static final String Z_AXIS = "z";
-
     private static final String POSITION_NAME = "sensorPosition";
 
     private static final Joiner COMMA_JOINER = Joiner.on(",");
+    
+    private String i18n = ServiceConfiguration.getInstance().getDefaultLanguage(); 
 
     /**
      * Generate procedure description from Hibernate procedure entity if no
@@ -128,7 +192,8 @@ public class HibernateProcedureDescriptionGenerator {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public SensorML generateProcedureDescription(Procedure procedure, Session session) throws OwsExceptionReport {
+    public SensorML generateProcedureDescription(Procedure procedure, String i18n, Session session) throws OwsExceptionReport {
+        this.i18n = i18n;
         final SensorML sml = new SensorML();
         // 2 try to get position from entity
         if (procedure.isSpatial()) {
@@ -155,12 +220,28 @@ public class HibernateProcedureDescriptionGenerator {
      */
     private ProcessModel createSmlProcessModel(Procedure procedure, Session session) throws OwsExceptionReport {
         final ProcessModel processModel = new ProcessModel();
-
         setCommonValues(procedure, processModel, session);
-        String[] observableProperties = getObservablePropertiesForProcedure(procedure.getIdentifier());
-        processModel.setMethod(createMethod(procedure, observableProperties));
-        processModel.setNames(createNames(procedure));
+        processModel.setMethod(createMethod(procedure, getObservablePropertiesForProcedure(procedure.getIdentifier())));
+//        processModel.setNames(createNames(procedure));
         return processModel;
+    }
+
+    /**
+     * Create a SensorML System from Hibernate procedure entity
+     * 
+     * @param procedure
+     *            Hibernate procedure entity
+     * 
+     * @return SensorML System
+     * 
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     */
+    private System createSmlSystem(Procedure procedure, Session session) throws OwsExceptionReport {
+        System smlSystem = new System();
+        setCommonValues(procedure, smlSystem, session);
+        smlSystem.setPosition(createPosition(procedure));
+        return smlSystem;
     }
 
     /**
@@ -186,25 +267,8 @@ public class HibernateProcedureDescriptionGenerator {
      * @return Collection with names
      */
     private List<CodeType> createNames(Procedure procedure) {
+        // i18n
         return Lists.newArrayList(new CodeType(procedure.getIdentifier()));
-    }
-
-    /**
-     * Create a SensorML System from Hibernate procedure entity
-     * 
-     * @param procedure
-     *            Hibernate procedure entity
-     * 
-     * @return SensorML System
-     * 
-     * @throws OwsExceptionReport
-     *             If an error occurs
-     */
-    private System createSmlSystem(Procedure procedure, Session session) throws OwsExceptionReport {
-        System smlSystem = new System();
-        setCommonValues(procedure, smlSystem, session);
-        smlSystem.setPosition(createPosition(procedure));
-        return smlSystem;
     }
 
     /**
@@ -237,26 +301,39 @@ public class HibernateProcedureDescriptionGenerator {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private void setCommonValues(Procedure procedure, AbstractProcess abstractSensorML, Session session)
+    private void setCommonValues(Procedure procedure, AbstractProcess abstractProcess, Session session)
             throws OwsExceptionReport {
         String identifier = procedure.getIdentifier();
         String[] observableProperties = getObservablePropertiesForProcedure(identifier);
 
-        // 1 set description
-        abstractSensorML.setDescriptions(createDescriptions(procedure, observableProperties));
-
+        // 1 set description, names
+        boolean languageSupport;
+        if (isSetI18N()) {
+            languageSupport = I18NHibernateHelper.getLanguageSpecificData(procedure, abstractProcess, getI18N() , false, session);
+        } else {
+            languageSupport =
+                    I18NHibernateHelper.getLanguageSpecificData(procedure, abstractProcess,
+                            ServiceConfiguration.getInstance().getDefaultLanguage(), ServiceConfiguration
+                                    .getInstance().isShowAllLanguageValues(), session);
+        }
+        if (!languageSupport) {
+            ProcedureDAO procedureDAO = new ProcedureDAO();
+            abstractProcess.addName(procedureDAO.getName(procedure));
+            abstractProcess.setDescription(procedureDAO.getDescription(procedure));
+        }
+        
         // 2 identifier
-        abstractSensorML.setIdentifier(identifier);
+        abstractProcess.setIdentifier(identifier);
 
         // 3 set identification
-        abstractSensorML.setIdentifications(createIdentifications(identifier));
+        abstractProcess.setIdentifications(createIdentifications(identifier));
 
         // 7 set inputs/outputs --> observableProperties
         if (getServiceConfig().isAddOutputsToSensorML()
                 && !"hydrology".equalsIgnoreCase(Configurator.getInstance().getProfileHandler().getActiveProfile()
                         .getIdentifier())) {
-            abstractSensorML.setInputs(createInputs(observableProperties));
-            abstractSensorML.setOutputs(createOutputs(procedure, observableProperties, session));
+            abstractProcess.setInputs(createInputs(observableProperties));
+            abstractProcess.setOutputs(createOutputs(procedure, observableProperties, session));
         }
     }
 
@@ -458,7 +535,7 @@ public class HibernateProcedureDescriptionGenerator {
         SmlPosition position = new SmlPosition();
         position.setName(POSITION_NAME);
         position.setFixed(true);
-        int srid = GeometryHandler.getInstance().getDefaultEPSG();
+        int srid = GeometryHandler.getInstance().getDefaultResponseEPSG();
         if (procedure.isSetLongLat()) {
             // 8.1 set latlong position
             position.setPosition(createCoordinatesForPosition(procedure.getLongitude(), procedure.getLatitude(),
@@ -491,11 +568,10 @@ public class HibernateProcedureDescriptionGenerator {
      * 
      * @return List with SWE Coordinate
      */
-    private List<SweCoordinate<?>> createCoordinatesForPosition(
-            Object longitude, Object latitude, Object altitude) {
-        SweQuantity yq = createSweQuantity(latitude, Y_AXIS, procedureSettings().getLatLongUom());
-        SweQuantity xq = createSweQuantity(longitude, X_AXIS, procedureSettings().getLatLongUom());
-        SweQuantity zq = createSweQuantity(altitude, Z_AXIS, procedureSettings().getAltitudeUom());
+    private List<SweCoordinate<?>> createCoordinatesForPosition(Object longitude, Object latitude, Object altitude) {
+        SweQuantity yq = createSweQuantity(latitude, SweConstants.Y_AXIS, procedureSettings().getLatLongUom());
+        SweQuantity xq = createSweQuantity(longitude, SweConstants.X_AXIS, procedureSettings().getLatLongUom());
+        SweQuantity zq = createSweQuantity(altitude, SweConstants.Z_AXIS, procedureSettings().getAltitudeUom());
         // TODO add Integer: Which SweSimpleType to use?
         return Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(SweCoordinateName.northing.name(), yq),
                 new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq), new SweCoordinate<Double>(
@@ -519,6 +595,7 @@ public class HibernateProcedureDescriptionGenerator {
     }
 
     private List<String> createDescriptions(Procedure procedure, String[] observableProperties) {
+        // i18n 
         String template = procedureSettings().getDescriptionTemplate();
         String identifier = procedure.getIdentifier();
         String obsProps = COMMA_JOINER.join(observableProperties);
@@ -533,6 +610,15 @@ public class HibernateProcedureDescriptionGenerator {
     private SmlIdentifier createIdentifier(final String identifier) {
         return new SmlIdentifier(OGCConstants.URN_UNIQUE_IDENTIFIER_END, OGCConstants.URN_UNIQUE_IDENTIFIER,
                 identifier);
+    }
+    
+    
+    private String getI18N() {
+        return i18n;
+    }
+    
+    private boolean isSetI18N() {
+        return StringHelper.isNotEmpty(getI18N());
     }
 
     /**

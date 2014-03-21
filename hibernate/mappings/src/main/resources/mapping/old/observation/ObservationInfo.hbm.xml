@@ -32,14 +32,20 @@
         <property name="resultTime" type="timestamp" >
             <column index="obsResultTimeIdx" name="resultTime" length="29" not-null="true" unique-key="observationIdentity"/>
         </property>
-        <property name="identifier" type="string">
-            <column name="identifier" unique="true" />
+       <property name="identifier" type="string">
+            <column name="identifier" unique="true"/>
         </property>
-        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="observationCodespaceFk">
-            <column index="obsCodespaceIdx" name="codespaceId" />
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="obsCodespaceIdentifierFk">
+            <column name="codespace" />
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name" />
+        </property>
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="obsCodespaceNameFk">
+            <column name="codespaceName" />
         </many-to-one>
         <property name="description" type="string">
-            <column name="description"/>
+            <column name="description" />
         </property>
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
             <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>

@@ -45,6 +45,14 @@ public interface JSONConstants {
     String OBSERVATION_ENCODINGS_KEY = "observationEncodings";
 
     String PROCEDURE_ENCODINGS_KEY = "procedureEncodings";
+    
+    String EXTENDED_CAPABILITIES_EXTENSION_KEY = "extendedCapabilitiesExtensions";
+    
+    String EXTENDED_CAPABILITIES_DOMAIN_KEY = "extendedCapabilitiesDomain";
+
+    String OFFERING_EXTENSION_EXTENSION_KEY = "offeringExtensionExtensions";
+
+    String OFFERING_EXTENSION_DOMAIN_KEY = "offeringExtensionDomain";
 
     String SECTIONS_KEY = "sections";
 

@@ -67,6 +67,7 @@ public class SosDescribeSensorOperatorV20 extends
     @Override
     public DescribeSensorResponse receive(DescribeSensorRequest request) throws OwsExceptionReport {
         return getDao().getSensorDescription(request);
+        // TODO check if sensor description position/location/observedArea should be transformed (CRS support)
     }
 
     @Override
@@ -98,6 +99,7 @@ public class SosDescribeSensorOperatorV20 extends
         // OptionNotSupportedException().at(Sos2Constants.DescribeSensorParams.validTime)
         // .withMessage("The requested parameter is not supported by this server!"));
         // }
+        checkExtensions(sosRequest, exceptions);
         exceptions.throwIfNotEmpty();
     }
 

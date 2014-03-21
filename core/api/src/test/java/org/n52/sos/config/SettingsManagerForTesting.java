@@ -40,9 +40,13 @@ import org.n52.sos.encode.ProcedureDescriptionFormatKey;
 import org.n52.sos.encode.ResponseFormatKey;
 import org.n52.sos.exception.NoSuchExtensionException;
 import org.n52.sos.exception.NoSuchOfferingException;
+import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.ows.OfferingExtension;
+import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesKey;
 import org.n52.sos.ogc.ows.StaticCapabilities;
 import org.n52.sos.ogc.ows.StringBasedCapabilitiesExtension;
+import org.n52.sos.ogc.swes.OfferingExtensionKey;
 import org.n52.sos.request.operator.RequestOperatorKey;
 
 /**
@@ -101,6 +105,20 @@ public class SettingsManagerForTesting extends AbstractSettingsManager {
     protected void setBindingStatus(BindingKey bk, boolean active) throws ConnectionProviderException {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    protected void setOfferingExtensionStatus(OfferingExtensionKey oek, boolean active)
+            throws ConnectionProviderException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    protected void setOwsExtendedCapabilitiesStatus(OwsExtendedCapabilitiesKey oeck, boolean active)
+            throws ConnectionProviderException {
+        // TODO Auto-generated method stub
+        
     }
 
     @Override
@@ -168,6 +186,18 @@ public class SettingsManagerForTesting extends AbstractSettingsManager {
         return false;
     }
 
+    @Override
+    public boolean isActive(OfferingExtensionKey oek) throws ConnectionProviderException {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isActive(OwsExtendedCapabilitiesKey oeck) throws ConnectionProviderException {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
     private static class SettingFactoryForTesting extends AbstractSettingValueFactory {
 
         @Override
@@ -198,6 +228,11 @@ public class SettingsManagerForTesting extends AbstractSettingsManager {
         @Override
         protected SettingValue<Double> newNumericSettingValue() {
             return new NumericSettingValueForTesting();
+        }
+        
+        @Override
+        protected SettingValue<TimeInstant> newTimeInstantSettingValue() {
+            return new TimeInstantSettingValueForTesting();
         }
     }
 

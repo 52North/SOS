@@ -36,7 +36,9 @@ import org.n52.sos.config.settings.FileSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.config.settings.NumericSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
+import org.n52.sos.config.settings.TimeInstantSettingDefinition;
 import org.n52.sos.config.settings.UriSettingDefinition;
+import org.n52.sos.ogc.gml.time.TimeInstant;
 
 /**
  * Factory to construct implementation specific {@link SettingValue}s.
@@ -130,6 +132,20 @@ public interface SettingValueFactory {
      * @return the implementation specific {@code SettingValue}
      */
     SettingValue<Double> newNumericSettingValue(NumericSettingDefinition setting, String stringValue);
+    
+    /**
+     * Constructs a new {@code TimeInstant} setting value from the supplied
+     * definition and string value.
+     * <p/>
+     * 
+     * @param setting
+     *            the setting definition
+     * @param stringValue
+     *            the value as string
+     *            <p/>
+     * @return the implementation specific {@code SettingValue}
+     */
+    SettingValue<TimeInstant> newTimeInstantSettingValue(TimeInstantSettingDefinition setting, String stringValue);
 
     /**
      * Constructs a new generic setting value from the supplied definition and

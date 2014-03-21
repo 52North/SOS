@@ -45,6 +45,8 @@ import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.encode.ProcedureDescriptionFormatKey;
 import org.n52.sos.encode.ResponseFormatKey;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesKey;
+import org.n52.sos.ogc.swes.OfferingExtensionKey;
 import org.n52.sos.request.operator.RequestOperatorKey;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.AbstractConfiguringServiceLoaderRepository;
@@ -448,4 +450,81 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
      * @throws ConnectionProviderException
      */
     public abstract boolean isActive(BindingKey bk) throws ConnectionProviderException;
+
+    /**
+     * Checks if the offering extension is active.
+     * 
+     * @param oek
+     *            the offering extension key
+     * 
+     * @return if the offering extension is active
+     * 
+     * @throws ConnectionProviderException
+     */
+    public abstract boolean isActive(OfferingExtensionKey oek) throws ConnectionProviderException;
+    
+    /**
+     * Sets the status of a offering extension.
+     * 
+     * @param oek
+     *            the offering extension
+     * @param active
+     *            the status
+     * 
+     * @throws ConnectionProviderException
+     */
+    public abstract void setActive(OfferingExtensionKey oek, boolean active) throws ConnectionProviderException;
+    
+    /**
+     * Sets the status of a offering extension.
+     * 
+     * @param oek
+     *            the offering extension
+     * @param active
+     *            the status
+     *  @param updateRepository
+     *            indicator if the repository should be updated
+     * 
+     * @throws ConnectionProviderException
+     */
+    public abstract void setActive(OfferingExtensionKey oek, boolean active, boolean updateRepository) throws ConnectionProviderException;
+
+    /**
+     * Checks if the extended capabilities is active.
+     * 
+     * @param oeck
+     *            the extended capabilities key
+     * 
+     * @return if the extended capabilities is active
+     * 
+     * @throws ConnectionProviderException
+     */
+    public abstract boolean isActive(OwsExtendedCapabilitiesKey oeck) throws ConnectionProviderException;
+    
+    /**
+     * Sets the status of a extended capabilities.
+     * 
+     * @param oeck
+     *            the extended capabilities
+     * @param active
+     *            the status
+     * 
+     * @throws ConnectionProviderException
+     */
+    public abstract void setActive(OwsExtendedCapabilitiesKey oeck, boolean active) throws ConnectionProviderException;
+
+    /**
+     * Sets the status of a extended capabilities.
+     * 
+     * @param oeck
+     *            the extended capabilities
+     * @param active
+     *            the status
+     *  @param updateRepository
+     *            indicator if the repository should be updated
+     * 
+     * @throws ConnectionProviderException
+     */
+    public abstract void setActive(OwsExtendedCapabilitiesKey oeck, boolean active, boolean updateRepository)  throws ConnectionProviderException;
+
 }

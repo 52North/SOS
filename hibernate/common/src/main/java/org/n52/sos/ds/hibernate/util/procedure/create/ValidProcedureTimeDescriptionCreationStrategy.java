@@ -47,7 +47,7 @@ public class ValidProcedureTimeDescriptionCreationStrategy extends XmlStringDesc
     }
 
     @Override
-    public SosProcedureDescription create(Procedure p, Session s)
+    public SosProcedureDescription create(Procedure p, String i18n, Session s)
             throws OwsExceptionReport {
         SosProcedureDescription desc = readXml(vpt.getDescriptionXml());
         desc.setIdentifier(p.getIdentifier());

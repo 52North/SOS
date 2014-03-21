@@ -120,4 +120,6 @@ public interface SensorMLConstants {
     String ELEMENT_NAME_OBSERVED_BBOX = "observedBBOX";
 
 	String OBSERVED_BBOX_DEFINITION_URN = "urn:ogc:def:property:OGC:1.0:observedBBOX";
+
+    String DEFAULT_FIELD_NAME = "field_";
 }

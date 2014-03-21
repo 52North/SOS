@@ -46,9 +46,9 @@ public class GeneratedDescriptionCreationStrategy implements
             new HibernateProcedureDescriptionGenerator();
 
     @Override
-    public SosProcedureDescription create(Procedure p, Session s)
+    public SosProcedureDescription create(Procedure p, String i18n, Session s)
             throws OwsExceptionReport {
-        return getCreator().generateProcedureDescription(p, s);
+        return getCreator().generateProcedureDescription(p, i18n, s);
     }
 
     @Override

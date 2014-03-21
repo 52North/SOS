@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.decode;
 
 import static org.hamcrest.Matchers.instanceOf;
@@ -60,8 +125,10 @@ import net.opengis.swe.x101.DataComponentPropertyType;
 import net.opengis.swe.x101.DataRecordType;
 import net.opengis.swe.x101.SimpleDataRecordType;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.n52.sos.AbstractBeforeAfterClassTest;
+import org.n52.sos.config.SettingsManager;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
@@ -84,7 +151,7 @@ import org.n52.sos.util.XmlOptionsHelper;
  * 
  * @since 4.0.0
  */
-public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassTest {
+public class SensorMLDecoderV101Test  {
     private static final String TEST_ID_1 = "test-id-1";
 
     private static final String TEST_NAME_1 = "test-name-1";
@@ -92,6 +159,17 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassTest {
     private static final String TEST_ID_2 = "test-id-2";
 
     private static final String TEST_NAME_2 = "test-name-2";
+    
+    
+    @BeforeClass
+    public static void initSettingsManager() {
+        SettingsManager.getInstance();
+    }
+
+    @AfterClass
+    public static void cleanupSettingManager() {
+        SettingsManager.getInstance().cleanup();
+    }
 
     @Test
     public void should_set_identifier_by_identifier_name() throws OwsExceptionReport {
@@ -171,9 +249,9 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassTest {
         assertThat(absProcess.getCapabilities().size(), is(1));
         List<SosOffering> sosOfferings = new ArrayList<SosOffering>(absProcess.getOfferings());
         Collections.sort(sosOfferings);
-        assertThat(sosOfferings.get(0).getOfferingIdentifier(), is(TEST_ID_1));
+        assertThat(sosOfferings.get(0).getIdentifier(), is(TEST_ID_1));
         assertThat(sosOfferings.get(0).getOfferingName(), is(TEST_NAME_1));
-        assertThat(sosOfferings.get(1).getOfferingIdentifier(), is(TEST_ID_2));
+        assertThat(sosOfferings.get(1).getIdentifier(), is(TEST_ID_2));
         assertThat(sosOfferings.get(1).getOfferingName(), is(TEST_NAME_2));
     }
 
@@ -225,6 +303,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassTest {
         AnyScalarPropertyType xbField = xbSimpleDataRecord.addNewField();
         xbField.setName(name);
         xbField.addNewText().setValue(value);
+        xbField.getText().addNewName().setStringValue(name);
     }
 
     private AbstractProcess decodeAbstractProcess(SensorMLDocument xbSmlDoc) throws OwsExceptionReport {

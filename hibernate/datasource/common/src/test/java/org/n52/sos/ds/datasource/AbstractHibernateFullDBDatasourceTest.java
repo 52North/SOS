@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.ds.datasource;
 
 import java.sql.Connection;
@@ -107,11 +172,12 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     }
 
     private void checkSettingKeys(final Collection<String> keys, final boolean changeable) {
-        final int maxCount = 13;
-        int counter = 13;
+        final int maxCount = 14;
+        int counter = 14;
         boolean spatialFilteringProfile = true;
         boolean transactional = true;
         boolean oldConcept = true;
+        boolean multiLanguage = true;
         if (!keys.contains(AbstractHibernateDatasource.SPATIAL_FILTERING_PROFILE_KEY)) {
             counter--;
             spatialFilteringProfile = false;
@@ -123,6 +189,10 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         if (!keys.contains(AbstractHibernateDatasource.OLD_CONCEPT_KEY)) {
             counter--;
             oldConcept = false;
+        }
+        if (!keys.contains(AbstractHibernateDatasource.MULTI_LANGUAGE_KEY) ){
+            counter--;
+            multiLanguage = false;
         }
         if (changeable) {
             assertEquals(9, keys.size());
@@ -149,6 +219,9 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         }
         if (oldConcept) {
             assertTrue(keys.contains(AbstractHibernateDatasource.OLD_CONCEPT_KEY));
+        }
+        if (multiLanguage) {
+            assertTrue(keys.contains(AbstractHibernateDatasource.MULTI_LANGUAGE_KEY));
         }
     }
 

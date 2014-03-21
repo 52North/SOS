@@ -51,7 +51,7 @@ public abstract class AbstractDescribeSensorDAO extends AbstractOperationDAO {
     @Override
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
-        opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.procedure, getCache().getProcedures());
+        addProcedureParameter(opsMeta);
         if (version.equals(Sos1Constants.SERVICEVERSION)) {
             opsMeta.addPossibleValuesParameter(
                     Sos1Constants.DescribeSensorParams.outputFormat,

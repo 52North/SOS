@@ -49,6 +49,22 @@
 			<groupId>org.n52.sensorweb.sos</groupId>
 			<artifactId>third-party-ncname-resolver</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+				<artifactId>gt-epsg-hsql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-referencing</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-api</artifactId>
+		</dependency>
+		<dependency>
+	         <groupId>org.reflections</groupId>
+	         <artifactId>reflections</artifactId>
+	     </dependency>
     </dependencies>
     <build>
         <plugins>

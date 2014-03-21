@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.decode.kvp.v2;
 
 import java.util.ArrayList;
@@ -44,7 +109,6 @@ import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
 import org.n52.sos.exception.ows.concrete.ParameterNotSupportedException;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -72,65 +136,71 @@ public class GetFeatureOfInterestKvpDecoderv20 extends AbstractKvpDecoder {
         GetFeatureOfInterestRequest request = new GetFeatureOfInterestRequest();
         CompositeOwsException exceptions = new CompositeOwsException();
 
-        boolean foundService = false;
-        boolean foundVersion = false;
-
         for (String parameterName : element.keySet()) {
             String parameterValues = element.get(parameterName);
             try {
-                // service (mandatory)
-                if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service.name())) {
-                    request.setService(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                    foundService = true;
-                }
-
-                // version (mandatory)
-                else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.version.name())) {
-                    request.setVersion(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                    foundVersion = true;
-                }
-                // request (mandatory)
-                else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
-                    KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
-                }
-                // observedProperty (optional)
-                else if (parameterName.equalsIgnoreCase(Sos2Constants.GetFeatureOfInterestParams.observedProperty
-                        .name())) {
-                    request.setObservedProperties(KvpHelper.checkParameterMultipleValues(parameterValues,
-                            parameterName));
-                }
-
-                // procedure (optional)
-                else if (parameterName.equalsIgnoreCase(Sos2Constants.GetFeatureOfInterestParams.procedure.name())) {
-                    request.setProcedures(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
-                }
-
-                // featureOfInterest (optional)
-                else if (parameterName.equalsIgnoreCase(Sos2Constants.GetFeatureOfInterestParams.featureOfInterest
-                        .name())) {
-                    request.setFeatureIdentifiers(KvpHelper.checkParameterMultipleValues(parameterValues,
-                            parameterName));
-                }
-
-                // spatialFilter (optional)
-                else if (parameterName.equalsIgnoreCase(Sos2Constants.GetFeatureOfInterestParams.spatialFilter.name())) {
-                    List<SpatialFilter> spatialFilters = new ArrayList<SpatialFilter>(1);
-                    List<String> splittedParameterValues = Arrays.asList(parameterValues.split(","));
-                    if (CollectionHelper.isEmpty(splittedParameterValues)) {
-                        throw new MissingParameterValueException(parameterName);
+                if (!parseDefaultParameter(request, parameterValues, parameterName)) {
+//                    // service (mandatory)
+//                    if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service.name())) {
+//                        request.setService(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+//                        foundService = true;
+//                    }
+//    
+//                    // version (mandatory)
+//                    else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.version.name())) {
+//                        request.setVersion(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+//                        foundVersion = true;
+//                    }
+//                    // request (mandatory)
+//                    else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
+//                        KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
+//                    }
+//                    // observedProperty (optional)
+//                    else 
+                        if (parameterName.equalsIgnoreCase(Sos2Constants.GetFeatureOfInterestParams.observedProperty
+                            .name())) {
+                        request.setObservedProperties(KvpHelper.checkParameterMultipleValues(parameterValues,
+                                parameterName));
                     }
-                    KvpHelper.checkParameterSingleValue(splittedParameterValues.get(0),
-                            SosConstants.Filter.ValueReference);
-                    KvpHelper.checkParameterMultipleValues(splittedParameterValues, parameterName);
-
-                    spatialFilters.add(parseSpatialFilter(splittedParameterValues, parameterName));
-                    request.setSpatialFilters(spatialFilters);
-                }
-                // namespaces (conditional)
-                else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.namespaces.name())) {
-                    request.setNamespaces(parseNamespaces(parameterValues));
-                } else {
-                    exceptions.add(new ParameterNotSupportedException(parameterName));
+    
+                    // procedure (optional)
+                    else if (parameterName.equalsIgnoreCase(Sos2Constants.GetFeatureOfInterestParams.procedure.name())) {
+                        request.setProcedures(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
+                    }
+    
+                    // featureOfInterest (optional)
+                    else if (parameterName.equalsIgnoreCase(Sos2Constants.GetFeatureOfInterestParams.featureOfInterest
+                            .name())) {
+                        request.setFeatureIdentifiers(KvpHelper.checkParameterMultipleValues(parameterValues,
+                                parameterName));
+                    }
+    
+                    // spatialFilter (optional)
+                    else if (parameterName.equalsIgnoreCase(Sos2Constants.GetFeatureOfInterestParams.spatialFilter.name())) {
+                        List<SpatialFilter> spatialFilters = new ArrayList<SpatialFilter>(1);
+                        List<String> splittedParameterValues = Arrays.asList(parameterValues.split(","));
+                        if (CollectionHelper.isEmpty(splittedParameterValues)) {
+                            throw new MissingParameterValueException(parameterName);
+                        }
+                        KvpHelper.checkParameterSingleValue(splittedParameterValues.get(0),
+                                SosConstants.Filter.ValueReference);
+                        KvpHelper.checkParameterMultipleValues(splittedParameterValues, parameterName);
+    
+                        spatialFilters.add(parseSpatialFilter(splittedParameterValues, parameterName));
+                        request.setSpatialFilters(spatialFilters);
+                    }
+                    // namespaces (conditional)
+                    else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.namespaces.name())) {
+                        request.setNamespaces(parseNamespaces(parameterValues));
+                     // language (optional)
+//                    } else if (parameterName.equalsIgnoreCase(SosConstants.InspireParams.language.name())) {
+//                        request.addExtension(getLanguageExtension(KvpHelper.checkParameterSingleValue(parameterValues, parameterName)));
+//                    // CRS (optional)
+//                    } else if (parameterName.equalsIgnoreCase(SosConstants.InspireParams.crs.name())) {
+//                        request.addExtension(getCrsExtension(KvpHelper.checkParameterSingleValue(parameterValues, parameterName)));
+                    } else {
+                        exceptions.add(new ParameterNotSupportedException(parameterName));
+                    }
                 }
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);
@@ -138,11 +208,11 @@ public class GetFeatureOfInterestKvpDecoderv20 extends AbstractKvpDecoder {
 
         }
 
-        if (!foundService) {
+        if (!request.isSetService()) {
             exceptions.add(new MissingServiceParameterException());
         }
 
-        if (!foundVersion) {
+        if (!request.isSetVersion()) {
             exceptions.add(new MissingVersionParameterException());
         }
 

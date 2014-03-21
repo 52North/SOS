@@ -147,7 +147,7 @@ public class SoapBinding extends SimpleBinding {
             throw new NoApplicableCodeException().withMessage(
                     "The returned object is not an AbstractServiceRequest implementation").setStatus(BAD_REQUEST);
         }
-        AbstractServiceRequest bodyRequest = (AbstractServiceRequest) aBodyRequest;
+        AbstractServiceRequest<?> bodyRequest = (AbstractServiceRequest<?>) aBodyRequest;
         bodyRequest.setRequestContext(getRequestContext(chain.getHttpRequest()));
         if (bodyRequest instanceof CommunicationObjectWithSoapHeader) {
             ((CommunicationObjectWithSoapHeader) bodyRequest).setSoapHeader(chain.getSoapRequest().getSoapHeader());
@@ -230,7 +230,7 @@ public class SoapBinding extends SimpleBinding {
     }
 
     private void createBodyResponse(SoapChain chain) throws OwsExceptionReport {
-        AbstractServiceRequest req = chain.getBodyRequest();
+        AbstractServiceRequest<?> req = chain.getBodyRequest();
         chain.setBodyResponse(getServiceOperator(req).receiveRequest(req));
     }
 

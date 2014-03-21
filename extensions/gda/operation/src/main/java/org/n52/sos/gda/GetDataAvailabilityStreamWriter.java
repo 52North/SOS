@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.gda;
 
 import java.io.OutputStream;
@@ -34,19 +99,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventFactory;
-import javax.xml.stream.XMLEventWriter;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 import org.joda.time.DateTime;
+import org.n52.sos.encode.XmlEventWriter;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time.TimeFormat;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.util.DateTimeHelper;
@@ -57,14 +120,10 @@ import org.n52.sos.w3c.W3CConstants;
  * 
  * @since 4.0.0
  */
-public class GetDataAvailabilityStreamWriter {
+public class GetDataAvailabilityStreamWriter extends XmlEventWriter {
     private static final String TIME_PERIOD_PREFIX = "tp_";
 
     private static final String DATA_AVAILABILITY_PREFIX = "dam_";
-
-    private final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-
-    private final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 
     private final List<DataAvailability> gdas;
 
@@ -76,53 +135,19 @@ public class GetDataAvailabilityStreamWriter {
 
     private int timePeriodCount = 1;
 
-    private XMLEventWriter w;
-
     public GetDataAvailabilityStreamWriter(String version, List<DataAvailability> gdas) {
         this.gdas = gdas == null ? Collections.<DataAvailability> emptyList() : gdas;
         this.times = new HashMap<TimePeriod, String>(this.gdas.size());
         this.version = version == null ? Sos2Constants.SERVICEVERSION : version;
     }
 
-    protected void attr(QName name, String value) throws XMLStreamException {
-        w.add(eventFactory.createAttribute(name, value));
-    }
-
-    protected void attr(String name, String value) throws XMLStreamException {
-        w.add(eventFactory.createAttribute(name, value));
-    }
-
-    protected void chars(String chars) throws XMLStreamException {
-        w.add(eventFactory.createCharacters(chars));
-    }
-
-    protected void end(QName name) throws XMLStreamException {
-        w.add(eventFactory.createEndElement(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart()));
-    }
-
-    protected void end() throws XMLStreamException {
-        w.add(eventFactory.createEndDocument());
-    }
-
-    protected void namespace(String prefix, String namespace) throws XMLStreamException {
-        w.add(eventFactory.createNamespace(prefix, namespace));
-    }
-
-    protected void start(QName name) throws XMLStreamException {
-        w.add(eventFactory.createStartElement(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart()));
-    }
-
-    protected void start() throws XMLStreamException {
-        w.add(eventFactory.createStartDocument());
-    }
-
-    public void write(OutputStream out) throws XMLStreamException, DateTimeFormatException {
-        this.w = outputFactory.createXMLEventWriter(out, "UTF-8");
+    @Override
+    public void write(OutputStream out) throws XMLStreamException, OwsExceptionReport {
+        init(out);
         start();
         writeGetDataAvailabilityResponse();
         end();
-        this.w.flush();
-        this.w.close();
+        finish();
     }
 
     protected void writeGetDataAvailabilityResponse() throws XMLStreamException, DateTimeFormatException {

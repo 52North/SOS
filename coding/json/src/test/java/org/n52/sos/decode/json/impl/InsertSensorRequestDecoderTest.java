@@ -134,6 +134,7 @@ public class InsertSensorRequestDecoderTest {
     @Test
     public void testProcedureDescription() throws OwsExceptionReport, IOException {
         assertThat(req.getProcedureDescription(), is(notNullValue()));
-        assertThat(req.getProcedureDescription().getIdentifier(), is("http://www.52north.org/test/procedure/9"));
+        assertThat(req.getProcedureDescription().getIdentifier(),
+                   is("http://www.52north.org/test/procedure/9"));
     }
 }

@@ -29,6 +29,7 @@
 package org.n52.sos.cache;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
@@ -230,7 +231,7 @@ public interface ContentCache extends Serializable {
      * @return the allowed observation types
      */
     Set<String> getAllowedObservationTypesForOffering(String offering);
-    
+
     /**
      * Returns the allowed featureOfInterest types for the specified offering.
      * 
@@ -245,7 +246,7 @@ public interface ContentCache extends Serializable {
      * @return all FeatureOfInterest types
      */
     Set<String> getFeatureOfInterestTypes();
-    
+
     /**
      * Checks whether the specified featureOfInterest type exists.
      * 
@@ -385,7 +386,7 @@ public interface ContentCache extends Serializable {
      * @return the observation types
      */
     Set<String> getObservationTypesForOffering(String offering);
-    
+
     /**
      * Get the observable properties associated with the specified result
      * template.
@@ -621,6 +622,59 @@ public interface ContentCache extends Serializable {
     String getNameForOffering(String offering);
 
     /**
+     * Get the name in the specified language of the specified offering.
+     * 
+     * @param offering
+     *            the offering
+     * @param i18n
+     *            the language
+     * @return the name of the offering or null
+     */
+    String getI18nNameForOffering(String offering, String i18n);
+
+    /**
+     * Get all names of the specified offering.
+     * 
+     * @param offering
+     *            the offering
+     * @return the names of the offering or null
+     */
+    Map<String, String> getI18nNamesForOffering(String offering);
+    
+    /**
+     * Check if there are I18N names for the specified offering and language.
+     * 
+     * @param offering
+     *            the offering
+     * @param i18n
+     *            the language
+     * @return <code>true</code>, if there are I18N names for the 
+     */
+    boolean hasI18NNamesForOffering(String offering, String i18n);
+
+    /**
+     * Get the description in the specified language of the specified offering.
+     * 
+     * @param offering
+     *            the offering
+     * @param i18n
+     *            the language
+     * @return the description of the offering or null
+     */
+    String getI18nDescriptionForOffering(String offering, String i18n);
+    
+    /**
+     * Check if there is a I18N description for the specified offering and language.
+     * 
+     * @param offering
+     *            the offering
+     * @param i18n
+     *            the language
+     * @return <code>true</code>, if there are I18N names for the 
+     */
+    boolean hasI18NDescriptionForOffering(String offering, String i18n);
+
+    /**
      * Get the composite phenomenons associated with the specified offering.
      * 
      * @param offering
@@ -792,4 +846,28 @@ public interface ContentCache extends Serializable {
      *         which is part of an observation.
      */
     boolean isRelatedFeatureSampled(String relatedFeatureIdentifier);
+
+    /**
+     * Get the supported languages
+     * 
+     * @return Supported languages
+     */
+    Set<String> getSupportedLanguages();
+
+    /**
+     * Has the service supported languages
+     * 
+     * @return <code>true</code>, if there are supported languages
+     */
+    boolean hasSupportedLanguage();
+
+    /**
+     * Is the specific language supported
+     * 
+     * @param language
+     *            Language to check
+     * @return <code>true</code>, if the specific lanugage is supported
+     */
+    boolean isLanguageSupported(String language);
+
 }

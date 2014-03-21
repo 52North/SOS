@@ -127,4 +127,58 @@ public interface SwesConstants {
     String SOAP_REASON_REQUEST_EXTENSION_NOT_SUPPORTED = ""; // FIXME emtpy
                                                              // constant
 
+    /**
+     * Interface to identify if the implemented class supportes
+     * {@link SwesExtensions}
+     * 
+     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @since 4.1.0
+     * 
+     * @param <T>
+     */
+    interface HasSwesExtension<T> {
+        /**
+         * Get the {@link SwesExtension}s
+         * 
+         * @return {@link SwesExtensions} with {@link SwesExtension}s
+         */
+        public SwesExtensions getExtensions();
+
+        /**
+         * Set the {@link SwesExtensions} object
+         * 
+         * @param extensions
+         *            the {@link SwesExtensions} object to set
+         * @return this
+         */
+        public T setExtensions(final SwesExtensions extensions);
+        
+        /**
+         * Add a {@link SwesExtensions} to this object
+         * 
+         * @param extension
+         *            the {@link SwesExtensions} to add
+         * @return this
+         */
+        public T addExtensions(final SwesExtensions extension);
+
+        /**
+         * Add a {@link SwesExtension} to this object
+         * 
+         * @param extension
+         *            the {@link SwesExtension} to add
+         * @return this
+         */
+        @SuppressWarnings("rawtypes")
+        public T addExtension(final SwesExtension extension);
+
+        /**
+         * Check if {@link SwesExtension}s are set
+         * 
+         * @return <code>true</code>, if {@link SwesExtensions} is not null or
+         *         empty
+         */
+        public boolean isSetExtensions();
+    }
+
 }

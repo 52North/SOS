@@ -139,6 +139,6 @@ public class CapabilitiesExtensionKey implements Comparable<CapabilitiesExtensio
 
     @Override
     public String toString() {
-        return String.format("CapabilitiesExtensionKeyType[service=%s, version=%s]", this.service, this.version);
+        return String.format("CapabilitiesExtensionKey[service=%s, version=%s]", this.service, this.version);
     }
 }

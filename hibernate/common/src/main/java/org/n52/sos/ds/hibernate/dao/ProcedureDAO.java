@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.ds.hibernate.dao;
 
 import java.util.Collection;
@@ -83,7 +148,8 @@ import com.google.common.collect.Sets;
  * @author CarstenHollmann
  * @since 4.0.0
  */
-public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConstants {
+public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implements HibernateSqlQueryConstants {
+    //public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConstants {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureDAO.class);
 
@@ -160,15 +226,25 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
      * @return Procedure object
      */
     public Procedure getProcedureForIdentifier(final String identifier, final Session session) {
-        Criteria criteria =
-                session.createCriteria(Procedure.class).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
-        if (HibernateHelper.isEntitySupported(TProcedure.class, session)) {
-            criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME).add(
-                    Restrictions.isNull(ValidProcedureTime.END_TIME));
-        }
+        Criteria criteria = getDefaultCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
         LOGGER.debug("QUERY getProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
-        return (Procedure) criteria.uniqueResult();
+        Procedure procedure = (Procedure)criteria.uniqueResult();
+        if (procedure instanceof TProcedure && HibernateHelper.isEntitySupported(TProcedure.class, session)) {
+            criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME).add(Restrictions.isNull(ValidProcedureTime.END_TIME));
+            LOGGER.debug("QUERY getProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
+            return (Procedure)criteria.uniqueResult();
+        }
+        return procedure;
+        
     }
+//
+//    private Procedure getProcedureWithLatestValidProcedureDescription(String identifier, Session session) {
+//        Criteria criteria = getDefaultCriteria(session);
+//        criteria.add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
+//        criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME).add(Restrictions.isNull(ValidProcedureTime.END_TIME));
+//        LOGGER.debug("QUERY getProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
+//        return (Procedure) criteria.uniqueResult();
+//    }
 
     /**
      * Get Procedure object for procedure identifier inclusive deleted procedure
@@ -197,8 +273,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
      * @return Procedure object
      */
     public Procedure getProcedureForIdentifier(final String identifier, Time time, final Session session) {
-        Criteria criteria =
-                session.createCriteria(Procedure.class).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
+        Criteria criteria = getDefaultCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
         LOGGER.debug("QUERY getProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
         return (Procedure) criteria.uniqueResult();
     }
@@ -217,8 +292,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
         if (identifiers == null || identifiers.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
-        Criteria criteria =
-                session.createCriteria(Procedure.class).add(Restrictions.in(Procedure.IDENTIFIER, identifiers));
+        Criteria criteria = getDefaultCriteria(session).add(Restrictions.in(Procedure.IDENTIFIER, identifiers));
         LOGGER.debug("QUERY getProceduresForIdentifiers(identifiers): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
@@ -300,7 +374,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
         } else {
             Criteria c = null;
             if (HibernateHelper.isEntitySupported(Series.class, session)) {
-                c = session.createCriteria(Procedure.class);
+                c = getDefaultCriteria(session);
                 c.add(Subqueries.propertyIn(Procedure.ID,
                         getDetachedCriteriaProceduresForFeatureOfInterestFromSeries(feature, session)));
                 c.setProjection(Projections.distinct(Projections.property(Procedure.IDENTIFIER)));
@@ -364,6 +438,16 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
         return session.createCriteria(Procedure.class).add(Restrictions.eq(Procedure.DELETED, false))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
+    
+    private Criteria getDefaultTProcedureCriteria(Session session) {
+        return session.createCriteria(TProcedure.class).add(Restrictions.eq(Procedure.DELETED, false))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    }
+    
+    private Criteria getDefaultTProcedureCriteriaIncludeDeleted(Session session) {
+        return session.createCriteria(TProcedure.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    }
 
     /**
      * Get procedure identifiers for observable property identifier
@@ -418,8 +502,22 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
      * @return Transactional procedure object
      */
     public TProcedure getTProcedureForIdentifier(final String identifier, final Session session) {
-        Criteria criteria =
-                session.createCriteria(TProcedure.class).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
+        Criteria criteria = getDefaultTProcedureCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
+        LOGGER.debug("QUERY getTProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
+        return (TProcedure) criteria.uniqueResult();
+    }
+
+    /**
+     * Get transactional procedure object for procedure identifier, include deleted
+     * 
+     * @param identifier
+     *            Procedure identifier
+     * @param session
+     *            Hibernate session
+     * @return Transactional procedure object
+     */
+    public TProcedure getTProcedureForIdentifierIncludeDeleted(String identifier, Session session) {
+        Criteria criteria = getDefaultTProcedureCriteriaIncludeDeleted(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
         LOGGER.debug("QUERY getTProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
         return (TProcedure) criteria.uniqueResult();
     }
@@ -443,7 +541,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
             Time validTime, final Session session) throws UnsupportedTimeException,
             UnsupportedValueReferenceException, UnsupportedOperatorException {
         Criteria criteria =
-                session.createCriteria(TProcedure.class).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
+                getDefaultTProcedureCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
         Criteria createValidProcedureTime = criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME);
         Criterion validTimeCriterion = QueryHelper.getValidTimeCriterion(validTime);
         if (validTime == null || validTimeCriterion == null) {
@@ -472,7 +570,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
     public TProcedure getTProcedureForIdentifier(final String identifier, Set<String> procedureDescriptionFormats,
             final Session session) {
         Criteria criteria =
-                session.createCriteria(TProcedure.class).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
+                getDefaultTProcedureCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
         criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME).add(
                 Restrictions.in(ValidProcedureTime.PROCEDURE_DESCRIPTION_FORMAT, procedureDescriptionFormats));
         LOGGER.debug("QUERY getTProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
@@ -503,7 +601,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
             Time validTime, Session session) throws UnsupportedTimeException, UnsupportedValueReferenceException,
             UnsupportedOperatorException {
         Criteria criteria =
-                session.createCriteria(TProcedure.class).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
+                getDefaultTProcedureCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
         Criteria createValidProcedureTime = criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME);
         Criterion validTimeCriterion = QueryHelper.getValidTimeCriterion(validTime);
         if (validTime == null || validTimeCriterion == null) {

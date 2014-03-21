@@ -41,7 +41,9 @@ import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingValue;
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.service.DatabaseSettingsHandler;
+import org.n52.sos.util.DateTimeHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -121,6 +123,8 @@ public class AbstractController {
             return ((File) v.getValue()).getPath();
         case URI:
             return ((URI) v.getValue()).toString();
+        case TIMEINSTANT:
+             return DateTimeHelper.format((Time)v.getValue());
         default:
             throw new IllegalArgumentException(String.format("Type %s is not supported!", v.getType()));
         }

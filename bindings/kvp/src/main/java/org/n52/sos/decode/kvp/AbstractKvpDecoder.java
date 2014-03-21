@@ -26,6 +26,71 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.decode.kvp;
 
 import java.math.BigDecimal;
@@ -55,14 +120,19 @@ import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
+import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.ogc.swes.SwesExtension;
+import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.service.ServiceConstants;
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.JTSHelper;
+import org.n52.sos.util.KvpHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.Validation;
 import org.slf4j.Logger;
@@ -73,15 +143,19 @@ import org.slf4j.LoggerFactory;
  * 
  */
 @Configurable
-public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceRequest, Map<String, String>> {
+public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceRequest<?>, Map<String, String>> {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractKvpDecoder.class);
 
     protected static final int VALID_COORDINATE_SIZE = 4;
 
-    private int defaultEPSG;
+    private int storageEPSG;
 
-    private int default3DEPSG;
+    private int storage3DEPSG;
+
+    private int defaultResponseEPSG;
+
+    private int defaultResponse3DEPSG;
 
     @Override
     public Set<String> getConformanceClasses() {
@@ -93,24 +167,129 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
         return Collections.emptyMap();
     }
 
+    @Deprecated
     public int getDefaultEPSG() {
-        return defaultEPSG;
+        return getStorageEPSG();
     }
 
+    @Deprecated
     public int getDefault3DEPSG() {
-        return default3DEPSG;
+        return getStorage3DEPSG();
     }
 
+    public int getStorageEPSG() {
+        return storageEPSG;
+    }
+
+    public int getStorage3DEPSG() {
+        return storage3DEPSG;
+    }
+
+    public int getDefaultResponseEPSG() {
+        return defaultResponseEPSG;
+    }
+
+    public int getDefaultResponse3DEPSG() {
+        return defaultResponse3DEPSG;
+    }
+
+    @Deprecated
     @Setting(FeatureQuerySettingsProvider.DEFAULT_EPSG)
     public void setDefaultEpsg(final int epsgCode) throws ConfigurationException {
-        Validation.greaterZero("Default EPSG Code", epsgCode);
-        defaultEPSG = epsgCode;
+        setStorageEpsg(epsgCode);
     }
 
+    @Deprecated
     @Setting(FeatureQuerySettingsProvider.DEFAULT_3D_EPSG)
     public void setDefault3DEpsg(final int epsgCode3D) throws ConfigurationException {
-        Validation.greaterZero("Default 3D EPSG Code", epsgCode3D);
-        default3DEPSG = epsgCode3D;
+        setStorage3DEpsg(epsgCode3D);
+    }
+
+    /**
+     * Set storage EPSG code from settings
+     * 
+     * @param epsgCode
+     *            EPSG code from settings
+     * @throws ConfigurationException
+     *             If an error occurs
+     */
+    @Setting(FeatureQuerySettingsProvider.STORAGE_EPSG)
+    public void setStorageEpsg(final int epsgCode) throws ConfigurationException {
+        Validation.greaterZero("Storage EPSG Code", epsgCode);
+        storageEPSG = epsgCode;
+    }
+
+    /**
+     * Set storage 3D EPSG code from settings
+     * 
+     * @param epsgCode3D
+     *            3D EPSG code from settings
+     * @throws ConfigurationException
+     *             If an error occurs
+     */
+    @Setting(FeatureQuerySettingsProvider.STORAGE_3D_EPSG)
+    public void setStorage3DEpsg(final int epsgCode3D) throws ConfigurationException {
+        Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
+        storage3DEPSG = epsgCode3D;
+    }
+
+    /**
+     * Set default response EPSG code from settings
+     * 
+     * @param epsgCode
+     *            EPSG code from settings
+     * @throws ConfigurationException
+     *             If an error occurs
+     */
+    @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_EPSG)
+    public void setDefaultResponseEpsg(final int epsgCode) throws ConfigurationException {
+        Validation.greaterZero("Storage EPSG Code", epsgCode);
+        defaultResponseEPSG = epsgCode;
+    }
+
+    /**
+     * Set default response 3D EPSG code from settings
+     * 
+     * @param epsgCode3D
+     *            3D EPSG code from settings
+     * @throws ConfigurationException
+     *             If an error occurs
+     */
+    @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_3D_EPSG)
+    public void setDefaultResponse3DEpsg(final int epsgCode3D) throws ConfigurationException {
+        Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
+        defaultResponse3DEPSG = epsgCode3D;
+    }
+
+    protected boolean parseDefaultParameter(AbstractServiceRequest<?> request, String parameterValues,
+            String parameterName) throws OwsExceptionReport {
+        // service (mandatory)
+        if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service.name())) {
+            request.setService(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+            return true;
+        }
+        // version (mandatory)
+        else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.version.name())) {
+            request.setVersion(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+            return true;
+        }
+        // request (mandatory)
+        else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
+            KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
+            return true;
+        }
+        // language (optional)
+        else if (parameterName.equalsIgnoreCase(OWSConstants.AdditionalRequestParams.language.name())) {
+            request.addExtension(getLanguageExtension(KvpHelper.checkParameterSingleValue(parameterValues,
+                    parameterName)));
+            return true;
+        }
+        // CRS (optional)
+        else if (parameterName.equalsIgnoreCase(OWSConstants.AdditionalRequestParams.crs.name())) {
+            request.addExtension(getCrsExtension(KvpHelper.checkParameterSingleValue(parameterValues, parameterName)));
+            return true;
+        }
+        return false;
     }
 
     protected SpatialFilter parseSpatialFilter(List<String> parameterValues, String parameterName)
@@ -191,8 +370,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
             // check if end time is a full ISO 8106 string
             int timeLength = DateTimeHelper.getTimeLengthBeforeTimeZone(times[1]);
             DateTime origEnd = DateTimeHelper.parseIsoString2DateTime(times[1]);
-            DateTime end = DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(
-                    origEnd, timeLength);
+            DateTime end = DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(origEnd, timeLength);
             TimePeriod timePeriod = new TimePeriod(start, end);
             return timePeriod;
         } else {
@@ -246,8 +424,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
             // check if end time is a full ISO 8106 string
             int timeLength = DateTimeHelper.getTimeLengthBeforeTimeZone(times[1]);
             DateTime origEnd = DateTimeHelper.parseIsoString2DateTime(times[1]);
-            DateTime end = DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(
-                    origEnd, timeLength);
+            DateTime end = DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(origEnd, timeLength);
             TimePeriod tp = new TimePeriod();
             tp.setStart(start);
             tp.setEnd(end);
@@ -268,4 +445,17 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
         return ServiceConfiguration.getInstance().getSrsNamePrefixSosV2();
     }
 
+    protected SwesExtension<SweText> getLanguageExtension(String language) {
+        return getSweTextFor(OWSConstants.AdditionalRequestParams.language.name(), language);
+    }
+
+    protected SwesExtension<SweText> getCrsExtension(String crs) {
+        return getSweTextFor(OWSConstants.AdditionalRequestParams.crs.name(), crs);
+    }
+    
+    protected SwesExtension<SweText> getSweTextFor(String identifier, String value) {
+        SweText text =
+                (SweText) new SweText().setValue(value).setIdentifier(identifier);
+        return new SwesExtensionImpl<SweText>().setValue(text);
+    }
 }

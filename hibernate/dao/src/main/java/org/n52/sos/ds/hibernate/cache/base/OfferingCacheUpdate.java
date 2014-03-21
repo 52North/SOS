@@ -54,7 +54,9 @@ import org.n52.sos.ds.hibernate.entities.TOffering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 import org.n52.sos.exception.CodedException;
+import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CacheHelper;
+import org.n52.sos.util.Constants;
 import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,12 +111,10 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         for (Offering offering : getAllOfferings()){
             String offeringId = offering.getIdentifier();
             if (shouldOfferingBeProcessed(offeringId)) {
-                String offeringName = offering.getName();
-    
                 String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
-                
                 getCache().addOffering(prefixedOfferingId);
-                getCache().setNameForOffering(prefixedOfferingId, getOfferingName(prefixedOfferingId, offeringName));
+                addOfferingNameToCache(prefixedOfferingId, offering);
+                addOfferingDescriptionToCache(prefixedOfferingId, offering);
                 
                 if (offering instanceof TOffering) {
                     TOffering tOffering = (TOffering) offering;
@@ -192,19 +192,43 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         return false;
     }
     
-    private String getOfferingName(String offeringIdentifier, String offeringName){
-        if (!StringHelper.isNotEmpty(offeringName)) {
-            offeringName = offeringIdentifier;
+    private void addOfferingNameToCache(String offeringId, Offering offering) {
+        if (offering.isSetName()) {
+            if (offering.isSetCodespaceName()) {
+                getCache().setI18nNameForOffering(offeringId, offering.getName(),
+                        offering.getCodespaceName().getCodespace());
+            } else {
+                getCache().setI18nNameForOffering(offeringId, offering.getName(),
+                        ServiceConfiguration.getInstance().getDefaultLanguage());
+    
+            }
+        } else {
+            String offeringName = offeringId;
             if (offeringName.startsWith("http")) {
-                offeringName = offeringName.substring(offeringName.lastIndexOf('/') + 1, offeringName.length());
+                offeringName = offeringName.substring(offeringName.lastIndexOf(Constants.SPACE_CHAR) + 1, offeringName.length());
             } else if (offeringName.startsWith("urn")) {
-                offeringName = offeringName.substring(offeringName.lastIndexOf(':') + 1, offeringName.length());
+                offeringName = offeringName.substring(offeringName.lastIndexOf(Constants.COLON_CHAR) + 1, offeringName.length());
             }
-            if (offeringName.contains("#")) {
-                offeringName = offeringName.substring(offeringName.lastIndexOf('#') + 1, offeringName.length());
+            if (offeringName.contains(Constants.NUMBER_SIGN_STRING)) {
+                offeringName = offeringName.substring(offeringName.lastIndexOf(Constants.NUMBER_SIGN_CHAR) + 1, offeringName.length());
             }
+            getCache().setI18nNameForOffering(offeringId, offeringName,
+                    ServiceConfiguration.getInstance().getDefaultLanguage());
         }
-        return offeringName;
+        
+    }
+
+    private void addOfferingDescriptionToCache(String offeringId, Offering offering) {
+        if (offering.isSetDescription()) {
+            if (offering.isSetCodespaceName()) {
+                getCache().setI18nDescriptionForOffering(offeringId, offering.getDescription(),
+                        offering.getCodespaceName().getCodespace());
+            } else {
+                getCache().setI18nDescriptionForOffering(offeringId, offering.getDescription(),
+                        ServiceConfiguration.getInstance().getDefaultLanguage());
+            }
+
+        }
     }
 
     protected Set<String> getObservationTypesFromObservationType(Set<ObservationType> observationTypes) {

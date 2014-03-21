@@ -26,20 +26,81 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+/**
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+
+ *
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+
+ *
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+
+ *
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+
+ *
+
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+
+ */
 package org.n52.sos.ogc.wml;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.util.CollectionHelper;
-
-import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
@@ -47,10 +108,8 @@ import com.google.common.collect.Lists;
  */
 public class ObservationProcess extends SosProcedureDescription {
 
-    private String procedureIdentifier;
+    private static final long serialVersionUID = -2211664623972369575L;
     
-    private List<CodeType> name = Lists.newArrayList();
-
     /*
      * Multiplicity: 1 A defintion of the type of process used in the
      * observation. This may be a Sensor, ManualMethod, Algorithm or Simulation
@@ -109,11 +168,6 @@ public class ObservationProcess extends SosProcedureDescription {
     private Set<SosOffering> offeringIdentifiers;
 
     @Override
-    public String getIdentifier() {
-        return procedureIdentifier;
-    }
-
-    @Override
     public Set<SosOffering> getOfferings() {
         return offeringIdentifiers;
     }
@@ -131,7 +185,6 @@ public class ObservationProcess extends SosProcedureDescription {
     @Override
     public ObservationProcess setIdentifier(final String procedureIdentifier) {
         super.setIdentifier(procedureIdentifier);
-        this.procedureIdentifier = procedureIdentifier;
         return this;
     }
 
@@ -254,25 +307,4 @@ public class ObservationProcess extends SosProcedureDescription {
         return parameters != null && !parameters.isEmpty();
     }
 
-    /**
-     * @return the name
-     */
-    public List<CodeType> getName() {
-        return name;
-    }
-
-    /**
-     * @param name the name to set
-     */
-    public void setName(List<CodeType> name) {
-       getName().addAll(name);
-    }
-    
-    public void addName(CodeType name) {
-        getName().add(name);
-    }
-    
-    public boolean isSetName() {
-        return CollectionHelper.isNotEmpty(getName());
-    }
 }

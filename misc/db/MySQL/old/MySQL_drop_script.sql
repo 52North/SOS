@@ -28,7 +28,6 @@
 --
 
 
-drop table if exists Parameter;
 drop table if exists blobValue;
 drop table if exists booleanValue;
 drop table if exists categoryValue;
@@ -40,6 +39,7 @@ drop table if exists numericValue;
 drop table if exists sweDataArrayValue;
 drop table if exists textValue;
 drop table if exists observationHasOffering;
+drop table if exists parameter;
 drop table if exists observation;
 drop table if exists observationConstellation;
 drop table if exists observationType;

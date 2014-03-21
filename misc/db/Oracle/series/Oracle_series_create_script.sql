@@ -27,7 +27,6 @@
 -- Public License for more details.
 --
 
-create table Parameter (parameterId number(19,0) not null, observationId number(19,0) not null, definition varchar2(255 char) not null, title varchar2(255 char), value blob not null, primary key (parameterId));
 create table blobValue (observationId number(19,0) not null, value blob, primary key (observationId));
 create table booleanValue (observationId number(19,0) not null, value char(1 char), primary key (observationId), check (value in ('T','F')));
 create table categoryValue (observationId number(19,0) not null, value varchar2(255 char), primary key (observationId));
@@ -48,6 +47,7 @@ create table offering (offeringId number(19,0) not null, hibernateDiscriminator 
 create table offeringAllowedFeatureType (offeringId number(19,0) not null, featureOfInterestTypeId number(19,0) not null, primary key (offeringId, featureOfInterestTypeId));
 create table offeringAllowedObservationType (offeringId number(19,0) not null, observationTypeId number(19,0) not null, primary key (offeringId, observationTypeId));
 create table offeringHasRelatedFeature (relatedFeatureId number(19,0) not null, offeringId number(19,0) not null, primary key (offeringId, relatedFeatureId));
+create table parameter (parameterId number(19,0) not null, observationId number(19,0) not null, definition varchar2(255 char) not null, title varchar2(255 char), value blob not null, primary key (parameterId));
 create table procedure (procedureId number(19,0) not null, hibernateDiscriminator char(1 char) not null, procedureDescriptionFormatId number(19,0) not null, identifier varchar2(255 char) not null unique, deleted char(1 char) default 'F' not null check (deleted in ('T','F')), descriptionFile clob, disabled char(1 char) default 'F' not null check (disabled in ('T','F'), primary key (procedureId));
 create table procedureDescriptionFormat (procedureDescriptionFormatId number(19,0) not null, procedureDescriptionFormat varchar2(255 char) not null, primary key (procedureDescriptionFormatId));
 create table relatedFeature (relatedFeatureId number(19,0) not null, featureOfInterestId number(19,0) not null, primary key (relatedFeatureId));
@@ -98,6 +98,7 @@ alter table offeringAllowedObservationType add constraint offeringObservationTyp
 alter table offeringAllowedObservationType add constraint FK28E66A64E4EF3005 foreign key (offeringId) references offering;
 alter table offeringHasRelatedFeature add constraint relatedFeatureOfferingFk foreign key (offeringId) references offering;
 alter table offeringHasRelatedFeature add constraint offeringRelatedFeatureFk foreign key (relatedFeatureId) references relatedFeature;
+alter table parameter add constraint parameterObservationFk foreign key (observationId) references observation;
 alter table procedure add constraint procProcDescFormatFk foreign key (procedureDescriptionFormatId) references procedureDescriptionFormat;
 alter table relatedFeature add constraint relatedFeatureFeatureFk foreign key (featureOfInterestId) references featureOfInterest;
 alter table relatedFeatureHasRole add constraint relatedFeatRelatedFeatRoleFk foreign key (relatedFeatureRoleId) references relatedFeatureRole;

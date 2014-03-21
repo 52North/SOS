@@ -27,7 +27,6 @@
 -- Public License for more details.
 --
 
-create table Parameter (parameterId int8 not null, observationId int8 not null, definition varchar(255) not null, title varchar(255), value oid not null, primary key (parameterId));
 create table blobValue (observationId int8 not null, value oid, primary key (observationId));
 create table booleanValue (observationId int8 not null, value char(1), primary key (observationId), check (value in ('T','F')));
 create table categoryValue (observationId int8 not null, value varchar(255), primary key (observationId));
@@ -48,6 +47,7 @@ create table offering (offeringId int8 not null, hibernateDiscriminator char(1) 
 create table offeringAllowedFeatureType (offeringId int8 not null, featureOfInterestTypeId int8 not null, primary key (offeringId, featureOfInterestTypeId));
 create table offeringAllowedObservationType (offeringId int8 not null, observationTypeId int8 not null, primary key (offeringId, observationTypeId));
 create table offeringHasRelatedFeature (relatedFeatureId int8 not null, offeringId int8 not null, primary key (offeringId, relatedFeatureId));
+create table parameter (parameterId int8 not null, observationId int8 not null, definition varchar(255) not null, title varchar(255), value oid not null, primary key (parameterId));
 create table procedure (procedureId int8 not null, hibernateDiscriminator char(1) not null, procedureDescriptionFormatId int8 not null, identifier varchar(255) not null unique, deleted char(1) default 'F' not null check (deleted in ('T','F')), descriptionFile text, disabled char(1) default 'F' not null check (disabled in ('T','F')), primary key (procedureId));
 create table procedureDescriptionFormat (procedureDescriptionFormatId int8 not null, procedureDescriptionFormat varchar(255) not null, primary key (procedureDescriptionFormatId));
 create table relatedFeature (relatedFeatureId int8 not null, featureOfInterestId int8 not null, primary key (relatedFeatureId));
@@ -98,6 +98,7 @@ alter table offeringAllowedObservationType add constraint offeringObservationTyp
 alter table offeringAllowedObservationType add constraint FK28E66A64E4EF3005 foreign key (offeringId) references offering;
 alter table offeringHasRelatedFeature add constraint relatedFeatureOfferingFk foreign key (offeringId) references offering;
 alter table offeringHasRelatedFeature add constraint offeringRelatedFeatureFk foreign key (relatedFeatureId) references relatedFeature;
+alter table parameter add constraint parameterObservationFk foreign key (observationId) references observation;
 alter table procedure add constraint procProcDescFormatFk foreign key (procedureDescriptionFormatId) references procedureDescriptionFormat;
 alter table relatedFeature add constraint relatedFeatureFeatureFk foreign key (featureOfInterestId) references featureOfInterest;
 alter table relatedFeatureHasRole add constraint relatedFeatRelatedFeatRoleFk foreign key (relatedFeatureRoleId) references relatedFeatureRole;

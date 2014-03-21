@@ -27,7 +27,7 @@
 -- Public License for more details.
 --
 
-create table Parameter (parameterId number(19,0) not null, observationId number(19,0) not null, definition varchar2(255 char) not null, title varchar2(255 char), value blob not null, primary key (parameterId));
+create table parameter (parameterId number(19,0) not null, observationId number(19,0) not null, definition varchar2(255 char) not null, title varchar2(255 char), value blob not null, primary key (parameterId));
 create table blobValue (observationId number(19,0) not null, value blob, primary key (observationId));
 create table booleanValue (observationId number(19,0) not null, value char(1 char), primary key (observationId), check (value in ('T','F')));
 create table categoryValue (observationId number(19,0) not null, value varchar2(255 char), primary key (observationId));
@@ -101,6 +101,7 @@ alter table offeringAllowedObservationType add constraint offeringObservationTyp
 alter table offeringAllowedObservationType add constraint FK28E66A64E4EF3005 foreign key (offeringId) references offering;
 alter table offeringHasRelatedFeature add constraint relatedFeatureOfferingFk foreign key (offeringId) references offering;
 alter table offeringHasRelatedFeature add constraint offeringRelatedFeatureFk foreign key (relatedFeatureId) references relatedFeature;
+alter table parameter add constraint parameterObservationFk foreign key (observationId) references observation;
 alter table procedure add constraint procProcDescFormatFk foreign key (procedureDescriptionFormatId) references procedureDescriptionFormat;
 alter table relatedFeature add constraint relatedFeatureFeatureFk foreign key (featureOfInterestId) references featureOfInterest;
 alter table relatedFeatureHasRole add constraint relatedFeatRelatedFeatRoleFk foreign key (relatedFeatureRoleId) references relatedFeatureRole;

@@ -557,6 +557,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
         Object[] result;
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA);
+            namedQuery.setParameter(PROCEDURE, procedureIdentifier);
             LOGGER.debug("QUERY getProcedureTimeExtrema(procedure) with NamedQuery: {}",
                     SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA);
             result = (Object[]) namedQuery.uniqueResult();

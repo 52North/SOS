@@ -199,7 +199,8 @@ public class SosService extends ConfiguratedHttpServlet {
         final BindingRepository repo = BindingRepository.getInstance();
         if (requestURI == null) {
             MediaType contentType = getContentType(request);
-            Binding binding = repo.getBinding(contentType);
+            // strip of the parameters to get rid of things like encoding
+            Binding binding = repo.getBinding(contentType.withoutParameters());
             if (binding == null) {
                 throw new HTTPException(HTTPStatus.UNSUPPORTED_MEDIA_TYPE);
             } else {

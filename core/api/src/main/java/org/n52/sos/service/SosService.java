@@ -33,28 +33,31 @@ import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.sos.binding.Binding;
 import org.n52.sos.binding.BindingRepository;
 import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.ExceptionEvent;
 import org.n52.sos.exception.HTTPException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.http.HTTPHeaders;
 import org.n52.sos.util.http.HTTPMethods;
 import org.n52.sos.util.http.HTTPStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.sos.util.http.MediaType;
+import org.n52.sos.util.http.MediaTypes;
 
 /**
  * The servlet of the SOS which receives the incoming HttpPost and HttpGet
  * requests and sends the operation result documents to the client TODO review
  * exception handling
- * 
+ *
  * @since 4.0.0
  */
 public class SosService extends ConfiguratedHttpServlet {
@@ -69,8 +72,8 @@ public class SosService extends ConfiguratedHttpServlet {
     public static final String BINDING_POST_METHOD = "doPostOperation";
 
     public static final String BINDING_GET_METHOD = "doGetOperation";
-    
-    private static long counter = 0;
+
+    private static final AtomicLong counter = new AtomicLong(0);
 
     @Override
     public void init() throws ServletException {
@@ -99,7 +102,7 @@ public class SosService extends ConfiguratedHttpServlet {
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
-        long currentCount = getNextCounter();
+        long currentCount = counter.incrementAndGet();
         logRequest(request, currentCount);
         try {
             getBinding(request).doDeleteOperation(request, response);
@@ -113,7 +116,7 @@ public class SosService extends ConfiguratedHttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
-        long currentCount = getNextCounter();
+        long currentCount = counter.incrementAndGet();
         logRequest(request, currentCount);
         try {
             getBinding(request).doGetOperation(request, response);
@@ -127,7 +130,7 @@ public class SosService extends ConfiguratedHttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
-        long currentCount = getNextCounter();
+        long currentCount = counter.incrementAndGet();
         logRequest(request, currentCount);
         try {
             getBinding(request).doPostOperation(request, response);
@@ -141,7 +144,7 @@ public class SosService extends ConfiguratedHttpServlet {
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
-        long currentCount = getNextCounter();
+        long currentCount = counter.incrementAndGet();
         logRequest(request, currentCount);
         try {
             getBinding(request).doPutOperation(request, response);
@@ -155,7 +158,7 @@ public class SosService extends ConfiguratedHttpServlet {
     @Override
     protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
-        long currentCount = getNextCounter();
+        long currentCount = counter.incrementAndGet();
         logRequest(request, currentCount);
         Binding binding = null;
         try {
@@ -180,28 +183,55 @@ public class SosService extends ConfiguratedHttpServlet {
     /**
      * Get the implementation of {@link Binding} that is registered for the
      * given <code>request</code>.
-     * 
+     *
      * @param request
      *            URL pattern from request URL
-     * 
+     *
      * @return The implementation of {@link Binding} that is registered for the
      *         given <code>urlPattern</code>.
-     * 
-     * 
-     * @throws OwsExceptionReport
-     *             * If the URL pattern is not supported by this SOS.
+     *
+     *
+     * @throws HTTPException If the URL pattern or ContentType is not supported
+     *                       by this SOS.
      */
     private Binding getBinding(HttpServletRequest request) throws HTTPException {
-        String requestURI = request.getPathInfo();
-        if (requestURI == null) {
-            throw new HTTPException(HTTPStatus.BAD_REQUEST);
+        final String requestURI = request.getPathInfo();
+        final BindingRepository repo = BindingRepository.getInstance();
+        if (requestURI == null || requestURI.isEmpty() || requestURI.equals("/")) {
+            MediaType contentType = getContentType(request);
+            // strip of the parameters to get rid of things like encoding
+            Binding binding = repo.getBinding(contentType.withoutParameters());
+            if (binding == null) {
+                throw new HTTPException(HTTPStatus.UNSUPPORTED_MEDIA_TYPE);
+            } else {
+                return binding;
+            }
         }
-        for (String prefix : BindingRepository.getInstance().getBindings().keySet()) {
+
+        for (String prefix : repo.getBindings().keySet()) {
             if (requestURI.startsWith(prefix)) {
-                return BindingRepository.getInstance().getBinding(prefix);
+                return repo.getBinding(prefix);
             }
         }
         throw new HTTPException(HTTPStatus.NOT_FOUND);
+    }
+
+    private MediaType getContentType(HttpServletRequest request)
+            throws HTTPException {
+        if (request.getContentType() == null) {
+            // default to KVP for GET requests
+            if (request.getMethod().equals(HTTPMethods.GET)) {
+                return MediaTypes.APPLICATION_KVP;
+            } else {
+                throw new HTTPException(HTTPStatus.BAD_REQUEST);
+            }
+        } else {
+            try {
+                return MediaType.parse(request.getContentType());
+            } catch (IllegalArgumentException e) {
+                throw new HTTPException(HTTPStatus.BAD_REQUEST, e);
+            }
+        }
     }
 
     protected void onHttpException(HttpServletRequest request, HttpServletResponse response, HTTPException exception)
@@ -257,9 +287,5 @@ public class SosService extends ConfiguratedHttpServlet {
             }
             return parent;
         }
-    }
-    
-    private long getNextCounter() {
-        return counter++;
     }
 }

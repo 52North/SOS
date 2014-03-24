@@ -16,11 +16,20 @@
         <databaseConfigurationFile>${project.parent.basedir}/misc/conf/datasource.properties</databaseConfigurationFile>
         <!-- do not overwrite this one! -->
         <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/configuration.db</sqliteSettingDatabaseTargetFile>
-        <sos.test.suite.version>1.0.0-M2</sos.test.suite.version>
+        <sos.test.suite.version>1.0.0-M3</sos.test.suite.version>
     </properties>
     <build>
         <finalName>${conf.sos.name}</finalName>
         <plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>**/*Suite*.java</include>
+					</includes>
+				</configuration>
+			</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -288,11 +297,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-datasource-mysql</artifactId>
-        </dependency>       
+        </dependency>
         <dependency>
 		    <groupId>${project.groupId}</groupId>
 		    <artifactId>hibernate-datasource-h2</artifactId>
-		</dependency>        
+		</dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>views</artifactId>
@@ -644,7 +653,7 @@
                 </dependency>
             </dependencies>
         </profile>
-        
+
         <profile>
             <id>wml</id>
             <dependencies>
@@ -936,7 +945,7 @@
                                     <cargo.servlet.port>${remote.port}</cargo.servlet.port>
                                     <cargo.remote.username>${remote.user}</cargo.remote.username>
 									<cargo.remote.password>${remote.password}</cargo.remote.password>
-                                    
+
                                      -->
 							</configuration>
 								<deployables>

@@ -36,12 +36,12 @@ The latest release of 52°North SOS can be downloaded from this website:
     http://52north.org/downloads/sensor-web/sos
 
 ### Contents
-  * `/src` :			     The source files of 52°North SOS modules
-  * `/bin` :			     Executable binary of 52°North SOS webapp module
-  * `LICENSE` :		     The license of 52°North SOS
-  * `NOTICE` :		     Third Party libraries and their licenses
-  * `README` :		     This file
-  * `RELEASE-NOTES` :  The release notes of the 52°North SOS
+  * `/src` :                 The source files of 52°North SOS modules
+  * `/bin` :                 Executable binary of 52°North SOS webapp module
+  * `LICENSE` :              The license of 52°North SOS
+  * `NOTICE` :               Third Party libraries and their licenses
+  * `README` :               This file
+  * `RELEASE-NOTES` :        The release notes of the 52°North SOS
 
 No printer friendly documentation exist for this release. Instead, refer to the [wiki documentation][5].
 
@@ -60,7 +60,7 @@ certain functionality added, let us know at:
 
  - Carsten Hollmann (c.hollmann@52north.org)
  - Christian Autermann (c.autermann@52north.org)
- - Eike Hinderk Juerrens (e.h.juerrens@52north.org)
+ - Eike Hinderk Jürrens [@EHJ-52n](e.h.juerrens@52north.org)
 
 The Sensor Web Community
 52°North Inititative for Geospatial Open Source Software GmbH, Germany

@@ -52,7 +52,7 @@
 	<td style="padding:3px;">Carsten Hollmann</td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
 </tr>
 <tr>
-	<td style="padding:3px;">Eike Hinderk Juerrens</td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
+	<td style="padding:3px;">Eike Hinderk J&uuml;rrens</td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
 </tr>
 <tr>
 	<td style="padding:3px;">Christian Autermann</td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>

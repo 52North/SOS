@@ -31,6 +31,7 @@ package org.n52.sos.service.it;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
+
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.service.SosService;
 
@@ -106,7 +107,8 @@ public class SOS40ComplianceTestSuite extends MockHttpExecutor
             org.n52.sos.service.it.v2.rest.CapabilitiesTest.class,
             org.n52.sos.service.it.v2.rest.OfferingsTest.class,
             org.n52.sos.service.it.v2.rest.SensorsTest.class,
-            org.n52.sos.service.it.v2.rest.ServiceEndpointTest.class
+            org.n52.sos.service.it.v2.rest.ServiceEndpointTest.class,
+            org.n52.sos.service.it.ContentNegotiationEndpointTest.class
         };
     }
 

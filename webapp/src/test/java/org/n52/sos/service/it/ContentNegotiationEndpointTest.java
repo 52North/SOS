@@ -37,11 +37,12 @@ import net.opengis.sos.x20.GetCapabilitiesDocument;
 import net.opengis.sos.x20.GetCapabilitiesType;
 
 import org.apache.xmlbeans.XmlObject;
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
-
+import org.n52.sos.binding.BindingRepository;
 import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -172,9 +173,14 @@ public class ContentNegotiationEndpointTest extends AbstractComplianceSuiteTest 
                 .response());
     }
 
+    private boolean isJsonBindingSupported() {
+        return BindingRepository.getInstance().isBindingSupported(MediaTypes.APPLICATION_JSON);
+    }
+
     @Test
     public void testJsonRequest()
             throws JsonProcessingException, IOException {
+        Assume.assumeTrue(isJsonBindingSupported());
         validate(post(null)
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_XML)
@@ -185,6 +191,7 @@ public class ContentNegotiationEndpointTest extends AbstractComplianceSuiteTest 
     @Test
     public void testJsonRequestContentTypeMismatch()
             throws JsonProcessingException, IOException {
+        Assume.assumeTrue(isJsonBindingSupported());
         validate(post("/json")
                 .contentType(APPLICATION_XML)
                 .accept(APPLICATION_XML)
@@ -195,6 +202,7 @@ public class ContentNegotiationEndpointTest extends AbstractComplianceSuiteTest 
     @Test
     public void testJsonRequestWithEncoding()
             throws JsonProcessingException, IOException {
+        Assume.assumeTrue(isJsonBindingSupported());
         validate(post(null)
                 .contentType(APPLICATION_JSON + ";charset=UTF-8")
                 .accept(APPLICATION_XML)

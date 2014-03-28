@@ -55,6 +55,8 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     private boolean deleted;
 
     private String descriptionFile;
+    
+    private boolean reference;
 
     public long getProcedureId() {
         return this.procedureId;
@@ -92,6 +94,20 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
 
     public void setDescriptionFile(String descriptionFile) {
         this.descriptionFile = descriptionFile;
+    }
+
+    /**
+     * @return the reference
+     */
+    public boolean isReference() {
+        return reference;
+    }
+
+    /**
+     * @param reference the reference to set
+     */
+    public void setReference(boolean reference) {
+        this.reference = reference;
     }
 
 }

@@ -29,22 +29,21 @@
 package org.n52.sos.ds.hibernate.entities.series;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservableProperty;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
-
+import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.*;
 /**
  * Hibernate entity for series
  * 
  * @since 4.0.0
  * 
  */
-public class Series implements Serializable, HasProcedure, HasObservableProperty, HasFeatureOfInterest, HasDeletedFlag {
+public class Series implements Serializable, HasProcedure, HasObservableProperty, HasFeatureOfInterest, HasDeletedFlag, HasUnit {
 
     private static final long serialVersionUID = 7838379468605356753L;
 
@@ -60,6 +59,17 @@ public class Series implements Serializable, HasProcedure, HasObservableProperty
 
     private Boolean deleted = false;
 
+    // the following values are used by the timeseries api
+    private Date firstTimeStamp;
+    
+    private Date lastTimeStamp;
+    
+    private BigDecimal firstNumericValue;
+    
+    private BigDecimal lastNumericValue;
+    
+    private Unit unit;
+    
     /**
      * Get series id
      * 
@@ -118,5 +128,91 @@ public class Series implements Serializable, HasProcedure, HasObservableProperty
     @Override
     public boolean isDeleted() {
         return deleted;
+    }
+
+    /**
+     * @return the firstTimeStamp
+     */
+    public Date getFirstTimeStamp() {
+        return firstTimeStamp;
+    }
+
+    /**
+     * @param firstTimeStamp the firstTimeStamp to set
+     */
+    public void setFirstTimeStamp(Date firstTimeStamp) {
+        this.firstTimeStamp = firstTimeStamp;
+    }
+    
+    public boolean isSetFirstTimeStamp() {
+        return getFirstTimeStamp() != null;
+    }
+
+    /**
+     * @return the lastTimeStamp
+     */
+    public Date getLastTimeStamp() {
+        return lastTimeStamp;
+    }
+
+    /**
+     * @param lastTimeStamp the lastTimeStamp to set
+     */
+    public void setLastTimeStamp(Date lastTimeStamp) {
+        this.lastTimeStamp = lastTimeStamp;
+    }
+    
+    public boolean isSetLastTimeStamp() {
+        return getLastTimeStamp() != null;
+    }
+
+    /**
+     * @return the firstNumericValue
+     */
+    public BigDecimal getFirstNumericValue() {
+        return firstNumericValue;
+    }
+
+    /**
+     * @param firstNumericValue the firstNumericValue to set
+     */
+    public void setFirstNumericValue(BigDecimal firstNumericValue) {
+        this.firstNumericValue = firstNumericValue;
+    }
+    
+    public boolean isSeFirstNumericValue() {
+        return getFirstNumericValue() != null;
+    }
+
+    /**
+     * @return the lastNumericValue
+     */
+    public BigDecimal getLastNumericValue() {
+        return lastNumericValue;
+    }
+
+    /**
+     * @param lastNumericValue the lastNumericValue to set
+     */
+    public void setLastNumericValue(BigDecimal lastNumericValue) {
+        this.lastNumericValue = lastNumericValue;
+    }
+    
+    public boolean isSeLastNumericValue() {
+        return getLastNumericValue() != null;
+    }
+
+    @Override
+    public Unit getUnit() {
+        return unit;
+    }
+
+    @Override
+    public void setUnit(Unit unit) {
+        this.unit = unit;
+    }
+    
+    public boolean isSetUnit() {
+        return getUnit() != null && getUnit().isSetUnit();
     }
 }

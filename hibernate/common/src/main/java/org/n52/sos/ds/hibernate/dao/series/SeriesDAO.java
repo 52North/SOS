@@ -34,9 +34,11 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.request.GetObservationRequest;
@@ -365,6 +367,42 @@ public class SeriesDAO {
             session.flush();
         }
         return hSeries;
+    }
+
+    /**
+     * Update series values which will be used by the Timeseries API.
+     * Can be later used by the SOS.
+     * 
+     * @param series Series object
+     * @param hObservation Observation object
+     * @param session Hibernate session
+     */
+    public void updateSeriesWithFirstLatestValues(Series series, AbstractObservation hObservation, Session session) {
+        boolean minChanged = false;
+        boolean maxChanged = false;
+        if (!series.isSetFirstTimeStamp() || (series.isSetFirstTimeStamp() && series.getFirstTimeStamp().after(hObservation.getPhenomenonTimeStart()))) {
+            minChanged = true;
+            series.setFirstTimeStamp(hObservation.getPhenomenonTimeStart());
+        }
+        if (!series.isSetLastTimeStamp() || (series.isSetLastTimeStamp() && series.getLastTimeStamp().before(hObservation.getPhenomenonTimeEnd()))) {
+            maxChanged = true;
+            series.setLastTimeStamp(hObservation.getPhenomenonTimeEnd());
+        }
+
+        if (hObservation instanceof NumericObservation) {
+            if (minChanged) {
+                series.setFirstNumericValue(((NumericObservation) hObservation).getValue());
+            }
+            if (maxChanged) {
+                series.setLastNumericValue(((NumericObservation) hObservation).getValue());
+            }
+            if (!series.isSetUnit() && hObservation.isSetUnit()) {
+                // TODO check if both unit are equal. If not throw exception?
+                series.setUnit(hObservation.getUnit());
+            }
+        }
+        session.saveOrUpdate(series);
+        session.flush();
     }
 
 }

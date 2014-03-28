@@ -21,5 +21,21 @@
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
             <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
         </property>
+        <!-- values for timeseries api -->
+        <property name="firstTimeStamp" type="timestamp">
+            <column name="firstTimeStamp" length="29" />
+        </property>
+        <property name="lastTimeStamp" type="timestamp">
+            <column name="lastTimeStamp" length="29" />
+        </property>
+        <property name="firstNumericValue" type="big_decimal">
+            <column name="firstNumericValue" length="29" />
+        </property>
+        <property name="lastNumericValue" type="big_decimal">
+            <column name="lastNumericValue" length="29" />
+        </property>
+         <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit" fetch="select" lazy="no-proxy" foreign-key="seriesUnitFk">
+            <column name="unitId" not-null="false" />
+        </many-to-one>
     </class>
 </hibernate-mapping>

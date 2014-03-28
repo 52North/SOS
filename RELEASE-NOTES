@@ -10,10 +10,32 @@ Changes since last release
 ==================================
 
  --- New features ---
+ 
+    * Binding selection by ContentType at /sos and /service
+    * Add columns to mapping files for an easier integration of the Timeseries API (only for Series concept)
+      * Added first/latest time (all) and value (only OM_Measurement) columns to series table and update these columns during insertion process
+ 
+ --- Changes ---
+ 
+    * Show the observation identifiers only in capabilities if size is less than 100, TODO: make this configurable
+ 
+ --- Fixed bugs ---
+   
+    * Check if JSON binding is supported before testing
+ 
+ 
+Release 52n-sos-4.0.1
+==================================
+
+ --- New features ---
 
  --- Changes ---
  
  --- Fixed bugs ---
+    
+    * Fix NcNameResolver.fixNcName and Show nested SQLExceptions in OwsExceptionReport
+    * Add missing setting of namedQuery parameter
+
 
 Release 52n-sos-4.0.0
 ==================================

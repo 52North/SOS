@@ -34,14 +34,14 @@ import java.util.Set;
 
 /**
  * Abstract implementation that delegates to a existing map implementation.
- * 
+ *
  * @param <K>
  *            the key type
  * @param <V>
  *            the value type
  * @param <C>
  *            the collection type
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
@@ -95,10 +95,11 @@ public abstract class AbstractDelegatingMultiMap<K, V, C extends Collection<V>> 
     }
 
     @Override
-    public boolean remove(K k, V v) {
-        C c = get(k);
+    @SuppressWarnings("unchecked")
+    public boolean remove(Object k, Object v) {
+        C c = get((K) k);
         if (c != null) {
-            return c.remove(v);
+            return c.remove((V) v);
         }
         return false;
     }

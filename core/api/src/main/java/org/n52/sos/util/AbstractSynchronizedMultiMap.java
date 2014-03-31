@@ -39,18 +39,18 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Abstract implementation that delegates to synchronized {@link HashMap}
- * 
+ *
  * @param <K>
  *            the key type
  * @param <V>
  *            the value type
  * @param <C>
  *            the collection type
- * 
+ *
  * @see Collections#synchronizedMap(java.util.Map)
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
- * 
+ *
  */
 public abstract class AbstractSynchronizedMultiMap<K, V, C extends Collection<V>> extends
         AbstractDelegatingMultiMap<K, V, C> {
@@ -62,7 +62,7 @@ public abstract class AbstractSynchronizedMultiMap<K, V, C extends Collection<V>
 
     private final Lock write = lock.writeLock();
 
-    private Map<K, C> delegate;
+    private final Map<K, C> delegate;
 
     public AbstractSynchronizedMultiMap(Map<? extends K, ? extends C> m) {
         this.delegate = new HashMap<K, C>(m);
@@ -166,7 +166,7 @@ public abstract class AbstractSynchronizedMultiMap<K, V, C extends Collection<V>
     }
 
     @Override
-    public boolean remove(K k, V v) {
+    public boolean remove(Object k, Object v) {
         write.lock();
         try {
             return super.remove(k, v);

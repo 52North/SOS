@@ -40,14 +40,20 @@ import java.util.Set;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
+
 import org.n52.sos.config.SettingDefinition;
+import org.n52.sos.ds.DatasourceCallback;
 import org.n52.sos.exception.ConfigurationException;
+
+import geodb.GeoDB;
+
+
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
@@ -93,6 +99,7 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
                 }
             }
             stmt.execute("set referential_integrity true");
+            GeoDB.InitGeoDB(conn);
         } catch (SQLException ex) {
             throw new ConfigurationException(ex);
         } finally {
@@ -105,4 +112,33 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
     protected String getDriverClass() {
         return H2_DRIVER_CLASS;
     }
+
+    @Override
+    public DatasourceCallback getCallback() {
+        return DatasourceCallback.chain(super.getCallback(),
+                                        new DatasourceCallback() {
+
+            @Override
+            public Properties onInit(Properties props) {
+                initGeoDB(parseDatasourceProperties(props));
+                return props;
+            }
+        });
+    }
+
+    protected void initGeoDB(Map<String, Object> settings)
+            throws ConfigurationException {
+        try {
+
+            Connection cx = openConnection(settings);
+            try {
+                GeoDB.InitGeoDB(cx);
+            } finally {
+                cx.close();
+            }
+        } catch (SQLException ex) {
+            throw new ConfigurationException("Could not init GeoDB", ex);
+        }
+    }
+
 }

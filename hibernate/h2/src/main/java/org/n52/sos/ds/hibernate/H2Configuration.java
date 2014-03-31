@@ -48,6 +48,9 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.jdbc.Work;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.cache.ctrl.ScheduledContentCacheControllerSettings;
 import org.n52.sos.config.sqlite.SQLiteSessionFactory;
 import org.n52.sos.ds.ConnectionProviderException;
@@ -55,14 +58,14 @@ import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.SosContextListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import geodb.GeoDB;
+
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class H2Configuration {
     private static final Logger LOG = LoggerFactory.getLogger(H2Configuration.class);
@@ -114,7 +117,7 @@ public class H2Configuration {
 //            resources.add("mapping/old/observation/Observation.hbm.xml");
 //            resources.add("mapping/old/observation/ObservationInfo.hbm.xml");
 //            resources.add("mapping/old/spatialFilteringProfile/SpatialFitleringProfile.hbm.xml");
-            // series observation concept, needs changes in tests 
+            // series observation concept, needs changes in tests
             resources.add("mapping/series/observation/Series.hbm.xml");
             resources.add("mapping/series/observation/SeriesObservation.hbm.xml");
             resources.add("mapping/series/observation/SeriesObservationInfo.hbm.xml");
@@ -318,10 +321,8 @@ public class H2Configuration {
         try {
             Class.forName(H2_DRIVER);
             conn = DriverManager.getConnection(H2_CONNECTION_URL);
+            GeoDB.InitGeoDB(conn);
             stmt = conn.createStatement();
-            final String cmd = "create domain if not exists geometry as blob";
-            LOG.debug("Executing {}", cmd);
-            stmt.execute(cmd);
             configuration = new Configuration().configure("/sos-hibernate.cfg.xml");
             @SuppressWarnings("unchecked")
             List<String> resources = (List<String>) properties.get(SessionFactoryProvider.HIBERNATE_RESOURCES);

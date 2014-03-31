@@ -37,6 +37,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
@@ -44,16 +45,16 @@ import com.google.common.collect.ImmutableSet;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class H2InMemoryDatasource extends AbstractH2Datasource {
     private static final String DIALECT = "H2/GeoDB (in memory)";
 
     private static final String JDBC_URL =
-            "jdbc:h2:mem:sos;DB_CLOSE_DELAY=-1;INIT=create domain if not exists geometry as blob";
+            "jdbc:h2:mem:sos;DB_CLOSE_DELAY=-1;";
 
     @Override
     public String getDialectName() {

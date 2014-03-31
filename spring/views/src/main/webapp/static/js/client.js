@@ -182,7 +182,7 @@ $(function() {
                 this.changeSyntax("application/xml");
             }
         },
-        createFilters: function(filters) {
+        createFilters: function() {
             var self = this;
             this.filters = [];
             for (var i = 0; i < arguments.length; ++i) {
@@ -205,7 +205,7 @@ $(function() {
                 this[jq] = $(id).on("change", (function(filter) {
                     return function() {
                         self.onFilterChange.apply(self, [filter]);
-                    }
+                    };
                 })(e));
                 // append valid values
                 this[jq].append($("<option>").attr("value", "any")
@@ -411,7 +411,7 @@ $(function() {
             }
         },
         updateExamples: function() {
-            var def, text, id, current, example, examples = {};
+            var def, text, id, example, examples = {};
 
             // apply current filters
             outer: for (var i = 0; i < this.requests.length; ++i) {
@@ -472,7 +472,7 @@ $(function() {
             this.$method.val(definition.method);
 
 
-            var url = this.sosUrl + definition.binding;
+            var url = this.sosUrl;
             if (definition.param) {
                 if (!url.endsWith("?")) {
                     url += "?";
@@ -497,11 +497,11 @@ $(function() {
             	this.$contentType.val("");
             	this.$accept.val("");
             }
-            this.$contentType.trigger("change");            
+            this.$contentType.trigger("change");
             this.$accept.trigger("change");
 
             if (definition.request) {
-                if (typeof(definition.request) == "string") {
+                if (typeof(definition.request) === "string") {
                     if (definition.request.endsWith("xml")) {
                         $.get(definition.request, function(data) {
                             var xml = self.xml2string(data);
@@ -514,8 +514,8 @@ $(function() {
                     } else {
                         this.editor.setValue(definition.request);
                     }
-                } else if (typeof(definition.request) == "object") {
-                    this.editor.setValue(JSON.stringify(definition.request, undefined, 2))
+                } else if (typeof(definition.request) === "object") {
+                    this.editor.setValue(JSON.stringify(definition.request, undefined, 2));
                 }
             } else {
                 this.editor.setValue("");

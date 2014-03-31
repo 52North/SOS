@@ -94,7 +94,7 @@ public interface MultiMap<K, V, C extends Collection<V>> extends Map<K, C>, Seri
      *
      * @return if the map was altered
      */
-    @Override
+    // @Override will compile in Java 8 but not in Java 6/7
     boolean remove(Object key, Object value);
 
     /**

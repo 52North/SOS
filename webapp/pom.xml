@@ -215,6 +215,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-feature</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>request-response-coordinate-transformer</artifactId>
+        </dependency>
         <!-- dependencies for integration test -->
         <dependency>
             <groupId>junit</groupId>
@@ -638,6 +642,15 @@
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-dao</artifactId>
                 </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>inspire</id>
+            <dependencies>
+		        <dependency>
+		            <groupId>${project.groupId}</groupId>
+		        	<artifactId>inspire-code</artifactId>
+		        </dependency>
             </dependencies>
         </profile>
         <profile>

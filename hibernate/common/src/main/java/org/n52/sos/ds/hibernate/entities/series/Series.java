@@ -26,91 +26,24 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-/**
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
-
- *
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- *
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- *
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- *
-
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- */
 package org.n52.sos.ds.hibernate.entities.series;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservableProperty;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
-
+import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.*;
 /**
  * Hibernate entity for series
  * 
  * @since 4.0.0
  * 
  */
-public class Series implements Serializable, HasProcedure, HasObservableProperty, HasFeatureOfInterest, HasDeletedFlag, HasDisabledFlag {
+public class Series implements Serializable, HasProcedure, HasObservableProperty, HasFeatureOfInterest, HasDeletedFlag, HasUnit {
 
     private static final long serialVersionUID = 7838379468605356753L;
 
@@ -125,9 +58,18 @@ public class Series implements Serializable, HasProcedure, HasObservableProperty
     private Procedure procedure;
 
     private Boolean deleted = false;
-    
-    private Boolean disabled = false;
 
+    // the following values are used by the timeseries api
+    private Date firstTimeStamp;
+    
+    private Date lastTimeStamp;
+    
+    private BigDecimal firstNumericValue;
+    
+    private BigDecimal lastNumericValue;
+    
+    private Unit unit;
+    
     /**
      * Get series id
      * 
@@ -184,28 +126,98 @@ public class Series implements Serializable, HasProcedure, HasObservableProperty
     }
 
     @Override
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    @Override
     public boolean getDeleted() {
         return deleted;
     }
 
-    @Override
-    public boolean isDeleted() {
-        return deleted;
+    /**
+     * @return the firstTimeStamp
+     */
+    public Date getFirstTimeStamp() {
+        return firstTimeStamp;
+    }
+
+    /**
+     * @param firstTimeStamp the firstTimeStamp to set
+     */
+    public void setFirstTimeStamp(Date firstTimeStamp) {
+        this.firstTimeStamp = firstTimeStamp;
     }
     
-    @Override
-    public HasDisabledFlag setDisabled(final boolean disabled) {
-        this.disabled = disabled;
-        return this;
+    public boolean isSetFirstTimeStamp() {
+        return getFirstTimeStamp() != null;
+    }
+
+    /**
+     * @return the lastTimeStamp
+     */
+    public Date getLastTimeStamp() {
+        return lastTimeStamp;
+    }
+
+    /**
+     * @param lastTimeStamp the lastTimeStamp to set
+     */
+    public void setLastTimeStamp(Date lastTimeStamp) {
+        this.lastTimeStamp = lastTimeStamp;
+    }
+    
+    public boolean isSetLastTimeStamp() {
+        return getLastTimeStamp() != null;
+    }
+
+    /**
+     * @return the firstNumericValue
+     */
+    public BigDecimal getFirstNumericValue() {
+        return firstNumericValue;
+    }
+
+    /**
+     * @param firstNumericValue the firstNumericValue to set
+     */
+    public void setFirstNumericValue(BigDecimal firstNumericValue) {
+        this.firstNumericValue = firstNumericValue;
+    }
+    
+    public boolean isSeFirstNumericValue() {
+        return getFirstNumericValue() != null;
+    }
+
+    /**
+     * @return the lastNumericValue
+     */
+    public BigDecimal getLastNumericValue() {
+        return lastNumericValue;
+    }
+
+    /**
+     * @param lastNumericValue the lastNumericValue to set
+     */
+    public void setLastNumericValue(BigDecimal lastNumericValue) {
+        this.lastNumericValue = lastNumericValue;
+    }
+    
+    public boolean isSeLastNumericValue() {
+        return getLastNumericValue() != null;
     }
 
     @Override
-    public boolean getDisabled() {
-        return disabled;
+    public Unit getUnit() {
+        return unit;
     }
 
     @Override
-    public boolean isDisabled() {
-        return getDisabled();
+    public void setUnit(Unit unit) {
+        this.unit = unit;
+    }
+    
+    public boolean isSetUnit() {
+        return getUnit() != null && getUnit().isSetUnit();
     }
 }

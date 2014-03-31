@@ -497,9 +497,12 @@ public class SeriesObservationDAO extends AbstractObservationDAO {
     @Override
     protected void addObservationIdentifiersToObservation(ObservationIdentifiers observationIdentifiers,
             AbstractObservation hObservation, Session session) {
-        ((SeriesObservation) hObservation).setSeries(new SeriesDAO().getOrInsertSeries(
+        SeriesDAO seriesDAO = new SeriesDAO();
+        Series series = seriesDAO.getOrInsertSeries(
                 observationIdentifiers.getFeatureOfInterest(), observationIdentifiers.getObservableProperty(),
-                observationIdentifiers.getProcedure(), session));
+                observationIdentifiers.getProcedure(), session);
+        ((SeriesObservation) hObservation).setSeries(series);
+        seriesDAO.updateSeriesWithFirstLatestValues(series, hObservation, session);
     }
 
     @Override

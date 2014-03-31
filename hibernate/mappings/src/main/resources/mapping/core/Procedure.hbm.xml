@@ -62,5 +62,9 @@
         	<column name="altitude" unique="true" />
         </property>
         -->
+        <!-- for timeseries API  -->
+        <property name="reference" type="org.hibernate.type.TrueFalseType">
+        	<column name="referenceFlag" default="'F'" check="referenceFlag in ('T','F')"/>
+        </property>
     </class>
 </hibernate-mapping>

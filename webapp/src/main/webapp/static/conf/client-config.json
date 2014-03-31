@@ -10,7 +10,7 @@
 			},
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"DescribeSensor",
 			"headers":{
 				"Accept":"application/xml"
@@ -25,7 +25,7 @@
 			},
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetCapabilities",
 			"headers":{
 				"Accept":"application/xml"
@@ -46,7 +46,7 @@
 			},
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"headers":{
 				"Accept":"application/xml"
@@ -62,7 +62,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"DeleteObservation",
 			"headers":{
 				"Accept":"application/xml"
@@ -78,7 +78,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"DeleteSensor",
 			"headers":{
 				"Accept":"application/xml"
@@ -95,7 +95,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"DescribeSensor",
 			"headers":{
 				"Accept":"application/xml"
@@ -109,7 +109,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"minimal",
 			"headers":{
@@ -125,7 +125,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"only Contents section",
 			"headers":{
@@ -141,7 +141,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"only OperationsMetadata section",
 			"headers":{
@@ -157,7 +157,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"with AcceptVersions=2.0.0",
 			"headers":{
@@ -187,7 +187,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetDataAvailability",
 			"headers":{
 				"Accept":"application/xml"
@@ -202,7 +202,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetDataAvailability",
 			"title":"minimal",
 			"headers":{
@@ -219,7 +219,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"featureOfInterest",
 			"headers":{
@@ -240,7 +240,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"featureOfInterests",
 			"headers":{
@@ -256,7 +256,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"minimal",
 			"headers":{
@@ -277,7 +277,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"observableProperties",
 			"headers":{
@@ -294,7 +294,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"observableProperty",
 			"headers":{
@@ -311,7 +311,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"procedure",
 			"headers":{
@@ -332,7 +332,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"procedures",
 			"headers":{
@@ -353,7 +353,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"spatial filter, URL",
 			"headers":{
@@ -374,7 +374,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"spatial filter, URN",
 			"headers":{
@@ -395,7 +395,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"Extension 'MergeObservationsIntoDataArray'",
 			"headers":{
@@ -412,7 +412,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"featureOfInterest",
 			"headers":{
@@ -433,7 +433,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"featureOfInterests",
 			"headers":{
@@ -458,7 +458,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"full",
 			"headers":{
@@ -479,7 +479,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"observableProperties",
 			"headers":{
@@ -496,7 +496,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"observableProperty",
 			"headers":{
@@ -513,7 +513,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"offering",
 			"headers":{
@@ -534,7 +534,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"offerings",
 			"headers":{
@@ -551,7 +551,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"procedure",
 			"headers":{
@@ -572,7 +572,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"procedures",
 			"headers":{
@@ -593,7 +593,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"spatial filter, URL",
 			"headers":{
@@ -614,7 +614,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"spatial filter, URN",
 			"headers":{
@@ -632,7 +632,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"temporal filter during",
 			"headers":{
@@ -650,7 +650,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"temporal filter equal",
 			"headers":{
@@ -668,7 +668,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"temporal filter equal, negativ time zone",
 			"headers":{
@@ -686,7 +686,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"temporal filter equal, reduced time",
 			"headers":{
@@ -704,7 +704,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"temporal filter first",
 			"headers":{
@@ -722,7 +722,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"temporal filter latest",
 			"headers":{
@@ -740,7 +740,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetResult",
 			"headers":{
 				"Accept":"application/xml"
@@ -757,7 +757,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "KVP",
+			"binding": "application/x-kvp",
 			"operation":"GetResultTemplate",
 			"headers":{
 				"Accept":"application/xml"
@@ -768,7 +768,7 @@
 			"request":"static/examples/sos_v100/requests_xml/DescribeSensor.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"DescribeSensor",
 			"headers":{
 				"Accept":"application/xml",
@@ -780,7 +780,7 @@
 			"request":"static/examples/sos_v100/requests_xml/GetCapabilities.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"GetCapabilities",
 			"title":"All Sections",
 			"headers":{
@@ -793,7 +793,7 @@
 			"request":"static/examples/sos_v100/requests_xml/GetFeatureOfInterest_SpatialFilter.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"GetFeatureOfInterest",
 			"title":"BoundingBox",
 			"headers":{
@@ -806,7 +806,7 @@
 			"request":"static/examples/sos_v100/requests_xml/GetFeatureOfInterest.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"GetFeatureOfInterest",
 			"title":"FeatureOfInterestId",
 			"headers":{
@@ -819,7 +819,7 @@
 			"request":"static/examples/sos_v100/requests_xml/GetObservation.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"GetObservation",
 			"title":"All Parameters",
 			"headers":{
@@ -832,7 +832,7 @@
 			"request":"static/examples/sos_v100/requests_xml/GetObservationById.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"GetObservationById",
 			"headers":{
 				"Accept":"application/xml",
@@ -844,7 +844,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_categoryObservation.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"CategoryObservation",
 			"headers":{
@@ -857,7 +857,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_GenericObs_allTypes.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"GenericObservation - AllTypes",
 			"headers":{
@@ -870,7 +870,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_GenericObs_Derwent.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"GenericObservation - Derwent",
 			"headers":{
@@ -883,7 +883,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_GenericObs_Derwent_2.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"GenericObservation - Derwent 2",
 			"headers":{
@@ -896,7 +896,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_GenericObs_noIDs.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"GenericObservation - No ID's",
 			"headers":{
@@ -909,7 +909,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObs_geometry.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Geometry",
 			"headers":{
@@ -922,7 +922,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObs_geometry_movingObject.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Geometry - MovingObject",
 			"headers":{
@@ -935,7 +935,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_Measurement.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Measurement",
 			"headers":{
@@ -948,7 +948,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_4_RegSen_withFOI.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"RegisterSensor - FeatureOfInterest",
 			"headers":{
@@ -961,7 +961,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_samplingPoint.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"SamplingPoint",
 			"headers":{
@@ -974,7 +974,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_samplingSurface.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"SamplingSurface",
 			"headers":{
@@ -987,7 +987,7 @@
 			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_categoryObservation.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"RegisterSensor",
 			"title":"CategoryObservation",
 			"headers":{
@@ -1000,7 +1000,7 @@
 			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_withFOI.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"RegisterSensor",
 			"title":"FeatureOfInterest",
 			"headers":{
@@ -1013,7 +1013,7 @@
 			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_geometry.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"RegisterSensor",
 			"title":"Geometry",
 			"headers":{
@@ -1026,7 +1026,7 @@
 			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_measurement.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"RegisterSensor",
 			"title":"Measurement",
 			"headers":{
@@ -1039,7 +1039,7 @@
 			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_Measurement_Derwent.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"RegisterSensor",
 			"title":"Measurement - Derwent",
 			"headers":{
@@ -1052,7 +1052,7 @@
 			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_Observation_Derwent_2.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"RegisterSensor",
 			"title":"Measurement - Derwent 2",
 			"headers":{
@@ -1065,7 +1065,7 @@
 			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_Observation_allTypes.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"RegisterSensor",
 			"title":"Observation - AllTypes",
 			"headers":{
@@ -1078,7 +1078,7 @@
 			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_Observation_noIDs.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"RegisterSensor",
 			"title":"Observation - No ID's",
 			"headers":{
@@ -1091,7 +1091,7 @@
 			"request":"static/examples/sos_v20/requests_xml/DeleteObservation.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"DeleteObservation",
 			"headers":{
 				"Accept":"application/xml",
@@ -1103,7 +1103,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/DeleteSensor.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"DeleteSensor",
 			"headers":{
 				"Accept":"application/xml",
@@ -1115,7 +1115,7 @@
 			"request":"static/examples/sos_v20/requests_xml/DescribeSensor.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"DescribeSensor",
 			"headers":{
 				"Accept":"application/xml",
@@ -1127,7 +1127,7 @@
 			"request":"static/examples/sos_v20/requests_xml/GetCapabilities.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"GetCapabilities",
 			"headers":{
 				"Accept":"application/xml",
@@ -1139,7 +1139,7 @@
 			"request":"static/examples/sos_v20/requests_xml/GetDataAvailability.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"GetDataAvailability",
 			"headers":{
 				"Accept":"application/xml",
@@ -1151,7 +1151,7 @@
 			"request":"static/examples/sos_v20/requests_xml/GetFeatureOfInterest.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"GetFeatureOfInterest",
 			"headers":{
 				"Accept":"application/xml",
@@ -1163,7 +1163,7 @@
 			"request":"static/examples/sos_v20/requests_xml/GetObservation.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"GetObservation",
 			"headers":{
 				"Accept":"application/xml",
@@ -1175,7 +1175,7 @@
 			"request":"static/examples/sos_v20/requests_xml/GetObservationById.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"GetObservationById",
 			"headers":{
 				"Accept":"application/xml",
@@ -1187,7 +1187,7 @@
 			"request":"static/examples/sos_v20/requests_xml/ResultHandling/GetResult.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"GetResult",
 			"headers":{
 				"Accept":"application/xml",
@@ -1199,7 +1199,7 @@
 			"request":"static/examples/sos_v20/requests_xml/ResultHandling/GetResultTemplate.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"GetResultTemplate",
 			"headers":{
 				"Accept":"application/xml",
@@ -1211,7 +1211,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Category.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Category",
 			"headers":{
@@ -1224,7 +1224,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Count.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Count",
 			"headers":{
@@ -1237,7 +1237,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Geometry.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Geometry",
 			"headers":{
@@ -1250,7 +1250,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Measurement.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Measurement",
 			"headers":{
@@ -1263,7 +1263,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Measurement_SFP.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Measurement/Spatial Filtering Profile",
 			"headers":{
@@ -1276,7 +1276,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Multiple.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Multiple observations",
 			"headers":{
@@ -1289,7 +1289,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_SweArray.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"SweArray",
 			"headers":{
@@ -1302,7 +1302,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Text.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Text",
 			"headers":{
@@ -1315,7 +1315,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Truth.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Truth",
 			"headers":{
@@ -1328,7 +1328,7 @@
 			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResult.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertResult",
 			"headers":{
 				"Accept":"application/xml",
@@ -1340,7 +1340,7 @@
 			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResultTemplate.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertResultTemplate",
 			"headers":{
 				"Accept":"application/xml",
@@ -1352,7 +1352,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertSensor.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"InsertSensor",
 			"headers":{
 				"Accept":"application/xml",
@@ -1364,7 +1364,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/UpdateSensorDescription.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "POX",
+			"binding": "application/xml",
 			"operation":"UpdateSensorDescription",
 			"headers":{
 				"Accept":"application/xml",
@@ -1376,7 +1376,7 @@
 			"request":"static/examples/sos_v100/requests_soap/DescribeSensor.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"DescribeSensor",
 			"title":"SOAP 1.2",
 			"headers":{
@@ -1389,7 +1389,7 @@
 			"request":"static/examples/sos_v100/requests_soap/GetCapabilities.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"GetCapabilities",
 			"title":"All Sections (SOAP 1.2)",
 			"headers":{
@@ -1402,7 +1402,7 @@
 			"request":"static/examples/sos_v100/requests_soap/GetFeatureOfInterest_SpatialFilter.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"GetFeatureOfInterest",
 			"title":"BBOX (SOAP 1.2)",
 			"headers":{
@@ -1415,7 +1415,7 @@
 			"request":"static/examples/sos_v100/requests_soap/GetFeatureOfInterest.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"GetFeatureOfInterest",
 			"title":"ID (SOAP 1.2)",
 			"headers":{
@@ -1428,7 +1428,7 @@
 			"request":"static/examples/sos_v100/requests_soap/GetObservation.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"GetObservation",
 			"title":"All Parameters (SOAP 1.2)",
 			"headers":{
@@ -1441,7 +1441,7 @@
 			"request":"static/examples/sos_v100/requests_soap/GetObservationById.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"GetObservationById",
 			"title":"By ID (SOAP 1.2)",
 			"headers":{
@@ -1454,7 +1454,7 @@
 			"request":"static/examples/sos_v100/requests_soap/InsertObservation.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"SOAP 1.2",
 			"headers":{
@@ -1467,7 +1467,7 @@
 			"request":"static/examples/sos_v100/requests_soap/RegisterSensor.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"RegisterSensor",
 			"title":"SOAP 1.2",
 			"headers":{
@@ -1480,7 +1480,7 @@
 			"request":"static/examples/sos_v20/requests_soap/DeleteObservation.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"DeleteObservation",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1492,7 +1492,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/DeleteSensor.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"DeleteSensor",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1504,7 +1504,7 @@
 			"request":"static/examples/sos_v20/requests_soap/DescribeSensor.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"DescribeSensor",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1516,7 +1516,7 @@
 			"request":"static/examples/sos_v20/requests_soap/GetCapabilities.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"GetCapabilities",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1528,7 +1528,7 @@
 			"request":"static/examples/sos_v20/requests_soap/GetDataAvailability.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"GetDataAvailability",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1540,7 +1540,7 @@
 			"request":"static/examples/sos_v20/requests_soap/GetFeatureOfInterest.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"GetFeatureOfInterest",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1552,7 +1552,7 @@
 			"request":"static/examples/sos_v20/requests_soap/GetObservation.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"GetObservation",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1564,7 +1564,7 @@
 			"request":"static/examples/sos_v20/requests_soap/GetObservationById.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"GetObservationById",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1576,7 +1576,7 @@
 			"request":"static/examples/sos_v20/requests_soap/ResultHandling/GetResult.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"GetResult",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1588,7 +1588,7 @@
 			"request":"static/examples/sos_v20/requests_soap/ResultHandling/GetResultTemplate.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"GetResultTemplate",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1600,7 +1600,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Category.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"Category",
 			"headers":{
@@ -1613,7 +1613,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Count.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"Count",
 			"headers":{
@@ -1626,7 +1626,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Geometry.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"Geometry",
 			"headers":{
@@ -1639,7 +1639,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Measurement.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"Measurement",
 			"headers":{
@@ -1652,7 +1652,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Measurement_SFP.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"Measurement/Spatial Filtering Profile",
 			"headers":{
@@ -1665,7 +1665,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Multiple.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"Multiple observations",
 			"headers":{
@@ -1678,7 +1678,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_SweArray.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"SweArray",
 			"headers":{
@@ -1691,7 +1691,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Text.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"Text",
 			"headers":{
@@ -1704,7 +1704,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Truth.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"Truth",
 			"headers":{
@@ -1717,7 +1717,7 @@
 			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResult.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"InsertResult",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1729,7 +1729,7 @@
 			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResultTemplate.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"InsertResultTemplate",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1741,7 +1741,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertSensor.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"InsertSensor",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1753,7 +1753,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/UpdateSensorDescription.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding": "SOAP",
+			"binding": "application/soap+xml",
 			"operation":"UpdateSensorDescription",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1765,7 +1765,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding": "JSON",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -1782,7 +1782,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding": "JSON",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -1803,7 +1803,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding": "JSON",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -1828,7 +1828,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding": "JSON",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -1847,7 +1847,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding": "JSON",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -1868,7 +1868,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding": "JSON",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -1893,7 +1893,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding": "JSON",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -1915,7 +1915,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding": "JSON",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -1986,7 +1986,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding": "JSON",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2079,7 +2079,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding": "JSON",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2100,7 +2100,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding": "JSON",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2131,7 +2131,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding": "JSON",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2152,7 +2152,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding": "JSON",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2220,7 +2220,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding": "JSON",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2238,7 +2238,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding": "JSON",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2260,7 +2260,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding": "JSON",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2296,7 +2296,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding": "JSON",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2364,7 +2364,7 @@
 				"service":"SOS",
 				"version":"2.0.0",
 				"method":"POST",
-				"binding": "JSON",
+				"binding": "application/json",
 				"headers":{
 					"Accept":"application/json",
 					"Content-Type":"application/json"
@@ -2383,7 +2383,7 @@
 				"service":"SOS",
 				"version":"2.0.0",
 				"method":"POST",
-				"binding": "JSON",
+				"binding": "application/json",
 				"headers":{
 					"Accept":"application/json",
 					"Content-Type":"application/json"
@@ -2403,7 +2403,7 @@
 				"service":"SOS",
 				"version":"2.0.0",
 				"method":"POST",
-				"binding": "JSON",
+				"binding": "application/json",
 				"headers":{
 					"Accept":"application/json",
 					"Content-Type":"application/json"
@@ -2485,7 +2485,7 @@
 				"service":"SOS",
 				"version":"2.0.0",
 				"method":"POST",
-				"binding": "JSON",
+				"binding": "application/json",
 				"headers":{
 					"Accept":"application/json",
 					"Content-Type":"application/json"
@@ -2504,7 +2504,7 @@
 				"service":"SOS",
 				"version":"2.0.0",
 				"method":"POST",
-				"binding": "JSON",
+				"binding": "application/json",
 				"headers":{
 					"Accept":"application/json",
 					"Content-Type":"application/json"
@@ -2584,7 +2584,7 @@
 				"service":"SOS",
 				"version":"2.0.0",
 				"method":"POST",
-				"binding": "JSON",
+				"binding": "application/json",
 				"headers":{
 					"Accept":"application/json",
 					"Content-Type":"application/json"
@@ -2605,7 +2605,7 @@
 				"service":"SOS",
 				"version":"2.0.0",
 				"method":"POST",
-				"binding": "JSON",
+				"binding": "application/json",
 				"headers":{
 					"Accept":"application/json",
 					"Content-Type":"application/json"
@@ -2617,21 +2617,21 @@
 						"service":"SOS",
 						"version":"2.0.0",
 						"method":"POST",
-						"binding": "JSON",
+						"binding": "application/json",
 						"operation":"InsertSensor"
 					},
 					{
 						"service":"SOS",
 						"version":"2.0.0",
 						"method":"POST",
-						"binding": "JSON",
+						"binding": "application/json",
 						"operation":"InsertObservation"
 					},
 					{
 						"service":"SOS",
 						"version":"2.0.0",
 						"method":"POST",
-						"binding": "JSON",
+						"binding": "application/json",
 						"operation":"InsertResultTemplate"
 					}
 

@@ -120,7 +120,7 @@
 <script type="text/javascript">
     var availableOperations = [
     <c:forEach items="${operations}" var="ao">
-        { method: "${ao.method}", binding: "${ao.binding}", service: "${ao.service}", version: "${ao.version}", operation: "${ao.operation}" },
+        { method: "${ao.method}", binding: "${ao.contentType}", service: "${ao.service}", version: "${ao.version}", operation: "${ao.operation}" },
     </c:forEach>
     ];
 </script>
@@ -142,31 +142,31 @@
                                 r.headers = {};
 								switch (b) {
 									case "KVP":
-:									case "/kvp":
+									case "/kvp":
 										r.method = "GET";
 										r.headers["Accept"] = "application/xml";
-										r.binding = "KVP";
+										r.binding = "application/x-kvp";
 										break;
 									case "POX":
 									case "/pox":
 										r.method = "POST";
 										r.headers["Accept"] = "application/xml";
 										r.headers["Content-Type"] = "application/xml";
-										r.binding = "POX"
+										r.binding = "application/xml";
 									break;
 									case "SOAP":
 									case "/soap":
 										r.method = "POST";
 										r.headers["Accept"] = "application/soap+xml";
 										r.headers["Content-Type"] = "application/soap+xml";
-										r.binding = "SOAP":
+										r.binding = "application/soap+xml";
 										break;
 									case "JSON":
 									case "/json":
 										r.method = "POST";
 										r.headers["Accept"] = "application/json";
 										r.headers["Content-Type"] = "application/json";
-										r.binding = "JSON";
+										r.binding = "application/json";
 										break;
 									default:
 										if (console && console.log) {

@@ -10,7 +10,7 @@
 			},
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"DescribeSensor",
 			"headers":{
 				"Accept":"application/xml"
@@ -25,7 +25,7 @@
 			},
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetCapabilities",
 			"headers":{
 				"Accept":"application/xml"
@@ -46,7 +46,7 @@
 			},
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"headers":{
 				"Accept":"application/xml"
@@ -62,7 +62,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"DeleteObservation",
 			"headers":{
 				"Accept":"application/xml"
@@ -78,7 +78,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"DeleteSensor",
 			"headers":{
 				"Accept":"application/xml"
@@ -95,7 +95,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"DescribeSensor",
 			"headers":{
 				"Accept":"application/xml"
@@ -109,7 +109,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"minimal",
 			"headers":{
@@ -125,7 +125,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"only Contents section",
 			"headers":{
@@ -141,7 +141,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"only OperationsMetadata section",
 			"headers":{
@@ -157,7 +157,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"with AcceptVersions=2.0.0",
 			"headers":{
@@ -183,11 +183,11 @@
 					"http://www.52north.org/test/featureOfInterest/3",
 					"http://www.52north.org/test/featureOfInterest/4"
 				]
-				
+
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetDataAvailability",
 			"headers":{
 				"Accept":"application/xml"
@@ -202,7 +202,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetDataAvailability",
 			"title":"minimal",
 			"headers":{
@@ -219,7 +219,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"featureOfInterest",
 			"headers":{
@@ -236,11 +236,11 @@
 					"http://www.52north.org/test/featureOfInterest/1",
 					"http://www.52north.org/test/featureOfInterest/2"
 				]
-				
+
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"featureOfInterests",
 			"headers":{
@@ -256,7 +256,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"minimal",
 			"headers":{
@@ -273,11 +273,11 @@
 					"http://www.52north.org/test/observableProperty/1",
 					"http://www.52north.org/test/observableProperty/2"
 				]
-				
+
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"observableProperties",
 			"headers":{
@@ -294,7 +294,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"observableProperty",
 			"headers":{
@@ -311,7 +311,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"procedure",
 			"headers":{
@@ -328,11 +328,11 @@
 					"http://www.52north.org/test/procedure/1",
 					"http://www.52north.org/test/procedure/2"
 				]
-				
+
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"procedures",
 			"headers":{
@@ -353,7 +353,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"spatial filter, URL",
 			"headers":{
@@ -374,7 +374,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"spatial filter, URN",
 			"headers":{
@@ -391,11 +391,11 @@
 				"procedure":[
 					"http://www.52north.org/test/procedure/8"
 				]
-				
+
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"Extension 'MergeObservationsIntoDataArray'",
 			"headers":{
@@ -412,7 +412,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"featureOfInterest",
 			"headers":{
@@ -429,11 +429,11 @@
 					"http://www.52north.org/test/featureOfInterest/1",
 					"http://www.52north.org/test/featureOfInterest/3"
 				]
-				
+
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"featureOfInterests",
 			"headers":{
@@ -458,7 +458,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"full",
 			"headers":{
@@ -475,11 +475,11 @@
 					"http://www.52north.org/test/observableProperty/1",
 					"http://www.52north.org/test/observableProperty/3"
 				]
-				
+
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"observableProperties",
 			"headers":{
@@ -496,7 +496,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"observableProperty",
 			"headers":{
@@ -513,7 +513,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"offering",
 			"headers":{
@@ -530,11 +530,11 @@
 					"http://www.52north.org/test/offering/1",
 					"http://www.52north.org/test/offering/3"
 				]
-				
+
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"offerings",
 			"headers":{
@@ -551,7 +551,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"procedure",
 			"headers":{
@@ -568,11 +568,11 @@
 					"http://www.52north.org/test/procedure/1",
 					"http://www.52north.org/test/procedure/3"
 				]
-				
+
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"procedures",
 			"headers":{
@@ -593,7 +593,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"spatial filter, URL",
 			"headers":{
@@ -614,7 +614,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"spatial filter, URN",
 			"headers":{
@@ -632,7 +632,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"temporal filter during",
 			"headers":{
@@ -650,7 +650,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"temporal filter equal",
 			"headers":{
@@ -668,7 +668,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"temporal filter equal, negativ time zone",
 			"headers":{
@@ -686,7 +686,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"temporal filter equal, reduced time",
 			"headers":{
@@ -704,7 +704,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"temporal filter first",
 			"headers":{
@@ -722,7 +722,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"temporal filter latest",
 			"headers":{
@@ -740,7 +740,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetResult",
 			"headers":{
 				"Accept":"application/xml"
@@ -757,7 +757,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding": "application/x-kvp",
 			"operation":"GetResultTemplate",
 			"headers":{
 				"Accept":"application/xml"
@@ -768,7 +768,7 @@
 			"request":"static/examples/sos_v100/requests_xml/DescribeSensor.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"DescribeSensor",
 			"headers":{
 				"Accept":"application/xml",
@@ -780,7 +780,7 @@
 			"request":"static/examples/sos_v100/requests_xml/GetCapabilities.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"GetCapabilities",
 			"title":"All Sections",
 			"headers":{
@@ -793,7 +793,7 @@
 			"request":"static/examples/sos_v100/requests_xml/GetFeatureOfInterest_SpatialFilter.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"GetFeatureOfInterest",
 			"title":"BoundingBox",
 			"headers":{
@@ -806,7 +806,7 @@
 			"request":"static/examples/sos_v100/requests_xml/GetFeatureOfInterest.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"GetFeatureOfInterest",
 			"title":"FeatureOfInterestId",
 			"headers":{
@@ -819,7 +819,7 @@
 			"request":"static/examples/sos_v100/requests_xml/GetObservation.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"GetObservation",
 			"title":"All Parameters",
 			"headers":{
@@ -832,7 +832,7 @@
 			"request":"static/examples/sos_v100/requests_xml/GetObservationById.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"GetObservationById",
 			"headers":{
 				"Accept":"application/xml",
@@ -844,7 +844,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_categoryObservation.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"CategoryObservation",
 			"headers":{
@@ -857,7 +857,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_GenericObs_allTypes.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"GenericObservation - AllTypes",
 			"headers":{
@@ -870,7 +870,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_GenericObs_Derwent.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"GenericObservation - Derwent",
 			"headers":{
@@ -883,7 +883,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_GenericObs_Derwent_2.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"GenericObservation - Derwent 2",
 			"headers":{
@@ -896,7 +896,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_GenericObs_noIDs.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"GenericObservation - No ID's",
 			"headers":{
@@ -909,7 +909,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObs_geometry.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Geometry",
 			"headers":{
@@ -922,7 +922,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObs_geometry_movingObject.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Geometry - MovingObject",
 			"headers":{
@@ -935,7 +935,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_Measurement.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Measurement",
 			"headers":{
@@ -948,7 +948,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_4_RegSen_withFOI.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"RegisterSensor - FeatureOfInterest",
 			"headers":{
@@ -961,7 +961,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_samplingPoint.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"SamplingPoint",
 			"headers":{
@@ -974,7 +974,7 @@
 			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_samplingSurface.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"SamplingSurface",
 			"headers":{
@@ -987,7 +987,7 @@
 			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_categoryObservation.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"RegisterSensor",
 			"title":"CategoryObservation",
 			"headers":{
@@ -1000,7 +1000,7 @@
 			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_withFOI.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"RegisterSensor",
 			"title":"FeatureOfInterest",
 			"headers":{
@@ -1013,7 +1013,7 @@
 			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_geometry.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"RegisterSensor",
 			"title":"Geometry",
 			"headers":{
@@ -1026,7 +1026,7 @@
 			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_measurement.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"RegisterSensor",
 			"title":"Measurement",
 			"headers":{
@@ -1039,7 +1039,7 @@
 			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_Measurement_Derwent.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"RegisterSensor",
 			"title":"Measurement - Derwent",
 			"headers":{
@@ -1052,7 +1052,7 @@
 			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_Observation_Derwent_2.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"RegisterSensor",
 			"title":"Measurement - Derwent 2",
 			"headers":{
@@ -1065,7 +1065,7 @@
 			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_Observation_allTypes.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"RegisterSensor",
 			"title":"Observation - AllTypes",
 			"headers":{
@@ -1078,7 +1078,7 @@
 			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_Observation_noIDs.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"RegisterSensor",
 			"title":"Observation - No ID's",
 			"headers":{
@@ -1091,7 +1091,7 @@
 			"request":"static/examples/sos_v20/requests_xml/DeleteObservation.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"DeleteObservation",
 			"headers":{
 				"Accept":"application/xml",
@@ -1103,7 +1103,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/DeleteSensor.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"DeleteSensor",
 			"headers":{
 				"Accept":"application/xml",
@@ -1115,7 +1115,7 @@
 			"request":"static/examples/sos_v20/requests_xml/DescribeSensor.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"DescribeSensor",
 			"headers":{
 				"Accept":"application/xml",
@@ -1127,7 +1127,7 @@
 			"request":"static/examples/sos_v20/requests_xml/GetCapabilities.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"GetCapabilities",
 			"headers":{
 				"Accept":"application/xml",
@@ -1139,7 +1139,7 @@
 			"request":"static/examples/sos_v20/requests_xml/GetDataAvailability.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"GetDataAvailability",
 			"headers":{
 				"Accept":"application/xml",
@@ -1151,7 +1151,7 @@
 			"request":"static/examples/sos_v20/requests_xml/GetFeatureOfInterest.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"GetFeatureOfInterest",
 			"headers":{
 				"Accept":"application/xml",
@@ -1163,7 +1163,7 @@
 			"request":"static/examples/sos_v20/requests_xml/GetObservation.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"GetObservation",
 			"headers":{
 				"Accept":"application/xml",
@@ -1175,7 +1175,7 @@
 			"request":"static/examples/sos_v20/requests_xml/GetObservationById.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"GetObservationById",
 			"headers":{
 				"Accept":"application/xml",
@@ -1187,7 +1187,7 @@
 			"request":"static/examples/sos_v20/requests_xml/ResultHandling/GetResult.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"GetResult",
 			"headers":{
 				"Accept":"application/xml",
@@ -1199,7 +1199,7 @@
 			"request":"static/examples/sos_v20/requests_xml/ResultHandling/GetResultTemplate.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"GetResultTemplate",
 			"headers":{
 				"Accept":"application/xml",
@@ -1211,7 +1211,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Category.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Category",
 			"headers":{
@@ -1224,7 +1224,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Count.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Count",
 			"headers":{
@@ -1237,7 +1237,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Geometry.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Geometry",
 			"headers":{
@@ -1250,7 +1250,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Measurement.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Measurement",
 			"headers":{
@@ -1263,7 +1263,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Measurement_SFP.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Measurement/Spatial Filtering Profile",
 			"headers":{
@@ -1276,7 +1276,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Multiple.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Multiple observations",
 			"headers":{
@@ -1289,7 +1289,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_SweArray.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"SweArray",
 			"headers":{
@@ -1302,7 +1302,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Text.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Text",
 			"headers":{
@@ -1315,7 +1315,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Truth.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertObservation",
 			"title":"Truth",
 			"headers":{
@@ -1328,7 +1328,7 @@
 			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResult.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertResult",
 			"headers":{
 				"Accept":"application/xml",
@@ -1340,7 +1340,7 @@
 			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResultTemplate.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertResultTemplate",
 			"headers":{
 				"Accept":"application/xml",
@@ -1352,7 +1352,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertSensor.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"InsertSensor",
 			"headers":{
 				"Accept":"application/xml",
@@ -1364,7 +1364,7 @@
 			"request":"static/examples/sos_v20/requests_xml/Transactional/UpdateSensorDescription.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/pox",
+			"binding": "application/xml",
 			"operation":"UpdateSensorDescription",
 			"headers":{
 				"Accept":"application/xml",
@@ -1376,7 +1376,7 @@
 			"request":"static/examples/sos_v100/requests_soap/DescribeSensor.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"DescribeSensor",
 			"title":"SOAP 1.2",
 			"headers":{
@@ -1389,7 +1389,7 @@
 			"request":"static/examples/sos_v100/requests_soap/GetCapabilities.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"GetCapabilities",
 			"title":"All Sections (SOAP 1.2)",
 			"headers":{
@@ -1402,7 +1402,7 @@
 			"request":"static/examples/sos_v100/requests_soap/GetFeatureOfInterest_SpatialFilter.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"GetFeatureOfInterest",
 			"title":"BBOX (SOAP 1.2)",
 			"headers":{
@@ -1415,7 +1415,7 @@
 			"request":"static/examples/sos_v100/requests_soap/GetFeatureOfInterest.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"GetFeatureOfInterest",
 			"title":"ID (SOAP 1.2)",
 			"headers":{
@@ -1428,7 +1428,7 @@
 			"request":"static/examples/sos_v100/requests_soap/GetObservation.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"GetObservation",
 			"title":"All Parameters (SOAP 1.2)",
 			"headers":{
@@ -1441,7 +1441,7 @@
 			"request":"static/examples/sos_v100/requests_soap/GetObservationById.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"GetObservationById",
 			"title":"By ID (SOAP 1.2)",
 			"headers":{
@@ -1454,7 +1454,7 @@
 			"request":"static/examples/sos_v100/requests_soap/InsertObservation.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"SOAP 1.2",
 			"headers":{
@@ -1467,7 +1467,7 @@
 			"request":"static/examples/sos_v100/requests_soap/RegisterSensor.xml",
 			"service":"SOS",
 			"version":"1.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"RegisterSensor",
 			"title":"SOAP 1.2",
 			"headers":{
@@ -1480,7 +1480,7 @@
 			"request":"static/examples/sos_v20/requests_soap/DeleteObservation.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"DeleteObservation",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1492,7 +1492,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/DeleteSensor.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"DeleteSensor",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1504,7 +1504,7 @@
 			"request":"static/examples/sos_v20/requests_soap/DescribeSensor.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"DescribeSensor",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1516,7 +1516,7 @@
 			"request":"static/examples/sos_v20/requests_soap/GetCapabilities.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"GetCapabilities",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1528,7 +1528,7 @@
 			"request":"static/examples/sos_v20/requests_soap/GetDataAvailability.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"GetDataAvailability",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1540,7 +1540,7 @@
 			"request":"static/examples/sos_v20/requests_soap/GetFeatureOfInterest.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"GetFeatureOfInterest",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1552,7 +1552,7 @@
 			"request":"static/examples/sos_v20/requests_soap/GetObservation.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"GetObservation",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1564,7 +1564,7 @@
 			"request":"static/examples/sos_v20/requests_soap/GetObservationById.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"GetObservationById",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1576,7 +1576,7 @@
 			"request":"static/examples/sos_v20/requests_soap/ResultHandling/GetResult.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"GetResult",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1588,7 +1588,7 @@
 			"request":"static/examples/sos_v20/requests_soap/ResultHandling/GetResultTemplate.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"GetResultTemplate",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1600,7 +1600,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Category.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"Category",
 			"headers":{
@@ -1613,7 +1613,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Count.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"Count",
 			"headers":{
@@ -1626,7 +1626,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Geometry.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"Geometry",
 			"headers":{
@@ -1639,7 +1639,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Measurement.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"Measurement",
 			"headers":{
@@ -1652,7 +1652,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Measurement_SFP.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"Measurement/Spatial Filtering Profile",
 			"headers":{
@@ -1665,7 +1665,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Multiple.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"Multiple observations",
 			"headers":{
@@ -1678,7 +1678,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_SweArray.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"SweArray",
 			"headers":{
@@ -1691,7 +1691,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Text.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"Text",
 			"headers":{
@@ -1704,7 +1704,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Truth.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"Truth",
 			"headers":{
@@ -1717,7 +1717,7 @@
 			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResult.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"InsertResult",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1729,7 +1729,7 @@
 			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResultTemplate.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"InsertResultTemplate",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1741,7 +1741,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertSensor.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"InsertSensor",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1753,7 +1753,7 @@
 			"request":"static/examples/sos_v20/requests_soap/Transactional/UpdateSensorDescription.xml",
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/soap",
+			"binding": "application/soap+xml",
 			"operation":"UpdateSensorDescription",
 			"headers":{
 				"Accept":"application/soap+xml",
@@ -1765,7 +1765,7 @@
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding":"/json",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -1776,13 +1776,13 @@
 				"request":"GetCapabilities",
 				"service":"SOS"
 			}
-			
+
 		},
 		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding":"/json",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -1795,15 +1795,15 @@
 				"sections":[
 					"Contents"
 				]
-				
+
 			}
-			
+
 		},
 		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding":"/json",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -1820,15 +1820,15 @@
 					"FilterCapabilities",
 					"Contents"
 				]
-				
+
 			}
-			
+
 		},
 		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding":"/json",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -1841,13 +1841,13 @@
 				"procedure":"http://www.52north.org/test/procedure/1",
 				"procedureDescriptionFormat":"http://www.opengis.net/sensorML/1.0.1"
 			}
-			
+
 		},
 		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding":"/json",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -1862,13 +1862,13 @@
 				"procedureDescriptionFormat":"http://www.opengis.net/sensorML/1.0.1",
 				"validTime":"2013-11-20T16:08:23Z"
 			}
-			
+
 		},
 		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding":"/json",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -1885,15 +1885,15 @@
 					"2013-11-20T16:08:23Z",
 					"2013-11-20T16:08:25Z"
 				]
-				
+
 			}
-			
+
 		},
 		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding":"/json",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -1909,13 +1909,13 @@
 				"observedProperty":"http://www.52north.org/test/observableProperty/6",
 				"featureOfInterest":"http://www.52north.org/test/featureOfInterest/6"
 			}
-			
+
 		},
 		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding":"/json",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -1957,15 +1957,15 @@
 										50.0,
 										7.0
 									]
-									
+
 								]
-								
+
 							]
-							
+
 						}
-						
+
 					}
-					
+
 				},
 				"temporalFilter":{
 					"during":{
@@ -1974,19 +1974,19 @@
 							"2012-11-19T14:00:00+01:00",
 							"2012-11-19T15:00:00+01:00"
 						]
-						
+
 					}
-					
+
 				}
-				
+
 			}
-			
+
 		},
 		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding":"/json",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2040,15 +2040,15 @@
 										50.0,
 										7.0
 									]
-									
+
 								]
-								
+
 							]
-							
+
 						}
-						
+
 					}
-					
+
 				},
 				"temporalFilter":[
 					{
@@ -2058,28 +2058,28 @@
 								"2012-11-19T14:00:00+01:00",
 								"2012-11-19T14:05:00+01:00"
 							]
-							
+
 						}
-						
+
 					},
 					{
 						"equals":{
 							"ref":"om:phenomenonTime",
 							"value":"2012-11-19T14:08:00+01:00"
 						}
-						
+
 					}
-					
+
 				]
-				
+
 			}
-			
+
 		},
 		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding":"/json",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2094,13 +2094,13 @@
 				"observedProperty":"http://www.52north.org/test/observableProperty/1",
 				"featureOfInterest":"http://www.52north.org/test/featureOfInterest/1"
 			}
-			
+
 		},
 		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding":"/json",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2123,15 +2123,15 @@
 					"http://www.52north.org/test/featureOfInterest/1",
 					"http://www.52north.org/test/featureOfInterest/5"
 				]
-				
+
 			}
-			
+
 		},
 		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding":"/json",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2146,13 +2146,13 @@
 				"observedProperty":"http://www.52north.org/test/observableProperty/1",
 				"procedure":"http://www.52north.org/test/procedure/1"
 			}
-			
+
 		},
 		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding":"/json",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2202,25 +2202,25 @@
 										50.0,
 										7.0
 									]
-									
+
 								]
-								
+
 							]
-							
+
 						}
-						
+
 					}
-					
+
 				}
-				
+
 			}
-			
+
 		},
 		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding":"/json",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2232,13 +2232,13 @@
 				"version":"2.0.0",
 				"procedure":"http://www.52north.org/test/procedure/9"
 			}
-			
+
 		},
 		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding":"/json",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2252,15 +2252,15 @@
 					"http://www.52north.org/test/observation/1",
 					"http://www.52north.org/test/observation/2"
 				]
-				
+
 			}
-			
+
 		},
 		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding":"/json",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2290,13 +2290,13 @@
 				],
 				"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 			}
-			
+
 		},
 		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
-			"binding":"/json",
+			"binding": "application/json",
 			"headers":{
 				"Accept":"application/json",
 				"Content-Type":"application/json"
@@ -2326,7 +2326,7 @@
 									"value":"52°North",
 									"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
 								}
-								
+
 							],
 							"sampledFeature":[
 								"http://www.52north.org/test/featureOfInterest/world"
@@ -2342,11 +2342,11 @@
 									"properties":{
 										"name":"EPSG:4326"
 									}
-									
+
 								}
-								
+
 							}
-							
+
 						},
 						"phenomenonTime":"012-11-19T17:45:15+00:00",
 						"resultTime":"012-11-19T17:45:15+00:00",
@@ -2354,17 +2354,17 @@
 							"uom":"test_unit_9_3",
 							"value":0.28
 						}
-						
+
 					}
-					
+
 				}
-				
+
 			},
 			{
 				"service":"SOS",
 				"version":"2.0.0",
 				"method":"POST",
-				"binding":"/json",
+				"binding": "application/json",
 				"headers":{
 					"Accept":"application/json",
 					"Content-Type":"application/json"
@@ -2377,13 +2377,13 @@
 					"offering":"http://www.52north.org/test/offering/6",
 					"observedProperty":"http://www.52north.org/test/observableProperty/6"
 				}
-				
+
 			},
 			{
 				"service":"SOS",
 				"version":"2.0.0",
 				"method":"POST",
-				"binding":"/json",
+				"binding": "application/json",
 				"headers":{
 					"Accept":"application/json",
 					"Content-Type":"application/json"
@@ -2397,13 +2397,13 @@
 					"offering":"http://www.52north.org/test/offering/6",
 					"observedProperty":"http://www.52north.org/test/observableProperty/6"
 				}
-				
+
 			},
 			{
 				"service":"SOS",
 				"version":"2.0.0",
 				"method":"POST",
-				"binding":"/json",
+				"binding": "application/json",
 				"headers":{
 					"Accept":"application/json",
 					"Content-Type":"application/json"
@@ -2429,7 +2429,7 @@
 									"value":"52°North",
 									"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
 								}
-								
+
 							],
 							"sampledFeature":[
 								"http://www.52north.org/test/featureOfInterest/world"
@@ -2445,11 +2445,11 @@
 									"properties":{
 										"name":"EPSG:4326"
 									}
-									
+
 								}
-								
+
 							}
-							
+
 						},
 						"phenomenonTime":"template",
 						"resultTime":"template",
@@ -2469,23 +2469,23 @@
 								"definition":"http://www.52north.org/test/observableProperty/9_3",
 								"uom":"test_unit_9"
 							}
-							
+
 						]
-						
+
 					},
 					"resultEncoding":{
 						"tokenSeparator":",",
 						"blockSeparator":"#"
 					}
-					
+
 				}
-				
+
 			},
 			{
 				"service":"SOS",
 				"version":"2.0.0",
 				"method":"POST",
-				"binding":"/json",
+				"binding": "application/json",
 				"headers":{
 					"Accept":"application/json",
 					"Content-Type":"application/json"
@@ -2498,13 +2498,13 @@
 					"templateIdentifier":"http://www.52north.org/test/procedure/9/template/1",
 					"resultValues":"15#2012-11-19T13:30:00+01:00,159.15#2012-11-19T13:31:00+01:00,159.15#2012-11-19T13:32:00+01:00,159.85#2012-11-19T13:33:00+01:00,160.5#2012-11-19T13:34:00+01:00,160.9#2012-11-19T13:35:00+01:00,160.7#2012-11-19T13:36:00+01:00,160.5#2012-11-19T13:37:00+01:00,160.6#2012-11-19T13:38:00+01:00,160.5#2012-11-19T13:39:00+01:00,160.4#2012-11-19T13:40:00+01:00,160.34#2012-11-19T13:41:00+01:00,160.25#2012-11-19T13:42:00+01:00,159.79#2012-11-19T13:43:00+01:00,159.56#2012-11-19T13:44:00+01:00,159.25#"
 				}
-				
+
 			},
 			{
 				"service":"SOS",
 				"version":"2.0.0",
 				"method":"POST",
-				"binding":"/json",
+				"binding": "application/json",
 				"headers":{
 					"Accept":"application/json",
 					"Content-Type":"application/json"
@@ -2545,15 +2545,15 @@
 											50.0,
 											7.0
 										]
-										
+
 									]
-									
+
 								]
-								
+
 							}
-							
+
 						}
-						
+
 					},
 					"temporalFilter":[
 						{
@@ -2563,28 +2563,28 @@
 									"2012-11-19T14:00:00+01:00",
 									"2012-11-19T14:05:00+01:00"
 								]
-								
+
 							}
-							
+
 						},
 						{
 							"equals":{
 								"ref":"om:phenomenonTime",
 								"value":"2012-11-19T14:08:00+01:00"
 							}
-							
+
 						}
-						
+
 					]
-					
+
 				}
-				
+
 			},
 			{
 				"service":"SOS",
 				"version":"2.0.0",
 				"method":"POST",
-				"binding":"/json",
+				"binding": "application/json",
 				"headers":{
 					"Accept":"application/json",
 					"Content-Type":"application/json"
@@ -2598,14 +2598,14 @@
 					"procedureDescriptionFormat":"http://www.opengis.net/sensorML/1.0.1",
 					"procedureDescription":"<sml:SensorML xmlns:swes=\"http://www.opengis.net/swes/2.0\" xmlns:sos=\"http://www.opengis.net/sos/2.0\" xmlns:swe=\"http://www.opengis.net/swe/1.0.1\" xmlns:sml=\"http://www.opengis.net/sensorML/1.0.1\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" version=\"1.0.1\"><sml:member><sml:System><sml:identification><sml:IdentifierList><sml:identifier name=\"uniqueID\"><sml:Term definition=\"urn:ogc:def:identifier:OGC:1.0:uniqueID\"><sml:value>http://www.52north.org/test/procedure/1</sml:value></sml:Term></sml:identifier><sml:identifier name=\"longName\"><sml:Term definition=\"urn:ogc:def:identifier:OGC:1.0:longName\"><sml:value>con terra GmbH (www.conterra.de)</sml:value></sml:Term></sml:identifier><sml:identifier name=\"shortName\"><sml:Term definition=\"urn:ogc:def:identifier:OGC:1.0:shortName\"><sml:value>con terra</sml:value></sml:Term></sml:identifier></sml:IdentifierList></sml:identification><sml:capabilities name=\"offerings\"><swe:SimpleDataRecord><swe:field name=\"Offering for sensor 1\"><swe:Text definition=\"urn:ogc:def:identifier:OGC:offeringID\"><swe:value>http://www.52north.org/test/offering/1</swe:value></swe:Text></swe:field></swe:SimpleDataRecord></sml:capabilities><sml:capabilities name=\"featuresOfInterest\"><swe:SimpleDataRecord><swe:field name=\"featureOfInterestID\"><swe:Text><swe:value>http://www.52north.org/test/featureOfInterest/1</swe:value></swe:Text></swe:field></swe:SimpleDataRecord></sml:capabilities><sml:position name=\"sensorPosition\"><swe:Position referenceFrame=\"urn:ogc:def:crs:EPSG::4326\"><swe:location><swe:Vector gml:id=\"STATION_LOCATION\"><swe:coordinate name=\"easting\"><swe:Quantity axisID=\"x\"><swe:uom code=\"degree\"/><swe:value>7.727958</swe:value></swe:Quantity></swe:coordinate><swe:coordinate name=\"northing\"><swe:Quantity axisID=\"y\"><swe:uom code=\"degree\" /><swe:value>51.883906</swe:value></swe:Quantity></swe:coordinate><swe:coordinate name=\"altitude\"><swe:Quantity axisID=\"z\"><swe:uom code=\"m\"/><swe:value>52.0</swe:value></swe:Quantity></swe:coordinate></swe:Vector></swe:location></swe:Position></sml:position><sml:inputs><sml:InputList><sml:input name=\"test_observable_property_1\"><swe:ObservableProperty definition=\"http://www.52north.org/test/observableProperty/1\"/></sml:input></sml:InputList></sml:inputs><sml:outputs><sml:OutputList><sml:output name=\"test_observable_property_1\"><swe:Category definition=\"http://www.52north.org/test/observableProperty/1\"><swe:codeSpace xlink:href=\"test_unit_1\"/></swe:Category></sml:output></sml:OutputList></sml:outputs></sml:System></sml:member></sml:SensorML>"
 				}
-				
+
 			},
 			{
 				"id":"exampleData",
 				"service":"SOS",
 				"version":"2.0.0",
 				"method":"POST",
-				"binding":"/json",
+				"binding": "application/json",
 				"headers":{
 					"Accept":"application/json",
 					"Content-Type":"application/json"
@@ -2617,24 +2617,24 @@
 						"service":"SOS",
 						"version":"2.0.0",
 						"method":"POST",
-						"binding":"/json",
+						"binding": "application/json",
 						"operation":"InsertSensor"
 					},
 					{
 						"service":"SOS",
 						"version":"2.0.0",
 						"method":"POST",
-						"binding":"/json",
+						"binding": "application/json",
 						"operation":"InsertObservation"
 					},
 					{
 						"service":"SOS",
 						"version":"2.0.0",
 						"method":"POST",
-						"binding":"/json",
+						"binding": "application/json",
 						"operation":"InsertResultTemplate"
 					}
-					
+
 				],
 				"request":{
 					"service":"SOS",
@@ -2680,7 +2680,7 @@
 												"value":"con terra",
 												"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
 											}
-											
+
 										],
 										"sampledFeature":[
 											"http://www.52north.org/test/featureOfInterest/world"
@@ -2696,11 +2696,11 @@
 												"properties":{
 													"name":"EPSG:4326"
 												}
-												
+
 											}
-											
+
 										}
-										
+
 									},
 									"phenomenonTime":"2012-11-19T13:00:00+00:00",
 									"resultTime":"2012-11-19T13:00:00+00:00",
@@ -2708,7 +2708,7 @@
 										"uom":"test_unit_1",
 										"value":1.0
 									}
-									
+
 								},
 								{
 									"identifier":{
@@ -2725,7 +2725,7 @@
 										"uom":"test_unit_1",
 										"value":1.1
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -2738,7 +2738,7 @@
 										"uom":"test_unit_1",
 										"value":1.2
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -2751,7 +2751,7 @@
 										"uom":"test_unit_1",
 										"value":1.3
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -2764,7 +2764,7 @@
 										"uom":"test_unit_1",
 										"value":1.4
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -2777,7 +2777,7 @@
 										"uom":"test_unit_1",
 										"value":1.5
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -2790,7 +2790,7 @@
 										"uom":"test_unit_1",
 										"value":1.6
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -2803,7 +2803,7 @@
 										"uom":"test_unit_1",
 										"value":1.7
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -2816,7 +2816,7 @@
 										"uom":"test_unit_1",
 										"value":1.8
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -2829,11 +2829,11 @@
 										"uom":"test_unit_1",
 										"value":1.9
 									}
-									
+
 								}
-								
+
 							]
-							
+
 						},
 						{
 							"request":"InsertSensor",
@@ -2869,7 +2869,7 @@
 												"value":"ESRI",
 												"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
 											}
-											
+
 										],
 										"sampledFeature":[
 											"http://www.52north.org/test/featureOfInterest/world"
@@ -2885,11 +2885,11 @@
 												"properties":{
 													"name":"EPSG:4326"
 												}
-												
+
 											}
-											
+
 										}
-										
+
 									},
 									"phenomenonTime":"2012-11-19T13:00:00+00:00",
 									"resultTime":"2012-11-19T13:00:00+00:00",
@@ -2976,9 +2976,9 @@
 									"resultTime":"2012-11-19T13:09:00+00:00",
 									"result":9
 								}
-								
+
 							]
-							
+
 						},
 						{
 							"request":"InsertSensor",
@@ -3014,7 +3014,7 @@
 												"value":"Kisters",
 												"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
 											}
-											
+
 										],
 										"sampledFeature":[
 											"http://www.52north.org/test/featureOfInterest/world"
@@ -3030,11 +3030,11 @@
 												"properties":{
 													"name":"EPSG:4326"
 												}
-												
+
 											}
-											
+
 										}
-										
+
 									},
 									"phenomenonTime":"2012-11-19T13:00:00+00:00",
 									"resultTime":"2012-11-19T13:00:00+00:00",
@@ -3121,9 +3121,9 @@
 									"resultTime":"2012-11-19T13:09:00+00:00",
 									"result":true
 								}
-								
+
 							]
-							
+
 						},
 						{
 							"request":"InsertSensor",
@@ -3159,7 +3159,7 @@
 												"value":"con terra",
 												"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
 											}
-											
+
 										],
 										"sampledFeature":[
 											"http://www.52north.org/test/featureOfInterest/world"
@@ -3175,11 +3175,11 @@
 												"properties":{
 													"name":"EPSG:4326"
 												}
-												
+
 											}
-											
+
 										}
-										
+
 									},
 									"phenomenonTime":"2012-11-19T13:00:00+00:00",
 									"resultTime":"2012-11-19T13:00:00+00:00",
@@ -3187,7 +3187,7 @@
 										"codespace":"test_unit_4",
 										"value":"test_category_0"
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation",
@@ -3200,7 +3200,7 @@
 										"codespace":"test_unit_4",
 										"value":"test_category_1"
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation",
@@ -3213,7 +3213,7 @@
 										"codespace":"test_unit_4",
 										"value":"test_category_2"
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation",
@@ -3226,7 +3226,7 @@
 										"codespace":"test_unit_4",
 										"value":"test_category_3"
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation",
@@ -3239,7 +3239,7 @@
 										"codespace":"test_unit_4",
 										"value":"test_category_4"
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation",
@@ -3252,7 +3252,7 @@
 										"codespace":"test_unit_4",
 										"value":"test_category_5"
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation",
@@ -3265,7 +3265,7 @@
 										"codespace":"test_unit_4",
 										"value":"test_category_6"
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation",
@@ -3278,7 +3278,7 @@
 										"codespace":"test_unit_4",
 										"value":"test_category_7"
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation",
@@ -3291,7 +3291,7 @@
 										"codespace":"test_unit_4",
 										"value":"test_category_8"
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation",
@@ -3304,11 +3304,11 @@
 										"codespace":"test_unit_4",
 										"value":"test_category_9"
 									}
-									
+
 								}
-								
+
 							]
-							
+
 						},
 						{
 							"request":"InsertSensor",
@@ -3344,7 +3344,7 @@
 												"value":"TU-Dresden",
 												"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
 											}
-											
+
 										],
 										"sampledFeature":[
 											"http://www.52north.org/test/featureOfInterest/world"
@@ -3360,11 +3360,11 @@
 												"properties":{
 													"name":"EPSG:4326"
 												}
-												
+
 											}
-											
+
 										}
-										
+
 									},
 									"phenomenonTime":"2012-11-19T13:00:00+00:00",
 									"resultTime":"2012-11-19T13:00:00+00:00",
@@ -3451,9 +3451,9 @@
 									"resultTime":"2012-11-19T13:09:00+00:00",
 									"result":"test_text_9"
 								}
-								
+
 							]
-							
+
 						},
 						{
 							"request":"InsertSensor",
@@ -3489,7 +3489,7 @@
 											"value":"Hochschule Bochum",
 											"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
 										}
-										
+
 									],
 									"sampledFeature":[
 										"http://www.52north.org/test/featureOfInterest/world"
@@ -3505,11 +3505,11 @@
 											"properties":{
 												"name":"EPSG:4326"
 											}
-											
+
 										}
-										
+
 									}
-									
+
 								},
 								"phenomenonTime":"template",
 								"resultTime":"template",
@@ -3535,15 +3535,15 @@
 										"definition":"http://www.52north.org/test/observableProperty/6",
 										"uom":"test_unit_6"
 									}
-									
+
 								]
-								
+
 							},
 							"resultEncoding":{
 								"tokenSeparator":",",
 								"blockSeparator":"#"
 							}
-							
+
 						},
 						{
 							"request":"InsertObservation",
@@ -3565,7 +3565,7 @@
 												"value":"Hochschule Bochum",
 												"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
 											}
-											
+
 										],
 										"sampledFeature":[
 											"http://www.52north.org/test/featureOfInterest/world"
@@ -3581,11 +3581,11 @@
 												"properties":{
 													"name":"EPSG:4326"
 												}
-												
+
 											}
-											
+
 										}
-										
+
 									},
 									"phenomenonTime":"2012-11-19T13:00:00+00:00",
 									"resultTime":"2012-11-19T13:00:00+00:00",
@@ -3593,7 +3593,7 @@
 										"uom":"test_unit_6",
 										"value":2.0
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3606,7 +3606,7 @@
 										"uom":"test_unit_6",
 										"value":2.1
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3619,7 +3619,7 @@
 										"uom":"test_unit_6",
 										"value":2.2
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3632,7 +3632,7 @@
 										"uom":"test_unit_6",
 										"value":2.3
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3645,7 +3645,7 @@
 										"uom":"test_unit_6",
 										"value":2.4
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3658,7 +3658,7 @@
 										"uom":"test_unit_6",
 										"value":2.5
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3671,7 +3671,7 @@
 										"uom":"test_unit_6",
 										"value":2.6
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3684,7 +3684,7 @@
 										"uom":"test_unit_6",
 										"value":2.7
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3697,7 +3697,7 @@
 										"uom":"test_unit_6",
 										"value":2.8
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3710,11 +3710,11 @@
 										"uom":"test_unit_6",
 										"value":2.9
 									}
-									
+
 								}
-								
+
 							]
-							
+
 						},
 						{
 							"request":"InsertSensor",
@@ -3750,7 +3750,7 @@
 												"value":"ITC",
 												"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
 											}
-											
+
 										],
 										"sampledFeature":[
 											"http://www.52north.org/test/featureOfInterest/world"
@@ -3766,11 +3766,11 @@
 												"properties":{
 													"name":"EPSG:4326"
 												}
-												
+
 											}
-											
+
 										}
-										
+
 									},
 									"phenomenonTime":"2012-11-19T13:00:00+00:00",
 									"resultTime":"2012-11-19T13:00:00+00:00",
@@ -3778,7 +3778,7 @@
 										"uom":"test_unit_7",
 										"value":3.0
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3791,7 +3791,7 @@
 										"uom":"test_unit_7",
 										"value":3.1
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3804,7 +3804,7 @@
 										"uom":"test_unit_7",
 										"value":3.2
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3817,7 +3817,7 @@
 										"uom":"test_unit_7",
 										"value":3.3
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3830,7 +3830,7 @@
 										"uom":"test_unit_7",
 										"value":3.4
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3843,7 +3843,7 @@
 										"uom":"test_unit_7",
 										"value":3.5
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3856,7 +3856,7 @@
 										"uom":"test_unit_7",
 										"value":3.6
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3869,7 +3869,7 @@
 										"uom":"test_unit_7",
 										"value":3.7
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3882,7 +3882,7 @@
 										"uom":"test_unit_7",
 										"value":3.8
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3895,11 +3895,11 @@
 										"uom":"test_unit_7",
 										"value":3.9
 									}
-									
+
 								}
-								
+
 							]
-							
+
 						},
 						{
 							"request":"InsertSensor",
@@ -3935,7 +3935,7 @@
 												"value":"DLZ-IT",
 												"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
 											}
-											
+
 										],
 										"sampledFeature":[
 											"http://www.52north.org/test/featureOfInterest/world"
@@ -3951,11 +3951,11 @@
 												"properties":{
 													"name":"EPSG:4326"
 												}
-												
+
 											}
-											
+
 										}
-										
+
 									},
 									"phenomenonTime":[
 										"2012-11-19T13:00:00+00:00",
@@ -3966,7 +3966,7 @@
 										"uom":"test_unit_8",
 										"value":4.0
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3982,7 +3982,7 @@
 										"uom":"test_unit_8",
 										"value":4.1
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3998,7 +3998,7 @@
 										"uom":"test_unit_8",
 										"value":4.2
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -4014,7 +4014,7 @@
 										"uom":"test_unit_8",
 										"value":4.3
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -4030,7 +4030,7 @@
 										"uom":"test_unit_8",
 										"value":4.4
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -4046,7 +4046,7 @@
 										"uom":"test_unit_8",
 										"value":4.5
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -4062,7 +4062,7 @@
 										"uom":"test_unit_8",
 										"value":4.6
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -4078,7 +4078,7 @@
 										"uom":"test_unit_8",
 										"value":4.7
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -4094,7 +4094,7 @@
 										"uom":"test_unit_8",
 										"value":4.8
 									}
-									
+
 								},
 								{
 									"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -4110,11 +4110,11 @@
 										"uom":"test_unit_8",
 										"value":4.9
 									}
-									
+
 								}
-								
+
 							]
-							
+
 						},
 						{
 							"request":"InsertSensor",
@@ -4150,7 +4150,7 @@
 												"value":"Heiden",
 												"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
 											}
-											
+
 										],
 										"sampledFeature":[
 											"http://www.52north.org/test/featureOfInterest/world"
@@ -4166,11 +4166,11 @@
 												"properties":{
 													"name":"EPSG:4326"
 												}
-												
+
 											}
-											
+
 										}
-										
+
 									},
 									"phenomenonTime":"2008-10-29T00:00:00+00:00",
 									"resultTime":"2008-10-29T00:00:00+00:00",
@@ -4190,7 +4190,7 @@
 												"value":"Münster/FE101",
 												"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
 											}
-											
+
 										],
 										"sampledFeature":[
 											"http://www.52north.org/test/featureOfInterest/world"
@@ -4206,11 +4206,11 @@
 												"properties":{
 													"name":"EPSG:4326"
 												}
-												
+
 											}
-											
+
 										}
-										
+
 									},
 									"phenomenonTime":"2008-10-29T00:00:00+00:00",
 									"resultTime":"2008-10-29T00:00:00+00:00",
@@ -4230,7 +4230,7 @@
 												"value":"Portland",
 												"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
 											}
-											
+
 										],
 										"sampledFeature":[
 											"http://www.52north.org/test/featureOfInterest/world"
@@ -4246,11 +4246,11 @@
 												"properties":{
 													"name":"EPSG:4326"
 												}
-												
+
 											}
-											
+
 										}
-										
+
 									},
 									"phenomenonTime":"2008-10-29T00:00:00+00:00",
 									"resultTime":"2008-10-29T00:00:00+00:00",
@@ -4270,7 +4270,7 @@
 												"value":"TODO",
 												"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
 											}
-											
+
 										],
 										"sampledFeature":[
 											"http://www.52north.org/test/featureOfInterest/world"
@@ -4286,27 +4286,27 @@
 												"properties":{
 													"name":"EPSG:4326"
 												}
-												
+
 											}
-											
+
 										}
-										
+
 									},
 									"phenomenonTime":"2013-01-01T01:00:00+02:00",
 									"resultTime":"2013-01-01T00:01:00+02:00",
 									"result":"John/Jane Doe"
 								}
-								
+
 							]
-							
+
 						}
-						
+
 					]
-					
+
 				}
-				
+
 			}
-			
+
 		]
-		
+
 	}

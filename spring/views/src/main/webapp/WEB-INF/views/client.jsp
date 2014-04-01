@@ -120,7 +120,7 @@
 <script type="text/javascript">
     var availableOperations = [
     <c:forEach items="${operations}" var="ao">
-        { method: "${ao.method}", binding: "${ao.binding}", service: "${ao.service}", version: "${ao.version}", operation: "${ao.operation}" },
+        { method: "${ao.method}", binding: "${ao.contentType}", service: "${ao.service}", version: "${ao.version}", operation: "${ao.operation}" },
     </c:forEach>
     ];
 </script>
@@ -137,29 +137,46 @@
                                 r = requests[s][v][b][o][t];
                                 r.service = s;
                                 r.version = v;
-                                r.binding = b;
                                 r.operation = o;
                                 r.title = t;
                                 r.headers = {};
-                                if (b === "/kvp") {
-                                    r.method = "GET";
-                                    r.headers["Accept"] = "application/xml";
-                                } else if (b === "/pox") {
-                                    r.method = "POST";
-                                    r.headers["Accept"] = "application/xml";
-                                    r.headers["Content-Type"] = "application/xml";
-                                } else if (b === "/soap") {
-                                    r.method = "POST";
-                                    r.headers["Accept"] = "application/soap+xml";
-                                    r.headers["Content-Type"] = "application/soap+xml";
-                                } else if (b === "/json") {
-                                    r.method = "POST";
-                                    r.headers["Accept"] = "application/json";
-                                    r.headers["Content-Type"] = "application/json";
-                                } else {
-                                    throw new Error("Unsupported binding" + b);
-                                }
-                                transformed.push(r);
+								switch (b) {
+									case "KVP":
+									case "/kvp":
+										r.method = "GET";
+										r.headers["Accept"] = "application/xml";
+										r.binding = "application/x-kvp";
+										break;
+									case "POX":
+									case "/pox":
+										r.method = "POST";
+										r.headers["Accept"] = "application/xml";
+										r.headers["Content-Type"] = "application/xml";
+										r.binding = "application/xml";
+									break;
+									case "SOAP":
+									case "/soap":
+										r.method = "POST";
+										r.headers["Accept"] = "application/soap+xml";
+										r.headers["Content-Type"] = "application/soap+xml";
+										r.binding = "application/soap+xml";
+										break;
+									case "JSON":
+									case "/json":
+										r.method = "POST";
+										r.headers["Accept"] = "application/json";
+										r.headers["Content-Type"] = "application/json";
+										r.binding = "application/json";
+										break;
+									default:
+										if (console && console.log) {
+											console.log("Unsupported binding" + b);
+										}
+										break;
+								}
+								if (r.binding) {
+									transformed.push(r);
+								}
                             }
                         }
                     }
@@ -174,7 +191,7 @@
         }
 
         config.sosUrl = document.location.protocol + "//"
-                + document.location.host + "<c:url value="/sos" />";
+                + document.location.host + "<c:url value="/service" />";
         config.availableOperations = availableOperations;
         new Client(config);
     })

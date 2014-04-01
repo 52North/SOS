@@ -42,12 +42,12 @@
     <div class="span3 header-img-span">
         <div class="row">
             <div class="span3">
-                <img src="<c:url value="/static/images/52n-logo-220x80.png"/>" />    
+                <img src="<c:url value="/static/images/52n-logo-220x80.png"/>" />
             </div>
         </div>
         <div class="row">
             <div class="span3">
-                <a id="export" class="btn btn-block btn-info" href="settings.json" target="_blank">Export Settings</a>    
+                <a id="export" class="btn btn-block btn-info" href="settings.json" target="_blank">Export Settings</a>
             </div>
         </div>
     </div>
@@ -73,7 +73,7 @@
         $.getJSON('<c:url value="/settingDefinitions.json" />', function(settings) {
             var $container = $("#settings"),
                 $button = $("<button>").attr("type", "button").addClass("btn btn-info").text("Save");
-            
+
             $button.click(function() {
                 $.post('<c:url value="/admin/settings" />', $container.serializeArray())
                 .fail(function(e) {
@@ -106,7 +106,7 @@
                     "admin_password_facade": {
                         "type": "string",
                         "title": "New Password",
-                        "description": "The new administrator password."        
+                        "description": "The new administrator password."
                     }
                 }
             });
@@ -116,17 +116,17 @@
             $("#service_identification .control-group:last").before("<legend>Extended Settings</legend>");
             $("#service_provider .control-group:last").before("<legend>Extended Settings</legend>");
             $("<div>").addClass("form-actions").append($button).appendTo($container);
-            
+
             function setSosUrl() {
                 $("input[name='service.sosUrl']").val(window.location.toString()
-                    .replace(/admin\/settings.*/, "sos")).trigger("input");    
+                    .replace(/admin\/settings.*/, "service")).trigger("input");
             }
             setSosUrl();
-            
+
 
             $(".required").bind("keyup input change", function() {
                 var valid = true;
-                $(".required").each(function(){ 
+                $(".required").each(function(){
                     var val = $(this).val();
                     return valid = (val !== null && val !== undefined && val !== "");
                 });
@@ -136,11 +136,11 @@
                     $button.attr("disabled", true);
                 }
             });
-            
+
             overwriteDefaultSettings(settings);
 
             $(".required:first").trigger("change");
-			
+
 			$("input[name=admin_password_facade]").removeAttr("name").attr("id","admin_password_facade");
 			$("form#settings").append($("<input>").attr({ "type":"hidden", "name": "admin_password" }));
 			$("input#admin_password_facade").bind('focus', function() {
@@ -168,8 +168,8 @@
                     if (key === "service.sosUrl") {
                         setSosUrl();
                     } else {
-                        setSetting(key, (s[key]["default"] !== undefined 
-                            && s[key]["default"] !== null) ? s[key]["default"] : "", settings);    
+                        setSetting(key, (s[key]["default"] !== undefined
+                            && s[key]["default"] !== null) ? s[key]["default"] : "", settings);
                     }
                 }
                 $(".required").trigger("input").trigger("change");

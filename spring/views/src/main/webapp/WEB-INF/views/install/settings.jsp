@@ -73,13 +73,13 @@
 		$("#service_identification .control-group:last").before("<legend>Extended Settings</legend>");
 		$("#service_provider .control-group:last").before("<legend>Extended Settings</legend>");
 		$("input[name='service.sosUrl']").val(window.location.toString()
-			.replace(/install\/settings.*/, "sos")).trigger("input");		
+			.replace(/install\/settings.*/, "service")).trigger("input");
 
 		overwriteDefaultSettings(settings);
 
 		$(".required").bind("keyup input change", function() {
             var valid = true;
-            $(".required").each(function(){ 
+            $(".required").each(function(){
                 var val = $(this).val();
                 return valid = (val !== null && val !== undefined && val !== "");
             });

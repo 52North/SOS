@@ -108,25 +108,27 @@ import org.hibernate.HibernateException;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.ds.Datasource;
+import org.n52.sos.ds.DatasourceCallback;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.SessionFactoryProvider;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.util.SQLConstants;
 import org.n52.sos.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class AbstractHibernateDatasource implements Datasource, SQLConstants, HibernateDatasourceConstants {
@@ -260,7 +262,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Create settings definition for username
-     * 
+     *
      * @return Username settings definition
      */
     protected StringSettingDefinition createUsernameDefinition() {
@@ -270,7 +272,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Create settings definition for password
-     * 
+     *
      * @return Password settings definition
      */
     protected StringSettingDefinition createPasswordDefinition() {
@@ -280,7 +282,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Create settings definition for database name
-     * 
+     *
      * @return database name settings definition
      */
     protected StringSettingDefinition createDatabaseDefinition() {
@@ -291,7 +293,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Create settings definition for host
-     * 
+     *
      * @return Host settings definition
      */
     protected StringSettingDefinition createHostDefinition() {
@@ -302,7 +304,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Create settings definition for port
-     * 
+     *
      * @return Port settings definition
      */
     protected IntegerSettingDefinition createPortDefinition() {
@@ -312,7 +314,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Create settings definition for database schema
-     * 
+     *
      * @return Database schema settings definition
      */
     protected StringSettingDefinition createSchemaDefinition() {
@@ -323,7 +325,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Create settings definition for old concept
-     * 
+     *
      * @return Old concept settings definition
      */
     protected BooleanSettingDefinition createOldConceptDefinition() {
@@ -334,7 +336,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Create settings definition for transactional support
-     * 
+     *
      * @return Transactional support settings definition
      */
     protected BooleanSettingDefinition createTransactionalDefinition() {
@@ -345,7 +347,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Create settings definition for Spatial Filtering Profile support
-     * 
+     *
      * @return Spatial Filtering Profile support settings definition
      */
     protected BooleanSettingDefinition createSpatialFilteringProfileDefinition() {
@@ -363,7 +365,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Create settings definition for JDBC driver
-     * 
+     *
      * @return JDBC driver settings definition
      */
     protected BooleanSettingDefinition createProvidedJdbcDriverDefinition() {
@@ -375,7 +377,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Create settings definition for minimal connection pool size
-     * 
+     *
      * @return Minimal connection pool size settings definition
      */
     protected IntegerSettingDefinition createMinPoolSizeDefinition() {
@@ -386,7 +388,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Create settings definition for maximal connection pool size
-     * 
+     *
      * @return Maximal connection pool size settings definition
      */
     protected IntegerSettingDefinition createMaxPoolSizeDefinition() {
@@ -397,7 +399,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Create settings definition for JDBC batch size
-     * 
+     *
      * @return JDBC batch size settings definition
      */
     protected IntegerSettingDefinition createBatchSizeDefinition() {
@@ -408,7 +410,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Get custom configuration from datasource settings
-     * 
+     *
      * @param settings
      *            Datasource settings to create custom configuration from
      * @return Custom configuration from datasource settings
@@ -449,7 +451,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Check if this datasource supported the series concept
-     * 
+     *
      * @param settings
      *            Datasource settings
      * @return <code>true</code>, if this datasource supported the series
@@ -461,7 +463,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Check if this datasource supported the old concept
-     * 
+     *
      * @param settings
      *            Datasource settings
      * @return <code>true</code>, if this datasource supported the old concept
@@ -475,7 +477,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
      * Add Spatial Filtering Profile mapping files path to configuration if this
      * is a Spatial Filtering Profile datasource and Spatial Filtering Profile
      * is activated in the settings
-     * 
+     *
      * @param config
      *            Datasource configuration
      * @param settings
@@ -495,7 +497,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Get File from resource String
-     * 
+     *
      * @param resource
      *            Resource String
      * @return File from resource String
@@ -666,7 +668,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Get internal Hibernate dialect
-     * 
+     *
      * @return Hibernate dialect
      */
     protected Dialect getDialectInternal() {
@@ -678,7 +680,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Execute SQL script
-     * 
+     *
      * @param sql
      *            SQL script to execute
      * @param conn
@@ -710,7 +712,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Close SQL connection
-     * 
+     *
      * @param conn
      *            SQL connection to close
      */
@@ -726,7 +728,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Close SQL statement
-     * 
+     *
      * @param stmt
      *            SQL statement to close
      */
@@ -742,7 +744,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Merge current properties with changed settings
-     * 
+     *
      * @param current
      *            Current properties
      * @param changed
@@ -757,7 +759,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Add mapping files directories to properties
-     * 
+     *
      * @param settings
      *            Datasource settings
      * @param p
@@ -798,7 +800,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
      * Add Spatial Filtering Profile mapping files path to directory String if
      * this is a Spatial Filtering Profile datasource and Spatial Filtering
      * Profile is activated in the settings
-     * 
+     *
      * @param builder
      *            Mapping files directories String
      * @param settings
@@ -818,7 +820,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Get the old database schema concept
-     * 
+     *
      * @return Old database schema concept
      */
     protected BooleanSettingDefinition getOldConceptDefiniton() {
@@ -827,7 +829,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Check if properties contains transactional mapping path
-     * 
+     *
      * @param properties
      *            Datasource properties
      * @return <code>true</code>, if properties contains transactional mapping
@@ -840,7 +842,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Get transactional setting definition
-     * 
+     *
      * @return Transactional setting definition
      */
     protected BooleanSettingDefinition getTransactionalDefiniton() {
@@ -849,7 +851,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Check if properties contains Spatial Filtering Profile mapping path
-     * 
+     *
      * @param properties
      *            Datasource properties
      * @return <code>true</code>, if properties contains Spatial Filtering
@@ -863,7 +865,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Get Spatial Filtering Profile setting definition
-     * 
+     *
      * @return Spatial Filtering Profile setting definition
      */
     protected BooleanSettingDefinition getSpatialFilteringProfileDefiniton() {
@@ -881,7 +883,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Concatenate two arrays
-     * 
+     *
      * @param first
      *            First array
      * @param rest
@@ -904,7 +906,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Get the schema script before the database schema is created
-     * 
+     *
      * @return script to run before the schema creation
      */
     protected String[] getPreSchemaScript() {
@@ -913,7 +915,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Get the schema script after the database schema is created
-     * 
+     *
      * @return script to run after the schema creation
      */
     protected String[] getPostSchemaScript() {
@@ -936,7 +938,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Check if the datasource is transactional
-     * 
+     *
      * @return <code>true</code>, if it is a transactionalDatasource
      */
     public boolean isTransactionalDatasource() {
@@ -945,7 +947,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Set transactional datasource flag
-     * 
+     *
      * @param transactionalDatasource
      *            the transactionalDatasource flag to set
      */
@@ -955,7 +957,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Check if the datasource has Spatial Filtering Profile
-     * 
+     *
      * @return <code>true</code>, if it has Spatial Filtering Profile
      */
     public boolean isSpatialFilteringProfileDatasource() {
@@ -964,7 +966,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Set Spatial Filtering Profile datasource flag
-     * 
+     *
      * @param spatialFilteringProfileDatasource
      *            the spatialFilteringProfileDatasource to set
      */
@@ -990,7 +992,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
     /**
      * Remove duplicated foreign key definition for table observationHasOffering
      * otherwise database model creation fails in Oracle
-     * 
+     *
      * @param script
      *            Create and not checked script.
      * @return Checked script without duplicate foreign key for
@@ -1017,16 +1019,26 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
         return checkedSchema.toArray(new String[checkedSchema.size()]);
     }
 
+    @Override
+    public DatasourceCallback getCallback() {
+        return DatasourceCallback.nullCallback();
+    }
+
+    @Override
+    public void prepare(Map<String, Object> settings) {
+
+    }
+
     /**
      * Gets the qualified name of the driver class.
-     * 
+     *
      * @return the driver class.
      */
     protected abstract String getDriverClass();
 
     /**
      * Parse datasource properties to map
-     * 
+     *
      * @param current
      *            Current datasource properties
      * @return Map with String key and Object value
@@ -1035,7 +1047,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Check if the required extensions are available
-     * 
+     *
      * @param con
      *            SQL connection
      * @param metadata
@@ -1048,14 +1060,14 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     /**
      * Create a new Hibernate dialect
-     * 
+     *
      * @return Hibernate dialect
      */
     protected abstract Dialect createDialect();
 
     /**
      * Open a new SQL connection
-     * 
+     *
      * @param settings
      *            Datasource setting: URL, username, passsword, database, ...
      * @return New SQL connection
@@ -1067,7 +1079,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
     /**
      * Check if drop schema contains alter table ... drop constraint ... . Due
      * to dynamic generation some constraints are generated and differ.
-     * 
+     *
      * @param dropSchema
      *            Schema to check
      * @return Checked schema

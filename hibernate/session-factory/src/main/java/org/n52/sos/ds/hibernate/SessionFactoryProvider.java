@@ -46,21 +46,25 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.jdbc.Work;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.ds.DataConnectionProvider;
-import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ds.hibernate.type.UtcTimestampType;
-import org.n52.sos.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.sos.ds.ConnectionProviderException;
+import org.n52.sos.ds.DataConnectionProvider;
+import org.n52.sos.ds.Datasource;
+import org.n52.sos.ds.DatasourceCallback;
+import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.sos.ds.hibernate.type.UtcTimestampType;
+import org.n52.sos.exception.ConfigurationException;
+
 /**
- * 
+ *
  * Implementation of the SessionFactory.
- * 
+ *
  * @since 4.0.0
  */
 public class SessionFactoryProvider extends AbstractSessionFactoryProvider implements DataConnectionProvider,
@@ -86,7 +90,7 @@ public class SessionFactoryProvider extends AbstractSessionFactoryProvider imple
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.n52.sos.ds.ConnectionProvider#getConnection()
      */
     @Override
@@ -107,7 +111,7 @@ public class SessionFactoryProvider extends AbstractSessionFactoryProvider imple
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.n52.sos.ds.ConnectionProvider#returnConnection(java.lang.Object)
      */
     @Override
@@ -153,6 +157,9 @@ public class SessionFactoryProvider extends AbstractSessionFactoryProvider imple
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(Properties properties) throws ConfigurationException {
+        final DatasourceCallback datasourceCallback
+                = getDatasourceCallback(properties);
+        datasourceCallback.onInit(properties);
         try {
             LOGGER.debug("Instantiating configuration and session factory");
             configuration = new Configuration().configure("/sos-hibernate.cfg.xml");
@@ -180,7 +187,7 @@ public class SessionFactoryProvider extends AbstractSessionFactoryProvider imple
                     }
                     if (!hibernateDir.exists()) {
                         throw new ConfigurationException("Hibernate directory " + directory + " doesn't exist!");
-                    }                    
+                    }
                     configuration.addDirectory(hibernateDir);
                 }
             } else {
@@ -191,7 +198,7 @@ public class SessionFactoryProvider extends AbstractSessionFactoryProvider imple
                 configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH)
                         .toURI()));
                 configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SERIES_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH)
-                        .toURI()));               
+                        .toURI()));
             }
             configuration.mergeProperties(properties);
 
@@ -199,10 +206,21 @@ public class SessionFactoryProvider extends AbstractSessionFactoryProvider imple
             // queried in UTC
 
             configuration.registerTypeOverride(new UtcTimestampType());
-
             ServiceRegistry serviceRegistry =
                     new ServiceRegistryBuilder().applySettings(configuration.getProperties()).buildServiceRegistry();
             this.sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+            Session s = this.sessionFactory.openSession();
+            try {
+                s.doWork(new Work() {
+                    @Override
+                    public void execute(Connection connection)
+                            throws SQLException {
+                        datasourceCallback.onFirstConnection(connection);
+                    }
+                });
+            } finally {
+                returnConnection(s);
+            }
         } catch (HibernateException he) {
             String exceptionText = "An error occurs during instantiation of the database connection pool!";
             LOGGER.error(exceptionText, he);
@@ -214,6 +232,27 @@ public class SessionFactoryProvider extends AbstractSessionFactoryProvider imple
             cleanup();
             throw new ConfigurationException(exceptionText, urise);
         }
+    }
+
+    private DatasourceCallback getDatasourceCallback(Properties properties) {
+        if (properties.containsKey(Datasource.class.getName())) {
+            try {
+                Class<?> c = Class.forName((String) properties
+                        .get(Datasource.class.getName()));
+                Datasource datasource = (Datasource) c.newInstance();
+                DatasourceCallback callback = datasource.getCallback();
+                if (callback != null) {
+                    return callback;
+                }
+            } catch (ClassNotFoundException ex) {
+                LOGGER.warn("Error instantiating Datasource", ex);
+            } catch (InstantiationException ex) {
+                LOGGER.warn("Error instantiating Datasource", ex);
+            } catch (IllegalAccessException ex) {
+                LOGGER.warn("Error instantiating Datasource", ex);
+            }
+        }
+        return DatasourceCallback.nullCallback();
     }
 
     @Override

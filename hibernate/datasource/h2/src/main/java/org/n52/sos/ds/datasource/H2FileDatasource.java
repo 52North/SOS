@@ -41,6 +41,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
@@ -48,18 +49,19 @@ import org.n52.sos.exception.ConfigurationException;
 
 import com.google.common.collect.Sets;
 
+
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class H2FileDatasource extends AbstractH2Datasource {
     private static final String DIALECT = "H2/GeoDB (file based)";
 
     private static final Pattern JDBC_URL_PATTERN = Pattern
-            .compile("^jdbc:h2:(.+); INIT=create domain if not exists geometry as blob$");
+            .compile("^jdbc:h2:(.+)$");
 
-    private static final String JDBC_URL_FORMAT = "jdbc:h2:%s; INIT=create domain if not exists geometry as blob";
+    private static final String JDBC_URL_FORMAT = "jdbc:h2:%s";
 
     private final StringSettingDefinition h2Database = createDatabaseDefinition().setDescription(
             "Set this to the name/path of the database you want to use for SOS.").setDefaultValue(
@@ -149,5 +151,10 @@ public class H2FileDatasource extends AbstractH2Datasource {
     @Override
     protected String[] checkDropSchema(String[] dropSchema) {
         return dropSchema;
+    }
+
+    @Override
+    public void prepare(Map<String, Object> settings) {
+        initGeoDB(settings);
     }
 }

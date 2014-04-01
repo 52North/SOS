@@ -38,16 +38,16 @@ import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public abstract class SosProcedureDescription {
     private String identifier;
     private String sensorDescriptionXmlString;
     private String descriptionFormat;
-    private final Set<SosOffering> offerings = Sets.newHashSet();
-    private final Set<String> featuresOfInterest = Sets.newHashSet();
-    private final Set<String> parentProcedures = Sets.newHashSet();
-    private final Set<SosProcedureDescription> childProcedures = Sets.newHashSet();
+    private final Set<SosOffering> offerings = Sets.newLinkedHashSet();
+    private final Set<String> featuresOfInterest = Sets.newLinkedHashSet();
+    private final Set<String> parentProcedures = Sets.newLinkedHashSet();
+    private final Set<SosProcedureDescription> childProcedures = Sets.newLinkedHashSet();
     private Time validTime;
 
     public SosProcedureDescription setIdentifier(String identifier) {

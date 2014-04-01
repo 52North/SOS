@@ -32,6 +32,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
 import org.n52.sos.binding.Binding;
 import org.n52.sos.binding.BindingRepository;
 import org.n52.sos.coding.OperationKey;
@@ -40,16 +45,13 @@ import org.n52.sos.request.operator.RequestOperatorKey;
 import org.n52.sos.request.operator.RequestOperatorRepository;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.http.HTTPMethods;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
+import org.n52.sos.util.http.MediaType;
 
 import com.google.common.base.Objects;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.CLIENT)
@@ -81,19 +83,39 @@ public class ClientController extends AbstractController {
                     final String pattern = b.getKey();
                     final Binding binding = b.getValue();
                     if (binding.checkOperationHttpDeleteSupported(ok)) {
-                        ops.add(new AvailableOperation(service, version, operation, pattern, HTTPMethods.DELETE));
+                        for (MediaType contentType : binding.getSupportedEncodings()) {
+                            ops.add(new AvailableOperation(
+                                    service, version, operation,
+                                    contentType.toString(), HTTPMethods.DELETE));
+                        }
                     }
                     if (binding.checkOperationHttpGetSupported(ok)) {
-                        ops.add(new AvailableOperation(service, version, operation, pattern, HTTPMethods.GET));
+                        for (MediaType contentType : binding.getSupportedEncodings()) {
+                            ops.add(new AvailableOperation(
+                                    service, version, operation,
+                                    contentType.toString(), HTTPMethods.GET));
+                        }
                     }
                     if (binding.checkOperationHttpOptionsSupported(ok)) {
-                        ops.add(new AvailableOperation(service, version, operation, pattern, HTTPMethods.OPTIONS));
+                        for (MediaType contentType : binding.getSupportedEncodings()) {
+                            ops.add(new AvailableOperation(
+                                    service, version, operation,
+                                    contentType.toString(), HTTPMethods.OPTIONS));
+                        }
                     }
                     if (binding.checkOperationHttpPostSupported(ok)) {
-                        ops.add(new AvailableOperation(service, version, operation, pattern, HTTPMethods.POST));
+                        for (MediaType contentType : binding.getSupportedEncodings()) {
+                            ops.add(new AvailableOperation(
+                                    service, version, operation,
+                                    contentType.toString(), HTTPMethods.POST));
+                        }
                     }
                     if (binding.checkOperationHttpPutSupported(ok)) {
-                        ops.add(new AvailableOperation(service, version, operation, pattern, HTTPMethods.PUT));
+                        for (MediaType contentType : binding.getSupportedEncodings()) {
+                            ops.add(new AvailableOperation(
+                                    service, version, operation,
+                                    contentType.toString(), HTTPMethods.PUT));
+                        }
                     }
                 } catch (HTTPException ex) {
                     /* ignore */
@@ -110,15 +132,15 @@ public class ClientController extends AbstractController {
 
         private final String operation;
 
-        private final String binding;
+        private final String contentType;
 
         private final String method;
 
-        public AvailableOperation(String service, String version, String operation, String binding, String method) {
+        public AvailableOperation(String service, String version, String operation, String contentType, String method) {
             this.service = service;
             this.version = version;
             this.operation = operation;
-            this.binding = binding;
+            this.contentType = contentType;
             this.method = method;
         }
 
@@ -134,8 +156,8 @@ public class ClientController extends AbstractController {
             return operation;
         }
 
-        public String getBinding() {
-            return binding;
+        public String getContentType() {
+            return contentType;
         }
 
         public String getMethod() {
@@ -144,13 +166,13 @@ public class ClientController extends AbstractController {
 
         @Override
         public String toString() {
-            return String.format("AvailableOperation[method=%s, service=%s, version=%s, operation=%s, binding=%s]",
-                    getMethod(), getService(), getVersion(), getOperation(), getBinding());
+            return String.format("AvailableOperation[method=%s, service=%s, version=%s, operation=%s, contentType=%s]",
+                    getMethod(), getService(), getVersion(), getOperation(), getContentType());
         }
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(getMethod(), getService(), getVersion(), getOperation(), getBinding());
+            return Objects.hashCode(getMethod(), getService(), getVersion(), getOperation(), getContentType());
         }
 
         @Override
@@ -161,7 +183,7 @@ public class ClientController extends AbstractController {
                         && Objects.equal(getService(), other.getService())
                         && Objects.equal(getVersion(), other.getVersion())
                         && Objects.equal(getOperation(), other.getOperation())
-                        && Objects.equal(getBinding(), other.getBinding());
+                        && Objects.equal(getContentType(), other.getContentType());
             }
             return false;
         }

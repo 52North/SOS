@@ -182,21 +182,27 @@ $(function() {
                 this.changeSyntax("application/xml");
             }
         },
-        createFilters: function(filters) {
-            var self = this;
+        createFilters: function() {
+            var self = this, e, pl, jq, id, i, j;
             this.filters = [];
-            for (var i = 0; i < arguments.length; ++i) {
-                var e = arguments[i],
-                    pl = e + "s",
-                    jq = "$" + e,
-                    id = "#" + e;
+            for (i = 0; i < arguments.length; ++i) {
+				e = arguments[i],
+				pl = e + "s",
+				jq = "$" + e,
+				id = "#" + e;
                 // currently selected value
                 this[e] = null;
                 this.filters.push(e);
                 // supported values
                 this[pl] = new Set();
                 this.availableOperations.forEach(function(r) {
-                    self[pl].add(r[e]);
+					// check if we actually have a matching request example
+					for (j = 0; j < self.requests.length; ++j) {
+						if (self.requests[j][e] === r[e]) {
+							self[pl].add(r[e]);
+							break;
+						}
+					}
                 });
                 this[pl] = this[pl].keys();
                 this[pl].sort();
@@ -205,19 +211,35 @@ $(function() {
                 this[jq] = $(id).on("change", (function(filter) {
                     return function() {
                         self.onFilterChange.apply(self, [filter]);
-                    }
+                    };
                 })(e));
                 // append valid values
                 this[jq].append($("<option>").attr("value", "any")
                     .text("Any " + e.slice(0, 1).toUpperCase() + e.slice(1)));
                 this[pl].forEach(function(s) {
-                    self[jq].append($("<option>").attr("value", s).text(s));
+                    self[jq].append($("<option>").attr("value", s)
+							.text(self.toHumanReadableString(s)));
                 });
 
                 this[jq].trigger("change");
                 this[jq].attr("disabled", this[jq].find("option").length <= 1);
             }
         },
+		toHumanReadableString: function(contentType) {
+			switch (contentType) {
+				case "application/x-kvp":
+					return "KVP";
+				case "application/soap+xml":
+					return "SOAP";
+				case "text/xml":
+				case "application/xml":
+					return "POX";
+				case "application/json":
+					return "JSON";
+				default:
+					return contentType;
+			}
+		},
         filter: function(requests) {
             var filtered = [];
             for (var i = 0; i < requests.length; ++i) {
@@ -411,7 +433,7 @@ $(function() {
             }
         },
         updateExamples: function() {
-            var def, text, id, current, example, examples = {};
+            var def, text, id, example, examples = {};
 
             // apply current filters
             outer: for (var i = 0; i < this.requests.length; ++i) {
@@ -439,7 +461,7 @@ $(function() {
                 if (examples.hasOwnProperty(id)){
                     def = examples[id];
                     text = "";
-                    text += "[" + def.binding.slice(1).toUpperCase()   + "]";
+                    text += "[" + this.toHumanReadableString(def.binding) + "]";
                     text += " " + def.operation;
                     if (def.title) {
                         text += " - " + def.title;
@@ -472,7 +494,7 @@ $(function() {
             this.$method.val(definition.method);
 
 
-            var url = this.sosUrl + definition.binding;
+            var url = this.sosUrl;
             if (definition.param) {
                 if (!url.endsWith("?")) {
                     url += "?";
@@ -497,11 +519,11 @@ $(function() {
             	this.$contentType.val("");
             	this.$accept.val("");
             }
-            this.$contentType.trigger("change");            
+            this.$contentType.trigger("change");
             this.$accept.trigger("change");
 
             if (definition.request) {
-                if (typeof(definition.request) == "string") {
+                if (typeof(definition.request) === "string") {
                     if (definition.request.endsWith("xml")) {
                         $.get(definition.request, function(data) {
                             var xml = self.xml2string(data);
@@ -514,8 +536,8 @@ $(function() {
                     } else {
                         this.editor.setValue(definition.request);
                     }
-                } else if (typeof(definition.request) == "object") {
-                    this.editor.setValue(JSON.stringify(definition.request, undefined, 2))
+                } else if (typeof(definition.request) === "object") {
+                    this.editor.setValue(JSON.stringify(definition.request, undefined, 2));
                 }
             } else {
                 this.editor.setValue("");

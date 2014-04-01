@@ -5,8 +5,8 @@ Licensed under GNU General Public License, Version 2.0
 This project includes: 
 
   "Java Concurrency in Practice" book annotations under Creative Commons Attribution License, http://creativecommons.org/licenses/by/2.5
-  52North SOS Integration and Compliance 2.0 under GPLv2
-  52North SOS Integration and Compliance Common under GPLv2
+  52North SOS Integration and Compliance 2.0 under Eclipse Public License 1.0
+  52North SOS Integration and Compliance Common under Eclipse Public License 1.0
   52°North Aggregated Third Party modules under GPLv2
   52°North Sensor Observation Service under GPLv2
   52°North SOS - 2.0 XML Request Coding under GPLv2

@@ -132,15 +132,15 @@ public final class HibernateHelper {
         List<Long> queryIdsList = Lists.newArrayList(queryIds);
         List<List<Long>> lists = Lists.newArrayList();
         if (queryIds.size() > HibernateConstants.LIMIT_EXPRESSION_DEPTH) {
-            List<Long> ids = Lists.newArrayList();
-            for (int i = 0; i < queryIds.size(); i++) {
-                if (i != 0 && i % (HibernateConstants.LIMIT_EXPRESSION_DEPTH - 1) == 0) {
-                    lists.add(ids);
-                    ids = Lists.newArrayList();
-                    ids.add(queryIdsList.get(i));
-                } else {
-                    ids.add(queryIdsList.get(i));
+            int startIndex = 0;
+            int endIndex = HibernateConstants.LIMIT_EXPRESSION_DEPTH - 1;
+            while (startIndex < queryIdsList.size() - 1) {
+                if (endIndex > (queryIdsList.size())) {
+                    endIndex = (queryIdsList.size());
                 }
+                lists.add(queryIdsList.subList(startIndex, endIndex));
+                startIndex = endIndex;
+                endIndex = endIndex + HibernateConstants.LIMIT_EXPRESSION_DEPTH - 1;
             }
         } else {
             lists.add(queryIdsList);

@@ -40,7 +40,7 @@ public class HibernateHelperTest {
     
     @Test
     public void shouldReturnListsOfLists() {
-        assertTrue( HibernateHelper.getValidSizedLists(getList()).size() == 10);
+        assertTrue( HibernateHelper.getValidSizedLists(getList()).size() == 11);
     }
     
     @Test

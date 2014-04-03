@@ -57,6 +57,7 @@ import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetCapabilitiesRequest;
 import org.n52.sos.service.CommunicationObjectWithSoapHeader;
+import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.service.SoapHeader;
 import org.n52.sos.soap.SoapHelper;
 import org.n52.sos.soap.SoapRequest;
@@ -67,6 +68,7 @@ import org.n52.sos.util.http.HTTPStatus;
 import org.n52.sos.util.http.HTTPUtils;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.http.MediaTypes;
+import org.n52.sos.util.http.StreamResponseWritable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -155,24 +157,25 @@ public class SoapBinding extends SimpleBinding {
         chain.setBodyRequest(bodyRequest);
     }
 
+    private void createSoapResponse(SoapChain chain) {
+        SoapResponse soapResponse = new SoapResponse();
+        soapResponse.setSoapVersion(chain.getSoapRequest().getSoapVersion());
+        soapResponse.setSoapNamespace(chain.getSoapRequest().getSoapNamespace());
+        soapResponse.setHeader(chain.getSoapRequest().getSoapHeader());
+        chain.setSoapResponse(soapResponse);
+    }
+
+    private void createBodyResponse(SoapChain chain) throws OwsExceptionReport {
+        AbstractServiceRequest req = chain.getBodyRequest();
+        chain.setBodyResponse(getServiceOperator(req).receiveRequest(req));
+    }
+
     private void encodeBodyResponse(SoapChain chain) throws OwsExceptionReport {
         XmlObject encodedResponse = (XmlObject) encodeResponse(chain.getBodyResponse(), MediaTypes.APPLICATION_XML);
         chain.getSoapResponse().setSoapBodyContent(encodedResponse);
     }
 
     private Object encodeSoapResponse(SoapChain chain) throws OwsExceptionReport {
-        // soap injection
-        if (chain.getBodyResponse() instanceof CommunicationObjectWithSoapHeader) {
-            final CommunicationObjectWithSoapHeader soapHeaderObject =
-                    (CommunicationObjectWithSoapHeader) chain.getBodyResponse();
-            if (soapHeaderObject.isSetSoapHeader()) {
-                final Map<String, SoapHeader> header =
-                        ((CommunicationObjectWithSoapHeader) chain.getSoapRequest()).getSoapHeader();
-                // TODO do things
-                chain.getSoapResponse().setHeader(header);
-            }
-        }
-
         final EncoderKey key =
                 CodingHelper.getEncoderKey(chain.getSoapResponse().getSoapNamespace(), chain.getSoapResponse());
         final Encoder<?, SoapResponse> encoder = getEncoder(key);
@@ -194,7 +197,12 @@ public class SoapBinding extends SimpleBinding {
             if (!chain.getSoapResponse().hasSoapNamespace()) {
                 chain.getSoapResponse().setSoapNamespace(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE);
             }
-            writeSoapResponse(chain);
+            if (chain.getSoapResponse().hasException() && chain.getSoapResponse().getException().hasStatus()) {
+                chain.getHttpResponse().setStatus(chain.getSoapResponse().getException().getStatus().getCode());
+            }
+            checkSoapInjection(chain);
+            HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), checkMediaType(chain),
+                    encodeSoapResponse(chain));
         } catch (OwsExceptionReport t) {
             throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, t);
         }
@@ -208,32 +216,72 @@ public class SoapBinding extends SimpleBinding {
         // TODO allow other bindings to encode response as soap messages
 
         if (contentType.isCompatible(getDefaultContentType())) {
-            try {
-                if (chain.hasBodyResponse()) {
-                    encodeBodyResponse(chain);
+            checkSoapInjection(chain);
+            if (ServiceConfiguration.getInstance().isStreamingEnabled()) {
+                HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), checkMediaType(chain),
+                        new StreamResponseWritable(chain));
+            } else {
+                try {
+                    if (chain.hasBodyResponse()) {
+                        encodeBodyResponse(chain);
+                    }
+                    HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), checkMediaType(chain),
+                            encodeSoapResponse(chain));
+                } catch (OwsExceptionReport e) {
+                    writeOwsExceptionReport(chain, e);
                 }
-                writeSoapResponse(chain);
-            } catch (OwsExceptionReport e) {
-                writeOwsExceptionReport(chain, e);
             }
         } else {
             writeResponse(chain.getHttpRequest(), chain.getHttpResponse(), chain.getBodyResponse(), contentType);
         }
     }
 
-    private void createSoapResponse(SoapChain chain) {
-        SoapResponse soapResponse = new SoapResponse();
-        soapResponse.setSoapVersion(chain.getSoapRequest().getSoapVersion());
-        soapResponse.setSoapNamespace(chain.getSoapRequest().getSoapNamespace());
-        soapResponse.setHeader(chain.getSoapRequest().getSoapHeader());
-        chain.setSoapResponse(soapResponse);
+    /**
+     * Check the {@link MediaType}
+     * 
+     * @param chain
+     *            SoapChain to check
+     * @return the valid {@link MediaType}
+     */
+    private MediaType checkMediaType(SoapChain chain) {
+        if (chain.getBodyRequest() instanceof GetCapabilitiesRequest) {
+            GetCapabilitiesRequest r = (GetCapabilitiesRequest) chain.getBodyRequest();
+            if (r.isSetAcceptFormats()) {
+                return MediaType.parse(r.getAcceptFormats().get(0));
+            }
+        }
+        return MediaTypes.APPLICATION_SOAP_XML;
     }
 
-    private void createBodyResponse(SoapChain chain) throws OwsExceptionReport {
-        AbstractServiceRequest req = chain.getBodyRequest();
-        chain.setBodyResponse(getServiceOperator(req).receiveRequest(req));
+    /**
+     * Check if SoapHeader information is contained in the body response and add
+     * the header information to the {@link SoapResponse}
+     * 
+     * @param chain
+     *            SoapChain to check
+     */
+    private void checkSoapInjection(SoapChain chain) {
+        if (chain.getBodyResponse() instanceof CommunicationObjectWithSoapHeader) {
+            final CommunicationObjectWithSoapHeader soapHeaderObject =
+                    (CommunicationObjectWithSoapHeader) chain.getBodyResponse();
+            if (soapHeaderObject.isSetSoapHeader()) {
+                final Map<String, SoapHeader> header =
+                        ((CommunicationObjectWithSoapHeader) chain.getSoapRequest()).getSoapHeader();
+                // TODO do things
+                chain.getSoapResponse().setHeader(header);
+            }
+        }
     }
 
+    /**
+     * Deprecated because of functionality has moved to
+     * {@link #writeResponse(SoapChain)} for streaming support
+     * 
+     * @param chain
+     * @throws IOException
+     * @throws OwsExceptionReport
+     */
+    @Deprecated
     private void writeSoapResponse(SoapChain chain) throws IOException, OwsExceptionReport {
         Object encodedSoapResponse = encodeSoapResponse(chain);
         if (chain.getSoapResponse().hasException() && chain.getSoapResponse().getException().hasStatus()) {

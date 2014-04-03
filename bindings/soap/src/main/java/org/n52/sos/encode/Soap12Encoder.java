@@ -115,7 +115,8 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject> {
                                 N52XmlHelper.getSchemaLocationForOWS110Exception()));
             } else {
                 action = response.getSoapAction();
-                final XmlObject bodyContent = response.getSoapBodyContent();
+
+                final XmlObject bodyContent = getBodyContent(response);
                 String value = null;
                 Node nodeToRemove = null;
                 final NamedNodeMap attributeMap = bodyContent.getDomNode().getFirstChild().getAttributes();

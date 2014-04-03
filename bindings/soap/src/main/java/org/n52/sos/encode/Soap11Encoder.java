@@ -98,7 +98,7 @@ public class Soap11Encoder extends AbstractSoapEncoder<SOAPMessage> {
                     addSchemaLocationForExceptionToSOAPMessage(soapResponseMessage);
                 } else {
                     action =
-                            createSOAPBody(soapResponseMessage, soapResponse.getSoapBodyContent(),
+                            createSOAPBody(soapResponseMessage, soapResponse,
                                     soapResponse.getSoapAction());
                 }
             }

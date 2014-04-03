@@ -34,6 +34,13 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 
+/**
+ * Abstract XML writer class for {@link XMLEventWriter}
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.0.2
+ *
+ */
 public abstract class XmlEventWriter extends XmlWriter<XMLEventWriter> {
 
     private XMLEventWriter w;
@@ -100,7 +107,7 @@ public abstract class XmlEventWriter extends XmlWriter<XMLEventWriter> {
     protected void start() throws XMLStreamException {
         getXmlWriter().add(getXmlEventFactory().createStartDocument());
     }
-    
+
     @Override
     protected void empty(QName name) throws XMLStreamException {
         start(name);

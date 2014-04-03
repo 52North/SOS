@@ -40,26 +40,34 @@ import org.n52.sos.ogc.gml.time.TimePosition;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.DateTimeHelper;
 
+/**
+ * Abstract XML writer class
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.0.2
+ *
+ * @param <T>
+ */
 public abstract class XmlWriter<T> {
-    
+
     private final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 
     private final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 
     protected abstract void init(OutputStream out) throws XMLStreamException;
-    
+
     protected abstract void init(OutputStream out, String encoding) throws XMLStreamException;
-    
+
     protected abstract T getXmlWriter();
-    
+
     protected abstract void finish() throws XMLStreamException;
-    
+
     protected abstract void attr(QName name, String value) throws XMLStreamException;
 
     protected abstract void attr(String name, String value) throws XMLStreamException;
 
     protected abstract void chars(String chars) throws XMLStreamException;
-    
+
     protected abstract void end(QName name) throws XMLStreamException;
 
     protected abstract void end() throws XMLStreamException;
@@ -69,7 +77,7 @@ public abstract class XmlWriter<T> {
     protected abstract void start(QName name) throws XMLStreamException;
 
     protected abstract void start() throws XMLStreamException;
-    
+
     protected abstract void empty(QName name) throws XMLStreamException;
 
     public abstract void write(OutputStream out) throws XMLStreamException, OwsExceptionReport;
@@ -77,15 +85,15 @@ public abstract class XmlWriter<T> {
     protected void time(TimeInstant time) throws XMLStreamException {
         time(time.getTimePosition());
     }
-    
+
     protected void time(TimePosition time) throws XMLStreamException {
         chars(DateTimeHelper.formatDateTime2IsoString(time.getTime()));
     }
-    
+
     protected XMLEventFactory getXmlEventFactory() {
         return this.eventFactory;
     }
-    
+
     protected XMLOutputFactory getXmlOutputFactory() {
         return this.outputFactory;
     }

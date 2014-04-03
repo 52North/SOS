@@ -34,6 +34,13 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+/**
+ * Abstract XML writer class for {@link XMLStreamWriter}
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.0.2
+ *
+ */
 public abstract class XmlStreamWriter extends XmlWriter<XMLStreamWriter> {
 
     private XMLStreamWriter w;

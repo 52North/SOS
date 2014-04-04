@@ -98,7 +98,6 @@ $(function() {
         this.$response = $("#response");
         this.$contentType = $("#content-type");
         this.$accept = $("#accept");
-        this.$form = $("#form");
         this.$method = $("#method");
 
         this.$request = $("#request").on("change",function() {
@@ -310,9 +309,6 @@ $(function() {
         xml2string: function(xml) {
             return typeof(xml) === "string" ? xml : xml.xml ? xml.xml : new XMLSerializer().serializeToString(xml);
         },
-        sendInline: function() {
-            return !!$("#send-inline").attr("checked");
-        },
         onUrlChange: function() {
             var url = this.$url.val();
             //remove query string if present, we just want to examine the binding
@@ -335,7 +331,6 @@ $(function() {
             this.$contentType.trigger("change");
             this.$method.trigger("change");
 
-            this.$form.attr("action", url);
             if (url) {
                 this.$send.removeAttr("disabled");
             } else {
@@ -403,24 +398,16 @@ $(function() {
                 contentType = this.getContentTypeHeader(),
                 accept = this.getAcceptHeader(),
                 options;
-            if (this.sendInline()) {
-                this.$send.attr("disabled", true);
-                options = { headers: {}, type: method, complete: function() {
-                    self.onServiceResponse.apply(self, arguments);
-                }};
+			this.$send.attr("disabled", true);
+			options = { headers: {}, type: method, complete: function() {
+				self.onServiceResponse.apply(self, arguments);
+			}};
 
-                if (contentType) { options.headers["Content-Type"] = contentType; }
-                if (accept) { options.headers["Accept"] = accept; }
-                if (request) { options.data = request; }
+			if (contentType) { options.headers["Content-Type"] = contentType; }
+			if (accept) { options.headers["Accept"] = accept; }
+			if (request) { options.data = request; }
 
-                $.ajax(this.$url.val(), options);
-            } else {
-                if (request) {
-                    this.$form.attr("method", method).submit();
-                } else {
-                    window.location.href = this.$url.val();
-                }
-            }
+			$.ajax(this.$url.val(), options);
         },
         onFilterChange: function(filter) {
             var old = this[filter];

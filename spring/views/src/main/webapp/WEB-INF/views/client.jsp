@@ -70,7 +70,7 @@
     .CodeMirror-foldgutter-folded:after { content: "\25B8"; }
 </style>
 
-<form id="form" action="">
+<div>
     <h3>Examples</h3>
     <p>NOTE: Requests use example values and are not dynamically generated from values in this SOS. Construct valid requests by changing request values to match values in the Capabilities response.</p>
     <div class="controls-row">
@@ -109,13 +109,10 @@
     </div>
     <textarea id="editor" name="request" class="span12"></textarea>
     <div id="send-group" class="pull-right control-group">
-        <label id="send-inline-label" class="checkbox inline">
-            <input id="send-inline" type="checkbox" checked="" /> show response inline
-        </label>
         <button id="send-button" type="button" class="btn btn-info inline">Send</button>
     </div>
     <div id="response" class="span12"></div>
-</form>
+</div>
 
 <script type="text/javascript">
     var availableOperations = [
@@ -140,43 +137,43 @@
                                 r.operation = o;
                                 r.title = t;
                                 r.headers = {};
-								switch (b) {
-									case "KVP":
-									case "/kvp":
-										r.method = "GET";
-										r.headers["Accept"] = "application/xml";
-										r.binding = "application/x-kvp";
-										break;
-									case "POX":
-									case "/pox":
-										r.method = "POST";
-										r.headers["Accept"] = "application/xml";
-										r.headers["Content-Type"] = "application/xml";
-										r.binding = "application/xml";
-									break;
-									case "SOAP":
-									case "/soap":
-										r.method = "POST";
-										r.headers["Accept"] = "application/soap+xml";
-										r.headers["Content-Type"] = "application/soap+xml";
-										r.binding = "application/soap+xml";
-										break;
-									case "JSON":
-									case "/json":
-										r.method = "POST";
-										r.headers["Accept"] = "application/json";
-										r.headers["Content-Type"] = "application/json";
-										r.binding = "application/json";
-										break;
-									default:
-										if (console && console.log) {
-											console.log("Unsupported binding" + b);
-										}
-										break;
-								}
-								if (r.binding) {
-									transformed.push(r);
-								}
+                                switch (b) {
+                                    case "KVP":
+                                    case "/kvp":
+                                        r.method = "GET";
+                                        r.headers["Accept"] = "application/xml";
+                                        r.binding = "application/x-kvp";
+                                        break;
+                                    case "POX":
+                                    case "/pox":
+                                        r.method = "POST";
+                                        r.headers["Accept"] = "application/xml";
+                                        r.headers["Content-Type"] = "application/xml";
+                                        r.binding = "application/xml";
+                                    break;
+                                    case "SOAP":
+                                    case "/soap":
+                                        r.method = "POST";
+                                        r.headers["Accept"] = "application/soap+xml";
+                                        r.headers["Content-Type"] = "application/soap+xml";
+                                        r.binding = "application/soap+xml";
+                                        break;
+                                    case "JSON":
+                                    case "/json":
+                                        r.method = "POST";
+                                        r.headers["Accept"] = "application/json";
+                                        r.headers["Content-Type"] = "application/json";
+                                        r.binding = "application/json";
+                                        break;
+                                    default:
+                                        if (console && console.log) {
+                                            console.log("Unsupported binding" + b);
+                                        }
+                                        break;
+                                }
+                                if (r.binding) {
+                                    transformed.push(r);
+                                }
                             }
                         }
                     }
@@ -190,13 +187,23 @@
             config = { examples: flatten(config) };
         }
 
+        /* accept endpoint based configs */
+        for (var i = 0; i < config.examples.length; ++i) {
+            switch (config.examples[i].binding) {
+                case "/kvp" : config.examples[i].binding = "application/x-kvp";    break;
+                case "/soap": config.examples[i].binding = "application/soap+xml"; break;
+                case "/pox" : config.examples[i].binding = "application/xml";      break;
+                case "/json": config.examples[i].binding = "application/json";     break;
+            }
+        }
+
         config.sosUrl = document.location.protocol + "//"
                 + document.location.host + "<c:url value="/service" />";
         config.availableOperations = availableOperations;
         new Client(config);
     })
     .fail(function() {
-    	alert('Error while loading request data!');
+        alert('Error while loading request data!');
     });
 </script>
 <jsp:include page="common/footer.jsp" />

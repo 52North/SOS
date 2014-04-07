@@ -390,12 +390,15 @@ public class ServiceConfiguration {
         return overallExtrema;
     }
     
-//    @Setting(MiscSettings.RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST)
-    public void setStreamingEnabled(boolean streaming) {
+    @Setting(ServiceSettings.FORCE_STREAMING)
+    public void setForceStreaming(boolean streaming) {
         this.streaming  = streaming;
     }
 
-    public boolean isStreamingEnabled() {
+    /**
+     * @return
+     */
+    public boolean isForceStreaming() {
         return streaming;
     }
     

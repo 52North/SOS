@@ -34,20 +34,22 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 
+import org.n52.sos.util.Constants;
+
 /**
  * Abstract XML writer class for {@link XMLEventWriter}
  * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.0.2
+ * @since 4.1.0
  *
  */
-public abstract class XmlEventWriter extends XmlWriter<XMLEventWriter> {
+public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
 
     private XMLEventWriter w;
 
     @Override
     protected void init(OutputStream out) throws XMLStreamException {
-        init(out, "UTF-8");
+        init(out, Constants.DEFAULT_ENCODING);
     }
 
     @Override
@@ -105,7 +107,7 @@ public abstract class XmlEventWriter extends XmlWriter<XMLEventWriter> {
 
     @Override
     protected void start() throws XMLStreamException {
-        getXmlWriter().add(getXmlEventFactory().createStartDocument());
+        getXmlWriter().add(getXmlEventFactory().createStartDocument(Constants.DEFAULT_ENCODING, XML_VERSION));
     }
 
     @Override

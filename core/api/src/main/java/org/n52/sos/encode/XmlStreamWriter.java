@@ -34,20 +34,26 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.n52.sos.util.Constants;
+
+import com.google.common.base.StandardSystemProperty;
+
 /**
  * Abstract XML writer class for {@link XMLStreamWriter}
  * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.0.2
+ * @since 4.1.0
  *
  */
-public abstract class XmlStreamWriter extends XmlWriter<XMLStreamWriter> {
+public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
 
     private XMLStreamWriter w;
+    
+    protected int indent = 0;
 
     @Override
     protected void init(OutputStream out) throws XMLStreamException {
-        init(out, "UTF-8");
+        init(out, Constants.DEFAULT_ENCODING);
     }
 
     @Override
@@ -62,7 +68,7 @@ public abstract class XmlStreamWriter extends XmlWriter<XMLStreamWriter> {
 
     @Override
     protected void finish() throws XMLStreamException {
-        getXmlWriter().flush();
+        flush();
         getXmlWriter().close();
     }
 
@@ -80,35 +86,63 @@ public abstract class XmlStreamWriter extends XmlWriter<XMLStreamWriter> {
     protected void chars(String chars) throws XMLStreamException {
         getXmlWriter().writeCharacters(chars);
     }
-
+    
+    @Override
+    protected void rawText(String text) throws XMLStreamException {
+        writeIndent(indent--);
+        getXmlWriter().writeCharacters(text);
+    }
+    
     @Override
     protected void end(QName name) throws XMLStreamException {
+        writeIndent(indent--);
         getXmlWriter().writeEndElement();
+        flush();
     }
 
     @Override
     protected void end() throws XMLStreamException {
         getXmlWriter().writeEndDocument();
+        flush();
     }
 
     @Override
     protected void namespace(String prefix, String namespace) throws XMLStreamException {
         getXmlWriter().writeNamespace(prefix, namespace);
     }
-
+    
     @Override
     protected void start(QName name) throws XMLStreamException {
+        writeIndent(indent++);
         getXmlWriter().writeStartElement(name.getPrefix(), name.getLocalPart(), name.getNamespaceURI());
     }
 
     @Override
     protected void start() throws XMLStreamException {
-        getXmlWriter().writeStartDocument();
+        getXmlWriter().writeStartDocument(Constants.DEFAULT_ENCODING, XML_VERSION);
+        writeNewLine();
     }
 
     @Override
     protected void empty(QName name) throws XMLStreamException {
+        writeIndent(indent);
         getXmlWriter().writeEmptyElement(name.getPrefix(), name.getLocalPart(), name.getNamespaceURI());
+    }
+    
+    protected void flush() throws XMLStreamException {
+        getXmlWriter().flush();
+    }
+    
+    @Override
+    protected void writeNewLine() throws XMLStreamException {
+        getXmlWriter().writeCharacters(StandardSystemProperty.LINE_SEPARATOR.value());
+        flush();
+    }
+    
+    protected void writeIndent(int level) throws XMLStreamException {
+        for (int i = 0; i < level; i++) {
+            getXmlWriter().writeCharacters("  ");
+        }
     }
 
 }

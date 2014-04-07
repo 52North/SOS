@@ -73,7 +73,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
-public abstract class AbstractSoapEncoder<T> implements Encoder<T, SoapResponse>, Constants {
+public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Constants {
     public static final String DEFAULT_FAULT_REASON = "A server exception was encountered.";
 
     public static final String MISSING_RESPONSE_DETAIL_TEXT = "Missing SOS response document!";
@@ -112,7 +112,7 @@ public abstract class AbstractSoapEncoder<T> implements Encoder<T, SoapResponse>
     }
 
     @Override
-    public T encode(SoapResponse response) throws OwsExceptionReport {
+    public T encode(S response) throws OwsExceptionReport {
         return encode(response, null);
     }
 

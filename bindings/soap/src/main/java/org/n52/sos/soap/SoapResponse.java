@@ -157,5 +157,9 @@ public class SoapResponse {
     public boolean isSetBodyContent() {
         return getBodyContent() != null;
     }
+    
+    public boolean isSetSoapFault() {
+        return getSoapFault() != null;
+    }
 
 }

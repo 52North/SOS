@@ -57,7 +57,6 @@ import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetCapabilitiesRequest;
 import org.n52.sos.service.CommunicationObjectWithSoapHeader;
-import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.service.SoapHeader;
 import org.n52.sos.soap.SoapHelper;
 import org.n52.sos.soap.SoapRequest;
@@ -170,6 +169,7 @@ public class SoapBinding extends SimpleBinding {
         chain.setBodyResponse(getServiceOperator(req).receiveRequest(req));
     }
 
+    @Deprecated
     private void encodeBodyResponse(SoapChain chain) throws OwsExceptionReport {
         XmlObject encodedResponse = (XmlObject) encodeResponse(chain.getBodyResponse(), MediaTypes.APPLICATION_XML);
         chain.getSoapResponse().setSoapBodyContent(encodedResponse);
@@ -217,20 +217,20 @@ public class SoapBinding extends SimpleBinding {
 
         if (contentType.isCompatible(getDefaultContentType())) {
             checkSoapInjection(chain);
-            if (ServiceConfiguration.getInstance().isStreamingEnabled()) {
+//            if (ServiceConfiguration.getInstance().isStreamingEnabled()) {
                 HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), checkMediaType(chain),
                         new StreamResponseWritable(chain));
-            } else {
-                try {
-                    if (chain.hasBodyResponse()) {
-                        encodeBodyResponse(chain);
-                    }
-                    HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), checkMediaType(chain),
-                            encodeSoapResponse(chain));
-                } catch (OwsExceptionReport e) {
-                    writeOwsExceptionReport(chain, e);
-                }
-            }
+//            } else {
+//                try {
+//                    if (chain.hasBodyResponse()) {
+//                        encodeBodyResponse(chain);
+//                    }
+//                    HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), checkMediaType(chain),
+//                            encodeSoapResponse(chain));
+//                } catch (OwsExceptionReport e) {
+//                    writeOwsExceptionReport(chain, e);
+//                }
+//            }
         } else {
             writeResponse(chain.getHttpRequest(), chain.getHttpResponse(), chain.getBodyResponse(), contentType);
         }

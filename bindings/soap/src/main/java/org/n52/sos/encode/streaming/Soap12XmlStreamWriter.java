@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode;
+package org.n52.sos.encode.streaming;
 
 import java.io.OutputStream;
 
@@ -34,6 +34,11 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.coding.CodingRepository;
+import org.n52.sos.encode.Encoder;
+import org.n52.sos.encode.EncoderKey;
+import org.n52.sos.encode.EncodingValues;
+import org.n52.sos.encode.OperationEncoderKey;
+import org.n52.sos.encode.XmlStreamWriter;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -81,10 +86,21 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
     }
 
     @Override
+    public void write(OutputStream out, EncodingValues encodingValues) throws OwsExceptionReport {
+        write(getResponse(), out, encodingValues);
+    }
+
+    @Override
     public void write(SoapResponse element, OutputStream out) throws OwsExceptionReport {
+        write(element, out, new EncodingValues());
+    }
+
+    @Override
+    public void write(SoapResponse element, OutputStream out, EncodingValues encodingValues) throws 
+            OwsExceptionReport {
         try {
             init(out);
-            start();
+            start(encodingValues.isEmbedded());
             writeSoapEnvelope(element);
             end();
             finish();
@@ -146,6 +162,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
      *             If an encoding error occurs
      */
     protected void writeSoapBody(SoapResponse response) throws XMLStreamException, OwsExceptionReport {
+        int before = indent;
         start(SoapConstants.SOAP_12_BODY);
         writeNewLine();
         if (response != null) {
@@ -157,6 +174,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
                 writeBodyContent(response.getBodyContent());
             }
         }
+        indent = before;
         writeNewLine();
         end(SoapConstants.SOAP_12_BODY);
     }
@@ -171,16 +189,21 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
      * @throws OwsExceptionReport
      *             If an encoding error occurs
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void writeBodyContent(AbstractServiceResponse bodyResponse) throws XMLStreamException,
             OwsExceptionReport {
         Encoder<Object, AbstractServiceResponse> encoder =
                 getEncoder(new OperationEncoderKey(bodyResponse.getOperationKey(), MediaTypes.APPLICATION_XML));
-        String soapBodyContent =
-                ((XmlObject) encoder.encode(bodyResponse)).xmlText(XmlOptionsHelper.getInstance().getXmlOptions());
-        if (soapBodyContent.startsWith("<?xml")) {
-            soapBodyContent = soapBodyContent.substring(soapBodyContent.indexOf(Constants.GREATER_THAN_SIGN_STRING));
+        if (encoder instanceof StreamingEncoder<?, ?>) {
+            ((StreamingEncoder) encoder).encode(bodyResponse, getOutputStream(), new EncodingValues().setAsDocument(true).setEmbedded(true).setIndent(indent));
+        } else {
+            String soapBodyContent =
+                    ((XmlObject) encoder.encode(bodyResponse)).xmlText(XmlOptionsHelper.getInstance().getXmlOptions());
+            if (soapBodyContent.startsWith("<?xml")) {
+                soapBodyContent = soapBodyContent.substring(soapBodyContent.indexOf(Constants.GREATER_THAN_SIGN_STRING));
+            }
+            rawText(soapBodyContent);
         }
-        rawText(soapBodyContent);
     }
 
     /**

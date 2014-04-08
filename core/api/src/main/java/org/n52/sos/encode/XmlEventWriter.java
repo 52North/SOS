@@ -106,8 +106,10 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
     }
 
     @Override
-    protected void start() throws XMLStreamException {
-        getXmlWriter().add(getXmlEventFactory().createStartDocument(Constants.DEFAULT_ENCODING, XML_VERSION));
+    protected void start(boolean embedded) throws XMLStreamException {
+        if (!embedded) {
+            getXmlWriter().add(getXmlEventFactory().createStartDocument(Constants.DEFAULT_ENCODING, XML_VERSION));
+        }
     }
 
     @Override

@@ -41,6 +41,8 @@ import javax.xml.soap.SOAPConstants;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
+import org.n52.sos.encode.streaming.Soap12XmlStreamWriter;
+import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OwsExceptionCode;
@@ -124,17 +126,17 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implem
 
     @Override
     public void encode(Object element, OutputStream outputStream) throws OwsExceptionReport {
-        encode(element, outputStream, Collections.<HelperValues, String> emptyMap());
+        encode(element, outputStream, new EncodingValues());
     }
 
     @Override
-    public void encode(Object element, OutputStream outputStream, Map<HelperValues, String> additionalValues)
+    public void encode(Object element, OutputStream outputStream, EncodingValues encodingValues)
             throws OwsExceptionReport {
         if (element instanceof SoapResponse) {
-            new Soap12XmlStreamWriter((SoapResponse) element).write(outputStream);
+            new Soap12XmlStreamWriter().write((SoapResponse) element, outputStream);
         } else {
             try {
-                ((XmlObject) encode(element, additionalValues)).save(outputStream, XmlOptionsHelper.getInstance().getXmlOptions());
+                ((XmlObject) encode(element, encodingValues.getAdditionalValues())).save(outputStream, XmlOptionsHelper.getInstance().getXmlOptions());
             } catch (IOException ioe) {
                 throw new NoApplicableCodeException().causedBy(ioe).withMessage("Error while writing element to stream!");
             }

@@ -50,15 +50,30 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
     private XMLStreamWriter w;
     
     protected int indent = 0;
+    
+    private OutputStream out;
 
     @Override
     protected void init(OutputStream out) throws XMLStreamException {
         init(out, Constants.DEFAULT_ENCODING);
     }
+    
+    @Override
+    protected void init(OutputStream out, EncodingValues encodingValues) throws XMLStreamException {
+        init(out, Constants.DEFAULT_ENCODING, encodingValues);
+        this.out = out;
+    }
 
     @Override
     protected void init(OutputStream out, String encoding) throws XMLStreamException {
+        init(out, encoding, new EncodingValues());
+    }
+
+    @Override
+    protected void init(OutputStream out, String encoding, EncodingValues encodingValues) throws XMLStreamException {
         this.w = getXmlOutputFactory().createXMLStreamWriter(out, encoding);
+        this.out = out;
+        indent = encodingValues.getIndent();
     }
 
     @Override
@@ -89,7 +104,7 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
     
     @Override
     protected void rawText(String text) throws XMLStreamException {
-        writeIndent(indent--);
+        writeIndent(indent);
         getXmlWriter().writeCharacters(text);
     }
     
@@ -118,11 +133,13 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
     }
 
     @Override
-    protected void start() throws XMLStreamException {
-        getXmlWriter().writeStartDocument(Constants.DEFAULT_ENCODING, XML_VERSION);
-        writeNewLine();
+    protected void start(boolean embedded) throws XMLStreamException {
+        if (!embedded) {
+            getXmlWriter().writeStartDocument(Constants.DEFAULT_ENCODING, XML_VERSION);
+            writeNewLine();
+        }
     }
-
+    
     @Override
     protected void empty(QName name) throws XMLStreamException {
         writeIndent(indent);
@@ -143,6 +160,10 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
         for (int i = 0; i < level; i++) {
             getXmlWriter().writeCharacters("  ");
         }
+    }
+    
+    protected OutputStream getOutputStream() {
+        return out;
     }
 
 }

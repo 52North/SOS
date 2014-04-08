@@ -28,6 +28,8 @@
  */
 package org.n52.sos.encode;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
@@ -37,6 +39,8 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.coding.OperationKey;
+import org.n52.sos.encode.streaming.StreamingEncoder;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
@@ -63,7 +67,8 @@ import com.google.common.collect.Sets;
  * 
  * @since 4.0.0
  */
-public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse> extends AbstractXmlEncoder<T> {
+public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse> extends AbstractXmlEncoder<T>
+        implements StreamingEncoder<XmlObject, T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResponseEncoder.class);
 
     private final Set<EncoderKey> encoderKeys;
@@ -94,7 +99,8 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
 
     public AbstractResponseEncoder(String service, String version, String operation, String namespace, String prefix,
             Class<T> responseType) {
-        this(service, version, operation, namespace, prefix, responseType, ServiceConfiguration.getInstance().isValidateResponse());
+        this(service, version, operation, namespace, prefix, responseType, ServiceConfiguration.getInstance()
+                .isValidateResponse());
     }
 
     @Override
@@ -127,13 +133,28 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
         XmlObject xml = create(response);
         setSchemaLocations(xml);
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Encoded object {} is valid: {}", xml.schemaType().toString(), XmlHelper.validateDocument(xml));
+            LOGGER.debug("Encoded object {} is valid: {}", xml.schemaType().toString(),
+                    XmlHelper.validateDocument(xml));
         } else {
             if (validate) {
-                LOGGER.warn("Encoded object {} is valid: {}", xml.schemaType().toString(), XmlHelper.validateDocument(xml));
+                LOGGER.warn("Encoded object {} is valid: {}", xml.schemaType().toString(),
+                        XmlHelper.validateDocument(xml));
             }
         }
         return xml;
+    }
+
+    @Override
+    public void encode(T element, OutputStream outputStream) throws OwsExceptionReport {
+        encode(element, outputStream, new EncodingValues());
+    }
+
+    @Override
+    public void encode(T response, OutputStream outputStream, EncodingValues encodingValues) throws OwsExceptionReport {
+        if (response == null) {
+            throw new UnsupportedEncoderInputException(this, response);
+        }
+        create(response, outputStream, encodingValues);
     }
 
     private void setSchemaLocations(XmlObject document) {
@@ -160,6 +181,27 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
     protected abstract Set<SchemaLocation> getConcreteSchemaLocations();
 
     protected abstract XmlObject create(T response) throws OwsExceptionReport;
+
+    /**
+     * Override this method in concrete response encoder if streaming is
+     * supported for this operations.
+     * 
+     * @param response
+     * @param outputStream
+     * @param encodingValues
+     * @throws OwsExceptionReport
+     */
+    protected void create(T response, OutputStream outputStream, EncodingValues encodingValues)
+            throws OwsExceptionReport {
+        try {
+            ((XmlObject) create(response)).save(outputStream, XmlOptionsHelper.getInstance().getXmlOptions()
+                    .setSaveNoXmlDecl());
+        } catch (IOException ioe) {
+            throw new NoApplicableCodeException().causedBy(ioe).withMessage("Error while writing element to stream!");
+        } finally {
+            XmlOptionsHelper.getInstance().getXmlOptions().remove(XmlOptions.SAVE_NO_XML_DECL);
+        }
+    }
 
     protected Class<T> getResponseType() {
         return responseType;

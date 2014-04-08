@@ -28,9 +28,12 @@
  */
 package org.n52.sos.encode.sos.v2;
 
+import java.io.OutputStream;
+
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.encode.Encoder;
+import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.ObservationEncoder;
 import org.n52.sos.encode.XmlEncoderKey;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -109,6 +112,17 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
             throw new InvalidResponseFormatParameterException(responseFormat);
         }
     }
+    
+    @Override
+    protected void create(T response, OutputStream outputStream, EncodingValues encodingValues) throws OwsExceptionReport {
+        final String responseFormat = response.getResponseFormat();
+        // search for an O&M2 encoder for this response format
+        ObservationEncoder<XmlObject, OmObservation> encoder = findObservationEncoder(responseFormat);
+        if (encoder != null) {
+            // encode the response as a GetObservationResponseDocument
+            createResponse(encoder, response, outputStream, encodingValues);
+        }
+    }
 
     /**
      * Create a response using the provided O&M2 compatible observation encoder.
@@ -125,4 +139,19 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
      */
     protected abstract XmlObject createResponse(ObservationEncoder<XmlObject, OmObservation> encoder, T response)
             throws OwsExceptionReport;
+    
+    /**
+     * Override this method in concrete response encoder if streaming is
+     * supported for this operations.
+     * 
+     * @param encoder
+     * @param response
+     * @param outputStream
+     * @param encodingValues
+     * @throws OwsExceptionReport
+     */
+    protected void createResponse(ObservationEncoder<XmlObject, OmObservation> encoder, T response, OutputStream outputStream,  EncodingValues encodingValues)
+            throws OwsExceptionReport {
+        super.create(response, outputStream, encodingValues);
+    }
 }

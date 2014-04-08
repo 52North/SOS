@@ -57,8 +57,12 @@ public abstract class XmlWriter<T, S> {
     private final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 
     protected abstract void init(OutputStream out) throws XMLStreamException;
+    
+    protected abstract void init(OutputStream out, EncodingValues encodingValues) throws XMLStreamException;
 
     protected abstract void init(OutputStream out, String encoding) throws XMLStreamException;
+
+    protected abstract void init(OutputStream out, String encoding, EncodingValues encodingValues) throws XMLStreamException;
 
     protected abstract T getXmlWriter();
 
@@ -80,7 +84,7 @@ public abstract class XmlWriter<T, S> {
 
     protected abstract void start(QName name) throws XMLStreamException;
 
-    protected abstract void start() throws XMLStreamException;
+    protected abstract void start(boolean embedded) throws XMLStreamException;
 
     protected abstract void empty(QName name) throws XMLStreamException;
 
@@ -95,6 +99,8 @@ public abstract class XmlWriter<T, S> {
      *             If an encoding error occurs
      */
     public abstract void write(OutputStream out) throws XMLStreamException, OwsExceptionReport;
+    
+    public abstract void write(OutputStream out, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport;
 
     /**
      * Encode and write the elementToStream to the {@link OutputStream}
@@ -109,6 +115,8 @@ public abstract class XmlWriter<T, S> {
      *             If an encoding error occurs
      */
     public abstract void write(S elementToStream, OutputStream out) throws XMLStreamException, OwsExceptionReport;
+    
+    public abstract void write(S elementToStream, OutputStream out, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport;
 
     protected abstract void writeNewLine() throws XMLStreamException;
 

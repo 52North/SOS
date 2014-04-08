@@ -28,14 +28,19 @@
  */
 package org.n52.sos.encode.sos.v2;
 
-import java.util.Date;
+import java.io.OutputStream;
 import java.util.Set;
+
+import javax.xml.stream.XMLStreamException;
 
 import net.opengis.sos.x20.GetObservationResponseDocument;
 import net.opengis.sos.x20.GetObservationResponseType;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.ObservationEncoder;
+import org.n52.sos.encode.streaming.sos.v2.GetObservationResponseXmlStreamWriter;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -79,6 +84,17 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
             XmlHelper.makeGmlIdsUnique(doc.getDomNode());
         }
         return doc;
+    }
+
+    @Override
+    protected void createResponse(ObservationEncoder<XmlObject, OmObservation> encoder,
+            GetObservationResponse response, OutputStream outputStream, EncodingValues encodingValues) throws OwsExceptionReport {
+        try {
+            new GetObservationResponseXmlStreamWriter().write(response, outputStream, encodingValues);
+        } catch (XMLStreamException xmlse) {
+            throw new NoApplicableCodeException().causedBy(xmlse);
+        }
+
     }
 
 }

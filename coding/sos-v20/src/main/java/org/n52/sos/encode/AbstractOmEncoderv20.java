@@ -263,6 +263,11 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
             observationDoc.setOMObservation(xbObservation);
             return observationDoc;
         }
+        if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+           OMObservationDocument obsDoc = OMObservationDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+           obsDoc.setOMObservation(xbObservation);
+           return obsDoc;
+        }
         return xbObservation;
     }
 

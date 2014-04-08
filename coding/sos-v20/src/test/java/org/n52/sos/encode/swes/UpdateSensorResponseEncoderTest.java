@@ -37,6 +37,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -136,7 +137,7 @@ public class UpdateSensorResponseEncoderTest {
     @Test(expected = UnsupportedEncoderInputException.class)
     public void should_return_exception_if_received_null() throws OwsExceptionReport {
         new UpdateSensorResponseEncoder().encode(null);
-        new UpdateSensorResponseEncoder().encode(null, null);
+        new UpdateSensorResponseEncoder().encode(null, new ByteArrayOutputStream());
         new UpdateSensorResponseEncoder().encode(null, new HashMap<SosConstants.HelperValues, String>());
     }
 

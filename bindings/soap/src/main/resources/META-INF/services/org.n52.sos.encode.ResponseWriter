@@ -1,2 +1,2 @@
 org.n52.sos.encode.SoapResponseWriter
-org.n52.sos.encode.StreamSoapResponseWriter
+org.n52.sos.encode.SoapResponseStreamWriter

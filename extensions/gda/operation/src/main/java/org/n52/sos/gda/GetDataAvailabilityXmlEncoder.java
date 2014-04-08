@@ -84,4 +84,5 @@ public class GetDataAvailabilityXmlEncoder extends AbstractResponseEncoder<GetDa
             throw new NoApplicableCodeException().causedBy(ex).withMessage("Error encoding response");
         }
     }
+
 }

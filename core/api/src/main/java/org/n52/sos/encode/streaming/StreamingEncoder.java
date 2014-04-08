@@ -26,11 +26,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode;
+package org.n52.sos.encode.streaming;
 
 import java.io.OutputStream;
 import java.util.Map;
 
+import org.n52.sos.encode.Encoder;
+import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 
@@ -49,6 +51,6 @@ public interface StreamingEncoder<T,S> extends Encoder<T, S> {
     
     public void encode(S objectToEncode, OutputStream outputStream) throws OwsExceptionReport;
     
-    public void encode(S objectToEncode, OutputStream outputStream, Map<HelperValues, String> additionalValues) throws OwsExceptionReport;
+    public void encode(S objectToEncode, OutputStream outputStream, EncodingValues encodingValues) throws OwsExceptionReport;
 
 }

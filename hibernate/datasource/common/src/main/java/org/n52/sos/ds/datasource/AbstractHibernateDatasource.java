@@ -45,7 +45,6 @@ import org.hibernate.mapping.Table;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
@@ -878,7 +877,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
      * @return Checked script without duplicate foreign key for
      *         observationHasOffering
      */
-    private String[] checkCreateSchema(String[] script) {
+    protected String[] checkCreateSchema(String[] script) {
         // creates upper case hexString form table name 'observationHasOffering'
         // hashCode() with prefix 'FK'
         String hexStringToCheck =
@@ -907,6 +906,15 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
     @Override
     public void prepare(Map<String, Object> settings) {
 
+    }
+    
+    @Override
+    public boolean isPostCreateSchema() {
+        return false;
+    }
+    
+    @Override
+    public void executePostCreateSchema(Map<String, Object> databaseSettings) {
     }
 
     /**

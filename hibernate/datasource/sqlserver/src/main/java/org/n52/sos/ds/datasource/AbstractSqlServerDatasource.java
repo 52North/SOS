@@ -175,7 +175,16 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
 
     @Override
     protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings) {
-
+        checkClasspath();
+    }
+    
+    private void checkClasspath() throws ConfigurationException {
+        try {
+            Class.forName(SQL_SERVER_DRIVER_CLASS);
+        } catch (ClassNotFoundException e) {
+            throw new ConfigurationException("SQL Server jar file (sqljdbc.jar) must be "
+                    + "included in the server classpath. ", e);
+        }
     }
 
     @Override
@@ -264,13 +273,14 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
 
     @Override
     protected String[] checkDropSchema(String[] dropSchema) {
-        List<String> checkedSchema = Lists.newLinkedList();
-        for (String string : dropSchema) {
-            if (!string.startsWith("alter")) {
-                checkedSchema.add(string);
-            }
-        }
-        return checkedSchema.toArray(new String[checkedSchema.size()]);
+        return dropSchema;
+//        List<String> checkedSchema = Lists.newLinkedList();
+//        for (String string : dropSchema) {
+//            if (!string.startsWith("alter")) {
+//                checkedSchema.add(string);
+//            }
+//        }
+//        return checkedSchema.toArray(new String[checkedSchema.size()]);
     }
 
 }

@@ -78,6 +78,8 @@ public abstract class XmlWriter<T, S> {
 
     protected abstract void end(QName name) throws XMLStreamException;
 
+    protected abstract void endInline(QName name) throws XMLStreamException;
+
     protected abstract void end() throws XMLStreamException;
 
     protected abstract void namespace(String prefix, String namespace) throws XMLStreamException;

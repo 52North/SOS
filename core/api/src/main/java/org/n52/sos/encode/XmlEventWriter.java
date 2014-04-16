@@ -87,6 +87,12 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
         getXmlWriter().add(
                 getXmlEventFactory().createEndElement(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart()));
     }
+    
+    @Override
+    protected void endInline(QName name) throws XMLStreamException {
+        getXmlWriter().add(
+                getXmlEventFactory().createEndElement(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart()));
+    }
 
     @Override
     protected void end() throws XMLStreamException {

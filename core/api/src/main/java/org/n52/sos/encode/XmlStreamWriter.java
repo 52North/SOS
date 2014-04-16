@@ -114,6 +114,13 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
         getXmlWriter().writeEndElement();
         flush();
     }
+    
+    @Override
+    protected void endInline(QName name) throws XMLStreamException {
+        indent--;
+        getXmlWriter().writeEndElement();
+        flush();
+    }
 
     @Override
     protected void end() throws XMLStreamException {

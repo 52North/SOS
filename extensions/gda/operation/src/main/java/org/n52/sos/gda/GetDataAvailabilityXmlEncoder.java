@@ -29,6 +29,8 @@
 package org.n52.sos.gda;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.Set;
@@ -38,6 +40,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.AbstractResponseEncoder;
+import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -58,6 +61,9 @@ public class GetDataAvailabilityXmlEncoder extends AbstractResponseEncoder<GetDa
 
     private static final Logger LOG = LoggerFactory.getLogger(GetDataAvailabilityXmlEncoder.class);
 
+    /**
+     * constructor
+     */
     public GetDataAvailabilityXmlEncoder() {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, GetDataAvailabilityConstants.OPERATION_NAME,
                 Sos2Constants.NS_SOS_20, SosConstants.NS_SOS_PREFIX, GetDataAvailabilityResponse.class, false);
@@ -70,8 +76,9 @@ public class GetDataAvailabilityXmlEncoder extends AbstractResponseEncoder<GetDa
 
     @Override
     protected XmlObject create(GetDataAvailabilityResponse response) throws OwsExceptionReport {
+        ByteArrayOutputStream out = null;
         try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            out = new ByteArrayOutputStream();
             new GetDataAvailabilityStreamWriter(response.getVersion(), response.getDataAvailabilities()).write(out);
             return XmlObject.Factory.parse(out.toString("UTF8"));
         } catch (XMLStreamException ex) {
@@ -82,6 +89,22 @@ public class GetDataAvailabilityXmlEncoder extends AbstractResponseEncoder<GetDa
             throw new NoApplicableCodeException().causedBy(ex).withMessage("Error encoding response");
         } catch (UnsupportedEncodingException ex) {
             throw new NoApplicableCodeException().causedBy(ex).withMessage("Error encoding response");
+        } finally {
+            try {
+                out.close();
+            } catch (IOException e) {
+               LOG.error("Error while closing output stream", e);
+            }
+        }
+    }
+    
+    @Override
+    protected void create(GetDataAvailabilityResponse response, OutputStream outputStream,
+            EncodingValues encodingValues) throws OwsExceptionReport {
+        try {
+            new GetDataAvailabilityStreamWriter().write(response, outputStream, encodingValues);
+        } catch (XMLStreamException xmlse) {
+            throw new NoApplicableCodeException().causedBy(xmlse);
         }
     }
 

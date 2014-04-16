@@ -42,6 +42,8 @@ import java.util.zip.GZIPOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.n52.sos.encode.ResponseWriter;
+import org.n52.sos.encode.ResponseWriterRepository;
 import org.n52.sos.exception.HTTPException;
 import org.n52.sos.response.ServiceResponse;
 import org.slf4j.Logger;
@@ -118,7 +120,7 @@ public class HTTPUtils {
 
     public static void writeObject(HttpServletRequest request, HttpServletResponse response, MediaType contentType,
             Object object) throws IOException {
-        writeObject(request, response, contentType, new GenericWritable(object));
+        writeObject(request, response, contentType, new GenericWritable(object, contentType));
     }
 
     public static void writeObject(HttpServletRequest request, HttpServletResponse response, ServiceResponse sr)
@@ -161,15 +163,36 @@ public class HTTPUtils {
         }
     }
 
-    private static class GenericWritable extends AbstractGenericWritable {
+    private static class GenericWritable implements Writable {
+        private final Object o;
 
-        GenericWritable(Object o) {
-            super(o);
+        private ResponseWriter<Object> writer;
+
+        /**
+         * constructor
+         * 
+         * @param o
+         *            {@link Object} to write
+         * @param ct
+         *            contentType to encode to
+         */
+        GenericWritable(Object o, MediaType ct) {
+            this.o = o;
+            writer = ResponseWriterRepository.getInstance().getWriter(o.getClass());
+            if (writer == null) {
+                throw new RuntimeException("no writer for " + o.getClass() + " found!");
+            }
+            writer.setContentType(ct);
         }
 
         @Override
         public boolean supportsGZip() {
-            return true;
+            return writer.supportsGZip(o);
+        }
+
+        @Override
+        public void write(OutputStream out) throws IOException {
+            writer.write(o, out);
         }
     }
 
@@ -188,31 +211,6 @@ public class HTTPUtils {
         @Override
         public boolean supportsGZip() {
             return response.supportsGZip();
-        }
-    }
-
-    /**
-     * Writer implementation for response streaming
-     * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
-     * @since 4.0.2
-     *
-     */
-    public static class StreamResponseWritable extends AbstractGenericWritable {
-
-        /**
-         * constructor
-         * 
-         * @param o
-         *            Object to write out
-         */
-        StreamResponseWritable(Object o) {
-            super(o);
-        }
-
-        @Override
-        public boolean supportsGZip() {
-            return false;
         }
     }
 

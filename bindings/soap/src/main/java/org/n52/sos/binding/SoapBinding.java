@@ -67,7 +67,6 @@ import org.n52.sos.util.http.HTTPStatus;
 import org.n52.sos.util.http.HTTPUtils;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.http.MediaTypes;
-import org.n52.sos.util.http.StreamResponseWritable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -214,25 +213,12 @@ public class SoapBinding extends SimpleBinding {
                 chooseResponseContentType(chain.getBodyResponse(), HTTPUtils.getAcceptHeader(chain.getHttpRequest()),
                         getDefaultContentType());
         // TODO allow other bindings to encode response as soap messages
-
         if (contentType.isCompatible(getDefaultContentType())) {
             checkSoapInjection(chain);
-//            if (ServiceConfiguration.getInstance().isStreamingEnabled()) {
                 HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), checkMediaType(chain),
-                        new StreamResponseWritable(chain));
-//            } else {
-//                try {
-//                    if (chain.hasBodyResponse()) {
-//                        encodeBodyResponse(chain);
-//                    }
-//                    HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), checkMediaType(chain),
-//                            encodeSoapResponse(chain));
-//                } catch (OwsExceptionReport e) {
-//                    writeOwsExceptionReport(chain, e);
-//                }
-//            }
+                        chain);
         } else {
-            writeResponse(chain.getHttpRequest(), chain.getHttpResponse(), chain.getBodyResponse(), contentType);
+            HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), contentType, chain.getBodyResponse());
         }
     }
 

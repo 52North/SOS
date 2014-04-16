@@ -29,6 +29,7 @@
 package org.n52.sos.encode;
 
 import org.n52.sos.coding.CodingRepository;
+import org.n52.sos.util.http.MediaType;
 
 /**
  * Abstract {@link ResponseWriter} class for response streaming
@@ -39,7 +40,27 @@ import org.n52.sos.coding.CodingRepository;
  * @param <T>
  *            generic for the element to write
  */
-public abstract class AbstractResponseStreamWriter<T> implements ResponseWriter<T> {
+public abstract class AbstractResponseWriter<T> implements ResponseWriter<T> {
+   
+    private MediaType contentType;
+    
+    @Override
+    public MediaType getContentType() {
+        return contentType;
+    }
+
+    @Override
+    public void setContentType(MediaType contentType) {
+        this.contentType = contentType;
+    }
+    
+    /**
+     * Check if contentType is set 
+     * @return <code>true</code>, if contentType is set
+     */
+    protected boolean isSetContentType() {
+        return getContentType() != null;
+    }
 
     /**
      * Getter for encoder, encapsulates the instance call

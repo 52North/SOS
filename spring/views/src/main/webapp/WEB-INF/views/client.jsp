@@ -70,7 +70,7 @@
     .CodeMirror-foldgutter-folded:after { content: "\25B8"; }
 </style>
 
-<form id="form" action="">
+<div>
     <h3>Examples</h3>
     <p>NOTE: Requests use example values and are not dynamically generated from values in this SOS. Construct valid requests by changing request values to match values in the Capabilities response.</p>
     <div class="controls-row">
@@ -109,13 +109,10 @@
     </div>
     <textarea id="editor" name="request" class="span12"></textarea>
     <div id="send-group" class="pull-right control-group">
-        <label id="send-inline-label" class="checkbox inline">
-            <input id="send-inline" type="checkbox" checked="" /> show response inline
-        </label>
         <button id="send-button" type="button" class="btn btn-info inline">Send</button>
     </div>
     <div id="response" class="span12"></div>
-</form>
+</div>
 
 <script type="text/javascript">
     var availableOperations = [

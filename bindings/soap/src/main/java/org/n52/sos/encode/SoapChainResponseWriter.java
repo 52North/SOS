@@ -50,7 +50,7 @@ import org.n52.sos.util.XmlOptionsHelper;
  * @since 4.1.0
  *
  */
-public class SoapResponseStreamWriter extends AbstractResponseStreamWriter<SoapChain> {
+public class SoapChainResponseWriter extends AbstractResponseWriter<SoapChain> {
 
     @Override
     public Class<SoapChain> getType() {
@@ -90,6 +90,11 @@ public class SoapResponseStreamWriter extends AbstractResponseStreamWriter<SoapC
         } else {
             throw new NoEncoderForKeyException(key);
         }
+    }
+
+    @Override
+    public boolean supportsGZip(SoapChain t) {
+        return false;
     }
 
 }

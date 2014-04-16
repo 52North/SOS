@@ -28,6 +28,8 @@
  */
 package org.n52.sos.web;
 
+import java.io.File;
+
 import javax.servlet.ServletContext;
 
 import org.n52.sos.service.DatabaseSettingsHandler;
@@ -68,6 +70,10 @@ public class JstlFunctions {
         return true;
     }
 
+    public static boolean viewExists(ServletContext ctx, String path) {
+        return new File(ctx.getRealPath("WEB-INF/views/" + path)).exists();
+    }
+    
     private JstlFunctions() {
     }
 }

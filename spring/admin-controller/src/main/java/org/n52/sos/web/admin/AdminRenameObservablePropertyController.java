@@ -29,7 +29,9 @@
 package org.n52.sos.web.admin;
 
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ServiceLoader;
 
 import org.n52.sos.cache.ContentCache;
@@ -52,6 +54,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.common.collect.Lists;
+
 /**
  * @author Christian Autermann <c.autermann@52north.org>
  */
@@ -65,8 +69,10 @@ public class AdminRenameObservablePropertyController extends AbstractAdminContro
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() {
+        List<String> observableProperties = Lists.newArrayList(getCache().getObservableProperties());
+        Collections.sort(observableProperties);
         return new ModelAndView(ControllerConstants.Views.ADMIN_RENAME_OBSERVABLE_PROPERTIES,
-                                "observableProperties", getCache().getObservableProperties());
+                                "observableProperties", observableProperties);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

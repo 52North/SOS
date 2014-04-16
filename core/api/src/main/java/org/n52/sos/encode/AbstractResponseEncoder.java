@@ -83,6 +83,24 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
 
     private final boolean validate;
 
+    /**
+     * constructor
+     * 
+     * @param service
+     *            Service
+     * @param version
+     *            Service version
+     * @param operation
+     *            Service operation name
+     * @param namespace
+     *            Service XML schema namespace
+     * @param prefix
+     *            Service XML schema prefix
+     * @param responseType
+     *            Response type
+     * @param validate
+     *            Indicator if the created/encoded object should be validated
+     */
     public AbstractResponseEncoder(String service, String version, String operation, String namespace, String prefix,
             Class<T> responseType, boolean validate) {
         OperationKey key = new OperationKey(service, version, operation);
@@ -97,6 +115,22 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
         this.validate = validate;
     }
 
+    /**
+     * constructor
+     * 
+     * @param service
+     *            Service
+     * @param version
+     *            Service version
+     * @param operation
+     *            Service operation name
+     * @param namespace
+     *            Service XML schema namespace
+     * @param prefix
+     *            Service XML schema prefix
+     * @param responseType
+     *            Response type
+     */
     public AbstractResponseEncoder(String service, String version, String operation, String namespace, String prefix,
             Class<T> responseType) {
         this(service, version, operation, namespace, prefix, responseType, ServiceConfiguration.getInstance()
@@ -178,8 +212,24 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
         return XmlOptionsHelper.getInstance().getXmlOptions();
     }
 
+    /**
+     * Get the concrete schema locations for this
+     * {@link AbstractServiceResponse} encoder
+     * 
+     * @return the concrete schema locations
+     */
     protected abstract Set<SchemaLocation> getConcreteSchemaLocations();
 
+    /**
+     * Create an {@link XmlObject} from the {@link AbstractServiceResponse}
+     * object
+     * 
+     * @param response
+     *            {@link AbstractServiceResponse} to encode
+     * @return XML encoded {@link AbstractServiceResponse}
+     * @throws OwsExceptionReport
+     *             If an error occurs during the encoding
+     */
     protected abstract XmlObject create(T response) throws OwsExceptionReport;
 
     /**
@@ -187,19 +237,46 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
      * supported for this operations.
      * 
      * @param response
+     *            Implementation of {@link AbstractServiceResponse}
      * @param outputStream
+     *            {@link OutputStream} to write
      * @param encodingValues
+     *            {@link EncodingValues} with additional indicators for encoding
      * @throws OwsExceptionReport
+     *             If an error occurs during encoding/writing to stream
      */
     protected void create(T response, OutputStream outputStream, EncodingValues encodingValues)
             throws OwsExceptionReport {
         try {
-            ((XmlObject) create(response)).save(outputStream, XmlOptionsHelper.getInstance().getXmlOptions()
-                    .setSaveNoXmlDecl());
+            XmlOptions xmlOptions = XmlOptionsHelper.getInstance().getXmlOptions();
+            if (encodingValues.isEmbedded()) {
+                xmlOptions.setSaveNoXmlDecl();
+            }
+            writeIndent(encodingValues.getIndent(), outputStream);
+            ((XmlObject) create(response)).save(outputStream, xmlOptions);
         } catch (IOException ioe) {
             throw new NoApplicableCodeException().causedBy(ioe).withMessage("Error while writing element to stream!");
         } finally {
-            XmlOptionsHelper.getInstance().getXmlOptions().remove(XmlOptions.SAVE_NO_XML_DECL);
+            if (encodingValues.isEmbedded()) {
+                XmlOptionsHelper.getInstance().getXmlOptions().remove(XmlOptions.SAVE_NO_XML_DECL);
+            }
+        }
+    }
+
+    /**
+     * Write indent to stream if the response is encoded with XmlBeans
+     * 
+     * @param level
+     *            Level of indent
+     * @param outputStream
+     *            {@link OutputStream} to write indent
+     * @throws IOException
+     *             If an error occurs when writing to stream
+     */
+    protected void writeIndent(int level, OutputStream outputStream) throws IOException {
+        byte[] indent = new String("  ").getBytes();
+        for (int i = 0; i < level; i++) {
+            outputStream.write(indent);
         }
     }
 

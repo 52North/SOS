@@ -28,19 +28,19 @@
  */
 package org.n52.sos.web.admin;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.n52.sos.binding.Binding;
 import org.n52.sos.binding.BindingRepository;
 import org.n52.sos.decode.OperationDecoderKey;
 import org.n52.sos.exception.HTTPException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.service.Configurator;
-import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.http.MediaTypes;
 import org.n52.sos.web.ControllerConstants;
 import org.slf4j.Logger;
@@ -49,6 +49,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -142,8 +144,9 @@ public class SensorDescriptionController extends AbstractAdminController {
         model.put(IS_DELETE_SENSOR_SUPPORTED, delete);
         model.put(IS_UPDATE_SENSOR_SUPPORTED, update);
         model.put(IS_DESCRIBE_SENSOR_SUPPORTED, getKvp||getSoap);
-        model.put(SENSORS, new HashSet<String>(Configurator.getInstance()
-                .getCache().getProcedures()));
+        List<String> procedures = Lists.newArrayList(Configurator.getInstance().getCache().getProcedures());
+        Collections.sort(procedures);
+        model.put(SENSORS, procedures);
         
         return new ModelAndView(ControllerConstants.Views.ADMIN_SENSOR_DESCRIPTIONS, model);
     }

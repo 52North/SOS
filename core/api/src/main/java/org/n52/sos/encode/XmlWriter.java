@@ -35,6 +35,7 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePosition;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -75,6 +76,10 @@ public abstract class XmlWriter<T, S> {
     protected abstract void chars(String chars) throws XMLStreamException;
 
     protected abstract void rawText(String chars) throws XMLStreamException;
+    
+    protected abstract void writeXmlObject(XmlObject encode, QName identifier) throws XMLStreamException;
+
+    protected abstract String getReplacement(QName identifier);
 
     protected abstract void end(QName name) throws XMLStreamException;
 

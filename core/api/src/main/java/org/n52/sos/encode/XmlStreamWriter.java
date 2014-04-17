@@ -34,7 +34,10 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.util.Constants;
+import org.n52.sos.util.StringHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.base.StandardSystemProperty;
 
@@ -107,6 +110,25 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
         writeIndent(indent);
         getXmlWriter().writeCharacters(text);
     }
+    
+    @Override
+    protected void writeXmlObject(XmlObject xmlObject, QName qnamwe) throws XMLStreamException {
+        if (xmlObject != null) {
+            String s = xmlObject.xmlText(XmlOptionsHelper.getInstance().getXmlOptions());
+            rawText(s.replaceAll("xml-fragment", getReplacement(qnamwe)));
+        }
+     }
+
+    @Override
+    protected String getReplacement(QName identifier) {
+         StringBuilder builder = new StringBuilder();
+         if (StringHelper.isNotEmpty(identifier.getPrefix())) {
+             builder.append(identifier.getPrefix());
+             builder.append(Constants.COLON_CHAR);
+         }
+         builder.append(identifier.getLocalPart());
+         return builder.toString();
+     }
     
     @Override
     protected void end(QName name) throws XMLStreamException {

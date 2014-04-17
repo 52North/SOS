@@ -136,6 +136,9 @@ public interface GmlConstants extends Constants {
     String EN_LOWER_CORNER = "lowerCorner";
 
     String EN_UPPER_CORNER = "upperCorner";
+    
+
+    String EN_IDENTIFIER = "identifier";
 
     /* attribute names in GML */
 
@@ -192,6 +195,10 @@ public interface GmlConstants extends Constants {
     QName QN_ABSTRACT_FEATURE_GML_32 = new QName(NS_GML_32, EN_ABSTRACT_FEATURE_32, NS_GML_PREFIX);
 
     QName QN_ABSTRACT_TIME_32 = new QName(NS_GML_32, EN_ABSTRACT_TIME_OBJECT_32, NS_GML_PREFIX);
+    
+    QName QN_IDENTIFIER_32 = new QName(NS_GML_32, EN_IDENTIFIER, NS_GML_PREFIX);
+
+    QName QN_DESCRIPTION_32 = new QName(NS_GML_32, EN_DESCRIPTION, NS_GML_PREFIX);
 
     /** string constant for ascending sorting order */
     String SORT_ORDER_ASC = SortingOrder.ASC.name();

@@ -160,7 +160,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
     }
 
     @Override
-    protected String getDefaultFeatureEncodingNamespace() {
+    public String getDefaultFeatureEncodingNamespace() {
         return WaterMLConstants.NS_WML_20;
     }
 

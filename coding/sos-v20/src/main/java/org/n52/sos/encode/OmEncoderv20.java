@@ -28,6 +28,7 @@
  */
 package org.n52.sos.encode;
 
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -35,12 +36,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.stream.XMLStreamException;
+
 import net.opengis.om.x20.OMObservationType;
 
 import org.apache.xmlbeans.XmlBoolean;
 import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
+import org.n52.sos.encode.streaming.OmV20XmlStreamWriter;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.MultiObservationValues;
@@ -156,6 +160,21 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
     public Set<SchemaLocation> getSchemaLocations() {
         return Sets.newHashSet(OmConstants.OM_20_SCHEMA_LOCATION);
     }
+    
+    @Override
+    public void encode(Object objectToEncode, OutputStream outputStream, EncodingValues encodingValues)
+            throws OwsExceptionReport {
+        encodingValues.setEncoder(this);
+        if (objectToEncode instanceof OmObservation) {
+            try {
+                new OmV20XmlStreamWriter().write((OmObservation)objectToEncode, outputStream, encodingValues);
+            } catch (XMLStreamException xmlse) {
+                throw new NoApplicableCodeException().causedBy(xmlse).withMessage("Error while writing element to stream!");
+            }
+        } else {
+            super.encode(objectToEncode, outputStream, encodingValues);
+        }
+    }
 
     @Override
     protected XmlObject createResult(OmObservation sosObservation) throws OwsExceptionReport {
@@ -177,7 +196,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
     }
 
     @Override
-    protected String getDefaultFeatureEncodingNamespace() {
+    public String getDefaultFeatureEncodingNamespace() {
         return SfConstants.NS_SAMS;
     }
 

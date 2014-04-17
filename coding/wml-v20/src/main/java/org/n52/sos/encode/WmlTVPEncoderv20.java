@@ -28,10 +28,13 @@
  */
 package org.n52.sos.encode;
 
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.xml.stream.XMLStreamException;
 
 import net.opengis.om.x20.OMObservationType;
 import net.opengis.waterml.x20.DefaultTVPMeasurementMetadataDocument;
@@ -42,6 +45,8 @@ import net.opengis.waterml.x20.TVPDefaultMetadataPropertyType;
 import net.opengis.waterml.x20.TVPMeasurementMetadataType;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.encode.streaming.WmlTVPEncoderv20XmlStreamWriter;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
@@ -134,6 +139,21 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     @Override
     public Set<SchemaLocation> getSchemaLocations() {
         return Sets.newHashSet(WaterMLConstants.WML_20_SCHEMA_LOCATION);
+    }
+    
+    @Override
+    public void encode(Object objectToEncode, OutputStream outputStream, EncodingValues encodingValues)
+            throws OwsExceptionReport {
+        encodingValues.setEncoder(this);
+        if (objectToEncode instanceof OmObservation) {
+            try {
+                new WmlTVPEncoderv20XmlStreamWriter().write((OmObservation)objectToEncode, outputStream, encodingValues);
+            } catch (XMLStreamException xmlse) {
+                throw new NoApplicableCodeException().causedBy(xmlse).withMessage("Error while writing element to stream!");
+            }
+        } else {
+            super.encode(objectToEncode, outputStream, encodingValues);
+        }
     }
 
     @Override

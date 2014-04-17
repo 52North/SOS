@@ -62,6 +62,8 @@ public class EncodingValues {
     
     private boolean embedded = false;
     
+    private Encoder<?, ?> encoder;
+    
     public EncodingValues() {
         
     }
@@ -270,6 +272,24 @@ public class EncodingValues {
     public EncodingValues setEmbedded(boolean embedded) {
         this.embedded = embedded;
         return this;
+    }
+
+    /**
+     * @return the encoder
+     */
+    public Encoder<?, ?> getEncoder() {
+        return encoder;
+    }
+
+    /**
+     * @param encoder the encoder to set
+     */
+    public void setEncoder(Encoder<?, ?> encoder) {
+        this.encoder = encoder;
+    }
+    
+    public boolean isSetEncoder() {
+        return getEncoder() != null;
     }
 
 }

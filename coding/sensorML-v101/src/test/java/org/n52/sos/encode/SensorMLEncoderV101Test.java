@@ -492,4 +492,14 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassTest {
 		assertThat(xbAddress.getDeliveryPointArray(0), is(responsibleParty.getDeliveryPoint().get(0)));
 		assertThat(xbAddress.getPostalCode(), is(responsibleParty.getPostalCode()));
 	}
+
+    @Test
+    public void should_set_gml_id() throws OwsExceptionReport {
+        final SensorML sensorMl = new SensorML();
+        final System system = new System();
+        sensorMl.addMember(system);
+        system.setGmlId(TEST_ID_1);
+        final SystemType xbSystem = encodeSystem(sensorMl);
+        assertThat(xbSystem.getId(), is(TEST_ID_1));
+    }
 }

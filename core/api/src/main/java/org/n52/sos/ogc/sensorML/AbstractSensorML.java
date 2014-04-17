@@ -40,6 +40,7 @@ import org.n52.sos.ogc.sensorML.elements.SmlCharacteristics;
 import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -58,7 +59,8 @@ public class AbstractSensorML extends SosProcedureDescription {
     private List<SmlContact> contacts = new ArrayList<SmlContact>(0);
     private final List<AbstractSmlDocumentation> documentations = new ArrayList<AbstractSmlDocumentation>(0);
     private String history;
-
+    private String gmlId;
+    
     @Override
     public SosProcedureDescription setIdentifier(final String identifier) {
         super.setIdentifier(identifier);
@@ -274,5 +276,17 @@ public class AbstractSensorML extends SosProcedureDescription {
 
     public boolean isSetHistory() {
         return history != null && !history.isEmpty();
+    }
+
+    public String getGmlId() {
+        return gmlId;
+    }
+
+    public void setGmlId(String gmlId) {
+        this.gmlId = gmlId;
+    }
+
+    public boolean isSetGmlId() {
+        return StringHelper.isNotEmpty(gmlId);
     }
 }

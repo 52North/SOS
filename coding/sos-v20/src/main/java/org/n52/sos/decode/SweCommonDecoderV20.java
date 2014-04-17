@@ -414,17 +414,16 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
     private SweTimeRange parseTimeRange(final TimeRangeType xbTime) throws OwsExceptionReport {
         final SweTimeRange sosTimeRange = new SweTimeRange();
         if (xbTime.isSetValue()) {
-            // FIXME check if this parses correct
             final List<?> value = xbTime.getValue();
             if (value != null && !value.isEmpty()) {
                 final RangeValue<DateTime> range = new RangeValue<DateTime>();
                 boolean first = true;
                 for (final Object object : value) {
                     if (first) {
-                        range.setRangeStart(DateTimeHelper.parseIsoString2DateTime(xbTime.getValue().toString()));
+                        range.setRangeStart(DateTimeHelper.parseIsoString2DateTime(object.toString()));
                         first = false;
                     }
-                    range.setRangeEnd(DateTimeHelper.parseIsoString2DateTime(xbTime.getValue().toString()));
+                    range.setRangeEnd(DateTimeHelper.parseIsoString2DateTime(object.toString()));
                 }
                 sosTimeRange.setValue(range);
             }

@@ -30,6 +30,7 @@
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="sos" uri="http://52north.org/communities/sensorweb/sos/tags" %>
 
 <jsp:include page="../common/header.jsp">
 	<jsp:param name="activeMenu" value="admin" />
@@ -167,6 +168,12 @@ $.extend(Descriptons.prototype, {
 			throw new Error("invalid procedure id");
 		}
 	},
+	_getProcedureFormat: function(id) {
+        if (!this.procedureFormats.hasOwnProperty(id)) {
+            throw new Error("invalid procedure id");
+        }		
+		return this.procedureFormats[id];
+	},
 	_isException: function(e) {
 		var faults = e.getElementsByTagNameNS(this.NS.soap, "Fault"),
 			exceptions = e.getElementsByTagNameNS(this.NS.ows, "ExceptionReport");
@@ -201,7 +208,7 @@ $.extend(Descriptons.prototype, {
 		describeSensor.appendChild(procedure);
 		procedure.appendChild(doc.createTextNode(id));
 		describeSensor.appendChild(procedureDescriptionFormat);
-		procedureDescriptionFormat.appendChild(doc.createTextNode("http://www.opengis.net/sensorML/1.0.1"));
+		procedureDescriptionFormat.appendChild(doc.createTextNode(this._getProcedureFormat(id)));
 		this._setServiceAndVersion(describeSensor);
 		return doc;
 	},
@@ -229,7 +236,7 @@ $.extend(Descriptons.prototype, {
 		updateSensorDescription.appendChild(procedure);
 		procedure.appendChild(doc.createTextNode(id))
 		updateSensorDescription.appendChild(procedureDescriptionFormat);
-		procedureDescriptionFormat.appendChild(doc.createTextNode("http://www.opengis.net/sensorML/1.0.1"));
+		procedureDescriptionFormat.appendChild(doc.createTextNode(this._getProcedureFormat(id)));
 		updateSensorDescription.appendChild(description);
 		description.appendChild(sensorDescription);
 		sensorDescription.appendChild(data);
@@ -258,7 +265,7 @@ $.extend(Descriptons.prototype, {
 			service: "SOS", 
 			version: "2.0.0", 
 			request: "DescribeSensor",
-			procedureDescriptionFormat: "http://www.opengis.net/sensorML/1.0.1",
+			procedureDescriptionFormat: this._getProcedureFormat(id),
 			procedure: id
 		};
 	},
@@ -399,13 +406,14 @@ $.extend(Controller.prototype, {
 				this.$delete.disabled(false);
 				this.$validate.disabled(false);
 			},
-			onError = function() {
+			onError = function(e) {
 				showError("Error requesting description for procedure <code>" + id 
 					+ "</code>: <code>" + e.status + " " + e.statusText 
 					+ "</code> " + e.responseText);
 			};
 		if (!id) {
 			this.$save.disabled(true);
+			
 			this.$delete.disabled(true);
 			this.$validate.disabled(true);
 			this.setEditorContent("");
@@ -506,6 +514,9 @@ $.extend(Controller.prototype, {
 	var sensors = [];
 	<c:forEach items="${sensors}" var="s">
 	sensors.push("${s}");</c:forEach>
+	
+    var procedureFormats = ${sos:mapToJson(procedureFormatMap)};
+	
 	var isUpdateSensorSupported = ${isUpdateSensorSupported};
 	var isDescribeSensorSupported = ${isDescribeSensorSupported};
 	var isDeleteSensorSupported = ${isDeleteSensorSupported};
@@ -513,7 +524,8 @@ $.extend(Controller.prototype, {
 	var descriptions = new Descriptons({
 		describeSensorRequestMethod: "${describeSensorRequestMethod}",
 		baseUrl: baseUrl,
-		sensors: sensors
+		sensors: sensors,
+		procedureFormats: procedureFormats
 	});
 	new Controller({
 		baseUrl: baseUrl,

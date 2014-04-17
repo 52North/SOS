@@ -29,9 +29,12 @@
 package org.n52.sos.web;
 
 import java.io.File;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.n52.sos.service.DatabaseSettingsHandler;
 
 /**
@@ -72,6 +75,10 @@ public class JstlFunctions {
 
     public static boolean viewExists(ServletContext ctx, String path) {
         return new File(ctx.getRealPath("WEB-INF/views/" + path)).exists();
+    }
+
+    public static String mapToJson(@SuppressWarnings("rawtypes") Map map) throws JSONException {
+        return new JSONObject(map).toString(2);
     }
     
     private JstlFunctions() {

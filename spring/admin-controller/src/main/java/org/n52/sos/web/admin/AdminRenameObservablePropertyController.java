@@ -30,9 +30,7 @@ package org.n52.sos.web.admin;
 
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ServiceLoader;
 
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.ds.RenameDAO;
@@ -41,6 +39,7 @@ import org.n52.sos.exception.NoSuchObservablePropertyException;
 import org.n52.sos.exception.ows.concrete.NoImplementationFoundException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.util.ServiceLoaderHelper;
 import org.n52.sos.web.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,12 +93,7 @@ public class AdminRenameObservablePropertyController extends AbstractAdminContro
 
     private RenameDAO getRenameDao() throws NoImplementationFoundException {
         if (this.dao == null) {
-            ServiceLoader<RenameDAO> sl = ServiceLoader.load(RenameDAO.class);
-            Iterator<RenameDAO> i = sl.iterator();
-            this.dao = i.hasNext() ? i.next() : null;
-            if (this.dao == null) {
-                throw new NoImplementationFoundException(RenameDAO.class);
-            }
+            this.dao = ServiceLoaderHelper.loadImplementation(RenameDAO.class);
         }
         return this.dao;
     }

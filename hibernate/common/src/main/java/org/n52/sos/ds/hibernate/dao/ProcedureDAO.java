@@ -39,6 +39,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -850,6 +851,30 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
             LOGGER.debug("QUERY getObservationIdentifiers(procedureIdentifier): {}",
                     HibernateHelper.getSqlString(criteria));
             return Sets.newHashSet(criteria.list());
+        }
+    }
+
+    public Map<String,String> getProcedureFormatMap(Session session) {
+        if (HibernateHelper.isEntitySupported(TProcedure.class, session)) {
+            //get the latest validProcedureTimes' procedureDescriptionFormats
+            return new ValidProcedureTimeDAO().getTProcedureFormatMap(session);
+        } else {
+            Criteria criteria = session.createCriteria(Procedure.class);            
+            criteria.createAlias(Procedure.PROCEDURE_DESCRIPTION_FORMAT, "pdf");
+            criteria.setProjection(Projections.projectionList()
+                    .add(Projections.property(Procedure.IDENTIFIER))
+                    .add(Projections.property("pdf." + ProcedureDescriptionFormat.PROCEDURE_DESCRIPTION_FORMAT)));
+            criteria.addOrder(Order.asc(Procedure.IDENTIFIER));
+            LOGGER.debug("QUERY getProcedureFormatMap(): {}", HibernateHelper.getSqlString(criteria));
+            @SuppressWarnings("unchecked")
+            List<Object[]> results = criteria.list();
+            Map<String,String> procedureFormatMap = Maps.newTreeMap();
+            for (Object[] result : results) {
+                String procedureIdentifier = (String) result[0];
+                String format = (String) result[1];                
+                procedureFormatMap.put(procedureIdentifier, format);
+            }
+            return procedureFormatMap;
         }
     }
 }

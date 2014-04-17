@@ -28,12 +28,10 @@
  */
 package org.n52.sos.web.admin;
 
-import java.util.Iterator;
-import java.util.ServiceLoader;
-
 import org.n52.sos.ds.DeleteDeletedObservationDAO;
 import org.n52.sos.exception.ows.concrete.NoImplementationFoundException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.util.ServiceLoaderHelper;
 import org.n52.sos.web.ControllerConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -54,12 +52,7 @@ public class AdminDeleteDeletedObservationsController extends AbstractAdminContr
 
     private DeleteDeletedObservationDAO getDAO() throws NoImplementationFoundException {
         if (this.dao == null) {
-            ServiceLoader<DeleteDeletedObservationDAO> sl = ServiceLoader.load(DeleteDeletedObservationDAO.class);
-            Iterator<DeleteDeletedObservationDAO> i = sl.iterator();
-            this.dao = i.hasNext() ? i.next() : null;
-            if (this.dao == null) {
-                throw new NoImplementationFoundException(DeleteDeletedObservationDAO.class);
-            }
+            this.dao = ServiceLoaderHelper.loadImplementation(DeleteDeletedObservationDAO.class);
         }
         return this.dao;
     }

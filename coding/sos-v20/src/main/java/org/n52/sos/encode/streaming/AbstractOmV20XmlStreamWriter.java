@@ -147,8 +147,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         writeProcedure(encodingValues);
         writeNewLine();
         if (observation.isSetParameter()) {
-            writeParameter();
-            writeNewLine();
+            writeParameter(encodingValues);
         }
         writeObservableProperty();
         writeNewLine();
@@ -234,9 +233,20 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         }
     }
 
-    protected void writeParameter() {
-        for (NamedValue<?> namedValue : observation.getParameter()) {
-            // TODO
+    protected void writeParameter(EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
+        if (encodingValues.isSetEncoder() && encodingValues.getEncoder() instanceof ObservationEncoder) {
+            for (NamedValue<?> namedValue : observation.getParameter()) {
+                start(OmConstants.QN_OM_20_PARAMETER);
+                writeNewLine();
+                XmlObject xmlObject =
+                        ((ObservationEncoder<XmlObject, Object>) encodingValues.getEncoder()).encode(namedValue, null);
+                writeXmlObject(xmlObject, OmConstants.QN_OM_20_NAMED_VALUE);
+                writeNewLine();
+                indent--;
+                end(OmConstants.QN_OM_20_PARAMETER);
+                writeNewLine();
+                indent++;
+            }
         }
     }
 

@@ -158,6 +158,10 @@ public interface OmConstants {
     String EN_FEATURE_OF_INTEREST = "featureOfInterest";
 
     String EN_PROCESS = "Process";
+    
+    String EN_PARAMETER = "parameter";
+    
+    String EN_NAMED_VALUE = "NamedValue";
 
     // /////////////////////////////////////////////////////////////////////////////////
     // other constants
@@ -246,5 +250,9 @@ public interface OmConstants {
     QName QN_OM_20_FEATURE_OF_INTEREST = new QName(NS_OM_2, EN_FEATURE_OF_INTEREST, NS_OM_PREFIX);
 
     QName QN_OM_20_RESULT = new QName(NS_OM_2, EN_RESULT, NS_OM_PREFIX);
+
+    QName QN_OM_20_PARAMETER = new QName(NS_OM_2, EN_PARAMETER, NS_OM_PREFIX);
+
+    QName QN_OM_20_NAMED_VALUE = new QName(NS_OM_2, EN_NAMED_VALUE, NS_OM_PREFIX);
     
 }

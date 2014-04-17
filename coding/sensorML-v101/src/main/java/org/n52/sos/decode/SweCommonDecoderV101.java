@@ -468,17 +468,16 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
             throws OwsExceptionReport {
         final SweTimeRange sosTimeRange = new SweTimeRange();
         if (timeRange.isSetValue()) {
-            // FIXME check if this parses correct
             final List<?> value = timeRange.getValue();
             if (value != null && !value.isEmpty()) {
                 final RangeValue<DateTime> range = new RangeValue<DateTime>();
                 boolean first = true;
                 for (final Object object : value) {
                     if (first) {
-                        range.setRangeStart(DateTimeHelper.parseIsoString2DateTime(timeRange.getValue().toString()));
+                        range.setRangeStart(DateTimeHelper.parseIsoString2DateTime(object.toString()));
                         first = false;
                     }
-                    range.setRangeEnd(DateTimeHelper.parseIsoString2DateTime(timeRange.getValue().toString()));
+                    range.setRangeEnd(DateTimeHelper.parseIsoString2DateTime(object.toString()));
                 }
                 sosTimeRange.setValue(range);
             }

@@ -220,6 +220,9 @@ public class SensorMLDecoderV101 implements Decoder<AbstractSensorML, XmlObject>
 
     private void parseAbstractProcess(final AbstractProcessType xbAbstractProcess,
             final AbstractProcess abstractProcess) throws OwsExceptionReport {
+        if (xbAbstractProcess.getId() != null) {
+            abstractProcess.setGmlId(xbAbstractProcess.getId());
+        }
         if (xbAbstractProcess.getIdentificationArray() != null) {
             parseIdentifications(abstractProcess, xbAbstractProcess.getIdentificationArray());
         }

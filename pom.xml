@@ -69,6 +69,7 @@
         <hibernate.version>4.1.12.Final</hibernate.version>
         <hibernate.spatial.version>4.1-52N</hibernate.spatial.version>
         <sqlite.version>3.7.2</sqlite.version>
+        <jackson.version>2.3.3</jackson.version>
 
         <!-- 52N dependency versions -->
         <n52.common.xml.version>1.1.5</n52.common.xml.version>
@@ -647,9 +648,14 @@
                 <version>1.0.2</version>
             </dependency>
             <dependency>
-                <artifactId>jackson-core</artifactId>
                 <groupId>com.fasterxml.jackson.core</groupId>
-                <version>2.1.4</version>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

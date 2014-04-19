@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds;
 
+import java.util.Collection;
+
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
@@ -39,4 +41,14 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
  */
 public interface CacheFeederDAO {
     void updateCache(WritableContentCache capabilitiesCache) throws OwsExceptionReport;
+
+    /**
+     * Reload all cache data for a list of offerings, for instance after a DeleteSensor event
+     * 
+     * @param capabilitiesCache The cache to update
+     * @param offerings A list of offerings to update
+     * @throws OwsExceptionReport
+     */
+    void updateCacheOfferings(WritableContentCache capabilitiesCache, Collection<String> offerings)
+            throws OwsExceptionReport;
 }

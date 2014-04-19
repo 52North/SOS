@@ -73,8 +73,10 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     private static final String THREAD_GROUP_NAME = "offering-cache-update";
 
     private final OfferingDAO offeringDAO = new OfferingDAO();
-    
-    private Collection<Offering> allOfferings;
+
+    private Collection<String> offeringsIdToUpdate = Lists.newArrayList();
+
+    private Collection<Offering> offeringsToUpdate;
     
     private Map<String,Collection<ObservationConstellationInfo>> offObsConstInfoMap;
     
@@ -86,11 +88,16 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         super(threads, THREAD_GROUP_NAME);
     }
 
-    private Collection<Offering> getAllOfferings() {
-        if (allOfferings == null) {
-            allOfferings = offeringDAO.getOfferingObjects(getSession());
+    public OfferingCacheUpdate(int threads, Collection<String> offeringIdsToUpdate) {
+        super(threads, THREAD_GROUP_NAME);
+        this.offeringsIdToUpdate = offeringIdsToUpdate;
+    }
+
+    private Collection<Offering> getOfferingsToUpdate() {
+        if (offeringsToUpdate == null) {            
+            offeringsToUpdate = offeringDAO.getOfferingObjectsForCacheUpdate(offeringsIdToUpdate, getSession());
         }
-        return allOfferings;
+        return offeringsToUpdate;
     }
 
     private Map<String,Collection<ObservationConstellationInfo>> getOfferingObservationConstellationInfo() {
@@ -106,7 +113,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         LOGGER.debug("Executing OfferingCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
         //perform single threaded updates here
-        for (Offering offering : getAllOfferings()){
+        for (Offering offering : getOfferingsToUpdate()){
             String offeringId = offering.getIdentifier();
             if (shouldOfferingBeProcessed(offeringId)) {
                 String offeringName = offering.getName();
@@ -131,18 +138,18 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         }
 
         //time ranges
-        //TODO querying all offering time extrema in a single query is definitely faster for a properly
+        //TODO querying offering time extrema in a single query is definitely faster for a properly
         //     indexed Postgres db, but may not be true for all platforms. move back to multithreaded execution
         //     in OfferingCacheUpdateTask if needed
-        Map<String, OfferingTimeExtrema> allOfferingTimeExtrema = null;
+        Map<String, OfferingTimeExtrema> offeringTimeExtrema = null;
         try {
-            allOfferingTimeExtrema = offeringDAO.getAllOfferingTimeExtrema(getSession());
+            offeringTimeExtrema = offeringDAO.getOfferingTimeExtrema(offeringsIdToUpdate, getSession());
         } catch (CodedException ce) {
             LOGGER.error("Error while querying offering time ranges!", ce);
             getErrors().add(ce);
         }
-        if (!CollectionHelper.isEmpty(allOfferingTimeExtrema)) {
-            for (Entry<String,OfferingTimeExtrema> entry : allOfferingTimeExtrema.entrySet()) {
+        if (!CollectionHelper.isEmpty(offeringTimeExtrema)) {
+            for (Entry<String,OfferingTimeExtrema> entry : offeringTimeExtrema.entrySet()) {
                 String offeringId = entry.getKey();
                 OfferingTimeExtrema ote = entry.getValue();
                 getCache().setMinPhenomenonTimeForOffering(offeringId, ote.getMinPhenomenonTime());
@@ -163,7 +170,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     @Override
     protected OfferingCacheUpdateTask[] getUpdatesToExecute() {
         Collection<OfferingCacheUpdateTask> offeringUpdateTasks = Lists.newArrayList();
-        for (Offering offering : getAllOfferings()){
+        for (Offering offering : getOfferingsToUpdate()){
             if (shouldOfferingBeProcessed(offering.getIdentifier())) {
                 offeringUpdateTasks.add(new OfferingCacheUpdateTask(offering.getIdentifier(),
                         getOfferingObservationConstellationInfo().get(offering.getIdentifier())));

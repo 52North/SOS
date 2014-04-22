@@ -39,7 +39,7 @@ import org.n52.sos.ogc.om.values.MultiValue;
  * @param <T>
  *            value type
  */
-public class MultiObservationValues<T> implements ObservationValue<MultiValue<T>> {
+public class MultiObservationValues<T> extends AbstractObservationValue<MultiValue<T>> {
     /**
      * serial number
      */

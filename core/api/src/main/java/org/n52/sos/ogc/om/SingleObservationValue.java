@@ -42,7 +42,7 @@ import org.n52.sos.ogc.om.values.Value;
  * @param <T>
  *            value type
  */
-public class SingleObservationValue<T> implements ObservationValue<Value<T>> {
+public class SingleObservationValue<T> extends AbstractObservationValue<Value<T>> {
     /**
      * serial number
      */

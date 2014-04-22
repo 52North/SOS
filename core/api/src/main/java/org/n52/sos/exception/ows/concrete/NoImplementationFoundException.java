@@ -51,7 +51,7 @@ public class NoImplementationFoundException extends NoApplicableCodeException {
     }
 
     public NoImplementationFoundException(final String required) {
-        withMessage("No implementation for '{}' found.", required);
+        withMessage("No implementation for '%s' found.", required);
         setStatus(INTERNAL_SERVER_ERROR);
     }
 }

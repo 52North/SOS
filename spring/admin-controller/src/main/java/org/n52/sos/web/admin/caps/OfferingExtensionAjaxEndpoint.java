@@ -30,6 +30,7 @@ package org.n52.sos.web.admin.caps;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +53,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import com.google.common.collect.Lists;
 
 @Controller
 @RequestMapping(ControllerConstants.Paths.OFFERING_EXTENSIONS_AJAX_ENDPOINT)
@@ -82,7 +85,8 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getOfferingExtensions() throws JSONException, OwsExceptionReport {
 		final Map<String, List<OfferingExtension>> offeringExtensions = getDao().getOfferingExtensions();
-		final Collection<String> offerings = getCache().getOfferings();
+		final List<String> offerings = Lists.newArrayList(getCache().getOfferings());
+		Collections.sort(offerings);
 		final JSONObject response = new JSONObject();
 		for (final String offering : offerings) {
 			response.put(offering, toJson(offeringExtensions.get(offering)));

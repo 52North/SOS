@@ -38,7 +38,6 @@ import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.ObservationEncoder;
-import org.n52.sos.encode.OperationEncoderKey;
 import org.n52.sos.encode.XmlEncoderKey;
 import org.n52.sos.encode.XmlStreamWriter;
 import org.n52.sos.encode.streaming.StreamingEncoder;
@@ -47,11 +46,8 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2StreamingConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.response.GetObservationResponse;
-import org.n52.sos.util.Constants;
 import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.sos.util.http.MediaTypes;
 import org.n52.sos.w3c.W3CConstants;
 
 import com.google.common.collect.Maps;
@@ -114,12 +110,13 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         ObservationEncoder<XmlObject, OmObservation> encoder = findObservationEncoder(response.getResponseFormat());
         Map<HelperValues, String> additionalValues = Maps.newHashMap();
         additionalValues.put(HelperValues.DOCUMENT, null);
+        EncodingValues encodingValues = new EncodingValues(additionalValues).setEncodingNamespace(response.getResponseFormat());
         // TODO remove this if the values are streamed
         if (encoder.shouldObservationsWithSameXBeMerged()) {
             response.mergeObservationsWithSameConstellation();
         }
         for (OmObservation observation : response.getObservationCollection()) {
-            writeObservationData(observation, encoder, additionalValues);
+            writeObservationData(observation, encoder, encodingValues);
             writeNewLine();
         }
         indent--;
@@ -127,13 +124,13 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
     }
     
     @SuppressWarnings("unchecked")
-    private void writeObservationData(OmObservation observation, ObservationEncoder<XmlObject, OmObservation> encoder, Map<HelperValues, String> additionalValues) throws XMLStreamException, OwsExceptionReport {
+    private void writeObservationData(OmObservation observation, ObservationEncoder<XmlObject, OmObservation> encoder, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
         start(Sos2StreamingConstants.OBSERVATION_DATA);
         writeNewLine();
         if (encoder instanceof StreamingEncoder<?, ?>) {
-            ((StreamingEncoder<XmlObject, OmObservation>) encoder).encode(observation, getOutputStream(), new EncodingValues(additionalValues).setAsDocument(true).setEmbedded(true).setIndent(indent));
+            ((StreamingEncoder<XmlObject, OmObservation>) encoder).encode(observation, getOutputStream(), encodingValues.setAsDocument(true).setEmbedded(true).setIndent(indent));
         } else {
-            rawText(((XmlObject) encoder.encode(observation, additionalValues)).xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
+            rawText(((XmlObject) encoder.encode(observation, encodingValues.getAdditionalValues())).xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
         }
         indent--;
         writeNewLine();

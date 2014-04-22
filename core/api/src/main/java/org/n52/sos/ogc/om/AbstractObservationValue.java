@@ -1,3 +1,31 @@
+/**
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ *
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+ *
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+ *
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ */
 package org.n52.sos.ogc.om;
 
 import org.n52.sos.ogc.om.values.Value;
@@ -13,16 +41,16 @@ public abstract class AbstractObservationValue<T extends Value<?>> implements Ob
     
     private String observableProperty;
     
-    private String tokenSeperator;
+    private String tokenSeparator;
     
-    private String tupleSeperator;
+    private String tupleSeparator;
     
     public void setValuesForResultEncoding(OmObservation observation) {
         setObservationID(observation.getObservationID());
         setObservableProperty(observation.getObservationConstellation().getObservableProperty().getIdentifier());
         setObservationType(observation.getObservationConstellation().getObservationType());
-        setTokenSeperator(observation.getTokenSeparator());
-        setTupleSeperator(observation.getTupleSeparator());
+        setTokenSeparator(observation.getTokenSeparator());
+        setTupleSeparator(observation.getTupleSeparator());
     }
 
     /**
@@ -80,39 +108,39 @@ public abstract class AbstractObservationValue<T extends Value<?>> implements Ob
     }
 
     /**
-     * @return the tokenSeperator
+     * @return the tokenSeparator
      */
-    public String getTokenSeperator() {
-        return tokenSeperator;
+    public String getTokenSeparator() {
+        return tokenSeparator;
     }
 
     /**
-     * @param tokenSeperator the tokenSeperator to set
+     * @param tokenSeparator the tokenSeparator to set
      */
-    private void setTokenSeperator(String tokenSeperator) {
-        this.tokenSeperator = tokenSeperator;
+    private void setTokenSeparator(String tokenSeparator) {
+        this.tokenSeparator = tokenSeparator;
     }
     
-    public boolean isSetTokenSeperator() {
-        return StringHelper.isNotEmpty(getTokenSeperator());
+    public boolean isSetTokenSeparator() {
+        return StringHelper.isNotEmpty(getTokenSeparator());
     }
 
     /**
-     * @return the tupleSeperator
+     * @return the tupleSeparator
      */
-    public String getTupleSeperator() {
-        return tupleSeperator;
+    public String getTupleSeparator() {
+        return tupleSeparator;
     }
 
     /**
-     * @param tupleSeperator the tupleSeperator to set
+     * @param tupleSeparator the tupleSeparator to set
      */
-    private void setTupleSeperator(String tupleSeperator) {
-        this.tupleSeperator = tupleSeperator;
+    private void setTupleSeparator(String tupleSeparator) {
+        this.tupleSeparator = tupleSeparator;
     }
     
-    public boolean isSetTupleSeperator() {
-        return StringHelper.isNotEmpty(getTupleSeperator());
+    public boolean isSetTupleSeparator() {
+        return StringHelper.isNotEmpty(getTupleSeparator());
     }
 
 }

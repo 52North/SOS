@@ -48,14 +48,18 @@ import net.opengis.watermlDr.x20.TimePositionListType;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.streaming.WmlTDREncoderv20XmlStreamWriter;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gmlcov.GmlCoverageConstants;
+import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.MultiObservationValues;
+import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -117,7 +121,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     private static Set<EncoderKey> createEncoderKeys() {
         return CollectionHelper
                 .union(getDefaultEncoderKeys(), CodingHelper.encoderKeysForElements(WaterMLConstants.NS_WML2_DR,
-                        GetObservationResponse.class, OmObservation.class, AbstractFeature.class));
+                        GetObservationResponse.class, OmObservation.class, AbstractFeature.class, SingleObservationValue.class, MultiObservationValues.class));
     }
 
     @Override
@@ -158,6 +162,18 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     }
     
     @Override
+    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
+            UnsupportedEncoderInputException {
+        XmlObject encodedObject = null;
+        if (element instanceof ObservationValue) {
+            encodedObject = encodeResult((ObservationValue<?>)element);
+        } else {
+            encodedObject = super.encode(element, additionalValues);
+        }
+        return encodedObject;
+    }
+    
+    @Override
     public void encode(Object objectToEncode, OutputStream outputStream, EncodingValues encodingValues)
             throws OwsExceptionReport {
         encodingValues.setEncoder(this);
@@ -175,6 +191,11 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     @Override
     protected XmlObject createResult(OmObservation sosObservation) throws OwsExceptionReport {
         return createMeasurementDomainRange(sosObservation);
+    }
+
+    @Override
+    protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
+        return createMeasurementDomainRange((AbstractObservationValue)observationValue);
     }
 
     @Override
@@ -328,5 +349,76 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
             }
         }
         return values;
+    }
+    
+    private XmlObject createMeasurementDomainRange(AbstractObservationValue observationValue) throws OwsExceptionReport {
+
+        MeasurementTimeseriesDomainRangeDocument xbMearuementTimeseriesDomainRangeDoc =
+                MeasurementTimeseriesDomainRangeDocument.Factory.newInstance();
+        MeasurementTimeseriesCoverageType xbMeasurementTimeseriesDomainRange =
+                xbMearuementTimeseriesDomainRangeDoc.addNewMeasurementTimeseriesDomainRange();
+        xbMeasurementTimeseriesDomainRange.setId("timeseries_" + observationValue.getObservationID());
+
+        // set time position list
+        xbMeasurementTimeseriesDomainRange.addNewDomainSet().set(getTimePositionList(observationValue));
+        // initialize unit
+//        AbstractPhenomenon observableProperty = observationValue.getObservableProperty();
+        String unit = "";
+        // create quantity list from values
+        QuantityListDocument quantityListDoc = QuantityListDocument.Factory.newInstance();
+        MeasureOrNilReasonListType quantityList = quantityListDoc.addNewQuantityList();
+        if (observationValue instanceof MultiObservationValues) {
+            MultiObservationValues<?> multiObservationValue = (MultiObservationValues<?>) observationValue.getValue();
+            TVPValue tvpValue = (TVPValue) multiObservationValue.getValue();
+            List<TimeValuePair> timeValuePairs = tvpValue.getValue();
+            if (Strings.isNullOrEmpty(unit) && CollectionHelper.isNotEmpty(timeValuePairs)
+                    && timeValuePairs.get(0).getValue().isSetUnit()) {
+                unit = timeValuePairs.get(0).getValue().getUnit();
+            }
+            quantityList.setListValue(getValueList(timeValuePairs));
+        }
+
+        if (Strings.isNullOrEmpty(unit)) {
+            unit = OGCConstants.UNKNOWN;
+        }
+        quantityList.setUom(unit);
+        // set unit to SosObservableProperty if not set.
+//        if (observableProperty instanceof OmObservableProperty
+//                && !((OmObservableProperty) observableProperty).isSetUnit()) {
+//            ((OmObservableProperty) observableProperty).setUnit(unit);
+//        }
+        // set up range set
+        xbMeasurementTimeseriesDomainRange.addNewRangeSet().set(quantityListDoc);
+        // set up rangeType
+        xbMeasurementTimeseriesDomainRange.addNewRangeType().set(createDataRecord(observationValue));
+
+        // set om:Result
+        return xbMearuementTimeseriesDomainRangeDoc;
+    }
+    
+    private XmlObject createDataRecord(AbstractObservationValue observationValue) throws OwsExceptionReport {
+//        AbstractPhenomenon observableProperty = sosObservation.getObservationConstellation().getObservableProperty();
+        SweDataRecord dataRecord = new SweDataRecord();
+        dataRecord.setIdentifier("datarecord_" + observationValue.getObservationID());
+        SweQuantity quantity = new SweQuantity();
+        quantity.setDefinition(observationValue.getObservableProperty());
+//        quantity.setDescription(observableProperty.getDescription());
+//        if (observableProperty instanceof OmObservableProperty
+//                && ((OmObservableProperty) observableProperty).isSetUnit()) {
+//            quantity.setUom(((OmObservableProperty) observableProperty).getUnit());
+//        }
+        SweField field = new SweField("observed_value", quantity);
+        dataRecord.addField(field);
+        Map<HelperValues, String> additionalValues = Maps.newEnumMap(HelperValues.class);
+        additionalValues.put(HelperValues.FOR_OBSERVATION, null);
+        return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, dataRecord, additionalValues);
+    }
+    
+    private TimePositionListDocument getTimePositionList(AbstractObservationValue observationValue) throws OwsExceptionReport {
+        TimePositionListDocument timePositionListDoc = TimePositionListDocument.Factory.newInstance();
+        TimePositionListType timePositionList = timePositionListDoc.addNewTimePositionList();
+        timePositionList.setId("timepositionList_" + observationValue.getObservationID());
+        timePositionList.setTimePositionList(getTimeArray((MultiObservationValues<?>) observationValue.getValue()));
+        return timePositionListDoc;
     }
 }

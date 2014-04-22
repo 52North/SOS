@@ -55,6 +55,8 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
     protected int indent = 0;
     
     private OutputStream out;
+    
+    protected static String XML_FRAGMENT = "xml-fragment";
 
     @Override
     protected void init(OutputStream out) throws XMLStreamException {
@@ -112,10 +114,10 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
     }
     
     @Override
-    protected void writeXmlObject(XmlObject xmlObject, QName qnamwe) throws XMLStreamException {
+    protected void writeXmlObject(XmlObject xmlObject, QName qname) throws XMLStreamException {
         if (xmlObject != null) {
             String s = xmlObject.xmlText(XmlOptionsHelper.getInstance().getXmlOptions());
-            rawText(s.replaceAll("xml-fragment", getReplacement(qnamwe)));
+            rawText(s.replaceAll(XML_FRAGMENT, getReplacement(qname)));
         }
      }
 

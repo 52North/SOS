@@ -64,6 +64,7 @@ import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmCompositePhenomenon;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
@@ -113,6 +114,8 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
      *             if an error occurs
      */
     protected abstract XmlObject createResult(OmObservation sosObservation) throws OwsExceptionReport;
+    
+    protected abstract XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport;
 
     /**
      * Method to add the observation type to the om:Observation. Subclasses

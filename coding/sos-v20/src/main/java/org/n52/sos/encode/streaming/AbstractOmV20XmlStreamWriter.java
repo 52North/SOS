@@ -31,18 +31,17 @@ package org.n52.sos.encode.streaming;
 import java.io.OutputStream;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
+
+import net.opengis.om.x20.OMObservationType;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.encode.AbstractOmEncoderv20;
 import org.n52.sos.encode.Encoder;
-import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.ObservationEncoder;
-import org.n52.sos.encode.XmlEncoderKey;
 import org.n52.sos.encode.XmlStreamWriter;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
@@ -65,6 +64,7 @@ import org.n52.sos.util.Constants;
 import org.n52.sos.util.GmlHelper;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.W3CConstants;
 
 import com.google.common.collect.Maps;
@@ -144,7 +144,6 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         writePhenomenonTime(phenomenonTime);
         writeNewLine();
         writeResultTime();
-        writeNewLine();
         writeProcedure(encodingValues);
         writeNewLine();
         if (observation.isSetParameter()) {
@@ -154,7 +153,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         writeNewLine();
         writeFeatureOfIntererst(encodingValues);
         writeNewLine();
-        writeResult();
+        writeResult(encodingValues);
         writeNewLine();
         indent--;
         end(OmConstants.QN_OM_20_OBSERVATION);
@@ -203,6 +202,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
             if (resultTime.equals(phenomenonTime)) {
                 empty(OmConstants.QN_OM_20_RESULT_TIME);
                 addXlinkHrefAttr(Constants.NUMBER_SIGN_STRING + phenomenonTime.getGmlId());
+                writeNewLine();
             } else {
                 addResultTime(resultTime);
             }
@@ -213,6 +213,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
             if (phenomenonTime instanceof TimeInstant) {
                 empty(OmConstants.QN_OM_20_RESULT_TIME);
                 addXlinkHrefAttr(Constants.NUMBER_SIGN_STRING + phenomenonTime.getGmlId());
+                writeNewLine();
             } else if (phenomenonTime instanceof TimePeriod) {
                 TimeInstant rsTime = new TimeInstant(((TimePeriod) observation.getPhenomenonTime()).getEnd());
                 addResultTime(rsTime);
@@ -256,7 +257,6 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         addXlinkHrefAttr(observation.getObservationConstellation().getObservableProperty().getIdentifier());
     }
 
-    @SuppressWarnings("unchecked")
     protected void writeFeatureOfIntererst(EncodingValues encodingValues) throws XMLStreamException,
             OwsExceptionReport {
         if (encodingValues.isSetEncoder() && encodingValues.getEncoder() instanceof AbstractOmEncoderv20) {
@@ -283,9 +283,32 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         }
     }
 
-    protected void writeResult() throws XMLStreamException {
-        ((AbstractObservationValue)observation.getValue()).setValuesForResultEncoding(observation);
-        empty(OmConstants.QN_OM_20_RESULT);
+    protected void writeResult(EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
+        ((AbstractObservationValue<?>)observation.getValue()).setValuesForResultEncoding(observation);
+        XmlObject createResult = CodingHelper.encodeObjectToXml(encodingValues.getEncodingNamespace(), observation.getValue());
+        if (createResult != null) {
+//          start(OmConstants.QN_OM_20_RESULT);
+//          writeNewLine();
+            // dirty 
+          if (createResult.xmlText().contains(XML_FRAGMENT)) {
+              XmlObject set = OMObservationType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions()).addNewResult().set(createResult);
+              writeXmlObject(set, OmConstants.QN_OM_20_RESULT);
+          } else {
+              start(OmConstants.QN_OM_20_RESULT);
+              writeNewLine();
+              writeXmlObject(createResult, OmConstants.QN_OM_20_RESULT);
+              writeNewLine();
+              indent--;
+              end(OmConstants.QN_OM_20_RESULT);
+              indent++;
+          }
+//          writeNewLine();
+//          indent--;
+//          end(OmConstants.QN_OM_20_RESULT);
+//          indent++;
+        } else {
+            empty(OmConstants.QN_OM_20_RESULT);
+        }
         // TODO
     }
 

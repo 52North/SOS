@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.dialect.Dialect;
@@ -45,7 +46,6 @@ import org.hibernate.mapping.Table;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
@@ -60,6 +60,7 @@ import org.n52.sos.util.SQLConstants;
 import org.n52.sos.util.StringHelper;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -896,7 +897,15 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
                 checkedSchema.add(string);
             }
         }
-        return checkedSchema.toArray(new String[checkedSchema.size()]);
+        // remove dublicated entries
+        Set<String> set = Sets.newHashSet(checkedSchema);
+        List<String> nonDublicated = Lists.newLinkedList();
+        for (String string : checkedSchema) {
+            if (set.contains(string)) {
+                nonDublicated.add(string);
+            }
+        }
+        return nonDublicated.toArray(new String[nonDublicated.size()]);
     }
 
     @Override

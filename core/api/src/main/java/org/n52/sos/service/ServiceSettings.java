@@ -67,8 +67,6 @@ public class ServiceSettings implements SettingDefinitionProvider {
     
     public static final String  VALIDATE_RESPONSE = "service.response.validate";
     
-    public static final String FORCE_STREAMING = "service.streaming.force";
-
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Service").setOrder(2);
 
     public static final UriSettingDefinition SERVICE_URL_DEFINITION = new UriSettingDefinition()
@@ -169,16 +167,6 @@ public class ServiceSettings implements SettingDefinitionProvider {
                     .setTitle("Should this SOS validate the XML response in non debug mode?")
                     .setDescription(
                             "Whether the SOS should validate the XML response when the debug mode is disables!");
-    
-    public static final BooleanSettingDefinition FORCE_STREAMING_DEFINITION =
-            new BooleanSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_17)
-                    .setKey(FORCE_STREAMING)
-                    .setDefaultValue(true)
-                    .setTitle("Should this service stream the XML responses?")
-                    .setDescription(
-                            "Whether the service should stream the XML response! If true, the responses are not validated!");
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = Sets.<SettingDefinition<?, ?>> newHashSet(
             SERVICE_URL_DEFINITION,
@@ -187,7 +175,7 @@ public class ServiceSettings implements SettingDefinitionProvider {
             SENSOR_DIRECTORY_DEFINITION, USE_DEFAULT_PREFIXES_DEFINITION,
             ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR_DEFINITION, DEREGISTER_JDBC_DRIVER_DEFINITION,
             ADD_OUTPUTS_TO_SENSOR_ML_DEFINITION, STRICT_SPATIAL_FILTERING_PROFILE_DEFINITION, 
-            VALIDATE_RESPONSE_DEFINITION, FORCE_STREAMING_DEFINITION);
+            VALIDATE_RESPONSE_DEFINITION);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

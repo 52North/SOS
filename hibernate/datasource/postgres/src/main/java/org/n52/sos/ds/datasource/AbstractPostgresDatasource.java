@@ -37,6 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,6 +50,7 @@ import org.n52.sos.exception.ConfigurationException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
@@ -240,6 +242,14 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
                 checkedSchema.add(string);
             }
         }
-        return checkedSchema.toArray(new String[checkedSchema.size()]);
+        // remove dublicated entries
+        Set<String> set = Sets.newHashSet(checkedSchema);
+        List<String> nonDublicated = Lists.newLinkedList();
+        for (String string : checkedSchema) {
+            if (set.contains(string)) {
+                nonDublicated.add(string);
+            }
+        }
+        return nonDublicated.toArray(new String[nonDublicated.size()]);
     }
 }

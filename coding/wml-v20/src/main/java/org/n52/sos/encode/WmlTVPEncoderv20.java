@@ -146,6 +146,11 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     }
     
     @Override
+    public boolean supportsResultStreamingForMergedValues() {
+        return true;
+    }
+
+    @Override
     public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
             UnsupportedEncoderInputException {
         XmlObject encodedObject = null;
@@ -179,7 +184,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
 
     @Override
     protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
-        return createMeasurementTimeseries((AbstractObservationValue)observationValue);
+        return createMeasurementTimeseries((AbstractObservationValue<?>)observationValue);
     }
 
     @Override
@@ -224,7 +229,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         xbDefMeasureMetaComponent.getDefaultTVPMeasurementMetadata().getInterpolationType().setTitle("Instantaneous");
         String unit = null;
         if (sosObservation.getValue() instanceof SingleObservationValue) {
-            SingleObservationValue<?> singleObservationValue = (SingleObservationValue) sosObservation.getValue();
+            SingleObservationValue<?> singleObservationValue = (SingleObservationValue<?>) sosObservation.getValue();
             String time = getTimeString(singleObservationValue.getPhenomenonTime());
             unit = singleObservationValue.getValue().getUnit();
             if (sosObservation.getValue().getValue() instanceof QuantityValue) {
@@ -242,7 +247,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                 }
             }
         } else if (sosObservation.getValue() instanceof MultiObservationValues) {
-            MultiObservationValues<?> observationValue = (MultiObservationValues) sosObservation.getValue();
+            MultiObservationValues<?> observationValue = (MultiObservationValues<?>) sosObservation.getValue();
             TVPValue tvpValue = (TVPValue) observationValue.getValue();
             List<TimeValuePair> timeValuePairs = tvpValue.getValue();
             unit = tvpValue.getUnit();
@@ -303,7 +308,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         }
     }
     
-    private XmlObject createMeasurementTimeseries(AbstractObservationValue observationValue) throws OwsExceptionReport {
+    private XmlObject createMeasurementTimeseries(AbstractObservationValue<?> observationValue) throws OwsExceptionReport {
         MeasurementTimeseriesDocument measurementTimeseriesDoc = MeasurementTimeseriesDocument.Factory.newInstance();
         MeasurementTimeseriesType measurementTimeseries = measurementTimeseriesDoc.addNewMeasurementTimeseries();
         measurementTimeseries.setId("timeseries." + observationValue.getObservationID());
@@ -322,7 +327,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         xbDefMeasureMetaComponent.getDefaultTVPMeasurementMetadata().getInterpolationType().setTitle("Instantaneous");
         String unit = null;
         if (observationValue instanceof SingleObservationValue) {
-            SingleObservationValue<?> singleObservationValue = (SingleObservationValue) observationValue;
+            SingleObservationValue<?> singleObservationValue = (SingleObservationValue<?>) observationValue;
             String time = getTimeString(singleObservationValue.getPhenomenonTime());
             unit = singleObservationValue.getValue().getUnit();
             if (observationValue.getValue() instanceof QuantityValue) {
@@ -340,7 +345,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                 }
             }
         } else if (observationValue instanceof MultiObservationValues) {
-            MultiObservationValues<?> multiObservationValue = (MultiObservationValues) observationValue;
+            MultiObservationValues<?> multiObservationValue = (MultiObservationValues<?>) observationValue;
             TVPValue tvpValue = (TVPValue) multiObservationValue.getValue();
             List<TimeValuePair> timeValuePairs = tvpValue.getValue();
             unit = tvpValue.getUnit();

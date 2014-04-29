@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
@@ -43,6 +44,7 @@ import org.hibernate.spatial.dialect.oracle.OracleSpatial10gDialect;
 import org.hibernate.spatial.dialect.postgis.PostgisDialect;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Class to generate the create and drop scripts for different databases.
@@ -228,6 +230,7 @@ public class SQLScriptGenerator {
                     checkedSchema.add(string);
                 }
             }
+            Set<String> set = Sets.newHashSet(checkedSchema);
             printToScreen("Scripts are created for: " + dia.toString());
             printToScreen("");
             printToScreen("#######################################");
@@ -235,7 +238,9 @@ public class SQLScriptGenerator {
             printToScreen("#######################################");
             printToScreen("");
             for (String t : checkedSchema.toArray(new String[checkedSchema.size()])) {
-                printToScreen(t + ";");
+                if (set.contains(t)) {
+                    printToScreen(t + ";");
+                }
             }
             // drop script
             String[] drop = configuration.generateDropSchemaScript(dia);

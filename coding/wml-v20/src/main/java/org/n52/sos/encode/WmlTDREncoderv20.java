@@ -162,6 +162,11 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     }
     
     @Override
+    public boolean supportsResultStreamingForMergedValues() {
+        return false;
+    }
+
+    @Override
     public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
             UnsupportedEncoderInputException {
         XmlObject encodedObject = null;
@@ -195,7 +200,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
 
     @Override
     protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
-        return createMeasurementDomainRange((AbstractObservationValue)observationValue);
+        return createMeasurementDomainRange((AbstractObservationValue<?>)observationValue);
     }
 
     @Override
@@ -351,7 +356,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         return values;
     }
     
-    private XmlObject createMeasurementDomainRange(AbstractObservationValue observationValue) throws OwsExceptionReport {
+    private XmlObject createMeasurementDomainRange(AbstractObservationValue<?> observationValue) throws OwsExceptionReport {
 
         MeasurementTimeseriesDomainRangeDocument xbMearuementTimeseriesDomainRangeDoc =
                 MeasurementTimeseriesDomainRangeDocument.Factory.newInstance();
@@ -368,8 +373,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         QuantityListDocument quantityListDoc = QuantityListDocument.Factory.newInstance();
         MeasureOrNilReasonListType quantityList = quantityListDoc.addNewQuantityList();
         if (observationValue instanceof MultiObservationValues) {
-            MultiObservationValues<?> multiObservationValue = (MultiObservationValues<?>) observationValue.getValue();
-            TVPValue tvpValue = (TVPValue) multiObservationValue.getValue();
+            TVPValue tvpValue = (TVPValue) ((MultiObservationValues<?>)observationValue).getValue();
             List<TimeValuePair> timeValuePairs = tvpValue.getValue();
             if (Strings.isNullOrEmpty(unit) && CollectionHelper.isNotEmpty(timeValuePairs)
                     && timeValuePairs.get(0).getValue().isSetUnit()) {
@@ -390,23 +394,19 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         // set up range set
         xbMeasurementTimeseriesDomainRange.addNewRangeSet().set(quantityListDoc);
         // set up rangeType
-        xbMeasurementTimeseriesDomainRange.addNewRangeType().set(createDataRecord(observationValue));
+        xbMeasurementTimeseriesDomainRange.addNewRangeType().set(createDataRecord(observationValue, unit));
 
         // set om:Result
         return xbMearuementTimeseriesDomainRangeDoc;
     }
     
-    private XmlObject createDataRecord(AbstractObservationValue observationValue) throws OwsExceptionReport {
+    private XmlObject createDataRecord(AbstractObservationValue<?> observationValue, String unit) throws OwsExceptionReport {
 //        AbstractPhenomenon observableProperty = sosObservation.getObservationConstellation().getObservableProperty();
         SweDataRecord dataRecord = new SweDataRecord();
         dataRecord.setIdentifier("datarecord_" + observationValue.getObservationID());
         SweQuantity quantity = new SweQuantity();
         quantity.setDefinition(observationValue.getObservableProperty());
-//        quantity.setDescription(observableProperty.getDescription());
-//        if (observableProperty instanceof OmObservableProperty
-//                && ((OmObservableProperty) observableProperty).isSetUnit()) {
-//            quantity.setUom(((OmObservableProperty) observableProperty).getUnit());
-//        }
+        quantity.setUom(unit);
         SweField field = new SweField("observed_value", quantity);
         dataRecord.addField(field);
         Map<HelperValues, String> additionalValues = Maps.newEnumMap(HelperValues.class);
@@ -414,11 +414,11 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, dataRecord, additionalValues);
     }
     
-    private TimePositionListDocument getTimePositionList(AbstractObservationValue observationValue) throws OwsExceptionReport {
+    private TimePositionListDocument getTimePositionList(AbstractObservationValue<?> observationValue) throws OwsExceptionReport {
         TimePositionListDocument timePositionListDoc = TimePositionListDocument.Factory.newInstance();
         TimePositionListType timePositionList = timePositionListDoc.addNewTimePositionList();
         timePositionList.setId("timepositionList_" + observationValue.getObservationID());
-        timePositionList.setTimePositionList(getTimeArray((MultiObservationValues<?>) observationValue.getValue()));
+        timePositionList.setTimePositionList(getTimeArray((MultiObservationValues<?>) observationValue));
         return timePositionListDoc;
     }
 }

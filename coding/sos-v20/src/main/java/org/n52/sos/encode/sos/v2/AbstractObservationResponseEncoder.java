@@ -105,7 +105,7 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
         // there is no O&M2 compatible observation encoder:
         // search for a encoder for the response and delegate
         Encoder<XmlObject, T> responseEncoder = findResponseEncoder(responseFormat);
-        if (encoder != null) {
+        if (responseEncoder != null) {
             return responseEncoder.encode(response);
         } else {
             // unsupported responseFormat

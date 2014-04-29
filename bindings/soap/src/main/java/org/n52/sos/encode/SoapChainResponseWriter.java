@@ -81,7 +81,7 @@ public class SoapChainResponseWriter extends AbstractResponseWriter<SoapChain> {
                 CodingHelper.getEncoderKey(chain.getSoapResponse().getSoapNamespace(), chain.getSoapResponse());
         Encoder<?, SoapResponse> encoder = getEncoder(key);
         if (encoder != null) {
-            if (ServiceConfiguration.getInstance().isForceStreaming() && encoder instanceof StreamingEncoder) {
+            if (ServiceConfiguration.getInstance().isForceStreamingEncoding() && encoder instanceof StreamingEncoder) {
                 ((StreamingEncoder) encoder).encode(chain.getSoapResponse(), out);
                 return null;
             } else {

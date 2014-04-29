@@ -114,7 +114,7 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
      *         {@link StreamingEncoder}
      */
     private boolean isStreaming(AbstractServiceResponse asr) {
-        return ServiceConfiguration.getInstance().isForceStreaming() && getEncoder(asr) instanceof StreamingEncoder;
+        return ServiceConfiguration.getInstance().isForceStreamingEncoding() && getEncoder(asr) instanceof StreamingEncoder;
     }
 
 }

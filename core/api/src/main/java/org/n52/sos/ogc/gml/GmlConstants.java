@@ -199,7 +199,11 @@ public interface GmlConstants extends Constants {
     QName QN_IDENTIFIER_32 = new QName(NS_GML_32, EN_IDENTIFIER, NS_GML_PREFIX);
 
     QName QN_DESCRIPTION_32 = new QName(NS_GML_32, EN_DESCRIPTION, NS_GML_PREFIX);
-
+    
+    QName QN_ID = new QName(NS_GML, AN_ID, NS_GML_PREFIX);
+    
+    QName QN_ID_32 = new QName(NS_GML_32, AN_ID, NS_GML_PREFIX);
+    
     /** string constant for ascending sorting order */
     String SORT_ORDER_ASC = SortingOrder.ASC.name();
 

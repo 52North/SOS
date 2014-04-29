@@ -28,7 +28,12 @@
  */
 package org.n52.sos.encode.streaming;
 
+import javax.xml.stream.XMLStreamException;
+
+import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class OmV20XmlStreamWriter extends AbstractOmV20XmlStreamWriter {
 
@@ -38,5 +43,11 @@ public class OmV20XmlStreamWriter extends AbstractOmV20XmlStreamWriter {
     
     public OmV20XmlStreamWriter(OmObservation observation) {
         super(observation);
+    }
+    
+    @Override
+    protected void writeResult(OmObservation observation, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
+        // TODO Auto-generated method stub
+        super.writeResult(observation, encodingValues);
     }
 }

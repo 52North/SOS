@@ -39,6 +39,8 @@ import org.n52.sos.ogc.sos.SosConstants;
  * 
  */
 public class GetObservationResponse extends AbstractObservationResponse {
+    
+    private boolean mergeObservation = false;
 
     public void mergeObservationsWithSameConstellation() {
         // TODO merge all observations with the same observationContellation
@@ -97,6 +99,14 @@ public class GetObservationResponse extends AbstractObservationResponse {
     @Override
     public String getOperationName() {
         return SosConstants.Operations.GetObservation.name();
+    }
+
+    public void setMergeObservations(boolean mergeObservation) {
+       this.mergeObservation = mergeObservation;
+    }
+    
+    public boolean isSetMergeObservation(){
+        return mergeObservation;
     }
 
 }

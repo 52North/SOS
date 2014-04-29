@@ -155,6 +155,12 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
     }
 
     @Override
+    public boolean supportsResultStreamingForMergedValues() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
     public MediaType getContentType() {
         return OmConstants.CONTENT_TYPE_OM_2;
     }
@@ -213,9 +219,9 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
     @Override
     protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
         if (observationValue instanceof SingleObservationValue) {
-            return createSingleObservationToResult((SingleObservationValue)observationValue);
+            return createSingleObservationToResult((SingleObservationValue<?>)observationValue);
         } else if (observationValue instanceof MultiObservationValues) {
-            return createMultiObservationValueToResult((MultiObservationValues)observationValue);
+            return createMultiObservationValueToResult((MultiObservationValues<?>)observationValue);
         }
         return null;
     }
@@ -255,7 +261,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
      */
     @Deprecated
     private XmlObject createSingleObservationToResult(OmObservation sosObservation) throws OwsExceptionReport {
-        SingleObservationValue<?> observationValue = (SingleObservationValue) sosObservation.getValue();
+        SingleObservationValue<?> observationValue = (SingleObservationValue<?>) sosObservation.getValue();
         final String observationType;
         if (sosObservation.getObservationConstellation().isSetObservationType()) {
             observationType = sosObservation.getObservationConstellation().getObservationType();
@@ -358,7 +364,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
      */
     @Deprecated
     private XmlObject createMultiObservationValueToResult(OmObservation sosObservation) throws OwsExceptionReport {
-        MultiObservationValues<?> observationValue = (MultiObservationValues) sosObservation.getValue();
+        MultiObservationValues<?> observationValue = (MultiObservationValues<?>) sosObservation.getValue();
         // TODO create SosSweDataArray
         SweDataArray dataArray = SweHelper.createSosSweDataArray(sosObservation);
         Map<HelperValues, String> additionalValues =

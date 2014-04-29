@@ -138,7 +138,7 @@ public class ServiceConfiguration {
 
     private boolean overallExtrema = true;
     
-    private boolean streaming = true;
+    private boolean streamingEncoding = true;
     
     /**
      * Returns the default token seperator for results.
@@ -390,16 +390,16 @@ public class ServiceConfiguration {
         return overallExtrema;
     }
     
-    @Setting(ServiceSettings.FORCE_STREAMING)
-    public void setForceStreaming(boolean streaming) {
-        this.streaming  = streaming;
+    @Setting(StreamingSettings.FORCE_STREAMING_ENCODING)
+    public void setForceStreamingEncoding(boolean streamingEncoding) {
+        this.streamingEncoding  = streamingEncoding;
     }
 
     /**
      * @return
      */
-    public boolean isForceStreaming() {
-        return streaming;
+    public boolean isForceStreamingEncoding() {
+        return streamingEncoding;
     }
     
     /*

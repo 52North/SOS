@@ -43,6 +43,8 @@ public interface W3CConstants {
     String AN_TITLE = "title";
 
     String AN_TYPE = "type";
+    
+    String AN_NIL = "nil";
 
     String AN_SCHEMA_LOCATION = "schemaLocation";
 
@@ -67,10 +69,12 @@ public interface W3CConstants {
 
     QName QN_XSI_TYPE = new QName(NS_XSI, AN_TYPE, NS_XSI_PREFIX);
     
+    QName QN_XSI_NIL = new QName(NS_XSI, AN_NIL, NS_XSI_PREFIX);
+
     QName QN_XLINK_HREF = new QName(NS_XLINK, AN_HREF, NS_XLINK_PREFIX);
 
     QName QN_XLINK_TITLE = new QName(NS_XLINK, AN_TITLE, NS_XLINK_PREFIX);
-    
+
     /**
      * Enum for xlink type attribute types
      * 

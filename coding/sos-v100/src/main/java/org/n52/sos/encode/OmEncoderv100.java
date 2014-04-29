@@ -195,6 +195,11 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
     }
 
     @Override
+    public boolean supportsResultStreamingForMergedValues() {
+        return false;
+    }
+
+    @Override
     public MediaType getContentType() {
         return OmConstants.CONTENT_TYPE_OM;
     }

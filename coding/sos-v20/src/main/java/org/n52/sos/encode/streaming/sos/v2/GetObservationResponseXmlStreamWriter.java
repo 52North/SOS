@@ -43,6 +43,8 @@ import org.n52.sos.encode.XmlStreamWriter;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.StreamingObservation;
+import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2StreamingConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
@@ -111,13 +113,55 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         Map<HelperValues, String> additionalValues = Maps.newHashMap();
         additionalValues.put(HelperValues.DOCUMENT, null);
         EncodingValues encodingValues = new EncodingValues(additionalValues).setEncodingNamespace(response.getResponseFormat());
-        // TODO remove this if the values are streamed
         if (encoder.shouldObservationsWithSameXBeMerged()) {
             response.mergeObservationsWithSameConstellation();
         }
-        for (OmObservation observation : response.getObservationCollection()) {
-            writeObservationData(observation, encoder, encodingValues);
-            writeNewLine();
+        for (OmObservation o : response.getObservationCollection()) {
+            if (o.getValue() instanceof StreamingObservation) {
+                StreamingObservation streamingObservation = (StreamingObservation)o.getValue();
+                if (streamingObservation.hasNextSingleObservation()) {
+                    if (encoder.shouldObservationsWithSameXBeMerged() || response.isSetMergeObservation()) {
+                        for (OmObservation obs : streamingObservation.mergeObservation()) {
+                            writeObservationData(obs, encoder, encodingValues);
+                            writeNewLine();
+                        }
+                    } else {
+                        do {
+                            writeObservationData(streamingObservation.nextSingleObservation(), encoder, encodingValues);
+                            writeNewLine();
+                        } while (streamingObservation.hasNextSingleObservation());
+                    }
+                } else if (streamingObservation.getValue() != null) {
+                    writeObservationData(streamingObservation.getValue().getValue(), encoder, encodingValues);
+                    writeNewLine();
+                }
+            } else if (o.getValue() instanceof StreamingValue) {
+                StreamingValue streamingValue = (StreamingValue)o.getValue();
+                if (streamingValue.hasNextValue()) {
+                    if (encoder.shouldObservationsWithSameXBeMerged() || response.isSetMergeObservation()) {
+                        if (encoder.supportsResultStreamingForMergedValues()) {
+                            writeObservationData(o, encoder, encodingValues);
+                            writeNewLine();
+                        } else {
+                            for (OmObservation obs : streamingValue.mergeObservation()) {
+                                writeObservationData(obs, encoder, encodingValues);
+                                writeNewLine();
+                            }
+                        }
+                    } else {
+                        do {
+                            writeObservationData(streamingValue.nextSingleObservation(), encoder, encodingValues);
+                            writeNewLine();
+                        } while (streamingValue.hasNextValue());
+                    }
+                } else if (streamingValue.getValue() != null) {
+                    writeObservationData(streamingValue.getValue().getValue(), encoder, encodingValues);
+                    writeNewLine();
+                }
+            } else {
+                writeObservationData(o, encoder, encodingValues);
+                writeNewLine();
+            }
         }
         indent--;
         end(Sos2StreamingConstants.GET_OBSERVATION_RESPONSE);

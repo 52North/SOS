@@ -45,6 +45,8 @@ public abstract class AbstractObservationValue<T extends Value<?>> implements Ob
     
     private String tupleSeparator;
     
+    private String unit;
+    
     public void setValuesForResultEncoding(OmObservation observation) {
         setObservationID(observation.getObservationID());
         setObservableProperty(observation.getObservationConstellation().getObservableProperty().getIdentifier());
@@ -141,6 +143,24 @@ public abstract class AbstractObservationValue<T extends Value<?>> implements Ob
     
     public boolean isSetTupleSeparator() {
         return StringHelper.isNotEmpty(getTupleSeparator());
+    }
+
+    /**
+     * @return the unit
+     */
+    public String getUnit() {
+        return unit;
+    }
+
+    /**
+     * @param unit the unit to set
+     */
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+    
+    public boolean isSetUnit() {
+        return StringHelper.isNotEmpty(getUnit());
     }
 
 }

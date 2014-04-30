@@ -113,6 +113,16 @@ public abstract class HibernateSeriesStreamingValue extends StreamingValue {
         }
     }
     
+    @Override
+    protected void queryUnit() {
+        try {
+            setUnit(seriesValueDAO.getUnit(request, series, session));
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        
+    }
+    
     protected TimeValuePair createTimeValuePairFrom(SeriesValue seriesValue) throws OwsExceptionReport {
         return new TimeValuePair(createPhenomenonTime(seriesValue), getValueFrom(seriesValue));
     }

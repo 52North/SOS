@@ -39,7 +39,7 @@ import org.n52.sos.util.CollectionHelper;
 
 import com.google.common.collect.Lists;
 
-public abstract class StreamingValue implements ObservationValue<Value<OmObservation>> {
+public abstract class StreamingValue extends AbstractObservationValue<Value<OmObservation>> {
     
     private static final long serialVersionUID = -884370769373807775L;
 
@@ -48,6 +48,10 @@ public abstract class StreamingValue implements ObservationValue<Value<OmObserva
     private TimeInstant resultTime;
     
     private Time validTime;
+    
+    private String unit;
+    
+    private boolean unitQueried = false;
     
     @Override
     public Time getPhenomenonTime() {
@@ -78,6 +82,27 @@ public abstract class StreamingValue implements ObservationValue<Value<OmObserva
         // TODO Auto-generated method stub
     }
     
+    @Override
+    public String getUnit() {
+        isSetUnit();
+        return unit;
+    }
+    
+    @Override
+    public void setUnit(String unit) {
+        this.unit = unit;
+        unitQueried = true;
+    }
+    
+    @Override
+    public boolean isSetUnit() {
+        if (!unitQueried && unit == null) {
+            queryUnit();
+            unitQueried = true;
+        }
+        return unit != null; 
+    }
+
     public TimeInstant getResultTime() {
         return resultTime;
     }
@@ -103,6 +128,8 @@ public abstract class StreamingValue implements ObservationValue<Value<OmObserva
     }
 
     protected abstract void queryTimes();
+    
+    protected abstract void queryUnit();
     
     public abstract boolean hasNextValue() throws OwsExceptionReport;
 

@@ -109,17 +109,6 @@ public class SosGetObservationOperatorV20 extends
         return false;
     }
 
-    private boolean responseContainsStreamingValues(GetObservationResponse response) {
-        if (CollectionHelper.isNotEmpty(response.getObservationCollection())) {
-            for (OmObservation observation : response.getObservationCollection()) {
-                if (observation.getValue() instanceof StreamingObservation || observation.getValue() instanceof StreamingValue) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     private boolean isSetExtensionMergeObservationsToSweDataArray(final GetObservationRequest sosRequest) {
         return sosRequest.isSetExtensions()
                 && sosRequest.getExtensions().isBooleanExtensionSet(

@@ -62,10 +62,12 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
     @Override
     protected void writeResult(OmObservation observation, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
          start(OmConstants.QN_OM_20_RESULT);
+         writeNewLine();
          start(WaterMLConstants.QN_MEASUREMENT_TIMESERIES);
          attr(GmlConstants.QN_ID_32, "timeseries." + observation.getObservationID());
+         writeNewLine();
          writeMeasurementTimeseriesMetadata(observation.getPhenomenonTime().getGmlId());
-         boolean isDefaultPointMetadataWritten = false;
+         writeNewLine();
         if (observation.getValue() instanceof SingleObservationValue) {
             SingleObservationValue<?> observationValue = (SingleObservationValue<?>) observation.getValue();
             writeDefaultPointMetadata(observationValue.getValue().getUnit());
@@ -84,12 +86,10 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
             close();
         } else if (observation.getValue() instanceof StreamingValue) {
             StreamingValue observationValue = (StreamingValue) observation.getValue();
+            writeDefaultPointMetadata(observationValue.getUnit());
+            writeNewLine();
             while (observationValue.hasNextValue()) {
                 TimeValuePair timeValuePair = observationValue.nextValue();
-                if (!isDefaultPointMetadataWritten) {
-                    writeDefaultPointMetadata(timeValuePair.getValue().getUnit());
-                    isDefaultPointMetadataWritten = true;
-                }
                 writePoint(getTimeString(timeValuePair.getTime()), getValue(timeValuePair.getValue()));
                 writeNewLine();
             }
@@ -100,26 +100,42 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
     }
         
     private void close() throws XMLStreamException {
+        indent--;
         end(WaterMLConstants.QN_MEASUREMENT_TIMESERIES);
+        writeNewLine();
         end(OmConstants.QN_OM_20_RESULT);
+        indent++;
     }
 
     private void writeMeasurementTimeseriesMetadata(String id) throws XMLStreamException {
         start(WaterMLConstants.QN_METADATA);
+        writeNewLine();
         start(WaterMLConstants.QN_TIMESERIES_METADATA);
+        writeNewLine();
         empty(WaterMLConstants.QN_TEMPORAL_EXTENT);
         addXlinkHrefAttr("#" + id);
+        writeNewLine();
+        indent--;
         end(WaterMLConstants.QN_TIMESERIES_METADATA);
+        writeNewLine();
         end(WaterMLConstants.QN_METADATA);
+        indent++;
     }
 
     private void writeDefaultPointMetadata(String unit) throws XMLStreamException {
         start(WaterMLConstants.QN_DEFAULT_POINT_METADATA);
+        writeNewLine();
         start(WaterMLConstants.QN_DEFAULT_TVP_MEASUREMENT_METADATA);
+        writeNewLine();
         writeUOM(unit);
+        writeNewLine();
         writeInterpolationType();
+        writeNewLine();
+        indent--;
         end(WaterMLConstants.QN_DEFAULT_TVP_MEASUREMENT_METADATA);
+        writeNewLine();
         end(WaterMLConstants.QN_DEFAULT_POINT_METADATA);
+        indent++;
     }
 
     private void writeUOM(String code) throws XMLStreamException {
@@ -149,16 +165,25 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
     private void writePoint(String time, String value) throws XMLStreamException {
         if (StringHelper.isNotEmpty(time)) {
             start(WaterMLConstants.QN_POINT);
+            writeNewLine();
             writeMeasurementTVP(time, value);
+            writeNewLine();
+            indent--;
             end(WaterMLConstants.QN_POINT);
+            indent++;
         }
     }
     
     private void writeMeasurementTVP(String time, String value) throws XMLStreamException {
         start(WaterMLConstants.QN_MEASUREMENT_TVP);
+        writeNewLine();
         writeTime(time);
+        writeNewLine();
         writeValue(value);
+        writeNewLine();
+        indent--;
         end(WaterMLConstants.QN_MEASUREMENT_TVP);
+        indent++;
     }
 
     private void writeTime(String time) throws XMLStreamException {

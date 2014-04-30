@@ -37,9 +37,11 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.dao.AbstractValueDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
+import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
@@ -114,6 +116,15 @@ public class SeriesValueDAO extends AbstractValueDAO {
     public Criteria getDefaultObservationCriteria(Class<?> clazz, Session session) {
         return session.createCriteria(clazz).add(Restrictions.eq(SeriesValue.DELETED, false))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    }
+
+    public String getUnit(GetObservationRequest request, long series, Session session) throws OwsExceptionReport {
+        Criteria c = getSeriesValueCriteriaFor(request, series, null, session);
+        Unit unit = (Unit)c.setMaxResults(1).setProjection(Projections.property(SeriesValue.UNIT)).uniqueResult();
+        if (unit != null && unit.isSetUnit()) {
+            return unit.getUnit();
+        }
+        return null;
     }
 
 }

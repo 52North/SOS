@@ -44,7 +44,7 @@ import com.google.common.collect.Lists;
  *
  * @param <T>
  */
-public abstract class StreamingObservation implements ObservationValue<Value<OmObservation>> {
+public abstract class StreamingObservation extends AbstractObservationValue<Value<OmObservation>> {
 
     /**
      * serial number

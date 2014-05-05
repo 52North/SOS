@@ -26,28 +26,52 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.cache.ctrl.action;
+package org.n52.sos.ds;
 
-import org.n52.sos.cache.ContentCacheUpdate;
-import org.n52.sos.ds.CacheFeederDAO;
-import org.n52.sos.ds.CacheFeederDAORepository;
+import org.n52.sos.config.SettingsManager;
+import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.exception.ows.concrete.NoImplementationFoundException;
+import org.n52.sos.util.ServiceLoaderHelper;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author Shane StClair <shane@axiomalaska.com>
  * 
- * @since 4.0.0
+ * @since 4.0.2
  */
-public abstract class CacheFeederDAOCacheUpdate extends ContentCacheUpdate {
+public class CacheFeederDAORepository {
+	private static class LazyHolder {
+		private static final CacheFeederDAORepository INSTANCE = new CacheFeederDAORepository();
+		
+		private LazyHolder() {};
+	}
+
+    /**
+     * @return Returns a singleton instance of the CacheFeederDAORepository.
+     */
+    public static CacheFeederDAORepository getInstance() {
+        return LazyHolder.INSTANCE;
+    }
+
+    /** Loaded and configured implementation */
     private CacheFeederDAO cacheFeederDAO;
 
-    protected CacheFeederDAO getDao() throws NoImplementationFoundException {
-        if (this.cacheFeederDAO == null) {
-            this.cacheFeederDAO = CacheFeederDAORepository.getInstance().getCacheFeederDAO();
-            if (this.cacheFeederDAO == null) {
-                throw new NoImplementationFoundException(CacheFeederDAO.class);
-            }
+    /**
+     * Load implemented CacheFeederDAO
+     * 
+     * @throws ConfigurationException
+     *             If no CacheFeederDAO implementation is found
+     * @throws ConfigurationException 
+     */
+    private CacheFeederDAORepository() throws ConfigurationException {
+        try {
+            cacheFeederDAO = ServiceLoaderHelper.loadImplementation(CacheFeederDAO.class);
+        } catch (NoImplementationFoundException e) {
+            throw new ConfigurationException(e);
         }
-        return this.cacheFeederDAO;
+        SettingsManager.getInstance().configure(cacheFeederDAO);
+    }
+
+    public CacheFeederDAO getCacheFeederDAO() {
+        return cacheFeederDAO;
     }
 }

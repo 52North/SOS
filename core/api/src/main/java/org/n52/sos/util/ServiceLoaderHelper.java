@@ -26,32 +26,30 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.exception.ows.concrete;
+package org.n52.sos.util;
 
-import static org.n52.sos.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
+import java.util.Iterator;
+import java.util.ServiceLoader;
 
-import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.exception.ows.concrete.NoImplementationFoundException;
 
-/**
- * @author Christian Autermann <c.autermann@52north.org>
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- *         J&uuml;rrens</a>
- * 
- * @since 4.0.0
- */
-public class NoImplementationFoundException extends NoApplicableCodeException {
-    private static final long serialVersionUID = 8191563379756983127L;
-
-    public NoImplementationFoundException(final Class<?> required) {
-        this(required.getSimpleName());
-    }
-
-    public NoImplementationFoundException(final String format, final Object... args) {
-        this(String.format(format, args));
-    }
-
-    public NoImplementationFoundException(final String required) {
-        withMessage("No implementation for '%s' found.", required);
-        setStatus(INTERNAL_SERVER_ERROR);
+public class ServiceLoaderHelper {
+    /**
+     * Return an implementation of a class, loaded by the ServiceLoader
+     * 
+     * @param clazz The class to load
+     * @return An implementation of the class
+     * @throws NoImplementationFoundException
+     */
+    public static <T> T loadImplementation(Class<T> clazz) throws NoImplementationFoundException {
+        T impl = null;
+        ServiceLoader<T> sl = ServiceLoader.load(clazz);
+        Iterator<T> i = sl.iterator();
+        //TODO throw exception if more than one implementation is found?
+        impl = i.hasNext() ? i.next() : null;
+        if (impl == null) {
+            throw new NoImplementationFoundException(clazz);
+        }
+        return impl;
     }
 }

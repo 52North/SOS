@@ -32,7 +32,7 @@ import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.HibernateSeriesRelations.HasSeries;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
 
-public class SeriesValue extends AbstractValue implements HasSeries{
+public class SeriesValue extends AbstractValue implements HasSeries {
 
     private Series series;
 

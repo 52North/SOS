@@ -26,13 +26,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.values;
+package org.n52.sos.ds.hibernate.values.series;
 
 import java.util.Iterator;
 import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
+import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -61,11 +62,6 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         boolean next = false;
         if (seriesValuesResult == null || !seriesValuesResult.hasNext()) {
             getNextResults();
-//            if (seriesValuesResult != null) {
-//                next = seriesValuesResult.hasNext();
-//            }
-//        } else {
-//            next = seriesValuesResult.hasNext();
         }
         if (seriesValuesResult != null) {
             next = seriesValuesResult.hasNext();

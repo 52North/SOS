@@ -66,6 +66,8 @@ public interface W3CConstants {
     QName QN_SCHEMA_LOCATION_PREFIXED = new QName(NS_XSI, AN_SCHEMA_LOCATION, NS_XSI_PREFIX);
 
     QName QN_XSI_TYPE = new QName(NS_XSI, AN_TYPE, NS_XSI_PREFIX);
+
+    QName QN_XLINK_HREF = new QName(NS_XLINK, AN_HREF, NS_XLINK_PREFIX);
     
     /**
      * Enum for xlink type attribute types

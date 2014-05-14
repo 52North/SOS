@@ -28,6 +28,8 @@
  */
 package org.n52.sos.gda;
 
+import org.n52.sos.config.annotation.Configurable;
+import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.AbstractOperationDAO;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
@@ -40,7 +42,15 @@ import org.n52.sos.util.SosHelper;
  * 
  * @since 4.0.0
  */
+@Configurable
 public abstract class AbstractGetDataAvailabilityDAO extends AbstractOperationDAO {
+    
+    public static final String INCLUDE_RESULT_TIMES = "IncludeResultTimes";
+    
+    public static final String SHOW_COUNT = "ShowCount";
+    
+    private boolean forceValueCount = false;
+
     public AbstractGetDataAvailabilityDAO(String service) {
         super(service, GetDataAvailabilityConstants.OPERATION_NAME);
     }
@@ -69,4 +79,19 @@ public abstract class AbstractGetDataAvailabilityDAO extends AbstractOperationDA
      */
     public abstract GetDataAvailabilityResponse getDataAvailability(GetDataAvailabilityRequest sosRequest)
             throws OwsExceptionReport;
+
+    /**
+     * @return the forceValueCount
+     */
+    protected boolean isForceValueCount() {
+        return forceValueCount;
+    }
+
+    /**
+     * @param forceValueCount the forceValueCount to set
+     */
+    @Setting(GetDataAvailabilitySettings.FORCE_GDA_VALUE_COUNT)
+    public void setForceValueCount(boolean forceValueCount) {
+        this.forceValueCount = forceValueCount;
+    }
 }

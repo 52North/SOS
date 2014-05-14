@@ -175,7 +175,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         try {
             Session session = sessionHolder.getSession();
             if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()
-                    && HibernateHelper.isEntitySupported(SpatialFilteringProfile.class, session)) {
+                    && DaoFactory.getInstance().getSpatialFilteringProfileDAO(session) != null) {
                 return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
             }
             sessionHolder.returnSession(session);

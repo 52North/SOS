@@ -58,11 +58,6 @@ public class GetDataAvailabilityJsonDecoder extends AbstractSosRequestDecoder<Ge
     @Override
     protected GetDataAvailabilityRequest decodeRequest(JsonNode node) throws OwsExceptionReport {
         GetDataAvailabilityRequest req = new GetDataAvailabilityRequest();
-        if (node.has(JSONConstants.FEATURE_OF_INTEREST)) {
-            for (String feature : parseStringOrStringList(node.path(JSONConstants.FEATURE_OF_INTEREST))) {
-                req.addFeatureOfInterest(feature);
-            }
-        }
         if (node.has(JSONConstants.PROCEDURE)) {
             for (String procedure : parseStringOrStringList(node.path(JSONConstants.PROCEDURE))) {
                 req.addProcedure(procedure);
@@ -71,6 +66,11 @@ public class GetDataAvailabilityJsonDecoder extends AbstractSosRequestDecoder<Ge
         if (node.has(JSONConstants.OBSERVED_PROPERTY)) {
             for (String property : parseStringOrStringList(node.path(JSONConstants.OBSERVED_PROPERTY))) {
                 req.addObservedProperty(property);
+            }
+        }
+        if (node.has(JSONConstants.FEATURE_OF_INTEREST)) {
+            for (String feature : parseStringOrStringList(node.path(JSONConstants.FEATURE_OF_INTEREST))) {
+                req.addFeatureOfInterest(feature);
             }
         }
         if (node.has(JSONConstants.OFFERING)) {

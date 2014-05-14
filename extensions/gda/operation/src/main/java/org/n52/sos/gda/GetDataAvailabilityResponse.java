@@ -34,8 +34,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.StringHelper;
+
+import com.google.common.collect.Lists;
 
 /**
  * Response of a {@link GetDataAvailabilityRequest}.
@@ -46,6 +51,8 @@ import org.n52.sos.response.AbstractServiceResponse;
  */
 public class GetDataAvailabilityResponse extends AbstractServiceResponse {
     private final List<DataAvailability> dataAvailabilities = new LinkedList<DataAvailability>();
+    
+    private String namespace = GetDataAvailabilityConstants.NS_GDA;
 
     /**
      * Creates a new {@code GetDataAvailabilityResponse} consisting of zero or
@@ -106,8 +113,10 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
 
         private final TimePeriod phenomenonTime;
         
-        private long valueCount = -1;
-
+        private long count = -1;
+        
+        private List<TimeInstant> resultTimes = Lists.newArrayList();
+        
         /**
          * Creates a new {@code DataAvailability}.
          * 
@@ -148,7 +157,7 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
             this.procedure = procedure;
             this.featureOfInterest = featureOfInterest;
             this.phenomenonTime = phenomenonTime;
-            this.valueCount = valueCount;
+            this.count = valueCount;
         }
 
         /**
@@ -180,14 +189,54 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         }
         
         /**
-         * @return the {@code valueCount} for this combination.
+         * @return the {@code count} for this combination.
          */
-        public long getValueCount() {
-            return valueCount;
+        public long getCount() {
+            return count;
+        }
+        
+        /**
+         * Set the {@code count} for this combination
+         * @return this.
+         */
+        public DataAvailability setCount(long count) {
+            this.count = count;
+            return this;
         }
 
-        public boolean isSetValueCount() {
-            return valueCount >= 0 ;
+        public boolean isSetCount() {
+            return count >= 0 ;
         }
+        
+        public DataAvailability setResultTimes(List<TimeInstant> resultTimes) {
+            if (resultTimes != null) {
+                this.resultTimes = resultTimes;
+            }
+            return this;
+        }
+        
+        public DataAvailability addResultTime(TimeInstant resultTime) {
+            getResultTimes().add(resultTime);
+            return this;
+        }
+        
+        public List<TimeInstant> getResultTimes() {
+            return this.resultTimes;
+        }
+        
+        public boolean isSetResultTime() {
+            return CollectionHelper.isNotEmpty(getResultTimes());
+        }
+        
+    }
+
+    public void setNamespace(String namespace) {
+        if (StringHelper.isNotEmpty(namespace)) {
+            this.namespace = namespace;
+        }
+    }
+    
+    public String getNamespace() {
+        return this.namespace;
     }
 }

@@ -65,7 +65,7 @@ public class SwesExtensions {
     }
 
     private boolean isExtensionNameEquals(final String extensionName, final SwesExtension<?> swesExtension) {
-        return swesExtension.getDefinition().equalsIgnoreCase(extensionName)
+        return extensionName.equalsIgnoreCase(swesExtension.getDefinition())
                 || (swesExtension.getValue() instanceof SweAbstractDataComponent
                         && ((SweAbstractDataComponent) swesExtension.getValue()).isSetDefinition() && ((SweAbstractDataComponent) swesExtension
                             .getValue()).getDefinition().equalsIgnoreCase(extensionName));
@@ -73,6 +73,10 @@ public class SwesExtensions {
 
     public boolean addSwesExtension(final SwesExtension<?> extension) {
         return extensions.add(extension);
+    }
+    
+    public Set<SwesExtension<?>> getExtensions() {
+        return extensions;
     }
 
     public boolean isEmpty() {

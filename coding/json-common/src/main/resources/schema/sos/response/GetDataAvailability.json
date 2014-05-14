@@ -17,17 +17,13 @@
           "items": {
             "type": "object",
             "required": [
+           	  "procedure",
+           	  "observedProperty",
               "featureOfInterest",
-              "procedure",
-              "observedProperty",
               "phenomenonTime"
             ],
             "properties": {
-              "featureOfInterest": {
-                "type": "string",
-                "format": "uri"
-              },
-              "procedure": {
+            	"procedure": {
                 "type": "string",
                 "format": "uri"
               },
@@ -35,8 +31,15 @@
                 "type": "string",
                 "format": "uri"
               },
+              "featureOfInterest": {
+                "type": "string",
+                "format": "uri"
+              },
               "phenomenonTime": {
                 "$ref": "http://www.52north.org/schema/json/TimePeriod#"
+              },
+              "count": {
+              	"type": "long"
               }
             }
           }

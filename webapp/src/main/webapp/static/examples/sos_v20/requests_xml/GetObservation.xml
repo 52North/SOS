@@ -68,6 +68,25 @@
 			</gml:TimeInstant>
 		</fes:TEquals>
 	</sos:temporalFilter>
+	
+	<sos:temporalFilter>
+		<fes:During>
+			<fes:ValueReference>resultTime</fes:ValueReference>
+			<gml:TimePeriod gml:id="tp_1">
+				<gml:beginPosition>2012-11-19T13:00:00.000Z</gml:beginPosition>
+				<gml:endPosition>2012-11-19T13:05:00.000Z</gml:endPosition>
+			</gml:TimePeriod>
+		</fes:During>
+	</sos:temporalFilter>
+	
+	<sos:temporalFilter>
+		<fes:TEquals>
+			<fes:ValueReference>resultTime</fes:ValueReference>
+			<gml:TimeInstant gml:id="ti_1">
+				<gml:timePosition>2012-11-19T14:00:00.000+01:00</gml:timePosition>
+			</gml:TimeInstant>
+		</fes:TEquals>
+	</sos:temporalFilter>
 	-->
 
 	<!-- optional, multiple values possible -->

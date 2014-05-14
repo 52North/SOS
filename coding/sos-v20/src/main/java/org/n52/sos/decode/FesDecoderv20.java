@@ -47,6 +47,7 @@ import net.opengis.fes.x20.PropertyIsLikeType;
 import net.opengis.fes.x20.PropertyIsNilType;
 import net.opengis.fes.x20.PropertyIsNullType;
 import net.opengis.fes.x20.SpatialOpsType;
+import net.opengis.fes.x20.TemporalOpsDocument;
 import net.opengis.fes.x20.TemporalOpsType;
 import net.opengis.fes.x20.UnaryLogicOpType;
 import net.opengis.fes.x20.ValueReferenceDocument;
@@ -94,7 +95,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
 
     private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.decoderKeysForElements(FilterConstants.NS_FES_2,
             SpatialOpsType.class, TemporalOpsType.class, ComparisonOpsType.class, LogicOpsType.class,
-            FilterType.class, FilterDocument.class);
+            FilterType.class, FilterDocument.class, TemporalOpsDocument.class);
 
     public FesDecoderv20() {
         StringBuilder builder = new StringBuilder();
@@ -127,6 +128,8 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
             return parseSpatialFilterType((SpatialOpsType) xmlObject);
         } else if (xmlObject instanceof TemporalOpsType) {
             return parseTemporalFilterType((TemporalOpsType) xmlObject);
+        } else if (xmlObject instanceof TemporalOpsDocument) {
+            return parseTemporalFilterType(((TemporalOpsDocument) xmlObject).getTemporalOps());
         } else if (xmlObject instanceof ComparisonOpsType) {
             return parseComparisonFilterType((ComparisonOpsType) xmlObject);
         } else if (xmlObject instanceof LogicOpsType) {

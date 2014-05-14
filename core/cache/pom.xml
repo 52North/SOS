@@ -22,6 +22,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
             <classifier>tests</classifier>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -32,5 +33,10 @@
             <artifactId>test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>test</scope>
+        </dependency>        
     </dependencies>
 </project>

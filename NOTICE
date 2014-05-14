@@ -94,9 +94,9 @@ This project includes:
   hibernate-spatial under GNU Lesser General Public License (LGPL) version 2.1
   HttpClient under Apache License
   HttpCore under Apache License
-  Jackson-annotations under The Apache Software License, Version 2.0
-  Jackson-core under The Apache Software License, Version 2.0
-  jackson-databind under The Apache Software License, Version 2.0
+  Jackson-annotations under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
+  Jackson-core under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
+  jackson-databind under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   Java Property Utility under The Apache Software License, Version 2.0
   JavaMail API jar under CDDL or GPLv2+CE
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0

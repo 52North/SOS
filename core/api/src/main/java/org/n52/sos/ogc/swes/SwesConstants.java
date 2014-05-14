@@ -30,7 +30,7 @@ package org.n52.sos.ogc.swes;
 
 import javax.xml.namespace.QName;
 
-//import org.n52.sos.ogc.swe.SWEConstants;
+import org.n52.sos.util.XmlHelper;
 import org.n52.sos.w3c.SchemaLocation;
 
 /**
@@ -44,6 +44,8 @@ public interface SwesConstants {
     String NS_SWES_20 = "http://www.opengis.net/swes/2.0";
 
     String NS_SWES_PREFIX = "swes";
+    
+    String XPATH_PREFIXES_SWES = XmlHelper.getXPathPrefix(NS_SWES_PREFIX, NS_SWES_20);
 
     String SCHEMA_LOCATION_URL_SWES_20 = "http://schemas.opengis.net/swes/2.0/swes.xsd";
 
@@ -71,6 +73,8 @@ public interface SwesConstants {
             SCHEMA_LOCATION_URL_SWES_20_DELETE_SENSOR);
 
     // element names
+    String EN_EXTENSION = "extension";
+    
     String EN_ABSTRACT_OFFERING = "AbstractOffering";
 
     String EN_DELETE_SENSOR_RESPONSE = "DeleteSensorResponse";
@@ -126,5 +130,10 @@ public interface SwesConstants {
 
     String SOAP_REASON_REQUEST_EXTENSION_NOT_SUPPORTED = ""; // FIXME emtpy
                                                              // constant
+
+    /**
+     * The {@code QName} for {@code swes:extension}.
+     */
+    QName SWES_EXTENSION = new QName(NS_SWES_20, EN_EXTENSION, NS_SWES_PREFIX);
 
 }

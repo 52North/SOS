@@ -33,6 +33,7 @@ import java.util.List;
 
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.StringHelper;
 
 /**
  * A request to obtain the {@code DataAvailabilites} of the SOS.
@@ -50,6 +51,8 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest {
     private final List<String> featuresOfInterest = new LinkedList<String>();
     
     private final List<String> offerings =  new LinkedList<String>();
+    
+    private String namspace = GetDataAvailabilityConstants.NS_GDA;
 
     @Override
     public String getOperationName() {
@@ -139,4 +142,15 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest {
     public boolean isSetOfferings() {
         return CollectionHelper.isNotEmpty(getOfferings());
     }
+
+    public void setNamespace(String namspace) {
+        if (StringHelper.isNotEmpty(namspace)) {
+            this.namspace = namspace;
+        }
+    }
+    
+    public String getNamespace() {
+        return this.namspace;
+    }
+    
 }

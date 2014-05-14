@@ -375,6 +375,4 @@ public interface JSONConstants {
     String VERSIONS = "versions";
 
     String WITHIN = "within";
-
-    String VALUE_COUNT = "valueCount";
 }

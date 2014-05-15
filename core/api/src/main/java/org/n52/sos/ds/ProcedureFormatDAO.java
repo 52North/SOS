@@ -26,32 +26,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.exception.ows.concrete;
+package org.n52.sos.ds;
 
-import static org.n52.sos.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
+import java.util.Map;
 
-import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- *         J&uuml;rrens</a>
- * 
- * @since 4.0.0
+ * @author Shane StClair <shane@axiomalaska.com>
  */
-public class NoImplementationFoundException extends NoApplicableCodeException {
-    private static final long serialVersionUID = 8191563379756983127L;
-
-    public NoImplementationFoundException(final Class<?> required) {
-        this(required.getSimpleName());
-    }
-
-    public NoImplementationFoundException(final String format, final Object... args) {
-        this(String.format(format, args));
-    }
-
-    public NoImplementationFoundException(final String required) {
-        withMessage("No implementation for '%s' found.", required);
-        setStatus(INTERNAL_SERVER_ERROR);
-    }
+public interface ProcedureFormatDAO {
+    Map<String,String> getProcedureFormatMap() throws OwsExceptionReport;
 }

@@ -31,6 +31,8 @@ package org.n52.sos.ogc.gml.time;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
+
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
@@ -62,6 +64,11 @@ public class TimeInstantTest {
         assertFalse("new TimeInstant(null) is empty", new TimeInstant((TimeIndeterminateValue) null)
                 .setSosIndeterminateTime(SosIndeterminateTime.latest).isEmpty());
     }
+    
+    @Test
+    public void isNotEmptyForConstructorWithDate() {
+        assertFalse("new TimeInstant(new DateTime()) is empty", new TimeInstant(new Date()).isEmpty());
+    }
 
     @Test
     public void shouldEqualTime() {
@@ -70,7 +77,7 @@ public class TimeInstantTest {
         TimeInstant equalTimeInstant = new TimeInstant(dateTime);
         assertTrue("TimeInstants are NOT equal", timeInstant.equals(equalTimeInstant));
     }
-    
+        
     @Test
     public void shouldEqualIndeterminateValue() {
         TimeIndeterminateValue tiv = TimeIndeterminateValue.after;

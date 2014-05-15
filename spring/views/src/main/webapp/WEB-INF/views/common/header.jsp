@@ -162,6 +162,10 @@
                                                             <span class="menu-title">Reset</span>
                                                         </a>
                                                     </li>
+                                                    <%-- include extra admin menu items if file exists (used by custom builds) --%>
+                                                    <c:if test="${sos:viewExists(pageContext.servletContext, 'common/extra-admin-menu-items.jsp')}">
+                                                        <jsp:include page="extra-admin-menu-items.jsp" />
+                                                    </c:if>
                                                 </ul>
                                             </sec:authorize>
                                         </li>
@@ -173,7 +177,7 @@
 											</a>
 										</li>
 									</sec:authorize>
-								</ul>                                   
+								</ul>
 							</div>
 						</div>
 					</div>

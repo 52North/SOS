@@ -26,32 +26,32 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.exception.ows.concrete;
+package org.n52.sos.ds.hibernate.admin;
 
-import static org.n52.sos.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
+import java.util.Map;
 
-import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.hibernate.Session;
+import org.n52.sos.ds.ProcedureFormatDAO;
+import org.n52.sos.ds.hibernate.HibernateSessionHolder;
+import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- *         J&uuml;rrens</a>
- * 
- * @since 4.0.0
+ * @author Shane StClair <shane@axiomalaska.com>
  */
-public class NoImplementationFoundException extends NoApplicableCodeException {
-    private static final long serialVersionUID = 8191563379756983127L;
+public class HibernateProcedureFormatDAO implements ProcedureFormatDAO {
+    private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
 
-    public NoImplementationFoundException(final Class<?> required) {
-        this(required.getSimpleName());
-    }
-
-    public NoImplementationFoundException(final String format, final Object... args) {
-        this(String.format(format, args));
-    }
-
-    public NoImplementationFoundException(final String required) {
-        withMessage("No implementation for '%s' found.", required);
-        setStatus(INTERNAL_SERVER_ERROR);
+    @Override
+    public Map<String, String> getProcedureFormatMap() throws OwsExceptionReport {
+        Session s = null;
+        Map<String,String> procedureFormatMap = null;
+        try {
+            s = sessionHolder.getSession();
+            procedureFormatMap = new ProcedureDAO().getProcedureFormatMap(s);
+        } finally {
+            sessionHolder.returnSession(s);
+        }        
+        return procedureFormatMap;
     }
 }

@@ -108,6 +108,7 @@ import org.n52.sos.config.SettingsManager;
 import org.n52.sos.convert.ConverterRepository;
 import org.n52.sos.convert.RequestResponseModifierRepository;
 import org.n52.sos.ds.CacheFeederDAO;
+import org.n52.sos.ds.CacheFeederDAORepository;
 import org.n52.sos.ds.ConnectionProvider;
 import org.n52.sos.ds.DataConnectionProvider;
 import org.n52.sos.ds.FeatureQueryHandler;
@@ -278,8 +279,6 @@ public class Configurator implements Cleanupable {
 
     private ContentCacheController contentCacheController;
 
-    private CacheFeederDAO cacheFeederDAO;
-
     private ProfileHandler profileHandler;
 
     private AdminServiceOperator adminServiceOperator;
@@ -339,7 +338,6 @@ public class Configurator implements Cleanupable {
         ServiceOperatorRepository.getInstance();
         CodingRepository.getInstance();
         featureQueryHandler = loadAndConfigure(FeatureQueryHandler.class, false);
-        cacheFeederDAO = loadAndConfigure(CacheFeederDAO.class, false);
         ConverterRepository.getInstance();
         RequestResponseModifierRepository.getInstance();
         RequestOperatorRepository.getInstance();
@@ -411,9 +409,11 @@ public class Configurator implements Cleanupable {
 
     /**
      * @return the implemented cache feeder DAO
+     * @deprecated use {@link CacheFeederDAORepository.getCacheFeederDAO()} instead.  
      */
+    @Deprecated
     public CacheFeederDAO getCacheFeederDAO() {
-        return cacheFeederDAO;
+        return CacheFeederDAORepository.getInstance().getCacheFeederDAO();
     }
 
     /**

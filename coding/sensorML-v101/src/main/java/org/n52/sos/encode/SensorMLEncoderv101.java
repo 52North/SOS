@@ -581,6 +581,9 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
     // TODO refactor/rename
     private void addAbstractProcessValues(final AbstractProcessType abstractProcess,
             final AbstractProcess sosAbstractProcess) throws OwsExceptionReport {
+        if (sosAbstractProcess.isSetGmlId()) {
+            abstractProcess.setId(sosAbstractProcess.getGmlId());
+        }
 
         addSpecialCapabilities(sosAbstractProcess);
         if (sosAbstractProcess.isSetCapabilities()) {

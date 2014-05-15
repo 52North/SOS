@@ -33,6 +33,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.opengis.swe.x101.BooleanDocument;
 import net.opengis.swe.x101.CategoryDocument;
@@ -40,8 +41,12 @@ import net.opengis.swe.x101.CountDocument;
 import net.opengis.swe.x101.QuantityDocument;
 import net.opengis.swe.x101.QuantityRangeDocument;
 import net.opengis.swe.x101.QuantityRangeDocument.QuantityRange;
+import net.opengis.swe.x101.TimeRangeDocument;
+import net.opengis.swe.x101.TimeRangeDocument.TimeRange;
 import net.opengis.swe.x101.UomPropertyType;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.RangeValue;
@@ -51,6 +56,7 @@ import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
 import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 
 import com.google.common.collect.Lists;
 
@@ -166,4 +172,24 @@ public class SweCommonDecoderV101Test {
 		assertThat(sweQuantityRange.getValue().getRangeStart(), is(values.get(0)));
 		assertThat(sweQuantityRange.getValue().getRangeEnd(), is(values.get(1)));
 	}
+
+   @Test
+   public void should_decode_TimeRange() throws OwsExceptionReport {
+        final TimeRangeDocument xbTimeRangeDoc = TimeRangeDocument.Factory.newInstance();
+        TimeRange xbTimeRange = xbTimeRangeDoc.addNewTimeRange();
+        final DateTime startDate = new DateTime(1970, 1, 1, 0, 0, DateTimeZone.UTC);
+        final DateTime endDate = new DateTime(2013, 12, 31, 23, 59, DateTimeZone.UTC);
+        final List<String> values = Lists.newArrayList(startDate.toString(), endDate.toString());
+        xbTimeRange.setValue(values);        
+        final String iso8601Uom = "urn:ogc:def:unit:ISO:8601";
+        xbTimeRange.addNewUom().setHref(iso8601Uom);
+        final Object decodedObject = new SweCommonDecoderV101().decode(xbTimeRange);
+        assertThat(decodedObject, is(instanceOf(SweTimeRange.class)));
+        final SweTimeRange sweTimeRange = (SweTimeRange) decodedObject;
+        assertThat(sweTimeRange.isSetUom(), is(true));
+        assertThat(sweTimeRange.getUom(), is(iso8601Uom));
+        assertThat(sweTimeRange.isSetValue(), is(true));
+        assertThat(sweTimeRange.getValue().getRangeStart(), is(startDate));
+        assertThat(sweTimeRange.getValue().getRangeEnd(), is(endDate));
+    }
 }

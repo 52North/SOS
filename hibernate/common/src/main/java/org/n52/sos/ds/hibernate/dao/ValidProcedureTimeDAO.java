@@ -29,11 +29,14 @@
 package org.n52.sos.ds.hibernate.dao;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -49,6 +52,8 @@ import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 import org.n52.sos.ogc.gml.time.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Maps;
 
 /**
  * Hibernate data access class for valid procedure time
@@ -202,5 +207,26 @@ public class ValidProcedureTimeDAO {
         LOGGER.debug("QUERY getValidProcedureTimes(procedure, possibleProcedureDescriptionFormats, validTime): {}",
                 HibernateHelper.getSqlString(criteria));
         return criteria.list();
+    }
+
+    public Map<String,String> getTProcedureFormatMap(Session session) {
+        Criteria criteria = session.createCriteria(TProcedure.class);
+        criteria.createAlias(TProcedure.VALID_PROCEDURE_TIME, "vpt");
+        criteria.createAlias(ValidProcedureTime.PROCEDURE_DESCRIPTION_FORMAT, "pdf");
+        criteria.add(Restrictions.isNull("vpt." + ValidProcedureTime.END_TIME));
+        criteria.setProjection(Projections.projectionList()
+                .add(Projections.property(TProcedure.IDENTIFIER))
+                .add(Projections.property("pdf." + ProcedureDescriptionFormat.PROCEDURE_DESCRIPTION_FORMAT)));
+        criteria.addOrder(Order.asc(TProcedure.IDENTIFIER));
+        LOGGER.debug("QUERY getTProcedureFormatMap(): {}", HibernateHelper.getSqlString(criteria));
+        @SuppressWarnings("unchecked")
+        List<Object[]> results = criteria.list();
+        Map<String,String> tProcedureFormatMap = Maps.newTreeMap();
+        for (Object[] result : results) {
+            String procedureIdentifier = (String) result[0];
+            String format = (String) result[1];
+            tProcedureFormatMap.put(procedureIdentifier, format);
+        }
+        return tProcedureFormatMap;
     }
 }

@@ -99,6 +99,7 @@ import java.util.Set;
 
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.sos.util.StringHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -130,13 +131,13 @@ public class SwesExtensions {
         return false;
     }
 
-    public boolean addSwesExtension(final SwesExtension<?> extension) {
-        return getExtensions().add(extension);
-    }
-    
     public boolean addSwesExtension(final Collection<SwesExtension<?>> extensions) {
        return getExtensions().addAll(extensions);
     }
+    
+    public boolean addSwesExtension(final SwesExtension<?> extensions) {
+        return getExtensions().add(extensions);
+     }
 
     public Set<SwesExtension<?>> getExtensions() {
         return extensions;
@@ -197,7 +198,7 @@ public class SwesExtensions {
     }
 
     private boolean checkSwesExtensionIdentifier(String extensionName, SwesExtension<?> swesExtension) {
-        if (extensionName != null && swesExtension != null) {
+        if (StringHelper.isNotEmpty(extensionName)) {
             return swesExtension.isSetIdentifier() && swesExtension.getIdentifier().equalsIgnoreCase(extensionName);
         }
         return false;

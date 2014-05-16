@@ -603,7 +603,7 @@ public class InsertDAOTest extends HibernateTestCase {
         assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
         OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
         if (omObservation.getValue() instanceof StreamingObservation) {
-            assertThat(((StreamingObservation)omObservation.getValue()).hasNextSingleObservation(), is(true));
+            assertThat(((StreamingObservation)omObservation.getValue()).hasNextValue(), is(true));
             omObservation = ((StreamingObservation)omObservation.getValue()).nextSingleObservation();
             assertThat(omObservation.getObservationConstellation(), notNullValue());
             OmObservationConstellation obsConst = omObservation.getObservationConstellation();

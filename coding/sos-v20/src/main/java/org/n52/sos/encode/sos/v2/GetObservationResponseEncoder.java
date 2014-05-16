@@ -81,7 +81,7 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
         for (OmObservation o : response.getObservationCollection()) {
             if (o.getValue() instanceof StreamingObservation) {
                 StreamingObservation streamingObservation = (StreamingObservation)o.getValue();
-                if (streamingObservation.hasNextSingleObservation()) {
+                if (streamingObservation.hasNextValue()) {
                     if (encoder.shouldObservationsWithSameXBeMerged() || response.isSetMergeObservation()) {
                         for (OmObservation obs : streamingObservation.mergeObservation()) {
                             xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(obs));
@@ -89,7 +89,7 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
                     } else {
                         do {
                             xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(streamingObservation.nextSingleObservation()));
-                        } while (streamingObservation.hasNextSingleObservation());
+                        } while (streamingObservation.hasNextValue());
                     }
                 } else if (streamingObservation.getValue() != null) {
                     xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(streamingObservation.getValue().getValue()));

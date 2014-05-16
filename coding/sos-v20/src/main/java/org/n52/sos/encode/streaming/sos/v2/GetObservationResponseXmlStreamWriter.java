@@ -119,7 +119,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         for (OmObservation o : response.getObservationCollection()) {
             if (o.getValue() instanceof StreamingObservation) {
                 StreamingObservation streamingObservation = (StreamingObservation)o.getValue();
-                if (streamingObservation.hasNextSingleObservation()) {
+                if (streamingObservation.hasNextValue()) {
                     if (encoder.shouldObservationsWithSameXBeMerged() || response.isSetMergeObservation()) {
                         for (OmObservation obs : streamingObservation.mergeObservation()) {
                             writeObservationData(obs, encoder, encodingValues);
@@ -129,7 +129,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
                         do {
                             writeObservationData(streamingObservation.nextSingleObservation(), encoder, encodingValues);
                             writeNewLine();
-                        } while (streamingObservation.hasNextSingleObservation());
+                        } while (streamingObservation.hasNextValue());
                     }
                 } else if (streamingObservation.getValue() != null) {
                     writeObservationData(streamingObservation.getValue().getValue(), encoder, encodingValues);

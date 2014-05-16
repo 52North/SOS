@@ -80,7 +80,7 @@ public class HibernateSeriesStreamingObservation extends StreamingObservation {
     }
 
     @Override
-    public boolean hasNextSingleObservation() throws OwsExceptionReport {
+    public boolean hasNextValue() throws OwsExceptionReport {
         boolean next = false;
         if (result == null ) {
             getNextScrollableResults();

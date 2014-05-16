@@ -292,6 +292,9 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
     }
 
     protected void writeResult(OmObservation observation, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
+            if (observation.getValue() instanceof AbstractObservationValue<?>) {
+                ((AbstractObservationValue<?>)observation.getValue()).setValuesForResultEncoding(observation);
+            }
             XmlObject createResult = CodingHelper.encodeObjectToXml(encodingValues.getEncodingNamespace(), observation.getValue());
             if (createResult != null) {
               if (createResult.xmlText().contains(XML_FRAGMENT)) {

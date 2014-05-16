@@ -31,6 +31,7 @@ package org.n52.sos.encode;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -54,13 +55,17 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
     @Override
     public void write(AbstractServiceResponse asr, OutputStream out) throws IOException {
         try {
-            if (getEncoder(asr) != null) {
+            Encoder<Object, AbstractServiceResponse> encoder = getEncoder(asr);
+            if (encoder != null) {
                 if (isStreaming(asr)) {
-                    ((StreamingEncoder<?, AbstractServiceResponse>) getEncoder(asr)).encode(asr, out);
+                    ((StreamingEncoder<?, AbstractServiceResponse>) encoder).encode(asr, out);
                 } else {
+                    if (!(encoder instanceof StreamingDataEncoder) && asr.hasStreamingData()) {
+                        asr.mergeStreamingData();
+                    }
                     // use encoded Object specific writer, e.g.
                     // XmlResponseWriter
-                    Object encode = getEncoder(asr).encode(asr);
+                    Object encode = encoder.encode(asr);
                     if (encode != null) {
                         ResponseWriter<Object> writer =
                                 ResponseWriterRepository.getInstance().getWriter(encode.getClass());

@@ -30,7 +30,10 @@ package org.n52.sos.ds.hibernate.values.series;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
+import org.n52.sos.ds.hibernate.dao.AbstractSpatialFilteringProfileDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
+import org.n52.sos.ds.hibernate.util.observation.SpatialFilteringProfileAdder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -41,27 +44,28 @@ import org.n52.sos.util.http.HTTPStatus;
 public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStreamingValue {
 
     private static final long serialVersionUID = -6439122088572009613L;
-    
+
     private ScrollableResults scrollableResult;
 
     public HibernateScrollableSeriesStreamingValue(GetObservationRequest request, long series) {
         super(request, series);
+        setSpatialFilteringProfileAdder(new SpatialFilteringProfileAdder());
     }
 
     @Override
     public boolean hasNextValue() throws OwsExceptionReport {
         boolean next = false;
-            if (scrollableResult == null) {
-                getNextResults();
-                if (scrollableResult != null) {
-                    next = scrollableResult.next();
-                }
-            } else {
+        if (scrollableResult == null) {
+            getNextResults();
+            if (scrollableResult != null) {
                 next = scrollableResult.next();
             }
-            if (!next) {
-                sessionHolder.returnSession(session);
-            }
+        } else {
+            next = scrollableResult.next();
+        }
+        if (!next) {
+            sessionHolder.returnSession(session);
+        }
         return next;
     }
 
@@ -85,6 +89,7 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
             OmObservation observation = observationTemplate.cloneTemplate();
             SeriesValue resultObject = (SeriesValue) scrollableResult.get()[0];
             addValuesToObservation(observation, resultObject);
+            addSpatialFilteringProfile(observation, resultObject.getObservationId());
             session.evict(resultObject);
             return observation;
         } catch (final HibernateException he) {
@@ -94,28 +99,35 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
         }
     }
 
+    private void addSpatialFilteringProfile(OmObservation observation, Long oId) throws OwsExceptionReport {
+        AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
+                DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
+        if (spatialFilteringProfileDAO != null) {
+            getSpatialFilteringProfileAdder().add(
+                    spatialFilteringProfileDAO.getSpatialFilertingProfile(oId, session), observation);
+        }
+    }
+
     private void getNextResults() throws OwsExceptionReport {
         if (session == null) {
             session = sessionHolder.getSession();
         }
         try {
-                // query with temporal filter
-                if (temporalFilterCriterion != null) {
-                    setScrollableResult(seriesValueDAO.getStreamingSeriesValuesFor(request, series,
-                            temporalFilterCriterion, session));
-                }
-                // query without temporal or indeterminate filters
-                else {
-                    setScrollableResult(seriesValueDAO.getStreamingSeriesValuesFor(request, series, session));
-                }
+            // query with temporal filter
+            if (temporalFilterCriterion != null) {
+                setScrollableResult(seriesValueDAO.getStreamingSeriesValuesFor(request, series,
+                        temporalFilterCriterion, session));
+            }
+            // query without temporal or indeterminate filters
+            else {
+                setScrollableResult(seriesValueDAO.getStreamingSeriesValuesFor(request, series, session));
+            }
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
 
     private void setScrollableResult(ScrollableResults scrollableResult) {
         this.scrollableResult = scrollableResult;

@@ -29,6 +29,9 @@
 package org.n52.sos.ds.hibernate.values.series;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
@@ -48,6 +51,7 @@ import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayValue;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextValue;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValueTime;
+import org.n52.sos.ds.hibernate.util.observation.SpatialFilteringProfileAdder;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -74,6 +78,8 @@ public abstract class HibernateSeriesStreamingValue extends StreamingValue {
     protected final SeriesValueDAO seriesValueDAO = new SeriesValueDAO();
 
     protected final SeriesValueTimeDAO seriesValueTimeDAO = new SeriesValueTimeDAO();
+    
+    private SpatialFilteringProfileAdder spatialFilteringProfileAdder;
 
     protected Session session;
 
@@ -88,6 +94,15 @@ public abstract class HibernateSeriesStreamingValue extends StreamingValue {
     public HibernateSeriesStreamingValue(GetObservationRequest request, long series) {
         this.request = request;
         this.series = series;
+    }
+
+    public void setObservationTemplate(OmObservation observationTemplate) {
+        this.observationTemplate = observationTemplate;
+    }
+
+    public void setTemporalFilterCriterion(Criterion temporalFilterCriterion) {
+        this.temporalFilterCriterion = temporalFilterCriterion;
+    
     }
 
     @Override
@@ -144,14 +159,28 @@ public abstract class HibernateSeriesStreamingValue extends StreamingValue {
         observation.setValidTime(createValidTime(seriesValue.getValidTimeStart(), seriesValue.getValidTimeEnd()));
         observation.setValue(new SingleObservationValue(createPhenomenonTime(seriesValue), getValueFrom(seriesValue)));
     }
+    
 
-    public void setObservationTemplate(OmObservation observationTemplate) {
-        this.observationTemplate = observationTemplate;
+    protected Set<Long> getObservationIds(List<SeriesValue> seriesValuesResult) {
+        Set<Long> ids = new HashSet<Long>();
+        for (SeriesValue seriesValue : seriesValuesResult) {
+            ids.add(seriesValue.getObservationId());
+        }
+        return ids;
+    }
+    
+    /**
+     * @return the spatialFilteringProfileAdder
+     */
+    protected SpatialFilteringProfileAdder getSpatialFilteringProfileAdder() {
+        return spatialFilteringProfileAdder;
     }
 
-    public void setTemporalFilterCriterion(Criterion temporalFilterCriterion) {
-        this.temporalFilterCriterion = temporalFilterCriterion;
-    
+    /**
+     * @param spatialFilteringProfileAdder the spatialFilteringProfileAdder to set
+     */
+    protected void setSpatialFilteringProfileAdder(SpatialFilteringProfileAdder spatialFilteringProfileAdder) {
+        this.spatialFilteringProfileAdder = spatialFilteringProfileAdder;
     }
 
     private Time createPhenomenonTime(SeriesValue seriesValue) {

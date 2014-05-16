@@ -32,7 +32,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.hibernate.HibernateException;
+import org.n52.sos.ds.hibernate.dao.AbstractSpatialFilteringProfileDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
+import org.n52.sos.ds.hibernate.util.observation.SpatialFilteringProfileAdder;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
@@ -47,7 +50,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     private static final long serialVersionUID = -1990901204421577265L;
 
     private Iterator<SeriesValue> seriesValuesResult;
-
+    
     private int chunkSize;
 
     private int currentRow;
@@ -97,6 +100,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
                 OmObservation observation = observationTemplate.cloneTemplate();
                 SeriesValue resultObject = seriesValuesResult.next();
                 addValuesToObservation(observation, resultObject);
+                getSpatialFilteringProfileAdder().add(resultObject.getObservationId(), observation);
                 session.evict(resultObject);
                 return observation;
             }
@@ -118,16 +122,23 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         }
         try {
             // query with temporal filter
+            List<SeriesValue> seriesValuesResult = null;
             if (temporalFilterCriterion != null) {
-                setSeriesValuesResult(seriesValueDAO.getStreamingSeriesValuesFor(request, series,
-                        temporalFilterCriterion, chunkSize, currentRow, session));
+                seriesValuesResult = seriesValueDAO.getStreamingSeriesValuesFor(request, series,
+                        temporalFilterCriterion, chunkSize, currentRow, session);
             }
             // query without temporal or indeterminate filters
             else {
-                setSeriesValuesResult(seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize,
-                        currentRow, session));
+                seriesValuesResult = seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize,
+                        currentRow, session);
             }
             currentRow += chunkSize;
+            // get SpatialFilteringProfile values
+            AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO = DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
+            if (spatialFilteringProfileDAO != null) {
+                setSpatialFilteringProfileAdder(new SpatialFilteringProfileAdder(spatialFilteringProfileDAO.getSpatialFilertingProfiles(getObservationIds(seriesValuesResult), session)));
+            }
+            setSeriesValuesResult(seriesValuesResult);
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")

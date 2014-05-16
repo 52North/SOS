@@ -26,44 +26,21 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ogc.om;
+package org.n52.sos.encode.streaming;
 
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.encode.Encoder;
 
 /**
+ * Generic interface for StreamingDataEncoder.
+ * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
  * @param <T>
+ *            the resulting type, the "Target"
+ * @param <S>
+ *            the input type, the "Source"
  */
-public abstract class StreamingObservation extends AbstractStreaming {
+public interface StreamingDataEncoder<T,S> extends Encoder<T, S> {
 
-    /**
-     * serial number
-     */
-    private static final long serialVersionUID = -5759256296641975519L;
-    
-    @Override
-    public Time getPhenomenonTime() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void setPhenomenonTime(Time phenomenonTime) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public Value<OmObservation> getValue() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void setValue(Value<OmObservation> value) {
-        // TODO Auto-generated method stub
-    }
-    
 }

@@ -28,18 +28,12 @@
  */
 package org.n52.sos.ogc.om;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.CollectionHelper;
 
-import com.google.common.collect.Lists;
-
-public abstract class StreamingValue extends AbstractObservationValue<Value<OmObservation>> {
+public abstract class StreamingValue extends AbstractStreaming {
     
     private static final long serialVersionUID = -884370769373807775L;
 
@@ -131,47 +125,6 @@ public abstract class StreamingValue extends AbstractObservationValue<Value<OmOb
     
     protected abstract void queryUnit();
     
-    public abstract boolean hasNextValue() throws OwsExceptionReport;
-
     public abstract TimeValuePair nextValue() throws OwsExceptionReport;
     
-    public abstract OmObservation nextSingleObservation() throws OwsExceptionReport;
-
-    public List<OmObservation> mergeObservation() throws OwsExceptionReport {
-        List<OmObservation> observations = Lists.newArrayList();
-        do {
-            observations.add(nextSingleObservation());
-        } while (hasNextValue());
-        // TODO merge all observations with the same observationContellation
-        // FIXME Failed to set the observation type to sweArrayObservation for
-        // the merged Observations
-        // (proc, obsProp, foi)
-        if (CollectionHelper.isNotEmpty(observations)) {
-            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
-            int obsIdCounter = 1;
-            for (final OmObservation sosObservation : observations) {
-                if (mergedObservations.isEmpty()) {
-                    sosObservation.setObservationID(Integer.toString(obsIdCounter++));
-                    mergedObservations.add(sosObservation);
-                } else {
-                    boolean combined = false;
-                    for (final OmObservation combinedSosObs : mergedObservations) {
-                        if (combinedSosObs.getObservationConstellation().equals(
-                                sosObservation.getObservationConstellation())) {
-                            combinedSosObs.setResultTime(null);
-                            combinedSosObs.mergeWithObservation(sosObservation);
-                            combined = true;
-                            break;
-                        }
-                    }
-                    if (!combined) {
-                        mergedObservations.add(sosObservation);
-                    }
-                }
-            }
-            return mergedObservations;
-        }
-        return observations;
-    }
-
 }

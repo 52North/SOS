@@ -43,7 +43,6 @@ import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.ExceptionEncoderKey;
 import org.n52.sos.encode.OperationEncoderKey;
-import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.ExceptionEvent;
 import org.n52.sos.exception.HTTPException;
@@ -68,7 +67,6 @@ import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.util.http.HTTPStatus;
 import org.n52.sos.util.http.HTTPUtils;
 import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

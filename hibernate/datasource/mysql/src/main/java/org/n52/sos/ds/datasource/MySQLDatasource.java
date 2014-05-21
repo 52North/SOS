@@ -48,6 +48,7 @@ import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.exception.ConfigurationException;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 /**
  * Hibernate datasource implementation for MySQL databases.
@@ -163,7 +164,22 @@ public class MySQLDatasource extends AbstractHibernateFullDBDatasource {
 
     @Override
     protected String[] checkDropSchema(String[] dropSchema) {
-        return dropSchema;
+        String hexStringToCheck =
+                new StringBuilder("FK").append(Integer.toHexString("observationHasOffering".hashCode()).toUpperCase())
+                        .toString();
+        boolean duplicate = false;
+        List<String> checkedSchema = Lists.newLinkedList();
+        for (String string : dropSchema) {
+            if (string.contains(hexStringToCheck)) {
+                if (!duplicate) {
+                    checkedSchema.add(string);
+                    duplicate = true;
+                }
+            } else {
+                checkedSchema.add(string);
+            }
+        }
+        return checkedSchema.toArray(new String[checkedSchema.size()]);
     }
 
     @Override

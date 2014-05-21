@@ -59,5 +59,11 @@
                 <module>oracle</module>
             </modules>
         </profile>
+        <profile>
+            <id>sqlserver</id>
+            <modules>
+                <module>sqlserver</module>
+            </modules>
+        </profile>
     </profiles>
 </project>

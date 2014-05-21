@@ -102,6 +102,9 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
             if (c.isCreateSchema()) {
                 String[] createSchema = datasource.createSchema(c.getDatabaseSettings());
                 datasource.execute(createSchema, c.getDatabaseSettings());
+                if (datasource.isPostCreateSchema()) {
+                    datasource.executePostCreateSchema(c.getDatabaseSettings());
+                }
             }
             if (c.isForceUpdateSchema()) {
                 String[] updateSchema = datasource.updateSchema(c.getDatabaseSettings());

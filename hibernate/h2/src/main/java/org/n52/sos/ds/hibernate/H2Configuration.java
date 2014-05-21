@@ -219,8 +219,9 @@ public class H2Configuration {
             }
             final Iterator<Table> tableMappings = instance.getConfiguration().getTableMappings();
             final List<String> tableNames = new LinkedList<String>();
+            GeoDBDialect dialect = new GeoDBDialect();
             while (tableMappings.hasNext()) {
-                tableNames.add(tableMappings.next().getName());
+                tableNames.add(tableMappings.next().getQuotedName(dialect));
             }
             Session session = null;
             Transaction transaction = null;

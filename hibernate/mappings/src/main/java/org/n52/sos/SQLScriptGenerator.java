@@ -41,6 +41,7 @@ import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
 import org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBDialect;
 import org.hibernate.spatial.dialect.oracle.OracleSpatial10gDialect;
 import org.hibernate.spatial.dialect.postgis.PostgisDialect;
+import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialect;
 
 import com.google.common.collect.Lists;
 
@@ -54,9 +55,9 @@ import com.google.common.collect.Lists;
  * 
  */
 public class SQLScriptGenerator {
-    
+
     private SQLScriptGenerator() {
-        
+
     }
 
     private Dialect getDialect(int selection) throws Exception {
@@ -74,54 +75,71 @@ public class SQLScriptGenerator {
                 printToScreen("https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#Oracle_support.");
                 throw new MissingDriverException();
             }
-            
+
         case 3:
             return new GeoDBDialect();
         case 4:
             return new MySQLSpatial5InnoDBDialect();
+        case 5:
+            return new SqlServer2008SpatialDialect();
         default:
             throw new Exception("The entered value is invalid!");
         }
     }
 
-    private void setDirectoriesForModelSelection(int selection, boolean oldConcept, Configuration configuration) throws Exception {
+    private void setDirectoriesForModelSelection(int selection, boolean oldConcept, Configuration configuration)
+            throws Exception {
         switch (selection) {
         case 1:
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/core").toURI()));
             if (oldConcept) {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation").toURI()));
+                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation")
+                        .toURI()));
             } else {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/series/observation").toURI()));
+                configuration.addDirectory(new File(SQLScriptGenerator.class
+                        .getResource("/mapping/series/observation").toURI()));
             }
             break;
         case 2:
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/core").toURI()));
             if (oldConcept) {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation").toURI()));
+                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation")
+                        .toURI()));
             } else {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/series/observation").toURI()));
+                configuration.addDirectory(new File(SQLScriptGenerator.class
+                        .getResource("/mapping/series/observation").toURI()));
             }
-            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/transactional").toURI()));
+            configuration
+                    .addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/transactional").toURI()));
             break;
         case 3:
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/core").toURI()));
             if (oldConcept) {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation").toURI()));
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/spatialFilteringProfile").toURI()));
+                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation")
+                        .toURI()));
+                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource(
+                        "/mapping/old/spatialFilteringProfile").toURI()));
             } else {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/series/observation").toURI()));
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/series/spatialFilteringProfile").toURI()));
+                configuration.addDirectory(new File(SQLScriptGenerator.class
+                        .getResource("/mapping/series/observation").toURI()));
+                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource(
+                        "/mapping/series/spatialFilteringProfile").toURI()));
             }
             break;
         case 4:
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/core").toURI()));
-            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/transactional").toURI()));
+            configuration
+                    .addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/transactional").toURI()));
             if (oldConcept) {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation").toURI()));
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/spatialFilteringProfile").toURI()));
+                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation")
+                        .toURI()));
+                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource(
+                        "/mapping/old/spatialFilteringProfile").toURI()));
             } else {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/series/observation").toURI()));
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/series/spatialFilteringProfile").toURI()));
+                configuration.addDirectory(new File(SQLScriptGenerator.class
+                        .getResource("/mapping/series/observation").toURI()));
+                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource(
+                        "/mapping/series/spatialFilteringProfile").toURI()));
             }
             break;
         default:
@@ -135,6 +153,7 @@ public class SQLScriptGenerator {
         printToScreen("2   Oracle");
         printToScreen("3   H2/GeoDB");
         printToScreen("4   MySQL");
+        printToScreen("5   SQL Server");
         printToScreen("");
         printToScreen("Enter your selection: ");
 
@@ -158,7 +177,7 @@ public class SQLScriptGenerator {
         selection = br.readLine();
         return Integer.parseInt(selection);
     }
-    
+
     private int getConceptSelection() throws IOException {
         printToScreen("Which observation concept should be created:");
         printToScreen("1   old");
@@ -171,7 +190,7 @@ public class SQLScriptGenerator {
         selection = br.readLine();
         return Integer.parseInt(selection);
     }
-    
+
     private boolean isOldConcept(int selection) throws Exception {
         switch (selection) {
         case 1:
@@ -182,7 +201,7 @@ public class SQLScriptGenerator {
             throw new Exception("The entered value is invalid!");
         }
     }
-    
+
     private String getSchema() throws IOException {
         printToScreen("For which schema should the database model be created?");
         printToScreen("No schema is also valid!");
@@ -196,6 +215,25 @@ public class SQLScriptGenerator {
 
     public static void printToScreen(String lineToPrint) {
         System.out.println(lineToPrint);
+    }
+
+    private List<String> checkSchema(Dialect dia, String[] create) {
+        String hexStringToCheck =
+                new StringBuilder("FK").append(Integer.toHexString("observationHasOffering".hashCode()).toUpperCase())
+                        .toString();
+        boolean duplicate = false;
+        List<String> checkedSchema = Lists.newLinkedList();
+        for (String string : create) {
+            if (string.contains(hexStringToCheck)) {
+                if (!duplicate) {
+                    checkedSchema.add(string);
+                    duplicate = true;
+                }
+            } else {
+                checkedSchema.add(string);
+            }
+        }
+        return checkedSchema;
     }
 
     public static void main(String[] args) {
@@ -215,36 +253,25 @@ public class SQLScriptGenerator {
             sqlScriptGenerator.setDirectoriesForModelSelection(modelSelection, oldConcept, configuration);
             // create script
             String[] create = configuration.generateSchemaCreationScript(dia);
-            String hexStringToCheck = new StringBuilder("FK").append(Integer.toHexString( "observationHasOffering".hashCode() ).toUpperCase()).toString();
-            boolean duplicate = false;
-            List<String> checkedSchema = Lists.newLinkedList();
-            for (String string : create) {
-                if (string.contains(hexStringToCheck)) {
-                    if (!duplicate) {
-                        checkedSchema.add(string);
-                        duplicate = true;
-                    }
-                } else {
-                    checkedSchema.add(string);
-                }
-            }
+            List<String> checkedSchema = sqlScriptGenerator.checkSchema(dia, create);
             printToScreen("Scripts are created for: " + dia.toString());
             printToScreen("");
             printToScreen("#######################################");
             printToScreen("##           Create-Script           ##");
             printToScreen("#######################################");
             printToScreen("");
-            for (String t : checkedSchema.toArray(new String[checkedSchema.size()])) {
+            for (String t : checkedSchema) {
                 printToScreen(t + ";");
             }
             // drop script
             String[] drop = configuration.generateDropSchemaScript(dia);
+            List<String> checkedDrop = sqlScriptGenerator.checkSchema(dia, drop);
             printToScreen("");
             printToScreen("#######################################");
             printToScreen("##            Drop-Script            ##");
             printToScreen("#######################################");
             printToScreen("");
-            for (String t : drop) {
+            for (String t : checkedDrop) {
                 printToScreen(t + ";");
             }
             printToScreen("");
@@ -258,16 +285,16 @@ public class SQLScriptGenerator {
             printToScreen("ERROR: " + e.getMessage());
             System.exit(1);
         }
-        
+
     }
-    
+
     private class MissingDriverException extends Exception {
 
         private static final long serialVersionUID = -5681526838468633998L;
-        
+
         public MissingDriverException() {
             super();
         }
-        
+
     }
 }

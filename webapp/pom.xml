@@ -668,7 +668,7 @@
             <dependencies>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>wml-v20</artifactId>
+                    <artifactId>coding-wml-v20</artifactId>
                 </dependency>
             </dependencies>
         </profile>

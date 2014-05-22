@@ -31,7 +31,7 @@ Changes since last release
     * Remove support for raw SQL execution in the admin interface because of security constraints 
       * https://github.com/52North/SOS/commit/ff5f8dd86f97024337f51492009559f11492bd7d
     * Update dependency versions:
-      * joda-time (2.3)
+      * joda-time (2.3), json-schema-validator (2.2.3), json-schema-core (1.2.1), springframework (3.2.6)
  
  --- Fixed bugs ---
    

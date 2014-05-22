@@ -4,7 +4,6 @@ Licensed under GNU General Public License, Version 2.0
 
 This project includes: 
 
-  "Java Concurrency in Practice" book annotations under Creative Commons Attribution License, http://creativecommons.org/licenses/by/2.5
   52North SOS Integration and Compliance 2.0 under Eclipse Public License 1.0
   52North SOS Integration and Compliance Common under Eclipse Public License 1.0
   52°North Aggregated Third Party modules under GPLv2
@@ -83,6 +82,7 @@ This project includes:
   Commons Logging under The Apache Software License, Version 2.0
   CORS Filter under The Apache Software License, Version 2.0
   dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
+  FindBugs-jsr305 under The Apache Software License, Version 2.0
   GeoDB Core under BSD style, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   H2 Database Engine under The H2 License, Version 1.0
@@ -97,15 +97,15 @@ This project includes:
   Jackson-core under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   jackson-databind under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   Java Property Utility under The Apache Software License, Version 2.0
+  JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail API jar under CDDL or GPLv2+CE
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   JBoss Logging 3 under GNU Lesser General Public License, version 2.1
   JCL 1.1.1 implemented over SLF4J under MIT License
   Jettison under Apache License, Version 2.0
   Joda-Time under Apache 2
+  JOpt Simple under The MIT License
   JPA 2.0 API under Eclipse Distribution License, Version 1.0
-  json-schema-core under LGPLv3 or later
-  json-schema-validator under LGPLv3 or later
   jsp-api under CDDL 1.1 or GPL2 w/ CPE
   jstl under CDDL 1.1 or GPL2 w/ CPE
   JTS Topology Suite under Lesser General Public License (LGPL)
@@ -118,6 +118,7 @@ This project includes:
   Mockito under The MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0
   MySQL java connector under The GNU General Public License, Version 2
+  null under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
   OASIS WS-N specification schemas - including WS-BrokeredNotification (v1.3) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   OASIS WS-Resources specification schemas v1.2 under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Objenesis under MIT License

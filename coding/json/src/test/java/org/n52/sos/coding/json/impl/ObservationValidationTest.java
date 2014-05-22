@@ -28,7 +28,7 @@
  */
 package org.n52.sos.coding.json.impl;
 
-import static com.github.fge.jsonschema.util.JsonLoader.fromResource;
+import static com.github.fge.jackson.JsonLoader.fromResource;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.n52.sos.coding.json.matchers.ValidationMatchers.validObservation;

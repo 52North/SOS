@@ -54,7 +54,7 @@ import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.request.InsertResultTemplateRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jsonschema.util.JsonLoader;
+import com.github.fge.jackson.JsonLoader;
 
 /**
  * @since 4.0.0

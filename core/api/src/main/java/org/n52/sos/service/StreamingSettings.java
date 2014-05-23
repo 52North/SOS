@@ -48,7 +48,7 @@ public class StreamingSettings implements SettingDefinitionProvider {
             .setGroup(GROUP)
             .setOrder(ORDER_0)
             .setKey(FORCE_STREAMING_ENCODING)
-            .setDefaultValue(true)
+            .setDefaultValue(false)
             .setTitle("Should this service stream the XML responses?")
             .setDescription(
                     "Whether the service should stream the XML response! If true, the responses are not validated!");

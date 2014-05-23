@@ -26,33 +26,26 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode.json;
+package org.n52.sos.ds.datasource;
 
-import org.n52.sos.exception.ows.NoApplicableCodeException;
+public class SqlServerCustomDatasource extends AbstractSqlServerDatasource {
 
-/**
- * TODO JavaDoc
- * 
- * @author Christian Autermann <c.autermann@52north.org>
- * 
- * @since 4.0.0
- */
-public class JSONEncodingException extends NoApplicableCodeException {
+    private static final String DIALECT_NAME = "SQL Server Custom";
 
-    private static final long serialVersionUID = 43255040132887078L;
-
-    public JSONEncodingException() {
+    public SqlServerCustomDatasource() {
+        super();
+        getSpatialFilteringProfileDefiniton().setDefaultValue(false);
+        super.setTransactional(false);
     }
 
-    public JSONEncodingException(String message) {
-        withMessage(message);
+    @Override
+    public String getDialectName() {
+        return DIALECT_NAME;
     }
 
-    public JSONEncodingException(String message, Throwable cause) {
-        withMessage(message).causedBy(cause);
+    @Override
+    public boolean needsSchema() {
+        return false;
     }
 
-    public JSONEncodingException(Throwable cause) {
-        causedBy(cause);
-    }
 }

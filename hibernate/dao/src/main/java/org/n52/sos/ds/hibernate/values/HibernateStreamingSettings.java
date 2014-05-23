@@ -52,7 +52,7 @@ public class HibernateStreamingSettings implements SettingDefinitionProvider  {
                     .setGroup(StreamingSettings.GROUP)
                     .setOrder(ORDER_1)
                     .setKey(FORCE_DATASOURCE_STREAMING)
-                    .setDefaultValue(true)
+                    .setDefaultValue(false)
                     .setTitle("Should this service stream datasource values (GetObservation) to encoder?")
                     .setDescription(
                             "Whether the service should stream datasource values (GetObservation) to encoder if it is supported by the datasource! This reduces the memory usage.");

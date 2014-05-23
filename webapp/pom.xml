@@ -549,6 +549,15 @@
             </dependencies>
         </profile>
         <profile>
+            <id>sqlserver</id>
+            <dependencies>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hibernate-datasource-sqlserver</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>both</id>
             <dependencies>
                 <dependency>
@@ -659,7 +668,7 @@
             <dependencies>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>wml-v20</artifactId>
+                    <artifactId>coding-wml-v20</artifactId>
                 </dependency>
             </dependencies>
         </profile>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jmeterTestPlan version="1.2" properties="2.3" jmeter="2.8 r1393162">
+<jmeterTestPlan version="1.2" properties="2.6" jmeter="2.11 r1554548">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname=" SOS" enabled="true">
       <stringProp name="TestPlan.comments">Various test for the  SOS implementation of 52°North</stringProp>
@@ -26,12 +26,12 @@
           </elementProp>
           <elementProp name="sos_port" elementType="Argument">
             <stringProp name="Argument.name">sos_port</stringProp>
-            <stringProp name="Argument.value">8080</stringProp>
+            <stringProp name="Argument.value">8090</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="content_type" elementType="Argument">
             <stringProp name="Argument.name">content_type</stringProp>
-            <stringProp name="Argument.value">text/xml</stringProp>
+            <stringProp name="Argument.value">application/xml</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -225,7 +225,6 @@
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="Response" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -257,7 +256,6 @@
         <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Response Time Graph" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -289,7 +287,6 @@
         <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="Response Table" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -319,7 +316,7 @@
         </ResultCollector>
         <hashTree/>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="POX - Request Scenario A" enabled="false">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="POX - Request Scenario A" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">stoptest</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Schleifen-Controller (Loop Controller)" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
@@ -335,13 +332,7 @@
       </ThreadGroup>
       <hashTree>
         <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="POX specific settings" enabled="true">
-          <collectionProp name="Arguments.arguments">
-            <elementProp name="url_pattern" elementType="Argument">
-              <stringProp name="Argument.name">url_pattern</stringProp>
-              <stringProp name="Argument.value">/pox</stringProp>
-              <stringProp name="Argument.metadata">=</stringProp>
-            </elementProp>
-          </collectionProp>
+          <collectionProp name="Arguments.arguments"/>
         </Arguments>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GetCapabilities" enabled="true">
@@ -376,7 +367,7 @@
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">${sos_servlet_path}${url_pattern}</stringProp>
+          <stringProp name="HTTPSampler.path">${sos_servlet_path}</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -407,7 +398,7 @@
           </RegexExtractor>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DescribeSensor" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DescribeSensor" enabled="false">
           <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
@@ -467,7 +458,7 @@
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">${sos_servlet_path}${url_pattern}</stringProp>
+          <stringProp name="HTTPSampler.path">${sos_servlet_path}</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -489,7 +480,7 @@
           </RegexExtractor>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GetFeatureOfInterest" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GetFeatureOfInterest" enabled="false">
           <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
@@ -529,7 +520,6 @@
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="Response" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -561,7 +551,6 @@
         <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Response Time Graph" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -593,7 +582,6 @@
         <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="Response Table" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -855,7 +843,6 @@
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="Response" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -887,7 +874,6 @@
         <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Response Time Graph" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -919,7 +905,6 @@
         <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="Response Table" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -1170,7 +1155,6 @@
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="Response" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -1202,7 +1186,6 @@
         <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Response Time Graph" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -1234,7 +1217,6 @@
         <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="Response Table" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -3911,7 +3893,6 @@
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="Response" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -3943,7 +3924,6 @@
         <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Response Time Graph" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -3975,7 +3955,6 @@
         <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="Response Table" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -4263,7 +4242,6 @@
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="Response" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -4295,7 +4273,6 @@
         <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Response Time Graph" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -4327,7 +4304,6 @@
         <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="Response Table" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -4749,7 +4725,6 @@
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="Response" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -4781,7 +4756,6 @@
         <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Response Time Graph" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>
@@ -4813,7 +4787,6 @@
         <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="Response Table" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
-            <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
               <latency>true</latency>

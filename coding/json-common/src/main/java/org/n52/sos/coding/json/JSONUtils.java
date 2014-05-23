@@ -39,6 +39,9 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -56,6 +59,9 @@ import com.google.common.io.Closeables;
  * @since 4.0.0
  */
 public final class JSONUtils {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(JSONUtils.class);
+    
     private static final JsonNodeFactory FACTORY = JsonNodeFactory.withExactBigDecimals(false);
 
     private static final ObjectReader READER;
@@ -94,7 +100,11 @@ public final class JSONUtils {
         } catch (IOException e) {
             // cannot happen
         } finally {
-            Closeables.closeQuietly(writer);
+            try {
+                Closeables.close(writer, true);
+            } catch (IOException ioe) {
+                LOGGER.error("Error while colsing closeable!", ioe);
+            }
         }
         return writer.toString();
     }

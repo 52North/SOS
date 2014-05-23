@@ -31,6 +31,8 @@ package org.n52.sos.ds.datasource;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
@@ -183,7 +185,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
             createSpatialFilteringProfileDefinition();
 
     private boolean spatialFilteringProfileDatasource = true;
-
+    
     /**
      * Create settings definition for username
      *
@@ -440,7 +442,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = new DatabaseMetadata(conn, getDialectInternal(), true);
+            DatabaseMetadata metadata = getDatabaseMetadata(conn);
             String[] dropScript =
                     checkDropSchema(getConfig(settings).generateDropSchemaScript(getDialectInternal(), metadata));
             return dropScript;
@@ -456,7 +458,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = new DatabaseMetadata(conn, getDialectInternal(), true);
+            DatabaseMetadata metadata = getDatabaseMetadata(conn);
             String[] dropScript = getConfig(settings).generateSchemaUpdateScript(getDialectInternal(), metadata);
             return dropScript;
         } catch (SQLException ex) {
@@ -471,7 +473,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = new DatabaseMetadata(conn, getDialectInternal(), true);
+            DatabaseMetadata metadata = getDatabaseMetadata(conn);
             getConfig(settings).validateSchema(getDialectInternal(), metadata);
         } catch (SQLException ex) {
             throw new ConfigurationException(ex);
@@ -482,22 +484,30 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
         }
     }
 
+    protected DatabaseMetadata getDatabaseMetadata(Connection conn) throws SQLException {
+            return  new DatabaseMetadata(conn, getDialectInternal(), true);
+    }
+
     @Override
     public boolean checkIfSchemaExists(Map<String, Object> settings) {
         Connection conn = null;
         try {
             /* check if any of the needed tables is existing */
             conn = openConnection(settings);
-            DatabaseMetadata metadata = new DatabaseMetadata(conn, getDialectInternal(), true);
+            DatabaseMetadata metadata = getDatabaseMetadata(conn);
             Iterator<Table> iter = getConfig(settings).getTableMappings();
-            String schema = (String) settings.get(SCHEMA_KEY);
-            String catalog = conn.getCatalog();
+            String catalog = checkCatalog(conn);
+            String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
             while (iter.hasNext()) {
                 Table table = iter.next();
                 // check if table is a physical table, tables is a table and if
                 // table is contained in the defined schema
-                if (table.isPhysicalTable() && metadata.isTable(table.getName())
-                        && metadata.getTableMetadata(table.getName(), schema, catalog, false) != null) {
+//                if (table.isPhysicalTable() && metadata.isTable(table.getName())
+//                        && metadata.getTableMetadata(table.getName(), schema, catalog, false) != null) {
+//                    return true;
+//                }
+                if (table.isPhysicalTable() && metadata.isTable(table.getQuotedName())
+                        && metadata.getTableMetadata(table.getName(), table.getSchema(), table.getCatalog(), table.isQuoted()) != null) {
                     return true;
                 }
             }
@@ -507,6 +517,24 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
         } finally {
             close(conn);
         }
+    }
+
+
+    protected String checkSchema(String schema, String catalog, Connection conn) throws SQLException {
+        DatabaseMetaData metaData = conn.getMetaData();
+        if (metaData != null) {
+            ResultSet rs = metaData.getSchemas();
+            while (rs.next()) {
+                if (StringHelper.isNotEmpty(rs.getString("TABLE_SCHEM")) && rs.getString("TABLE_SCHEM").equals(schema)) {
+                    return rs.getString("TABLE_SCHEM");
+                }
+            }
+        }
+        return null;
+    }
+    
+    private String checkCatalog(Connection conn) throws SQLException {
+        return conn.getCatalog();
     }
 
     @Override
@@ -544,7 +572,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = new DatabaseMetadata(conn, getDialectInternal(), true);
+            DatabaseMetadata metadata = getDatabaseMetadata(conn);
             validatePrerequisites(conn, metadata, settings);
         } catch (SQLException ex) {
             throw new ConfigurationException(ex);
@@ -879,7 +907,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
      * @return Checked script without duplicate foreign key for
      *         observationHasOffering
      */
-    private String[] checkCreateSchema(String[] script) {
+    protected String[] checkCreateSchema(String[] script) {
         // creates upper case hexString form table name 'observationHasOffering'
         // hashCode() with prefix 'FK'
         String hexStringToCheck =
@@ -916,6 +944,15 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
     @Override
     public void prepare(Map<String, Object> settings) {
 
+    }
+    
+    @Override
+    public boolean isPostCreateSchema() {
+        return false;
+    }
+    
+    @Override
+    public void executePostCreateSchema(Map<String, Object> databaseSettings) {
     }
 
     /**

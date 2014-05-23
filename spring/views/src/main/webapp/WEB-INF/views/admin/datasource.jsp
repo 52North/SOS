@@ -56,6 +56,7 @@
 <form id="form" action="" method="POST">
     <h3>Query</h3>
     <p>Here are some raw SQL query examples which can be copied and executed in the appropriate database tool, e.g. pgAdmin.</p>
+    <p>The MySQL examples use 'sos' as schema. If you use another schema, please change the 'sos' definition to your schema. This can be easily done with a text editor by search for 'sos.' and replace with 'your_schema.'.</p>
     <div class="controls-row">
         <select id="input-query" class="span12 pull-right">
             <option value="" disabled selected style="display: none;">Select a example query &hellip;</option>

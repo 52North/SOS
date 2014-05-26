@@ -37,11 +37,13 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
@@ -1000,18 +1002,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
                 throw new OptionNotSupportedException().at(Sos2Constants.GetObservationParams.spatialFilter)
                         .withMessage("The SOS 2.0 Spatial Filtering Profile is not supported by this service!");
             }
-            Set<Long> observationIds =
-                    spatialFilteringProfileDAO.getObservationIdsForSpatialFilter(request.getSpatialFilter(),
-                            session);
-            if (CollectionHelper.isEmpty(observationIds)) {
-                c.add(Restrictions.eq(Observation.ID, Long.MIN_VALUE));
-            } else if (CollectionHelper.isNotEmpty(observationIds)) {
-                Disjunction disjunction = Restrictions.disjunction();
-                for (List<Long> list : HibernateHelper.getValidSizedLists(observationIds)) {
-                    disjunction.add(Restrictions.in(Observation.ID, list));
-                }
-                c.add(disjunction);
-            }
+            c.add(Subqueries.propertyIn(AbstractObservation.ID, spatialFilteringProfileDAO.getDetachedCriteriaFor(request.getSpatialFilter())));
         }
         
     }

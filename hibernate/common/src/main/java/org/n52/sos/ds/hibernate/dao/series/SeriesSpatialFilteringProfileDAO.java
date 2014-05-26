@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
 import org.n52.sos.ds.hibernate.dao.AbstractSpatialFilteringProfileDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.AbstractSpatialFilteringProfile;
@@ -91,6 +92,11 @@ public class SeriesSpatialFilteringProfileDAO extends AbstractSpatialFilteringPr
     @Override
     protected SeriesSpatialFilteringProfile getSpatialFilteringProfileImpl() {
         return new SeriesSpatialFilteringProfile();
+    }
+
+    @Override
+    public DetachedCriteria getDetachedCriteriaFor(SpatialFilter filter) throws OwsExceptionReport{
+        return getDetachedCriteria(SeriesSpatialFilteringProfile.class, filter);
     }
 
 }

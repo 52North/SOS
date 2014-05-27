@@ -76,6 +76,10 @@ public class JstlFunctions {
     public static boolean viewExists(ServletContext ctx, String path) {
         return new File(ctx.getRealPath("/WEB-INF/views/" + path)).exists();
     }
+    
+    public static boolean staticExtensionExists(ServletContext ctx, String path) {
+            return new File(ctx.getRealPath("/static/" + path)).exists();
+    }
 
     public static String mapToJson(@SuppressWarnings("rawtypes") Map map) throws JSONException {
         return new JSONObject(map).toString(2);

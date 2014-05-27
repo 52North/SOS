@@ -268,5 +268,7 @@ public interface Datasource {
     boolean isPostCreateSchema();
 
     void executePostCreateSchema(Map<String, Object> databaseSettings);
-
+    
+    void checkPostCreation(Properties properties);
+    
 }

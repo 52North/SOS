@@ -48,7 +48,7 @@
                                     <overWrite>false</overWrite>
                                 </artifactItem>
                             </artifactItems>
-                            <includes>**/*.xml</includes>
+                            <includes>**/*.xml,**/README</includes>
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
                         </configuration>

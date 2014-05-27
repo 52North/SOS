@@ -29,7 +29,11 @@
 package org.n52.sos.ds.datasource;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -604,6 +608,28 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
     @Override
     public Properties getDatasourceProperties(Properties current, Map<String, Object> changed) {
         return getDatasourceProperties(mergeProperties(current, changed));
+    }
+    
+    @Override
+    public void checkPostCreation(Properties properties) {
+        if (checkIfExtensionDirectoryExists()) {
+            StringBuilder builder =
+                    new StringBuilder(properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY));
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_EXTENSION_READONLY);
+            properties.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
+        }
+    }
+
+    private boolean checkIfExtensionDirectoryExists() {
+        URL dirUrl = Thread.currentThread().getContextClassLoader().getResource(HIBERNATE_MAPPING_EXTENSION_READONLY);
+        if (dirUrl != null) {
+            try {
+                return new File(URLDecoder.decode(dirUrl.getPath(), Charset.defaultCharset().toString())).exists();
+            } catch (UnsupportedEncodingException e) {
+                throw new ConfigurationException("Unable to encode directory URL " + dirUrl + "!");
+            }
+        }
+        return false;
     }
 
     /**

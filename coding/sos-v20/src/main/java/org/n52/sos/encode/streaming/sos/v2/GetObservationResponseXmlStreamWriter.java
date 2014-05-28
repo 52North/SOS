@@ -29,7 +29,7 @@
 package org.n52.sos.encode.streaming.sos.v2;
 
 import java.io.OutputStream;
-import java.util.Map;
+import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -46,13 +46,16 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.StreamingObservation;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.Sos2StreamingConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.response.GetObservationResponse;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.w3c.SchemaLocation;
 import org.n52.sos.w3c.W3CConstants;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetObservationResponse> {
     
@@ -96,7 +99,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         try {
             init(out, encodingValues);
             start(encodingValues.isEmbedded());
-            writeGetObservationResponseDoc(response);
+            writeGetObservationResponseDoc(response, encodingValues);
             end();
             finish();
         } catch (XMLStreamException xmlse) {
@@ -104,15 +107,20 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         }
     }
 
-    private void writeGetObservationResponseDoc(GetObservationResponse response) throws XMLStreamException, OwsExceptionReport {
+    private void writeGetObservationResponseDoc(GetObservationResponse response, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
         start(Sos2StreamingConstants.GET_OBSERVATION_RESPONSE);
         namespace(W3CConstants.NS_XLINK_PREFIX, W3CConstants.NS_XLINK);
         namespace(Sos2StreamingConstants.NS_SOS_PREFIX, Sos2StreamingConstants.NS_SOS_20);
-        writeNewLine();
+        // get observation encoder
         ObservationEncoder<XmlObject, OmObservation> encoder = findObservationEncoder(response.getResponseFormat());
-        Map<HelperValues, String> additionalValues = Maps.newHashMap();
-        additionalValues.put(HelperValues.DOCUMENT, null);
-        EncodingValues encodingValues = new EncodingValues(additionalValues).setEncodingNamespace(response.getResponseFormat());
+        encodingValues.getAdditionalValues().put(HelperValues.DOCUMENT, null);
+        encodingValues.setEncodingNamespace(response.getResponseFormat());
+        // write schemaLocation
+        schemaLocation(getSchemaLocation(encodingValues, encoder));
+        writeNewLine();
+//        Map<HelperValues, String> additionalValues = Maps.newHashMap();
+//        additionalValues.put(HelperValues.DOCUMENT, null);
+//        EncodingValues encodingValues = new EncodingValues(additionalValues).setEncodingNamespace(response.getResponseFormat());
         if (encoder.shouldObservationsWithSameXBeMerged()) {
             response.mergeObservationsWithSameConstellation();
         }
@@ -167,6 +175,19 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         end(Sos2StreamingConstants.GET_OBSERVATION_RESPONSE);
     }
     
+    private Set<SchemaLocation> getSchemaLocation(EncodingValues encodingValue, ObservationEncoder<XmlObject, OmObservation> encoder) {
+        Set<SchemaLocation> schemaLocations = Sets.newHashSet();
+       if (encodingValue.isSetEncoder() && CollectionHelper.isNotEmpty(encodingValue.getEncoder().getSchemaLocations())) {
+           schemaLocations.addAll(encodingValue.getEncoder().getSchemaLocations());
+       } else {
+           schemaLocations.add(Sos2Constants.SOS_GET_OBSERVATION_SCHEMA_LOCATION);
+       }
+       if (encoder != null && CollectionHelper.isNotEmpty(encoder.getSchemaLocations())) {
+           schemaLocations.addAll(encoder.getSchemaLocations());
+       }
+        return schemaLocations;
+    }
+
     @SuppressWarnings("unchecked")
     private void writeObservationData(OmObservation observation, ObservationEncoder<XmlObject, OmObservation> encoder, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
         start(Sos2StreamingConstants.OBSERVATION_DATA);

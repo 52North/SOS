@@ -41,7 +41,7 @@ import org.n52.sos.w3c.SchemaLocation;
 public interface WaterMLConstants {
     String NS_WML_20 = "http://www.opengis.net/waterml/2.0";
 
-    String NS_WML2_DR = "http://www.opengis.net/waterml-dr/2.0";
+    String NS_WML_20_DR = "http://www.opengis.net/waterml-dr/2.0";
 
     String NS_WML_20_PREFIX = "wml2";
 
@@ -80,9 +80,13 @@ public interface WaterMLConstants {
     String SCHEMA_LOCATION_URL_WML_20_DR =
             "http://schemas.opengis.net/waterml/2.0/domain-range-informative/timeseries-domain-range.xsd";
 
+    String SCHEMA_LOCATION_URL_WML_20_TS = "http://schemas.opengis.net/waterml/2.0/timeseries.xsd";
+
     SchemaLocation WML_20_SCHEMA_LOCATION = new SchemaLocation(NS_WML_20, SCHEMA_LOCATION_URL_WML_20);
 
-    SchemaLocation WML_20_DR_SCHEMA_LOCATION = new SchemaLocation(NS_WML_20_DR_PREFIX, SCHEMA_LOCATION_URL_WML_20_DR);
+    SchemaLocation WML_20_TS_SCHEMA_LOCATION = new SchemaLocation(NS_WML_20, SCHEMA_LOCATION_URL_WML_20_TS);
+
+    SchemaLocation WML_20_DR_SCHEMA_LOCATION = new SchemaLocation(NS_WML_20_DR, SCHEMA_LOCATION_URL_WML_20_DR);
     
     String EN_POINT = "point";
     

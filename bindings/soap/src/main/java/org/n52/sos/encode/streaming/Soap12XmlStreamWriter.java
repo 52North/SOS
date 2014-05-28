@@ -29,6 +29,7 @@
 package org.n52.sos.encode.streaming;
 
 import java.io.OutputStream;
+import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -50,7 +51,10 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.util.http.MediaTypes;
+import org.n52.sos.w3c.SchemaLocation;
 import org.n52.sos.w3c.W3CConstants;
+
+import com.google.common.collect.Sets;
 
 /**
  * {@link XmlStreamWriter} implementation for SOAP 1.2
@@ -143,12 +147,25 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
         start(SoapConstants.SOAP_12_ENVELOPE);
         namespace(W3CConstants.NS_XLINK_PREFIX, W3CConstants.NS_XLINK);
         namespace(SoapConstants.NS_SOAP_PREFIX, SoapConstants.NS_SOAP_12);
+        schemaLocation(getSchemaLocation(response));
         writeNewLine();
         // writeSoapHeader()
         writeSoapBody(response);
         writeNewLine();
         end(SoapConstants.SOAP_12_ENVELOPE);
 
+    }
+
+    protected Set<SchemaLocation> getSchemaLocation(SoapResponse response) throws OwsExceptionReport, XMLStreamException {
+        Set<SchemaLocation> schemaLocations = Sets.newHashSet();
+        schemaLocations.add(SoapConstants.SOAP_12_SCHEMA_LOCATION);
+        if (response.isSetBodyContent()) {
+            Encoder<Object, AbstractServiceResponse> encoder = getEncoder(response.getBodyContent());
+            if (encoder != null) {
+                schemaLocations.addAll(encoder.getSchemaLocations());
+            }
+        }
+        return schemaLocations;
     }
 
     /**
@@ -245,6 +262,10 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
             soapFault = soapFault.substring(soapFault.indexOf(Constants.GREATER_THAN_SIGN_STRING));
         }
         rawText(soapFault);
+    }
+
+    protected Encoder<Object, AbstractServiceResponse> getEncoder(AbstractServiceResponse abstractServiceResponse) throws NoEncoderForKeyException {
+         return getEncoder(new OperationEncoderKey(abstractServiceResponse.getOperationKey(), MediaTypes.APPLICATION_XML));
     }
 
     /**

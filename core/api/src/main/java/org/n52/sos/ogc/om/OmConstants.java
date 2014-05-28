@@ -135,7 +135,7 @@ public interface OmConstants {
 
     String EN_OBSERVATION = "Observation";
     
-    String EN_OM_OBSERVATION = "Observation";
+    String EN_OM_OBSERVATION = "OM_Observation";
 
     String EN_TYPE = "type";
 

@@ -62,6 +62,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
     @Override
     protected void writeResult(OmObservation observation, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
          start(OmConstants.QN_OM_20_RESULT);
+         namespace(WaterMLConstants.NS_WML_20_PREFIX, WaterMLConstants.NS_WML_20);
          writeNewLine();
          start(WaterMLConstants.QN_MEASUREMENT_TIMESERIES);
          attr(GmlConstants.QN_ID_32, "timeseries." + observation.getObservationID());
@@ -71,12 +72,15 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
         if (observation.getValue() instanceof SingleObservationValue) {
             SingleObservationValue<?> observationValue = (SingleObservationValue<?>) observation.getValue();
             writeDefaultPointMetadata(observationValue.getValue().getUnit());
+            writeNewLine();
             String time = getTimeString(observationValue.getPhenomenonTime());
             writePoint(time, getValue(observation.getValue().getValue()));
+            writeNewLine();
             close();
         } else if (observation.getValue() instanceof MultiObservationValues) {
             MultiObservationValues<?> observationValue = (MultiObservationValues<?>) observation.getValue();
             writeDefaultPointMetadata(observationValue.getValue().getUnit());
+            writeNewLine();
             TVPValue tvpValue = (TVPValue) observationValue.getValue();
             List<TimeValuePair> timeValuePairs = tvpValue.getValue();
             for (TimeValuePair timeValuePair : timeValuePairs) {
@@ -208,7 +212,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
         start(WaterMLConstants.QN_METADATA);
         start(WaterMLConstants.QN_TVP_MEASUREMENT_METADATA);
         empty(WaterMLConstants.QN_NIL_REASON);
-        attr("nilreason", "missing");
+        addXlinkHrefAttr("missing");
         endInline(WaterMLConstants.QN_TVP_MEASUREMENT_METADATA);
         endInline(WaterMLConstants.QN_METADATA);
         

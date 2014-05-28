@@ -29,6 +29,7 @@
 package org.n52.sos.encode;
 
 import java.io.OutputStream;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -36,8 +37,11 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.util.Constants;
+import org.n52.sos.util.N52XmlHelper;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.w3c.SchemaLocation;
+import org.n52.sos.w3c.W3CConstants;
 
 import com.google.common.base.StandardSystemProperty;
 
@@ -155,6 +159,14 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
     @Override
     protected void namespace(String prefix, String namespace) throws XMLStreamException {
         getXmlWriter().writeNamespace(prefix, namespace);
+    }
+    
+    protected void schemaLocation(Set<SchemaLocation> schemaLocations) throws XMLStreamException {
+        String merged = N52XmlHelper.mergeSchemaLocationsToString(schemaLocations);
+        if (StringHelper.isNotEmpty(merged)) {
+            namespace(W3CConstants.NS_XSI_PREFIX, W3CConstants.NS_XSI);
+            getXmlWriter().writeAttribute(W3CConstants.NS_XSI, W3CConstants.SCHEMA_LOCATION, merged);
+        }
     }
     
     @Override

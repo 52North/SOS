@@ -253,7 +253,9 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
                 xmlOptions.setSaveNoXmlDecl();
             }
             writeIndent(encodingValues.getIndent(), outputStream);
-            ((XmlObject) create(response)).save(outputStream, xmlOptions);
+            XmlObject xmlObject = (XmlObject) create(response);
+            setSchemaLocations(xmlObject);
+            xmlObject.save(outputStream, xmlOptions);
         } catch (IOException ioe) {
             throw new NoApplicableCodeException().causedBy(ioe).withMessage("Error while writing element to stream!");
         } finally {

@@ -59,7 +59,6 @@ import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
@@ -188,9 +187,8 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
     }
 
     protected void writeObservationType(String observationType) throws XMLStreamException {
-        start(OmConstants.QN_OM_20_OBSERVATION_TYPE);
-        chars(observationType);
-        endInline(OmConstants.QN_OM_20_OBSERVATION_TYPE);
+        empty(OmConstants.QN_OM_20_OBSERVATION_TYPE);
+        addXlinkHrefAttr(observationType);
     }
 
     protected void writePhenomenonTime(Time time) throws OwsExceptionReport, XMLStreamException {
@@ -346,7 +344,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         } else {
             observation.setObservationID(observationID);
         }
-        attr(GmlConstants.AN_ID, "o_" + observationID);
+        attr(GmlConstants.QN_ID_32, "o_" + observationID);
         return observationID;
     }
 

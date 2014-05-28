@@ -58,6 +58,8 @@ public interface W3CConstants {
     String NS_XSI_PREFIX = "xsi";
 
     String SCHEMA_LOCATION_XLINK = "http://www.w3.org/1999/xlink.xsd";
+    
+    String SCHEMA_LOCATION = "schemaLocation";
 
     String NS_XS = "http://www.w3.org/2001/XMLSchema";
 

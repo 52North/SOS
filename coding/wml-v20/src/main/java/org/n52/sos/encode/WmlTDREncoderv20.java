@@ -61,6 +61,8 @@ import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.TimeValuePair;
+import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -106,11 +108,10 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
             SupportedTypeKey.ObservationType, Collections.singleton(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TDR));;
 
-    private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections
-            .singletonMap(
-                    SosConstants.SOS,
-                    Collections.singletonMap(Sos2Constants.SERVICEVERSION,
-                            Collections.singleton(WaterMLConstants.NS_WML2_DR)));
+    private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
+            SosConstants.SOS,
+            Collections.singletonMap(Sos2Constants.SERVICEVERSION,
+                    Collections.singleton(WaterMLConstants.NS_WML_20_DR)));
 
     public WmlTDREncoderv20() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -119,9 +120,9 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
 
     @SuppressWarnings("unchecked")
     private static Set<EncoderKey> createEncoderKeys() {
-        return CollectionHelper
-                .union(getDefaultEncoderKeys(), CodingHelper.encoderKeysForElements(WaterMLConstants.NS_WML2_DR,
-                        GetObservationResponse.class, OmObservation.class, AbstractFeature.class, SingleObservationValue.class, MultiObservationValues.class));
+        return CollectionHelper.union(getDefaultEncoderKeys(), CodingHelper.encoderKeysForElements(
+                WaterMLConstants.NS_WML_20_DR, GetObservationResponse.class, OmObservation.class,
+                AbstractFeature.class, SingleObservationValue.class, MultiObservationValues.class));
     }
 
     @Override
@@ -142,7 +143,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     @Override
     public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
         super.addNamespacePrefixToMap(nameSpacePrefixMap);
-        nameSpacePrefixMap.put(WaterMLConstants.NS_WML2_DR, WaterMLConstants.NS_WML_20_DR_PREFIX);
+        nameSpacePrefixMap.put(WaterMLConstants.NS_WML_20_DR, WaterMLConstants.NS_WML_20_DR_PREFIX);
         nameSpacePrefixMap.put(GmlCoverageConstants.NS_GML_COV, GmlCoverageConstants.NS_GML_COV_PREFIX);
     }
 
@@ -160,7 +161,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         return Sets.newHashSet(WaterMLConstants.WML_20_SCHEMA_LOCATION, WaterMLConstants.WML_20_DR_SCHEMA_LOCATION,
                 GmlCoverageConstants.GML_COVERAGE_10_SCHEMA_LOCATION);
     }
-    
+
     @Override
     public boolean supportsResultStreamingForMergedValues() {
         return false;
@@ -171,22 +172,24 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
             UnsupportedEncoderInputException {
         XmlObject encodedObject = null;
         if (element instanceof ObservationValue) {
-            encodedObject = encodeResult((ObservationValue<?>)element);
+            encodedObject = encodeResult((ObservationValue<?>) element);
         } else {
             encodedObject = super.encode(element, additionalValues);
         }
         return encodedObject;
     }
-    
+
     @Override
     public void encode(Object objectToEncode, OutputStream outputStream, EncodingValues encodingValues)
             throws OwsExceptionReport {
         encodingValues.setEncoder(this);
         if (objectToEncode instanceof OmObservation) {
             try {
-                new WmlTDREncoderv20XmlStreamWriter().write((OmObservation)objectToEncode, outputStream, encodingValues);
+                new WmlTDREncoderv20XmlStreamWriter().write((OmObservation) objectToEncode, outputStream,
+                        encodingValues);
             } catch (XMLStreamException xmlse) {
-                throw new NoApplicableCodeException().causedBy(xmlse).withMessage("Error while writing element to stream!");
+                throw new NoApplicableCodeException().causedBy(xmlse).withMessage(
+                        "Error while writing element to stream!");
             }
         } else {
             super.encode(objectToEncode, outputStream, encodingValues);
@@ -200,7 +203,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
 
     @Override
     protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
-        return createMeasurementDomainRange((AbstractObservationValue<?>)observationValue);
+        return createMeasurementDomainRange((AbstractObservationValue<?>) observationValue);
     }
 
     @Override
@@ -227,7 +230,11 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
      *             If an error occurs
      */
     private XmlObject createMeasurementDomainRange(OmObservation sosObservation) throws OwsExceptionReport {
-
+        if (!sosObservation.getObservationConstellation().isSetObservationType()
+                || (sosObservation.getObservationConstellation().isSetObservationType() && isInvalidObservationType(sosObservation
+                        .getObservationConstellation().getObservationType()))) {
+            return null;
+        }
         MeasurementTimeseriesDomainRangeDocument xbMearuementTimeseriesDomainRangeDoc =
                 MeasurementTimeseriesDomainRangeDocument.Factory.newInstance();
         MeasurementTimeseriesCoverageType xbMeasurementTimeseriesDomainRange =
@@ -312,7 +319,11 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         TimePositionListDocument timePositionListDoc = TimePositionListDocument.Factory.newInstance();
         TimePositionListType timePositionList = timePositionListDoc.addNewTimePositionList();
         timePositionList.setId("timepositionList_" + sosObservation.getObservationID());
-        timePositionList.setTimePositionList(getTimeArray((MultiObservationValues<?>) sosObservation.getValue()));
+        if (sosObservation.getValue() instanceof SingleObservationValue<?>) {
+            timePositionList.setTimePositionList(Lists.newArrayList(getTimeString(sosObservation.getValue().getPhenomenonTime())));
+        } else if (sosObservation.getValue() instanceof MultiObservationValues<?>) {
+            timePositionList.setTimePositionList(getTimeArray((MultiObservationValues<?>) sosObservation.getValue()));
+        }
         return timePositionListDoc;
     }
 
@@ -347,7 +358,8 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     private List<Object> getValueList(List<TimeValuePair> timeValuePairs) throws OwsExceptionReport {
         ArrayList<Object> values = new ArrayList<Object>(timeValuePairs.size());
         for (TimeValuePair timeValuePair : timeValuePairs) {
-            if (timeValuePair.getValue() != null) {
+            if (timeValuePair.getValue() != null
+                    && (timeValuePair.getValue() instanceof CountValue || timeValuePair.getValue() instanceof QuantityValue)) {
                 values.add(timeValuePair.getValue().getValue());
             } else {
                 values.add("");
@@ -355,8 +367,14 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         }
         return values;
     }
-    
-    private XmlObject createMeasurementDomainRange(AbstractObservationValue<?> observationValue) throws OwsExceptionReport {
+
+    private XmlObject createMeasurementDomainRange(AbstractObservationValue<?> observationValue)
+            throws OwsExceptionReport {
+        if (!observationValue.isSetObservationType()
+                || (observationValue.isSetObservationType() && isInvalidObservationType(observationValue
+                        .getObservationType()))) {
+            return null;
+        }
 
         MeasurementTimeseriesDomainRangeDocument xbMearuementTimeseriesDomainRangeDoc =
                 MeasurementTimeseriesDomainRangeDocument.Factory.newInstance();
@@ -367,13 +385,14 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         // set time position list
         xbMeasurementTimeseriesDomainRange.addNewDomainSet().set(getTimePositionList(observationValue));
         // initialize unit
-//        AbstractPhenomenon observableProperty = observationValue.getObservableProperty();
+        // AbstractPhenomenon observableProperty =
+        // observationValue.getObservableProperty();
         String unit = "";
         // create quantity list from values
         QuantityListDocument quantityListDoc = QuantityListDocument.Factory.newInstance();
         MeasureOrNilReasonListType quantityList = quantityListDoc.addNewQuantityList();
         if (observationValue instanceof MultiObservationValues) {
-            TVPValue tvpValue = (TVPValue) ((MultiObservationValues<?>)observationValue).getValue();
+            TVPValue tvpValue = (TVPValue) ((MultiObservationValues<?>) observationValue).getValue();
             List<TimeValuePair> timeValuePairs = tvpValue.getValue();
             if (Strings.isNullOrEmpty(unit) && CollectionHelper.isNotEmpty(timeValuePairs)
                     && timeValuePairs.get(0).getValue().isSetUnit()) {
@@ -387,10 +406,10 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         }
         quantityList.setUom(unit);
         // set unit to SosObservableProperty if not set.
-//        if (observableProperty instanceof OmObservableProperty
-//                && !((OmObservableProperty) observableProperty).isSetUnit()) {
-//            ((OmObservableProperty) observableProperty).setUnit(unit);
-//        }
+        // if (observableProperty instanceof OmObservableProperty
+        // && !((OmObservableProperty) observableProperty).isSetUnit()) {
+        // ((OmObservableProperty) observableProperty).setUnit(unit);
+        // }
         // set up range set
         xbMeasurementTimeseriesDomainRange.addNewRangeSet().set(quantityListDoc);
         // set up rangeType
@@ -399,9 +418,16 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         // set om:Result
         return xbMearuementTimeseriesDomainRangeDoc;
     }
-    
-    private XmlObject createDataRecord(AbstractObservationValue<?> observationValue, String unit) throws OwsExceptionReport {
-//        AbstractPhenomenon observableProperty = sosObservation.getObservationConstellation().getObservableProperty();
+
+    private boolean isInvalidObservationType(String observationType) {
+        return !OmConstants.OBS_TYPE_COUNT_OBSERVATION.equals(observationType)
+                || !OmConstants.OBS_TYPE_MEASUREMENT.equals(observationType);
+    }
+
+    private XmlObject createDataRecord(AbstractObservationValue<?> observationValue, String unit)
+            throws OwsExceptionReport {
+        // AbstractPhenomenon observableProperty =
+        // sosObservation.getObservationConstellation().getObservableProperty();
         SweDataRecord dataRecord = new SweDataRecord();
         dataRecord.setIdentifier("datarecord_" + observationValue.getObservationID());
         SweQuantity quantity = new SweQuantity();
@@ -413,8 +439,9 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         additionalValues.put(HelperValues.FOR_OBSERVATION, null);
         return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, dataRecord, additionalValues);
     }
-    
-    private TimePositionListDocument getTimePositionList(AbstractObservationValue<?> observationValue) throws OwsExceptionReport {
+
+    private TimePositionListDocument getTimePositionList(AbstractObservationValue<?> observationValue)
+            throws OwsExceptionReport {
         TimePositionListDocument timePositionListDoc = TimePositionListDocument.Factory.newInstance();
         TimePositionListType timePositionList = timePositionListDoc.addNewTimePositionList();
         timePositionList.setId("timepositionList_" + observationValue.getObservationID());

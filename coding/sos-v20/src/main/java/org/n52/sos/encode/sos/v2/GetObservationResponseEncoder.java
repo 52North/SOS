@@ -135,6 +135,7 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
             GetObservationResponse response, OutputStream outputStream, EncodingValues encodingValues)
             throws OwsExceptionReport {
         try {
+            encodingValues.setEncoder(this);
             new GetObservationResponseXmlStreamWriter().write(response, outputStream, encodingValues);
         } catch (XMLStreamException xmlse) {
             throw new NoApplicableCodeException().causedBy(xmlse);

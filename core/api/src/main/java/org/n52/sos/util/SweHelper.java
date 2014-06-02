@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
@@ -147,6 +148,42 @@ public final class SweHelper {
         return dataArray;
     }
 
+    public static SweDataArray createSosSweDataArray(AbstractObservationValue<?> observationValue) {
+        String observablePropertyIdentifier = observationValue.getObservableProperty();
+        SweDataArrayValue dataArrayValue = new SweDataArrayValue();
+        SweDataArray dataArray = new SweDataArray();
+        dataArray.setEncoding(createTextEncoding(observationValue));
+        dataArrayValue.setValue(dataArray);
+        if (observationValue instanceof SingleObservationValue) {
+            SingleObservationValue<?> singleValue = (SingleObservationValue<?>) observationValue;
+            if (singleValue.getValue() instanceof SweDataArrayValue) {
+                return (SweDataArray) singleValue.getValue().getValue();
+            } else {
+                dataArray.setElementType(createElementType(singleValue.getValue(), observablePropertyIdentifier));
+                dataArrayValue.addBlock(createBlock(dataArray.getElementType(), observationValue.getPhenomenonTime(),
+                        observablePropertyIdentifier, singleValue.getValue()));
+            }
+        } else if (observationValue instanceof MultiObservationValues) {
+            MultiObservationValues<?> multiValue = (MultiObservationValues<?>) observationValue;
+            if (multiValue.getValue() instanceof SweDataArrayValue) {
+                return ((SweDataArrayValue) multiValue.getValue()).getValue();
+            } else if (multiValue.getValue() instanceof TVPValue) {
+                TVPValue tvpValues = (TVPValue) multiValue.getValue();
+                for (TimeValuePair timeValuePair : tvpValues.getValue()) {
+                    if (!dataArray.isSetElementTyp()) {
+                        dataArray.setElementType(createElementType(timeValuePair.getValue(),
+                                observablePropertyIdentifier));
+                    }
+                    List<String> newBlock =
+                            createBlock(dataArray.getElementType(), timeValuePair.getTime(),
+                                    observablePropertyIdentifier, timeValuePair.getValue());
+                    dataArrayValue.addBlock(newBlock);
+                }
+            }
+        }
+        return dataArray;
+    }
+
     private static SweAbstractDataComponent createElementType(Value<?> iValue, String name) {
         SweDataRecord dataRecord = new SweDataRecord();
         dataRecord.addField(getPhenomenonTimeField());
@@ -198,17 +235,51 @@ public final class SweHelper {
      * @return TextEncoding
      */
     private static SweAbstractEncoding createTextEncoding(OmObservation sosObservation) {
-        SweTextEncoding sosTextEncoding = new SweTextEncoding();
+        String tupleSeparator = ServiceConfiguration.getInstance().getTupleSeparator();
+        String tokenSeparator = ServiceConfiguration.getInstance().getTokenSeparator();
         if (sosObservation.isSetTupleSeparator()) {
-            sosTextEncoding.setBlockSeparator(sosObservation.getTupleSeparator());
-        } else {
-            sosTextEncoding.setBlockSeparator(ServiceConfiguration.getInstance().getTupleSeparator());
+            tupleSeparator = sosObservation.getTupleSeparator();
         }
         if (sosObservation.isSetTokenSeparator()) {
-            sosTextEncoding.setTokenSeparator(sosObservation.getTokenSeparator());
-        } else {
-            sosTextEncoding.setTokenSeparator(ServiceConfiguration.getInstance().getTokenSeparator());
+            tokenSeparator = sosObservation.getTokenSeparator();
         }
+        return createTextEncoding(tupleSeparator, tokenSeparator);
+    }
+
+    /**
+     * Create a TextEncoding object for token and tuple separators from
+     * SosObservation. If separators not set, definitions from Configurator are
+     * used.
+     * 
+     * @param observationValue
+     *            AbstractObservationValue with token and tuple separator
+     * @return TextEncoding
+     */
+    private static SweAbstractEncoding createTextEncoding(AbstractObservationValue<?> observationValue) {
+        String tupleSeparator = ServiceConfiguration.getInstance().getTupleSeparator();
+        String tokenSeparator = ServiceConfiguration.getInstance().getTokenSeparator();
+        if (observationValue.isSetTupleSeparator()) {
+            tupleSeparator = observationValue.getTupleSeparator();
+        }
+        if (observationValue.isSetTokenSeparator()) {
+            tokenSeparator = observationValue.getTokenSeparator();
+        }
+        return createTextEncoding(tupleSeparator, tokenSeparator);
+    }
+
+    /**
+     * Create a TextEncoding object for token and tuple separators.
+     * 
+     * @param tupleSeparator
+     *            Token separator
+     * @param tokenSeparator
+     *            Tuple separator
+     * @return TextEncoding
+     */
+    private static SweAbstractEncoding createTextEncoding(String tupleSeparator, String tokenSeparator) {
+        SweTextEncoding sosTextEncoding = new SweTextEncoding();
+        sosTextEncoding.setBlockSeparator(tupleSeparator);
+        sosTextEncoding.setTokenSeparator(tokenSeparator);
         return sosTextEncoding;
     }
 

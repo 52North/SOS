@@ -21,6 +21,20 @@ Changes since last release
     * GetObservation with multiple temporal filter and different valueReferences
       * same valueReference:       filter OR filter
       * different valueReferences: (filterA1 OR filterA2) AND filterB
+    * Streaming response:
+      * can be activated via settings
+      * StreamWriter for SOAP envelope, O&M 2.0, and WaterML 2.0
+      * Allows bigger responses because the no XML DOM-Tree is created
+    * Streaming datasource (Hibernate) for GetObservation:
+      * can be activate via settings
+      * Query observation metadata and create template observations
+      * In the encoder the observation values are queried
+      * Two possibilities, configurable via settings:
+      	* scroll: send query and get scrollable values
+      	* chunk: 
+      	  * send paging requests and process each chunk
+      	  * chunk size is configurable via settings
+      * reduced latency for GetObservation requests
  
  --- Changes ---
  

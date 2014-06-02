@@ -44,6 +44,9 @@ import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.StreamingObservation;
+import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
@@ -87,13 +90,23 @@ public class SosGetObservationOperatorV20 extends
 
     @Override
     public GetObservationResponse receive(final GetObservationRequest sosRequest) throws OwsExceptionReport {
+        boolean checkForMergeObservationsInResponse = checkForMergeObservationsInResponse(sosRequest);
+        sosRequest.setMergeObservationValues(checkForMergeObservationsInResponse);
         final GetObservationResponse sosResponse = getDao().getObservation(sosRequest);
         setObservationResponseResponseFormatAndContentType(sosRequest, sosResponse);
         // TODO check for correct merging, add merge if swes:extension is set
-        if (getActiveProfile().isMergeValues() || isSetExtensionMergeObservationsToSweDataArray(sosRequest)) {
+        if (checkForMergeObservationsInResponse) {
             sosResponse.mergeObservationsWithSameConstellation();
+            sosResponse.setMergeObservations(true);
         }        
         return sosResponse;
+    }
+
+    private boolean checkForMergeObservationsInResponse(GetObservationRequest sosRequest) {
+        if (getActiveProfile().isMergeValues() || isSetExtensionMergeObservationsToSweDataArray(sosRequest)) {
+            return true;
+        }
+        return false;
     }
 
     private boolean isSetExtensionMergeObservationsToSweDataArray(final GetObservationRequest sosRequest) {

@@ -42,14 +42,18 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @since 4.0.0
  */
-public interface Sos1Constants {
+public interface Sos1Constants extends SosConstants {
 
     String NS_SOS = "http://www.opengis.net/sos/1.0";
 
     /** Constant for the schema repository of the SOS */
     String SCHEMA_LOCATION_SOS = "http://schemas.opengis.net/sos/1.0.0/sosAll.xsd";
+    
+    String SCHEMA_LOCATION_URL_SOS1_GET_CAPBABILITIES = "http://schemas.opengis.net/sos/1.0.0/sosAll.xsd";
 
     SchemaLocation SOS1_SCHEMA_LOCATION = new SchemaLocation(NS_SOS, SCHEMA_LOCATION_SOS);
+
+    SchemaLocation GET_CAPABILITIES_SOS1_SCHEMA_LOCATION = new SchemaLocation(NS_SOS, SCHEMA_LOCATION_URL_SOS1_GET_CAPBABILITIES);
 
     /** Constant for the content types of the response formats */
     // TODO use MediaType

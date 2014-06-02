@@ -138,7 +138,7 @@ public interface GmlConstants extends Constants {
     String EN_UPPER_CORNER = "upperCorner";
     
     String EN_FEATURE_MEMBER = "featureMember";
-    
+
     String EN_IDENTIFIER = "identifier";
 
     /* attribute names in GML */
@@ -207,9 +207,10 @@ public interface GmlConstants extends Constants {
      */
     QName QN_ID_32 = new QName(NS_GML_32, AN_ID, NS_GML_PREFIX);
 
-    /**
-     * The {@code QName} for {@code gml:beginPosition}.
-     */
+    QName QN_DESCRIPTION_32 = new QName(NS_GML_32, EN_DESCRIPTION, NS_GML_PREFIX);
+    
+    QName QN_ID = new QName(NS_GML, AN_ID, NS_GML_PREFIX);
+
     QName QN_BEGIN_POSITION_32 = new QName(GmlConstants.NS_GML_32, GmlConstants.EN_BEGIN_POSITION,
             GmlConstants.NS_GML_PREFIX);
 

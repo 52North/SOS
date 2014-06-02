@@ -137,6 +137,9 @@ public class ServiceConfiguration {
     private int maxNumberOfReturnedValues = Integer.MAX_VALUE;
 
     private boolean overallExtrema = true;
+    
+    private boolean streamingEncoding = true;
+    
     /**
      * Returns the default token seperator for results.
      * <p/>
@@ -386,7 +389,19 @@ public class ServiceConfiguration {
     public boolean isOverallExtrema() {
         return overallExtrema;
     }
+    
+    @Setting(StreamingSettings.FORCE_STREAMING_ENCODING)
+    public void setForceStreamingEncoding(boolean streamingEncoding) {
+        this.streamingEncoding  = streamingEncoding;
+    }
 
+    /**
+     * @return
+     */
+    public boolean isForceStreamingEncoding() {
+        return streamingEncoding;
+    }
+    
     /*
      * Now, we return the list of returned features and not a complex encoded
      * relatedFeature => this setting is not needed at all See

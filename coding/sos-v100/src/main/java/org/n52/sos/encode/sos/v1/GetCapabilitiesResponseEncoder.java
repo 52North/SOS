@@ -65,6 +65,7 @@ import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosEnvelope;
@@ -75,6 +76,7 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.N52XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.w3c.SchemaLocation;
 
 import com.google.common.collect.Sets;
 
@@ -86,6 +88,11 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     public GetCapabilitiesResponseEncoder() {
         super(SosConstants.Operations.GetCapabilities.name(), GetCapabilitiesResponse.class);
+    }
+    
+    @Override
+    protected Set<SchemaLocation> getConcreteSchemaLocations() {
+        return Sets.newHashSet(Sos1Constants.GET_CAPABILITIES_SOS1_SCHEMA_LOCATION);
     }
 
     @Override

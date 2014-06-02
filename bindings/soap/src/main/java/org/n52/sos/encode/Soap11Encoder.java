@@ -61,7 +61,7 @@ import com.google.common.collect.Sets;
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
-public class Soap11Encoder extends AbstractSoapEncoder<SOAPMessage> {
+public class Soap11Encoder extends AbstractSoapEncoder<SOAPMessage, SoapResponse> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Soap11Encoder.class);
 
@@ -98,7 +98,7 @@ public class Soap11Encoder extends AbstractSoapEncoder<SOAPMessage> {
                     addSchemaLocationForExceptionToSOAPMessage(soapResponseMessage);
                 } else {
                     action =
-                            createSOAPBody(soapResponseMessage, soapResponse.getSoapBodyContent(),
+                            createSOAPBody(soapResponseMessage, soapResponse,
                                     soapResponse.getSoapAction());
                 }
             }

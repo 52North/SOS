@@ -28,6 +28,8 @@
  */
 package org.n52.sos.encode;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -46,11 +48,13 @@ import org.apache.xmlbeans.XmlBoolean;
 import org.apache.xmlbeans.XmlDouble;
 import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlString;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.convert.Converter;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.convert.ConverterRepository;
+import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
@@ -60,6 +64,7 @@ import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmCompositePhenomenon;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
@@ -97,9 +102,7 @@ import com.google.common.collect.Maps;
  * 
  */
 public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> implements
-        ObservationEncoder<XmlObject, Object> {
-    
-    
+        ObservationEncoder<XmlObject, Object>, StreamingEncoder<XmlObject, Object> {
 
     /**
      * Method to create the om:result element content
@@ -111,6 +114,8 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
      *             if an error occurs
      */
     protected abstract XmlObject createResult(OmObservation sosObservation) throws OwsExceptionReport;
+    
+    protected abstract XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport;
 
     /**
      * Method to add the observation type to the om:Observation. Subclasses
@@ -129,7 +134,7 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
      * 
      * @return Encoding namespace
      */
-    protected abstract String getDefaultFeatureEncodingNamespace();
+    public abstract String getDefaultFeatureEncodingNamespace();
 
     /**
      * Get the default encoding Namespace for Procedures
@@ -153,6 +158,10 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
             encodedObject = createOmObservation((OmObservation) element, additionalValues);
         } else if (element instanceof NamedValue) {
             encodedObject = createNamedValue((NamedValue<?>) element);
+        } else if (element instanceof AbstractFeature) {
+            encodedObject = addFeatureOfInterest((AbstractFeature) element);
+        } else if (element instanceof SosProcedureDescription) {
+            encodedObject = encodeProcedureDescription((SosProcedureDescription) element);
         } else {
             throw new UnsupportedEncoderInputException(this, element);
         }
@@ -160,6 +169,30 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
         // encodedObject.schemaType().toString(),
         // XmlHelper.validateDocument(encodedObject));
         return encodedObject;
+    }
+
+    @Override
+    public void encode(Object objectToEncode, OutputStream outputStream) throws OwsExceptionReport {
+        encode(objectToEncode, outputStream, new EncodingValues());
+    }
+
+    @Override
+    public void encode(Object objectToEncode, OutputStream outputStream, EncodingValues encodingValues)
+            throws OwsExceptionReport {
+        try {
+            XmlOptions xmlOptions = XmlOptionsHelper.getInstance().getXmlOptions();
+            if (encodingValues.isEmbedded()) {
+                xmlOptions.setSaveNoXmlDecl();
+            }
+            // writeIndent(encodingValues.getIndent(), outputStream);
+            encode(objectToEncode, encodingValues.getAdditionalValues()).save(outputStream, xmlOptions);
+        } catch (IOException ioe) {
+            throw new NoApplicableCodeException().causedBy(ioe).withMessage("Error while writing element to stream!");
+        } finally {
+            if (encodingValues.isEmbedded()) {
+                XmlOptionsHelper.getInstance().getXmlOptions().remove(XmlOptions.SAVE_NO_XML_DECL);
+            }
+        }
     }
 
     @Override
@@ -254,16 +287,31 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
         if (createResult != null) {
             addNewResult.set(createResult);
         }
-        if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)){
-            OMObservationPropertyType observationPropertyType = OMObservationPropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+            OMObservationPropertyType observationPropertyType =
+                    OMObservationPropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
             observationPropertyType.setOMObservation(xbObservation);
             return observationPropertyType;
         } else if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
-            OMObservationDocument observationDoc = OMObservationDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+            OMObservationDocument observationDoc =
+                    OMObservationDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
             observationDoc.setOMObservation(xbObservation);
             return observationDoc;
         }
+        if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+            OMObservationDocument obsDoc =
+                    OMObservationDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+            obsDoc.setOMObservation(xbObservation);
+            return obsDoc;
+        }
         return xbObservation;
+    }
+
+    private XmlObject encodeProcedureDescription(SosProcedureDescription procedureDescription)
+            throws OwsExceptionReport {
+        OMProcessPropertyType procedure = OMProcessPropertyType.Factory.newInstance();
+        addProcedure(procedure, procedureDescription, null);
+        return procedure;
     }
 
     /**
@@ -486,27 +534,30 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
                 XmlBoolean xbBoolean = XmlBoolean.Factory.newInstance();
                 xbBoolean.setBooleanValue(booleanValue.getValue());
                 return xbBoolean;
-//                return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20,
-//                        new SweBoolean().setValue(booleanValue.getValue()), helperValues);
+                // return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20,
+                // new SweBoolean().setValue(booleanValue.getValue()),
+                // helperValues);
             } else if (value instanceof CategoryValue) {
                 CategoryValue categoryValue = (CategoryValue) value;
                 if (categoryValue.isSetValue()) {
                     XmlString xmlString = XmlString.Factory.newInstance();
                     xmlString.setStringValue(categoryValue.getValue());
                     return xmlString;
-//                    return CodingHelper
-//                            .encodeObjectToXml(
-//                                    SweConstants.NS_SWE_20,
-//                                    new SweCategory().setValue(categoryValue.getValue()).setCodeSpace(
-//                                            categoryValue.getUnit()), helperValues);
+                    // return CodingHelper
+                    // .encodeObjectToXml(
+                    // SweConstants.NS_SWE_20,
+                    // new
+                    // SweCategory().setValue(categoryValue.getValue()).setCodeSpace(
+                    // categoryValue.getUnit()), helperValues);
                 }
             } else if (value instanceof CountValue) {
                 CountValue countValue = (CountValue) value;
                 XmlInteger xmlInteger = XmlInteger.Factory.newInstance();
                 xmlInteger.setStringValue(countValue.getValue().toString());
                 return xmlInteger;
-//                return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20,
-//                        new SweCount().setValue(countValue.getValue()), helperValues);
+                // return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20,
+                // new SweCount().setValue(countValue.getValue()),
+                // helperValues);
             } else if (value instanceof GeometryValue) {
                 GeometryValue geometryValue = (GeometryValue) value;
                 if (geometryValue.getValue() != null) {
@@ -518,17 +569,18 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
                 XmlDouble xmlDouble = XmlDouble.Factory.newInstance();
                 xmlDouble.setDoubleValue(quantityValue.getValue().doubleValue());
                 return xmlDouble;
-//                return CodingHelper.encodeObjectToXml(
-//                        SweConstants.NS_SWE_20,
-//                        new SweQuantity().setValue(quantityValue.getValue().doubleValue()).setUom(
-//                                quantityValue.getUnit()), helperValues);
+                // return CodingHelper.encodeObjectToXml(
+                // SweConstants.NS_SWE_20,
+                // new
+                // SweQuantity().setValue(quantityValue.getValue().doubleValue()).setUom(
+                // quantityValue.getUnit()), helperValues);
             } else if (value instanceof TextValue) {
                 TextValue textValue = (TextValue) value;
                 XmlString xmlString = XmlString.Factory.newInstance();
                 xmlString.setStringValue(textValue.getValue());
                 return xmlString;
-//                return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20,
-//                        new SweText().setValue(textValue.getValue()), helperValues);
+                // return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20,
+                // new SweText().setValue(textValue.getValue()), helperValues);
             }
         }
         return null;

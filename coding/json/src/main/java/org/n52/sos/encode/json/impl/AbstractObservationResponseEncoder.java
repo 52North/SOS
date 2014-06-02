@@ -71,6 +71,11 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
     public boolean isObservationAndMeasurmentV20Type() {
         return false;
     }
+    
+    @Override
+    public boolean supportsResultStreamingForMergedValues() {
+        return false;
+    }
 
     @Override
     public boolean shouldObservationsWithSameXBeMerged() {

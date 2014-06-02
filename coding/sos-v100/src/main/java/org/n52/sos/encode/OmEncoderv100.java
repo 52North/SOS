@@ -75,6 +75,7 @@ import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
@@ -195,6 +196,11 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
     }
 
     @Override
+    public boolean supportsResultStreamingForMergedValues() {
+        return false;
+    }
+
+    @Override
     public MediaType getContentType() {
         return OmConstants.CONTENT_TYPE_OM;
     }
@@ -267,7 +273,15 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
                 String observationType = checkObservationType(sosObservation);
                 if (Strings.isNullOrEmpty(resultModel)
                         || (StringHelper.isNotEmpty(resultModel) && observationType.equals(resultModel))) {
-                    xbObservationCollection.addNewMember().set(createObservation(sosObservation, null));
+                    if (sosObservation.getValue() instanceof StreamingValue) {
+                        StreamingValue streamingValue = (StreamingValue) sosObservation.getValue();
+                        while (streamingValue.hasNextValue()) {
+                            xbObservationCollection.addNewMember().set(
+                                    createObservation(streamingValue.nextSingleObservation(), null));
+                        }
+                    } else {
+                        xbObservationCollection.addNewMember().set(createObservation(sosObservation, null));
+                    }
                 } else {
                     throw new InvalidParameterValueException().at(Sos1Constants.GetObservationParams.resultModel)
                             .withMessage("The requested resultModel '%s' is invalid for the resulting observations!",

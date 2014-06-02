@@ -253,7 +253,7 @@ public abstract class SimpleBinding extends Binding {
             AbstractServiceResponse serviceResponse) throws HTTPException, IOException {
         MediaType contentType =
                 chooseResponseContentType(serviceResponse, HTTPUtils.getAcceptHeader(request), getDefaultContentType());
-        writeResponse(request, response, serviceResponse, contentType);
+        HTTPUtils.writeObject(request, response, contentType, serviceResponse);
     }
 
     protected Object encodeResponse(AbstractServiceResponse response, MediaType contentType) throws OwsExceptionReport {
@@ -295,6 +295,7 @@ public abstract class SimpleBinding extends Binding {
         return encoder.encode(oer);
     }
 
+    @Deprecated
     protected void writeResponse(HttpServletRequest request, HttpServletResponse response,
             AbstractServiceResponse serviceResponse, MediaType contentType) throws IOException, HTTPException {
         Object encodedResponse = null;
@@ -312,4 +313,5 @@ public abstract class SimpleBinding extends Binding {
             }
         }
     }
+    
 }

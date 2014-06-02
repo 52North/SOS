@@ -120,7 +120,7 @@ public class HTTPUtils {
 
     public static void writeObject(HttpServletRequest request, HttpServletResponse response, MediaType contentType,
             Object object) throws IOException {
-        writeObject(request, response, contentType, new GenericWritable(object));
+        writeObject(request, response, contentType, new GenericWritable(object, contentType));
     }
 
     public static void writeObject(HttpServletRequest request, HttpServletResponse response, ServiceResponse sr)
@@ -141,7 +141,7 @@ public class HTTPUtils {
         }
     }
 
-    private static void writeObject(HttpServletRequest request, HttpServletResponse response, MediaType contentType,
+    public static void writeObject(HttpServletRequest request, HttpServletResponse response, MediaType contentType,
             Writable writable) throws IOException {
         OutputStream out = null;
         response.setContentType(contentType.toString());
@@ -150,7 +150,7 @@ public class HTTPUtils {
             if (supportsGzipEncoding(request) && writable.supportsGZip()) {
                 out = new GZIPOutputStream(out);
                 response.setHeader(HTTPHeaders.CONTENT_ENCODING, HTTPConstants.GZIP_ENCODING);
-                //FIXME content length is unknown when using GZIPOutputStream
+                // FIXME content length is unknown when using GZIPOutputStream
                 response.setContentLength(-1);
             }
 
@@ -166,22 +166,33 @@ public class HTTPUtils {
     private static class GenericWritable implements Writable {
         private final Object o;
 
-        GenericWritable(Object o) {
-            this.o = o;
-        }
+        private ResponseWriter<Object> writer;
 
-        @Override
-        public void write(OutputStream out) throws IOException {
-            ResponseWriter<Object> writer = ResponseWriterRepository.getInstance().getWriter(o.getClass());
+        /**
+         * constructor
+         * 
+         * @param o
+         *            {@link Object} to write
+         * @param ct
+         *            contentType to encode to
+         */
+        GenericWritable(Object o, MediaType ct) {
+            this.o = o;
+            writer = ResponseWriterRepository.getInstance().getWriter(o.getClass());
             if (writer == null) {
                 throw new RuntimeException("no writer for " + o.getClass() + " found!");
             }
-            writer.write(o, out);
+            writer.setContentType(ct);
         }
 
         @Override
         public boolean supportsGZip() {
-            return true;
+            return writer.supportsGZip(o);
+        }
+
+        @Override
+        public void write(OutputStream out) throws IOException {
+            writer.write(o, out);
         }
     }
 
@@ -203,9 +214,10 @@ public class HTTPUtils {
         }
     }
 
-    private interface Writable {
+    public interface Writable {
         void write(OutputStream out) throws IOException;
 
         boolean supportsGZip();
     }
+
 }

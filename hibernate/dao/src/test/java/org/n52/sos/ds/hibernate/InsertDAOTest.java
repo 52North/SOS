@@ -70,6 +70,8 @@ import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.StreamingObservation;
+import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.QuantityValue;
@@ -600,24 +602,70 @@ public class InsertDAOTest extends HibernateTestCase {
         assertThat(getObsResponse, notNullValue());
         assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
         OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
+        if (omObservation.getValue() instanceof StreamingObservation) {
+            assertThat(((StreamingObservation)omObservation.getValue()).hasNextValue(), is(true));
+            omObservation = ((StreamingObservation)omObservation.getValue()).nextSingleObservation();
+            assertThat(omObservation.getObservationConstellation(), notNullValue());
+            OmObservationConstellation obsConst = omObservation.getObservationConstellation();
+            assertThat(obsConst.getProcedure().getIdentifier(), is(obsProcedure));
+            assertThat(obsConst.getObservableProperty().getIdentifier(), is(obsObsProp));
 
-        assertThat(omObservation.getObservationConstellation(), notNullValue());
-        OmObservationConstellation obsConst = omObservation.getObservationConstellation();
-        assertThat(obsConst.getProcedure().getIdentifier(), is(obsProcedure));
-        assertThat(obsConst.getObservableProperty().getIdentifier(), is(obsObsProp));
+            // TODO this fails
+            // assertThat(obsConst.getFeatureOfInterest().getIdentifier().getValue(),
+            // is(obsFeature));
 
-        // TODO this fails
-        // assertThat(obsConst.getFeatureOfInterest().getIdentifier().getValue(),
-        // is(obsFeature));
+            assertThat(omObservation.getValue(), notNullValue());
+            ObservationValue<?> value = omObservation.getValue();
+            assertThat(value.getValue(), instanceOf(QuantityValue.class));
+            assertThat(value.getPhenomenonTime(), instanceOf(TimeInstant.class));
+            TimeInstant timeInstant = (TimeInstant) value.getPhenomenonTime();
+            assertThat(timeInstant.getValue().toDate(), is(time.toDate()));
+            QuantityValue quantityValue = (QuantityValue) value.getValue();
+            assertThat(quantityValue.getValue().doubleValue(), is(obsVal));
+            assertThat(quantityValue.getUnit(), is(obsUnit));
+            // TODO
+        } else if (omObservation.getValue() instanceof StreamingValue) {
+            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
+            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
+            assertThat(omObservation.getObservationConstellation(), notNullValue());
+            OmObservationConstellation obsConst = omObservation.getObservationConstellation();
+            assertThat(obsConst.getProcedure().getIdentifier(), is(obsProcedure));
+            assertThat(obsConst.getObservableProperty().getIdentifier(), is(obsObsProp));
 
-        assertThat(omObservation.getValue(), notNullValue());
-        ObservationValue<?> value = omObservation.getValue();
-        assertThat(value.getValue(), instanceOf(QuantityValue.class));
-        assertThat(value.getPhenomenonTime(), instanceOf(TimeInstant.class));
-        TimeInstant timeInstant = (TimeInstant) value.getPhenomenonTime();
-        assertThat(timeInstant.getValue().toDate(), is(time.toDate()));
-        QuantityValue quantityValue = (QuantityValue) value.getValue();
-        assertThat(quantityValue.getValue().doubleValue(), is(obsVal));
-        assertThat(quantityValue.getUnit(), is(obsUnit));
+            // TODO this fails
+            // assertThat(obsConst.getFeatureOfInterest().getIdentifier().getValue(),
+            // is(obsFeature));
+
+            assertThat(omObservation.getValue(), notNullValue());
+            ObservationValue<?> value = omObservation.getValue();
+            assertThat(value.getValue(), instanceOf(QuantityValue.class));
+            assertThat(value.getPhenomenonTime(), instanceOf(TimeInstant.class));
+            TimeInstant timeInstant = (TimeInstant) value.getPhenomenonTime();
+            assertThat(timeInstant.getValue().toDate(), is(time.toDate()));
+            QuantityValue quantityValue = (QuantityValue) value.getValue();
+            assertThat(quantityValue.getValue().doubleValue(), is(obsVal));
+            assertThat(quantityValue.getUnit(), is(obsUnit));
+        } else {
+            assertThat(omObservation.getObservationConstellation(), notNullValue());
+            OmObservationConstellation obsConst = omObservation.getObservationConstellation();
+            assertThat(obsConst.getProcedure().getIdentifier(), is(obsProcedure));
+            assertThat(obsConst.getObservableProperty().getIdentifier(), is(obsObsProp));
+
+            // TODO this fails
+            // assertThat(obsConst.getFeatureOfInterest().getIdentifier().getValue(),
+            // is(obsFeature));
+
+            assertThat(omObservation.getValue(), notNullValue());
+            ObservationValue<?> value = omObservation.getValue();
+            assertThat(value.getValue(), instanceOf(QuantityValue.class));
+            assertThat(value.getPhenomenonTime(), instanceOf(TimeInstant.class));
+            TimeInstant timeInstant = (TimeInstant) value.getPhenomenonTime();
+            assertThat(timeInstant.getValue().toDate(), is(time.toDate()));
+            QuantityValue quantityValue = (QuantityValue) value.getValue();
+            assertThat(quantityValue.getValue().doubleValue(), is(obsVal));
+            assertThat(quantityValue.getUnit(), is(obsUnit));
+        }
+
+        
     }
 }

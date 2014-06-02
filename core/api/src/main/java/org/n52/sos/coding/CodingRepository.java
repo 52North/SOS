@@ -130,7 +130,7 @@ public class CodingRepository {
         initEncoderMap();
         generateTypeMap();
         generateResponseFormatMaps();
-        generateProcedureDesccriptionFormatMaps();
+        generateProcedureDescriptionFormatMaps();
         generateSchemaLocationMap();
     }
 
@@ -183,7 +183,7 @@ public class CodingRepository {
         initEncoderMap();
         generateTypeMap();
         generateResponseFormatMaps();
-        generateProcedureDesccriptionFormatMaps();
+        generateProcedureDescriptionFormatMaps();
         generateSchemaLocationMap();
         LOG.debug("Reloaded Encoder implementations");
     }
@@ -208,7 +208,7 @@ public class CodingRepository {
         }
     }
 
-    private void generateProcedureDesccriptionFormatMaps() {
+    private void generateProcedureDescriptionFormatMaps() {
         procedureDescriptionFormatsStatus.clear();
         procedureDescriptionFormats.clear();
         final Set<ServiceOperatorKey> serviceOperatorKeyTypes =

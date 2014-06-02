@@ -149,6 +149,18 @@ public final class N52XmlHelper implements Constants {
         }
         setSchemaLocationToDocument(document, schemaLocation.toString());
     }
+    
+    public static String mergeSchemaLocationsToString(Set<SchemaLocation> schemaLocations) {
+        if (CollectionHelper.isNotEmpty(schemaLocations)) {
+            StringBuilder builder = new StringBuilder();
+            for (SchemaLocation schemaLocation : schemaLocations) {
+                builder.append(schemaLocation.getSchemaLocationString());
+                builder.append(BLANK_CHAR);
+            }
+            return builder.substring(0, builder.toString().lastIndexOf(BLANK_STRING));
+        }
+        return EMPTY_STRING;
+    }
 
     public static Set<String> getNamespaces(XmlObject xmlObject) {
         Set<String> namespaces = Sets.newHashSet();

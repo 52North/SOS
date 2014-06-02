@@ -66,7 +66,7 @@ public class ServiceSettings implements SettingDefinitionProvider {
     public static final String STRICT_SPATIAL_FILTERING_PROFILE = "service.strictSpatialFilteringProfile";
     
     public static final String  VALIDATE_RESPONSE = "service.response.validate";
-
+    
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Service").setOrder(2);
 
     public static final UriSettingDefinition SERVICE_URL_DEFINITION = new UriSettingDefinition()
@@ -175,7 +175,8 @@ public class ServiceSettings implements SettingDefinitionProvider {
             // SUPPORTS_QUALITY_DEFINITION,
             SENSOR_DIRECTORY_DEFINITION, USE_DEFAULT_PREFIXES_DEFINITION,
             ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR_DEFINITION, DEREGISTER_JDBC_DRIVER_DEFINITION,
-            ADD_OUTPUTS_TO_SENSOR_ML_DEFINITION, STRICT_SPATIAL_FILTERING_PROFILE_DEFINITION, VALIDATE_RESPONSE_DEFINITION);
+            ADD_OUTPUTS_TO_SENSOR_ML_DEFINITION, STRICT_SPATIAL_FILTERING_PROFILE_DEFINITION, 
+            VALIDATE_RESPONSE_DEFINITION);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

@@ -103,6 +103,8 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     private Filter resultFilter;
 
     private Map<String, String> namespaces = Maps.newHashMap();
+    
+    private boolean mergeObservationValues = false;
 
     /*
      * (non-Javadoc)
@@ -477,5 +479,13 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     public boolean isSetResponseMode() {
         return StringHelper.isNotEmpty(getResponseMode());
+    }
+
+    public void setMergeObservationValues(boolean mergeObservationValues) {
+        this.mergeObservationValues = mergeObservationValues;
+    }
+    
+    public boolean isMergeObservationValues() {
+        return mergeObservationValues;
     }
 }

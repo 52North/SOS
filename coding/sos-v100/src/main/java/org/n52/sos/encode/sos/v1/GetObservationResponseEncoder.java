@@ -53,6 +53,9 @@ public class GetObservationResponseEncoder extends AbstractSosResponseEncoder<Ge
         String responseFormat = response.getResponseFormat();
         Encoder<XmlObject, GetObservationResponse> encoder = CodingHelper.getEncoder(responseFormat, response);
         if (encoder != null) {
+            if (response.hasStreamingData()) {
+                response.mergeStreamingData();
+            }
             return encoder.encode(response);
         } else {
             throw new InvalidResponseFormatParameterException(responseFormat);

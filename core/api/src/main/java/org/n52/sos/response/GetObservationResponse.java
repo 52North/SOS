@@ -127,10 +127,12 @@ public class GetObservationResponse extends AbstractObservationResponse {
         if (hasStreamingData()) {
             for (OmObservation observation : getObservationCollection()) {
                 AbstractStreaming values = (AbstractStreaming) observation.getValue();
-                if (isSetMergeObservation()) { 
-                    observations.addAll(values.mergeObservation());
-                } else {
-                    observations.addAll(values.getObservation());
+                if (values.hasNextValue()) {
+                    if (isSetMergeObservation()) { 
+                        observations.addAll(values.mergeObservation());
+                    } else {
+                        observations.addAll(values.getObservation());
+                    }
                 }
             }
         }

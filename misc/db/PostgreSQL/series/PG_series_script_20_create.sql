@@ -48,7 +48,7 @@ create table offeringAllowedFeatureType (offeringId int8 not null, featureOfInte
 create table offeringAllowedObservationType (offeringId int8 not null, observationTypeId int8 not null, primary key (offeringId, observationTypeId));
 create table offeringHasRelatedFeature (relatedFeatureId int8 not null, offeringId int8 not null, primary key (offeringId, relatedFeatureId));
 create table parameter (parameterId int8 not null, observationId int8 not null, definition varchar(255) not null, title varchar(255), value oid not null, primary key (parameterId));
-create table procedure (procedureId int8 not null, hibernateDiscriminator char(1) not null, procedureDescriptionFormatId int8 not null, identifier varchar(255) not null unique, deleted char(1) default 'F' not null check (deleted in ('T','F')), descriptionFile text, referenceFlag char(1) default 'F' check (referenceFlag in ('T','F')), disabled char(1) default 'F' check (disabled in ('T','F')), primary key (procedureId));
+create table "procedure" (procedureId int8 not null, hibernateDiscriminator char(1) not null, procedureDescriptionFormatId int8 not null, identifier varchar(255) not null unique, deleted char(1) default 'F' not null check (deleted in ('T','F')), descriptionFile text, referenceFlag char(1) default 'F' check (referenceFlag in ('T','F')), disabled char(1) default 'F' check (disabled in ('T','F')), primary key (procedureId));
 create table procedureDescriptionFormat (procedureDescriptionFormatId int8 not null, procedureDescriptionFormat varchar(255) not null, primary key (procedureDescriptionFormatId));
 create table relatedFeature (relatedFeatureId int8 not null, featureOfInterestId int8 not null, primary key (relatedFeatureId));
 create table relatedFeatureHasRole (relatedFeatureId int8 not null, relatedFeatureRoleId int8 not null, primary key (relatedFeatureId, relatedFeatureRoleId));
@@ -85,7 +85,7 @@ create index obsConstObsPropIdx on observationConstellation (observablePropertyI
 create index obsConstProcedureIdx on observationConstellation (procedureId);
 create index obsConstOfferingIdx on observationConstellation (offeringId);
 alter table observationConstellation add constraint obsConstObsPropFk foreign key (observablePropertyId) references observableProperty;
-alter table observationConstellation add constraint obsnConstProcedureFk foreign key (procedureId) references procedure;
+alter table observationConstellation add constraint obsnConstProcedureFk foreign key (procedureId) references "procedure";
 alter table observationConstellation add constraint obsConstObservationIypeFk foreign key (observationTypeId) references observationType;
 alter table observationConstellation add constraint obsConstOfferingFk foreign key (offeringId) references offering;
 create index obshasoffobservationidx on observationHasOffering (observationId);
@@ -99,7 +99,7 @@ alter table offeringAllowedObservationType add constraint FK28E66A64E4EF3005 for
 alter table offeringHasRelatedFeature add constraint relatedFeatureOfferingFk foreign key (offeringId) references offering;
 alter table offeringHasRelatedFeature add constraint offeringRelatedFeatureFk foreign key (relatedFeatureId) references relatedFeature;
 alter table parameter add constraint parameterObservationFk foreign key (observationId) references observation;
-alter table procedure add constraint procProcDescFormatFk foreign key (procedureDescriptionFormatId) references procedureDescriptionFormat;
+alter table "procedure" add constraint procProcDescFormatFk foreign key (procedureDescriptionFormatId) references procedureDescriptionFormat;
 alter table relatedFeature add constraint relatedFeatureFeatureFk foreign key (featureOfInterestId) references featureOfInterest;
 alter table relatedFeatureHasRole add constraint relatedFeatRelatedFeatRoleFk foreign key (relatedFeatureRoleId) references relatedFeatureRole;
 alter table relatedFeatureHasRole add constraint FK5643E7654A79987 foreign key (relatedFeatureId) references relatedFeature;
@@ -118,7 +118,7 @@ create index seriesObsPropIdx on series (observablePropertyId);
 create index seriesProcedureIdx on series (procedureId);
 alter table series add constraint seriesFeatureFk foreign key (featureOfInterestId) references featureOfInterest;
 alter table series add constraint seriesObPropFk foreign key (observablePropertyId) references observableProperty;
-alter table series add constraint seriesProcedureFk foreign key (procedureId) references procedure;
+alter table series add constraint seriesProcedureFk foreign key (procedureId) references "procedure";
 alter table series add constraint seriesUnitFk foreign key (unitId) references unit;
 create index sfpObservationIdx on spatialFilteringProfile (observation);
 alter table spatialFilteringProfile add constraint sfpObservationFK foreign key (observation) references observation;
@@ -126,7 +126,7 @@ alter table sweDataArrayValue add constraint observationSweDataArrayValueFk fore
 alter table textValue add constraint observationTextValueFk foreign key (observationId) references observation;
 create index validProcedureTimeStartTimeIdx on validProcedureTime (startTime);
 create index validProcedureTimeEndTimeIdx on validProcedureTime (endTime);
-alter table validProcedureTime add constraint validProcedureTimeProcedureFk foreign key (procedureId) references procedure;
+alter table validProcedureTime add constraint validProcedureTimeProcedureFk foreign key (procedureId) references "procedure";
 alter table validProcedureTime add constraint validProcProcDescFormatFk foreign key (procedureDescriptionFormatId) references procedureDescriptionFormat;
 create sequence codespaceId_seq;
 create sequence featureOfInterestId_seq;

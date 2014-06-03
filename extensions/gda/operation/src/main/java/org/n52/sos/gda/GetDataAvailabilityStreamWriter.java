@@ -102,6 +102,7 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 
 import org.joda.time.DateTime;
+import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.XmlEventWriter;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
@@ -123,14 +124,14 @@ import org.n52.sos.w3c.W3CConstants;
  * 
  * @since 4.0.0
  */
-public class GetDataAvailabilityStreamWriter extends XmlEventWriter {
+public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAvailability>> {
     private static final String TIME_PERIOD_PREFIX = "tp_";
 
     private static final String DATA_AVAILABILITY_PREFIX = "dam_";
 
     private static final String RESULT_TIME = "resultTime";
 
-    private final List<DataAvailability> gdas;
+    private List<DataAvailability> gdas;
 
     private final Map<TimePeriod, String> times;
 
@@ -155,6 +156,25 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter {
         writeGetDataAvailabilityResponse();
         end();
         finish();
+    }
+
+    @Override
+    public void write(OutputStream out, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
+        write(out);
+    }
+
+    @Override
+    public void write(List<DataAvailability> elementToStream, OutputStream out) throws XMLStreamException,
+            OwsExceptionReport {
+       this.gdas = elementToStream;
+       write(out);
+    }
+
+    @Override
+    public void write(List<DataAvailability> elementToStream, OutputStream out, EncodingValues encodingValues)
+            throws XMLStreamException, OwsExceptionReport {
+        this.gdas = elementToStream;
+        write(out);
     }
 
     protected void writeGetDataAvailabilityResponse() throws XMLStreamException, OwsExceptionReport {
@@ -294,4 +314,5 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter {
         writeTimeString(ti.getValue(), ti.getTimeFormat());
         end(SweConstants.QN_VALUE_SWE_200);
     }
+
 }

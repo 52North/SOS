@@ -166,6 +166,8 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     private Filter resultFilter;
 
     private Map<String, String> namespaces = Maps.newHashMap();
+    
+    private boolean mergeObservationValues = false;
 
     /*
      * (non-Javadoc)
@@ -516,5 +518,13 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     @Override
     public AbstractObservationResponse getResponse() throws OwsExceptionReport {
         return (GetObservationResponse) new GetObservationResponse().set(this);
+    }
+
+    public void setMergeObservationValues(boolean mergeObservationValues) {
+        this.mergeObservationValues = mergeObservationValues;
+    }
+    
+    public boolean isMergeObservationValues() {
+        return mergeObservationValues;
     }
 }

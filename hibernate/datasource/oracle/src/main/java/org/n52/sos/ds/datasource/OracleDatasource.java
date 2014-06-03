@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
 
 import oracle.jdbc.OracleDriver;
 
+import org.hibernate.HibernateException;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.oracle.OracleSpatial10gDialect;
@@ -215,6 +216,27 @@ public class OracleDatasource extends AbstractHibernateFullDBDatasource {
     protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings)
             throws ConfigurationException {
         checkClasspath();
+    }
+    
+    @Override
+    public void validateSchema(Map<String,Object> settings) {
+        Connection conn = null;
+        String schema = null;
+        try {
+            conn = openConnection(settings);
+            DatabaseMetadata metadata = getDatabaseMetadata(conn);
+            // fix problem with quoted tables
+            schema = (String)settings.get(SCHEMA_KEY);
+            settings.put(SCHEMA_KEY, null);
+            getConfig(settings).validateSchema(getDialectInternal(), metadata);
+        } catch (SQLException ex) {
+            throw new ConfigurationException(ex);
+        } catch (HibernateException ex) {
+            throw new ConfigurationException(ex);
+        } finally {
+            close(conn);
+            settings.put(SCHEMA_KEY, schema);
+        }
     }
 
     @Override

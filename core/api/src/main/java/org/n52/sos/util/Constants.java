@@ -105,6 +105,8 @@ public interface Constants {
     int EPSG_WGS84_3D = 4979;
 
     int EPSG_WGS84 = 4326;
+    
+    String DEFAULT_ENCODING = "UTF-8";
 
     // String constants
     String EMPTY_STRING = "";
@@ -158,6 +160,10 @@ public interface Constants {
     String MINUS_STRING = "-";
 
     String PLUS_STRING = "+";
+    
+    String LESS_THAN_SIGN_STRING = "<";
+    
+    String GREATER_THAN_SIGN_STRING = ">";
 
     // char constants
     char SPACE_CHAR = ' ';

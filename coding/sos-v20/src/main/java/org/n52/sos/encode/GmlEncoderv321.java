@@ -239,7 +239,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
                     }
                     return featurePropertyType;
                 }
-                if (samplingFeature.getUrl() != null) {
+                if (samplingFeature.isSetUrl()) {
                     featurePropertyType.setHref(samplingFeature.getUrl());
                     if (samplingFeature.isSetName()) {
                         featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());

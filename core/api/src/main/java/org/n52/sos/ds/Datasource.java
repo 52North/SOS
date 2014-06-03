@@ -265,4 +265,10 @@ public interface Datasource {
      */
     void prepare(Map<String, Object> settings);
 
+    boolean isPostCreateSchema();
+
+    void executePostCreateSchema(Map<String, Object> databaseSettings);
+    
+    void checkPostCreation(Properties properties);
+    
 }

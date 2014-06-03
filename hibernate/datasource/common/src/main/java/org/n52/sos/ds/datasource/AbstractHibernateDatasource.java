@@ -26,76 +26,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-/**
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
-
- *
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- *
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- *
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- *
-
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- */
 package org.n52.sos.ds.datasource;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
@@ -103,6 +44,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.dialect.Dialect;
@@ -110,7 +52,6 @@ import org.hibernate.mapping.Table;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
@@ -125,6 +66,7 @@ import org.n52.sos.util.SQLConstants;
 import org.n52.sos.util.StringHelper;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -255,7 +197,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
             createSpatialFilteringProfileDefinition();
 
     private boolean spatialFilteringProfileDatasource = true;
-
+    
     private final BooleanSettingDefinition mulitLanguageDefinition = createMultiLanguageDefinition();
 
     private boolean multiLanguageDatasource = true;
@@ -528,7 +470,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = new DatabaseMetadata(conn, getDialectInternal(), true);
+            DatabaseMetadata metadata = getDatabaseMetadata(conn);
             String[] dropScript =
                     checkDropSchema(getConfig(settings).generateDropSchemaScript(getDialectInternal(), metadata));
             return dropScript;
@@ -544,7 +486,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = new DatabaseMetadata(conn, getDialectInternal(), true);
+            DatabaseMetadata metadata = getDatabaseMetadata(conn);
             String[] dropScript = getConfig(settings).generateSchemaUpdateScript(getDialectInternal(), metadata);
             return dropScript;
         } catch (SQLException ex) {
@@ -559,7 +501,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = new DatabaseMetadata(conn, getDialectInternal(), true);
+            DatabaseMetadata metadata = getDatabaseMetadata(conn);
             getConfig(settings).validateSchema(getDialectInternal(), metadata);
         } catch (SQLException ex) {
             throw new ConfigurationException(ex);
@@ -570,22 +512,30 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
         }
     }
 
+    protected DatabaseMetadata getDatabaseMetadata(Connection conn) throws SQLException {
+            return  new DatabaseMetadata(conn, getDialectInternal(), true);
+    }
+
     @Override
     public boolean checkIfSchemaExists(Map<String, Object> settings) {
         Connection conn = null;
         try {
             /* check if any of the needed tables is existing */
             conn = openConnection(settings);
-            DatabaseMetadata metadata = new DatabaseMetadata(conn, getDialectInternal(), true);
+            DatabaseMetadata metadata = getDatabaseMetadata(conn);
             Iterator<Table> iter = getConfig(settings).getTableMappings();
-            String schema = (String) settings.get(SCHEMA_KEY);
-            String catalog = conn.getCatalog();
+            String catalog = checkCatalog(conn);
+            String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
             while (iter.hasNext()) {
                 Table table = iter.next();
                 // check if table is a physical table, tables is a table and if
                 // table is contained in the defined schema
-                if (table.isPhysicalTable() && metadata.isTable(table.getName())
-                        && metadata.getTableMetadata(table.getName(), schema, catalog, false) != null) {
+//                if (table.isPhysicalTable() && metadata.isTable(table.getName())
+//                        && metadata.getTableMetadata(table.getName(), schema, catalog, false) != null) {
+//                    return true;
+//                }
+                if (table.isPhysicalTable() && metadata.isTable(table.getQuotedName())
+                        && metadata.getTableMetadata(table.getName(), table.getSchema(), table.getCatalog(), table.isQuoted()) != null) {
                     return true;
                 }
             }
@@ -595,6 +545,24 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
         } finally {
             close(conn);
         }
+    }
+
+
+    protected String checkSchema(String schema, String catalog, Connection conn) throws SQLException {
+        DatabaseMetaData metaData = conn.getMetaData();
+        if (metaData != null) {
+            ResultSet rs = metaData.getSchemas();
+            while (rs.next()) {
+                if (StringHelper.isNotEmpty(rs.getString("TABLE_SCHEM")) && rs.getString("TABLE_SCHEM").equals(schema)) {
+                    return rs.getString("TABLE_SCHEM");
+                }
+            }
+        }
+        return null;
+    }
+    
+    private String checkCatalog(Connection conn) throws SQLException {
+        return conn.getCatalog();
     }
 
     @Override
@@ -632,7 +600,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = new DatabaseMetadata(conn, getDialectInternal(), true);
+            DatabaseMetadata metadata = getDatabaseMetadata(conn);
             validatePrerequisites(conn, metadata, settings);
         } catch (SQLException ex) {
             throw new ConfigurationException(ex);
@@ -664,6 +632,28 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
     @Override
     public Properties getDatasourceProperties(Properties current, Map<String, Object> changed) {
         return getDatasourceProperties(mergeProperties(current, changed));
+    }
+    
+    @Override
+    public void checkPostCreation(Properties properties) {
+        if (checkIfExtensionDirectoryExists()) {
+            StringBuilder builder =
+                    new StringBuilder(properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY));
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_EXTENSION_READONLY);
+            properties.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
+        }
+    }
+
+    private boolean checkIfExtensionDirectoryExists() {
+        URL dirUrl = Thread.currentThread().getContextClassLoader().getResource(HIBERNATE_MAPPING_EXTENSION_READONLY);
+        if (dirUrl != null) {
+            try {
+                return new File(URLDecoder.decode(dirUrl.getPath(), Charset.defaultCharset().toString())).exists();
+            } catch (UnsupportedEncodingException e) {
+                throw new ConfigurationException("Unable to encode directory URL " + dirUrl + "!");
+            }
+        }
+        return false;
     }
 
     /**
@@ -998,7 +988,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
      * @return Checked script without duplicate foreign key for
      *         observationHasOffering
      */
-    private String[] checkCreateSchema(String[] script) {
+    protected String[] checkCreateSchema(String[] script) {
         // creates upper case hexString form table name 'observationHasOffering'
         // hashCode() with prefix 'FK'
         String hexStringToCheck =
@@ -1016,7 +1006,15 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
                 checkedSchema.add(string);
             }
         }
-        return checkedSchema.toArray(new String[checkedSchema.size()]);
+        // remove dublicated entries
+        Set<String> set = Sets.newHashSet(checkedSchema);
+        List<String> nonDublicated = Lists.newLinkedList();
+        for (String string : checkedSchema) {
+            if (set.contains(string)) {
+                nonDublicated.add(string);
+            }
+        }
+        return nonDublicated.toArray(new String[nonDublicated.size()]);
     }
 
     @Override
@@ -1027,6 +1025,15 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
     @Override
     public void prepare(Map<String, Object> settings) {
 
+    }
+    
+    @Override
+    public boolean isPostCreateSchema() {
+        return false;
+    }
+    
+    @Override
+    public void executePostCreateSchema(Map<String, Object> databaseSettings) {
     }
 
     /**

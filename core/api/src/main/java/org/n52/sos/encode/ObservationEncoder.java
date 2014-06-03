@@ -54,6 +54,8 @@ public interface ObservationEncoder<S, T> extends Encoder<S, T> {
      * @return Merge or not
      */
     boolean shouldObservationsWithSameXBeMerged();
+    
+    boolean supportsResultStreamingForMergedValues();
 
     /**
      * Get the supported response formats for this

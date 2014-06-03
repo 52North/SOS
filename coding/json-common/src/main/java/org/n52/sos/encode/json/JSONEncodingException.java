@@ -38,6 +38,9 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
  * @since 4.0.0
  */
 public class JSONEncodingException extends NoApplicableCodeException {
+
+    private static final long serialVersionUID = 43255040132887078L;
+
     public JSONEncodingException() {
     }
 

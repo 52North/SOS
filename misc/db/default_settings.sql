@@ -130,6 +130,10 @@ INSERT INTO "settings" VALUES('misc.srsNamePrefixSosV2');
 INSERT INTO "settings" VALUES('misc.switchCoordinatesForEpsgCodes');
 INSERT INTO "settings" VALUES('misc.tokenSeparator');
 INSERT INTO "settings" VALUES('misc.tupleSeparator');
+INSERT INTO "settings" VALUES('profile.hydrology.maxReturnedValue');
+INSERT INTO "settings" VALUES('profile.hydrology.maxReturnedTimeSeries');
+INSERT INTO "settings" VALUES('profile.hydrology.overallExtrema');
+
 
 INSERT INTO "settings" VALUES('procedureDesc.ENRICH_WITH_OFFERINGS');
 INSERT INTO "settings" VALUES('procedureDesc.ENRICH_WITH_FEATURES');
@@ -148,6 +152,7 @@ INSERT INTO "settings" VALUES('service.lease');
 INSERT INTO "settings" VALUES('service.maxGetObservationResults');
 INSERT INTO "settings" VALUES('service.minimumGzipSize');
 INSERT INTO "settings" VALUES('service.response.validate');
+INSERT INTO "settings" VALUES('service.streaming.force');
 INSERT INTO "settings" VALUES('service.security.transactional.active');
 INSERT INTO "settings" VALUES('service.sensorDirectory');
 INSERT INTO "settings" VALUES('service.skipDuplicateObservations');
@@ -194,12 +199,14 @@ INSERT INTO "boolean_settings" VALUES(1,'service.encodeFullChildrenInDescribeSen
 INSERT INTO "boolean_settings" VALUES(1,'service.addOutputsToSensorML');
 INSERT INTO "boolean_settings" VALUES(0,'service.strictSpatialFilteringProfile');
 INSERT INTO "boolean_settings" VALUES(0,'service.response.validate');
+INSERT INTO "boolean_settings" VALUES(1,'service.streaming.force');
 INSERT INTO "boolean_settings" VALUES(1,'service.jdbc.deregister');
 INSERT INTO "boolean_settings" VALUES(1,'service.SpatialDatasource');
 INSERT INTO "boolean_settings" VALUES(0,'service.security.transactional.active');
 INSERT INTO "boolean_settings" VALUES(1,'procedureDesc.ENRICH_WITH_OFFERINGS');
 INSERT INTO "boolean_settings" VALUES(1,'procedureDesc.ENRICH_WITH_FEATURES');
 INSERT INTO "boolean_settings" VALUES(1,'procedureDesc.ENRICH_WITH_DISCOVERY_INFORMATION');
+INSERT INTO "boolean_settings" VALUES(1,'profile.hydrology.overallExtrema');
 
 INSERT INTO "file_settings" VALUES(NULL,'serviceIdentification.file');
 INSERT INTO "file_settings" VALUES(NULL,'serviceProvider.file');
@@ -211,6 +218,8 @@ INSERT INTO "integer_settings" VALUES(4979,'service.default3DEpsg');
 INSERT INTO "integer_settings" VALUES(1048576,'service.minimumGzipSize');
 INSERT INTO "integer_settings" VALUES(5,'service.cacheThreadCount');
 INSERT INTO "integer_settings" VALUES(5,'service.capabilitiesCacheUpdateInterval');
+INSERT INTO "integer_settings" VALUES(2147483647,'profile.hydrology.maxReturnedValue');
+INSERT INTO "integer_settings" VALUES(2147483647,'profile.hydrology.maxReturnedTimeSeries');
 
 INSERT INTO "string_settings" VALUES('+49(0)251/396 371-0','serviceProvider.phone');
 INSERT INTO "string_settings" VALUES(',','misc.tokenSeparator');

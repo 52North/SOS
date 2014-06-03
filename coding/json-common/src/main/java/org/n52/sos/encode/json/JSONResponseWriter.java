@@ -33,6 +33,8 @@ import java.io.OutputStream;
 
 import org.n52.sos.coding.json.JSONUtils;
 import org.n52.sos.encode.ResponseWriter;
+import org.n52.sos.util.http.MediaType;
+import org.n52.sos.util.http.MediaTypes;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -52,5 +54,20 @@ public class JSONResponseWriter implements ResponseWriter<JsonNode> {
     @Override
     public void write(JsonNode t, OutputStream out) throws IOException {
         JSONUtils.print(out, t);
+    }
+
+    @Override
+    public MediaType getContentType() {
+        return MediaTypes.APPLICATION_JSON;
+    }
+
+    @Override
+    public void setContentType(MediaType contentType) {
+        
+    }
+
+    @Override
+    public boolean supportsGZip(JsonNode t) {
+        return true;
     }
 }

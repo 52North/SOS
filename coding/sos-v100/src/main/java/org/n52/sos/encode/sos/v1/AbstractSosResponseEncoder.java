@@ -53,6 +53,11 @@ public abstract class AbstractSosResponseEncoder<T extends AbstractServiceRespon
 
     @Override
     protected Set<SchemaLocation> getConcreteSchemaLocations() {
-        return Sets.newHashSet();
+        return Sets.newHashSet(Sos1Constants.SOS1_SCHEMA_LOCATION);
+    }
+    
+    @Override
+    public Set<SchemaLocation> getSchemaLocations() {
+        return Sets.newHashSet(Sos1Constants.SOS1_SCHEMA_LOCATION);
     }
 }

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.response;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.AbstractServiceCommunicationObject;
 import org.n52.sos.util.http.MediaType;
 
@@ -51,5 +52,13 @@ public abstract class AbstractServiceResponse extends AbstractServiceCommunicati
 
     public boolean isSetContentType() {
         return getContentType() != null;
+    }
+
+    public boolean hasStreamingData() {
+        return false;
+    }
+    
+    public void mergeStreamingData() throws OwsExceptionReport {
+        // should be overridden by concrete responses
     }
 }

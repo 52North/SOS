@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import geodb.GeoDB;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -38,6 +40,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.hibernate.HibernateException;
@@ -48,9 +51,6 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.jdbc.Work;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.cache.ctrl.ScheduledContentCacheControllerSettings;
 import org.n52.sos.config.sqlite.SQLiteSessionFactory;
 import org.n52.sos.ds.ConnectionProviderException;
@@ -58,10 +58,11 @@ import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.SosContextListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-
-import geodb.GeoDB;
+import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
@@ -114,14 +115,16 @@ public class H2Configuration {
             resources.add("mapping/transactional/TOffering.hbm.xml");
             resources.add("mapping/transactional/TProcedure.hbm.xml");
             // old observation concept
-//            resources.add("mapping/old/observation/Observation.hbm.xml");
-//            resources.add("mapping/old/observation/ObservationInfo.hbm.xml");
-//            resources.add("mapping/old/spatialFilteringProfile/SpatialFitleringProfile.hbm.xml");
+            // resources.add("mapping/old/observation/Observation.hbm.xml");
+            // resources.add("mapping/old/observation/ObservationInfo.hbm.xml");
+            // resources.add("mapping/old/spatialFilteringProfile/SpatialFitleringProfile.hbm.xml");
             // series observation concept, needs changes in tests
             resources.add("mapping/series/observation/Series.hbm.xml");
             resources.add("mapping/series/observation/SeriesObservation.hbm.xml");
             resources.add("mapping/series/observation/SeriesObservationInfo.hbm.xml");
             resources.add("mapping/series/observation/SeriesObservationTime.hbm.xml");
+            resources.add("mapping/series/observation/SeriesValue.hbm.xml");
+            resources.add("mapping/series/observation/SeriesValueTime.hbm.xml");
             resources.add("mapping/series/spatialFilteringProfile/SeriesSpatialFitleringProfile.hbm.xml");
             return resources;
         }
@@ -219,8 +222,9 @@ public class H2Configuration {
             }
             final Iterator<Table> tableMappings = instance.getConfiguration().getTableMappings();
             final List<String> tableNames = new LinkedList<String>();
+            GeoDBDialect dialect = new GeoDBDialect();
             while (tableMappings.hasNext()) {
-                tableNames.add(tableMappings.next().getName());
+                tableNames.add(tableMappings.next().getQuotedName(dialect));
             }
             Session session = null;
             Transaction transaction = null;
@@ -330,8 +334,8 @@ public class H2Configuration {
                 configuration.addResource(resource);
             }
             final GeoDBDialect dialect = new GeoDBDialect();
-            createScript = configuration.generateSchemaCreationScript(dialect);
-            dropScript = configuration.generateDropSchemaScript(dialect);
+            createScript = getCreateSrcipt(configuration.generateSchemaCreationScript(dialect));
+            dropScript = getDropScript(configuration.generateDropSchemaScript(dialect));
             for (final String s : createScript) {
                 LOG.debug("Executing {}", s);
                 stmt.execute(s);
@@ -356,6 +360,41 @@ public class H2Configuration {
                 }
             }
         }
+    }
+
+    private String[] getCreateSrcipt(String[] generateSchemaCreationScript) {
+        List<String> finalScript = Lists.newArrayList(); 
+        Set<String> nonDublicates = Sets.newHashSet();
+        Set<String> nonDuplicateCreate = Sets.newHashSet();
+        for (final String s : generateSchemaCreationScript) {
+            if (!nonDublicates.contains(s)) {
+                if (s.toLowerCase().startsWith("create table")) {
+                    String substring = s.substring(0, s.indexOf("("));
+                    if (!nonDuplicateCreate.contains(substring)) {
+                        nonDuplicateCreate.add(substring);
+                        LOG.debug("Executing {}", s);
+                        finalScript.add(s);
+                    }
+                } else {
+                    LOG.debug("Executing {}", s);
+                    finalScript.add(s);
+                }
+                nonDublicates.add(s);
+            }
+        }
+        return finalScript.toArray(new String[finalScript.size()]);
+    }
+
+    private String[] getDropScript(String[] generateDropSchemaScript) {
+        Set<String> nonDuplicates = Sets.newHashSet();
+        List<String> finalScript = Lists.newArrayList();
+        for (String string : generateDropSchemaScript) {
+            if (!nonDuplicates.contains(string)) {
+                finalScript.add(string);
+                nonDuplicates.add(string);
+            }
+        }
+        return finalScript.toArray(new String[finalScript.size()]);
     }
 
     private void init() throws ConfigurationException, IOException {

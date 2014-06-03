@@ -33,6 +33,7 @@ import java.io.OutputStream;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.util.http.MediaType;
 
 /**
  * TODO JavaDoc
@@ -42,6 +43,8 @@ import org.n52.sos.util.XmlOptionsHelper;
  * @since 4.0.0
  */
 public class XmlResponseWriter implements ResponseWriter<XmlObject> {
+    
+    private MediaType contentType;
 
     @Override
     public Class<XmlObject> getType() {
@@ -51,6 +54,21 @@ public class XmlResponseWriter implements ResponseWriter<XmlObject> {
     @Override
     public void write(XmlObject xml, OutputStream out) throws IOException {
         xml.save(out, XmlOptionsHelper.getInstance().getXmlOptions());
+    }
+
+    @Override
+    public MediaType getContentType() {
+        return contentType;
+    }
+
+    @Override
+    public void setContentType(MediaType contentType) {
+        this.contentType = contentType;
+    }
+
+    @Override
+    public boolean supportsGZip(XmlObject t) {
+        return true;
     }
 
 }

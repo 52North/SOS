@@ -46,7 +46,7 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
     private String responseFormat;
 
     private String resultModel;
-
+   
     public List<OmObservation> getObservationCollection() {
         return Collections.unmodifiableList(observationCollection);
     }
@@ -74,4 +74,5 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
     public boolean isSetResultModel() {
         return resultModel != null;
     }
+  
 }

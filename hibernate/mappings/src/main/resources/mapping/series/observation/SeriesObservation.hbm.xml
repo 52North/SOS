@@ -56,35 +56,35 @@
                 <column name="offeringId" not-null="true" index="obshasoffofferingidx" />
             </many-to-many>
         </set>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesBlobObservation" extends="org.n52.sos.ds.hibernate.entities.Observation" table="blobValue">
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesBlobObservation" extends="org.n52.sos.ds.hibernate.entities.series.SeriesObservation" table="blobValue">
         	<key column="observationId" foreign-key="observationBlobValueFk" />
          	<property name="value" type="blob" />
         </joined-subclass>
-		<joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesBooleanObservation" extends="org.n52.sos.ds.hibernate.entities.Observation" table="booleanValue" check="value in ('T','F')">
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesBooleanObservation" extends="org.n52.sos.ds.hibernate.entities.series.SeriesObservation" table="booleanValue" check="value in ('T','F')">
         	<key column="observationId" foreign-key="observationBooleanValueFk" />
         	<property name="value" type="org.hibernate.type.TrueFalseType"/>
         </joined-subclass>
-		<joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesCategoryObservation" extends="org.n52.sos.ds.hibernate.entities.Observation" table="categoryValue">
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesCategoryObservation" extends="org.n52.sos.ds.hibernate.entities.series.SeriesObservation" table="categoryValue">
         	<key column="observationId" foreign-key="observationCategoryValueFk" />
          	<property name="value" type="string" />
         </joined-subclass>
-		<joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesCountObservation" extends="org.n52.sos.ds.hibernate.entities.Observation" table="countValue">
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesCountObservation" extends="org.n52.sos.ds.hibernate.entities.series.SeriesObservation" table="countValue">
         	<key column="observationId" foreign-key="observationCountValueFk" />
         	<property name="value" type="integer" />
         </joined-subclass>
-		<joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesGeometryObservation" extends="org.n52.sos.ds.hibernate.entities.Observation" table="geometryValue">
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesGeometryObservation" extends="org.n52.sos.ds.hibernate.entities.series.SeriesObservation" table="geometryValue">
         	<key column="observationId" foreign-key="observationGeometryValueFk" />
          	<property name="value" type="org.hibernate.spatial.GeometryType" />
         </joined-subclass>
-		<joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesNumericObservation" extends="org.n52.sos.ds.hibernate.entities.Observation" table="numericValue">
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesNumericObservation" extends="org.n52.sos.ds.hibernate.entities.series.SeriesObservation" table="numericValue">
         	<key column="observationId" foreign-key="observationNumericValueFk" />
          	<property name="value" type="big_decimal" />
         </joined-subclass>
-		<joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesTextObservation" extends="org.n52.sos.ds.hibernate.entities.Observation" table="textValue">
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesTextObservation" extends="org.n52.sos.ds.hibernate.entities.series.SeriesObservation" table="textValue">
         	<key column="observationId" foreign-key="observationTextValueFk" />
         	<property name="value" type="org.hibernate.type.StringClobType" />
         </joined-subclass>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesSweDataArrayObservation" extends="org.n52.sos.ds.hibernate.entities.Observation" table="sweDataArrayValue">
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesSweDataArrayObservation" extends="org.n52.sos.ds.hibernate.entities.series.SeriesObservation" table="sweDataArrayValue">
         	<key column="observationId" foreign-key="observationSweDataArrayValueFk" />
         	<property name="value" type="org.hibernate.type.StringClobType" />
         </joined-subclass>

@@ -82,17 +82,45 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+/**
+ * Helper class for GetObservation DAOs
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 public class HibernateGetObservationHelper {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateGetObservationHelper.class);
 
-    public static List<ObservationConstellation> getAndCheckObservationConstellationSize(GetObservationRequest request,
-            Session session) throws CodedException {
+    /**
+     * Get ObservationConstellations and check if size limit is exceeded
+     * 
+     * @param request
+     *            GetObservation request
+     * @param session
+     *            Hibernate session
+     * @return List of {@link ObservationConstellation}
+     * @throws CodedException
+     *             If the size limit is exceeded
+     */
+    public static List<ObservationConstellation> getAndCheckObservationConstellationSize(
+            GetObservationRequest request, Session session) throws CodedException {
         List<ObservationConstellation> observationConstellations = getObservationConstellations(session, request);
         checkMaxNumberOfReturnedSeriesSize(observationConstellations.size());
         return observationConstellations;
     }
 
+    /**
+     * Check if the max number of returned time series is exceeded
+     * 
+     * @param seriesObservations
+     *            Observations to check
+     * @param metadataObservationsCount
+     *            Count of metadata observations
+     * @throws CodedException
+     *             If the size limit is exceeded
+     */
     public static void checkMaxNumberOfReturnedTimeSeries(Collection<SeriesObservation> seriesObservations,
             int metadataObservationsCount) throws CodedException {
         if (Integer.MAX_VALUE != ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries()) {
@@ -104,6 +132,14 @@ public class HibernateGetObservationHelper {
         }
     }
 
+    /**
+     * Check if the size limit is exceeded
+     * 
+     * @param size
+     *            The size limit to check
+     * @throws CodedException
+     *             If the size limit is exceeded
+     */
     public static void checkMaxNumberOfReturnedSeriesSize(int size) throws CodedException {
         // FIXME refactor profile handling
         if (size > ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries()) {
@@ -111,6 +147,14 @@ public class HibernateGetObservationHelper {
         }
     }
 
+    /**
+     * Check if the max number of returned values is exceeded
+     * 
+     * @param size
+     *            Max number count
+     * @throws CodedException
+     *             If the size limit is exceeded
+     */
     public static void checkMaxNumberOfReturnedValues(int size) throws CodedException {
         // FIXME refactor profile handling
         if (size > ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues()) {
@@ -177,18 +221,37 @@ public class HibernateGetObservationHelper {
                     HibernateObservationUtilities.createSosObservationsFromObservations(
                             new HashSet<AbstractObservation>(observations), spatialFilteringProfile, version,
                             resultModel, session);
-            LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),(System.currentTimeMillis() - startProcess));
+            LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),
+                    (System.currentTimeMillis() - startProcess));
             return sosObservations;
         } else {
             return Collections.emptyList();
         }
     }
-    
-    public static OmObservation toSosObservation(AbstractObservation observation,
-            final String version, final String resultModel, final Session session) throws OwsExceptionReport,
-            ConverterException {
+
+    /**
+     * Convert observation entity to internal observationy
+     * 
+     * @param observation
+     *            Observation entity
+     * @param version
+     *            Service version
+     * @param resultModel
+     *            Requested result model
+     * @param session
+     *            Hibernate session
+     * @return Internal observation object
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     * @throws ConverterException
+     *             If an error occurs during the conversion
+     * @throws ConverterException
+     */
+    public static OmObservation toSosObservation(AbstractObservation observation, final String version,
+            final String resultModel, final Session session) throws OwsExceptionReport, ConverterException {
         if (observation != null) {
-            AbstractSpatialFilteringProfile spatialFilteringProfile = null;;
+            AbstractSpatialFilteringProfile spatialFilteringProfile = null;
+            ;
             AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
                     DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
             if (spatialFilteringProfileDAO != null) {
@@ -197,9 +260,8 @@ public class HibernateGetObservationHelper {
             }
             final long startProcess = System.currentTimeMillis();
             final OmObservation sosObservation =
-                    HibernateObservationUtilities.createSosObservationFromObservation(
-                            observation, spatialFilteringProfile, version,
-                            resultModel, session);
+                    HibernateObservationUtilities.createSosObservationFromObservation(observation,
+                            spatialFilteringProfile, version, resultModel, session);
             LOGGER.debug("Time to process one observation needs {} ms!", (System.currentTimeMillis() - startProcess));
             return sosObservation;
         }
@@ -347,6 +409,15 @@ public class HibernateGetObservationHelper {
         }
     }
 
+    /**
+     * Check if the {@link ObservationEncoder} demands for merging of
+     * observations with the same timeseries.
+     * 
+     * @param responseFormat
+     *            Response format
+     * @return <code>true</code>, if the {@link ObservationEncoder} demands for
+     *         merging of observations with the same timeseries.
+     */
     public static boolean checkEncoderForMergeObservationValues(String responseFormat) {
         Encoder<XmlObject, OmObservation> encoder =
                 CodingRepository.getInstance().getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));

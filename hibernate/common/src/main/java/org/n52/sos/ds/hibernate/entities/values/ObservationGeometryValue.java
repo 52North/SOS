@@ -26,17 +26,40 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.interfaces;
+package org.n52.sos.ds.hibernate.entities.values;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValue;
+import org.n52.sos.ds.hibernate.entities.interfaces.GeometryValue;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
- * Interface for Hibernate count value entities
+ * Concrete implementation of {@link ObservationValue} for old concept and geometry
+ * values
  * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
- * 
+ *
  */
-public interface CountValue extends HasValue<Integer> {
+public class ObservationGeometryValue extends ObservationValue implements GeometryValue {
+    
+    private static final long serialVersionUID = 9053334455269237189L;
+    
+    private Geometry value;
+
+    @Override
+    public Geometry getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(Geometry value) {
+        this.value = value;
+    }
+
+    @Override
+    public boolean isSetValue() {
+        return getValue() != null;
+
+    }
 
 }

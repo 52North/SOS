@@ -39,44 +39,52 @@ import org.n52.sos.service.StreamingSettings;
 
 import com.google.common.collect.Sets;
 
-public class HibernateStreamingSettings implements SettingDefinitionProvider  {
-    
+/**
+ * {@link SettingDefinitionProvider} class for streaming datasource settings
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
+public class HibernateStreamingSettings implements SettingDefinitionProvider {
+
     public static final String FORCE_DATASOURCE_STREAMING = "service.streaming.datasource";
-    
+
     public static final String DATASOURCE_STREAMING_APPROACH = "service.streaming.datasource.approach";
-    
+
     public static final String CHUNK_SIZE = "service.streaming.datasource.chunkSize";
-    
+
     public static final BooleanSettingDefinition FORCE_DATASOURCE_STREAMING_DEFINITION =
             new BooleanSettingDefinition()
                     .setGroup(StreamingSettings.GROUP)
                     .setOrder(ORDER_1)
                     .setKey(FORCE_DATASOURCE_STREAMING)
                     .setDefaultValue(false)
-                    .setTitle("Should this service stream datasource values (GetObservation) to encoder?")
+                    .setTitle("Should this service stream datasource values (currently only GetObservation) to encoder?")
                     .setDescription(
-                            "Whether the service should stream datasource values (GetObservation) to encoder if it is supported by the datasource! This reduces the memory usage.");
-    
+                            "Whether the service should stream datasource values (currently only GetObservation) to encoder if it is supported by the datasource! This reduces the memory usage.");
+
     public static final BooleanSettingDefinition DATASOURCE_STREAMING_APPROACH_DEFINITION =
             new BooleanSettingDefinition()
                     .setGroup(StreamingSettings.GROUP)
                     .setOrder(ORDER_2)
                     .setKey(DATASOURCE_STREAMING_APPROACH)
                     .setDefaultValue(true)
-                    .setTitle("Should this service query the streaming datasource values (GetObservation) as chunk of x (true) ora as scrollable values?")
+                    .setTitle(
+                            "Should this service query the streaming datasource values (currently only GetObservation) as chunk of x (true) ora as scrollable values?")
                     .setDescription(
-                            "Whether the service should query the streaming stream datasource values (GetObservation) as chunk of x (true) ora as scrollable values.");
-    
-    public static final IntegerSettingDefinition CHUNK_SIZE_DEFINITION = new IntegerSettingDefinition()
-            .setGroup(StreamingSettings.GROUP)
-            .setKey(CHUNK_SIZE)
-            .setDefaultValue(1000)
-            .setTitle(String.format("Number of chunk size.", 1000))
-            .setDescription(
-                    "Number of chunk size, only relevant if scrollable datasource streaming is set to 'true'.")
-            .setOrder(ORDER_3);
-    
-    
+                            "Whether the service should query the streaming stream datasource values (currently only GetObservation) as chunk of x (true) ora as scrollable values.");
+
+    public static final IntegerSettingDefinition CHUNK_SIZE_DEFINITION =
+            new IntegerSettingDefinition()
+                    .setGroup(StreamingSettings.GROUP)
+                    .setKey(CHUNK_SIZE)
+                    .setDefaultValue(1000)
+                    .setTitle(String.format("Number of chunk size.", 1000))
+                    .setDescription(
+                            "Number of chunk size, only relevant if scrollable datasource streaming is set to 'true'.")
+                    .setOrder(ORDER_3);
+
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = Sets.<SettingDefinition<?, ?>> newHashSet(
             FORCE_DATASOURCE_STREAMING_DEFINITION, DATASOURCE_STREAMING_APPROACH_DEFINITION, CHUNK_SIZE_DEFINITION);
 

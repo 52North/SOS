@@ -35,6 +35,7 @@ import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -47,25 +48,40 @@ import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
 
+/**
+ * Abstract DAO class for querying {@link AbstractValue}
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 public abstract class AbstractValueDAO extends TimeCreator {
-    
+
     /**
-     * Check if a Spatial Filtering Profile filter is requested and add to criteria
-     * @param c Criteria to add crtierion
-     * @param request GetObservation request
-     * @param session Hiberante Session
-     * @throws OwsExceptionReport If Spatial Filteirng Profile is not supported or an error occurs.
+     * Check if a Spatial Filtering Profile filter is requested and add to
+     * criteria
+     * 
+     * @param c
+     *            Criteria to add crtierion
+     * @param request
+     *            GetObservation request
+     * @param session
+     *            Hiberante Session
+     * @throws OwsExceptionReport
+     *             If Spatial Filteirng Profile is not supported or an error
+     *             occurs.
      */
-    protected void checkAndAddSpatialFilteringProfileCriterion(Criteria c, GetObservationRequest request, Session session) throws OwsExceptionReport {
+    protected void checkAndAddSpatialFilteringProfileCriterion(Criteria c, GetObservationRequest request,
+            Session session) throws OwsExceptionReport {
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
-            AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO = DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
+            AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
+                    DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
             if (spatialFilteringProfileDAO == null) {
                 throw new OptionNotSupportedException().at(Sos2Constants.GetObservationParams.spatialFilter)
                         .withMessage("The SOS 2.0 Spatial Filtering Profile is not supported by this service!");
             }
             Set<Long> observationIds =
-                    spatialFilteringProfileDAO.getObservationIdsForSpatialFilter(request.getSpatialFilter(),
-                            session);
+                    spatialFilteringProfileDAO.getObservationIdsForSpatialFilter(request.getSpatialFilter(), session);
             if (CollectionHelper.isEmpty(observationIds)) {
                 c.add(Restrictions.eq(AbstractValue.ID, Long.MIN_VALUE));
             } else if (CollectionHelper.isNotEmpty(observationIds)) {
@@ -76,26 +92,27 @@ public abstract class AbstractValueDAO extends TimeCreator {
                 c.add(disjunction);
             }
         }
-        
+
     }
 
     /**
-     * Add an indeterminate time restriction to a criteria. This allows for multiple results if more than one
-     * observation has the extrema time (max for latest, min for first).
-     * Note: use this method *after* adding all other applicable restrictions so that they will apply to the
-     * min/max observation time determination.
+     * Add an indeterminate time restriction to a criteria. This allows for
+     * multiple results if more than one observation has the extrema time (max
+     * for latest, min for first). Note: use this method *after* adding all
+     * other applicable restrictions so that they will apply to the min/max
+     * observation time determination.
      * 
      * @param c
-     *          Criteria to add the restriction to
+     *            Criteria to add the restriction to
      * @param sosIndeterminateTime
-     *          Indeterminate time restriction to add
+     *            Indeterminate time restriction to add
      * @return Modified criteria
      */
     protected Criteria addIndeterminateTimeRestriction(Criteria c, SosIndeterminateTime sosIndeterminateTime) {
         // get extrema indeterminate time
         c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
         Timestamp indeterminateExtremaTime = (Timestamp) c.uniqueResult();
-        
+
         // reset criteria
         // see http://stackoverflow.com/a/1472958/193435
         c.setProjection(null);
@@ -104,10 +121,11 @@ public abstract class AbstractValueDAO extends TimeCreator {
         // get observations with exactly the extrema time
         c.add(Restrictions.eq(getIndeterminateTimeFilterProperty(sosIndeterminateTime), indeterminateExtremaTime));
 
-        // not really necessary to return the Criteria object, but useful if we want to chain
+        // not really necessary to return the Criteria object, but useful if we
+        // want to chain
         return c;
     }
-    
+
     /**
      * Get projection for {@link SosIndeterminateTime} value
      * 
@@ -123,13 +141,14 @@ public abstract class AbstractValueDAO extends TimeCreator {
         }
         return null;
     }
-    
+
     /**
-     * Get the AbstractValue property to filter on for an {@link SosIndeterminateTime}
+     * Get the AbstractValue property to filter on for an
+     * {@link SosIndeterminateTime}
      * 
      * @param indetTime
      *            Value to get property for
-     * @return String property to filter on 
+     * @return String property to filter on
      */
     protected String getIndeterminateTimeFilterProperty(final SosIndeterminateTime indetTime) {
         if (indetTime.equals(SosIndeterminateTime.first)) {
@@ -139,5 +158,20 @@ public abstract class AbstractValueDAO extends TimeCreator {
         }
         return null;
     }
+    
+    /**
+     * Add chunk information to {@link Criteria}
+      * 
+      * @param c
+      *            {@link Criteria} to add information
+      * @param chunkSize
+      *            Chunk size
+      * @param currentRow
+      *            Start row
+      */
+     protected void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow) {
+         c.addOrder(Order.asc(AbstractValue.PHENOMENON_TIME_START));
+         c.setMaxResults(chunkSize).setFirstResult(currentRow);
+     }
 
 }

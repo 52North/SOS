@@ -36,15 +36,14 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.dao.AbstractValueDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
+import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
@@ -52,56 +51,140 @@ import org.n52.sos.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Implementation of {@link AbstractValueDAO} for series concept
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 public class SeriesValueDAO extends AbstractValueDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeriesValueDAO.class);
 
+    /**
+     * Query streaming value for parameter as {@link ScrollableResults}
+     * 
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param series
+     *            Datasource series id
+     * @param temporalFilterCriterion
+     *            Temporal filter {@link Criterion}
+     * @param session
+     *            Hibernate Session
+     * @return Resulting {@link ScrollableResults}
+     * @throws HibernateException
+     *             If an error occurs when querying the {@link AbstractValue}s
+     * @throws OwsExceptionReport
+     *             If an error occurs when querying the {@link AbstractValue}s
+     */
     public ScrollableResults getStreamingSeriesValuesFor(GetObservationRequest request, long series,
-            Criterion temporalFilterCriterion, Session session) throws HibernateException, OwsExceptionReport {
+            Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         return getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session).scroll(
                 ScrollMode.FORWARD_ONLY);
     }
 
+    /**
+     * Query streaming value for parameter as {@link ScrollableResults}
+     * 
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param series
+     *            Datasource series id
+     * @param session
+     *            Hibernate Session
+     * @return Resulting {@link ScrollableResults}
+     * @throws OwsExceptionReport
+     *             If an error occurs when querying the {@link AbstractValue}s
+     */
     public ScrollableResults getStreamingSeriesValuesFor(GetObservationRequest request, long series, Session session)
-            throws HibernateException, OwsExceptionReport {
+            throws OwsExceptionReport {
         return getSeriesValueCriteriaFor(request, series, null, session).scroll(ScrollMode.FORWARD_ONLY);
     }
 
+    /**
+     * Query streaming value for parameter as chunk {@link List}
+     * 
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param series
+     *            Datasource series id
+     * @param temporalFilterCriterion
+     *            Temporal filter {@link Criterion}
+     * @param chunkSize
+     *            chunk size
+     * @param currentRow
+     *            Start row
+     * @param session
+     *            Hibernate Session
+     * @return Resulting chunk {@link List}
+     * @throws OwsExceptionReport
+     *             If an error occurs when querying the {@link AbstractValue}s
+     */
     @SuppressWarnings("unchecked")
-    public List<SeriesValue> getStreamingSeriesValuesFor(GetObservationRequest request, long series,
-            Criterion temporalFilterCriterion, int chunkSize, int currentRow, Session session) throws OwsExceptionReport {
+    public List<AbstractValue> getStreamingSeriesValuesFor(GetObservationRequest request, long series,
+            Criterion temporalFilterCriterion, int chunkSize, int currentRow, Session session)
+            throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session);
         addChunkValuesToCriteria(c, chunkSize, currentRow);
         LOGGER.debug("QUERY getStreamingSeriesValuesFor(): {}", HibernateHelper.getSqlString(c));
-        return (List<SeriesValue>) c.list();
+        return (List<AbstractValue>) c.list();
     }
 
+    /**
+     * Query streaming value for parameter as chunk {@link List}
+     * 
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param series
+     *            Datasource series id
+     * @param chunkSize
+     *            Chunk size
+     * @param currentRow
+     *            Start row
+     * @param session
+     *            Hibernate Session
+     * @return Resulting chunk {@link List}
+     * @throws OwsExceptionReport
+     *             If an error occurs when querying the {@link AbstractValue}s
+     */
     @SuppressWarnings("unchecked")
-    public List<SeriesValue> getStreamingSeriesValuesFor(GetObservationRequest request, long series, int chunkSize,
+    public List<AbstractValue> getStreamingSeriesValuesFor(GetObservationRequest request, long series, int chunkSize,
             int currentRow, Session session) throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(request, series, null, session);
         addChunkValuesToCriteria(c, chunkSize, currentRow);
         LOGGER.debug("QUERY getStreamingSeriesValuesFor(): {}", HibernateHelper.getSqlString(c));
-        return (List<SeriesValue>) c.list();
+        return (List<AbstractValue>) c.list();
     }
 
-    private void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow) {
-        c.addOrder(Order.asc(SeriesValue.PHENOMENON_TIME_START));
-        c.setMaxResults(chunkSize).setFirstResult(currentRow);
-    }
-
+    /**
+     * Get {@link Criteria} for parameter
+     * 
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param series
+     *            Datasource series id
+     * @param temporalFilterCriterion
+     *            Temporal filter {@link Criterion}
+     * @param session
+     *            Hibernate Session
+     * @return Resulting {@link Criteria}
+     * @throws OwsExceptionReport
+     *             If an error occurs when adding Spatial Filtering Profile
+     *             restrictions
+     */
     private Criteria getSeriesValueCriteriaFor(GetObservationRequest request, long series,
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         final Criteria c =
-                getDefaultObservationCriteria(SeriesValue.class, session).createAlias(SeriesObservation.SERIES, "s");
+                getDefaultObservationCriteria(SeriesValue.class, session).createAlias(SeriesValue.SERIES, "s");
 
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
 
         c.add(Restrictions.eq("s." + Series.ID, series));
 
         if (CollectionHelper.isNotEmpty(request.getOfferings())) {
-            c.createCriteria(SeriesObservation.OFFERINGS).add(
-                    Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
+            c.createCriteria(SeriesValue.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
         }
 
         String logArgs = "request, series, offerings";
@@ -113,14 +196,36 @@ public class SeriesValueDAO extends AbstractValueDAO {
         return c.setReadOnly(true);
     }
 
+    /**
+     * Get default {@link Criteria} for {@link Class}
+     * 
+     * @param clazz
+     *            {@link Class} to get default {@link Criteria} for
+     * @param session
+     *            Hibernate Session
+     * @return Default {@link Criteria}
+     */
     public Criteria getDefaultObservationCriteria(Class<?> clazz, Session session) {
         return session.createCriteria(clazz).add(Restrictions.eq(SeriesValue.DELETED, false))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
+    /**
+     * Query unit for parameter
+     * 
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param series
+     *            Datasource series id
+     * @param session
+     *            Hibernate Session
+     * @return Unit or null if no unit is set
+     * @throws OwsExceptionReport
+     *             If an error occurs when querying the unit
+     */
     public String getUnit(GetObservationRequest request, long series, Session session) throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(request, series, null, session);
-        Unit unit = (Unit)c.setMaxResults(1).setProjection(Projections.property(SeriesValue.UNIT)).uniqueResult();
+        Unit unit = (Unit) c.setMaxResults(1).setProjection(Projections.property(SeriesValue.UNIT)).uniqueResult();
         if (unit != null && unit.isSetUnit()) {
             return unit.getUnit();
         }

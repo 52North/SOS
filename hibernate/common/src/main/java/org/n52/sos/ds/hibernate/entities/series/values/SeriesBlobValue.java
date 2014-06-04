@@ -30,7 +30,17 @@ package org.n52.sos.ds.hibernate.entities.series.values;
 
 import org.n52.sos.ds.hibernate.entities.interfaces.BlobValue;
 
+/**
+ * Concrete implementation of {@link SeriesValue} for series concept and blob
+ * values
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 public class SeriesBlobValue extends SeriesValue implements BlobValue {
+    
+    private static final long serialVersionUID = 503922159414098744L;
     
     private Object value;
 

@@ -31,8 +31,18 @@ package org.n52.sos.ds.hibernate.entities.series.values;
 import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayValue;
 import org.n52.sos.util.StringHelper;
 
+/**
+ * Concrete implementation of {@link SeriesValue} for series concept and swe:DataArray
+ * values
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 public class SeriesSweDataArrayValue extends SeriesValue implements SweDataArrayValue {
 
+    private static final long serialVersionUID = 8620387145785871292L;
+    
     private String value;
 
     @Override

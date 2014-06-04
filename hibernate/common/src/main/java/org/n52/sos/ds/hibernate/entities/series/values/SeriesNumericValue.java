@@ -32,7 +32,17 @@ import java.math.BigDecimal;
 
 import org.n52.sos.ds.hibernate.entities.interfaces.NumericValue;
 
+/**
+ * Concrete implementation of {@link SeriesValue} for series concept and numeric
+ * values
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 public class SeriesNumericValue extends SeriesValue implements NumericValue {
+    
+    private static final long serialVersionUID = 7487419141361171657L;
     
     private BigDecimal value;
 

@@ -31,8 +31,18 @@ package org.n52.sos.ds.hibernate.entities.series.values;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextValue;
 import org.n52.sos.util.StringHelper;
 
+/**
+ * Concrete implementation of {@link SeriesValue} for series concept and text
+ * values
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 public class SeriesTextValue extends SeriesValue implements TextValue {
 
+    private static final long serialVersionUID = -4907297395374635905L;
+    
     private String value;
 
     @Override

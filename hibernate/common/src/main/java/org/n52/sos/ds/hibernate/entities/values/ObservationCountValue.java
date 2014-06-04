@@ -26,17 +26,37 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.interfaces;
+package org.n52.sos.ds.hibernate.entities.values;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValue;
+import org.n52.sos.ds.hibernate.entities.interfaces.CountValue;
 
 /**
- * Interface for Hibernate count value entities
+ * Concrete implementation of {@link ObservationValue} for old concept and count
+ * values
  * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
- * 
+ *
  */
-public interface CountValue extends HasValue<Integer> {
+public class ObservationCountValue extends ObservationValue implements CountValue {
+    
+    private static final long serialVersionUID = 93019974653584867L;
+    
+    private Integer value;
+
+    @Override
+    public Integer getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(Integer value) {
+        this.value = value;
+    }
+
+    @Override
+    public boolean isSetValue() {
+        return getValue() != null;
+    }
 
 }

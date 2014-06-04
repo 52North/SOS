@@ -26,17 +26,39 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.interfaces;
+package org.n52.sos.ds.hibernate.entities.values;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValue;
+import java.math.BigDecimal;
+
+import org.n52.sos.ds.hibernate.entities.interfaces.NumericValue;
 
 /**
- * Interface for Hibernate count value entities
+ * Concrete implementation of {@link ObservationValue} for old concept and numeric
+ * values
  * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
- * 
+ *
  */
-public interface CountValue extends HasValue<Integer> {
+public class ObservationNumericValue extends ObservationValue implements NumericValue {
+    
+    private static final long serialVersionUID = 4104949732202796710L;
+    
+    private BigDecimal value;
+
+    @Override
+    public BigDecimal getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(BigDecimal value) {
+        this.value = value;
+    }
+
+    @Override
+    public boolean isSetValue() {
+        return getValue() != null;
+    }
 
 }

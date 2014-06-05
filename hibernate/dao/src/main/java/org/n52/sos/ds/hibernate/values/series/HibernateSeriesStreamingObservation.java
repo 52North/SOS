@@ -31,119 +31,61 @@ package org.n52.sos.ds.hibernate.values.series;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
-import org.hibernate.ScrollableResults;
-import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
-import org.n52.sos.convert.ConverterException;
-import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
-import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
-import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
+import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingObservation;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.StreamingObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.util.http.HTTPStatus;
 
-public class HibernateSeriesStreamingObservation extends StreamingObservation {
-    
+/**
+ * Streaming observation class for series concept
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.0.2
+ *
+ */
+public class HibernateSeriesStreamingObservation extends AbstractHibernateStreamingObservation {
+
     private static final long serialVersionUID = 201732114914686926L;
-    
-    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
-    
+
     private final SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO();
-    
-    private Session session;
-    
-    private ScrollableResults result;
-    
-    private GetObservationRequest request;
 
-    private Set<String> features;
-
-    private Criterion temporalFilterCriterion;
-    
     private Set<Long> seriesIDs;
-    
-    private boolean showMetadataOfEmptyObservation = false;
-    
-    private boolean observationNotQueried = true;
-    
+
+    /**
+     * constructor
+     * 
+     * @param request
+     *            {@link GetObservationRequest}
+     */
     public HibernateSeriesStreamingObservation(GetObservationRequest request) {
-        this.request = request;
-        showMetadataOfEmptyObservation = Configurator.getInstance().getProfileHandler().getActiveProfile().isShowMetadataOfEmptyObservations();
+        super(request);
     }
 
     @Override
-    public boolean hasNextValue() throws OwsExceptionReport {
-        boolean next = false;
-        if (result == null ) {
-            getNextScrollableResults();
-            if (result != null ) {
-                next = result.next();
-            }
-        } else {
-            next = result.next();
-            if (!next) {
-                getNextScrollableResults();
-                if (result != null) {
-                    next = result.next();
-                }
-            }
-        }
-        if (!next) {
-            sessionHolder.returnSession(session);
-        }
-        return next;
-    }
-
-    @Override
-    public OmObservation nextSingleObservation() throws OwsExceptionReport {
-        try {
-            OmObservation observation;
-            Object resultObject = result.get()[0];
-            if (resultObject instanceof SeriesObservation) {
-                observation = HibernateGetObservationHelper.toSosObservation(checkShowMetadtaOfEmptyObservations((SeriesObservation)result.get()[0]), request.getVersion(), request.getResultModel(), session);
-            } else if (resultObject instanceof Series) {
-                observation = HibernateObservationUtilities.createSosObservationFromSeries((Series)resultObject, request.getVersion(), session).iterator().next();
-            } else {
-                throw new NoApplicableCodeException().withMessage("The object {} is not supported", resultObject.getClass().getName()); 
-            }
-            session.evict(resultObject);
-            return observation;
-        } catch (final HibernateException he) {
-            sessionHolder.returnSession(session);
-            throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
-                    .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
-        } catch (ConverterException ce) {
-            sessionHolder.returnSession(session);
-            throw new NoApplicableCodeException().causedBy(ce).withMessage("Error while processing observation data!")
-                    .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-    
-
-    private AbstractObservation checkShowMetadtaOfEmptyObservations(SeriesObservation seriesObservation) {
+    protected AbstractObservation checkShowMetadtaOfEmptyObservations(AbstractObservation abstractObservation) {
         if (showMetadataOfEmptyObservation) {
-            seriesIDs.add(seriesObservation.getSeries().getSeriesId());
+            if (abstractObservation instanceof SeriesObservation) {
+                seriesIDs.add(((SeriesObservation) abstractObservation).getSeries().getSeriesId());
+            }
         }
-        return seriesObservation;
+        return abstractObservation;
     }
 
-    private void getNextScrollableResults() throws OwsExceptionReport {
+    @Override
+    protected void getNextScrollableResults() throws OwsExceptionReport {
         if (session == null) {
-             session = sessionHolder.getSession();
+            session = sessionHolder.getSession();
         }
         try {
             if (observationNotQueried) {
                 // query with temporal filter
                 if (temporalFilterCriterion != null) {
-                    setResult(seriesObservationDAO.getStreamingSeriesObservationsFor(request, features, temporalFilterCriterion, session));
+                    setResult(seriesObservationDAO.getStreamingSeriesObservationsFor(request, features,
+                            temporalFilterCriterion, session));
                 }
                 // query without temporal or indeterminate filters
                 else {
@@ -153,13 +95,14 @@ public class HibernateSeriesStreamingObservation extends StreamingObservation {
             }
             if (!observationNotQueried && showMetadataOfEmptyObservation) {
                 if (temporalFilterCriterion != null) {
-                    setResult(seriesObservationDAO.getSeriesNotMatchingSeries(seriesIDs ,request, features, temporalFilterCriterion, session));
+                    setResult(seriesObservationDAO.getSeriesNotMatchingSeries(seriesIDs, request, features,
+                            temporalFilterCriterion, session));
                 }
                 // query without temporal or indeterminate filters
                 else {
                     setResult(seriesObservationDAO.getSeriesNotMatchingSeries(seriesIDs, request, features, session));
                 }
-                
+
             }
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);
@@ -167,18 +110,5 @@ public class HibernateSeriesStreamingObservation extends StreamingObservation {
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    private void setResult(ScrollableResults result) {
-        this.result = result;
-    }
-    
-    public void setValidFeatures(Set<String> features) {
-        this.features = features;
-    }
-
-    public void setTemporalFilterCriterion(Criterion temporalFilterCriterion) {
-        this.temporalFilterCriterion = temporalFilterCriterion;
-    }
-
 
 }

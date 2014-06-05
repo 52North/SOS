@@ -28,13 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.values.series;
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.n52.sos.ds.hibernate.dao.AbstractSpatialFilteringProfileDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
+import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
 import org.n52.sos.ds.hibernate.util.observation.SpatialFilteringProfileAdder;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -45,16 +45,31 @@ import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.HTTPStatus;
 
+/**
+ * Hibernate series streaming value implementation for chunk results
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.0.2
+ *
+ */
 public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreamingValue {
 
     private static final long serialVersionUID = -1990901204421577265L;
 
-    private Iterator<SeriesValue> seriesValuesResult;
-    
+    private Iterator<AbstractValue> seriesValuesResult;
+
     private int chunkSize;
 
     private int currentRow;
 
+    /**
+     * constructor
+     * 
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param series
+     *            Datasource series id
+     */
     public HibernateChunkSeriesStreamingValue(GetObservationRequest request, long series) {
         super(request, series);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
@@ -80,7 +95,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
             if (hasNextValue()) {
-                SeriesValue resultObject = seriesValuesResult.next();
+                AbstractValue resultObject = seriesValuesResult.next();
                 TimeValuePair value = createTimeValuePairFrom(resultObject);
                 session.evict(resultObject);
                 return value;
@@ -98,7 +113,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         try {
             if (hasNextValue()) {
                 OmObservation observation = observationTemplate.cloneTemplate();
-                SeriesValue resultObject = seriesValuesResult.next();
+                AbstractValue resultObject = seriesValuesResult.next();
                 addValuesToObservation(observation, resultObject);
                 getSpatialFilteringProfileAdder().add(resultObject.getObservationId(), observation);
                 session.evict(resultObject);
@@ -112,31 +127,37 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         }
     }
 
-    public void setObservationTemplate(OmObservation observationTemplate) {
-        this.observationTemplate = observationTemplate;
-    }
-
+    /**
+     * Get the next results from database
+     * 
+     * @throws OwsExceptionReport
+     *             If an error occurs when querying the next results
+     */
     private void getNextResults() throws OwsExceptionReport {
         if (session == null) {
             session = sessionHolder.getSession();
         }
         try {
             // query with temporal filter
-            List<SeriesValue> seriesValuesResult = null;
+            Collection<AbstractValue> seriesValuesResult = null;
             if (temporalFilterCriterion != null) {
-                seriesValuesResult = seriesValueDAO.getStreamingSeriesValuesFor(request, series,
-                        temporalFilterCriterion, chunkSize, currentRow, session);
+                seriesValuesResult =
+                        seriesValueDAO.getStreamingSeriesValuesFor(request, series, temporalFilterCriterion,
+                                chunkSize, currentRow, session);
             }
             // query without temporal or indeterminate filters
             else {
-                seriesValuesResult = seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize,
-                        currentRow, session);
+                seriesValuesResult =
+                        seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize, currentRow, session);
             }
             currentRow += chunkSize;
             // get SpatialFilteringProfile values
-            AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO = DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
+            AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
+                    DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
             if (spatialFilteringProfileDAO != null) {
-                setSpatialFilteringProfileAdder(new SpatialFilteringProfileAdder(spatialFilteringProfileDAO.getSpatialFilertingProfiles(getObservationIds(seriesValuesResult), session)));
+                setSpatialFilteringProfileAdder(new SpatialFilteringProfileAdder(
+                        spatialFilteringProfileDAO.getSpatialFilertingProfiles(getObservationIds(seriesValuesResult),
+                                session)));
             }
             setSeriesValuesResult(seriesValuesResult);
         } catch (final HibernateException he) {
@@ -146,7 +167,14 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         }
     }
 
-    private void setSeriesValuesResult(List<SeriesValue> seriesValuesResult) {
+    /**
+     * Check the queried {@link AbstractValue}s for null and set them as
+     * iterator to local variable.
+     * 
+     * @param seriesValuesResult
+     *            Queried {@link AbstractValue}s
+     */
+    private void setSeriesValuesResult(Collection<AbstractValue> seriesValuesResult) {
         if (CollectionHelper.isNotEmpty(seriesValuesResult)) {
             this.seriesValuesResult = seriesValuesResult.iterator();
         }

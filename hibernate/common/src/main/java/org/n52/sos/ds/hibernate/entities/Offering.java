@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
+import org.hibernate.annotations.common.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
 
@@ -66,6 +67,11 @@ public class Offering implements Serializable, HasIdentifier, HasName {
     public Offering setIdentifier(String identifier) {
         this.identifier = identifier;
         return this;
+    }
+    
+    @Override
+    public boolean isSetIdentifier() {
+        return StringHelper.isNotEmpty(getIdentifier());
     }
 
     @Override

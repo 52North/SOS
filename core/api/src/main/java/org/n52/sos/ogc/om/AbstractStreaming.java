@@ -40,7 +40,7 @@ import com.google.common.collect.Lists;
 public abstract class AbstractStreaming extends AbstractObservationValue<Value<OmObservation>>{
     
     private static final long serialVersionUID = -4290319005184152231L;
-
+    
     public abstract boolean hasNextValue() throws OwsExceptionReport ;
     
     public abstract OmObservation nextSingleObservation() throws OwsExceptionReport;

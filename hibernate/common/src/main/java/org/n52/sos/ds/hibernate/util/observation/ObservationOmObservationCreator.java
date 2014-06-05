@@ -112,15 +112,9 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     private final boolean encodeProcedureInObservation;
 
-//    private final boolean strictSpatialFilteringProfile;
-    
     private final SpatialFilteringProfileAdder spatialFilteringProfileAdder;
 
     private List<OmObservation> observationCollection;
-//
-//    private final int default3DEPSG;
-//
-//    private final int defaultEPSG;
 
     /**
      * Constructor
@@ -150,25 +144,14 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         spatialFilteringProfileAdder = new SpatialFilteringProfileAdder(spatialFilteringProfile);
         this.procedureConverter = new HibernateProcedureConverter();
         this.featureQueryHandler = getFeatureQueryHandler();
-//        this.strictSpatialFilteringProfile = ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile();
         this.encodeProcedureInObservation = getActiveProfile().isEncodeProcedureInObservation();
-//        this.defaultEPSG = GeometryHandler.getInstance().getDefaultEPSG();
-//        this.default3DEPSG = GeometryHandler.getInstance().getDefault3DEPSG();
     }
-
-//    private int getDefaultEPSG() {
-//        return defaultEPSG;
-//    }
-//
-//    private int getDefault3DEPSG() {
-//        return default3DEPSG;
-//    }
 
     private Collection<AbstractObservation> getObservations() {
         return observations;
     }
 
-    private SpatialFilteringProfileAdder getSpatialFilteringProfileCreator() {
+    private SpatialFilteringProfileAdder getSpatialFilteringProfileAdder() {
         return spatialFilteringProfileAdder;
     }
 
@@ -260,94 +243,6 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         }
         return null;
     }
-
-//    private NamedValue<?> getSpatialFilteringProfileParameter(AbstractSpatialFilteringProfile spatialFilteringProfile)
-//            throws OwsExceptionReport {
-//        final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
-//        final ReferenceType referenceType = new ReferenceType(spatialFilteringProfile.getDefinition());
-//        if (spatialFilteringProfile.isSetTitle()) {
-//            referenceType.setTitle(spatialFilteringProfile.getTitle());
-//        }
-//        namedValue.setName(referenceType);
-//        Geometry geometry;
-//        if (spatialFilteringProfile.isSetLongLat()) {
-//            final int epsg;
-//            if (spatialFilteringProfile.isSetSrid()) {
-//                epsg = spatialFilteringProfile.getSrid();
-//            } else {
-//                epsg = getDefaultEPSG();
-//            }
-//            JTSHelper.getGeometryFactoryForSRID(epsg);
-//            final String wktString =
-//                    GeometryHandler.getInstance().getWktString(spatialFilteringProfile.getLongitude(),
-//                            spatialFilteringProfile.getLatitude());
-//
-//            geometry = JTSHelper.createGeometryFromWKT(wktString, epsg);
-//            if (spatialFilteringProfile.isSetAltitude()) {
-//                geometry.getCoordinate().z =
-//                        GeometryHandler.getInstance().getValueAsDouble(spatialFilteringProfile.getAltitude());
-//                if (geometry.getSRID() == getDefaultEPSG()) {
-//                    geometry.setSRID(getDefault3DEPSG());
-//                }
-//            }
-//        } else {
-//            geometry = spatialFilteringProfile.getGeom();
-//        }
-//        namedValue.setValue(new GeometryValue(GeometryHandler.getInstance()
-//                .switchCoordinateAxisOrderIfNeeded(geometry)));
-//        return namedValue;
-//    }
-//
-//    private NamedValue<?> getSpatialFilteringProfileParameterForConstellation(
-//            OmObservationConstellation omObservationConstellation) {
-//        final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
-//        namedValue.setName(new ReferenceType(Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE));
-//        if (omObservationConstellation.getFeatureOfInterest() instanceof SamplingFeature
-//                && ((SamplingFeature) omObservationConstellation.getFeatureOfInterest()).isSetGeometry()) {
-//            namedValue.setValue(new GeometryValue(
-//                    ((SamplingFeature) omObservationConstellation.getFeatureOfInterest()).getGeometry()));
-//        } else {
-//            final String pId = omObservationConstellation.getProcedure().getIdentifier();
-//            SosEnvelope offeringEnvelope = getMergedBBox(getSosOfferingsForProcedure(pId));
-//            namedValue.setValue(new GeometryValue(JTSHelper.getGeometryFactoryForSRID(getDefaultEPSG()).createPoint(
-//                    offeringEnvelope.getEnvelope().centre())));
-//        }
-//        return namedValue;
-//    }
-//
-//    /**
-//     * Merge offering envelopes
-//     * 
-//     * @param offeringsForProcedure
-//     *            SOS offerings
-//     * 
-//     * @return merged envelopes
-//     */
-//    private SosEnvelope getMergedBBox(final Collection<SosOffering> offeringsForProcedure) {
-//        SosEnvelope mergedEnvelope = null;
-//        for (final SosOffering sosOffering : offeringsForProcedure) {
-//            final SosEnvelope offeringEnvelope =
-//                    getCache().getEnvelopeForOffering(sosOffering.getOfferingIdentifier());
-//            if (offeringEnvelope != null && offeringEnvelope.isSetEnvelope()) {
-//                if (mergedEnvelope == null) {
-//                    mergedEnvelope = offeringEnvelope;
-//                } else {
-//                    mergedEnvelope.expandToInclude(offeringEnvelope.getEnvelope());
-//                }
-//            }
-//        }
-//        return mergedEnvelope;
-//    }
-//
-//    private Collection<SosOffering> getSosOfferingsForProcedure(final String procedureIdentifier) {
-//        final Collection<String> offeringIds = getCache().getOfferingsForProcedure(procedureIdentifier);
-//        final Collection<SosOffering> offerings = Lists.newLinkedList();
-//        for (final String offeringIdentifier : offeringIds) {
-//            final String offeringName = getCache().getNameForOffering(offeringIdentifier);
-//            offerings.add(new SosOffering(offeringIdentifier, offeringName));
-//        }
-//        return offerings;
-//    }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private OmObservation createNewObservation(OmObservationConstellation oc, AbstractObservation ho, Value<?> value) {
@@ -447,7 +342,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
                     createObservationConstellation(hObservation, procedureId, phenomenonId, featureId);
             final OmObservation sosObservation = createNewObservation(obsConst, hObservation, value);
             // add SpatialFilteringProfile
-            getSpatialFilteringProfileCreator().add(hObservation.getObservationId(), sosObservation);
+            getSpatialFilteringProfileAdder().add(hObservation.getObservationId(), sosObservation);
             observationCollection.add(sosObservation);
             getSession().evict(hObservation);
             // TODO check for ScrollableResult vs
@@ -487,14 +382,4 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return obsConst;
     }
 
-//    public void createSpatialFilteringProfileParameter(AbstractObservation hObservation,
-//            OmObservation sosObservation, OmObservationConstellation oc) throws OwsExceptionReport {
-//        final long oId = hObservation.getObservationId();
-//        if (getSpatialFilteringProfile().containsKey(oId)) {
-//            AbstractSpatialFilteringProfile sfp = getSpatialFilteringProfile().get(oId);
-//            sosObservation.addParameter(getSpatialFilteringProfileParameter(sfp));
-//        } else if (strictSpatialFilteringProfile) {
-//            sosObservation.addParameter(getSpatialFilteringProfileParameterForConstellation(oc));
-//        }
-//    }
 }

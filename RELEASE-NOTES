@@ -34,7 +34,7 @@ Changes since last release
       	* chunk: 
       	  * send paging requests and process each chunk
       	  * chunk size is configurable via settings
-      * reduced latency for GetObservation requests
+      * reduced latency for GetObservation response
  
  --- Changes ---
  
@@ -51,11 +51,13 @@ Changes since last release
    
     * Check if JSON binding is supported before testing
     * Show Spatial Filtering Profile key in the Profile section of the Capabilities.ServiceIdentification if strict Spatial Filtering Profile is selected
-      * https://github.com/52North/SOS/commit/437fd75068d9d77d0bc79f6f1f90d92381bfd2f3
+      * https://github.com/52North/SOS/commit/437fd75
     * Fix TimeRange decoding
-      * https://github.com/52North/SOS/commit/41516477d6cc88ef62db638d5dc19dd4149423f5
+      * https://github.com/52North/SOS/commit/4151647
     * Fix TimeInstant constructor with parameter java.util.Date 
-      * https://github.com/52North/SOS/commit/3dc6205e815e546c306c342b4384feb42611ac6e
+      * https://github.com/52North/SOS/commit/3dc6205
+    * Fix SOS 1.0 schemaLocation randomly missing after restarts (https://github.com/52North/SOS/issues/45)
+      * https://github.com/52North/SOS/commit/f849cc9
  
  
 Release 52n-sos-4.0.1
@@ -328,5 +330,5 @@ Release 52n-sos-webapp-4.0.0-Beta1
 
 
 
-For more detailed information about the bugs look at https://52north.org/bugzilla/
+For more detailed information about the bugs look at https://github.com/52North/SOS/issues
 

@@ -29,13 +29,11 @@
 package org.n52.sos.ds.hibernate.dao;
 
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.Observation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.values.ObservationValueTime;
@@ -47,41 +45,129 @@ import org.n52.sos.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Implementation of {@link AbstractValueDAO} for old concept to query only time information
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 public class ValueTimeDAO extends AbstractValueDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(ValueTimeDAO.class);
 
+    /**
+     * Query the minimum {@link ObservationValueTime} for parameter
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param procedure
+     *            Datasource procedure id
+     * @param observableProperty
+     *            Datasource procedure id
+     * @param featureOfInterest
+     *            Datasource procedure id
+     * @param temporalFilterCriterion
+     *            Temporal filter {@link Criterion}
+     * @param session
+     *            Hibernate Session
+     * @return Resulting minimum {@link ObservationValueTime}
+     * @throws OwsExceptionReport If an error occurs when executing the query
+     */
     public ObservationValueTime getMinValueFor(GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest, Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         return (ObservationValueTime) getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest,
                 temporalFilterCriterion, SosIndeterminateTime.first, session).uniqueResult();
     }
 
+    /**
+     * Query the maximum {@link ObservationValueTime} for parameter
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param procedure
+     *            Datasource procedure id
+     * @param observableProperty
+     *            Datasource procedure id
+     * @param featureOfInterest
+     *            Datasource procedure id
+     * @param temporalFilterCriterion
+     *            Temporal filter {@link Criterion}
+     * @param session
+     *            Hibernate Session
+     * @return Resulting maximum {@link ObservationValueTime}
+     * @throws OwsExceptionReport If an error occurs when executing the query
+     */
     public ObservationValueTime getMaxValueFor(GetObservationRequest request, long procedure, long observableProperty,
-            long featureOfInterest, Criterion temporalFilterCriterion, Session session) throws HibernateException,
-            OwsExceptionReport {
+            long featureOfInterest, Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         return (ObservationValueTime) getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest,
                 temporalFilterCriterion, SosIndeterminateTime.latest, session).uniqueResult();
     }
 
+    /**
+     * Query the minimum {@link ObservationValueTime} for parameter
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param procedure
+     *            Datasource procedure id
+     * @param observableProperty
+     *            Datasource procedure id
+     * @param featureOfInterest
+     *            Datasource procedure id
+     * @param session
+     *            Hibernate Session
+     * @return Resulting minimum {@link ObservationValueTime}
+     * @throws OwsExceptionReport If an error occurs when executing the query
+     */
     public ObservationValueTime getMinValueFor(GetObservationRequest request, long procedure, long observableProperty,
-            long featureOfInterest, Session session) throws HibernateException, OwsExceptionReport {
+            long featureOfInterest, Session session) throws OwsExceptionReport {
         return (ObservationValueTime) getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest, null,
                 SosIndeterminateTime.first, session).uniqueResult();
     }
 
+    /**
+     * Query the maximum {@link ObservationValueTime} for parameter
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param procedure
+     *            Datasource procedure id
+     * @param observableProperty
+     *            Datasource procedure id
+     * @param featureOfInterest
+     *            Datasource procedure id
+     * @param session
+     *            Hibernate Session
+     * @return Resulting maximum {@link ObservationValueTime}
+     * @throws OwsExceptionReport If an error occurs when executing the query
+     */
     public ObservationValueTime getMaxValueFor(GetObservationRequest request, long procedure, long observableProperty,
-            long featureOfInterest, Session session) throws HibernateException, OwsExceptionReport {
+            long featureOfInterest, Session session) throws OwsExceptionReport {
         return (ObservationValueTime) getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest, null,
                 SosIndeterminateTime.latest, session).uniqueResult();
     }
 
+    /**
+     * Create {@link Criteria} for parameter
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param procedure
+     *            Datasource procedure id
+     * @param observableProperty
+     *            Datasource procedure id
+     * @param featureOfInterest
+     *            Datasource procedure id
+     * @param temporalFilterCriterion
+     *            Temporal filter {@link Criterion}
+     * @param sosIndeterminateTime first/latest indicator
+     * @param session
+     *            Hibernate Session
+     * @return Resulting {@link Criteria}
+     * @throws OwsExceptionReport  If an error occurs when adding Spatial Filtering Profile
+     *             restrictions
+     */
     private Criteria getValueCriteriaFor(GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest, Criterion temporalFilterCriterion, SosIndeterminateTime sosIndeterminateTime,
             Session session) throws OwsExceptionReport {
         final Criteria c =
-                getDefaultObservationCriteria(ObservationValueTime.class, session).createAlias(Observation.PROCEDURE, "p")
-                        .createAlias(Observation.FEATURE_OF_INTEREST, "f")
-                        .createAlias(Observation.OBSERVABLE_PROPERTY, "o");
+                getDefaultObservationCriteria(ObservationValueTime.class, session).createAlias(ObservationValueTime.PROCEDURE, "p")
+                        .createAlias(ObservationValueTime.FEATURE_OF_INTEREST, "f")
+                        .createAlias(ObservationValueTime.OBSERVABLE_PROPERTY, "o");
 
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
 
@@ -90,7 +176,7 @@ public class ValueTimeDAO extends AbstractValueDAO {
         c.add(Restrictions.eq("f." + FeatureOfInterest.ID, featureOfInterest));
 
         if (CollectionHelper.isNotEmpty(request.getOfferings())) {
-            c.createCriteria(Observation.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
+            c.createCriteria(ObservationValueTime.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
         }
 
         String logArgs = "request, series, offerings";
@@ -106,6 +192,15 @@ public class ValueTimeDAO extends AbstractValueDAO {
         return c;
     }
 
+    /**
+     * Get default {@link Criteria} for {@link Class}
+     * 
+     * @param clazz
+     *            {@link Class} to get default {@link Criteria} for
+     * @param session
+     *            Hibernate Session
+     * @return Default {@link Criteria}
+     */
     public Criteria getDefaultObservationCriteria(Class<?> clazz, Session session) {
         return session.createCriteria(clazz).add(Restrictions.eq(ObservationValueTime.DELETED, false))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);

@@ -125,6 +125,11 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
         this.identifier = identifier;
         return this;
     }
+    
+    @Override
+    public boolean isSetIdentifier() {
+        return StringHelper.isNotEmpty(getIdentifier());
+    }
 
     @Override
     public String getResultStructure() {

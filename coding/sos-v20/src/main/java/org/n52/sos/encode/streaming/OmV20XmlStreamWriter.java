@@ -34,18 +34,34 @@ import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
+/**
+ * Implementation of {@link AbstractOmV20XmlStreamWriter} to write O&M 2.0 encoded
+ * {@link OmObservation}s to stream
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 public class OmV20XmlStreamWriter extends AbstractOmV20XmlStreamWriter {
 
+    /**
+     * constructor
+     */
     public OmV20XmlStreamWriter() {
         super();
     }
-    
+
+    /**
+     * constructor
+     * @param observation {@link OmObservation} to write to stream
+     */
     public OmV20XmlStreamWriter(OmObservation observation) {
         super(observation);
     }
-    
+
     @Override
-    protected void writeResult(OmObservation observation, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
-            super.writeResult(observation, encodingValues);
+    protected void writeResult(OmObservation observation, EncodingValues encodingValues) throws XMLStreamException,
+            OwsExceptionReport {
+        super.writeResult(observation, encodingValues);
     }
 }

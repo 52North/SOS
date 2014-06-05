@@ -34,18 +34,36 @@ import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
+/**
+ * Implementation of {@link AbstractOmV20XmlStreamWriter} to write WaterML 2.0
+ * Domain Range encoded {@link OmObservation}s to stream
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 public class WmlTDREncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWriter {
-    
+
+    /**
+     * constructor
+     */
     public WmlTDREncoderv20XmlStreamWriter() {
         super();
     }
-    
+
+    /**
+     * constructor
+     * 
+     * @param observation
+     *            {@link OmObservation} to write to stream
+     */
     public WmlTDREncoderv20XmlStreamWriter(OmObservation observation) {
         super(observation);
     }
-    
+
     @Override
-    protected void writeResult(OmObservation observation, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
+    protected void writeResult(OmObservation observation, EncodingValues encodingValues) throws XMLStreamException,
+            OwsExceptionReport {
         // TODO Auto-generated method stub
         super.writeResult(observation, encodingValues);
     }

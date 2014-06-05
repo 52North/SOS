@@ -41,12 +41,27 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.http.HTTPStatus;
 
+/**
+ * Hibernate series streaming value implementation for {@link ScrollableResults}
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.0.2
+ *
+ */
 public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStreamingValue {
 
     private static final long serialVersionUID = -6439122088572009613L;
 
     private ScrollableResults scrollableResult;
 
+    /**
+     * constructor
+     * 
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param series
+     *            Datasource series id
+     */
     public HibernateScrollableSeriesStreamingValue(GetObservationRequest request, long series) {
         super(request, series);
         setSpatialFilteringProfileAdder(new SpatialFilteringProfileAdder());
@@ -99,15 +114,32 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
         }
     }
 
+    /**
+     * Query and add Spatial Filtering Profile information to observation
+     * 
+     * @param observation
+     *            Observation to add Spatial Filtering Profile information
+     * @param oId
+     *            Datasource observation id
+     * @throws OwsExceptionReport
+     *             If an error occurs when querying the Spatial Filtering
+     *             Profile information or during the adding
+     */
     private void addSpatialFilteringProfile(OmObservation observation, Long oId) throws OwsExceptionReport {
         AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
                 DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
         if (spatialFilteringProfileDAO != null) {
-            getSpatialFilteringProfileAdder().add(
-                    spatialFilteringProfileDAO.getSpatialFilertingProfile(oId, session), observation);
+            getSpatialFilteringProfileAdder().add(spatialFilteringProfileDAO.getSpatialFilertingProfile(oId, session),
+                    observation);
         }
     }
 
+    /**
+     * Get the next results from database
+     * 
+     * @throws OwsExceptionReport
+     *             If an error occurs when querying the next results
+     */
     private void getNextResults() throws OwsExceptionReport {
         if (session == null) {
             session = sessionHolder.getSession();
@@ -129,6 +161,12 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
         }
     }
 
+    /**
+     * Set the queried {@link ScrollableResults} to local variable
+     * 
+     * @param scrollableResult
+     *            Queried {@link ScrollableResults}
+     */
     private void setScrollableResult(ScrollableResults scrollableResult) {
         this.scrollableResult = scrollableResult;
     }

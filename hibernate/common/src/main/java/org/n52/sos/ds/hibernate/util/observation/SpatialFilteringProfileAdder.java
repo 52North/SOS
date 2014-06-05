@@ -104,9 +104,9 @@ public class SpatialFilteringProfileAdder {
     public void add(Long oId, OmObservation observation) throws OwsExceptionReport {
         if (spatialFilteringProfiles.containsKey(oId)) {
             AbstractSpatialFilteringProfile sfp = spatialFilteringProfiles.get(oId);
-            observation.addParameter(getSpatialFilteringProfileParameter(sfp));
+            observation.addParameter(createSpatialFilteringProfileParameter(sfp));
         } else if (strictSpatialFilteringProfile) {
-            observation.addParameter(getSpatialFilteringProfileParameterForConstellation(observation
+            observation.addParameter(createSpatialFilteringProfileParameterForConstellation(observation
                     .getObservationConstellation()));
         }
     }
@@ -123,9 +123,9 @@ public class SpatialFilteringProfileAdder {
      */
     public void add(AbstractSpatialFilteringProfile sfp, OmObservation observation) throws OwsExceptionReport {
         if (sfp != null) {
-            observation.addParameter(getSpatialFilteringProfileParameter(sfp));
+            observation.addParameter(createSpatialFilteringProfileParameter(sfp));
         } else if (strictSpatialFilteringProfile) {
-            observation.addParameter(getSpatialFilteringProfileParameterForConstellation(observation
+            observation.addParameter(createSpatialFilteringProfileParameterForConstellation(observation
                     .getObservationConstellation()));
         }
     }
@@ -148,7 +148,7 @@ public class SpatialFilteringProfileAdder {
         }
     }
 
-    private NamedValue<?> getSpatialFilteringProfileParameter(AbstractSpatialFilteringProfile spatialFilteringProfile)
+    private NamedValue<?> createSpatialFilteringProfileParameter(AbstractSpatialFilteringProfile spatialFilteringProfile)
             throws OwsExceptionReport {
         final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
         final ReferenceType referenceType = new ReferenceType(spatialFilteringProfile.getDefinition());
@@ -185,7 +185,7 @@ public class SpatialFilteringProfileAdder {
         return namedValue;
     }
 
-    private NamedValue<?> getSpatialFilteringProfileParameterForConstellation(
+    private NamedValue<?> createSpatialFilteringProfileParameterForConstellation(
             OmObservationConstellation omObservationConstellation) {
         final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
         namedValue.setName(new ReferenceType(Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE));

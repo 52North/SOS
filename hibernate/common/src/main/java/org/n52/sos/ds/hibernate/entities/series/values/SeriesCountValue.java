@@ -30,7 +30,17 @@ package org.n52.sos.ds.hibernate.entities.series.values;
 
 import org.n52.sos.ds.hibernate.entities.interfaces.CountValue;
 
+/**
+ * Concrete implementation of {@link SeriesValue} for series concept and count
+ * values
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 public class SeriesCountValue extends SeriesValue implements CountValue {
+    
+    private static final long serialVersionUID = 844475617058700079L;
     
     private Integer value;
 

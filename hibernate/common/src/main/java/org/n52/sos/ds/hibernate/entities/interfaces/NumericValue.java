@@ -32,6 +32,13 @@ import java.math.BigDecimal;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValue;
 
+/**
+ * Interface for Hibernate numeric value entities
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ * 
+ */
 public interface NumericValue extends HasValue<BigDecimal> {
 
 }

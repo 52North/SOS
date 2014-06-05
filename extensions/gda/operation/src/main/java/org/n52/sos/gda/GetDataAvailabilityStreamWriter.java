@@ -152,7 +152,7 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
     @Override
     public void write(OutputStream out) throws XMLStreamException, OwsExceptionReport {
         init(out);
-        start();
+        start(true);
         writeGetDataAvailabilityResponse();
         end();
         finish();

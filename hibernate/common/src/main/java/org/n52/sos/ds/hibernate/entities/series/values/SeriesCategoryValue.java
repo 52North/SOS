@@ -31,7 +31,17 @@ package org.n52.sos.ds.hibernate.entities.series.values;
 import org.n52.sos.ds.hibernate.entities.interfaces.CategoryValue;
 import org.n52.sos.util.StringHelper;
 
+/**
+ * Concrete implementation of {@link SeriesValue} for series concept and category
+ * values
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 public class SeriesCategoryValue extends SeriesValue implements CategoryValue {
+    
+    private static final long serialVersionUID = -4206516111463835035L;
     
     private String value;
 

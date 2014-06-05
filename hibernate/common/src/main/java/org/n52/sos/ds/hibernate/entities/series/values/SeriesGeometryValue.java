@@ -32,7 +32,17 @@ import org.n52.sos.ds.hibernate.entities.interfaces.GeometryValue;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+/**
+ * Concrete implementation of {@link SeriesValue} for series concept and geometry
+ * values
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 public class SeriesGeometryValue extends SeriesValue implements GeometryValue {
+    
+    private static final long serialVersionUID = 4821542860405259404L;
     
     private Geometry value;
 

@@ -84,23 +84,32 @@ import org.n52.sos.w3c.W3CConstants;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
+/**
+ * Abstract implementation of {@link XmlStreamWriter} for writing
+ * {@link OmObservation}s to stream
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObservation> {
 
     private OmObservation observation;
 
+    /**
+     * constructor
+     */
     public AbstractOmV20XmlStreamWriter() {
     }
 
+    /**
+     * constructor
+     * 
+     * @param observation
+     *            {@link OmObservation} to write to stream
+     */
     public AbstractOmV20XmlStreamWriter(OmObservation observation) {
         setOmObservation(observation);
-    }
-    
-    private void setOmObservation(OmObservation observation) {
-        this.observation = observation;
-    }
-
-    private OmObservation getOmObservation() {
-        return observation;
     }
 
     @Override
@@ -133,6 +142,18 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         }
     }
 
+    /**
+     * Write {@link OmObservation} XML encoded to stream
+     * 
+     * @param encodingValues
+     *            {@link EncodingValues} contains additional information for the
+     *            encoding
+     * @throws XMLStreamException
+     *             If an error occurs when writing to stream
+     * @throws OwsExceptionReport
+     *             If an error occurs when creating elements to be written If an
+     *             error occurs when creating elements to be written
+     */
     protected void writeOmObservationDoc(EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
         start(OmConstants.QN_OM_20_OBSERVATION);
         namespace(W3CConstants.NS_XLINK_PREFIX, W3CConstants.NS_XLINK);
@@ -176,6 +197,16 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         indent++;
     }
 
+    /**
+     * Write {@link CodeWithAuthority} as gml:identifier to stream
+     * 
+     * @param identifier
+     *            {@link CodeWithAuthority} to write
+     * @throws OwsExceptionReport
+     *             If an error occurs when creating elements to be written
+     * @throws XMLStreamException
+     *             If an error occurs when writing to stream
+     */
     protected void writeIdentifier(CodeWithAuthority identifier) throws OwsExceptionReport, XMLStreamException {
         Encoder<?, CodeWithAuthority> encoder =
                 CodingRepository.getInstance().getEncoder(
@@ -188,17 +219,43 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         }
     }
 
+    /**
+     * Write description as gml:descritpion to stream
+     * 
+     * @param description
+     *            Description to write
+     * @throws XMLStreamException
+     *             If an error occurs when writing to stream
+     */
     protected void writeDescription(String description) throws XMLStreamException {
         start(GmlConstants.QN_DESCRIPTION_32);
         chars(description);
         endInline(GmlConstants.QN_DESCRIPTION_32);
     }
 
+    /**
+     * Write observation typ as om:type to stream
+     * 
+     * @param observationType
+     *            Observation type to write
+     * @throws XMLStreamException
+     *             If an error occurs when writing to stream
+     */
     protected void writeObservationType(String observationType) throws XMLStreamException {
         empty(OmConstants.QN_OM_20_OBSERVATION_TYPE);
         addXlinkHrefAttr(observationType);
     }
 
+    /**
+     * Write {@link Time} as om:phenomenonTime to stream
+     * 
+     * @param time
+     *            {@link Time} to write as om:phenomenonTime to stream
+     * @throws OwsExceptionReport
+     *             If an error occurs when creating elements to be written
+     * @throws XMLStreamException
+     *             If an error occurs when writing to stream
+     */
     protected void writePhenomenonTime(Time time) throws OwsExceptionReport, XMLStreamException {
         start(OmConstants.QN_OM_20_PHENOMENON_TIME);
         writeNewLine();
@@ -209,6 +266,14 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         indent++;
     }
 
+    /**
+     * Write om:resultTime to stream
+     * 
+     * @throws XMLStreamException
+     *             If an error occurs when writing to stream
+     * @throws OwsExceptionReport
+     *             If an error occurs when creating elements to be written
+     */
     protected void writeResultTime() throws XMLStreamException, OwsExceptionReport {
         TimeInstant resultTime = observation.getResultTime();
         Time phenomenonTime = observation.getPhenomenonTime();
@@ -234,6 +299,18 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         }
     }
 
+    /**
+     * Write om:procedure encoded or as xlink:href to stream
+     * 
+     * @param encodingValues
+     *            {@link EncodingValues} contains the required encoder
+     * @throws XMLStreamException
+     *             If an error occurs when writing to stream
+     * @throws UnsupportedEncoderInputException
+     *             If the procedure could not be encoded
+     * @throws OwsExceptionReport
+     *             If an error occurs when creating elements to be written
+     */
     @SuppressWarnings("unchecked")
     protected void writeProcedure(EncodingValues encodingValues) throws XMLStreamException,
             UnsupportedEncoderInputException, OwsExceptionReport {
@@ -286,6 +363,16 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
 //        }
     }
 
+    /**
+     * Write om:parameter to stream
+     * 
+     * @param encodingValues
+     *            {@link EncodingValues} contains the required encoder
+     * @throws XMLStreamException
+     *             If an error occurs when writing to stream
+     * @throws OwsExceptionReport
+     *             If an error occurs when creating elements to be written
+     */
     @SuppressWarnings("unchecked")
     protected void writeParameter(EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
         if (encodingValues.isSetEncoder() && encodingValues.getEncoder() instanceof ObservationEncoder) {
@@ -304,11 +391,27 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         }
     }
 
+    /**
+     * Write om:observedProperty to stream
+     * 
+     * @throws XMLStreamException
+     *             If an error occurs when writing to stream
+     */
     protected void writeObservableProperty() throws XMLStreamException {
         empty(OmConstants.QN_OM_20_OBSERVED_PROPERTY);
         addXlinkHrefAttr(observation.getObservationConstellation().getObservableProperty().getIdentifier());
     }
 
+    /**
+     * Write om:featureOfInterest encoded or as xlink:href to stream
+     * 
+     * @param encodingValues
+     *            {@link EncodingValues} contains the required encoder
+     * @throws XMLStreamException
+     *             If an error occurs when writing to stream
+     * @throws OwsExceptionReport
+     *             If an error occurs when creating elements to be written
+     */
     protected void writeFeatureOfIntererst(EncodingValues encodingValues) throws XMLStreamException,
             OwsExceptionReport {
         if (encodingValues.isSetEncoder() && encodingValues.getEncoder() instanceof AbstractOmEncoderv20) {
@@ -334,97 +437,69 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         }
     }
 
-    protected void writeResult(OmObservation observation, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
-            if (observation.getValue() instanceof AbstractObservationValue<?>) {
-                ((AbstractObservationValue<?>)observation.getValue()).setValuesForResultEncoding(observation);
-            }
-            XmlObject createResult = CodingHelper.encodeObjectToXml(encodingValues.getEncodingNamespace(), observation.getValue());
-            if (createResult != null) {
-              if (createResult.xmlText().contains(XML_FRAGMENT)) {
-                  XmlObject set = OMObservationType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions()).addNewResult().set(createResult);
-                  writeXmlObject(set, OmConstants.QN_OM_20_RESULT);
-              } else {
-                  if (checkResult(createResult)) {
-                      QName name = createResult.schemaType().getName();
-                      String prefix = name.getPrefix();
-                      if (Strings.isNullOrEmpty(prefix)) {
-                          XmlCursor newCursor = createResult.newCursor();
-                          prefix = newCursor.prefixForNamespace(name.getNamespaceURI());
-                          newCursor.setAttributeText(W3CConstants.QN_XSI_TYPE, prefix + Constants.COLON_STRING + name.getLocalPart());
-                          newCursor.dispose();
-                      }
-                      writeXmlObject(createResult, OmConstants.QN_OM_20_RESULT);
-                  } else {
-                      start(OmConstants.QN_OM_20_RESULT);
-                      writeNewLine();
-                      writeXmlObject(createResult, OmConstants.QN_OM_20_RESULT);
-                      writeNewLine();
-                      indent--;
-                      end(OmConstants.QN_OM_20_RESULT);
-                      indent++;
-                  }
-              }
+    /**
+     * write om:result to stream
+     * 
+     * @param observation
+     *            {@link OmObservation} with the result to write
+     * @param encodingValues
+     *            {@link EncodingValues} contains the result element namespace
+     * @throws XMLStreamException
+     *             If an error occurs when writing to stream
+     * @throws OwsExceptionReport
+     *             If an error occurs when creating elements to be written
+     */
+    protected void writeResult(OmObservation observation, EncodingValues encodingValues) throws XMLStreamException,
+            OwsExceptionReport {
+        if (observation.getValue() instanceof AbstractObservationValue<?>) {
+            ((AbstractObservationValue<?>) observation.getValue()).setValuesForResultEncoding(observation);
+        }
+        XmlObject createResult =
+                CodingHelper.encodeObjectToXml(encodingValues.getEncodingNamespace(), observation.getValue());
+        if (createResult != null) {
+            if (createResult.xmlText().contains(XML_FRAGMENT)) {
+                XmlObject set =
+                        OMObservationType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions())
+                                .addNewResult().set(createResult);
+                writeXmlObject(set, OmConstants.QN_OM_20_RESULT);
             } else {
-                empty(OmConstants.QN_OM_20_RESULT);
-            }
-    }
-
-    private boolean checkResult(XmlObject result) {
-        if (result.schemaType() != null) {
-            SchemaType schemaType = result.schemaType();
-            if (schemaType.getName() != null) {
-                QName name = schemaType.getName();
-                if (name.getLocalPart() != null && name.getLocalPart().toLowerCase().contains("propertytype")) {
-                    return true;
+                if (checkResult(createResult)) {
+                    QName name = createResult.schemaType().getName();
+                    String prefix = name.getPrefix();
+                    if (Strings.isNullOrEmpty(prefix)) {
+                        XmlCursor newCursor = createResult.newCursor();
+                        prefix = newCursor.prefixForNamespace(name.getNamespaceURI());
+                        newCursor.setAttributeText(W3CConstants.QN_XSI_TYPE,
+                                prefix + Constants.COLON_STRING + name.getLocalPart());
+                        newCursor.dispose();
+                    }
+                    writeXmlObject(createResult, OmConstants.QN_OM_20_RESULT);
+                } else {
+                    start(OmConstants.QN_OM_20_RESULT);
+                    writeNewLine();
+                    writeXmlObject(createResult, OmConstants.QN_OM_20_RESULT);
+                    writeNewLine();
+                    indent--;
+                    end(OmConstants.QN_OM_20_RESULT);
+                    indent++;
                 }
             }
-        }
-        return  false;
-    }
-
-    private String addGmlId(OmObservation observation) throws XMLStreamException {
-        String observationID = JavaHelper.generateID(Double.toString(System.currentTimeMillis() * Math.random()));
-        if (observation.isSetObservationID()) {
-            observationID = observation.getObservationID();
         } else {
-            observation.setObservationID(observationID);
+            empty(OmConstants.QN_OM_20_RESULT);
         }
-        attr(GmlConstants.QN_ID_32, "o_" + observationID);
-        return observationID;
     }
 
-    private void writePhenomenonTimeContent(Time time) throws OwsExceptionReport, XMLStreamException {
-        XmlObject xmlObject =
-                CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, time, getDocumentAdditionalHelperValues());
-        writeXmlObject(xmlObject, GmlHelper.getGml321QnameForITime(time));
-    }
-
-    private void addResultTime(TimeInstant time) throws OwsExceptionReport, XMLStreamException {
-        start(OmConstants.QN_OM_20_RESULT_TIME);
-        writeNewLine();
-        XmlObject xmlObject =
-                CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, time, getDocumentAdditionalHelperValues());
-        writeXmlObject(xmlObject, GmlConstants.QN_TIME_INSTANT_32);
-        writeNewLine();
-        indent--;
-        end(OmConstants.QN_OM_20_RESULT_TIME);
-        indent++;
-    }
-
+    /**
+     * Get additional values map with document helper value
+     * 
+     * @return
+     */
     protected Map<HelperValues, String> getDocumentAdditionalHelperValues() {
         Map<HelperValues, String> additionalValues = Maps.newHashMap();
         additionalValues.put(HelperValues.DOCUMENT, null);
         return additionalValues;
     }
 
-    protected void addXlinkHrefAttr(String value) throws XMLStreamException {
-        attr(W3CConstants.QN_XLINK_HREF, value);
-    }
-
-    protected void addXlinkTitleAttr(String value) throws XMLStreamException {
-        attr(W3CConstants.QN_XLINK_TITLE, value);
-    }
-    
     /**
      * Parses the ITime object to a time representation as String
      * 
@@ -438,7 +513,85 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         DateTime dateTime = getTime(time);
         return DateTimeHelper.formatDateTime2String(dateTime, time.getTimeFormat());
     }
-    
+
+    /**
+     * Check the encoded om:result content for ...PropertyType
+     * 
+     * @param result
+     *            Encoded om:result content to check
+     * @return <code>true</code>, if content contains ...PropertyType
+     */
+    private boolean checkResult(XmlObject result) {
+        if (result.schemaType() != null) {
+            SchemaType schemaType = result.schemaType();
+            if (schemaType.getName() != null) {
+                QName name = schemaType.getName();
+                if (name.getLocalPart() != null && name.getLocalPart().toLowerCase().contains("propertytype")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Add gml:id to om:OM_Observation element
+     * 
+     * @param observation
+     *            {@link OmObservation} with the GML id
+     * @return observation id
+     * @throws XMLStreamException
+     *             If an error occurs when writing to stream
+     */
+    private String addGmlId(OmObservation observation) throws XMLStreamException {
+        String observationID = JavaHelper.generateID(Double.toString(System.currentTimeMillis() * Math.random()));
+        if (observation.isSetObservationID()) {
+            observationID = observation.getObservationID();
+        } else {
+            observation.setObservationID(observationID);
+        }
+        attr(GmlConstants.QN_ID_32, "o_" + observationID);
+        return observationID;
+    }
+
+    /**
+     * Write encoded om:phenomenonTime to stream
+     * 
+     * @param time
+     *            {@link Time} to encode and write
+     * @throws OwsExceptionReport
+     *             If an error occurs when creating elements to be written
+     * @throws XMLStreamException
+     *             If an error occurs when writing to stream
+     */
+    private void writePhenomenonTimeContent(Time time) throws OwsExceptionReport, XMLStreamException {
+        XmlObject xmlObject =
+                CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, time, getDocumentAdditionalHelperValues());
+        writeXmlObject(xmlObject, GmlHelper.getGml321QnameForITime(time));
+    }
+
+    /**
+     * Write encoded om:resultTime to stream
+     * 
+     * @param time
+     *            {@link Time} to encode and write
+     * @throws OwsExceptionReport
+     *             If an error occurs when creating elements to be written
+     * @throws XMLStreamException
+     *             If an error occurs when writing to stream
+     */
+    private void addResultTime(TimeInstant time) throws OwsExceptionReport, XMLStreamException {
+        start(OmConstants.QN_OM_20_RESULT_TIME);
+        writeNewLine();
+        XmlObject xmlObject =
+                CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, time, getDocumentAdditionalHelperValues());
+        writeXmlObject(xmlObject, GmlConstants.QN_TIME_INSTANT_32);
+        writeNewLine();
+        indent--;
+        end(OmConstants.QN_OM_20_RESULT_TIME);
+        indent++;
+    }
+
     /**
      * Get the time representation from ITime object
      * 
@@ -458,6 +611,25 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
             }
         }
         return new DateTime().minusYears(1000);
+    }
+
+    /**
+     * Set {@link OmObservation} which should be written
+     * 
+     * @param observation
+     *            the {@link OmObservation}
+     */
+    private void setOmObservation(OmObservation observation) {
+        this.observation = observation;
+    }
+
+    /**
+     * Get the {@link OmObservation} which should be written
+     * 
+     * @return the {@link OmObservation}
+     */
+    private OmObservation getOmObservation() {
+        return observation;
     }
 
     /**

@@ -181,7 +181,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private final SpatialFilteringProfileAdder spatialFilteringProfileAdder;
 
     private List<OmObservation> observationCollection;
-    
+
     /**
      * Constructor
      * 
@@ -495,14 +495,4 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return obsConst;
     }
 
-//    public void createSpatialFilteringProfileParameter(AbstractObservation hObservation,
-//            OmObservation sosObservation, OmObservationConstellation oc) throws OwsExceptionReport {
-//        final long oId = hObservation.getObservationId();
-//        if (getSpatialFilteringProfile().containsKey(oId)) {
-//            AbstractSpatialFilteringProfile sfp = getSpatialFilteringProfile().get(oId);
-//            sosObservation.addParameter(getSpatialFilteringProfileParameter(sfp));
-//        } else if (strictSpatialFilteringProfile) {
-//            sosObservation.addParameter(getSpatialFilteringProfileParameterForConstellation(oc));
-//        }
-//    }
 }

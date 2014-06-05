@@ -28,215 +28,27 @@
  */
 package org.n52.sos.ds.hibernate.entities.values;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
+import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCodespace;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCodespaceName;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescription;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
-import org.n52.sos.ds.hibernate.entities.Codespace;
-import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.util.StringHelper;
 
-public abstract class AbstractValue implements HasIdentifier, HasCodespace,  HasName, HasCodespaceName, HasDeletedFlag, HasUnit, HasOfferings {
+/**
+ * Abstract class for values
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
+public abstract class AbstractValue extends AbstractObservationTime implements HasIdentifier, HasCodespace, HasUnit,
+        HasDescription {
 
-    public static final String ID = "observationId";
-
-    public static final String PHENOMENON_TIME_START = "phenomenonTimeStart";
-
-    public static final String PHENOMENON_TIME_END = "phenomenonTimeEnd";
-
-    public static final String VALID_TIME_START = "validTimeStart";
-
-    public static final String VALID_TIME_END = "validTimeEnd";
-
-    public static final String RESULT_TIME = "resultTime";
-    
-    public static final String DESCRIPTION = "description";
-
-    private long observationId;
-
-    private Date phenomenonTimeStart;
-
-    private Date phenomenonTimeEnd;
-
-    private Date resultTime;
-    
-    private String identifier;
-
-    private Codespace codespace;
-    
-    private String name;
-    
-    private Codespace codespaceName;
-
-    private String description;
-
-    private boolean deleted;
-
-    private Date validTimeStart;
-
-    private Date validTimeEnd;
+    private static final long serialVersionUID = -3803490157787902881L;
 
     private Unit unit;
-    
-    private Set<Offering> offerings = new HashSet<Offering>(0);
 
-    /**
-     * Get observation id
-     * 
-     * @return observation id
-     */
-    public long getObservationId() {
-        return observationId;
-    }
-
-    /**
-     * Set observation id
-     * 
-     * @param observationId
-     *            Observation id to set
-     */
-    public void setObservationId(final long observationId) {
-        this.observationId = observationId;
-    }
-
-    public Date getPhenomenonTimeStart() {
-        return phenomenonTimeStart;
-    }
-
-    public void setPhenomenonTimeStart(final Date phenomenonTimeStart) {
-        this.phenomenonTimeStart = phenomenonTimeStart;
-    }
-
-    public Date getPhenomenonTimeEnd() {
-        return phenomenonTimeEnd;
-    }
-
-    public void setPhenomenonTimeEnd(final Date phenomenonTimeEnd) {
-        this.phenomenonTimeEnd = phenomenonTimeEnd;
-    }
-
-    public Date getResultTime() {
-        return resultTime;
-    }
-
-    public void setResultTime(final Date resultTime) {
-        this.resultTime = resultTime;
-    }
-    
-    @Override
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    @Override
-    public AbstractValue setIdentifier(final String identifier) {
-        this.identifier = identifier;
-        return this;
-    }
-    
-    /**
-     * Is identifier set
-     * 
-     * @return <code>true</code>, if identifier is set
-     */
-    public boolean isSetIdentifier() {
-        return getIdentifier() != null && !getIdentifier().isEmpty();
-    }
-
-    @Override
-    public Codespace getCodespace() {
-        return codespace;
-    }
-
-    @Override
-    public AbstractValue setCodespace(final Codespace codespace) {
-        this.codespace = codespace;
-        return this;
-    }
-
-    @Override
-    public boolean isSetCodespace() {
-        return getCodespace() != null && getCodespace().isSetCodespace();
-    }
-    
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public AbstractValue setName(final String name) {
-        this.name = name;
-        return this;
-    }
-    
-    @Override
-    public boolean isSetName() {
-        return StringHelper.isNotEmpty(getName());
-    }
-
-    @Override
-    public Codespace getCodespaceName() {
-        return codespaceName;
-    }
-
-    @Override
-    public AbstractValue setCodespaceName(final Codespace codespaceName) {
-        this.codespaceName = codespaceName;
-        return this;
-    }
-
-    @Override
-    public boolean isSetCodespaceName() {
-        return getCodespaceName() != null && getCodespaceName().isSetCodespace();
-    }
-    
-    public String getDescription() {
-        return description;
-    }
-
-    public AbstractValue setDescription(final String description) {
-        this.description = description;
-        return this;
-    }
-    
-    /**
-     * Is description set
-     * 
-     * @return <code>true</code>, if description is set
-     */
-    public boolean isSetDescription() {
-        return getDescription() != null && !getDescription().isEmpty();
-    }
-
-    public Date getValidTimeStart() {
-        return validTimeStart;
-    }
-
-    public void setValidTimeStart(final Date validTimeStart) {
-        this.validTimeStart = validTimeStart;
-    }
-
-    public Date getValidTimeEnd() {
-        return validTimeEnd;
-    }
-
-    public void setValidTimeEnd(final Date validTimeEnd) {
-        this.validTimeEnd = validTimeEnd;
-    }
-    
-
-    public boolean isSetValidTime() {
-        return getValidTimeStart() != null && getValidTimeEnd() != null;
-    }
 
     @Override
     public Unit getUnit() {
@@ -249,43 +61,8 @@ public abstract class AbstractValue implements HasIdentifier, HasCodespace,  Has
     }
 
     @Override
-    public boolean isDeleted() {
-        return deleted;
-    }
-    
-    @Override
-    public AbstractValue setDeleted(boolean deleted) {
-        this.deleted = deleted;
-        return this;
-    }
-
-    @Override
-    public boolean getDeleted() {
-        return deleted;
-    }
-
-    /**
-     * Is unit set
-     * 
-     * @return <code>true</code>, if unit is set
-     */
     public boolean isSetUnit() {
         return getUnit() != null && getUnit().isSetUnit();
-    }
-    
-    @Override
-    public Set<Offering> getOfferings() {
-        return offerings;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void setOfferings(final Object offerings) {
-        if (offerings instanceof Set<?>) {
-            this.offerings = (Set<Offering>) offerings;
-        } else {
-            getOfferings().add((Offering) offerings);
-        }
     }
 
 }

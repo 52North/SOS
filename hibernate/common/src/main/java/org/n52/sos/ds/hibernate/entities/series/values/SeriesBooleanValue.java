@@ -30,7 +30,17 @@ package org.n52.sos.ds.hibernate.entities.series.values;
 
 import org.n52.sos.ds.hibernate.entities.interfaces.BooleanValue;
 
+/**
+ * Concrete implementation of {@link SeriesValue} for series concept and boolean
+ * values
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 public class SeriesBooleanValue extends SeriesValue implements BooleanValue {
+    
+    private static final long serialVersionUID = 2071956765678050524L;
     
     private Boolean value;
 

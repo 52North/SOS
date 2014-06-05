@@ -35,10 +35,13 @@ import java.util.Map;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OWSConstants.AdditionalRequestParams;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.vividsolutions.jts.geom.Geometry;
 
 public abstract class AbstractStreaming extends AbstractObservationValue<Value<OmObservation>>{
     
@@ -96,10 +99,6 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
        additionalRequestParams.put(parameter, object);
     }
     
-    public Object getAdditionalRequestParams(AdditionalRequestParams parameter) {
-        return additionalRequestParams.get(parameter);
-    }
-    
     public boolean contains(AdditionalRequestParams parameter) {
         return additionalRequestParams.containsKey(parameter);
     }
@@ -108,5 +107,40 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
         return CollectionHelper.isNotEmpty(additionalRequestParams);
     }
     
+    protected Object getAdditionalRequestParams(AdditionalRequestParams parameter) {
+        return additionalRequestParams.get(parameter);
+    }
+
+    /**
+     * Check and modify observation for Spatial Filtering Profile and requested
+     * crs
+     * 
+     * @param observation
+     *            {@link OmObservation} to check
+     * @throws OwsExceptionReport
+     *             If an error occurs when modifying the {@link OmObservation}
+     */
+    @SuppressWarnings("unchecked")
+    protected void checkForModifications(OmObservation observation) throws OwsExceptionReport {
+        if (isSetAdditionalRequestParams() && contains(AdditionalRequestParams.crs)) {
+            Object additionalRequestParam = getAdditionalRequestParams(AdditionalRequestParams.crs);
+            int targetCRS = -1;
+            if (additionalRequestParam instanceof Integer) {
+                targetCRS = (Integer) additionalRequestParam;
+            } else if (additionalRequestParam instanceof String) {
+                targetCRS = Integer.parseInt((String) additionalRequestParam);
+            }
+            if (observation.isSetParameter()) {
+                for (NamedValue<?> namedValue : observation.getParameter()) {
+                    if (Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
+                        NamedValue<Geometry> spatialFilteringProfileParameter = (NamedValue<Geometry>) namedValue;
+                        spatialFilteringProfileParameter.getValue().setValue(
+                                GeometryHandler.getInstance().transform(
+                                        spatialFilteringProfileParameter.getValue().getValue(), targetCRS));
+                    }
+                }
+            }
+        }
+    }
     
 }

@@ -32,8 +32,18 @@ import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.HibernateSeriesRelations.HasSeries;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
 
+/**
+ * Implementation of {@link AbstractValue} for series concept used in streaming
+ * datasource
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 public class SeriesValue extends AbstractValue implements HasSeries {
 
+    private static final long serialVersionUID = -2757686338936995366L;
+    
     private Series series;
 
     @Override

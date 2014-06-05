@@ -28,11 +28,14 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.hibernate.HibernateException;
-import org.n52.sos.ds.hibernate.entities.values.ObservationValue;
+import org.n52.sos.ds.hibernate.dao.AbstractSpatialFilteringProfileDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
+import org.n52.sos.ds.hibernate.util.observation.SpatialFilteringProfileAdder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -41,16 +44,35 @@ import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.HTTPStatus;
 
+/**
+ * Hibernate streaming value implementation for chunk results
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 public class HibernateChunkStreamingValue extends HibernateStreamingValue {
 
     private static final long serialVersionUID = -4898252375907510691L;
-    
-    private Iterator<ObservationValue> valuesResult;
+
+    private Iterator<AbstractValue> valuesResult;
 
     private int chunkSize;
 
     private int currentRow;
 
+    /**
+     * constructor
+     * 
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param procedure
+     *            Datasource procedure id
+     * @param observableProperty
+     *            Datasource observableProperty id
+     * @param featureOfInterest
+     *            Datasource featureOfInterest id
+     */
     public HibernateChunkStreamingValue(GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest) {
         super(request, procedure, observableProperty, featureOfInterest);
@@ -77,7 +99,7 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
             if (hasNextValue()) {
-                ObservationValue resultObject = valuesResult.next();
+                AbstractValue resultObject = valuesResult.next();
                 TimeValuePair value = createTimeValuePairFrom(resultObject);
                 session.evict(resultObject);
                 return value;
@@ -95,8 +117,12 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
         try {
             if (hasNextValue()) {
                 OmObservation observation = observationTemplate.cloneTemplate();
-                ObservationValue resultObject = valuesResult.next();
+                AbstractValue resultObject = valuesResult.next();
                 addValuesToObservation(observation, resultObject);
+                if (isSetSpatialFilteringProfileAdder()) {
+                    getSpatialFilteringProfileAdder().add(resultObject.getObservationId(), observation);
+                }
+                checkForModifications(observation);
                 session.evict(resultObject);
                 return observation;
             }
@@ -108,26 +134,40 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
         }
     }
 
-    public void setObservationTemplate(OmObservation observationTemplate) {
-        this.observationTemplate = observationTemplate;
-    }
-
+    /**
+     * Get the next results from database
+     * 
+     * @throws OwsExceptionReport
+     *             If an error occurs when querying the next results
+     */
     private void getNextResults() throws OwsExceptionReport {
         if (session == null) {
             session = sessionHolder.getSession();
         }
         try {
             // query with temporal filter
+            Collection<AbstractValue> valuesResult = null;
             if (temporalFilterCriterion != null) {
-                setObservationValuesResult(valueDAO.getStreamingValuesFor(request, procedure, observableProperty, featureOfInterest,
-                        temporalFilterCriterion, chunkSize, currentRow, session));
+                valuesResult =
+                        valueDAO.getStreamingValuesFor(request, procedure, observableProperty, featureOfInterest,
+                                temporalFilterCriterion, chunkSize, currentRow, session);
             }
             // query without temporal or indeterminate filters
             else {
-                setObservationValuesResult(valueDAO.getStreamingValuesFor(request, procedure, observableProperty, featureOfInterest, chunkSize,
-                        currentRow, session));
+                valuesResult =
+                        valueDAO.getStreamingValuesFor(request, procedure, observableProperty, featureOfInterest,
+                                chunkSize, currentRow, session);
             }
             currentRow += chunkSize;
+            // get SpatialFilteringProfile values
+            AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
+                    DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
+            if (spatialFilteringProfileDAO != null) {
+                setSpatialFilteringProfileAdder(new SpatialFilteringProfileAdder(
+                        spatialFilteringProfileDAO.getSpatialFilertingProfiles(getObservationIds(valuesResult),
+                                session)));
+            }
+            setObservationValuesResult(valuesResult);
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
@@ -135,7 +175,14 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
         }
     }
 
-    private void setObservationValuesResult(List<ObservationValue> valuesResult) {
+    /**
+     * Check the queried {@link AbstractValue}s for null and set them as
+     * iterator to local variable.
+     * 
+     * @param valuesResult
+     *            Queried {@link AbstractValue}s
+     */
+    private void setObservationValuesResult(Collection<AbstractValue> valuesResult) {
         if (CollectionHelper.isNotEmpty(valuesResult)) {
             this.valuesResult = valuesResult.iterator();
         }

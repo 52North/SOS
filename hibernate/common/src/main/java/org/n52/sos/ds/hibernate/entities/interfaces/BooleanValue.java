@@ -30,6 +30,13 @@ package org.n52.sos.ds.hibernate.entities.interfaces;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValue;
 
+/**
+ * Interface for Hibernate boolean value entities
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ * 
+ */
 public interface BooleanValue extends HasValue<Boolean> {
 
 }

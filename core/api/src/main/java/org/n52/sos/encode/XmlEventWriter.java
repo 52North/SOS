@@ -31,6 +31,7 @@ package org.n52.sos.encode;
 import java.io.OutputStream;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 
@@ -39,7 +40,7 @@ import org.n52.sos.util.Constants;
 import com.google.common.base.StandardSystemProperty;
 
 /**
- * Abstract XML writer class for {@link XMLEventWriter}
+ * Abstract {@link XmlWriter} class for {@link XMLEventWriter}
  * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.2
@@ -49,21 +50,7 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
 
     private XMLEventWriter w;
     
-    @Override
-    protected void init(OutputStream out) throws XMLStreamException {
-        init(out, Constants.DEFAULT_ENCODING);
-    }
-
-    @Override
-    protected void init(OutputStream out, String encoding) throws XMLStreamException {
-        init(out, encoding, new EncodingValues());
-    }
-
-    @Override
-    protected void init(OutputStream out, EncodingValues encodingValues) throws XMLStreamException {
-        init(out, Constants.DEFAULT_ENCODING, encodingValues);
-        
-    }
+    private final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 
     @Override
     protected void init(OutputStream out, String encoding, EncodingValues encodingValues) throws XMLStreamException {
@@ -77,11 +64,6 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
         return w;
     }
 
-    protected void finish() throws XMLStreamException {
-        getXmlWriter().flush();
-        getXmlWriter().close();
-    }
-
     @Override
     protected void attr(QName name, String value) throws XMLStreamException {
         getXmlWriter().add(getXmlEventFactory().createAttribute(name, value));
@@ -91,27 +73,10 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
     protected void attr(String name, String value) throws XMLStreamException {
         getXmlWriter().add(getXmlEventFactory().createAttribute(name, value));
     }
-
-    @Override
-    protected void chars(String chars) throws XMLStreamException {
-        getXmlWriter().add(getXmlEventFactory().createCharacters(chars));
+    protected void attr(String namespace, String localName, String value) throws XMLStreamException {
+        attr(new QName(namespace, localName), value);
     }
 
-    @Override
-    protected void end(QName name) throws XMLStreamException {
-        getXmlWriter().add(
-                getXmlEventFactory().createEndElement(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart()));
-    }
-    @Override
-    protected void endInline(QName name) throws XMLStreamException {
-        getXmlWriter().add(
-                getXmlEventFactory().createEndElement(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart()));
-    }
-
-    @Override
-    protected void end() throws XMLStreamException {
-        getXmlWriter().add(getXmlEventFactory().createEndDocument());
-    }
 
     @Override
     protected void namespace(String prefix, String namespace) throws XMLStreamException {
@@ -126,10 +91,6 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
     }
 
     @Override
-    protected void start() throws XMLStreamException {
-        getXmlWriter().add(getXmlEventFactory().createStartDocument());
-    }
-    
     protected void start(boolean embedded) throws XMLStreamException {
         if (!embedded) {
             getXmlWriter().add(getXmlEventFactory().createStartDocument(Constants.DEFAULT_ENCODING, XML_VERSION));
@@ -143,15 +104,30 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
     }
 
     @Override
-    protected void rawText(String text) throws XMLStreamException {
-        writeIndent(indent);
-        getXmlWriter().add(getXmlEventFactory().createCharacters(text));
+    protected void chars(String chars) throws XMLStreamException {
+        getXmlWriter().add(getXmlEventFactory().createCharacters(chars));
     }
 
     @Override
-    protected void writeNewLine() throws XMLStreamException {
-        getXmlWriter().add(getXmlEventFactory().createCharacters(StandardSystemProperty.LINE_SEPARATOR.value()));
+    protected void end(QName name) throws XMLStreamException {
+        getXmlWriter().add(
+                getXmlEventFactory().createEndElement(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart()));
+    }
+    
+    @Override
+    protected void endInline(QName name) throws XMLStreamException {
+        getXmlWriter().add(
+                getXmlEventFactory().createEndElement(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart()));
+    }
+
+    @Override
+    protected void end() throws XMLStreamException {
+        getXmlWriter().add(getXmlEventFactory().createEndDocument());
+    }
+
+    protected void finish() throws XMLStreamException {
         flush();
+        getXmlWriter().close();
     }
 
     @Override
@@ -159,9 +135,10 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
         getXmlWriter().flush();
     }
     
-    protected void writeIndent(int level) throws XMLStreamException {
-        for (int i = 0; i < level; i++) {
-            getXmlWriter().add(getXmlEventFactory().createCharacters("  "));
-        }
+    /**
+     * @return
+     */
+    protected XMLEventFactory getXmlEventFactory() {
+        return this.eventFactory;
     }
 }

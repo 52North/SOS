@@ -197,7 +197,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
             createSpatialFilteringProfileDefinition();
 
     private boolean spatialFilteringProfileDatasource = true;
-    
+
     private final BooleanSettingDefinition mulitLanguageDefinition = createMultiLanguageDefinition();
 
     private boolean multiLanguageDatasource = true;
@@ -513,7 +513,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
     }
 
     protected DatabaseMetadata getDatabaseMetadata(Connection conn) throws SQLException {
-            return  new DatabaseMetadata(conn, getDialectInternal(), true);
+        return new DatabaseMetadata(conn, getDialectInternal(), true);
     }
 
     @Override
@@ -530,12 +530,16 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
                 Table table = iter.next();
                 // check if table is a physical table, tables is a table and if
                 // table is contained in the defined schema
-//                if (table.isPhysicalTable() && metadata.isTable(table.getName())
-//                        && metadata.getTableMetadata(table.getName(), schema, catalog, false) != null) {
-//                    return true;
-//                }
-                if (table.isPhysicalTable() && metadata.isTable(table.getQuotedName())
-                        && metadata.getTableMetadata(table.getName(), table.getSchema(), table.getCatalog(), table.isQuoted()) != null) {
+                // if (table.isPhysicalTable() &&
+                // metadata.isTable(table.getName())
+                // && metadata.getTableMetadata(table.getName(), schema,
+                // catalog, false) != null) {
+                // return true;
+                // }
+                if (table.isPhysicalTable()
+                        && metadata.isTable(table.getQuotedName())
+                        && metadata.getTableMetadata(table.getName(), table.getSchema(), table.getCatalog(),
+                                table.isQuoted()) != null) {
                     return true;
                 }
             }
@@ -546,7 +550,6 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
             close(conn);
         }
     }
-
 
     protected String checkSchema(String schema, String catalog, Connection conn) throws SQLException {
         DatabaseMetaData metaData = conn.getMetaData();
@@ -560,7 +563,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
         }
         return null;
     }
-    
+
     private String checkCatalog(Connection conn) throws SQLException {
         return conn.getCatalog();
     }
@@ -633,7 +636,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
     public Properties getDatasourceProperties(Properties current, Map<String, Object> changed) {
         return getDatasourceProperties(mergeProperties(current, changed));
     }
-    
+
     @Override
     public void checkPostCreation(Properties properties) {
         if (checkIfExtensionDirectoryExists()) {
@@ -772,15 +775,14 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
         if (isTransactionalDatasource()) {
             Boolean t = (Boolean) settings.get(transactionalDefiniton.getKey());
             if (t != null && t.booleanValue()) {
-                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
-                        HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
             }
         }
         if (isMultiLanguageDatasource()) {
             Boolean t = (Boolean) settings.get(mulitLanguageDefinition.getKey());
             if (t.booleanValue()) {
                 builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
-                        resource(HIBERNATE_MAPPING_I18N_PATH).getAbsolutePath());
+                        resource(HIBERNATE_MAPPING_I18N_PATH));
             } 
         }
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
@@ -989,32 +991,45 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
      *         observationHasOffering
      */
     protected String[] checkCreateSchema(String[] script) {
-        // creates upper case hexString form table name 'observationHasOffering'
-        // hashCode() with prefix 'FK'
-        String hexStringToCheck =
-                new StringBuilder("FK").append(Integer.toHexString("observationHasOffering".hashCode()).toUpperCase())
-                        .toString();
-        boolean duplicate = false;
+        // creates upper case hexStrings from table names hashCode() with prefix
+        // 'FK'
+        Set<String> generatedForeignKeys =
+                Sets.newHashSet(getGeneratedForeignKeyFor("observationHasOffering"),
+                        getGeneratedForeignKeyFor("relatedFeatureHasRole"),
+                        getGeneratedForeignKeyFor("offeringAllowedFeatureType"),
+                        getGeneratedForeignKeyFor("offeringAllowedObservationType"));
         List<String> checkedSchema = Lists.newLinkedList();
         for (String string : script) {
-            if (string.contains(hexStringToCheck)) {
-                if (!duplicate) {
-                    checkedSchema.add(string);
-                    duplicate = true;
+            if (string.startsWith("alter table")) {
+                boolean hasNoGeneratedKey = true;
+                for (String key : generatedForeignKeys) {
+                    if (string.contains(key)) {
+                        hasNoGeneratedKey = false;
+                    }
+                }
+                if (hasNoGeneratedKey) {
+                    checkedSchema.add(string.trim());
                 }
             } else {
-                checkedSchema.add(string);
+                checkedSchema.add(string.trim());
             }
         }
-        // remove dublicated entries
-        Set<String> set = Sets.newHashSet(checkedSchema);
-        List<String> nonDublicated = Lists.newLinkedList();
-        for (String string : checkedSchema) {
-            if (set.contains(string)) {
-                nonDublicated.add(string);
-            }
-        }
+        // eliminate duplicated lines while keeping the order
+        Set<String> nonDublicated = Sets.newLinkedHashSet(checkedSchema);
         return nonDublicated.toArray(new String[nonDublicated.size()]);
+    }
+
+    /**
+     * Create the beginning character of a generated foreign key from a table
+     * name hasCode()
+     * 
+     * @param string
+     *            Table name
+     * @return Beginning characters of a generated foreign key like
+     *         "FK + table name hasCode()"
+     */
+    private String getGeneratedForeignKeyFor(String tableName) {
+        return new StringBuilder("FK").append(Integer.toHexString(tableName.hashCode()).toUpperCase()).toString();
     }
 
     @Override
@@ -1026,12 +1041,12 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
     public void prepare(Map<String, Object> settings) {
 
     }
-    
+
     @Override
     public boolean isPostCreateSchema() {
         return false;
     }
-    
+
     @Override
     public void executePostCreateSchema(Map<String, Object> databaseSettings) {
     }

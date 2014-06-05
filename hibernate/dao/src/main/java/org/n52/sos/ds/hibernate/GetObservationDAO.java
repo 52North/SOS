@@ -77,7 +77,10 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
+import org.n52.sos.ds.hibernate.values.HibernateChunkStreamingValue;
+import org.n52.sos.ds.hibernate.values.HibernateScrollableStreamingValue;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
+import org.n52.sos.ds.hibernate.values.HibernateStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateChunkSeriesStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateScrollableSeriesStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateSeriesStreamingValue;
@@ -157,7 +160,8 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         Session session = null;
         try {
             session = sessionHolder.getSession();
-            if (HibernateStreamingConfiguration.getInstance().isForceDatasourceStreaming() && CollectionHelper.isEmpty(sosRequest.getFirstLatestTemporalFilter())) {
+            if (HibernateStreamingConfiguration.getInstance().isForceDatasourceStreaming()
+                    && CollectionHelper.isEmpty(sosRequest.getFirstLatestTemporalFilter())) {
                 // TODO
                 if (HibernateHelper.isEntitySupported(Series.class, session)) {
                     sosResponse.setObservationCollection(querySeriesObservationForStreaming(sosRequest, session));
@@ -253,8 +257,10 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                     observations =
                             new ObservationDAO().getObservationsFor(request, features, sosIndeterminateTime, session);
                 } else {
-                    for (ObservationConstellation oc : HibernateGetObservationHelper.getAndCheckObservationConstellationSize(request, session)) {
-                        for (String feature : HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features, session)) {
+                    for (ObservationConstellation oc : HibernateGetObservationHelper
+                            .getAndCheckObservationConstellationSize(request, session)) {
+                        for (String feature : HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features,
+                                session)) {
                             observations.addAll(new ObservationDAO().getObservationsFor(oc, Sets.newHashSet(feature),
                                     request, sosIndeterminateTime, session));
                         }
@@ -280,8 +286,10 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowMetadataOfEmptyObservations()) {
             // create a map of series to check by id, so we don't need to fetch
             // each observation's series from the database
-            for (ObservationConstellation oc : HibernateGetObservationHelper.getAndCheckObservationConstellationSize(request, session)) {
-                final List<String> featureIds = HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features, session);
+            for (ObservationConstellation oc : HibernateGetObservationHelper.getAndCheckObservationConstellationSize(
+                    request, session)) {
+                final List<String> featureIds =
+                        HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features, session);
                 for (OmObservation omObservation : HibernateObservationUtilities.createSosObservationFromObservationConstellation(oc,
                         featureIds, request.getVersion(), getLanguage(request), session)) {
                     if (!timeSeries.contains(omObservation.getObservationConstellation())) {
@@ -291,7 +299,9 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                 }
             }
         }
-        HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(timeSeries.size() +  metadataObservationsCount);
+
+        HibernateGetObservationHelper
+                .checkMaxNumberOfReturnedSeriesSize(timeSeries.size() + metadataObservationsCount);
         HibernateGetObservationHelper.checkMaxNumberOfReturnedValues(observations.size());
         LOGGER.debug("Time to query observations needed {} ms!", (System.currentTimeMillis() - start));
         return result;
@@ -375,7 +385,6 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                     seriesToCheckMap.remove(seriesId);
                 }
             }
-
             // now we're left with the series without matching observations in
             // the check map,
             // add "result" observations for them
@@ -385,7 +394,8 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                         request.getVersion(), getLanguage(request), session));
             }
         }
-        HibernateGetObservationHelper.checkMaxNumberOfReturnedTimeSeries(seriesObservations, metadataObservationsCount);
+        HibernateGetObservationHelper
+                .checkMaxNumberOfReturnedTimeSeries(seriesObservations, metadataObservationsCount);
         HibernateGetObservationHelper.checkMaxNumberOfReturnedValues(seriesObservations.size());
 
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
@@ -395,12 +405,65 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         return result;
     }
 
+    /**
+     * Query the observations for streaming datasource
+     * 
+     * @param request
+     *            The GetObservation request
+     * @param session
+     *            Hibernate Session
+     * @return List of internal observations
+     * @throws OwsExceptionReport
+     *             If an error occurs.
+     * @throws ConverterException
+     *             If an error occurs during sensor description creation.
+     */
     protected List<OmObservation> queryObservationForStreaming(GetObservationRequest request, final Session session)
             throws OwsExceptionReport, ConverterException {
-        // TODO implement streaming support for old concept
-        return queryObservation(request, session);
+        final long start = System.currentTimeMillis();
+        final List<OmObservation> result = new LinkedList<OmObservation>();
+        // get valid featureOfInterest identifier
+        final Set<String> features = QueryHelper.getFeatures(request, session);
+        if (features != null && features.isEmpty()) {
+            return result;
+        }
+        Criterion temporalFilterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
+        for (ObservationConstellation oc : HibernateGetObservationHelper.getAndCheckObservationConstellationSize(
+                request, session)) {
+            final List<String> featureIds =
+                    HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features, session);
+            for (OmObservation observationTemplate : HibernateObservationUtilities
+                    .createSosObservationFromObservationConstellation(oc, featureIds, request.getVersion(), session)) {
+                FeatureOfInterest featureOfInterest =
+                        new FeatureOfInterestDAO().getFeatureOfInterest(observationTemplate
+                                .getObservationConstellation().getFeatureOfInterest().getIdentifier(),
+                                session);
+                HibernateStreamingValue streamingValue =
+                        getStreamingValue(request, oc.getProcedure().getProcedureId(), oc.getObservableProperty()
+                                .getObservablePropertyId(), featureOfInterest.getFeatureOfInterestId());
+                streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
+                streamingValue.setObservationTemplate(observationTemplate);
+                observationTemplate.setValue(streamingValue);
+                result.add(observationTemplate);
+            }
+        }
+        LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
+        return result;
     }
 
+    /**
+     * Query the series observations for streaming datasource
+     * 
+     * @param request
+     *            The GetObservation request
+     * @param session
+     *            Hibernate Session
+     * @return List of internal observations
+     * @throws OwsExceptionReport
+     *             If an error occurs.
+     * @throws ConverterException
+     *             If an error occurs during sensor description creation.
+     */
     protected List<OmObservation> querySeriesObservationForStreaming(GetObservationRequest request,
             final Session session) throws OwsExceptionReport, ConverterException {
         final long start = System.currentTimeMillis();
@@ -411,33 +474,57 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             return result;
         }
         Criterion temporalFilterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
-//        if (request.isMergeObservationValues() || HibernateGetObservationHelper.checkEncoderForMergeObservationValues(request.getResponseFormat())) {
-            for (Series series : new SeriesDAO().getSeries(request, features, session)) {
-                Collection<? extends OmObservation> createSosObservationFromSeries = HibernateObservationUtilities.createSosObservationFromSeries(series, request.getVersion(), session);
-                OmObservation observationTemplate = createSosObservationFromSeries.iterator().next();
-                HibernateSeriesStreamingValue streamingValue = getStreamingValue(request, series.getSeriesId());
-                streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
-                streamingValue.setObservationTemplate(observationTemplate);
-                observationTemplate.setValue(streamingValue);
-                result.add(observationTemplate);
-            }
-//        } else {
-//            HibernateSeriesStreamingObservation streamingObservation = new  HibernateSeriesStreamingObservation(request);
-//            streamingObservation.setValidFeatures(features);
-//            streamingObservation.setTemporalFilterCriterion(temporalFilterCriterion);
-//            OmObservation omObservation = new OmObservation();
-//            omObservation.setValue(streamingObservation);
-//            result.add(omObservation);
-//        }
+        for (Series series : new SeriesDAO().getSeries(request, features, session)) {
+            Collection<? extends OmObservation> createSosObservationFromSeries =
+                    HibernateObservationUtilities
+                            .createSosObservationFromSeries(series, request.getVersion(), session);
+            OmObservation observationTemplate = createSosObservationFromSeries.iterator().next();
+            HibernateSeriesStreamingValue streamingValue = getSeriesStreamingValue(request, series.getSeriesId());
+            streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
+            streamingValue.setObservationTemplate(observationTemplate);
+            observationTemplate.setValue(streamingValue);
+            result.add(observationTemplate);
+        }
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
         return result;
     }
 
-    private HibernateSeriesStreamingValue getStreamingValue(GetObservationRequest request, long seriesId) {
+    /**
+     * Get the series streaming observation value for the observations
+     * 
+     * @param request
+     *            GetObservation request
+     * @param seriesId
+     *            Series id
+     * @return Streaming observation value
+     */
+    private HibernateSeriesStreamingValue getSeriesStreamingValue(GetObservationRequest request, long seriesId) {
         if (HibernateStreamingConfiguration.getInstance().isChunkDatasourceStreaming()) {
             return new HibernateChunkSeriesStreamingValue(request, seriesId);
         } else {
             return new HibernateScrollableSeriesStreamingValue(request, seriesId);
+        }
+    }
+
+    /**
+     * Get the streaming observation value for the observations
+     * 
+     * @param request
+     *            GetObservation request
+     * @param procedure
+     *            Procedure id
+     * @param observableProperty
+     *            ObservableProperty id
+     * @param feature
+     *            FeatureOfInterest id
+     * @return Streaming observation value
+     */
+    private HibernateStreamingValue getStreamingValue(GetObservationRequest request, long procedure,
+            long observableProperty, long feature) {
+        if (HibernateStreamingConfiguration.getInstance().isChunkDatasourceStreaming()) {
+            return new HibernateChunkStreamingValue(request, procedure, observableProperty, feature);
+        } else {
+            return new HibernateScrollableStreamingValue(request, procedure, observableProperty, feature);
         }
     }
 
@@ -569,7 +656,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
      *            Result filter to add
      * @throws CodedException
      *             If the requested filter is not supported!
-     *                 
+     * 
      * @see {@link HibernateGetObservationHelper#addResultFilterToCriteria}
      */
     @Deprecated

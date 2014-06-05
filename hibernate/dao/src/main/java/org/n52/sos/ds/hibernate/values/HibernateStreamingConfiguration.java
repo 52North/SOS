@@ -32,17 +32,24 @@ import org.n52.sos.config.SettingsManager;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 
+/**
+ * Configuration class for Hibernate streaming settings
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
 @Configurable
 public class HibernateStreamingConfiguration {
-    
+
     private static HibernateStreamingConfiguration instance;
-    
+
     private boolean streamingDatasource = true;
-    
+
     private boolean chunkDatasourceStreaming = true;
-    
+
     private int chunkSize = 1000;
-    
+
     /**
      * @return Returns a singleton instance of the ServiceConfiguration.
      */
@@ -59,38 +66,63 @@ public class HibernateStreamingConfiguration {
      */
     private HibernateStreamingConfiguration() {
     }
-    
+
+    /**
+     * Set the indicator to force streaming datasource
+     * 
+     * @param streamingDatasource
+     *            Value to set
+     */
     @Setting(HibernateStreamingSettings.FORCE_DATASOURCE_STREAMING)
     public void setForceDatasourceStreaming(boolean streamingDatasource) {
         this.streamingDatasource = streamingDatasource;
     }
 
     /**
-     * @return
+     * Check if streaming values should be used
+     * 
+     * @return <code>true</code>, if datasource streaming is activated
      */
     public boolean isForceDatasourceStreaming() {
         return streamingDatasource;
     }
-    
+
+    /**
+     * Set the indicator to use chunk or scrollable streaming
+     * 
+     * @param chunkDatasourceStreaming
+     *            Value to set
+     */
     @Setting(HibernateStreamingSettings.DATASOURCE_STREAMING_APPROACH)
     public void setChunkDatasourceStreaming(boolean chunkDatasourceStreaming) {
         this.chunkDatasourceStreaming = chunkDatasourceStreaming;
     }
 
     /**
-     * @return
+     * Check for streaming mode to use
+     * 
+     * @return <code>true</code>, if chunk streaming should be used
+     *         <code>false</code>, if scrollable should be used
      */
     public boolean isChunkDatasourceStreaming() {
         return chunkDatasourceStreaming;
     }
-    
+
+    /**
+     * Set the chunk size for chunk streaming
+     * 
+     * @param chunkSize
+     *            Size to set
+     */
     @Setting(HibernateStreamingSettings.CHUNK_SIZE)
     public void setChunkSize(int chunkSize) {
         this.chunkSize = chunkSize;
     }
 
     /**
-     * @return
+     * Get the chunk size
+     * 
+     * @return the chunk wize
      */
     public int getChunkSize() {
         return chunkSize;

@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities.values;
 
-
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -36,12 +35,23 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservableProperty;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterest;
 
-public class ObservationValue extends AbstractValue implements HasProcedure, HasObservableProperty, HasFeatureOfInterest {
-    
+/**
+ * Implementation of {@link AbstractValue} for old concept used in streaming
+ * datasource
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ */
+public class ObservationValue extends AbstractValue implements HasProcedure, HasObservableProperty,
+        HasFeatureOfInterest {
+
+    private static final long serialVersionUID = -4041873148098462844L;
+
     private Procedure procedure;
-    
+
     private ObservableProperty observableProperty;
-    
+
     private FeatureOfInterest featureOfInterest;
 
     @Override

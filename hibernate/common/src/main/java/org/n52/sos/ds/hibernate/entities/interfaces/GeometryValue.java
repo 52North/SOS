@@ -32,6 +32,13 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValue;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+/**
+ * Interface for Hibernate geometry value entities
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ * 
+ */
 public interface GeometryValue extends HasValue<Geometry> {
 
 }

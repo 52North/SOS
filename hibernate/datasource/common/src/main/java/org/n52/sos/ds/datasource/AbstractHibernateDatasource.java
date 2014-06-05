@@ -936,12 +936,12 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
      *         observationHasOffering
      */
     protected String[] checkCreateSchema(String[] script) {
-        // creates upper case hexString form table name 'observationHasOffering'
-        // hashCode() with prefix 'FK'
+        // creates upper case hexStrings from table names hashCode() with prefix
+        // 'FK'
         Set<String> generatedForeignKeys =
                 Sets.newHashSet(getGeneratedForeignKeyFor("observationHasOffering"),
                         getGeneratedForeignKeyFor("relatedFeatureHasRole"),
-                        getGeneratedForeignKeyFor("offeringAllowedFeatureType"), 
+                        getGeneratedForeignKeyFor("offeringAllowedFeatureType"),
                         getGeneratedForeignKeyFor("offeringAllowedObservationType"));
         List<String> checkedSchema = Lists.newLinkedList();
         for (String string : script) {
@@ -959,33 +959,22 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
                 checkedSchema.add(string.trim());
             }
         }
-//        String hexStringToCheck =
-//                new StringBuilder("FK").append(Integer.toHexString("observationHasOffering".hashCode()).toUpperCase())
-//                        .toString();
-//        boolean duplicate = false;
-//        for (String string : script) {
-//            if (string.contains(hexStringToCheck)) {
-//                if (!duplicate) {
-//                    checkedSchema.add(string.trim());
-//                    duplicate = true;
-//                }
-//            } else {
-//                checkedSchema.add(string);
-//            }
-//        }
-        // remove dublicated entries
+        // eliminate duplicated lines while keeping the order
         Set<String> nonDublicated = Sets.newLinkedHashSet(checkedSchema);
-//        List<String> nonDublicated = Lists.newLinkedList();
-//        for (String string : checkedSchema) {
-//            if (set.contains(string)) {
-//                nonDublicated.add(string);
-//            }
-//        }
         return nonDublicated.toArray(new String[nonDublicated.size()]);
     }
 
-    private String getGeneratedForeignKeyFor(String string) {
-        return new StringBuilder("FK").append(Integer.toHexString(string.hashCode()).toUpperCase()).toString();
+    /**
+     * Create the beginning character of a generated foreign key from a table
+     * name hasCode()
+     * 
+     * @param string
+     *            Table name
+     * @return Beginning characters of a generated foreign key like
+     *         "FK + table name hasCode()"
+     */
+    private String getGeneratedForeignKeyFor(String tableName) {
+        return new StringBuilder("FK").append(Integer.toHexString(tableName.hashCode()).toUpperCase()).toString();
     }
 
     @Override

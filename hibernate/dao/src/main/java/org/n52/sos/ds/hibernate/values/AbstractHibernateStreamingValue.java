@@ -197,7 +197,17 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
     protected void setSpatialFilteringProfileAdder(SpatialFilteringProfileAdder spatialFilteringProfileAdder) {
         this.spatialFilteringProfileAdder = spatialFilteringProfileAdder;
     }
-
+    
+    /**
+     * Check if the {@link SpatialFilteringProfileAdder} is set
+     * 
+     * @return <code>true</code>, if the {@link SpatialFilteringProfileAdder} is
+     *         set
+     */
+    protected boolean isSetSpatialFilteringProfileAdder() {
+        return getSpatialFilteringProfileAdder() != null;
+    }
+    
     /**
      * Create the phenomenon time from {@link AbstractValue}
      * 

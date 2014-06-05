@@ -115,7 +115,9 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
                 OmObservation observation = observationTemplate.cloneTemplate();
                 AbstractValue resultObject = seriesValuesResult.next();
                 addValuesToObservation(observation, resultObject);
-                getSpatialFilteringProfileAdder().add(resultObject.getObservationId(), observation);
+                if (isSetSpatialFilteringProfileAdder()) {
+                    getSpatialFilteringProfileAdder().add(resultObject.getObservationId(), observation);
+                }
                 session.evict(resultObject);
                 return observation;
             }

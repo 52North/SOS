@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
-    <version>4.0.2-SNAPSHOT</version>
+    <version>4.1.0-SNAPSHOT</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation</url>
@@ -77,9 +77,9 @@
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
         <!-- managed dependencies with ${project.version} will be wrong in submodules
             with different versions -->
-        <sos.version>4.0.2-SNAPSHOT</sos.version>
-        <do.version>0.1.3-SNAPSHOT</do.version>
-        <rest-binding.version>0.1.3-SNAPSHOT</rest-binding.version>
+        <sos.version>4.1.0-SNAPSHOT</sos.version>
+        <do.version>0.2.0-SNAPSHOT</do.version>
+        <rest-binding.version>0.2.0-SNAPSHOT</rest-binding.version>
     </properties>
     <dependencyManagement>
         <dependencies>

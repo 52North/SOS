@@ -171,7 +171,9 @@ public abstract class AbstractValueDAO extends TimeCreator {
       */
      protected void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow) {
          c.addOrder(Order.asc(AbstractValue.PHENOMENON_TIME_START));
-         c.setMaxResults(chunkSize).setFirstResult(currentRow);
+         if (chunkSize > 0) {
+             c.setMaxResults(chunkSize).setFirstResult(currentRow);
+         }
      }
 
 }

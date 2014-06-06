@@ -60,6 +60,8 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     private int chunkSize;
 
     private int currentRow;
+    
+    private boolean noChunk = false;
 
     /**
      * constructor
@@ -83,7 +85,12 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     public boolean hasNextValue() throws OwsExceptionReport {
         boolean next = false;
         if (valuesResult == null || !valuesResult.hasNext()) {
-            getNextResults();
+            if (!noChunk) {
+                getNextResults();
+                if (chunkSize <= 0) {
+                    noChunk = true;
+                }
+            }
         }
         if (valuesResult != null) {
             next = valuesResult.hasNext();

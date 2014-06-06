@@ -82,7 +82,7 @@ public class HibernateStreamingSettings implements SettingDefinitionProvider {
                     .setDefaultValue(1000)
                     .setTitle(String.format("Number of chunk size.", 1000))
                     .setDescription(
-                            "Number of chunk size, only relevant if scrollable datasource streaming is set to 'true'.")
+                            "Number of chunk size, only relevant if scrollable datasource streaming is set to 'true'. If define a number <= 0, the whole values are queried at once!")
                     .setOrder(ORDER_3);
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = Sets.<SettingDefinition<?, ?>> newHashSet(

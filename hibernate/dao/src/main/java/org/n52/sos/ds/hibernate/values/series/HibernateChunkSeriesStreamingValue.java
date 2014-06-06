@@ -61,6 +61,8 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     private int chunkSize;
 
     private int currentRow;
+    
+    private boolean noChunk = false;
 
     /**
      * constructor
@@ -79,7 +81,12 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     public boolean hasNextValue() throws OwsExceptionReport {
         boolean next = false;
         if (seriesValuesResult == null || !seriesValuesResult.hasNext()) {
-            getNextResults();
+            if (!noChunk) {
+                getNextResults();
+                if (chunkSize <= 0) {
+                    noChunk = true;
+                }
+            }
         }
         if (seriesValuesResult != null) {
             next = seriesValuesResult.hasNext();

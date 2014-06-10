@@ -40,7 +40,7 @@ import org.n52.sos.util.Cleanupable;
  * 
  * @since 4.0.0
  */
-public interface ConnectionProvider extends Cleanupable {
+public interface ConnectionProvider extends Cleanupable, DatasourceIdentificator {
 
     /**
      * Get a data source connection

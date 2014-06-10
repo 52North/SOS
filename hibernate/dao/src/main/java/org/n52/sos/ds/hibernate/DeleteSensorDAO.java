@@ -34,6 +34,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.n52.sos.ds.AbstractDeleteSensorDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
@@ -63,6 +64,11 @@ public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
      */
     public DeleteSensorDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Override
+    public String getDatasourceIdentifier() {
+        return HibernateDatasourceConstants.DATASOURCE_IDENTIFIER;
     }
 
     @Override

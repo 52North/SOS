@@ -34,6 +34,8 @@ package org.n52.sos.ds;
  */
 public interface HibernateDatasourceConstants {
     
+    String DATASOURCE_IDENTIFIER = "hibernate";
+    
     String HIBERNATE_MAPPING_PATH = "/mapping";
 
     String HIBERNATE_MAPPING_CORE_PATH = HIBERNATE_MAPPING_PATH + "/core";

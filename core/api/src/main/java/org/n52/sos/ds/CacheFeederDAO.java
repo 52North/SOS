@@ -39,7 +39,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
  * 
  * @since 4.0.0
  */
-public interface CacheFeederDAO {
+public interface CacheFeederDAO extends DatasourceIdentificator {
     void updateCache(WritableContentCache capabilitiesCache) throws OwsExceptionReport;
 
     /**

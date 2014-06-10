@@ -52,7 +52,6 @@ import org.hibernate.service.ServiceRegistryBuilder;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.DataConnectionProvider;
 import org.n52.sos.ds.Datasource;
@@ -281,5 +280,10 @@ public class SessionFactoryProvider extends AbstractSessionFactoryProvider imple
             updateSqlString.append(sqlLine + ";\n\n");
         }
         return updateSqlString.toString();
+    }
+
+    @Override
+    public String getDatasourceIdentifier() {
+        return HibernateDatasourceConstants.DATASOURCE_IDENTIFIER;
     }
 }

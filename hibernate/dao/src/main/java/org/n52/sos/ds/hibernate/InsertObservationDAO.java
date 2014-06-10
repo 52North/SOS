@@ -39,6 +39,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.n52.sos.ds.AbstractInsertObservationDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
@@ -89,6 +90,11 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
      */
     public InsertObservationDAO() {
         super(SosConstants.SOS);
+    }
+    
+    @Override
+    public String getDatasourceIdentifier() {
+        return HibernateDatasourceConstants.DATASOURCE_IDENTIFIER;
     }
 
     @Override

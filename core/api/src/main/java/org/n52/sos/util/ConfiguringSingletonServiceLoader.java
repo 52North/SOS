@@ -44,6 +44,14 @@ public class ConfiguringSingletonServiceLoader<T> extends SingletonServiceLoader
     public static <T> T loadAndConfigure(Class<? extends T> t, boolean required, T defaultImplementation) {
         return new ConfiguringSingletonServiceLoader<T>(t, required, defaultImplementation).get();
     }
+    
+    public static <T> T loadAndConfigure(Class<? extends T> t, boolean required, String identification) {
+        return new ConfiguringSingletonServiceLoader<T>(t, required).get(identification);
+    }
+
+    public static <T> T loadAndConfigure(Class<? extends T> t, boolean required, T defaultImplementation, String identification) {
+        return new ConfiguringSingletonServiceLoader<T>(t, required, defaultImplementation).get(identification);
+    }
 
     public ConfiguringSingletonServiceLoader(Class<? extends T> c, boolean failIfNotFound) {
         super(c, failIfNotFound);

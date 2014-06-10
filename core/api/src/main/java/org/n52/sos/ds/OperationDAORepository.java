@@ -82,7 +82,9 @@ public class OperationDAORepository extends AbstractConfiguringServiceLoaderRepo
     protected void processConfiguredImplementations(final Set<OperationDAO> daos) throws ConfigurationException {
         operationDaos.clear();
         for (final OperationDAO dao : daos) {
-            operationDaos.put(dao.getOperationDAOKeyType(), dao);
+                if (checkDatasourceIdentifications(dao)) {
+                    operationDaos.put(dao.getOperationDAOKeyType(), dao);
+                }
         }
     }
 

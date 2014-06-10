@@ -42,6 +42,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.AbstractGetResultDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.dao.series.SeriesDAO;
@@ -97,6 +98,11 @@ public class GetResultDAO extends AbstractGetResultDAO {
      */
     public GetResultDAO() {
         super(SosConstants.SOS);
+    }
+    
+    @Override
+    public String getDatasourceIdentifier() {
+        return HibernateDatasourceConstants.DATASOURCE_IDENTIFIER;
     }
 
     @Override

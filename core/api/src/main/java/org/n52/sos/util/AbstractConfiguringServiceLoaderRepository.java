@@ -55,6 +55,6 @@ public abstract class AbstractConfiguringServiceLoaderRepository<T> extends Abst
         }
         processConfiguredImplementations(implementations);
     }
-
+    
     protected abstract void processConfiguredImplementations(Set<T> implementations) throws ConfigurationException;
 }

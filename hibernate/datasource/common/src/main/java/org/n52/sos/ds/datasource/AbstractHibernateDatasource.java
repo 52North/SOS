@@ -50,8 +50,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
@@ -64,6 +62,8 @@ import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.util.SQLConstants;
 import org.n52.sos.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -75,7 +75,7 @@ import com.google.common.collect.Sets;
  */
 public abstract class AbstractHibernateDatasource implements Datasource, SQLConstants, HibernateDatasourceConstants {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractHibernateDatasource.class);
-
+    
     protected static final String USERNAME_TITLE = "User Name";
 
     protected static final String PASSWORD_TITLE = "Password";
@@ -976,7 +976,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
     private String getGeneratedForeignKeyFor(String tableName) {
         return new StringBuilder("FK").append(Integer.toHexString(tableName.hashCode()).toUpperCase()).toString();
     }
-
+   
     @Override
     public DatasourceCallback getCallback() {
         return DatasourceCallback.nullCallback();

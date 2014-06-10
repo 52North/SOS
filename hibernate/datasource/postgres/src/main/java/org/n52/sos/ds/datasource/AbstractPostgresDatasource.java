@@ -29,9 +29,7 @@
 package org.n52.sos.ds.datasource;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
@@ -49,7 +47,6 @@ import org.hibernate.spatial.dialect.postgis.PostgisDialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;

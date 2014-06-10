@@ -45,6 +45,7 @@ import org.n52.sos.ds.CacheFeederDAO;
 import org.n52.sos.ds.CacheFeederDAORepository;
 import org.n52.sos.ds.ConnectionProvider;
 import org.n52.sos.ds.DataConnectionProvider;
+import org.n52.sos.ds.DatasourceIdentificator;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.IFeatureConnectionProvider;
@@ -528,6 +529,7 @@ public class Configurator implements Cleanupable {
 
     protected void initializeConnectionProviders() throws ConfigurationException {
         checkForProvidedJdbc();
+        dataConnectionProviderProperties.getProperty("");
         dataConnectionProvider =
                 ConfiguringSingletonServiceLoader.<ConnectionProvider> loadAndConfigure(DataConnectionProvider.class,
                         true);

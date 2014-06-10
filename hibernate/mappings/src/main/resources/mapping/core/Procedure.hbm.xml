@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.Procedure" table="procedure">
+    <class name="org.n52.sos.ds.hibernate.entities.Procedure" table="`procedure`">
         <id name="procedureId" type="long">
             <column name="procedureId" />
             <generator class="native">

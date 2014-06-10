@@ -34,36 +34,31 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.n52.sos.util.Constants;
+import org.n52.sos.w3c.W3CConstants;
+
 /**
- * Abstract XML writer class for {@link XMLStreamWriter}
+ * Abstract {@link XmlWriter} class for {@link XMLStreamWriter}
  * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.2
  *
  */
-public abstract class XmlStreamWriter extends XmlWriter<XMLStreamWriter> {
+public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
 
     private XMLStreamWriter w;
+    
 
     @Override
-    protected void init(OutputStream out) throws XMLStreamException {
-        init(out, "UTF-8");
-    }
-
-    @Override
-    protected void init(OutputStream out, String encoding) throws XMLStreamException {
+    protected void init(OutputStream out, String encoding, EncodingValues encodingValues) throws XMLStreamException {
         this.w = getXmlOutputFactory().createXMLStreamWriter(out, encoding);
+        this.out = out;
+        indent = encodingValues.getIndent();
     }
 
     @Override
     protected XMLStreamWriter getXmlWriter() {
         return w;
-    }
-
-    @Override
-    protected void finish() throws XMLStreamException {
-        getXmlWriter().flush();
-        getXmlWriter().close();
     }
 
     @Override
@@ -76,19 +71,8 @@ public abstract class XmlStreamWriter extends XmlWriter<XMLStreamWriter> {
         getXmlWriter().writeAttribute(name, value);
     }
 
-    @Override
-    protected void chars(String chars) throws XMLStreamException {
-        getXmlWriter().writeCharacters(chars);
-    }
-
-    @Override
-    protected void end(QName name) throws XMLStreamException {
-        getXmlWriter().writeEndElement();
-    }
-
-    @Override
-    protected void end() throws XMLStreamException {
-        getXmlWriter().writeEndDocument();
+    protected void attr(String namespace, String localName, String value) throws XMLStreamException {
+        getXmlWriter().writeAttribute(W3CConstants.NS_XSI, W3CConstants.SCHEMA_LOCATION, value);
     }
 
     @Override
@@ -98,17 +82,57 @@ public abstract class XmlStreamWriter extends XmlWriter<XMLStreamWriter> {
 
     @Override
     protected void start(QName name) throws XMLStreamException {
+        writeIndent(indent++);
         getXmlWriter().writeStartElement(name.getPrefix(), name.getLocalPart(), name.getNamespaceURI());
     }
 
     @Override
-    protected void start() throws XMLStreamException {
-        getXmlWriter().writeStartDocument();
+    protected void start(boolean embedded) throws XMLStreamException {
+        if (!embedded) {
+            getXmlWriter().writeStartDocument(Constants.DEFAULT_ENCODING, XML_VERSION);
+            writeNewLine();
+        }
     }
 
     @Override
     protected void empty(QName name) throws XMLStreamException {
+        writeIndent(indent);
         getXmlWriter().writeEmptyElement(name.getPrefix(), name.getLocalPart(), name.getNamespaceURI());
     }
 
+    @Override
+    protected void chars(String chars) throws XMLStreamException {
+        getXmlWriter().writeCharacters(chars);
+    }
+
+    @Override
+    protected void end(QName name) throws XMLStreamException {
+        writeIndent(indent--);
+        getXmlWriter().writeEndElement();
+        flush();
+    }
+    
+    @Override
+    protected void endInline(QName name) throws XMLStreamException {
+        indent--;
+        getXmlWriter().writeEndElement();
+        flush();
+    }
+
+    @Override
+    protected void end() throws XMLStreamException {
+        getXmlWriter().writeEndDocument();
+        flush();
+    }
+
+    @Override
+    protected void finish() throws XMLStreamException {
+        flush();
+        getXmlWriter().close();
+    }
+
+    protected void flush() throws XMLStreamException {
+        getXmlWriter().flush();
+    }
+    
 }

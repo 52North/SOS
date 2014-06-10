@@ -48,7 +48,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.InsertObservationRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jsonschema.util.JsonLoader;
+import com.github.fge.jackson.JsonLoader;
 
 /**
  * TODO JavaDoc

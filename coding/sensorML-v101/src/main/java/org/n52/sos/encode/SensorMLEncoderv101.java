@@ -581,6 +581,9 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
     // TODO refactor/rename
     private void addAbstractProcessValues(final AbstractProcessType abstractProcess,
             final AbstractProcess sosAbstractProcess) throws OwsExceptionReport {
+        if (sosAbstractProcess.isSetGmlId()) {
+            abstractProcess.setId(sosAbstractProcess.getGmlId());
+        }
 
         addSpecialCapabilities(sosAbstractProcess);
         if (sosAbstractProcess.isSetCapabilities()) {
@@ -1467,7 +1470,11 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
                     final SweText sweText = (SweText) field.getElement();
                     for (SweText sweTextField : sweTextFieldSet) {
                         if (sweText.getValue().equals(sweTextField.getValue())) {
-                            field.setName(sweTextField.getName().getValue());
+                            if (sweTextField.isSetName()) {
+                                field.setName(sweTextField.getName().getValue());
+                            } else {
+                                field.setName(fieldName);
+                            }
                             // we don't need to add it any more
                             sweTextFieldSet.remove(sweTextField);
                         }

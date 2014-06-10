@@ -63,8 +63,11 @@ import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.gml.time.TimePosition;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.MediaType;
+
+import com.google.common.html.HtmlEscapers;
 
 /**
  * XML stream writer for INSPIRE DLS ExtendedCapabilities
@@ -73,7 +76,7 @@ import org.n52.sos.util.http.MediaType;
  * @since 4.1.0
  * 
  */
-public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireConstants {
+public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> implements InspireConstants {
 
     private InspireObject inspireObject;
 
@@ -100,6 +103,25 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
             writeSupportedCRS((InspireSupportedCRS) getInspireObject(), true);
         }
         finish();
+    }
+
+    @Override
+    public void write(OutputStream out, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
+      write(out);
+    }
+
+    @Override
+    public void write(InspireObject elementToStream, OutputStream out) throws XMLStreamException, OwsExceptionReport {
+        this.inspireObject = elementToStream;
+        write(out);
+    }
+
+    @Override
+    public void write(InspireObject elementToStream, OutputStream out, EncodingValues encodingValues) throws XMLStreamException,
+            OwsExceptionReport {
+        this.inspireObject = elementToStream;
+        write(out);
+        
     }
 
     /**
@@ -135,14 +157,20 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
         start(QN_EXTENDED_CAPABILITIES);
         writeInspireCommonNamespaces(true);
         writeInspireDLSNamespaces();
+        writeNewLine();
         writeMetadataUrl(minimalInspireExtendedCapabilities.getMetadataUrl());
+        writeNewLine();
         writeSupportedLanguages(minimalInspireExtendedCapabilities.getSupportedLanguages(), false);
+        writeNewLine();
         writeResponseLanguage(minimalInspireExtendedCapabilities.getResponseLanguage());
+        writeNewLine();
         for (InspireUniqueResourceIdentifier inspireUniqueResourceIdentifier : minimalInspireExtendedCapabilities
                 .getSpatialDataSetIdentifier()) {
             writeSpatialDataSetIdentifier(inspireUniqueResourceIdentifier);
+            writeNewLine();
         }
         writeSupportedCRS(minimalInspireExtendedCapabilities.getSupportedCRS(), false);
+        writeNewLine();
         end(QN_EXTENDED_CAPABILITIES);
     }
 
@@ -160,38 +188,52 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
         start(QN_EXTENDED_CAPABILITIES);
         writeInspireCommonNamespaces(true);
         writeInspireDLSNamespaces();
+        writeNewLine();
         for (InspireResourceLocator resourceLocator : fullInspireExtendedCapabilities.getResourceLocator()) {
             writeResourceLocator(resourceLocator);
+            writeNewLine();
         }
         writeResourceType(fullInspireExtendedCapabilities.getResourceType());
+        writeNewLine();
         writeTemporalReference(fullInspireExtendedCapabilities.getTemporalReferences());
         for (InspireConformity conformity : fullInspireExtendedCapabilities.getConformity()) {
             writeConformity(conformity);
+            writeNewLine();
         }
         for (InspireMetadataPointOfContact metadataPointOfContact : fullInspireExtendedCapabilities
                 .getMetadataPointOfContacts()) {
             writeMetadataPointOfContact(metadataPointOfContact);
+            writeNewLine();
         }
         writeMetadataDate(fullInspireExtendedCapabilities.getMetadataDate());
+        writeNewLine();
         writeSpatialDataServiceType(fullInspireExtendedCapabilities.getSpatialDataServiceType());
+        writeNewLine();
         for (InspireMandatoryKeyword mandatoryKeyword : fullInspireExtendedCapabilities.getMandatoryKeywords()) {
             writeMandatoryKeyword(mandatoryKeyword);
+            writeNewLine();
         }
         if (fullInspireExtendedCapabilities.isSetKeywords()) {
             for (InspireKeyword keyword : fullInspireExtendedCapabilities.getKeywords()) {
                 writeKeyword(keyword);
+                writeNewLine();
             }
         }
         writeSupportedLanguages(fullInspireExtendedCapabilities.getSupportedLanguages(), false);
+        writeNewLine();
         writeResponseLanguage(fullInspireExtendedCapabilities.getResponseLanguage());
+        writeNewLine();
         if (fullInspireExtendedCapabilities.isSetMetadataUrl()) {
             writeMetadataUrl(fullInspireExtendedCapabilities.getMetadataUrl());
+            writeNewLine();
         }
         for (InspireUniqueResourceIdentifier inspireUniqueResourceIdentifier : fullInspireExtendedCapabilities
                 .getSpatialDataSetIdentifier()) {
             writeSpatialDataSetIdentifier(inspireUniqueResourceIdentifier);
+            writeNewLine();
         }
         writeSupportedCRS(fullInspireExtendedCapabilities.getSupportedCRS(), false);
+        writeNewLine();
         end(QN_EXTENDED_CAPABILITIES);
     }
 
@@ -206,14 +248,17 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeCitationContent(InspireCitation citation) throws XMLStreamException {
         writeTitle(citation.getTitle());
         writeDateOf(citation.getDateOf());
+        writeNewLine();
         if (citation.isSetUrls()) {
             for (String url : citation.getUrls()) {
                 writeURI(url);
+                writeNewLine();
             }
         }
         if (citation.isSetResourceLocators()) {
             for (InspireResourceLocator resourceLocator : citation.getResourceLocator()) {
                 writeResourceLocator(resourceLocator);
+                writeNewLine();
             }
         }
     }
@@ -229,7 +274,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeCode(String code) throws XMLStreamException {
         start(QN_CODE);
         chars(code);
-        end(QN_CODE);
+        endInline(QN_CODE);
     }
 
     /**
@@ -242,8 +287,11 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
      */
     private void writeConformity(InspireConformity conformity) throws XMLStreamException {
         start(QN_CONFORMITY);
+        writeNewLine();
         writeSpecification(conformity.getInspireSpecification());
+        writeNewLine();
         writeDegree(conformity.getInspireDegreeOfConformity());
+        writeNewLine();
         end(QN_CONFORMITY);
 
     }
@@ -259,7 +307,9 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
      */
     private void writeDefaultLanguage(InspireLanguageISO6392B defaultLanguage) throws XMLStreamException {
         start(QN_DEFAULT_LANGUAGE);
+        writeNewLine();
         writeLanguage(defaultLanguage);
+        writeNewLine();
         end(QN_DEFAULT_LANGUAGE);
     }
 
@@ -274,7 +324,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeDegree(InspireDegreeOfConformity inspireDegreeOfConformity) throws XMLStreamException {
         start(QN_DEGREE);
         chars(inspireDegreeOfConformity.toString());
-        end(QN_DEGREE);
+        endInline(QN_DEGREE);
     }
 
     /**
@@ -306,7 +356,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeDateOfPublication(InspireDateOfPublication dateOf) throws XMLStreamException {
         start(QN_DATE_OF_PUBLICATION);
         time(dateOf);
-        end(QN_DATE_OF_PUBLICATION);
+        endInline(QN_DATE_OF_PUBLICATION);
     }
 
     /**
@@ -320,7 +370,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeDateOfCreation(InspireDateOfCreation dateOf) throws XMLStreamException {
         start(QN_DATE_OF_CREATION);
         time(dateOf);
-        end(QN_DATE_OF_CREATION);
+        endInline(QN_DATE_OF_CREATION);
     }
 
     /**
@@ -334,7 +384,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeDateOfLastRevision(InspireDateOfLastRevision dateOf) throws XMLStreamException {
         start(QN_DATE_OF_LAST_REVISION);
         time(dateOf);
-        end(QN_DATE_OF_LAST_REVISION);
+        endInline(QN_DATE_OF_LAST_REVISION);
     }
 
     /**
@@ -348,7 +398,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeEmailAddress(String emailAddress) throws XMLStreamException {
         start(QN_EMAIL_ADDRESS);
         chars(emailAddress);
-        end(QN_EMAIL_ADDRESS);
+        endInline(QN_EMAIL_ADDRESS);
     }
 
     /**
@@ -362,7 +412,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeEndDate(TimePosition time) throws XMLStreamException {
         start(QN_END_DATE);
         time(time);
-        end(QN_END_DATE);
+        endInline(QN_END_DATE);
 
     }
 
@@ -378,7 +428,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeIndividualDate(TimeInstant time) throws XMLStreamException {
         start(QN_INDIVIDUAL_DATE);
         time(time);
-        end(QN_INDIVIDUAL_DATE);
+        endInline(QN_INDIVIDUAL_DATE);
 
     }
 
@@ -441,6 +491,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
         }
         start(QN_KEYWORD);
         writeKeywordValue(keyword.getKeywordValue());
+        writeNewLine();
         end(QN_KEYWORD);
 
     }
@@ -456,7 +507,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeKeywordValue(String keywordValue) throws XMLStreamException {
         start(QN_KEYWORD_VALUE);
         chars(keywordValue);
-        end(QN_KEYWORD_VALUE);
+        endInline(QN_KEYWORD_VALUE);
     }
 
     /**
@@ -468,9 +519,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
      *             If an error occurs when writing the object to stream
      */
     private void writeKeywordValue(InspireMandatoryKeywordValue keywordValue) throws XMLStreamException {
-        start(QN_KEYWORD_VALUE);
-        chars(keywordValue.toString());
-        end(QN_KEYWORD_VALUE);
+        writeKeywordValue(keywordValue.toString());
     }
 
     /**
@@ -484,7 +533,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeLanguage(InspireLanguageISO6392B language) throws XMLStreamException {
         start(QN_LANGUAGE);
         chars(language.value());
-        end(QN_LANGUAGE);
+        endInline(QN_LANGUAGE);
     }
 
     /**
@@ -497,7 +546,9 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
      */
     private void writeMandatoryKeyword(InspireMandatoryKeyword mandatoryKeyword) throws XMLStreamException {
         start(QN_MANDATORY_KEYWORD);
+        writeNewLine();
         writeKeywordValue(mandatoryKeyword.getKeywordValue());
+        writeNewLine();
         end(QN_MANDATORY_KEYWORD);
     }
 
@@ -512,7 +563,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeMediaType(MediaType mediaType) throws XMLStreamException {
         start(QN_MEDIA_TYPE);
         chars(mediaType.toString());
-        end(QN_MEDIA_TYPE);
+        endInline(QN_MEDIA_TYPE);
     }
 
     /**
@@ -527,7 +578,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeMetadataDate(TimeInstant metadataDate) throws XMLStreamException {
         start(QN_METADATA_DATE);
         time(metadataDate);
-        end(QN_METADATA_DATE);
+        endInline(QN_METADATA_DATE);
     }
 
     /**
@@ -541,8 +592,11 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeMetadataPointOfContact(InspireMetadataPointOfContact metadataPointOfContact)
             throws XMLStreamException {
         start(QN_METADATA_POINT_OF_CONTACT);
+        writeNewLine();
         writeOrganisationName(metadataPointOfContact.getOrganisationName());
+        writeNewLine();
         writeEmailAddress(metadataPointOfContact.getEmailAddress());
+        writeNewLine();
         end(QN_METADATA_POINT_OF_CONTACT);
     }
 
@@ -557,6 +611,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
      */
     private void writeMetadataUrl(InspireResourceLocator metadataUrl) throws XMLStreamException {
         start(QN_METADATA_URL);
+        writeNewLine();
         writeResourceLocatorContent(metadataUrl);
         end(QN_METADATA_URL);
     }
@@ -602,7 +657,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeOrganisationName(String organisationName) throws XMLStreamException {
         start(QN_ORGANISATION_NAME);
         chars(organisationName);
-        end(QN_SPATIAL_DATA_SERVICE_TYPE);
+        endInline(QN_SPATIAL_DATA_SERVICE_TYPE);
     }
 
     /**
@@ -617,7 +672,9 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
      */
     private void writeResponseLanguage(InspireLanguageISO6392B responseLanguage) throws XMLStreamException {
         start(QN_RESPONSE_LANGUAGE);
+        writeNewLine();
         writeLanguage(responseLanguage);
+        writeNewLine();
         end(QN_RESPONSE_LANGUAGE);
 
     }
@@ -632,9 +689,11 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
      */
     private void writeResourceLocatorContent(InspireResourceLocator resourceLocator) throws XMLStreamException {
         writeUrl(resourceLocator.getURL());
+        writeNewLine();
         if (resourceLocator.isSetMediaTypes()) {
             for (MediaType mediaType : resourceLocator.getMediaTypes()) {
                 writeMediaType(mediaType);
+                writeNewLine();
             }
         }
     }
@@ -649,8 +708,11 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
      */
     private void writeResourceLocator(InspireResourceLocator resourceLocator) throws XMLStreamException {
         start(QN_RESOURCE_LOCATOR);
+        writeNewLine();
         writeResourceLocatorContent(resourceLocator);
+        indent--;
         end(QN_RESOURCE_LOCATOR);
+        indent++;
     }
 
     /**
@@ -666,7 +728,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeResourceType(InspireServiceSpatialDataResourceType resourceType) throws XMLStreamException {
         start(QN_RESOURCE_TYPE);
         chars(resourceType.toString());
-        end(QN_RESOURCE_TYPE);
+        endInline(QN_RESOURCE_TYPE);
     }
 
     /**
@@ -685,9 +747,11 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
         start(QN_SUPPORTED_LANGUAGES);
         writeInspireCommonNamespaces(root);
         writeDefaultLanguage(supportedLanguages.getDefaultLanguage());
+        writeNewLine();
         if (supportedLanguages.isSetSupportedLanguages()) {
             for (InspireLanguageISO6392B supportedLanguage : supportedLanguages.getSupportedLanguages()) {
                 writeSupportedLanguage(supportedLanguage);
+                writeNewLine();
             }
         }
         end(QN_SUPPORTED_LANGUAGES);
@@ -706,7 +770,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
             throws XMLStreamException {
         start(QN_SPATIAL_DATA_SERVICE_TYPE);
         chars(spatialDataServiceType.toString());
-        end(QN_SPATIAL_DATA_SERVICE_TYPE);
+        endInline(QN_SPATIAL_DATA_SERVICE_TYPE);
 
     }
 
@@ -723,8 +787,10 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeSpatialDataSetIdentifier(InspireUniqueResourceIdentifier inspireUniqueResourceIdentifier)
             throws XMLStreamException {
         start(QN_SPATIAL_DATASET_IDENTIFIER);
+        writeNewLine();
         writeUniqueResourceIdentifierContent(inspireUniqueResourceIdentifier);
-        end(QN_SPATIAL_DATASET_IDENTIFIER);
+        writeNewLine();
+        endInline(QN_SPATIAL_DATASET_IDENTIFIER);
     }
 
     /**
@@ -739,6 +805,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
      */
     private void writeSpecification(InspireConformityCitation inspireSpecification) throws XMLStreamException {
         start(QN_SPECIFICATION);
+        writeNewLine();
         writeCitationContent(inspireSpecification);
         end(QN_SPECIFICATION);
     }
@@ -755,7 +822,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeStartingDate(TimePosition time) throws XMLStreamException {
         start(QN_STARTING_DATE);
         time(time);
-        end(QN_STARTING_DATE);
+        endInline(QN_STARTING_DATE);
 
     }
 
@@ -771,7 +838,9 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
      */
     private void writeSupportedLanguage(InspireLanguageISO6392B supportedLanguage) throws XMLStreamException {
         start(QN_SUPPORTED_LANGUAGE);
+        writeNewLine();
         writeLanguage(supportedLanguage);
+        writeNewLine();
         end(QN_SUPPORTED_LANGUAGE);
 
     }
@@ -810,21 +879,27 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
         } else {
             start(QN_TEMPORAL_REFERENCE);
             if (temporalReference.isSetDateOfCreation()) {
+                writeNewLine();
                 writeDateOfCreation(temporalReference.getDateOfCreation());
             }
             if (temporalReference.isSetDateOfLastRevision()) {
+                writeNewLine();
                 writeDateOfLastRevision(temporalReference.getDateOfLastRevision());
             }
             if (temporalReference.isSetDatesOfPublication()) {
                 for (InspireDateOfPublication dateOfPublication : temporalReference.getDatesOfPublication()) {
+                    writeNewLine();
                     writeDateOfPublication(dateOfPublication);
                 }
             }
             if (temporalReference.isSetTemporalExtents()) {
+                writeNewLine();
                 for (Time temporalExtent : temporalReference.getTemporalExtents()) {
+                    writeNewLine();
                     writeTemporalExtent(temporalExtent);
                 }
             }
+            writeNewLine();
             end(QN_TEMPORAL_REFERENCE);
         }
     }
@@ -841,9 +916,11 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
         if (CollectionHelper.isNotEmpty(temporalReferences)) {
             for (InspireTemporalReference temporalReference : temporalReferences) {
                 writeTemporalReference(temporalReference);
+                writeNewLine();
             }
         } else {
             empty(QN_TEMPORAL_REFERENCE);
+            writeNewLine();
         }
     }
 
@@ -858,7 +935,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeTitle(String title) throws XMLStreamException {
         start(QN_TITLE);
         chars(title);
-        end(QN_TITLE);
+        endInline(QN_TITLE);
     }
 
     /**
@@ -874,6 +951,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
         // TODO Check if metadataURL and/or Code/Namespace (attr(name, value);)
         writeCode(uniqueResourceIdentifier.getCode());
         if (uniqueResourceIdentifier.isSetNamespace()) {
+            writeNewLine();
             writeNamespace(uniqueResourceIdentifier.getNamespace());
         }
     }
@@ -888,8 +966,8 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
      */
     private void writeURI(String url) throws XMLStreamException {
         start(QN_URI);
-        chars(url);
-        end(QN_URI);
+        chars(HtmlEscapers.htmlEscaper().escape(url));
+        endInline(QN_URI);
     }
 
     /**
@@ -902,8 +980,8 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
      */
     private void writeUrl(String url) throws XMLStreamException {
         start(QN_URL);
-        chars(url);
-        end(QN_URL);
+        chars(HtmlEscapers.htmlEscaper().escape(url));
+        endInline(QN_URL);
     }
 
     /**
@@ -919,11 +997,16 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
      */
     private void writeSupportedCRS(InspireSupportedCRS supportedCRSes, boolean root) throws XMLStreamException {
         start(QN_SUPPORTED_CRS);
-        writeInspireDLSNamespaces();
+        if (root) {
+            writeInspireDLSNamespaces();
+        }
+        writeNewLine();
         writeDefaultCRS(supportedCRSes.getDefaultCRS());
+        writeNewLine();
         if (supportedCRSes.isSetSupportedCRSs()) {
             for (String supportedCRS : supportedCRSes.getOtherCRS()) {
                 writeOtherCRS(supportedCRS);
+                writeNewLine();
             }
         }
         end(QN_SUPPORTED_CRS);
@@ -941,7 +1024,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeDefaultCRS(String crs) throws XMLStreamException {
         start(QN_DEFAULT_CRS);
         chars(crs);
-        end(QN_DEFAULT_CRS);
+        endInline(QN_DEFAULT_CRS);
     }
 
     /**
@@ -955,7 +1038,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeOtherCRS(String crs) throws XMLStreamException {
         start(QN_OTHER_CRS);
         chars(crs);
-        end(QN_OTHER_CRS);
+        endInline(QN_OTHER_CRS);
     }
 
     /**
@@ -969,7 +1052,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter implements InspireCo
     private void writeCRS(String crs) throws XMLStreamException {
         start(QN_CRS);
         chars(crs);
-        end(QN_CRS);
+        endInline(QN_CRS);
     }
 
 }

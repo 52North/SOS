@@ -28,6 +28,11 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
@@ -52,6 +57,8 @@ import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.gml.time.Time;
+
+import com.google.common.collect.Maps;
 
 /**
  * Factory methods to create {@link Criterion Criterions} for
@@ -1030,7 +1037,7 @@ public class TemporalRestrictions {
     }
 
     /**
-     * Creates a {@link Disjunction} for the specified temporal filters.
+     * Creates a {@link Conjunction} for the specified temporal filters.
      * 
      * @param temporalFilters
      *            the filters
@@ -1049,11 +1056,47 @@ public class TemporalRestrictions {
      */
     public static Criterion filter(Iterable<TemporalFilter> temporalFilters) throws UnsupportedTimeException,
             UnsupportedValueReferenceException, UnsupportedOperatorException {
-        Disjunction disjunction = Restrictions.disjunction();
-        for (TemporalFilter temporalFilter : temporalFilters) {
-            disjunction.add(filter(temporalFilter));
+        Conjunction conjunction = Restrictions.conjunction();
+        Collection<Disjunction> disjunctions = getDisjunction(temporalFilters);
+        if (disjunctions.size() == 1) {
+            return disjunctions.iterator().next();
         }
-        return disjunction;
+        for (Disjunction disjunction : disjunctions) {
+            conjunction.add(disjunction);
+        }
+        return conjunction;
+    }
+
+    /**
+     * Creates {@link Disjunction}s for the specified temporal filters with the
+     * same valueReference.
+     * 
+     * @param temporalFilters
+     *            the filters
+     * @return {@link Collection} of {@link Disjunction}
+     * @throws UnsupportedTimeException
+     *             if the value and property combination is not applicable for
+     *             this restriction
+     * @throws UnsupportedValueReferenceException
+     *             if the {@link TemporalFilter#getValueReference() value
+     *             reference} can not be decoded
+     * @throws UnsupportedOperatorException
+     *             if no restriction definition for the {@link TimeOperator} is
+     *             found
+     */
+    private static Collection<Disjunction> getDisjunction(Iterable<TemporalFilter> temporalFilters)
+            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
+        Map<String, Disjunction> map = Maps.newHashMap();
+        for (TemporalFilter temporalFilter : temporalFilters) {
+            if (map.containsKey(temporalFilter.getValueReference())) {
+                map.get(temporalFilter.getValueReference()).add(filter(temporalFilter));
+            } else {
+                Disjunction disjunction = Restrictions.disjunction();
+                disjunction.add(filter(temporalFilter));
+                map.put(temporalFilter.getValueReference(), disjunction);
+            }
+        }
+        return (Collection<Disjunction>) map.values();
     }
 
     /**

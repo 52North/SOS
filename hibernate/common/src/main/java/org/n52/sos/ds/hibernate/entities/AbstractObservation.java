@@ -93,14 +93,8 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterestGetter;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservablePropertyGetter;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureGetter;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.util.StringHelper;
@@ -112,90 +106,15 @@ import org.n52.sos.util.StringHelper;
  * @since 4.0.0
  * 
  */
-public abstract class AbstractObservation extends AbstractIdentifierNameDescriptionEntity implements HasDeletedFlag, HasObservablePropertyGetter,
-        HasProcedureGetter, HasFeatureOfInterestGetter, HasOfferings,  HasUnit {
+public abstract class AbstractObservation extends AbstractObservationTime implements HasObservablePropertyGetter,
+        HasProcedureGetter, HasFeatureOfInterestGetter, HasUnit {
 
-    private static final long serialVersionUID = 8860291031549060409L;
-
-    public static final String ID = "observationId";
-
-    public static final String PHENOMENON_TIME_START = "phenomenonTimeStart";
-
-    public static final String PHENOMENON_TIME_END = "phenomenonTimeEnd";
-
-    public static final String VALID_TIME_START = "validTimeStart";
-
-    public static final String VALID_TIME_END = "validTimeEnd";
-
-    public static final String RESULT_TIME = "resultTime";
-
-    private long observationId;
-
-    private Date phenomenonTimeStart;
-
-    private Date phenomenonTimeEnd;
-
-    private Date resultTime;
-
-    private boolean deleted;
-
-    private Date validTimeStart;
-
-    private Date validTimeEnd;
+    private static final long serialVersionUID = -5638600640028433573L;
 
     private Unit unit;
 
-    private Set<Offering> offerings = new HashSet<Offering>(0);
+
     
-    public long getObservationId() {
-        return observationId;
-    }
-
-    public void setObservationId(final long observationId) {
-        this.observationId = observationId;
-    }
-
-
-    public Date getPhenomenonTimeStart() {
-        return phenomenonTimeStart;
-    }
-
-    public void setPhenomenonTimeStart(final Date phenomenonTimeStart) {
-        this.phenomenonTimeStart = phenomenonTimeStart;
-    }
-
-    public Date getPhenomenonTimeEnd() {
-        return phenomenonTimeEnd;
-    }
-
-    public void setPhenomenonTimeEnd(final Date phenomenonTimeEnd) {
-        this.phenomenonTimeEnd = phenomenonTimeEnd;
-    }
-
-    public Date getResultTime() {
-        return resultTime;
-    }
-
-    public void setResultTime(final Date resultTime) {
-        this.resultTime = resultTime;
-    }
-
-    public Date getValidTimeStart() {
-        return validTimeStart;
-    }
-
-    public void setValidTimeStart(final Date validTimeStart) {
-        this.validTimeStart = validTimeStart;
-    }
-
-    public Date getValidTimeEnd() {
-        return validTimeEnd;
-    }
-
-    public void setValidTimeEnd(final Date validTimeEnd) {
-        this.validTimeEnd = validTimeEnd;
-    }
-
     @Override
     public Unit getUnit() {
         return unit;
@@ -207,51 +126,6 @@ public abstract class AbstractObservation extends AbstractIdentifierNameDescript
     }
 
     @Override
-    public Set<Offering> getOfferings() {
-        return offerings;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void setOfferings(final Object offerings) {
-        if (offerings instanceof Set<?>) {
-            this.offerings = (Set<Offering>) offerings; 
-        } else {
-            getOfferings().add((Offering)offerings);
-        }
-    }
-    
-//    
-//    @Override
-//    public Offering getOffering() {
-//        return this.offering;
-//    }
-//    
-//    @Override
-//    public void setOfferings(final Offering offering) {
-//        if (getOfferings() == null)  {
-//            setOfferings( new HashSet<Offering>(0));
-//        }
-//        getOfferings().add(offering);
-//        this.offering = offering;
-//    }
-
-    @Override
-    public boolean isDeleted() {
-        return deleted;
-    }
-    
-    @Override
-    public boolean getDeleted() {
-        return deleted;
-    }
-
-    @Override
-    public AbstractObservation setDeleted(final boolean deleted) {
-        this.deleted = deleted;
-        return this;
-    }
-
     public boolean isSetIdentifier() {
         return getIdentifier() != null && !getIdentifier().isEmpty();
     }

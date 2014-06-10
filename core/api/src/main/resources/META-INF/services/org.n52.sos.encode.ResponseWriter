@@ -1,1 +1,2 @@
 org.n52.sos.encode.XmlResponseWriter
+org.n52.sos.encode.AbstractServiceResponseWriter

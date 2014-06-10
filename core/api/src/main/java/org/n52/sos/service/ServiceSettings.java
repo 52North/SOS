@@ -141,8 +141,9 @@ public class ServiceSettings implements SettingDefinitionProvider {
             .setTitle("SOS URL")
             .setDescription(
                     "The endpoint URL of this sos which will be shown in the GetCapabilities response "
-                            + "(e.g. <code>http://localhost:8080/52nSOS/sos</code>). The path to a specific "
-                            + "binding (like <code>/soap</code>) will appended to this URL.");
+                            + "(e.g. <code>http://localhost:8080/52nSOS/sos</code> or <code>http://localhost:8080/52nSOS/service</code>)."
+                            + " The path to a specific binding (like <code>/soap</code>) will appended to this URL."
+                            + " For detailed information, please read the <a href=\"https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation\">documentation</a>");
 
     public static final IntegerSettingDefinition MAX_GET_OBSERVATION_RESULTS_DEFINITION =
             new IntegerSettingDefinition()
@@ -239,7 +240,8 @@ public class ServiceSettings implements SettingDefinitionProvider {
             // SUPPORTS_QUALITY_DEFINITION,
             SENSOR_DIRECTORY_DEFINITION, USE_DEFAULT_PREFIXES_DEFINITION,
             ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR_DEFINITION, DEREGISTER_JDBC_DRIVER_DEFINITION,
-            ADD_OUTPUTS_TO_SENSOR_ML_DEFINITION, STRICT_SPATIAL_FILTERING_PROFILE_DEFINITION, VALIDATE_RESPONSE_DEFINITION);
+            ADD_OUTPUTS_TO_SENSOR_ML_DEFINITION, STRICT_SPATIAL_FILTERING_PROFILE_DEFINITION, 
+            VALIDATE_RESPONSE_DEFINITION);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

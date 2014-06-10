@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.n52.sensorweb.sos</groupId>
 		<artifactId>hibernate-datasource</artifactId>
-		<version>4.0.2-SNAPSHOT</version>
+		<version>4.2.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>hibernate-datasource-oracle</artifactId>
@@ -55,7 +55,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.15</version>
 				<configuration>
 					<additionalClasspathElements>
 						<additionalClasspathElement>${project.basedir}/lib</additionalClasspathElement>
@@ -92,7 +91,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.15</version>
 						<configuration>
 							<skipTests>false</skipTests>
 						</configuration>

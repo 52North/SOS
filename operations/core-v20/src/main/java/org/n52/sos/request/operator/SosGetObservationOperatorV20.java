@@ -152,13 +152,23 @@ public class SosGetObservationOperatorV20 extends
 
     @Override
     public GetObservationResponse receive(final GetObservationRequest sosRequest) throws OwsExceptionReport {
+        boolean checkForMergeObservationsInResponse = checkForMergeObservationsInResponse(sosRequest);
+        sosRequest.setMergeObservationValues(checkForMergeObservationsInResponse);
         final GetObservationResponse sosResponse = getDao().getObservation(sosRequest);
         setObservationResponseResponseFormatAndContentType(sosRequest, sosResponse);
         // TODO check for correct merging, add merge if swes:extension is set
-        if (getActiveProfile().isMergeValues() || isSetExtensionMergeObservationsToSweDataArray(sosRequest)) {
+        if (checkForMergeObservationsInResponse) {
             sosResponse.mergeObservationsWithSameConstellation();
+            sosResponse.setMergeObservations(true);
         }        
         return sosResponse;
+    }
+
+    private boolean checkForMergeObservationsInResponse(GetObservationRequest sosRequest) {
+        if (getActiveProfile().isMergeValues() || isSetExtensionMergeObservationsToSweDataArray(sosRequest)) {
+            return true;
+        }
+        return false;
     }
 
     private boolean isSetExtensionMergeObservationsToSweDataArray(final GetObservationRequest sosRequest) {

@@ -28,8 +28,6 @@
  */
 package org.n52.sos.encode.sos.v1;
 
-import java.util.Set;
-
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.exception.ows.concrete.NoEncoderForResponseException;
@@ -39,10 +37,6 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.N52XmlHelper;
-import org.n52.sos.w3c.SchemaLocation;
-
-import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
@@ -66,11 +60,5 @@ public class GetFeatureOfInterestResponseEncoder extends AbstractSosResponseEnco
             throw new NoEncoderForResponseException();
         }
 
-    }
-
-    @Override
-    public Set<SchemaLocation> getSchemaLocations() {
-        return Sets.newHashSet(N52XmlHelper.getSchemaLocationForSOS100(), N52XmlHelper.getSchemaLocationForGML311(),
-                N52XmlHelper.getSchemaLocationForSA100());
     }
 }

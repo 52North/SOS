@@ -4,7 +4,7 @@
     <parent>
         <artifactId>52n-sos</artifactId>
         <groupId>org.n52.sensorweb.sos</groupId>
-        <version>4.0.2-SNAPSHOT</version>
+        <version>4.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>webapp</artifactId>
@@ -48,7 +48,7 @@
                                     <overWrite>false</overWrite>
                                 </artifactItem>
                             </artifactItems>
-                            <includes>**/*.xml</includes>
+                            <includes>**/*.xml,**/README</includes>
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
                         </configuration>
@@ -553,6 +553,15 @@
             </dependencies>
         </profile>
         <profile>
+            <id>sqlserver</id>
+            <dependencies>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hibernate-datasource-sqlserver</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>both</id>
             <dependencies>
                 <dependency>
@@ -672,7 +681,7 @@
             <dependencies>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>wml-v20</artifactId>
+                    <artifactId>coding-wml-v20</artifactId>
                 </dependency>
             </dependencies>
         </profile>

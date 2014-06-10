@@ -67,6 +67,11 @@ public abstract class AbstractIdentifierNameDescriptionEntity implements Seriali
     }
     
     @Override
+    public boolean isSetIdentifier() {
+        return StringHelper.isNotEmpty(getIdentifier());
+    }
+    
+    @Override
     public Codespace getCodespace() {
         return this.codespace;
     }

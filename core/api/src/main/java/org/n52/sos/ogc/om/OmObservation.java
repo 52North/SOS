@@ -513,4 +513,13 @@ public class OmObservation extends AbstractFeature implements Serializable {
                 && namedValue.getName().getHref().equals(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY)
                 && namedValue.getValue() instanceof GeometryValue;
     }
+    
+    public OmObservation cloneTemplate() {
+        OmObservation clone = new OmObservation();
+        clone.setObservationConstellation(this.getObservationConstellation());
+        clone.setResultType(this.getResultType());
+        clone.setTokenSeparator(this.getTokenSeparator());
+        clone.setTupleSeparator(this.getTupleSeparator());
+        return clone;
+    }
 }

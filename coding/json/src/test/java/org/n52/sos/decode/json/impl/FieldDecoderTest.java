@@ -62,7 +62,7 @@ import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.util.DateTimeHelper;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.github.fge.jsonschema.report.ProcessingReport;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
 
 /**
  * TODO JavaDoc

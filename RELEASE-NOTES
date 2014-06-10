@@ -14,14 +14,50 @@ Changes since last release
     * Binding selection by ContentType at /sos and /service
     * Add columns to mapping files for an easier integration of the Timeseries API (only for Series concept)
       * Added first/latest time (all) and value (only OM_Measurement) columns to series table and update these columns during insertion process
+    * Add Microsoft SQL Server support
+      * https://github.com/52North/SOS/commit/e288e502fbc1f0b833bad1e90d60b36c491d0792
+    * Create JSON cache dump in admin interface
+      * https://github.com/52North/SOS/commit/9cef2ba00c862058e7ada1f7a2862ef98a3e3096
+    * GetObservation with multiple temporal filter and different valueReferences
+      * same valueReference:       filter OR filter
+      * different valueReferences: (filterA1 OR filterA2) AND filterB
+    * Streaming response:
+      * can be activated via settings
+      * StreamWriter for SOAP envelope, O&M 2.0, and WaterML 2.0
+      * Allows bigger responses because the no XML DOM-Tree is created
+    * Streaming datasource (Hibernate) for GetObservation:
+      * can be activate via settings
+      * Query observation metadata and create template observations
+      * In the encoder the observation values are queried
+      * Two possibilities, configurable via settings:
+      	* scroll: send query and get scrollable values
+      	* chunk: 
+      	  * send paging requests and process each chunk
+      	  * chunk size is configurable via settings
+      * reduced latency for GetObservation response
  
  --- Changes ---
  
     * Show the observation identifiers only in capabilities if size is less than 100, TODO: make this configurable
+    * Adapt the GetDataAvailability request/response to the OGC Discussion Paper:
+      * OGC Sensor Observation Service 2.0 Hydrology Profile (https://portal.opengeospatial.org/files/?artifact_id=57327)
+      * XML schema: http://waterml2.org/schemas/gda/1.0/gda.xsd
+    * Remove support for raw SQL execution in the admin interface because of security constraints 
+      * https://github.com/52North/SOS/commit/ff5f8dd86f97024337f51492009559f11492bd7d
+    * Update dependency versions:
+      * joda-time (2.3), json-schema-validator (2.2.3), json-schema-core (1.2.1), springframework (3.2.6)
  
  --- Fixed bugs ---
    
     * Check if JSON binding is supported before testing
+    * Show Spatial Filtering Profile key in the Profile section of the Capabilities.ServiceIdentification if strict Spatial Filtering Profile is selected
+      * https://github.com/52North/SOS/commit/437fd75
+    * Fix TimeRange decoding
+      * https://github.com/52North/SOS/commit/4151647
+    * Fix TimeInstant constructor with parameter java.util.Date 
+      * https://github.com/52North/SOS/commit/3dc6205
+    * Fix SOS 1.0 schemaLocation randomly missing after restarts (https://github.com/52North/SOS/issues/45)
+      * https://github.com/52North/SOS/commit/f849cc9
  
  
 Release 52n-sos-4.0.1
@@ -294,5 +330,5 @@ Release 52n-sos-webapp-4.0.0-Beta1
 
 
 
-For more detailed information about the bugs look at https://52north.org/bugzilla/
+For more detailed information about the bugs look at https://github.com/52North/SOS/issues
 

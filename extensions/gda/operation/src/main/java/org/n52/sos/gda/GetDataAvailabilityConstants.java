@@ -32,10 +32,11 @@ import java.net.URI;
 
 import javax.xml.namespace.QName;
 
-import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.w3c.SchemaLocation;
 import org.n52.sos.w3c.W3CConstants;
 import org.n52.sos.wsdl.WSDLFault;
 import org.n52.sos.wsdl.WSDLOperation;
@@ -48,6 +49,18 @@ import org.n52.sos.wsdl.WSDLOperation;
  * @since 4.0.0
  */
 public interface GetDataAvailabilityConstants {
+    
+    String NS_GDA = "http://www.opengis.net/sosgda/1.0";
+    
+    String SCHEMA_LOCATION_URL_GET_DATA_AVAILABILITY =  "http://waterml2.org/schemas/gda/1.0/gda.xsd";
+    
+    SchemaLocation GET_DATA_AVAILABILITY_SCHEMA_LOCATION = new SchemaLocation(NS_GDA,
+            SCHEMA_LOCATION_URL_GET_DATA_AVAILABILITY);
+    
+    String NS_GDA_PREFIX = "gda";
+    
+    String XPATH_PREFIXES_GDA = XmlHelper.getXPathPrefix(NS_GDA_PREFIX, NS_GDA);
+    
     String EN_GET_DATA_AVAILABILITY_MEMBER = "dataAvailabilityMember";
 
     String EN_GET_DATA_AVAILABILITY = "GetDataAvailability";
@@ -73,6 +86,12 @@ public interface GetDataAvailabilityConstants {
      */
     QName SOS_DATA_AVAILABILITY_MEMBER = new QName(Sos2Constants.NS_SOS_20, EN_GET_DATA_AVAILABILITY_MEMBER,
             SosConstants.NS_SOS_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:dataAvailabilityMember}.
+     */
+    QName GDA_DATA_AVAILABILITY_MEMBER = new QName(GetDataAvailabilityConstants.NS_GDA, EN_GET_DATA_AVAILABILITY_MEMBER,
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
 
     /**
      * The {@code QName} for {@code sos:GetDataAvailabilityResponse}.
@@ -81,10 +100,25 @@ public interface GetDataAvailabilityConstants {
             SosConstants.NS_SOS_PREFIX);
 
     /**
+     * The {@code QName} for {@code gda:GetDataAvailabilityResponse}.
+     */
+    QName GDA_GET_DATA_AVAILABILITY_RESPONSE = new QName(GetDataAvailabilityConstants.NS_GDA, EN_GET_DATA_AVAILABILITY_RESPONSE,
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
      * The {@code QName} for {@code sos:GetDataAvailability}.
      */
     QName SOS_GET_DATA_AVAILABILITY = new QName(Sos2Constants.NS_SOS_20, EN_GET_DATA_AVAILABILITY,
             SosConstants.NS_SOS_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:GetDataAvailability}.
+     */
+    QName GDA_GET_DATA_AVAILABILITY = new QName(GetDataAvailabilityConstants.NS_GDA, EN_GET_DATA_AVAILABILITY,
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    QName GDA_EXTENSION = new QName(GetDataAvailabilityConstants.NS_GDA, "extension",
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
 
     /**
      * The {@code QName} for {@code version}.
@@ -118,43 +152,40 @@ public interface GetDataAvailabilityConstants {
             W3CConstants.NS_XLINK_PREFIX);
 
     /**
-     * The {@code QName} for {@code gml:id}.
-     */
-    QName GML_ID = new QName(GmlConstants.NS_GML_32, GmlConstants.AN_ID, GmlConstants.NS_GML_PREFIX);
-
-    /**
-     * The {@code QName} for {@code gml:TimePeriod}.
-     */
-    QName GML_TIME_PERIOD = new QName(GmlConstants.NS_GML_32, GmlConstants.EN_TIME_PERIOD, GmlConstants.NS_GML_PREFIX);
-
-    /**
-     * The {@code QName} for {@code gml:beginPosition}.
-     */
-    QName GML_BEGIN_POSITION = new QName(GmlConstants.NS_GML_32, GmlConstants.EN_BEGIN_POSITION,
-            GmlConstants.NS_GML_PREFIX);
-
-    /**
-     * The {@code QName} for {@code gml:endPosition}.
-     */
-    QName GML_END_POSITION = new QName(GmlConstants.NS_GML_32, GmlConstants.EN_END_POSITION, GmlConstants.NS_GML_PREFIX);
-
-    /**
      * The {@code QName} for {@code om:featureOfInterest}.
      */
     QName OM_FEATURE_OF_INTEREST = new QName(OmConstants.NS_OM_2, OmConstants.EN_FEATURE_OF_INTEREST,
             OmConstants.NS_OM_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:featureOfInterest}.
+     */
+    QName GDA_FEATURE_OF_INTEREST = new QName(GetDataAvailabilityConstants.NS_GDA, OmConstants.EN_FEATURE_OF_INTEREST,
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
 
     /**
      * The {@code QName} for {@code om:observedProperty}.
      */
     QName OM_OBSERVED_PROPERTY = new QName(OmConstants.NS_OM_2, OmConstants.EN_OBSERVED_PROPERTY,
             OmConstants.NS_OM_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:observedProperty}.
+     */
+    QName GDA_OBSERVED_PROPERTY = new QName(GetDataAvailabilityConstants.NS_GDA, OmConstants.EN_OBSERVED_PROPERTY,
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
 
     /**
      * The {@code QName} for {@code om:phenomenonTime}.
      */
     QName OM_PHENOMENON_TIME =
             new QName(OmConstants.NS_OM_2, OmConstants.EN_PHENOMENON_TIME, OmConstants.NS_OM_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:phenomenonTime}.
+     */
+    QName GDA_PHENOMENON_TIME =
+            new QName(GetDataAvailabilityConstants.NS_GDA, OmConstants.EN_PHENOMENON_TIME, GetDataAvailabilityConstants.NS_GDA_PREFIX);
 
     /**
      * The {@code QName} for {@code om:procedure}.
@@ -162,9 +193,19 @@ public interface GetDataAvailabilityConstants {
     QName OM_PROCEDURE = new QName(OmConstants.NS_OM_2, OmConstants.EN_PROCEDURE, OmConstants.NS_OM_PREFIX);
     
     /**
+     * The {@code QName} for {@code gda:procedure}.
+     */
+    QName GDA_PROCEDURE = new QName(GetDataAvailabilityConstants.NS_GDA, OmConstants.EN_PROCEDURE, GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
      * The {@code QName} for {@code sos:procedure}.
      */
-    QName SOS_VALUE_COUNT = new QName(Sos2Constants.NS_SOS_20, "valueCount", SosConstants.NS_SOS_PREFIX);
+    QName SOS_COUNT = new QName(Sos2Constants.NS_SOS_20, "count", SosConstants.NS_SOS_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:procedure}.
+     */
+    QName GDA_COUNT = new QName(GetDataAvailabilityConstants.NS_GDA, "count", GetDataAvailabilityConstants.NS_GDA_PREFIX);
 
     /**
      * The available parameters of the operation.

@@ -117,12 +117,14 @@ public abstract class AbstractOmObservationCreator {
     private final String i18n;
 
     public AbstractOmObservationCreator(String version, Session session) {
+        super();
         this.version = version;
         this.session = session;
         this.i18n = ServiceConfiguration.getInstance().getDefaultLanguage();
     }
     
     public AbstractOmObservationCreator(String version, String i18n, Session session) {
+        super();
         this.version = version;
         this.session = session;
         this.i18n = i18n;

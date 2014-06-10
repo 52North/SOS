@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import java.util.Properties;
+
 import org.hibernate.Session;
 import org.n52.sos.ds.ConnectionProvider;
 import org.n52.sos.ds.ConnectionProviderException;
@@ -44,7 +46,11 @@ public class HibernateSessionHolder {
     private final ConnectionProvider connectionProvider;
 
     public HibernateSessionHolder() {
-        this.connectionProvider = Configurator.getInstance().getDataConnectionProvider();
+        this(Configurator.getInstance().getDataConnectionProvider());
+    }
+    
+    public HibernateSessionHolder(ConnectionProvider connectionProvider) {
+        this.connectionProvider = connectionProvider;
     }
 
     public static Session getSession(Object connection) throws OwsExceptionReport {

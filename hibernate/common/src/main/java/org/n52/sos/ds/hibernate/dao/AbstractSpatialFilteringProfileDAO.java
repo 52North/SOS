@@ -228,6 +228,8 @@ public abstract class AbstractSpatialFilteringProfileDAO<T extends AbstractSpati
      *             If an error occurs
      */
     public abstract SosEnvelope getEnvelopeForOfferingId(String offeringID, Session session) throws OwsExceptionReport;
+    
+    public abstract DetachedCriteria getDetachedCriteriaFor(SpatialFilter filter) throws OwsExceptionReport; 
 
     /**
      * Get concrete SpatialFilteringProfile entity object

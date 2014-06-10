@@ -26,20 +26,50 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate;
+package org.n52.sos.encode;
 
-import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.ds.CacheFeederDAO;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.coding.CodingRepository;
+import org.n52.sos.util.http.MediaType;
 
 /**
- * Mock NOOP implementation of CacheFeederDAO used in Hibernate common tests
- * to prevent NoImplementationFoundException.
+ * Abstract {@link ResponseWriter} class for response streaming
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ * @param <T>
+ *            generic for the element to write
  */
-public class MockCacheFeederDAO implements CacheFeederDAO {
+public abstract class AbstractResponseWriter<T> implements ResponseWriter<T> {
+   
+    private MediaType contentType;
+    
     @Override
-    public void updateCache(WritableContentCache capabilitiesCache)
-            throws OwsExceptionReport {
-        //NOOP, only used for testing
+    public MediaType getContentType() {
+        return contentType;
+    }
+
+    @Override
+    public void setContentType(MediaType contentType) {
+        this.contentType = contentType;
+    }
+    
+    /**
+     * Check if contentType is set 
+     * @return <code>true</code>, if contentType is set
+     */
+    protected boolean isSetContentType() {
+        return getContentType() != null;
+    }
+
+    /**
+     * Getter for encoder, encapsulates the instance call
+     * 
+     * @param key
+     *            Encoder key
+     * @return Matching encoder
+     */
+    protected <D, S> Encoder<D, S> getEncoder(EncoderKey key) {
+        return CodingRepository.getInstance().getEncoder(key);
     }
 }

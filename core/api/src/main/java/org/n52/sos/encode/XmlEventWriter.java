@@ -31,38 +31,37 @@ package org.n52.sos.encode;
 import java.io.OutputStream;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 
+import org.n52.sos.util.Constants;
+
+import com.google.common.base.StandardSystemProperty;
+
 /**
- * Abstract XML writer class for {@link XMLEventWriter}
+ * Abstract {@link XmlWriter} class for {@link XMLEventWriter}
  * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.2
  *
  */
-public abstract class XmlEventWriter extends XmlWriter<XMLEventWriter> {
+public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
 
     private XMLEventWriter w;
+    
+    private final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 
     @Override
-    protected void init(OutputStream out) throws XMLStreamException {
-        init(out, "UTF-8");
-    }
-
-    @Override
-    protected void init(OutputStream out, String encoding) throws XMLStreamException {
+    protected void init(OutputStream out, String encoding, EncodingValues encodingValues) throws XMLStreamException {
         this.w = getXmlOutputFactory().createXMLEventWriter(out, encoding);
+        this.out = out;
+        indent = encodingValues.getIndent();
     }
 
     @Override
     protected XMLEventWriter getXmlWriter() {
         return w;
-    }
-
-    protected void finish() throws XMLStreamException {
-        getXmlWriter().flush();
-        getXmlWriter().close();
     }
 
     @Override
@@ -74,22 +73,10 @@ public abstract class XmlEventWriter extends XmlWriter<XMLEventWriter> {
     protected void attr(String name, String value) throws XMLStreamException {
         getXmlWriter().add(getXmlEventFactory().createAttribute(name, value));
     }
-
-    @Override
-    protected void chars(String chars) throws XMLStreamException {
-        getXmlWriter().add(getXmlEventFactory().createCharacters(chars));
+    protected void attr(String namespace, String localName, String value) throws XMLStreamException {
+        attr(new QName(namespace, localName), value);
     }
 
-    @Override
-    protected void end(QName name) throws XMLStreamException {
-        getXmlWriter().add(
-                getXmlEventFactory().createEndElement(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart()));
-    }
-
-    @Override
-    protected void end() throws XMLStreamException {
-        getXmlWriter().add(getXmlEventFactory().createEndDocument());
-    }
 
     @Override
     protected void namespace(String prefix, String namespace) throws XMLStreamException {
@@ -104,8 +91,10 @@ public abstract class XmlEventWriter extends XmlWriter<XMLEventWriter> {
     }
 
     @Override
-    protected void start() throws XMLStreamException {
-        getXmlWriter().add(getXmlEventFactory().createStartDocument());
+    protected void start(boolean embedded) throws XMLStreamException {
+        if (!embedded) {
+            getXmlWriter().add(getXmlEventFactory().createStartDocument(Constants.DEFAULT_ENCODING, XML_VERSION));
+        }
     }
 
     @Override
@@ -114,4 +103,42 @@ public abstract class XmlEventWriter extends XmlWriter<XMLEventWriter> {
         end(name);
     }
 
+    @Override
+    protected void chars(String chars) throws XMLStreamException {
+        getXmlWriter().add(getXmlEventFactory().createCharacters(chars));
+    }
+
+    @Override
+    protected void end(QName name) throws XMLStreamException {
+        getXmlWriter().add(
+                getXmlEventFactory().createEndElement(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart()));
+    }
+    
+    @Override
+    protected void endInline(QName name) throws XMLStreamException {
+        getXmlWriter().add(
+                getXmlEventFactory().createEndElement(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart()));
+    }
+
+    @Override
+    protected void end() throws XMLStreamException {
+        getXmlWriter().add(getXmlEventFactory().createEndDocument());
+    }
+
+    protected void finish() throws XMLStreamException {
+        flush();
+        getXmlWriter().close();
+    }
+
+    @Override
+    protected void flush() throws XMLStreamException {
+        getXmlWriter().flush();
+    }
+    
+    /**
+     * @return
+     */
+    protected XMLEventFactory getXmlEventFactory() {
+        return this.eventFactory;
+    }
 }

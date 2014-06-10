@@ -41,6 +41,7 @@ import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.om.AbstractStreaming;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.FeatureCollection;
@@ -741,6 +742,9 @@ public class CoordianteTransformator implements
                             .getObservationConstellation().getFeatureOfInterest(), targetCRS);
                 if (omObservation.isSetParameter()) {
                     checkOmParameterForGeometry(omObservation.getParameter(), targetCRS);
+                }
+                if (omObservation.getValue() instanceof AbstractStreaming) {
+                    ((AbstractStreaming)omObservation.getValue()).add(OWSConstants.AdditionalRequestParams.crs, targetCRS);
                 }
             }
         }

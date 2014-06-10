@@ -28,17 +28,11 @@
  */
 package org.n52.sos.encode.sos.v1;
 
-import java.util.Set;
-
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.N52XmlHelper;
-import org.n52.sos.w3c.SchemaLocation;
-
-import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
@@ -57,8 +51,4 @@ public class DescribeSensorResponseEncoder extends AbstractSosResponseEncoder<De
         return CodingHelper.encodeObjectToXml(response.getOutputFormat(), response.getProcedureDescriptions().get(0));
     }
 
-    @Override
-    public Set<SchemaLocation> getSchemaLocations() {
-        return Sets.newHashSet(N52XmlHelper.getSchemaLocationForSML101(), N52XmlHelper.getSchemaLocationForSWE101());
-    }
 }

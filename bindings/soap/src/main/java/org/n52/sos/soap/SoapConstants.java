@@ -28,6 +28,11 @@
  */
 package org.n52.sos.soap;
 
+import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPConstants;
+
+import org.n52.sos.w3c.SchemaLocation;
+
 /**
  * Constants for SOAP messages
  * 
@@ -48,4 +53,20 @@ public interface SoapConstants {
      * SOAP body locator
      */
     String LOCATOR_SOAP_BODY = "SOAPBody";
+
+    String NS_SOAP_PREFIX = "soap";
+
+    String NS_SOAP_12 = SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE;
+    
+    String EN_SOAP_ENVELOPE = "Envelope";
+    
+    String EN_SOAP_BODY = "Body";
+    
+    QName SOAP_12_ENVELOPE = new QName(NS_SOAP_12, EN_SOAP_ENVELOPE, NS_SOAP_PREFIX);
+    
+    QName SOAP_12_BODY = new QName(NS_SOAP_12, EN_SOAP_BODY, NS_SOAP_PREFIX);
+
+    String SCHEMA_LOCATION_URL_SOPA_12 = SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE + "/soap-envelope.xsd";
+    
+    SchemaLocation SOAP_12_SCHEMA_LOCATION = new SchemaLocation(NS_SOAP_12, SCHEMA_LOCATION_URL_SOPA_12);
 }

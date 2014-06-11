@@ -35,6 +35,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
@@ -78,20 +81,20 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     @SuppressWarnings("unused")
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferingCacheUpdateTask.class);
 
-    private FeatureOfInterestDAO featureDAO = new FeatureOfInterestDAO();
+    private final FeatureOfInterestDAO featureDAO = new FeatureOfInterestDAO();
 
-    private String offeringId;
+    private final String offeringId;
 
-    private Collection<ObservationConstellationInfo> observationConstellationInfos;
+    private final Collection<ObservationConstellationInfo> observationConstellationInfos;
 
     private boolean obsConstSupported;
-    
+
     /**
      * Constructor. Note: never pass in Hibernate objects that have been loaded by a session in a different thread
-     * 
+     *
      * @param dsOfferingId
      *            Offering identifier
-     * @param observationConstellatinInfos
+     * @param observationConstellationInfos
      *            Observation Constellation info collection, passed in from parent update if supported
      */
     public OfferingCacheUpdateTask(String dsOfferingId, Collection<ObservationConstellationInfo> observationConstellationInfos) {
@@ -103,7 +106,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         // process all offering updates here (in multiple threads) which have the potential to perform large
         // queries that aren't able to be loaded all at once. many (but not all) of these can be avoided
         // if ObservationConstellation is supported
-        
+
         // NOTE: Don't perform queries or load obecjts here unless you have to, since they are performed once per offering
 
         String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
@@ -208,7 +211,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         }
     }
 
-    protected Set<String> getObservationTypes(Session session) throws CodedException {
+    protected Set<String> getObservationTypes(Session session) throws OwsExceptionReport {
         if (obsConstSupported) {
             if (CollectionHelper.isNotEmpty(observationConstellationInfos)) {
                 Set<String> observationTypes = Sets.newHashSet();
@@ -226,7 +229,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         }
     }
 
-    private Set<String> getObservationTypesFromObservations(Session session) throws CodedException {
+    private Set<String> getObservationTypesFromObservations(Session session) throws OwsExceptionReport {
         AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
         Set<String> observationTypes = Sets.newHashSet();
         if (observationDAO.checkNumericObservationsFor(offeringId, session)) {
@@ -267,7 +270,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         return Sets.newHashSet();
     }
 
-    
+
     protected SosEnvelope getEnvelopeForOffering(Collection<String> featureOfInterestIdentifiers, Session session)
             throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(featureOfInterestIdentifiers)) {
@@ -281,8 +284,8 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
     /**
      * Get SpatialFilteringProfile envelope if exist and supported
-     * 
-     * @param offeringID
+     *
+     * @param prefixedOfferingId
      *            Offering identifier used in requests and responses
      * @param offeringID
      *            Database Offering identifier to get envelope for
@@ -307,10 +310,6 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             getOfferingInformationFromDbAndAddItToCacheMaps(getSession());
         } catch (OwsExceptionReport owse) {
             getErrors().add(owse);
-        } catch (Exception e) {
-            getErrors().add(
-                    new GenericThrowableWrapperException(e)
-                            .withMessage("Error while processing offering cache update task!"));
         }
     }
 }

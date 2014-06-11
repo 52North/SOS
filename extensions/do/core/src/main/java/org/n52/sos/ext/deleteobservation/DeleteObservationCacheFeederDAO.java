@@ -32,6 +32,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.ds.DatasourceCacheUpdate;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -44,8 +47,6 @@ import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.util.CacheHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -53,7 +54,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * Updates the cache after a Observation was deleted. Uses the deleted
  * observation to determine which cache relations have to be updated.
  * <p/>
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 1.0.0
  */
@@ -79,7 +80,7 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      * Set of offering identifiers to keep track for which offerings we already
      * updated the spatial bounding box.
      */
-    private Set<String> updatedOfferingBoundingBoxes = new HashSet<String>(0);
+    private final Set<String> updatedOfferingBoundingBoxes = new HashSet<String>(0);
 
     public void setDeletedObservation(OmObservation deletedObservation) {
         this.o = deletedObservation;
@@ -92,12 +93,12 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
     /**
      * Translates the dbFeature identifiers to database dbFeature identifiers
      * and queries the FeatureQueryHandler for the envelope.
-     * 
+     *
      * @param features
      *            the dbFeature identifiers
-     * 
+     *
      * @return the envelope for the identifiers
-     * 
+     *
      * @throws OwsExceptionReport
      *             if the FeatureQueryHandler fails
      */
@@ -114,12 +115,12 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      * by {@code e1} (or {@code e2}) is removed from a collection of geometries
      * represented by {@code e2} (or {@code e1}), {@code e2} (or {@code e2}) has
      * to be updated.
-     * 
+     *
      * @param e1
      *            the first envelope
      * @param e2
      *            the second envelope
-     * 
+     *
      * @return {@code true} if the envelopes have to be updated
      */
     protected boolean isCritical(Envelope e1, Envelope e2) {
@@ -147,9 +148,9 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
     /**
      * Disassociates the feature of interest from the procedure and offerings if
      * there are no observations left.
-     * @throws CodedException 
+     * @throws CodedException
      */
-    protected void updateFeatureOfInterest() throws CodedException {
+    protected void updateFeatureOfInterest() throws OwsExceptionReport {
         final String feature = o.getObservationConstellation().getFeatureOfInterest().getIdentifierCodeWithAuthority().getValue();
         final String procedure = o.getObservationConstellation().getProcedure().getIdentifier();
         final String dbFeature = CacheHelper.removePrefixAndGetFeatureIdentifier(feature);
@@ -182,7 +183,7 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      * <p/>
      * This method will use the cache for dbFeature identifiers. These have to
      * be updated beforehand.
-     * 
+     *
      * @throws OwsExceptionReport
      *             if the dbFeature of interest is not supported or the
      *             FeatureQueryHandler fails.
@@ -201,10 +202,10 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      * <p/>
      * This method will use the cache for dbFeature identifiers. These have to
      * be updated beforehand.
-     * 
+     *
      * @param featureOfInterest
      *            the dbFeature to check
-     * 
+     *
      * @throws OwsExceptionReport
      *             if the FeatureQueryHandler fails
      */
@@ -247,9 +248,9 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      * Update the global and offering specific temporal bounding boxes. The
      * updates are conditional: the database is only queried if the observation
      * bounding boxes touch the cached bounding boxes.
-     * @throws CodedException 
+     * @throws CodedException
      */
-    protected void updateTemporalBoundingBoxes() throws CodedException {
+    protected void updateTemporalBoundingBoxes() throws OwsExceptionReport {
         DateTime minPhenomenonTime = null;
         DateTime maxPhenomenonTime = null;
         DateTime resultTime = null;
@@ -325,12 +326,12 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
     /**
      * Checks if there is no observation with the specified offering/feature
      * combination.
-     * 
+     *
      * @param feature
      *            the feature identifier
      * @param offering
      *            the offering identifier
-     * 
+     *
      * @return if there is no observation with the specified dbFeature and
      *         offering
      */
@@ -339,25 +340,25 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
     /**
      * Check if there is no observation with the specified dbProcedure/feature
      * combination.
-     * 
+     *
      * @param feature
      *            the feature identifier
      * @param procedure
      *            the procedure identifier
-     * 
+     *
      * @return if there is no observation with the specified dbFeature and
      *         dbProcedure.
-     * @throws CodedException 
+     * @throws CodedException
      */
-    protected abstract boolean isLastForProcedure(String feature, String procedure) throws CodedException;
+    protected abstract boolean isLastForProcedure(String feature, String procedure) throws OwsExceptionReport;
 
-    protected abstract DateTime getMaxDateForOffering(String offering) throws CodedException;
+    protected abstract DateTime getMaxDateForOffering(String offering) throws OwsExceptionReport;
 
-    protected abstract DateTime getMinDateForOffering(String offering) throws CodedException;
+    protected abstract DateTime getMinDateForOffering(String offering) throws OwsExceptionReport;
 
-    protected abstract DateTime getMaxDateForProcedure(String procedure) throws CodedException;
+    protected abstract DateTime getMaxDateForProcedure(String procedure) throws OwsExceptionReport;
 
-    protected abstract DateTime getMinDateForProcedure(String procedure) throws CodedException;
+    protected abstract DateTime getMinDateForProcedure(String procedure) throws OwsExceptionReport;
 
     protected abstract DateTime getMaxResultTime();
 
@@ -367,13 +368,13 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
 
     protected abstract DateTime getMinPhenomenonTime();
 
-    protected abstract DateTime getMaxResultTimeForOffering(String offering) throws CodedException;
+    protected abstract DateTime getMaxResultTimeForOffering(String offering) throws OwsExceptionReport;
 
-    protected abstract DateTime getMinResultTimeForOffering(String offering) throws CodedException;
+    protected abstract DateTime getMinResultTimeForOffering(String offering) throws OwsExceptionReport;
 
     /**
      * Will be called before the update starts.
-     * 
+     *
      * @throws OwsExceptionReport
      *             if an error occures during preperation
      */

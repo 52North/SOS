@@ -45,6 +45,7 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.StringSettingDefinition;

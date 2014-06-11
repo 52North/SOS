@@ -54,10 +54,10 @@ import com.google.common.collect.Maps;
 
 /**
  * Hibernate helper class.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.0
- * 
+ *
  */
 public final class HibernateHelper {
     /**
@@ -69,7 +69,7 @@ public final class HibernateHelper {
 
     /**
      * Get the SQL query string from Criteria.
-     * 
+     *
      * @param criteria
      *            Criteria to get SQL query string from
      * @return SQL query string from criteria
@@ -92,7 +92,7 @@ public final class HibernateHelper {
 
     /**
      * Get the SQL query string from HQL Query.
-     * 
+     *
      * @param query
      *            HQL query to convert to SQL
      * @return SQL query string from HQL
@@ -109,7 +109,7 @@ public final class HibernateHelper {
 
     public static boolean isEntitySupported(Class<?> clazz, Session session) {
         if (session.getSessionFactory() != null) {
-            return session.getSessionFactory().getAllClassMetadata().keySet().contains(clazz.getName());
+            return session.getSessionFactory().getAllClassMetadata().containsKey(clazz.getName());
         }
         return false;
     }
@@ -150,7 +150,7 @@ public final class HibernateHelper {
 
     /**
      * Check if the requested function is supported by the requested dialect
-     * 
+     *
      * @param dialect
      *            Dialect to check
      * @param function

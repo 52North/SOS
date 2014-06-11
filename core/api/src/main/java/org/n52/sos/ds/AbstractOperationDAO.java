@@ -35,6 +35,9 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.binding.Binding;
 import org.n52.sos.binding.BindingRepository;
 import org.n52.sos.cache.ContentCache;
@@ -46,7 +49,6 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
 import org.n52.sos.ogc.ows.OwsParameterValuePossibleValues;
 import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.MultiMaps;
@@ -55,12 +57,10 @@ import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.http.HTTPHeaders;
 import org.n52.sos.util.http.HTTPMethods;
 import org.n52.sos.util.http.MediaType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public abstract class AbstractOperationDAO implements OperationDAO {
 
@@ -121,11 +121,11 @@ public abstract class AbstractOperationDAO implements OperationDAO {
 
     /**
      * Get the HTTP DCPs for a operation
-     * 
+     *
      * @param decoderKey
      *            the decoderKey
      * @return Map with DCPs for the SOS operation
-     * 
+     *
      * @throws OwsExceptionReport
      */
     protected Map<String, Set<DCP>> getDCP(OperationKey decoderKey) throws OwsExceptionReport {

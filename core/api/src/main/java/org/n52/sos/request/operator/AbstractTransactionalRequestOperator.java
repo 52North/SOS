@@ -28,6 +28,7 @@
  */
 package org.n52.sos.request.operator;
 
+
 import org.n52.sos.ds.OperationDAO;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;

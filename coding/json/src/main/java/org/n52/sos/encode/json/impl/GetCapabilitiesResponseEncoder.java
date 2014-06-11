@@ -189,6 +189,9 @@ import java.util.SortedSet;
 
 import javax.xml.namespace.QName;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.sos.ogc.filter.FilterCapabilities;
@@ -211,8 +214,6 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosObservationOffering;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.response.GetCapabilitiesResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -221,9 +222,9 @@ import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<GetCapabilitiesResponse> {

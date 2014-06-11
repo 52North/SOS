@@ -911,7 +911,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
     }
 
     @Override
-    public String getDatasourceIdentifier() {
-        return "default";
+    public String getDatasourceDaoIdentifier() {
+        return IDEPENDET_IDENTIFIER;
     }
 }

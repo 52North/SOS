@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.n52.sensorweb.sos</groupId>
+        <artifactId>hibernate-envirocar</artifactId>
+        <version>4.1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>hibernate-envirocar-dao</artifactId>
+    <packaging>jar</packaging>
+    <name>52°North SOS - Hibernate enviroCar DAOs</name>
+    <description>52°North Sensor Observation Service Hibernate enviroCar DAOs module</description>
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-session-factory</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-common</artifactId>
+        </dependency>
+        <!-- TODO remove after changing from document to type saving in resultTemplate -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-sos-v20</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-sensorML-v101</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>transactional-v20</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+        	<groupId>org.n52.sensorweb</groupId>
+        	<artifactId>52n-xml-sensorML-v101</artifactId>
+        	<scope>test</scope>
+        </dependency>
+        <dependency>
+        	<groupId>org.n52.sensorweb</groupId>
+        	<artifactId>52n-xml-sweCommon-v20</artifactId>
+        </dependency>
+    </dependencies>
+</project>

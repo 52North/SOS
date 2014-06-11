@@ -111,8 +111,8 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     }
 
     @Override
-    public String getDatasourceIdentifier() {
-        return HibernateDatasourceConstants.DATASOURCE_IDENTIFIER;
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
     
     @Override

@@ -34,7 +34,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.util.JavaHelper;
@@ -47,21 +46,21 @@ import com.google.common.collect.Sets;
  * 
  */
 public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernateDatasource {
-    private String usernameDefault, usernameDescription;
-
-    private String passwordDefault, passwordDescription;
-
-    private String databaseDefault, databaseDescription;
-
-    private String hostDefault, hostDescription;
-
-    private int portDefault;
-
-    private String portDescription;
+//    private String usernameDefault, usernameDescription;
+//
+//    private String passwordDefault, passwordDescription;
+//
+//    private String databaseDefault, databaseDescription;
+//
+//    private String hostDefault, hostDescription;
+//
+//    private int portDefault,minPoolSizeDefault, maxPoolSizeDefault, ;
+//
+//    private String portDescription;
 
     private String schemaDefault, schemaDescription;
 
-    private int minPoolSizeDefault, maxPoolSizeDefault, batchSizeDefault;
+    private int batchSizeDefault;
 
     private boolean providedJdbc;
 
@@ -83,13 +82,11 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        final Set<SettingDefinition<?, ?>> set =
-                Sets.<SettingDefinition<?, ?>> newHashSet(createUsernameDefinition(usernameDefault),
-                        createPasswordDefinition(passwordDefault), createDatabaseDefinition(databaseDefault),
-                        createHostDefinition(hostDefault), createPortDefinition(portDefault),
-                        createSchemaDefinition(schemaDefault), createMinPoolSizeDefinition(minPoolSizeDefault),
-                        createMaxPoolSizeDefinition(maxPoolSizeDefault), createBatchSizeDefinition(batchSizeDefault),
-                        createProvidedJdbcDriverDefinition(providedJdbc), getOldConceptDefiniton());
+        Set<SettingDefinition<?, ?>> set = super.getSettingDefinitions();
+        set.add(createSchemaDefinition(schemaDefault));
+        set.add(createBatchSizeDefinition(batchSizeDefault));
+        set.add(createProvidedJdbcDriverDefinition(providedJdbc));
+        set.add(getOldConceptDefiniton());
         if (isTransactionalDatasource()) {
             set.add(getTransactionalDefiniton());
         }
@@ -114,36 +111,36 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
                 createBatchSizeDefinition(JavaHelper.asInteger(settings.get(BATCH_SIZE_KEY))));
     }
 
-    protected StringSettingDefinition createUsernameDefinition(final String defaultValue) {
-        return createUsernameDefinition().setDescription(usernameDescription).setDefaultValue(defaultValue);
-    }
-
-    protected StringSettingDefinition createPasswordDefinition(final String defaultValue) {
-        return createPasswordDefinition().setDescription(passwordDescription).setDefaultValue(defaultValue);
-    }
-
-    protected StringSettingDefinition createDatabaseDefinition(final String defaultValue) {
-        return createDatabaseDefinition().setDescription(databaseDescription).setDefaultValue(defaultValue);
-    }
-
-    protected StringSettingDefinition createHostDefinition(final String defaultValue) {
-        return createHostDefinition().setDescription(hostDescription).setDefaultValue(defaultValue);
-    }
-
-    protected IntegerSettingDefinition createPortDefinition(final int defaultValue) {
-        return createPortDefinition().setDescription(portDescription).setDefaultValue(defaultValue);
-    }
-
+//    protected StringSettingDefinition createUsernameDefinition(final String defaultValue) {
+//        return createUsernameDefinition().setDescription(usernameDescription).setDefaultValue(defaultValue);
+//    }
+//
+//    protected StringSettingDefinition createPasswordDefinition(final String defaultValue) {
+//        return createPasswordDefinition().setDescription(passwordDescription).setDefaultValue(defaultValue);
+//    }
+//
+//    protected StringSettingDefinition createDatabaseDefinition(final String defaultValue) {
+//        return createDatabaseDefinition().setDescription(databaseDescription).setDefaultValue(defaultValue);
+//    }
+//
+//    protected StringSettingDefinition createHostDefinition(final String defaultValue) {
+//        return createHostDefinition().setDescription(hostDescription).setDefaultValue(defaultValue);
+//    }
+//
+//    protected IntegerSettingDefinition createPortDefinition(final int defaultValue) {
+//        return createPortDefinition().setDescription(portDescription).setDefaultValue(defaultValue);
+//    }
+//
+//    protected SettingDefinition<?, ?> createMinPoolSizeDefinition(final Integer defaultValue) {
+//        return createMinPoolSizeDefinition().setDefaultValue(defaultValue);
+//    }
+//
+//    protected SettingDefinition<?, ?> createMaxPoolSizeDefinition(final Integer defaultValue) {
+//        return createMaxPoolSizeDefinition().setDefaultValue(defaultValue);
+//    }
+    
     protected StringSettingDefinition createSchemaDefinition(final String defaultValue) {
         return createSchemaDefinition().setDescription(schemaDescription).setDefaultValue(defaultValue);
-    }
-
-    protected SettingDefinition<?, ?> createMinPoolSizeDefinition(final Integer defaultValue) {
-        return createMinPoolSizeDefinition().setDefaultValue(defaultValue);
-    }
-
-    protected SettingDefinition<?, ?> createMaxPoolSizeDefinition(final Integer defaultValue) {
-        return createMaxPoolSizeDefinition().setDefaultValue(defaultValue);
     }
 
     protected SettingDefinition<?, ?> createBatchSizeDefinition(final Integer defaultValue) {
@@ -192,7 +189,6 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         }
     }
 
-    @Override
     protected Map<String, Object> parseDatasourceProperties(final Properties current) {
         final Map<String, Object> settings = new HashMap<String, Object>(current.size());
         settings.put(SCHEMA_KEY, current.getProperty(HibernateConstants.DEFAULT_SCHEMA));
@@ -247,85 +243,85 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
      */
     protected abstract String[] parseURL(String url);
 
-    /**
-     * @param usernameDefault
-     *            the usernameDefault to set
-     */
-    public void setUsernameDefault(final String usernameDefault) {
-        this.usernameDefault = usernameDefault;
-    }
-
-    /**
-     * @param usernameDescription
-     *            the usernameDescription to set
-     */
-    public void setUsernameDescription(final String usernameDescription) {
-        this.usernameDescription = usernameDescription;
-    }
-
-    /**
-     * @param passwordDefault
-     *            the passwordDefault to set
-     */
-    public void setPasswordDefault(final String passwordDefault) {
-        this.passwordDefault = passwordDefault;
-    }
-
-    /**
-     * @param passwordDescription
-     *            the passwordDescription to set
-     */
-    public void setPasswordDescription(final String passwordDescription) {
-        this.passwordDescription = passwordDescription;
-    }
-
-    /**
-     * @param databaseDefault
-     *            the databaseDefault to set
-     */
-    public void setDatabaseDefault(final String databaseDefault) {
-        this.databaseDefault = databaseDefault;
-    }
-
-    /**
-     * @param databaseDescription
-     *            the databaseDescription to set
-     */
-    public void setDatabaseDescription(final String databaseDescription) {
-        this.databaseDescription = databaseDescription;
-    }
-
-    /**
-     * @param hostDefault
-     *            the hostDefault to set
-     */
-    public void setHostDefault(final String hostDefault) {
-        this.hostDefault = hostDefault;
-    }
-
-    /**
-     * @param hostDescription
-     *            the hostDescription to set
-     */
-    public void setHostDescription(final String hostDescription) {
-        this.hostDescription = hostDescription;
-    }
-
-    /**
-     * @param portDefault
-     *            the portDefault to set
-     */
-    public void setPortDefault(final int portDefault) {
-        this.portDefault = portDefault;
-    }
-
-    /**
-     * @param portDescription
-     *            the portDescription to set
-     */
-    public void setPortDescription(final String portDescription) {
-        this.portDescription = portDescription;
-    }
+//    /**
+//     * @param usernameDefault
+//     *            the usernameDefault to set
+//     */
+//    public void setUsernameDefault(final String usernameDefault) {
+//        this.usernameDefault = usernameDefault;
+//    }
+//
+//    /**
+//     * @param usernameDescription
+//     *            the usernameDescription to set
+//     */
+//    public void setUsernameDescription(final String usernameDescription) {
+//        this.usernameDescription = usernameDescription;
+//    }
+//
+//    /**
+//     * @param passwordDefault
+//     *            the passwordDefault to set
+//     */
+//    public void setPasswordDefault(final String passwordDefault) {
+//        this.passwordDefault = passwordDefault;
+//    }
+//
+//    /**
+//     * @param passwordDescription
+//     *            the passwordDescription to set
+//     */
+//    public void setPasswordDescription(final String passwordDescription) {
+//        this.passwordDescription = passwordDescription;
+//    }
+//
+//    /**
+//     * @param databaseDefault
+//     *            the databaseDefault to set
+//     */
+//    public void setDatabaseDefault(final String databaseDefault) {
+//        this.databaseDefault = databaseDefault;
+//    }
+//
+//    /**
+//     * @param databaseDescription
+//     *            the databaseDescription to set
+//     */
+//    public void setDatabaseDescription(final String databaseDescription) {
+//        this.databaseDescription = databaseDescription;
+//    }
+//
+//    /**
+//     * @param hostDefault
+//     *            the hostDefault to set
+//     */
+//    public void setHostDefault(final String hostDefault) {
+//        this.hostDefault = hostDefault;
+//    }
+//
+//    /**
+//     * @param hostDescription
+//     *            the hostDescription to set
+//     */
+//    public void setHostDescription(final String hostDescription) {
+//        this.hostDescription = hostDescription;
+//    }
+//
+//    /**
+//     * @param portDefault
+//     *            the portDefault to set
+//     */
+//    public void setPortDefault(final int portDefault) {
+//        this.portDefault = portDefault;
+//    }
+//
+//    /**
+//     * @param portDescription
+//     *            the portDescription to set
+//     */
+//    public void setPortDescription(final String portDescription) {
+//        this.portDescription = portDescription;
+//    }
 
     /**
      * @param schemaDefault
@@ -343,19 +339,23 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         this.schemaDescription = schemaDescription;
     }
 
+    public void setBatchSizeDefault(Integer batchSizeDefaultValue) {
+       this.batchSizeDefault = batchSizeDefaultValue;
+    }
+
     public void setProvidedJdbcDefault(final boolean providedJdbc) {
         this.providedJdbc = providedJdbc;
     }
 
-    public void setMinPoolSizeDefault(final int minPoolSizeDefault) {
-        this.minPoolSizeDefault = minPoolSizeDefault;
-    }
-
-    public void setMaxPoolSizeDefault(final int maxPoolSizeDefault) {
-        this.maxPoolSizeDefault = maxPoolSizeDefault;
-    }
-
-    public void setBatchSizeDefault(final int batchSizeDefault) {
-        this.batchSizeDefault = batchSizeDefault;
-    }
+//    public void setMinPoolSizeDefault(final int minPoolSizeDefault) {
+//        this.minPoolSizeDefault = minPoolSizeDefault;
+//    }
+//
+//    public void setMaxPoolSizeDefault(final int maxPoolSizeDefault) {
+//        this.maxPoolSizeDefault = maxPoolSizeDefault;
+//    }
+//
+//    public void setBatchSizeDefault(final int batchSizeDefault) {
+//        this.batchSizeDefault = batchSizeDefault;
+//    }
 }

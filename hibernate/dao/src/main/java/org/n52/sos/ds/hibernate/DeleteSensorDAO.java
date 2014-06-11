@@ -67,8 +67,8 @@ public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
     }
 
     @Override
-    public String getDatasourceIdentifier() {
-        return HibernateDatasourceConstants.DATASOURCE_IDENTIFIER;
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 
     @Override
@@ -136,4 +136,5 @@ public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
             throw new NoApplicableCodeException().withMessage("The requested identifier is not contained in database");
         }
     }
+
 }

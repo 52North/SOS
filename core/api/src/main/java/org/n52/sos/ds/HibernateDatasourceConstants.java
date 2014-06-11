@@ -34,7 +34,13 @@ package org.n52.sos.ds;
  */
 public interface HibernateDatasourceConstants {
     
-    String DATASOURCE_IDENTIFIER = "hibernate";
+    String ORM_CONNECTION_PROVIDER_IDENTIFIER = "hibernate.orm";
+    
+    String ORM_DATASOURCE_DAO_IDENTIFIER = "hibernate.orm";
+    
+    String OGM_CONNECTION_PROVIDER_IDENTIFIER = "hibernate.ogm";
+    
+    String OGM_DATASOURCE_DAO_IDENTIFIER = "hibernate.ogm";
     
     String HIBERNATE_MAPPING_PATH = "/mapping";
 

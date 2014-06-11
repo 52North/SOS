@@ -47,25 +47,23 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.dao.series.SeriesDAO;
-import org.n52.sos.ds.hibernate.dao.series.SeriesObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
+import org.n52.sos.ds.hibernate.dao.series.SeriesObservationTimeDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationInfo;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
+import org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
-import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
-import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 import org.n52.sos.gda.AbstractGetDataAvailabilityDAO;
 import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.gda.GetDataAvailabilityResponse;
@@ -814,5 +812,10 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         public List transformList(List collection) {
             return collection;
         }
+    }
+
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 }

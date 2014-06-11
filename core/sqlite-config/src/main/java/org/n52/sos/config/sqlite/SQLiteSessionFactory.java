@@ -230,4 +230,9 @@ public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
             lock.unlock();
         }
     }
+
+    @Override
+    public String getConnectionProviderIdentifier() {
+        return "sqLiteHibernate";
+    }
 }

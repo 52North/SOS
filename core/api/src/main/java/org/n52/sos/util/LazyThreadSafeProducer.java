@@ -32,6 +32,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.ogc.ows.SosServiceProvider;
 
 /**
  * Thread safe producer that creates a object only if it is null or if it should
@@ -89,6 +90,11 @@ public abstract class LazyThreadSafeProducer<T> implements Producer<T> {
         } finally {
             lock.writeLock().unlock();
         }
+    }
+    
+    @Override
+    public T get(String identification) {
+        return get();
     }
 
     protected abstract T create() throws ConfigurationException;

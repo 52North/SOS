@@ -18,5 +18,7 @@
         <module>feature</module>
 		<module>h2</module>
 		<module>datasource</module>
+		<module>envirocar</module>
+		<module>ogm</module>
   </modules>
 </project>

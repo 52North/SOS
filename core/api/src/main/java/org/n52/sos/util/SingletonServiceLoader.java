@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
-import org.n52.sos.ds.DatasourceIdentificator;
+import org.n52.sos.ds.ConnectionProviderIdentificator;
 import org.n52.sos.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,7 +103,7 @@ public class SingletonServiceLoader<T> implements Producer<T> {
     }
 
     @Override
-    public final T get(String identification) {
+    public final T get(String datasourceIdentifier) {
         if (implementation == null) {
             Iterator<? extends T> iter = serviceLoader.iterator();
             T currentImplementation = null;
@@ -113,8 +113,9 @@ public class SingletonServiceLoader<T> implements Producer<T> {
                 } catch (ServiceConfigurationError sce) {
                     LOG.warn(String.format("Implementation for %s could be loaded!", clazz), sce);
                 }
-                if (implementation instanceof DatasourceIdentificator) {
-                    if (identification.equalsIgnoreCase(((DatasourceIdentificator) implementation).getDatasourceIdentifier())){
+                if (currentImplementation instanceof ConnectionProviderIdentificator) {
+                    if (datasourceIdentifier.equalsIgnoreCase(
+                            ((ConnectionProviderIdentificator) currentImplementation).getConnectionProviderIdentifier())) {
                         implementation = currentImplementation;
                     }
                 }
@@ -151,4 +152,5 @@ public class SingletonServiceLoader<T> implements Producer<T> {
      */
     protected void processImplementation(T implementation) throws ConfigurationException {
     }
+
 }

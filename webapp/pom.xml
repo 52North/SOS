@@ -736,6 +736,31 @@
             </dependencies>
         </profile>
         <profile>
+            <id>envirocar</id>
+            <dependencies>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hiberante-ogm-session-factory</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hiberante-envirocar-common</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hiberante-envirocar-dao</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hiberante-envirocar-feature</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hiberante-envirocar-datasource</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>diagram</id>
             <dependencies>
                 <dependency>

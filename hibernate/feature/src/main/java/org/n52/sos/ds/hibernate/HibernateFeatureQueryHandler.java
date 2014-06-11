@@ -532,7 +532,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
     }
 
     @Override
-    public String getDatasourceIdentifier() {
-        return HibernateDatasourceConstants.DATASOURCE_IDENTIFIER;
+    public String getConnectionProviderIdentifier() {
+        return HibernateDatasourceConstants.ORM_CONNECTION_PROVIDER_IDENTIFIER;
     }
 }

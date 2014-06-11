@@ -73,34 +73,34 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
-public abstract class AbstractHibernateDatasource implements Datasource, SQLConstants, HibernateDatasourceConstants {
+public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreDatasource implements SQLConstants{
     private static final Logger LOG = LoggerFactory.getLogger(AbstractHibernateDatasource.class);
     
-    protected static final String USERNAME_TITLE = "User Name";
-
-    protected static final String PASSWORD_TITLE = "Password";
-
-    protected static final String DATABASE_KEY = "jdbc.database";
-
-    protected static final String DATABASE_TITLE = "Database";
-
-    protected static final String DATABASE_DESCRIPTION =
-            "Set this to the name of the database you want to use for SOS.";
-
-    protected static final String DATABASE_DEFAULT_VALUE = "sos";
-
-    protected static final String HOST_KEY = "jdbc.host";
-
-    protected static final String HOST_TITLE = "Host";
-
-    protected static final String HOST_DESCRIPTION =
-            "Set this to the IP/net location of the database server. The default value for is \"localhost\".";
-
-    protected static final String HOST_DEFAULT_VALUE = "localhost";
-
-    protected static final String PORT_KEY = "jdbc.port";
-
-    protected static final String PORT_TITLE = "Database Port";
+//    protected static final String USERNAME_TITLE = "User Name";
+//
+//    protected static final String PASSWORD_TITLE = "Password";
+//
+//    protected static final String DATABASE_KEY = "jdbc.database";
+//
+//    protected static final String DATABASE_TITLE = "Database";
+//
+//    protected static final String DATABASE_DESCRIPTION =
+//            "Set this to the name of the database you want to use for SOS.";
+//
+//    protected static final String DATABASE_DEFAULT_VALUE = "sos";
+//
+//    protected static final String HOST_KEY = "jdbc.host";
+//
+//    protected static final String HOST_TITLE = "Host";
+//
+//    protected static final String HOST_DESCRIPTION =
+//            "Set this to the IP/net location of the database server. The default value for is \"localhost\".";
+//
+//    protected static final String HOST_DEFAULT_VALUE = "localhost";
+//
+//    protected static final String PORT_KEY = "jdbc.port";
+//
+//    protected static final String PORT_TITLE = "Database Port";
 
     protected static final String SCHEMA_KEY = HibernateConstants.DEFAULT_SCHEMA;
 
@@ -137,12 +137,12 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     protected static final boolean SPATIAL_FILTERING_PROFILE_DEFAULT_VALUE = true;
 
-    protected static final String USERNAME_KEY = HibernateConstants.CONNECTION_USERNAME;
-
-    protected static final String PASSWORD_KEY = HibernateConstants.CONNECTION_PASSWORD;
-
-    protected static final String C3P0_CONNECTION_POOL =
-            "org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider";
+//    protected static final String USERNAME_KEY = HibernateConstants.CONNECTION_USERNAME;
+//
+//    protected static final String PASSWORD_KEY = HibernateConstants.CONNECTION_PASSWORD;
+//
+//    protected static final String C3P0_CONNECTION_POOL =
+//            "org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider";
 
     protected static final Boolean PROVIDED_JDBC_DRIVER_DEFAULT_VALUE = false;
 
@@ -153,21 +153,21 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     protected static final String PROVIDED_JDBC_DRIVER_KEY = "sos.jdbc.provided";
 
-    protected static final String MIN_POOL_SIZE_KEY = "jdbc.pool.min";
-
-    protected static final String MIN_POOL_SIZE_TITLE = "Minimum ConnectionPool size";
-
-    protected static final String MIN_POOL_SIZE_DESCRIPTION = "Minimum size of the ConnectionPool";
-
-    protected static final Integer MIN_POOL_SIZE_DEFAULT_VALUE = 10;
-
-    protected static final String MAX_POOL_SIZE_KEY = "jdbc.pool.max";
-
-    protected static final String MAX_POOL_SIZE_TITLE = "Maximum ConnectionPool size";
-
-    protected static final String MAX_POOL_SIZE_DESCRIPTION = "Maximum size of the ConnectionPool";
-
-    protected static final Integer MAX_POOL_SIZE_DEFAULT_VALUE = 30;
+//    protected static final String MIN_POOL_SIZE_KEY = "jdbc.pool.min";
+//
+//    protected static final String MIN_POOL_SIZE_TITLE = "Minimum ConnectionPool size";
+//
+//    protected static final String MIN_POOL_SIZE_DESCRIPTION = "Minimum size of the ConnectionPool";
+//
+//    protected static final Integer MIN_POOL_SIZE_DEFAULT_VALUE = 10;
+//
+//    protected static final String MAX_POOL_SIZE_KEY = "jdbc.pool.max";
+//
+//    protected static final String MAX_POOL_SIZE_TITLE = "Maximum ConnectionPool size";
+//
+//    protected static final String MAX_POOL_SIZE_DESCRIPTION = "Maximum size of the ConnectionPool";
+//
+//    protected static final Integer MAX_POOL_SIZE_DEFAULT_VALUE = 30;
 
     protected static final String BATCH_SIZE_KEY = "jdbc.batch.size";
 
@@ -190,57 +190,57 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
 
     private boolean spatialFilteringProfileDatasource = true;
 
-    /**
-     * Create settings definition for username
-     *
-     * @return Username settings definition
-     */
-    protected StringSettingDefinition createUsernameDefinition() {
-        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
-                .setKey(USERNAME_KEY).setTitle(USERNAME_TITLE);
-    }
-
-    /**
-     * Create settings definition for password
-     *
-     * @return Password settings definition
-     */
-    protected StringSettingDefinition createPasswordDefinition() {
-        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_2)
-                .setKey(PASSWORD_KEY).setTitle(PASSWORD_TITLE);
-    }
-
-    /**
-     * Create settings definition for database name
-     *
-     * @return database name settings definition
-     */
-    protected StringSettingDefinition createDatabaseDefinition() {
-        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_3)
-                .setKey(DATABASE_KEY).setTitle(DATABASE_TITLE).setDescription(DATABASE_DESCRIPTION)
-                .setDefaultValue(DATABASE_DEFAULT_VALUE);
-    }
-
-    /**
-     * Create settings definition for host
-     *
-     * @return Host settings definition
-     */
-    protected StringSettingDefinition createHostDefinition() {
-        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
-                .setKey(HOST_KEY).setTitle(HOST_TITLE).setDescription(HOST_DESCRIPTION)
-                .setDefaultValue(HOST_DEFAULT_VALUE);
-    }
-
-    /**
-     * Create settings definition for port
-     *
-     * @return Port settings definition
-     */
-    protected IntegerSettingDefinition createPortDefinition() {
-        return new IntegerSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_5)
-                .setKey(PORT_KEY).setTitle(PORT_TITLE);
-    }
+//    /**
+//     * Create settings definition for username
+//     *
+//     * @return Username settings definition
+//     */
+//    protected StringSettingDefinition createUsernameDefinition() {
+//        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
+//                .setKey(USERNAME_KEY).setTitle(USERNAME_TITLE);
+//    }
+//
+//    /**
+//     * Create settings definition for password
+//     *
+//     * @return Password settings definition
+//     */
+//    protected StringSettingDefinition createPasswordDefinition() {
+//        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_2)
+//                .setKey(PASSWORD_KEY).setTitle(PASSWORD_TITLE);
+//    }
+//
+//    /**
+//     * Create settings definition for database name
+//     *
+//     * @return database name settings definition
+//     */
+//    protected StringSettingDefinition createDatabaseDefinition() {
+//        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_3)
+//                .setKey(DATABASE_KEY).setTitle(DATABASE_TITLE).setDescription(DATABASE_DESCRIPTION)
+//                .setDefaultValue(DATABASE_DEFAULT_VALUE);
+//    }
+//
+//    /**
+//     * Create settings definition for host
+//     *
+//     * @return Host settings definition
+//     */
+//    protected StringSettingDefinition createHostDefinition() {
+//        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
+//                .setKey(HOST_KEY).setTitle(HOST_TITLE).setDescription(HOST_DESCRIPTION)
+//                .setDefaultValue(HOST_DEFAULT_VALUE);
+//    }
+//
+//    /**
+//     * Create settings definition for port
+//     *
+//     * @return Port settings definition
+//     */
+//    protected IntegerSettingDefinition createPortDefinition() {
+//        return new IntegerSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_5)
+//                .setKey(PORT_KEY).setTitle(PORT_TITLE);
+//    }
 
     /**
      * Create settings definition for database schema
@@ -299,27 +299,27 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
                 .setOrder(SettingDefinitionProvider.ORDER_5).setKey(PROVIDED_JDBC_DRIVER_KEY);
     }
 
-    /**
-     * Create settings definition for minimal connection pool size
-     *
-     * @return Minimal connection pool size settings definition
-     */
-    protected IntegerSettingDefinition createMinPoolSizeDefinition() {
-        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_6)
-                .setKey(MIN_POOL_SIZE_KEY).setTitle(MIN_POOL_SIZE_TITLE).setDescription(MIN_POOL_SIZE_DESCRIPTION)
-                .setDefaultValue(MIN_POOL_SIZE_DEFAULT_VALUE);
-    }
-
-    /**
-     * Create settings definition for maximal connection pool size
-     *
-     * @return Maximal connection pool size settings definition
-     */
-    protected IntegerSettingDefinition createMaxPoolSizeDefinition() {
-        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_7)
-                .setKey(MAX_POOL_SIZE_KEY).setTitle(MAX_POOL_SIZE_TITLE).setDescription(MAX_POOL_SIZE_DESCRIPTION)
-                .setDefaultValue(MAX_POOL_SIZE_DEFAULT_VALUE);
-    }
+//    /**
+//     * Create settings definition for minimal connection pool size
+//     *
+//     * @return Minimal connection pool size settings definition
+//     */
+//    protected IntegerSettingDefinition createMinPoolSizeDefinition() {
+//        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_6)
+//                .setKey(MIN_POOL_SIZE_KEY).setTitle(MIN_POOL_SIZE_TITLE).setDescription(MIN_POOL_SIZE_DESCRIPTION)
+//                .setDefaultValue(MIN_POOL_SIZE_DEFAULT_VALUE);
+//    }
+//
+//    /**
+//     * Create settings definition for maximal connection pool size
+//     *
+//     * @return Maximal connection pool size settings definition
+//     */
+//    protected IntegerSettingDefinition createMaxPoolSizeDefinition() {
+//        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_7)
+//                .setKey(MAX_POOL_SIZE_KEY).setTitle(MAX_POOL_SIZE_TITLE).setDescription(MAX_POOL_SIZE_DESCRIPTION)
+//                .setDefaultValue(MAX_POOL_SIZE_DEFAULT_VALUE);
+//    }
 
     /**
      * Create settings definition for JDBC batch size
@@ -995,6 +995,16 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
     @Override
     public void executePostCreateSchema(Map<String, Object> databaseSettings) {
     }
+    
+    @Override
+    public String getConnectionProviderIdentifier() {
+        return HibernateDatasourceConstants.ORM_CONNECTION_PROVIDER_IDENTIFIER;
+    }
+    
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    }
 
     /**
      * Gets the qualified name of the driver class.
@@ -1003,14 +1013,14 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
      */
     protected abstract String getDriverClass();
 
-    /**
-     * Parse datasource properties to map
-     *
-     * @param current
-     *            Current datasource properties
-     * @return Map with String key and Object value
-     */
-    protected abstract Map<String, Object> parseDatasourceProperties(Properties current);
+//    /**
+//     * Parse datasource properties to map
+//     *
+//     * @param current
+//     *            Current datasource properties
+//     * @return Map with String key and Object value
+//     */
+//    protected abstract Map<String, Object> parseDatasourceProperties(Properties current);
 
     /**
      * Check if the required extensions are available

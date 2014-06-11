@@ -67,6 +67,7 @@
         <logback.version>1.0.13</logback.version>
         <slf4j.version>1.7.2</slf4j.version>
         <hibernate.version>4.1.12.Final</hibernate.version>
+        <hibernate.ogm.version>4.1.0.Beta3</hibernate.ogm.version>
         <hibernate.spatial.version>4.1-52N</hibernate.spatial.version>
         <sqlite.version>3.7.2</sqlite.version>
         <jackson.version>2.3.3</jackson.version>
@@ -173,6 +174,21 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>hibernate-ogm-session-factory</artifactId>
+                <version>${sos.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hibernate-ogm-datasource-common</artifactId>
+                <version>${sos.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hibernate-ogm-datasource-mongodb</artifactId>
+                <version>${sos.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>hibernate-common</artifactId>
                 <version>${sos.version}</version>
             </dependency>
@@ -225,6 +241,27 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hibernate-datasource-mysql</artifactId>
+                <version>${sos.version}</version>
+            </dependency>
+            <!-- Hibernate envirocar -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hibernate-envirocar-common</artifactId>
+                <version>${sos.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hibernate-envirocar-dao</artifactId>
+                <version>${sos.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hibernate-envirocar-feature</artifactId>
+                <version>${sos.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hibernate-envirocar-datasource</artifactId>
                 <version>${sos.version}</version>
             </dependency>
             <dependency>
@@ -453,6 +490,29 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <!-- Hibernate OGM core dependencies -->
+            <dependency>
+			 	<groupId>org.hibernate.ogm</groupId>
+				<artifactId>hibernate-ogm-core</artifactId>
+	             <version>${hibernate.ogm.version}</version>
+	             <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
+       	 	</dependency>
+       	 	<dependency>
+				<groupId>org.hibernate.ogm</groupId>
+				<artifactId>hibernate-ogm-mongodb</artifactId>
+	             <version>${hibernate.ogm.version}</version>
+	             <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
+       	 	</dependency>
             <dependency>
                 <groupId>postgresql</groupId>
                 <artifactId>postgresql</artifactId>

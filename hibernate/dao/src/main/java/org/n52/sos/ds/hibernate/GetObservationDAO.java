@@ -143,10 +143,9 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
     }
     
     @Override
-    public String getDatasourceIdentifier() {
-        return HibernateDatasourceConstants.DATASOURCE_IDENTIFIER;
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
-
     @Override
     public GetObservationResponse getObservation(final GetObservationRequest sosRequest) throws OwsExceptionReport {
         if (sosRequest.getVersion().equals(Sos1Constants.SERVICEVERSION)

@@ -49,4 +49,9 @@ public class MockCacheFeederDAO implements CacheFeederDAO {
             throws OwsExceptionReport {
         //NOOP, only used for testing
     }
+
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return "mock";
+    }
 }

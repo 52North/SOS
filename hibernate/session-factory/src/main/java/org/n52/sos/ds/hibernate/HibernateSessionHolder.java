@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.util.Properties;
-
 import org.hibernate.Session;
 import org.n52.sos.ds.ConnectionProvider;
 import org.n52.sos.ds.ConnectionProviderException;

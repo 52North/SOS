@@ -244,7 +244,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
         for (final OmObservableProperty sosObsProp : observableProperty) {
             boolean exists = false;
             for (final ObservableProperty obsProp : obsProps) {
-                if (obsProp.getIdentifier().equals(sosObsProp.getIdentifierCodeWithAuthority())) {
+                if (obsProp.getIdentifier().equals(sosObsProp.getIdentifierCodeWithAuthority().getValue())) {
                     exists = true;
                     break;
                 }

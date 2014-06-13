@@ -3,4 +3,4 @@ target
 .project
 .settings
 .svn
-nb-*.xml
+nb*.xml

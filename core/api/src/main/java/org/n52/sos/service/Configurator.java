@@ -182,7 +182,7 @@ public class Configurator implements Cleanupable {
             if (e.getCause() != null && e.getCause() instanceof OwsExceptionReport) {
                 throw (OwsExceptionReport) e.getCause();
             } else {
-                throw new NoApplicableCodeException().withMessage("Could not request object from %s", factory);
+                throw new NoApplicableCodeException().withMessage("Could not request object from %s", factory).causedBy(e);
             }
         }
     }

@@ -86,7 +86,7 @@ public abstract class LazyThreadSafeProducer<T> implements Producer<T> {
     public T get(Locale language)
             throws ConfigurationException {
         if (language == null) {
-            this.lock.readLock();
+            this.lock.readLock().lock();
             try {
                 return this.nullLocale;
             } finally {

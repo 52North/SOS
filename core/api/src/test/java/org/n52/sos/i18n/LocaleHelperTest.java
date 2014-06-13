@@ -61,7 +61,7 @@ public class LocaleHelperTest {
         //IETF BCP 47
         // ISO 639 alpha-2 or alpha-3
         String string = LocaleHelper.toString(Locale.GERMAN);
-        System.out.println(Locale.GERMAN.toLanguageTag());
+        //System.out.println(Locale.GERMAN.toLanguageTag());
         errors.checkThat(LocaleHelper.fromString(string), is(Locale.GERMAN));
         errors.checkThat(LocaleHelper.fromString("de_DE"), is(Locale.GERMANY));
         errors.checkThat(LocaleHelper.fromString("de_DE"), is(Locale.GERMANY));

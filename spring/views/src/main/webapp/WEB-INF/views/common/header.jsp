@@ -35,43 +35,43 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<meta http-equiv="Content-Language" content="en" />
-		<meta name="author" content="c.autermann@52north.org" />
-		<meta name="Date-Creation-yyyymmdd" content="20120306" />
-		<meta name="Date-Revision-yyyymmdd" content="20120307" />
-		<link href="<c:url value="/static/images/favicon.ico" />" rel="shortcut icon" type="image/x-icon" />        
-		<link rel="stylesheet" href="<c:url value="/static/css/52n.css" />" type="text/css" />
-		<link rel="stylesheet" href="<c:url value="/static/css/52n.cssmenu.css" />" type="text/css"/>
-		<link rel="stylesheet" href="<c:url value="/static/lib/bootstrap-2.3.1.min.css" />" type="text/css" />
-		<link rel="stylesheet" href="<c:url value="/static/css/application.css" />" type="text/css" />
-		<script type="text/javascript" src="<c:url value="/static/js/arrays.js" />"></script>
-		<script type="text/javascript" src="<c:url value="/static/lib/jquery-1.8.2.min.js" />"></script>
-		<script type="text/javascript" src="<c:url value="/static/lib/bootstrap-2.3.1.min.js" />"></script>
-		<script type="text/javascript" src="<c:url value="/static/js/application.js" />"></script>
-		<title>52&deg;North Sensor Observation Service</title>
-		
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="Content-Language" content="en" />
+        <meta name="author" content="c.autermann@52north.org" />
+        <meta name="Date-Creation-yyyymmdd" content="20120306" />
+        <meta name="Date-Revision-yyyymmdd" content="20120307" />
+        <link href="<c:url value="/static/images/favicon.ico" />" rel="shortcut icon" type="image/x-icon" />        
+        <link rel="stylesheet" href="<c:url value="/static/css/52n.css" />" type="text/css" />
+        <link rel="stylesheet" href="<c:url value="/static/css/52n.cssmenu.css" />" type="text/css"/>
+        <link rel="stylesheet" href="<c:url value="/static/lib/bootstrap-2.3.1.min.css" />" type="text/css" />
+        <link rel="stylesheet" href="<c:url value="/static/css/application.css" />" type="text/css" />
+        <script type="text/javascript" src="<c:url value="/static/js/arrays.js" />"></script>
+        <script type="text/javascript" src="<c:url value="/static/lib/jquery-1.8.2.min.js" />"></script>
+        <script type="text/javascript" src="<c:url value="/static/lib/bootstrap-2.3.1.min.js" />"></script>
+        <script type="text/javascript" src="<c:url value="/static/js/application.js" />"></script>
+        <title>52&deg;North Sensor Observation Service</title>
+        
         <c:if test="${sos:hasInstaller() and not sos:configurated(pageContext.servletContext)}">
             <script type="text/javascript">
-				$(function() { 
-					showMessage('You first have to complete the installation process! Click <a href="<c:url value="/install/index" />"><strong>here</strong></a> to start it.', "error"); 
-				});
-			</script>
-		</c:if>
-	</head>
-	<body>
-		<div id="wrap">
-			<div id="main" class="clearfix">
-				<div id="navigation_h">
-					<div id="wopper" class="wopper">
-						<div id="ja-mainnavwrap">
-							<div id="ja-mainnav">
-								<ul id="ja-cssmenu" class="clearfix">
-									<li>
-										<a id="home-menuitem" class="menu-item0" href="<c:url value="/index" />">
-											<span class="menu-title">Home</span>
-										</a>
+                $(function() { 
+                    showMessage('You first have to complete the installation process! Click <a href="<c:url value="/install/index" />"><strong>here</strong></a> to start it.', "error"); 
+                });
+            </script>
+        </c:if>
+    </head>
+    <body>
+        <div id="wrap">
+            <div id="main" class="clearfix">
+                <div id="navigation_h">
+                    <div id="wopper" class="wopper">
+                        <div id="ja-mainnavwrap">
+                            <div id="ja-mainnav">
+                                <ul id="ja-cssmenu" class="clearfix">
+                                    <li>
+                                        <a id="home-menuitem" class="menu-item0" href="<c:url value="/index" />">
+                                            <span class="menu-title">Home</span>
+                                        </a>
                                     </li>
                                     <c:if test="${sos:hasClient()}">
                                         <li>
@@ -120,7 +120,7 @@
                                                                     <span class="menu-title">Datasource</span>
                                                                 </a>
                                                             </li>
-															<li>
+                                                            <li>
                                                                 <a href="<c:url value="/admin/sensors" />">
                                                                     <span class="menu-title">Procedure Descriptions</span>
                                                                 </a>
@@ -157,19 +157,19 @@
                                         </li>
                                     </c:if>
                                     <sec:authorize access="hasRole('ROLE_ADMIN')">
-										<li style="float: right;">
-											<a id="logout-menuitem" class="menu-item3" href="<c:url value="/j_spring_security_logout" />">
-												<span class="menu-title">Logout</span>
-											</a>
-										</li>
-									</sec:authorize>
-								</ul>                                   
-							</div>
-						</div>
-					</div>
-				</div>
-				<script type="text/javascript">
-					$("#ja-cssmenu li a#${param.activeMenu}-menuitem").addClass("active");
-				</script>
-				<div class="container">
-					<div id="content" class="span12">
+                                        <li style="float: right;">
+                                            <a id="logout-menuitem" class="menu-item3" href="<c:url value="/j_spring_security_logout" />">
+                                                <span class="menu-title">Logout</span>
+                                            </a>
+                                        </li>
+                                    </sec:authorize>
+                                </ul>                                   
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    $("#ja-cssmenu li a#${param.activeMenu}-menuitem").addClass("active");
+                </script>
+                <div class="container">
+                    <div id="content" class="span12">

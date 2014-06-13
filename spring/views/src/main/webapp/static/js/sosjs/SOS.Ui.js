@@ -4212,7 +4212,7 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null &&
         // If app container div doesn't exist, create one on the fly
         if(ac.length < 1) {
           ac = jQuery('<div id="' + this.config.app.id + 'Container" class="sos-app-container"/>');
-          jQuery('body').append(ac);
+          jQuery('#sos-js').append(ac);
         }
 
         // If app menu container div doesn't exist, create one on the fly

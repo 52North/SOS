@@ -95,4 +95,5 @@
 <div onload="initSOSjs()">
     <p>To learn more about the project go to the project page: <a title="sos-js project page" href="https://github.com/52North/sos-js">https://github.com/52North/sos-js</a></p>
 </div>
+<div id="sos-js"></div>
 <jsp:include page="common/footer.jsp" />

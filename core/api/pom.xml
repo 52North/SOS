@@ -26,11 +26,6 @@
 			<artifactId>jts</artifactId>
 		</dependency>
 		<dependency>
-        <groupId>com.neovisionaries</groupId>
-        <artifactId>nv-i18n</artifactId>
-        <version>1.12</version>
-    </dependency>
-		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 		</dependency>

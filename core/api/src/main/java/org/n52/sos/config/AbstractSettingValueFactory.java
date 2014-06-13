@@ -36,23 +36,21 @@ import java.util.Set;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
 import org.n52.sos.config.settings.FileSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
+import org.n52.sos.config.settings.MultilingualStringSettingDefinition;
 import org.n52.sos.config.settings.NumericSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.config.settings.TimeInstantSettingDefinition;
 import org.n52.sos.config.settings.UriSettingDefinition;
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.i18n.LocaleHelper;
 
 import com.google.common.collect.ImmutableSet;
 
-/**
- * Abstract implementation that does everything exept object instantiation.
- * <p/>
- * 
- * @author Christian Autermann <c.autermann@52north.org>
- * @since 4.0.0
- */
+
+
 public abstract class AbstractSettingValueFactory implements SettingValueFactory {
 
     private static final Set<String> VALID_FALSE_VALUES = ImmutableSet.of("false", "no", "off", "0");
@@ -118,7 +116,7 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
             String stringValue) {
         return newUriSettingValue().setValue(parseUri(stringValue)).setKey(setting.getKey());
     }
-    
+
     @Override
     public SettingValue<TimeInstant> newTimeInstantSettingValue(TimeInstantSettingDefinition setting, String stringValue) {
         return newTimeInstantSettingValueFromGenericDefinition(setting, stringValue);
@@ -127,6 +125,15 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     private SettingValue<TimeInstant> newTimeInstantSettingValueFromGenericDefinition(SettingDefinition<?, ?> setting,
             String stringValue) {
         return newTimeInstantSettingValue().setValue(parseTimeInstant(stringValue)).setKey(setting.getKey());
+    }
+
+    @Override
+    public SettingValue<MultilingualString> newMultiLingualStringValue(MultilingualStringSettingDefinition setting, String stringValue) {
+        return newMultiLingualStringSettingValueFromGenericDefinition(setting, stringValue);
+    }
+
+    private SettingValue<MultilingualString> newMultiLingualStringSettingValueFromGenericDefinition(SettingDefinition<?, ?> setting, String stringValue) {
+       return newMultiLingualStringSettingValue().setValue(parseMultilingualString(stringValue)).setKey(setting.getKey());
     }
 
     @Override
@@ -146,6 +153,8 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
             return newUriSettingValueFromGenericDefinition(setting, value);
         case TIMEINSTANT:
             return newTimeInstantSettingValueFromGenericDefinition(setting, value);
+        case MULTILINGUAL_STRING:
+            return newMultiLingualStringSettingValueFromGenericDefinition(setting, value);
         default:
             throw new IllegalArgumentException(String.format("Type %s not supported", setting.getType()));
         }
@@ -154,7 +163,7 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     /**
      * Parses the a string to a {@code Boolean}.
      * <p/>
-     * 
+     *
      * @param stringValue
      *            the string value
      *            <p/>
@@ -180,7 +189,7 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     /**
      * Parses the a string to a {@code File}.
      * <p/>
-     * 
+     *
      * @param stringValue
      *            the string value
      *            <p/>
@@ -196,7 +205,7 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     /**
      * Parses the a string to a {@code Integer}.
      * <p/>
-     * 
+     *
      * @param stringValue
      *            the string value
      *            <p/>
@@ -212,7 +221,7 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     /**
      * Parses the a string to a {@code Double}.
      * <p/>
-     * 
+     *
      * @param stringValue
      *            the string value
      *            <p/>
@@ -228,7 +237,7 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     /**
      * Parses the a string to a {@code URI}.
      * <p/>
-     * 
+     *
      * @param stringValue
      *            the string value
      *            <p/>
@@ -251,7 +260,7 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     /**
      * Parses the a string to a {@code String}.
      * <p/>
-     * 
+     *
      * @param stringValue
      *            the string value
      *            <p/>
@@ -263,11 +272,11 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     protected String parseString(String stringValue) {
         return nullOrEmpty(stringValue) ? null : stringValue;
     }
-    
+
     /**
      * Parses the a string to a {@code String}.
      * <p/>
-     * 
+     *
      * @param stringValue
      *            the string value
      *            <p/>
@@ -285,6 +294,22 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
             } catch (DateTimeParseException e) {
                 throw new IllegalArgumentException(e);
             }
+        }
+    }
+     private MultilingualString parseMultilingualString(String stringValue) {
+        if (nullOrEmpty(stringValue)) {
+            return null;
+        } else {
+            String[] s = stringValue.trim().split("(?<!\\\\)#");
+            MultilingualString ms = new MultilingualString();
+            if ((s.length % 2) == 0) {
+                for (int i = 0; i < s.length; i += 2) {
+                    ms.addLocalization(LocaleHelper.fromString(s[1]), s[i + 1]);
+                }
+            } else {
+                throw new IllegalArgumentException(String.format("Malformed multilingual string: %s", stringValue));
+            }
+            return ms;
         }
     }
 
@@ -317,11 +342,16 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
      * @return a implementation specific instance
      */
     protected abstract SettingValue<Double> newNumericSettingValue();
-    
+
     /**
      * @return a implementation specific instance
      */
     protected abstract SettingValue<TimeInstant> newTimeInstantSettingValue();
+
+    /**
+     * @return a implementation specific instance
+     */
+    protected abstract SettingValue<MultilingualString> newMultiLingualStringSettingValue();
 
     /**
      * @param stringValue
@@ -331,4 +361,6 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     protected boolean nullOrEmpty(String stringValue) {
         return stringValue == null || stringValue.trim().isEmpty();
     }
+
+
 }

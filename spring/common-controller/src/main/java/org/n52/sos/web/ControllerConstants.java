@@ -30,14 +30,14 @@ package org.n52.sos.web;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public interface ControllerConstants {
     String MEDIA_TYPE_APPLICATION_JSON = "application/json; charset=UTF-8";
 
     /**
      * @since 4.0.0
-     * 
+     *
      */
     interface Views {
         String INDEX = "index";
@@ -83,13 +83,13 @@ public interface ControllerConstants {
         String ADMIN_CACHE = "admin/cache";
 
         String ADMIN_SENSOR_DESCRIPTIONS = "admin/sensors";
-        
+
         String ADMIN_CAPABILITIES_SETTINGS = "admin/capabilities";
-        
+
         String ADMIN_I18N = "admin/i18n";
-        
+
         String ADMIN_I18N_SETTINGS = ADMIN_I18N + "/settings";
-        
+
         String ADMIN_RENAME_OBSERVABLE_PROPERTIES = "admin/observableProperties";
 
         String ADMIN_EXTENSIONS = "/admin/extensions";
@@ -97,7 +97,7 @@ public interface ControllerConstants {
 
     /**
      * @since 4.0.0
-     * 
+     *
      */
     interface Paths {
         String ROOT = "/";
@@ -125,7 +125,7 @@ public interface ControllerConstants {
         String ADMIN_SETTINGS_UPDATE = "/admin/settings";
 
         String ADMIN_DATABASE = "/admin/datasource";
-        
+
         String ADMIN_SENSORS_DESCRIPTIONS = "/admin/sensors";
 
         String ADMIN_LIBRARY_LIST = "/admin/libs";
@@ -149,35 +149,39 @@ public interface ControllerConstants {
         String ADMIN_CACHE = "/admin/cache";
 
         String ADMIN_CACHE_SUMMARY = "/admin/cache/summary";
-        
+
         String ADMIN_CACHE_LOADING = "/admin/cache/loading";
-        
-        String ADMIN_CACHE_DUMP = "/admin/cache/dump";        
+
+        String ADMIN_CACHE_DUMP = "/admin/cache/dump";
 
         String ADMIN_RELOAD_CAPABILITIES_CACHE = "/admin/cache/reload";
 
         String ADMIN_DATABASE_UPDATE_SCRIPT = "/admin/datasource/updatescript";
 
-        String ADMIN_DATABASE_REMOVE_TEST_DATA = "/admin/datasource/testdata/remove";
+        String ADMIN_DATABASE_REMOVE_TEST_DATA
+                = "/admin/datasource/testdata/remove";
 
-        String ADMIN_DATABASE_CREATE_TEST_DATA = "/admin/datasource/testdata/create";
+        String ADMIN_DATABASE_CREATE_TEST_DATA
+                = "/admin/datasource/testdata/create";
 
         String ADMIN_DATABASE_CLEAR = "/admin/datasource/clear";
 
-        String ADMIN_DATABASE_DELETE_DELETED_OBSERVATIONS = "/admin/datasource/deleteDeletedObservations";
+        String ADMIN_DATABASE_DELETE_DELETED_OBSERVATIONS
+                = "/admin/datasource/deleteDeletedObservations";
 
-        String ADMIN_RENAME_OBSERVABLE_PROPERTIES = "/admin/observableProperties";
-        
+        String ADMIN_RENAME_OBSERVABLE_PROPERTIES
+                = "/admin/observableProperties";
+
         String ADMIN_RESET = "/admin/reset";
 
         String ADMIN_LOGGING = "/admin/logging";
 
         String ADMIN_LOGGING_FILE_DOWNLOAD = "/admin/logging/file";
-        
+
         String ADMIN_CAPABILITIES_SETTINGS = "/admin/capabilities";
-        
+
         String ADMIN_I18N = "/admin/i18n";
-        
+
         String ADMIN_I18N_SETTINGS = ADMIN_I18N + "/settings";
 
         String INSTALL_ROOT = "/install";
@@ -197,23 +201,23 @@ public interface ControllerConstants {
         String LOGIN = "/login";
 
         String LOGOUT = "/j_spring_security_logout";
-        
-	String OFFERING_EXTENSIONS_AJAX_ENDPOINT = "/admin/capabilities/ajax/offeringExtensions";
-		
-        String CAPABILITIES_EXTENSION_AJAX_ENDPOINT = "/admin/capabilities/ajax/capabilitiesExtensions";
-        
-        String STATIC_CAPABILITIES_AJAX_ENDPOINT = "/admin/capabilities/ajax/staticCapabilities";
-        
+
+        String OFFERING_EXTENSIONS_AJAX_ENDPOINT
+                = "/admin/capabilities/ajax/offeringExtensions";
+
+        String CAPABILITIES_EXTENSION_AJAX_ENDPOINT
+                = "/admin/capabilities/ajax/capabilitiesExtensions";
+
+        String STATIC_CAPABILITIES_AJAX_ENDPOINT
+                = "/admin/capabilities/ajax/staticCapabilities";
+
         String VALIDATION_AJAX_ENDPOINT = "/admin/capabilities/ajax/validation";
-        
+
         String OFFERING_I18N_AJAX_ENDPOINT = "/admin/i18n/ajax/offerings";
-        
         String PROCEDURE_I18N_AJAX_ENDPOINT = "/admin/i18n/ajax/procedures";
-        
-        String FEATURE_I18N_AJAX_ENDPOINT = "/admin/i18n/ajax/featuresOfInterest";
-        
+        String FEATURE_I18N_AJAX_ENDPOINT = "/admin/i18n/ajax/features";
         String OBSERVABLE_PROPERTY_I18N_AJAX_ENDPOINT = "/admin/i18n/ajax/observableProperties";
-        
+
         String SETTINGS_I18N_AJAX_ENDPOINT = "/admin/i18n/ajax/settings";
 
         String ADMIN_EXTENSIONS = "/admin/extensions";

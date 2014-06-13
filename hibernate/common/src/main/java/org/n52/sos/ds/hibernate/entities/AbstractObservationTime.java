@@ -34,38 +34,38 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasPhenomenonTime;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasResultTime;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValidTime;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
 
 /**
  * Abstract class for value time
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
- * 
+ *
  */
-public abstract class AbstractObservationTime extends AbstractIdentifierNameDescriptionEntity implements Serializable, HasDeletedFlag, HasOfferings, HasPhenomenonTime,
-        HasResultTime, HasValidTime, HasObservationId {
+public abstract class AbstractObservationTime
+        extends AbstractIdentifierNameDescriptionEntity
+        implements Serializable,
+                   HasDeletedFlag,
+                   HasOfferings,
+                   HasPhenomenonTime,
+                   HasResultTime,
+                   HasValidTime,
+                   HasObservationId {
 
     private static final long serialVersionUID = 8704397558609682891L;
 
     private long observationId;
-
     private Date phenomenonTimeStart;
-
     private Date phenomenonTimeEnd;
-
     private Date resultTime;
-
     private Date validTimeStart;
-
     private Date validTimeEnd;
-
     private Set<Offering> offerings = new HashSet<Offering>(0);
-
     private boolean deleted;
 
     @Override
@@ -143,7 +143,7 @@ public abstract class AbstractObservationTime extends AbstractIdentifierNameDesc
     public boolean isDeleted() {
         return deleted;
     }
-    
+
     @Override
     public boolean getDeleted() {
         return deleted;
@@ -163,5 +163,4 @@ public abstract class AbstractObservationTime extends AbstractIdentifierNameDesc
             getOfferings().add((Offering) offerings);
         }
     }
-
 }

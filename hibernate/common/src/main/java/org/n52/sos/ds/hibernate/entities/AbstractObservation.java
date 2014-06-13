@@ -32,24 +32,25 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterest
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservablePropertyGetter;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureGetter;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
-import org.n52.sos.util.StringHelper;
 
 /**
  * Abstract Hibernate Observation entity class. Contains the default
  * getter/setter methods and constants for Criteria creation.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
-public abstract class AbstractObservation extends AbstractObservationTime implements HasObservablePropertyGetter,
-        HasProcedureGetter, HasFeatureOfInterestGetter, HasUnit {
+public abstract class AbstractObservation
+        extends AbstractObservationTime
+        implements HasObservablePropertyGetter,
+                   HasProcedureGetter,
+                   HasFeatureOfInterestGetter,
+                   HasUnit {
 
     private static final long serialVersionUID = -5638600640028433573L;
 
     private Unit unit;
 
-
-    
     @Override
     public Unit getUnit() {
         return unit;
@@ -61,219 +62,7 @@ public abstract class AbstractObservation extends AbstractObservationTime implem
     }
 
     @Override
-    public boolean isSetIdentifier() {
-        return getIdentifier() != null && !getIdentifier().isEmpty();
-    }
-
-    @Override
-    public boolean isSetCodespace() {
-        return getCodespace() != null && getCodespace().isSetCodespace();
-    }
-
     public boolean isSetUnit() {
         return getUnit() != null && getUnit().isSetUnit();
     }
-    
-    @Override
-    public boolean isSetDescription() {
-        return StringHelper.isNotEmpty(getDescription());
-    }
-    
-//    public abstract class AbstractObservation implements HasIdentifier, HasDeletedFlag, HasFeatureOfInterestGetter,
-//    HasObservablePropertyGetter, HasProcedureGetter, HasOfferings, HasCodespace, HasUnit {
-//
-//public static final String ID = "observationId";
-//
-//public static final String PHENOMENON_TIME_START = "phenomenonTimeStart";
-//
-//public static final String PHENOMENON_TIME_END = "phenomenonTimeEnd";
-//
-//public static final String VALID_TIME_START = "validTimeStart";
-//
-//public static final String VALID_TIME_END = "validTimeEnd";
-//
-//public static final String RESULT_TIME = "resultTime";
-//
-//public static final String DESCRIPTION = "description";
-//
-//private long observationId;
-//
-//private Date phenomenonTimeStart;
-//
-//private Date phenomenonTimeEnd;
-//
-//private Date resultTime;
-//
-//private String identifier;
-//
-//private Codespace codespace;
-//
-//private String description;
-//
-//private boolean deleted;
-//
-//private Date validTimeStart;
-//
-//private Date validTimeEnd;
-//
-//private Unit unit;
-//
-//private Set<Offering> offerings = new HashSet<Offering>(0);
-//
-///**
-// * Get observation id
-// * 
-// * @return observation id
-// */
-//public long getObservationId() {
-//    return observationId;
-//}
-//
-///**
-// * Set observation id
-// * 
-// * @param observationId
-// *            Observation id to set
-// */
-//public void setObservationId(final long observationId) {
-//    this.observationId = observationId;
-//}
-//
-//@Override
-//public String getIdentifier() {
-//    return identifier;
-//}
-//
-//@Override
-//public AbstractObservation setIdentifier(final String identifier) {
-//    this.identifier = identifier;
-//    return this;
-//}
-//
-//@Override
-//public Codespace getCodespace() {
-//    return codespace;
-//}
-//
-//@Override
-//public void setCodespace(final Codespace codespace) {
-//    this.codespace = codespace;
-//}
-//
-//public String getDescription() {
-//    return description;
-//}
-//
-//public AbstractObservation setDescription(final String description) {
-//    this.description = description;
-//    return this;
-//}
-//
-//public Date getPhenomenonTimeStart() {
-//    return phenomenonTimeStart;
-//}
-//
-//public void setPhenomenonTimeStart(final Date phenomenonTimeStart) {
-//    this.phenomenonTimeStart = phenomenonTimeStart;
-//}
-//
-//public Date getPhenomenonTimeEnd() {
-//    return phenomenonTimeEnd;
-//}
-//
-//public void setPhenomenonTimeEnd(final Date phenomenonTimeEnd) {
-//    this.phenomenonTimeEnd = phenomenonTimeEnd;
-//}
-//
-//public Date getResultTime() {
-//    return resultTime;
-//}
-//
-//public void setResultTime(final Date resultTime) {
-//    this.resultTime = resultTime;
-//}
-//
-//public Date getValidTimeStart() {
-//    return validTimeStart;
-//}
-//
-//public void setValidTimeStart(final Date validTimeStart) {
-//    this.validTimeStart = validTimeStart;
-//}
-//
-//public Date getValidTimeEnd() {
-//    return validTimeEnd;
-//}
-//
-//public void setValidTimeEnd(final Date validTimeEnd) {
-//    this.validTimeEnd = validTimeEnd;
-//}
-//
-//@Override
-//public Unit getUnit() {
-//    return unit;
-//}
-//
-//@Override
-//public void setUnit(final Unit unit) {
-//    this.unit = unit;
-//}
-//
-//@Override
-//public Set<Offering> getOfferings() {
-//    return offerings;
-//}
-//
-//@SuppressWarnings("unchecked")
-//@Override
-//public void setOfferings(final Object offerings) {
-//    if (offerings instanceof Set<?>) {
-//        this.offerings = (Set<Offering>) offerings;
-//    } else {
-//        getOfferings().add((Offering) offerings);
-//    }
-//}
-//
-//@Override
-//public boolean isDeleted() {
-//    return deleted;
-//}
-//
-//@Override
-//public AbstractObservation setDeleted(final boolean deleted) {
-//    this.deleted = deleted;
-//    return this;
-//}
-//
-///**
-// * Is identifier set
-// * 
-// * @return <code>true</code>, if identifier is set
-// */
-//public boolean isSetIdentifier() {
-//    return getIdentifier() != null && !getIdentifier().isEmpty();
-//}
-//
-//@Override
-//public boolean isSetCodespace() {
-//    return getCodespace() != null && getCodespace().isSetCodespace();
-//}
-//
-///**
-// * Is description set
-// * 
-// * @return <code>true</code>, if description is set
-// */
-//public boolean isSetDescription() {
-//    return getDescription() != null && !getDescription().isEmpty();
-//}
-//
-///**
-// * Is unit set
-// * 
-// * @return <code>true</code>, if unit is set
-// */
-//public boolean isSetUnit() {
-//    return getUnit() != null && getUnit().isSetUnit();
-//}
 }

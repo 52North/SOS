@@ -95,7 +95,7 @@ function showMessage(text, type, autoclose) {
 
 function showError(error, autoclose) {
 	if (autoclose === undefined) {
-		autoclose = false; 
+		autoclose = false;
 	}
     showMessage("<strong>Error!</strong> " + error, "error", autoclose);
 }
@@ -193,6 +193,9 @@ function generateSettings(settings, container, tabbed) {
                 $input.attr("checked", setting["default"]);
             }
             break;
+		case "multilingual":
+
+			break;
         }
         return $setting;
     }
@@ -270,7 +273,7 @@ function setSetting(id, val, settings) {
                     } else {
                         $("input[name='" + setting + "']").removeAttr("checked");
                     }
-                    
+
                     break;
                 }
                 return;

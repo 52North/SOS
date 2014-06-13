@@ -67,13 +67,13 @@ public class HibernateDeleteObservationCacheFeederDAO extends DeleteObservationC
 
     @Override
     protected boolean isLastForProcedure(String feature, String procedure) throws OwsExceptionReport {
-        Criteria criteria = DaoFactory.getInstance().getObservationDAO(getConnection()).getObservationInfoCriteriaForFeatureOfInterestAndProcedure(feature, procedure, getConnection());
+        Criteria criteria = DaoFactory.getInstance().getObservationDAO().getObservationInfoCriteriaForFeatureOfInterestAndProcedure(feature, procedure, getConnection());
         return isEmpty(criteria);
     }
 
     @Override
     protected boolean isLastForOffering(String feature, String offering) throws OwsExceptionReport {
-        Criteria criteria = DaoFactory.getInstance().getObservationDAO(getConnection()).getObservationInfoCriteriaForFeatureOfInterestAndOffering(feature, offering, getConnection());
+        Criteria criteria = DaoFactory.getInstance().getObservationDAO().getObservationInfoCriteriaForFeatureOfInterestAndOffering(feature, offering, getConnection());
         return isEmpty(criteria);
     }
 

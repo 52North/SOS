@@ -40,9 +40,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Helper class for Java objects.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public final class JavaHelper {
 
@@ -58,9 +58,9 @@ public final class JavaHelper {
      * Message digest for generating single identifier
      */
     private static MessageDigest messageDigest;
-    
+
     private static Reflections reflections;
-    
+
     /**
      * Instantiation of the message digest
      */
@@ -75,7 +75,7 @@ public final class JavaHelper {
 
     /**
      * Generates a sensor id from description and current time as long.
-     * 
+     *
      * @param message
      *            sensor description
      * @return generated sensor id as hex SHA-1.
@@ -88,7 +88,7 @@ public final class JavaHelper {
 
     /**
      * Transforms byte to hex representation
-     * 
+     *
      * @param b
      *            bytes
      * @return hex
@@ -111,7 +111,7 @@ public final class JavaHelper {
 
     /**
      * return Object value as String
-     * 
+     *
      * @param object
      *            to get as String
      * @return String value
@@ -131,7 +131,7 @@ public final class JavaHelper {
 
     /**
      * return Object value as Double
-     * 
+     *
      * @param object
      *            to get as Double
      * @return Double value
@@ -150,7 +150,7 @@ public final class JavaHelper {
 
     /**
      * return Object value as Integer
-     * 
+     *
      * @param object
      *            to get as Integer
      * @return Integer value
@@ -168,7 +168,7 @@ public final class JavaHelper {
 
     /**
      * return Object value as Boolean
-     * 
+     *
      * @param object
      *            to get as Boolean
      * @return Boolean value
@@ -183,8 +183,8 @@ public final class JavaHelper {
         }
         return null;
     }
-    
-    public static Set<?> getSubclasses(Class<?> clazz) {
+
+    public static <T> Set<Class<? extends T>> getSubclasses(Class<T> clazz) {
         return reflections.getSubTypesOf(clazz);
     }
 

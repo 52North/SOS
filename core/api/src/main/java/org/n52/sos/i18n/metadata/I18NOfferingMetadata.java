@@ -26,37 +26,26 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.i18n;
+package org.n52.sos.i18n.metadata;
+
+import org.n52.sos.i18n.MultilingualString;
 
 /**
  * I18N object class for offering
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
- * 
+ *
  */
-public class I18NOfferingObject extends I18NObject {
+public class I18NOfferingMetadata extends AbstractI18NMetadata {
 
-    /**
-     * constructor
-     * 
-     * @param objectId
-     *            object identifier
-     */
-    public I18NOfferingObject(String objectId) {
-        super(objectId);
+    public I18NOfferingMetadata(String id, MultilingualString name,
+                              MultilingualString description) {
+        super(id, name, description);
     }
 
-    /**
-     * constructor
-     * 
-     * @param objectId
-     *            object identifier
-     * @param i18NLanguageObject
-     *            language object
-     */
-    public I18NOfferingObject(String objectId, I18NLanguageObject i18NLanguageObject) {
-        super(objectId, i18NLanguageObject);
+    public I18NOfferingMetadata(String id) {
+        super(id);
     }
 
 }

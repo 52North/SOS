@@ -29,41 +29,27 @@
 package org.n52.sos.ds;
 
 import java.util.Collection;
+import java.util.Locale;
 
-import org.n52.sos.i18n.I18NObject;
-import org.n52.sos.i18n.request.GetI18NObjectRequest;
-import org.n52.sos.i18n.request.InsertI18NObjectRequest;
+import org.n52.sos.i18n.metadata.AbstractI18NMetadata;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * Interface for the I18N DAOs
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.1.0
- * 
+ * @author Christian Autermann <c.autermann@52north.org>
+ * @since 4.2.0
+ *
  */
-public interface I18NDAO {
-
-    /**
-     * Get I18N data from the datasource
-     * 
-     * @param request
-     *            The Get request
-     * @return Collection with data that match the request
-     * @throws OwsExceptionReport
-     *             If an error occurs when querying the datasource
-     */
-    public Collection<I18NObject> getI18NObjects(GetI18NObjectRequest request) throws OwsExceptionReport;
-
-    /**
-     * Insert I18N data into the datasource
-     * 
-     * @param request
-     *            Insertion request
-     * @throws OwsExceptionReport
-     *             If an error occurs when inserting the data into the
-     *             datasource
-     */
-    public void insertI18NObjects(InsertI18NObjectRequest request) throws OwsExceptionReport;
-
+public interface I18NDAO<T extends AbstractI18NMetadata> {
+    Class<T> getType();
+    boolean isSupported();
+    T getMetadata(String id) throws OwsExceptionReport;
+    T getMetadata(String id, Locale locale) throws OwsExceptionReport;
+    Collection<T> getMetadata() throws OwsExceptionReport;
+    Collection<T> getMetadata(Collection<String> id) throws OwsExceptionReport;
+    Collection<T> getMetadata(Collection<String> id, Locale locale) throws OwsExceptionReport;
+    void saveMetadata(T i18n) throws OwsExceptionReport;
+    Collection<Locale> getAvailableLocales() throws OwsExceptionReport;
 }

@@ -39,11 +39,11 @@ import org.n52.sos.util.StringHelper;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class FeatureOfInterest extends SpatialEntity  implements Serializable, HasFeatureOfInterestType, HasGeometry,
         HasDescriptionXml, HasUrl, HasCoordinate {
-    
+
     private static final long serialVersionUID = 4142090100433622512L;
 
     public static final String ID = "featureOfInterestId";
@@ -53,7 +53,7 @@ public class FeatureOfInterest extends SpatialEntity  implements Serializable, H
     private FeatureOfInterestType featureOfInterestType;
 
     private String url;
-    
+
     public long getFeatureOfInterestId() {
         return this.featureOfInterestId;
     }

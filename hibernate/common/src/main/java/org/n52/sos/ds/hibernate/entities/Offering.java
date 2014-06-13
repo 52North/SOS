@@ -34,17 +34,17 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
-public class Offering extends AbstractIdentifierNameDescriptionEntity implements Serializable,
-        HasDisabledFlag {
+public class Offering extends AbstractIdentifierNameDescriptionEntity
+        implements Serializable, HasDisabledFlag {
 
     private static final long serialVersionUID = 6512574941388917166L;
 
     public static final String ID = "offeringId";
 
     private long offeringId;
-    
+
     private Boolean disabled = false;
 
     public long getOfferingId() {
@@ -54,13 +54,13 @@ public class Offering extends AbstractIdentifierNameDescriptionEntity implements
     public void setOfferingId(long offeringId) {
         this.offeringId = offeringId;
     }
-    
+
     @Override
-    public HasDisabledFlag setDisabled(final boolean disabled) {
+    public Offering setDisabled(final boolean disabled) {
         this.disabled = disabled;
         return this;
     }
-    
+
     @Override
     public boolean getDisabled() {
         return disabled;

@@ -129,6 +129,8 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
+import org.n52.sos.i18n.LocaleHelper;
+import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.ogc.filter.FilterCapabilities;
 import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
@@ -188,10 +190,16 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
             ObjectNode jsi = json.putObject(SERVICE_IDENTIFICATION);
 
             if (si.hasTitle()) {
-                jsi.put(TITLE, si.getTitle());
+                ObjectNode title = jsi.putObject(TITLE);
+                for (LocalizedString ls : si.getTitle()) {
+                    title.put(LocaleHelper.toString(ls.getLang()), ls.getText());
+                }
             }
             if (si.hasAbstract()) {
-                jsi.put(ABSTRACT, si.getAbstract());
+                ObjectNode abstrakt = jsi.putObject(ABSTRACT);
+                for (LocalizedString ls : si.getAbstract()) {
+                    abstrakt.put(LocaleHelper.toString(ls.getLang()), ls.getText());
+                }
             }
             if (si.hasAccessConstraints()) {
                 ArrayNode constraints = jsi.putArray(ACCESS_CONSTRAINTS);

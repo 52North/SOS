@@ -47,6 +47,9 @@ import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
@@ -69,10 +72,9 @@ import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -80,7 +82,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Hibernate data access class for procedure
- * 
+ *
  * @author CarstenHollmann
  * @since 4.0.0
  */
@@ -89,19 +91,19 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureDAO.class);
 
-    private static final String SQL_QUERY_GET_PROCEDURES_FOR_ALL_FEATURES_OF_INTEREST = "getProceduresForAllFeaturesOfInterest";    
-    
+    private static final String SQL_QUERY_GET_PROCEDURES_FOR_ALL_FEATURES_OF_INTEREST = "getProceduresForAllFeaturesOfInterest";
+
     private static final String SQL_QUERY_GET_PROCEDURES_FOR_FEATURE_OF_INTEREST = "getProceduresForFeatureOfInterest";
 
     private static final String SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA = "getProcedureTimeExtrema";
-    
+
     private static final String SQL_QUERY_GET_MIN_DATE_FOR_PROCEDURE = "getMinDate4Procedure";
 
     private static final String SQL_QUERY_GET_MAX_DATE_FOR_PROCEDURE = "getMaxDate4Procedure";
 
     /**
      * Get all procedure objects
-     * 
+     *
      * @param session
      *            Hibernate session
      * @return Procedure objects
@@ -112,7 +114,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         LOGGER.debug("QUERY getProcedureObjects(): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
-    
+
     /**
      * Get map keyed by undeleted procedure identifiers with
      * collections of parent procedures (if supported) as values
@@ -132,8 +134,8 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         criteria.setProjection(projectionList);
         //return as List<Object[]> even if there's only one column for consistency
         criteria.setResultTransformer(NoopTransformerAdapter.INSTANCE);
-        
-        LOGGER.debug("QUERY getProcedureIdentifiers(): {}", HibernateHelper.getSqlString(criteria));        
+
+        LOGGER.debug("QUERY getProcedureIdentifiers(): {}", HibernateHelper.getSqlString(criteria));
         @SuppressWarnings("unchecked")
         List<Object[]> results = criteria.list();
         Map<String,Collection<String>> map = Maps.newHashMap();
@@ -151,10 +153,10 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         }
         return map;
     }
-    
+
     /**
      * Get Procedure object for procedure identifier
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param session
@@ -171,7 +173,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             return (Procedure)criteria.uniqueResult();
         }
         return procedure;
-        
+
     }
 //
 //    private Procedure getProcedureWithLatestValidProcedureDescription(String identifier, Session session) {
@@ -184,7 +186,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     /**
      * Get Procedure object for procedure identifier inclusive deleted procedure
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param session
@@ -201,7 +203,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     /**
      * Get Procedure object for procedure identifier
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param session
@@ -216,7 +218,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     /**
      * Get Procedure objects for procedure identifiers
-     * 
+     *
      * @param identifiers
      *            Procedure identifiers
      * @param session
@@ -235,10 +237,10 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     /**
      * Get procedure identifiers for all FOIs
-     * 
+     *
      * @param session
      *            Hibernate session
-     * 
+     *
      * @return Map of foi identifier to procedure identifier collection
      * @throws CodedException
      */
@@ -271,9 +273,9 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             }
             LOGGER.debug("QUERY getProceduresForAllFeaturesOfInterest(feature): {}", HibernateHelper.getSqlString(c));
             results = c.list();
-        }        
-        
-        Map<String,Collection<String>> foiProcMap = Maps.newHashMap();        
+        }
+
+        Map<String,Collection<String>> foiProcMap = Maps.newHashMap();
         for (Object[] result : results) {
             String foi = (String) result[0];
             String proc = (String) result[1];
@@ -283,24 +285,24 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                 foiProcMap.put(foi, foiProcs);
             }
             foiProcs.add(proc);
-        }        
+        }
         return foiProcMap;
-    }    
-    
+    }
+
     /**
      * Get procedure identifiers for FOI
-     * 
+     *
      * @param session
      *            Hibernate session
      * @param feature
      *            FOI object
-     * 
+     *
      * @return Related procedure identifiers
      * @throws CodedException
      */
     @SuppressWarnings("unchecked")
     public List<String> getProceduresForFeatureOfInterest(final Session session, final FeatureOfInterest feature)
-            throws CodedException {
+            throws OwsExceptionReport {
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_PROCEDURES_FOR_FEATURE_OF_INTEREST, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_PROCEDURES_FOR_FEATURE_OF_INTEREST);
             namedQuery.setParameter(FEATURE, feature.getIdentifier());
@@ -330,7 +332,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     /**
      * Get procedure identifiers for offering identifier
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -341,7 +343,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      */
     @SuppressWarnings("unchecked")
     public List<String> getProcedureIdentifiersForOffering(final String offeringIdentifier, final Session session)
-            throws CodedException {
+            throws OwsExceptionReport {
         final boolean obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class, session);
         Criteria c = null;
 
@@ -374,12 +376,12 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         return session.createCriteria(Procedure.class).add(Restrictions.eq(Procedure.DELETED, false))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
-    
+
     private Criteria getDefaultTProcedureCriteria(Session session) {
         return session.createCriteria(TProcedure.class).add(Restrictions.eq(Procedure.DELETED, false))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
-    
+
     private Criteria getDefaultTProcedureCriteriaIncludeDeleted(Session session) {
         return session.createCriteria(TProcedure.class)
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -387,7 +389,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     /**
      * Get procedure identifiers for observable property identifier
-     * 
+     *
      * @param observablePropertyIdentifier
      *            Observable property identifier
      * @param session
@@ -430,7 +432,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     /**
      * Get transactional procedure object for procedure identifier
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param session
@@ -445,7 +447,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     /**
      * Get transactional procedure object for procedure identifier, include deleted
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param session
@@ -461,7 +463,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     /**
      * Get transactional procedure object for procedure identifier and
      * procedureDescriptionFormat
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param procedureDescriptionFormat
@@ -494,7 +496,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     /**
      * Get transactional procedure object for procedure identifier and
      * procedureDescriptionFormats
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param procedureDescriptionFormats
@@ -516,7 +518,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     /**
      * Get procedure for identifier, possible procedureDescriptionFormats and
      * valid time
-     * 
+     *
      * @param identifier
      *            Identifier of the procedure
      * @param possibleProcedureDescriptionFormats
@@ -555,7 +557,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     }
 
     /**
-     * Hold min and max obs time for procedure 
+     * Hold min and max obs time for procedure
      */
     public class ProcedureTimeExtrema {
         private DateTime minTime;
@@ -580,14 +582,14 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     /**
      * Query procedure time extrema for the provided procedure identifier
-     * 
+     *
      * @param session
      * @param procedureIdentifier
      * @return ProcedureTimeExtrema
      * @throws CodedException
      */
     public ProcedureTimeExtrema getProcedureTimeExtrema(final Session session, String procedureIdentifier)
-            throws CodedException {
+            throws OwsExceptionReport {
         Object[] result;
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA);
@@ -611,11 +613,11 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_START));
             projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_END));
             criteria.setProjection(projectionList);
-    
+
             LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}", HibernateHelper.getSqlString(criteria));
             result = (Object[]) criteria.uniqueResult();
         }
-        
+
         ProcedureTimeExtrema pte = new ProcedureTimeExtrema();
         if (result != null) {
             pte.setMinTime(DateTimeHelper.makeDateTime(result[1]));
@@ -624,11 +626,11 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             pte.setMaxTime(DateTimeHelper.max(maxPhenStart, maxPhenEnd));
         }
         return pte;
-    }    
-    
+    }
+
     /**
      * Get min time from observations for procedure
-     * 
+     *
      * @param procedure
      *            Procedure identifier
      * @param session
@@ -636,7 +638,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @return min time for procedure
      * @throws CodedException
      */
-    public DateTime getMinDate4Procedure(final String procedure, final Session session) throws CodedException {
+    public DateTime getMinDate4Procedure(final String procedure, final Session session) throws OwsExceptionReport {
         Object min = null;
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_MIN_DATE_FOR_PROCEDURE, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_MIN_DATE_FOR_PROCEDURE);
@@ -664,7 +666,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     /**
      * Get max time from observations for procedure
-     * 
+     *
      * @param procedure
      *            Procedure identifier
      * @param session
@@ -672,7 +674,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @return max time for procedure
      * @throws CodedException
      */
-    public DateTime getMaxDate4Procedure(final String procedure, final Session session) throws CodedException {
+    public DateTime getMaxDate4Procedure(final String procedure, final Session session) throws OwsExceptionReport {
         Object maxStart = null;
         Object maxEnd = null;
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_MAX_DATE_FOR_PROCEDURE, session)) {
@@ -722,7 +724,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     /**
      * Insert and get procedure object
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param procedureDecriptionFormat
@@ -756,7 +758,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     /**
      * Get Hibernate Detached Criteria for class Series and featureOfInterest
      * identifier
-     * 
+     *
      * @param featureOfInterest
      *            FeatureOfInterest identifier parameter
      * @param session
@@ -775,7 +777,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     /**
      * Get Hibernate Detached Criteria for class ObservationConstellation and
      * observableProperty identifier
-     * 
+     *
      * @param observablePropertyIdentifier
      *            ObservableProperty identifier parameter
      * @param session
@@ -795,7 +797,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     /**
      * Get Hibernate Detached Criteria for class Series and observableProperty
      * identifier
-     * 
+     *
      * @param observablePropertyIdentifier
      *            ObservableProperty identifier parameter
      * @param session
@@ -815,7 +817,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     /**
      * Get Hibernate Detached Criteria for class ObservationConstellation and
      * offering identifier
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier parameter
      * @param session
@@ -834,7 +836,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     /**
      * Add procedure identifier restriction to Hibernate Criteria for series
-     * 
+     *
      * @param criteria
      *            Hibernate Criteria for series to add restriction
      * @param procedure
@@ -848,7 +850,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     /**
      * Add procedure identifier restriction to Hibernate Criteria
-     * 
+     *
      * @param criteria
      *            Hibernate Criteria to add restriction
      * @param procedure
@@ -892,7 +894,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             //get the latest validProcedureTimes' procedureDescriptionFormats
             return new ValidProcedureTimeDAO().getTProcedureFormatMap(session);
         } else {
-            Criteria criteria = session.createCriteria(Procedure.class);            
+            Criteria criteria = session.createCriteria(Procedure.class);
             criteria.createAlias(Procedure.PROCEDURE_DESCRIPTION_FORMAT, "pdf");
             criteria.setProjection(Projections.projectionList()
                     .add(Projections.property(Procedure.IDENTIFIER))
@@ -904,7 +906,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             Map<String,String> procedureFormatMap = Maps.newTreeMap();
             for (Object[] result : results) {
                 String procedureIdentifier = (String) result[0];
-                String format = (String) result[1];                
+                String format = (String) result[1];
                 procedureFormatMap.put(procedureIdentifier, format);
             }
             return procedureFormatMap;

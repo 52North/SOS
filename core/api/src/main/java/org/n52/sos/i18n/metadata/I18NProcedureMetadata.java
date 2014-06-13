@@ -26,37 +26,76 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.i18n;
+package org.n52.sos.i18n.metadata;
 
-/**
- * I18N object class for procedure
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.1.0
- * 
- */
-public class I18NProcedureObject extends I18NObject {
+import java.util.Locale;
+import java.util.Set;
 
-    /**
-     * constructor
-     * 
-     * @param objectId
-     *            object identifier
-     */
-    public I18NProcedureObject(String objectId) {
-        super(objectId);
+import org.n52.sos.i18n.MultilingualString;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.Sets;
+
+public class I18NProcedureMetadata extends AbstractI18NMetadata {
+    private final MultilingualString shortName;
+    private final MultilingualString longName;
+
+    public I18NProcedureMetadata(String id,
+                               MultilingualString name,
+                               MultilingualString description,
+                               MultilingualString shortName,
+                               MultilingualString longName) {
+        super(id, name, description);
+        this.shortName = newIfNull(shortName);
+        this.longName = newIfNull(longName);
     }
 
-    /**
-     * constructor
-     * 
-     * @param objectId
-     *            object identifier
-     * @param i18NLanguageObject
-     *            language object
-     */
-    public I18NProcedureObject(String objectId, I18NLanguageObject i18NLanguageObject) {
-        super(objectId, i18NLanguageObject);
+    public I18NProcedureMetadata(String id) {
+        this(id, null, null, null, null);
+    }
+
+    public MultilingualString getShortName() {
+        return this.shortName;
+    }
+
+    public MultilingualString getLongName() {
+        return this.longName;
+    }
+
+    @Override
+    public Set<Locale> getLocales() {
+        return Sets.union(getShortName().getLocales(),
+                          Sets.union(getLongName().getLocales(),
+                                     super.getLocales()));
+    }
+
+    @Override
+    public String toString() {
+        return toStringHelper().toString();
+    }
+
+    @Override
+    protected ToStringHelper toStringHelper() {
+        return super.toStringHelper()
+                .add("shortName", getShortName())
+                .add("longName", getLongName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), getShortName(), getLongName());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof I18NProcedureMetadata) {
+            I18NProcedureMetadata that = (I18NProcedureMetadata) o;
+            return super.equals(that) &&
+                   Objects.equal(this.getShortName(), that.getShortName()) &&
+                   Objects.equal(this.getLongName(), that.getLongName());
+        }
+        return false;
     }
 
 }

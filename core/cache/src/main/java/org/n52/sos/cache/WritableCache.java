@@ -30,28 +30,26 @@ package org.n52.sos.cache;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.sos.i18n.LocalizedString;
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.util.CollectionHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.vividsolutions.jts.geom.Envelope;
 
-/**
- * {@code WritableContentCache} that allows the updating of the underlying maps.
- * All basic CRUD operations are supported.
- * 
- * @author Christian Autermann <c.autermann@52north.org>
- * @since 4.0.0
- */
+
 public class WritableCache extends ReadableCache implements WritableContentCache, CacheConstants {
     private static final Logger LOG = LoggerFactory.getLogger(WritableCache.class);
 
@@ -59,10 +57,10 @@ public class WritableCache extends ReadableCache implements WritableContentCache
 
     /**
      * Creates a {@code TimePeriod} for the specified {@code ITime}.
-     * 
+     *
      * @param time
      *            the abstract time
-     * 
+     *
      * @return the period describing the abstract time
      */
     protected static TimePeriod toTimePeriod(final Time time) {
@@ -374,14 +372,14 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         getNameForOfferingsMap().put(offering, name);
 
     }
-    
+
     @Override
-    public void setI18nNameForOffering(String offering, String name, String i18n) {
+    public void setI18nNameForOffering(String offering, String name, Locale i18n) {
         notNullOrEmpty(OFFERING, offering);
         notNullOrEmpty(NAME, name);
-        notNullOrEmpty(I18N, i18n);
+        notNull(I18N, i18n);
         LOG.trace("Setting Name of Offering {} and language {} to {}", offering, i18n, name);
-        Map<String, String> map = null;
+        Map<Locale, String> map = null;
         if (getI18nNameForOfferingsMap().containsKey(offering)) {
             map = getI18nNameForOfferingsMap().get(offering);
         } else {
@@ -389,16 +387,16 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         }
         map.put(i18n, name);
         getI18nNameForOfferingsMap().put(offering, map);
-        
+
     }
 
     @Override
-    public void setI18nDescriptionForOffering(String offering, String description, String i18n) {
+    public void setI18nDescriptionForOffering(String offering, String description, Locale i18n) {
         notNullOrEmpty(OFFERING, offering);
         notNullOrEmpty(DESCRIPTION, description);
-        notNullOrEmpty(I18N, i18n);
+        notNull(I18N, i18n);
         LOG.trace("Setting Description of Offering {} and language {} to {}", offering, i18n, description);
-        Map<String, String> map = null;
+        Map<Locale, String> map = null;
         if (getI18nDescriptionForOfferingsMap().containsKey(offering)) {
             map = getI18nDescriptionForOfferingsMap().get(offering);
         } else {
@@ -406,6 +404,23 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         }
         map.put(i18n, description);
         getI18nDescriptionForOfferingsMap().put(offering, map);
+    }
+
+    @Override
+    public void setI18nNameForOffering(String offering, MultilingualString name) {
+        notNull(DESCRIPTION, name);
+        for (LocalizedString ls : name) {
+            setI18nNameForOffering(offering, ls.getText(), ls.getLang());
+        }
+    }
+
+    @Override
+    public void setI18nDescriptionForOffering(String offering,
+                                              MultilingualString description) {
+        notNull(DESCRIPTION, description);
+        for (LocalizedString ls : description) {
+            setI18nDescriptionForOffering(offering, ls.getText(), ls.getLang());
+        }
     }
 
     @Override
@@ -966,7 +981,7 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         LOG.trace("Setting allowedObservationTypes for offering {} to {}", offering, newValue);
         getAllowedObservationTypesForOfferingsMap().put(offering, newValue);
     }
-    
+
     @Override
     public void setAllowedFeatureOfInterestTypeForOffering(final String offering,
             final Collection<String> allowedFeatureOfInterestType) {
@@ -1345,7 +1360,7 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     public void clearI18nNamesForOfferings() {
         LOG.trace("Clearing i18n names for offerings");
         getI18nNameForOfferingsMap().clear();
-        
+
     }
 
     @Override
@@ -1353,7 +1368,7 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         LOG.trace("Clearing i18n descriptions for offerings");
         getI18nDescriptionForOfferingsMap().clear();
     }
-    
+
     @Override
     public void clearObservablePropertiesForOfferings() {
         LOG.trace("Clearing observable properties for offerings");
@@ -1576,32 +1591,32 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         LOG.trace("Adding AllowedFeatureOfInterestTypes {} to Offering {}", allowedFeatureOfInterestTypes, offering);
         getAllowedFeatureOfInterestTypesForOfferingsMap().addAll(offering, allowedFeatureOfInterestTypes);
     }
-    
+
     @Override
-    public void addSupportedLanguage(String language){
-      notNullOrEmpty(SUPPORTED_LANGUAGE, language);
+    public void addSupportedLanguage(Locale language){
+      notNull(SUPPORTED_LANGUAGE, language);
       LOG.trace("Adding Language {}", language);
       getSupportedLanguageSet().add(language);
     }
-    
+
     @Override
-    public void addSupportedLanguage(Collection<String> languages) {
+    public void addSupportedLanguage(Collection<Locale> languages) {
         noNullValues(SUPPORTED_LANGUAGES, languages);
-      for (final String language : languages) {
+      for (final Locale language : languages) {
           addSupportedLanguage(language);
       }
     }
-    
+
     @Override
     public void clearSupportedLanguage() {
         LOG.trace("Clearing supported languages");
         getSupportedLanguageSet().clear();
     }
-    
+
     @Override
-    public void removeSupportedLanguage(String language) {
+    public void removeSupportedLanguage(Locale language) {
         LOG.trace("Removing Language {}", language);
         getSupportedLanguageSet().remove(language);
     }
-    
+
 }

@@ -28,91 +28,66 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import java.util.List;
-
-import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.i18n.AbstractFeatureI18NDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
-import org.n52.sos.ds.hibernate.entities.i18n.AbstractFeatureI18N;
+import org.n52.sos.ds.hibernate.entities.i18n.AbstractHibernateI18NMetadata;
+import org.n52.sos.i18n.LocaleHelper;
+import org.n52.sos.i18n.LocalizedString;
+import org.n52.sos.i18n.metadata.AbstractI18NMetadata;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeType;
-import org.n52.sos.util.CollectionHelper;
 
 /**
  * Hibernate helper class for I18N support
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.0
- * 
+ *
  */
 public class I18NHibernateHelper {
 
     /**
-     * Query and add language specific values to the abstract feature object
-     * 
-     * @param abstractEntity
-     *            Queried abstract entity with language specific values
-     * @param abstractFeature
-     *            Abstract feature to add language specific values
-     * @param i18n
-     *            Requested language to add values for
-     * @param showAllLanguageValues
-     *            Indicator if all language values should be added
-     * @param session
-     *            Hibernate session
-     * @return <code>true</code>, if language specific values are added
-     */
-    public static boolean getLanguageSpecificData(AbstractIdentifierNameDescriptionEntity abstractEntity,
-            AbstractFeature abstractFeature, String i18n, boolean showAllLanguageValues, Session session) {
-        AbstractFeatureI18NDAO i18ndao = DaoFactory.getInstance().getI18NDAO(abstractEntity, session);
-        if (i18ndao != null) {
-            if (showAllLanguageValues) {
-                List<AbstractFeatureI18N> abstractI18Ns = i18ndao.getObjects(abstractEntity, session);
-                if (CollectionHelper.isNotEmpty(abstractI18Ns)) {
-                    for (AbstractFeatureI18N abstractI18N : abstractI18Ns) {
-                        if (abstractI18N.getCodespace().getCodespace().equals(i18n)) {
-                            addLanguageSpecificDescriptionToFeature(abstractFeature, abstractI18N);
-                        }
-                        addLanguageSpecificNameToFeature(abstractFeature, abstractI18N);
-                    }
-                }
-            } else {
-                AbstractFeatureI18N abstractI18N = i18ndao.getObject(abstractEntity, i18n, session);
-                addLanguageSpecificNameToFeature(abstractFeature, abstractI18N);
-                addLanguageSpecificDescriptionToFeature(abstractFeature, abstractI18N);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Add name to abstract feature
-     * 
+     *
      * @param abstractFeature
      *            Abstract feature to add name
      * @param abstractI18N
      *            I18N with language specific values
      */
-    public static void addLanguageSpecificNameToFeature(AbstractFeature abstractFeature, AbstractFeatureI18N abstractI18N) {
+    public static void addLanguageSpecificNameToFeature(
+            AbstractFeature abstractFeature, AbstractHibernateI18NMetadata abstractI18N) {
         if (abstractI18N != null && abstractI18N.isSetName()) {
-            CodeType codeType = new CodeType(abstractI18N.getName());
-            codeType.setCodeSpace(abstractI18N.getCodespace().getCodespace());
-            abstractFeature.addName(codeType);
+            //FIXME autermann: create a setting to control in which format the locale is outputted
+            String locale = abstractI18N.getLocale().getISO3Language();
+            abstractFeature.addName(new CodeType(abstractI18N.getName(), locale));
+        }
+    }
+    /**
+     * Add names to abstract feature
+     *
+     * @param abstractFeature
+     *            Abstract feature to add name
+     * @param i18n
+     *            I18N with language specific values
+     */
+    public static void addLanguageSpecificNameToFeature(
+            AbstractFeature abstractFeature, AbstractI18NMetadata i18n) {
+        if (i18n != null) {
+            for (LocalizedString name : i18n.getName()) {
+                //FIXME autermann: create a setting to control in which format the locale is outputted
+                abstractFeature.addName(new CodeType(name.getText(), LocaleHelper.toString(name.getLang())));
+            }
         }
     }
 
     /**
      * Add description to abstract feature
-     * 
+     *
      * @param abstractFeature
      *            Abstract feature to add description
      * @param abstractI18N
      *            I18N with language specific values
      */
     public static void addLanguageSpecificDescriptionToFeature(AbstractFeature abstractFeature,
-            AbstractFeatureI18N abstractI18N) {
+            AbstractHibernateI18NMetadata abstractI18N) {
         if (abstractI18N != null && abstractI18N.isSetDescription()) {
             abstractFeature.setDescription(abstractI18N.getDescription());
         }

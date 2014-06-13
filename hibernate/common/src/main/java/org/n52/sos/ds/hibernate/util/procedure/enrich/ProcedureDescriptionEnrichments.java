@@ -28,16 +28,17 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
+import java.util.Locale;
 import java.util.Map;
 
 import org.hibernate.Session;
+
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.StringHelper;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -56,7 +57,7 @@ public class ProcedureDescriptionEnrichments {
     private Session session;
     private HibernateProcedureConverter converter;
     private TimePeriod validTime;
-    private String language = ServiceConfiguration.getInstance().getDefaultLanguage();
+    private Locale language = ServiceConfiguration.getInstance().getDefaultLanguage();
 
     private ProcedureDescriptionEnrichments() {
     }
@@ -105,9 +106,9 @@ public class ProcedureDescriptionEnrichments {
         this.validTime = validTime;
         return this;
     }
-    
-    public ProcedureDescriptionEnrichments setLanguage(String language) {
-        if (StringHelper.isNotEmpty(language)) {
+
+    public ProcedureDescriptionEnrichments setLanguage(Locale language) {
+        if (language != null) {
             this.language = language;
         }
         return this;
@@ -183,7 +184,7 @@ public class ProcedureDescriptionEnrichments {
         enrichment.setDescription(description)
                 .setIdentifier(identifier)
                 .setVersion(version)
-                .setI18n(language)
+                .setLocale(language)
                 .setSession(session);
         return enrichment;
     }

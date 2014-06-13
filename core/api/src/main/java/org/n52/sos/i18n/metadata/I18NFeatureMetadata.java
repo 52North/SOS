@@ -26,36 +26,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.i18n;
+package org.n52.sos.i18n.metadata;
 
-/**
- * I18N object class for featureOfInterest
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.1.0
- * 
- */
-public class I18NFeatureObject extends I18NObject {
+import org.n52.sos.i18n.MultilingualString;
 
-    /**
-     * constructor
-     * 
-     * @param objectId
-     *            object identifier
-     */
-    public I18NFeatureObject(String objectId) {
-        super(objectId);
+public class I18NFeatureMetadata extends AbstractI18NMetadata {
+
+    public I18NFeatureMetadata(String id, MultilingualString name,
+                             MultilingualString description) {
+        super(id, name, description);
     }
 
-    /**
-     * constructor
-     * 
-     * @param objectId
-     *            object identifier
-     * @param i18NLanguageObject
-     *            language object
-     */
-    public I18NFeatureObject(String objectId, I18NLanguageObject i18NLanguageObject) {
-        super(objectId, i18NLanguageObject);
+    public I18NFeatureMetadata(String id) {
+        super(id);
     }
+
 }

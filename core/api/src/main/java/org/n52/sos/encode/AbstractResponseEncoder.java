@@ -37,6 +37,9 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.coding.OperationKey;
 import org.n52.sos.encode.streaming.StreamingEncoder;
@@ -51,8 +54,6 @@ import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.util.http.MediaTypes;
 import org.n52.sos.w3c.SchemaLocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
@@ -60,11 +61,11 @@ import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @param <T>
  *            the response type
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse> extends AbstractXmlEncoder<T>
@@ -85,7 +86,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
 
     /**
      * constructor
-     * 
+     *
      * @param service
      *            Service
      * @param version
@@ -117,7 +118,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
 
     /**
      * constructor
-     * 
+     *
      * @param service
      *            Service
      * @param version
@@ -215,7 +216,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
     /**
      * Get the concrete schema locations for this
      * {@link AbstractServiceResponse} encoder
-     * 
+     *
      * @return the concrete schema locations
      */
     protected abstract Set<SchemaLocation> getConcreteSchemaLocations();
@@ -223,7 +224,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
     /**
      * Create an {@link XmlObject} from the {@link AbstractServiceResponse}
      * object
-     * 
+     *
      * @param response
      *            {@link AbstractServiceResponse} to encode
      * @return XML encoded {@link AbstractServiceResponse}
@@ -235,7 +236,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
     /**
      * Override this method in concrete response encoder if streaming is
      * supported for this operations.
-     * 
+     *
      * @param response
      *            Implementation of {@link AbstractServiceResponse}
      * @param outputStream
@@ -253,7 +254,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
                 xmlOptions.setSaveNoXmlDecl();
             }
             writeIndent(encodingValues.getIndent(), outputStream);
-            XmlObject xmlObject = (XmlObject) create(response);
+            XmlObject xmlObject = create(response);
             setSchemaLocations(xmlObject);
             xmlObject.save(outputStream, xmlOptions);
         } catch (IOException ioe) {
@@ -267,7 +268,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
 
     /**
      * Write indent to stream if the response is encoded with XmlBeans
-     * 
+     *
      * @param level
      *            Level of indent
      * @param outputStream

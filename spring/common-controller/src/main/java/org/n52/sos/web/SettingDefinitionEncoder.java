@@ -39,19 +39,21 @@ import java.util.Set;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionGroup;
 import org.n52.sos.config.SettingType;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.ds.Datasource;
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.util.DateTimeHelper;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 /*
@@ -131,12 +133,14 @@ public class SettingDefinitionEncoder {
         case STRING:
         case URI:
             return JSONConstants.STRING_TYPE;
+        case MULTILINGUAL_STRING:
+            return JSONConstants.MULTILINGUAL_TYPE;
         default:
             throw new IllegalArgumentException(String.format("Unknown Type %s", def.getType()));
         }
     }
 
-    private Object encodeValue(SettingDefinition def) {
+    private Object encodeValue(SettingDefinition def) throws JSONException {
         switch (def.getType()) {
         case TIMEINSTANT:
             return DateTimeHelper.format((TimeInstant)def.getDefaultValue());
@@ -148,6 +152,8 @@ public class SettingDefinitionEncoder {
         case NUMERIC:
         case STRING:
             return def.getDefaultValue();
+        case MULTILINGUAL_STRING:
+            return new I18NJsonEncoder().encodeMultilingualString((MultilingualString) def.getDefaultValue());
         default:
             throw new IllegalArgumentException(String.format("Unknown Type %s", def.getType()));
         }

@@ -44,7 +44,10 @@ import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.web.ControllerConstants;
 import org.n52.sos.web.install.InstallConstants.Step;
 
-
+/**
+ * @since 4.0.0
+ *
+ */
 @Controller
 @RequestMapping(ControllerConstants.Paths.INSTALL_SETTINGS)
 public class InstallSettingsController extends AbstractProcessingInstallationController {

@@ -40,8 +40,8 @@ import org.n52.sos.encode.ProcedureDescriptionFormatKey;
 import org.n52.sos.encode.ResponseFormatKey;
 import org.n52.sos.exception.NoSuchExtensionException;
 import org.n52.sos.exception.NoSuchOfferingException;
-import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.ows.OfferingExtension;
 import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesKey;
 import org.n52.sos.ogc.ows.StaticCapabilities;
@@ -51,7 +51,7 @@ import org.n52.sos.request.operator.RequestOperatorKey;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SettingsManagerForTesting extends AbstractSettingsManager {
 
@@ -93,7 +93,7 @@ public class SettingsManagerForTesting extends AbstractSettingsManager {
 
     }
 
-    
+
     @Override
     @Deprecated
     protected void setProcedureDescriptionFormatStatus(String pdf, boolean active) throws ConnectionProviderException {
@@ -111,14 +111,14 @@ public class SettingsManagerForTesting extends AbstractSettingsManager {
     protected void setOfferingExtensionStatus(OfferingExtensionKey oek, boolean active)
             throws ConnectionProviderException {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     protected void setOwsExtendedCapabilitiesStatus(OwsExtendedCapabilitiesKey oeck, boolean active)
             throws ConnectionProviderException {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -229,10 +229,15 @@ public class SettingsManagerForTesting extends AbstractSettingsManager {
         protected SettingValue<Double> newNumericSettingValue() {
             return new NumericSettingValueForTesting();
         }
-        
+
         @Override
         protected SettingValue<TimeInstant> newTimeInstantSettingValue() {
             return new TimeInstantSettingValueForTesting();
+        }
+
+        @Override
+        protected SettingValue<MultilingualString> newMultiLingualStringSettingValue() {
+            return new MultilingualStringValueForTestin();
         }
     }
 
@@ -265,7 +270,7 @@ public class SettingsManagerForTesting extends AbstractSettingsManager {
 	public void saveOfferingExtension(String offering, String identifier,
 			String value) throws NoSuchOfferingException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -273,14 +278,14 @@ public class SettingsManagerForTesting extends AbstractSettingsManager {
 			boolean disabled) throws NoSuchExtensionException,
 			NoSuchOfferingException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void deleteOfferingExtension(String offering, String identifier)
 			throws NoSuchOfferingException, NoSuchExtensionException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -298,28 +303,28 @@ public class SettingsManagerForTesting extends AbstractSettingsManager {
 	@Override
 	public void saveCapabilitiesExtension(String identifier, String value) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void disableCapabilitiesExtension(String identifier, boolean disabled)
 			throws NoSuchExtensionException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void deleteCapabiltiesExtension(String identfier)
 			throws NoSuchExtensionException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setActiveStaticCapabilities(String identifier)
 			throws NoSuchExtensionException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -355,14 +360,14 @@ public class SettingsManagerForTesting extends AbstractSettingsManager {
 	@Override
 	public void saveStaticCapabilities(String identifier, String document) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void deleteStaticCapabilities(String identifier)
 			throws NoSuchExtensionException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

@@ -59,6 +59,7 @@ import org.n52.sos.ds.Datasource;
 import org.n52.sos.ds.DatasourceCallback;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.type.UtcTimestampType;
+import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
 import org.n52.sos.exception.ConfigurationException;
 
 /**
@@ -211,6 +212,7 @@ public class SessionFactoryProvider extends AbstractSessionFactoryProvider imple
             this.sessionFactory = configuration.buildSessionFactory(serviceRegistry);
             Session s = this.sessionFactory.openSession();
             try {
+                HibernateMetadataCache.init(s);
                 s.doWork(new Work() {
                     @Override
                     public void execute(Connection connection)

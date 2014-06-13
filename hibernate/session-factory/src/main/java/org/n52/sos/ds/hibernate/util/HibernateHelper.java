@@ -107,21 +107,30 @@ public final class HibernateHelper {
         return qt.getSQLString();
     }
 
+    /**
+     * Checks if the specified entity is supported.
+     *
+     * @param clazz   the class
+     * @param session the session
+     *
+     * @return if the entity supported
+     *
+     * @deprecated use {@link #isEntitySupported(java.lang.Class) }
+     */
+    @Deprecated
     public static boolean isEntitySupported(Class<?> clazz, Session session) {
-        if (session.getSessionFactory() != null) {
-            return session.getSessionFactory().getAllClassMetadata().containsKey(clazz.getName());
-        }
-        return false;
+        return isEntitySupported(clazz);
+    }
+
+    public static boolean isEntitySupported(Class<?> clazz) {
+        return HibernateMetadataCache.getInstance().isEntitySupported(clazz);
     }
 
     public static boolean isNamedQuerySupported(String namedQuery, Session session) {
         NamedQueryDefinition namedQueryDef = ((SessionImpl) session).getSessionFactory().getNamedQuery(namedQuery);
         NamedSQLQueryDefinition namedSQLQueryDef =
                 ((SessionImpl) session).getSessionFactory().getNamedSQLQuery(namedQuery);
-        if (namedQueryDef == null && namedSQLQueryDef == null) {
-            return false;
-        }
-        return true;
+        return namedQueryDef != null || namedSQLQueryDef != null;
     }
 
     public static Dialect getDialect(Session session) {

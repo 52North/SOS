@@ -28,17 +28,27 @@
  */
 package org.n52.sos.ogc.ows;
 
-import static org.n52.sos.ogc.ows.SosServiceIdentificationFactorySettings.*;
+import static org.n52.sos.ogc.ows.SosServiceIdentificationFactorySettings.ABSTRACT;
+import static org.n52.sos.ogc.ows.SosServiceIdentificationFactorySettings.ACCESS_CONSTRAINTS;
+import static org.n52.sos.ogc.ows.SosServiceIdentificationFactorySettings.FEES;
+import static org.n52.sos.ogc.ows.SosServiceIdentificationFactorySettings.FILE;
+import static org.n52.sos.ogc.ows.SosServiceIdentificationFactorySettings.KEYWORDS;
+import static org.n52.sos.ogc.ows.SosServiceIdentificationFactorySettings.SERVICE_TYPE;
+import static org.n52.sos.ogc.ows.SosServiceIdentificationFactorySettings.SERVICE_TYPE_CODE_SPACE;
+import static org.n52.sos.ogc.ows.SosServiceIdentificationFactorySettings.TITLE;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Map;
+import java.util.Collections;
+import java.util.Locale;
 import java.util.Set;
 
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.i18n.LocaleHelper;
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.util.LazyThreadSafeProducer;
@@ -46,42 +56,24 @@ import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.Validation;
 import org.n52.sos.util.XmlHelper;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-/**
- * @author Christian Autermann <c.autermann@52north.org>
- * 
- * @since 4.0.0
- */
 @Configurable
 public class SosServiceIdentificationFactory extends LazyThreadSafeProducer<SosServiceIdentification> {
 
     private File file;
-
     private String[] keywords;
-
-    private Map<String, Set<String>> languageTitleMap = Maps.newHashMap();
-
-    private Map<String, Set<String>> languageAbstractMap = Maps.newHashMap();
-
+    private MultilingualString title;
+    private MultilingualString abstrakt;
     private String serviceType;
-
     private String serviceTypeCodeSpace;
-
     private String fees;
-
     private String[] constraints;
-    
-    private String defaultLanguage;
-    
-    private String defaultTitle;
-    
-    private String defaultAbstract;
-    
-    public SosServiceIdentificationFactory() throws ConfigurationException {
+
+    public SosServiceIdentificationFactory()
+            throws ConfigurationException {
         SettingsManager.getInstance().configure(this);
-   }
+    }
 
     @Setting(FILE)
     public void setFile(File file) {
@@ -90,87 +82,56 @@ public class SosServiceIdentificationFactory extends LazyThreadSafeProducer<SosS
     }
 
     public void setKeywords(String[] keywords) {
-        this.keywords = keywords == null ? new String[0] : Arrays.copyOf(keywords, keywords.length);
+        this.keywords = copyOf(keywords);
         setRecreate();
     }
 
     @Setting(KEYWORDS)
     public void setKeywords(String keywords) {
         setKeywords(StringHelper.splitToArray(keywords));
-//        if (keywords != null) {
-//            String[] keywordArray = keywords.split(",");
-//            ArrayList<String> keywordList = new ArrayList<String>(keywordArray.length);
-//            for (String s : keywordArray) {
-//                if (s != null && !s.trim().isEmpty()) {
-//                    keywordList.add(s.trim());
-//                }
-//            }
-//            setKeywords(keywordList.toArray(new String[keywordList.size()]));
-//        } else {
-//            setKeywords(new String[0]);
-//        }
-    }
-    
-    @Setting(ABTRACT_TITLE_LANGUAGE)
-    public void setDefaultLanguage(String defaultLanguage) {
-        Validation.notNullOrEmpty("Defualt language as three character string", defaultLanguage);
-        this.defaultLanguage = defaultLanguage;
-        if (StringHelper.isNotEmpty(defaultTitle)) {
-            addToMap(languageTitleMap, defaultLanguage, defaultTitle);
-        }
-        if (StringHelper.isNotEmpty(defaultAbstract)) {
-            addToMap(languageAbstractMap, defaultLanguage, defaultAbstract);
-        }
-    }
-    
-    private boolean isSetDefaultLanguage() {
-        return StringHelper.isNotEmpty(defaultLanguage);
     }
 
     @Setting(TITLE)
-    public void setTitle(String title) throws ConfigurationException {
-        Validation.notNullOrEmpty("Service Identification Title", title);
-        if (isSetDefaultLanguage()) {
-            addLanguageTitle(defaultLanguage, title);
-        } else {
-            defaultTitle = title;
-        }
+    public void setTitle(MultilingualString title)
+            throws ConfigurationException {
+        Validation.notNull("Service Identification Title", title);
+        this.title = title;
         setRecreate();
     }
 
     @Setting(ABSTRACT)
-    public void setAbstract(String description) throws ConfigurationException {
-        Validation.notNullOrEmpty("Service Identification Abstract", description);
-        if (isSetDefaultLanguage()) {
-            addLanguageAbstract(defaultLanguage, description);
-        } else {
-            defaultAbstract = description;
-        }
+    public void setAbstract(MultilingualString description)
+            throws ConfigurationException {
+        Validation.notNull("Service Identification Abstract", description);
+        this.abstrakt = description;
         setRecreate();
     }
 
     @Setting(SERVICE_TYPE)
-    public void setServiceType(String serviceType) throws ConfigurationException {
+    public void setServiceType(String serviceType)
+            throws ConfigurationException {
         Validation.notNullOrEmpty("Service Identification Service Type", serviceType);
         this.serviceType = serviceType;
         setRecreate();
     }
 
     @Setting(SERVICE_TYPE_CODE_SPACE)
-    public void setServiceTypeCodeSpace(String serviceTypeCodeSpace) throws ConfigurationException {
+    public void setServiceTypeCodeSpace(String serviceTypeCodeSpace)
+            throws ConfigurationException {
         this.serviceTypeCodeSpace = serviceTypeCodeSpace;
         setRecreate();
     }
 
     @Setting(FEES)
-    public void setFees(String fees) throws ConfigurationException {
+    public void setFees(String fees)
+            throws ConfigurationException {
 //        Validation.notNullOrEmpty("Service Identification Fees", fees);
         this.fees = fees;
         setRecreate();
     }
 
     public void setConstraints(String[] constraints) {
-        this.constraints = constraints == null ? new String[0] : Arrays.copyOf(constraints, constraints.length);
+        this.constraints = copyOf(constraints);
         setRecreate();
     }
 
@@ -178,103 +139,72 @@ public class SosServiceIdentificationFactory extends LazyThreadSafeProducer<SosS
     public void setConstraints(String constraints) {
         setConstraints(StringHelper.splitToArray(constraints));
     }
-    
-    public void setLanguageTitle(Map<String, Set<String>> languageTitleMap) {
-        this.languageTitleMap = languageTitleMap;
-    }
-    
-    public void setLanguageTitle(String language, Set<String> titles) {
-        this.languageTitleMap.put(language, titles);
-    }
-    
-    public void addLanguageTitle(String language, Set<String> titles) {
-        addToMap(languageTitleMap, language, titles);
-    }
-    
-    public void addLanguageTitle(String language, String title) {
-        addToMap(languageTitleMap, language, title);
-    }
-    
-    public void setLanguageAbstract(Map<String, Set<String>> languageAbstractMap) {
-        this.languageAbstractMap = languageAbstractMap;
-    }
-    
-    public void setLanguageAbstract(String language, Set<String> abstrakts) {
-        this.languageAbstractMap.put(language, abstrakts);
-    }
-    
-    public void addLanguageAbstract(String language, Set<String> abstrakts) {
-        addToMap(languageAbstractMap, language, abstrakts);
-    }
-    
-    public void addLanguageAbstract(String language, String abstrakt) {
-        addToMap(languageAbstractMap, language, abstrakt);
-    }
-    
-   private void addToMap(Map<String, Set<String>> map, String key, Set<String> values) {
-        if (map.containsKey(key)) {
-            map.get(key).addAll(values);
-        } else {
-            map.put(key, values);
-        }
-    }
-    
-   private void addToMap(Map<String, Set<String>> map, String key, String value) {
-        if (map.containsKey(key)) {
-            map.get(key).add(value);
-        } else {
-            map.put(key, Sets.newHashSet(value));
-        }
-    }
-    
+
     @Override
-    protected SosServiceIdentification create() throws ConfigurationException {
-        SosServiceIdentification serviceIdentification = new SosServiceIdentification();
+    protected SosServiceIdentification create(Locale language)
+            throws ConfigurationException {
         if (this.file != null) {
-            try {
-                serviceIdentification.setServiceIdentification(XmlHelper.loadXmlDocumentFromFile(this.file));
-            } catch (OwsExceptionReport ex) {
-                throw new ConfigurationException(ex);
-            }
+            return createFromFile();
         } else {
-            addTitlesToServiceIdentification(serviceIdentification, defaultLanguage);
-            addAbstractsToServiceIdentification(serviceIdentification, defaultLanguage);
+            return createFromSettings(language);
+        }
+    }
+
+    private SosServiceIdentification createFromSettings(Locale locale) {
+        SosServiceIdentification serviceIdentification
+                = new SosServiceIdentification();
+        if (this.title != null) {
+            serviceIdentification.setTitle(LocaleHelper.filter(this.title, locale));
+        }
+        if (this.abstrakt != null) {
+            serviceIdentification.setAbstract(LocaleHelper.filter(this.abstrakt, locale));
+        }
+        if (this.constraints != null) {
             serviceIdentification.setAccessConstraints(Arrays.asList(this.constraints));
-            serviceIdentification.setFees(this.fees);
-            serviceIdentification.setServiceType(this.serviceType);
-            serviceIdentification.setServiceTypeCodeSpace(this.serviceTypeCodeSpace);
-            serviceIdentification.setVersions(ServiceOperatorRepository.getInstance().getSupportedVersions(
-                    SosConstants.SOS));
+        }
+        serviceIdentification.setFees(this.fees);
+        serviceIdentification.setServiceType(this.serviceType);
+        serviceIdentification.setServiceTypeCodeSpace(this.serviceTypeCodeSpace);
+        Set<String> supportedVersions = ServiceOperatorRepository
+                .getInstance().getSupportedVersions(SosConstants.SOS);
+        serviceIdentification.setVersions(supportedVersions);
+        if (this.keywords != null) {
             serviceIdentification.setKeywords(Arrays.asList(this.keywords));
         }
         return serviceIdentification;
     }
 
-    @Override
-    protected SosServiceIdentification create(String language) throws ConfigurationException {
-        SosServiceIdentification serviceIdentification = create();
-        if (!defaultLanguage.equals(language)) {
-            addTitlesToServiceIdentification(serviceIdentification, language);
-            addAbstractsToServiceIdentification(serviceIdentification, language);
+    private SosServiceIdentification createFromFile()
+            throws ConfigurationException {
+        try {
+            SosServiceIdentification serviceIdentification
+                    = new SosServiceIdentification();
+            serviceIdentification.setServiceIdentification(XmlHelper
+                    .loadXmlDocumentFromFile(this.file));
+            return serviceIdentification;
+        } catch (OwsExceptionReport ex) {
+            throw new ConfigurationException(ex);
         }
-        return serviceIdentification;
     }
-    
-    private void addTitlesToServiceIdentification(SosServiceIdentification serviceIdentification, String language) {
-        if (languageTitleMap.containsKey(language)) {
-            serviceIdentification.clearTitles();
-            for (String title : languageTitleMap.get(language)) {
-                serviceIdentification.addTitle(new OwsLanguageString(title, language));
+
+    public Set<Locale> getAvailableLocales() {
+        if (this.title == null) {
+            if (this.abstrakt == null) {
+                return Collections.emptySet();
+            } else {
+                return this.abstrakt.getLocales();
+            }
+        } else {
+            if (this.abstrakt == null) {
+                return this.title.getLocales();
+            } else {
+                return Sets.union(this.title.getLocales(),
+                                  this.abstrakt.getLocales());
             }
         }
     }
-    
-    private void addAbstractsToServiceIdentification(SosServiceIdentification serviceIdentification, String language) {
-        if (languageAbstractMap.containsKey(language)) {
-            serviceIdentification.clearAbstracts();
-            for (String abstrakt : languageAbstractMap.get(language)) {
-                serviceIdentification.addAbstract(new OwsLanguageString(abstrakt, language));
-            }
-        }
+
+    private static String[] copyOf(String[] a) {
+        return a == null ? new String[0] : Arrays.copyOf(a, a.length);
     }
 }

@@ -335,7 +335,7 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      * @return if there is no observation with the specified dbFeature and
      *         offering
      */
-    protected abstract boolean isLastForOffering(String feature, String offering) throws CodedException;
+    protected abstract boolean isLastForOffering(String feature, String offering) throws OwsExceptionReport;
 
     /**
      * Check if there is no observation with the specified dbProcedure/feature

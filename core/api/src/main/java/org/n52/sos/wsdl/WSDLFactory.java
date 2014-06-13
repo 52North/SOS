@@ -29,6 +29,7 @@
 package org.n52.sos.wsdl;
 
 import java.net.URI;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,9 +48,9 @@ import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.Producer;
 
 /**
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class WSDLFactory implements Producer<String> {
@@ -63,7 +64,7 @@ public class WSDLFactory implements Producer<String> {
     }
 
     @Override
-    public String get(String language) {
+    public String get(Locale language) {
         // No language support
         return get();
     }

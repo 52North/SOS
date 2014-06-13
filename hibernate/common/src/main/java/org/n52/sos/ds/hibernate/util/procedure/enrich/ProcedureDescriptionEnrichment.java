@@ -31,8 +31,10 @@ package org.n52.sos.ds.hibernate.util.procedure.enrich;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
+import java.util.Locale;
 
 import org.hibernate.Session;
+
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosOffering;
@@ -41,7 +43,6 @@ import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.I18NHelper;
-import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
@@ -56,7 +57,7 @@ public abstract class ProcedureDescriptionEnrichment {
     private SosProcedureDescription description;
     private String version;
     private String identifier;
-    private String i18n = ServiceConfiguration.getInstance().getDefaultLanguage();
+    private Locale locale = ServiceConfiguration.getInstance().getDefaultLanguage();
     private Session session;
 
     protected ProcedureDescriptionSettings procedureSettings() {
@@ -75,15 +76,15 @@ public abstract class ProcedureDescriptionEnrichment {
         for (String offering : identifiers) {
             SosOffering sosOffering = new SosOffering(offering, false);
             // add offering name
-            I18NHelper.addOfferingNames(sosOffering, getI18N());
+            I18NHelper.addOfferingNames(sosOffering, getLocale());
             // add offering description
-            I18NHelper.addOfferingDescription(sosOffering, getI18N());
+            I18NHelper.addOfferingDescription(sosOffering, getLocale());
             // add to list
             offerings.add(sosOffering);
         }
         return offerings;
     }
-    
+
     public SosProcedureDescription getDescription() {
         return description;
     }
@@ -110,25 +111,25 @@ public abstract class ProcedureDescriptionEnrichment {
         this.identifier = checkNotNull(identifier);
         return this;
     }
-    
-    public String getI18N() {
-        return i18n;
+
+    public Locale getLocale() {
+        return locale;
     }
-    
-    public boolean isSetI18N() {
-        return StringHelper.isNotEmpty(getI18N());
+
+    public boolean isSetLocale() {
+        return getLocale() != null;
     }
-    
-    public ProcedureDescriptionEnrichment setI18n(String i18n) {
-        this.i18n = i18n;
+
+    public ProcedureDescriptionEnrichment setLocale(Locale locale) {
+        this.locale = locale;
         return this;
     }
-    
+
     public ProcedureDescriptionEnrichment setSession(Session session) {
         this.session = checkNotNull(session);
         return this;
     }
-    
+
     public Session getSession() {
         return session;
     }

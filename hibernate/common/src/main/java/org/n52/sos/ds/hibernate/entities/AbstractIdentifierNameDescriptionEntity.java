@@ -41,43 +41,46 @@ import org.n52.sos.util.StringHelper;
  * @since 4.0.0
  *
  */
-public abstract class AbstractIdentifierNameDescriptionEntity implements Serializable, HasIdentifier, HasCodespace, HasName, HasCodespaceName, HasDescription {
+public abstract class AbstractIdentifierNameDescriptionEntity
+        implements Serializable,
+                   HasIdentifier,
+                   HasCodespace,
+                   HasName,
+                   HasCodespaceName,
+                   HasDescription {
 
     private static final long serialVersionUID = -5784528065957127968L;
-
     private String identifier;
-    
     private Codespace codespace;
-
     private String name;
-    
     private Codespace codespaceName;
-    
     private String decription;
-    
+
     @Override
     public String getIdentifier() {
         return identifier;
     }
-    
+
     @Override
-    public AbstractIdentifierNameDescriptionEntity setIdentifier(final String identifier) {
+    public AbstractIdentifierNameDescriptionEntity setIdentifier(
+            final String identifier) {
         this.identifier = identifier;
         return this;
     }
-    
+
     @Override
     public boolean isSetIdentifier() {
         return StringHelper.isNotEmpty(getIdentifier());
     }
-    
+
     @Override
     public Codespace getCodespace() {
         return this.codespace;
     }
 
     @Override
-    public AbstractIdentifierNameDescriptionEntity setCodespace(Codespace codespace) {
+    public AbstractIdentifierNameDescriptionEntity setCodespace(
+            Codespace codespace) {
         this.codespace = codespace;
         return this;
     }
@@ -91,7 +94,6 @@ public abstract class AbstractIdentifierNameDescriptionEntity implements Seriali
     public String getName() {
         return this.name;
     }
-    
 
     @Override
     public AbstractIdentifierNameDescriptionEntity setName(String name) {
@@ -110,7 +112,8 @@ public abstract class AbstractIdentifierNameDescriptionEntity implements Seriali
     }
 
     @Override
-    public AbstractIdentifierNameDescriptionEntity setCodespaceName(Codespace codespaceName) {
+    public AbstractIdentifierNameDescriptionEntity setCodespaceName(
+            Codespace codespaceName) {
         this.codespaceName = codespaceName;
         return this;
     }
@@ -119,14 +122,15 @@ public abstract class AbstractIdentifierNameDescriptionEntity implements Seriali
     public boolean isSetCodespaceName() {
         return getCodespaceName() != null && getCodespaceName().isSetCodespace();
     }
-    
+
     @Override
     public String getDescription() {
         return decription;
     }
 
     @Override
-    public AbstractIdentifierNameDescriptionEntity setDescription(String description) {
+    public AbstractIdentifierNameDescriptionEntity setDescription(
+            String description) {
         this.decription = description;
         return this;
     }
@@ -136,8 +140,10 @@ public abstract class AbstractIdentifierNameDescriptionEntity implements Seriali
         return StringHelper.isNotEmpty(getDescription());
     }
 
+    @Override
     public String toString() {
-        return this.getClass().getSimpleName() + " [identifier=" + getIdentifier() + "]";
+        return this.getClass().getSimpleName() + " [identifier=" +
+               getIdentifier() + "]";
     }
 
 }

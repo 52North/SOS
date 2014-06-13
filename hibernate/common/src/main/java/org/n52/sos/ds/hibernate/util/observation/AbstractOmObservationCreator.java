@@ -29,8 +29,10 @@
 package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.hibernate.Session;
+
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.FeatureQueryHandler;
@@ -49,7 +51,7 @@ import org.n52.sos.service.profile.Profile;
 public abstract class AbstractOmObservationCreator {
     private final String version;
     private final Session session;
-    private final String i18n;
+    private final Locale i18n;
 
     public AbstractOmObservationCreator(String version, Session session) {
         super();
@@ -57,9 +59,8 @@ public abstract class AbstractOmObservationCreator {
         this.session = session;
         this.i18n = ServiceConfiguration.getInstance().getDefaultLanguage();
     }
-    
-    public AbstractOmObservationCreator(String version, String i18n, Session session) {
-        super();
+
+    public AbstractOmObservationCreator(String version, Locale i18n, Session session) {
         this.version = version;
         this.session = session;
         this.i18n = i18n;
@@ -99,9 +100,9 @@ public abstract class AbstractOmObservationCreator {
     public Session getSession() {
         return session;
     }
-    
-    public String getI18N() {
+
+    public Locale getI18N() {
         return i18n;
     }
-    
+
 }

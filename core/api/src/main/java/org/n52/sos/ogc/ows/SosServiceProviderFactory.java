@@ -43,6 +43,7 @@ import static org.n52.sos.ogc.ows.SosServiceProviderFactorySettings.STATE;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Locale;
 
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.config.annotation.Configurable;
@@ -53,34 +54,23 @@ import org.n52.sos.util.XmlHelper;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 @Configurable
 public class SosServiceProviderFactory extends LazyThreadSafeProducer<SosServiceProvider> {
 
     private File file;
-
     private String name;
-
     private URI site;
-
     private String individualName;
-
     private String positionName;
-
     private String phone;
-
     private String deliveryPoint;
-
     private String city;
-
     private String postalCode;
-
     private String country;
-
     private String mailAddress;
-
     private String administrativeArea;
 
     public SosServiceProviderFactory() throws ConfigurationException {
@@ -160,7 +150,7 @@ public class SosServiceProviderFactory extends LazyThreadSafeProducer<SosService
     }
 
     @Override
-    protected SosServiceProvider create() throws ConfigurationException {
+    protected SosServiceProvider create(Locale language) throws ConfigurationException {
         SosServiceProvider serviceProvider = new SosServiceProvider();
         if (this.file != null) {
             try {
@@ -182,11 +172,5 @@ public class SosServiceProviderFactory extends LazyThreadSafeProducer<SosService
             serviceProvider.setSite(this.site == null ? null : this.site.toString());
         }
         return serviceProvider;
-    }
-
-    @Override
-    protected SosServiceProvider create(String language) throws ConfigurationException {
-        // No language support
-        return create();
     }
 }

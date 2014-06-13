@@ -30,6 +30,7 @@ package org.n52.sos.ds;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.n52.sos.ogc.filter.SpatialFilter;
@@ -41,17 +42,17 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public class FeatureQueryHandlerQueryObject {
-    
+
     private Object connection;
-    
+
 //    private int requestedSrid = Integer.MIN_VALUE;
-    
-    private String i18n;
-    
+
+    private Locale i18n;
+
     private List<SpatialFilter> spatialFilters = Lists.newArrayList();
-    
+
     private Set<String> featureIdentifiers = Sets.newHashSet();
-    
+
     private String version;
 
     public Object getConnection() {
@@ -72,11 +73,11 @@ public class FeatureQueryHandlerQueryObject {
 //        return this;
 //    }
 
-    public String getI18N() {
+    public Locale getI18N() {
         return i18n;
     }
 
-    public FeatureQueryHandlerQueryObject setI18N(String i18n) {
+    public FeatureQueryHandlerQueryObject setI18N(Locale i18n) {
         this.i18n = i18n;
         return this;
     }
@@ -91,14 +92,14 @@ public class FeatureQueryHandlerQueryObject {
         }
         return this;
     }
-    
+
     public FeatureQueryHandlerQueryObject addSpatialFilter(SpatialFilter spatialFilter) {
         if (spatialFilter != null) {
             spatialFilters.add(spatialFilter);
         }
         return this;
     }
-    
+
     public SpatialFilter getSpatialFitler() {
         if (isSetSpatialFilters() && getSpatialFilters().size() == 1) {
             return getSpatialFilters().iterator().next();
@@ -116,50 +117,50 @@ public class FeatureQueryHandlerQueryObject {
         }
         return this;
     }
-    
+
     public FeatureQueryHandlerQueryObject addFeatureIdentifier(String identifier) {
         if (StringHelper.isNotEmpty(identifier)) {
             featureIdentifiers.add(identifier);
         }
         return this;
     }
-    
+
     public String getFeatureIdentifier() {
         if (isSetFeatureIdentifiers() && getFeatureIdentifiers().size() == 1) {
             return getFeatureIdentifiers().iterator().next();
         }
         return Constants.EMPTY_STRING;
     }
-    
+
     public FeatureQueryHandlerQueryObject setVersion(String version) {
         this.version = version;
         return this;
     }
-    
+
     public String getVersion() {
         return version;
     }
-    
+
     public boolean isSetConnection() {
         return getConnection() != null;
     }
-    
+
 //    public boolean isSetRequestedSrid() {
 //        return requestedSrid > 0;
 //    }
-    
+
     public boolean isSetI18N() {
-        return StringHelper.isNotEmpty(getI18N());
+        return getI18N() != null;
     }
 
     public boolean isSetSpatialFilters() {
         return CollectionHelper.isNotEmpty(getSpatialFilters());
     }
-    
+
     public boolean isSetFeatureIdentifiers() {
         return CollectionHelper.isNotEmpty(getFeatureIdentifiers());
     }
-    
+
     public boolean isSetVersion() {
         return StringHelper.isNotEmpty(getVersion());
     }

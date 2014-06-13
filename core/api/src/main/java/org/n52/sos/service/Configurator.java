@@ -30,10 +30,14 @@ package org.n52.sos.service;
 
 import static org.n52.sos.util.ConfiguringSingletonServiceLoader.loadAndConfigure;
 
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.sos.binding.BindingRepository;
 import org.n52.sos.cache.ContentCache;
@@ -72,15 +76,13 @@ import org.n52.sos.tasking.Tasking;
 import org.n52.sos.util.Cleanupable;
 import org.n52.sos.util.ConfiguringSingletonServiceLoader;
 import org.n52.sos.util.Producer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
 /**
  * Singleton class reads the configFile and builds the RequestOperator and DAO;
  * configures the logger.
- * 
+ *
  * @since 4.0.0
  */
 public class Configurator implements Cleanupable {
@@ -115,7 +117,7 @@ public class Configurator implements Cleanupable {
      * @param basepath
      * @return Returns an instance of the SosConfigurator. This method is used
      *         to implement the singelton pattern
-     * 
+     *
      * @throws ConfigurationException
      *             if the initialization failed
      */
@@ -184,8 +186,8 @@ public class Configurator implements Cleanupable {
             }
         }
     }
-    
-    protected static <T> T get(final Producer<T> factory, String language) throws OwsExceptionReport {
+
+    protected static <T> T get(final Producer<T> factory, Locale language) throws OwsExceptionReport {
         try {
             return factory.get(language);
         } catch (final Exception e) {
@@ -228,7 +230,7 @@ public class Configurator implements Cleanupable {
 
     /**
      * private constructor due to the singelton pattern.
-     * 
+     *
      * @param connectionProviderConfig
      *            Connection provider configuration properties
      * @param basepath
@@ -285,7 +287,7 @@ public class Configurator implements Cleanupable {
         contentCacheController = loadAndConfigure(ContentCacheController.class, false);
         tasking = new Tasking();
         profileHandler = loadAndConfigure(ProfileHandler.class, false, new DefaultProfileHandler());
-        
+
         SosEventBus.fire(new ConfiguratorInitializedEvent());
         LOGGER.info("\n******\n Configurator initialization finished\n******\n");
     }
@@ -298,16 +300,16 @@ public class Configurator implements Cleanupable {
     public SosServiceIdentification getServiceIdentification() throws OwsExceptionReport {
         return get(serviceIdentificationFactory);
     }
-    
+
     /**
      * @return Returns the service identification for the specific language
      *         <p/>
      * @throws OwsExceptionReport
      */
-    public SosServiceIdentification getServiceIdentification(String lanugage) throws OwsExceptionReport {
+    public SosServiceIdentification getServiceIdentification(Locale lanugage) throws OwsExceptionReport {
         return get(serviceIdentificationFactory, lanugage);
     }
-    
+
     public SosServiceIdentificationFactory getServiceIdentificationFactory() throws OwsExceptionReport {
         return (SosServiceIdentificationFactory) serviceIdentificationFactory;
     }
@@ -344,7 +346,7 @@ public class Configurator implements Cleanupable {
 
     /**
      * @return the implemented cache feeder DAO
-     * @deprecated use {@link CacheFeederDAORepository.getCacheFeederDAO()} instead.  
+     * @deprecated use {@link CacheFeederDAORepository.getCacheFeederDAO()} instead.
      */
     @Deprecated
     public CacheFeederDAO getCacheFeederDAO() {
@@ -426,7 +428,7 @@ public class Configurator implements Cleanupable {
     /**
      * Returns the default token seperator for results.
      * <p/>
-     * 
+     *
      * @return the tokenSeperator.
      * @deprecated Use ServiceConfiguration.getInstance().getTokenSeparator()
      */
@@ -519,7 +521,7 @@ public class Configurator implements Cleanupable {
 
     /**
      * Get service URL.
-     * 
+     *
      * @return the service URL
      * @deprecated Use ServiceConfiguration.getInstance().getServiceURL()
      */

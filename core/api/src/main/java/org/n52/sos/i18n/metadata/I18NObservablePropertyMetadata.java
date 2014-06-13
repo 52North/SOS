@@ -26,37 +26,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.i18n;
+package org.n52.sos.i18n.metadata;
 
-/**
- * I18N object class for observableProperty
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.1.0
- * 
- */
-public class I18NObservablePropertyObject extends I18NObject {
+import org.n52.sos.i18n.MultilingualString;
 
-    /**
-     * constructor
-     * 
-     * @param objectId
-     *            object identifier
-     */
-    public I18NObservablePropertyObject(String objectId) {
-        super(objectId);
+public class I18NObservablePropertyMetadata extends AbstractI18NMetadata {
+
+    public I18NObservablePropertyMetadata(String id, MultilingualString name,
+                                        MultilingualString description) {
+        super(id, name, description);
     }
 
-    /**
-     * constructor
-     * 
-     * @param objectId
-     *            object identifier
-     * @param i18NLanguageObject
-     *            language object
-     */
-    public I18NObservablePropertyObject(String objectId, I18NLanguageObject i18NLanguageObject) {
-        super(objectId, i18NLanguageObject);
+    public I18NObservablePropertyMetadata(String id) {
+        super(id);
     }
 
 }

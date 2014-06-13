@@ -167,19 +167,11 @@ public abstract class AbstractOperationDAO implements OperationDAO {
 
     protected abstract void setOperationsMetadata(OwsOperation operation, String service, String version)
             throws OwsExceptionReport;
-    
-    protected String getLanguage(AbstractServiceRequest<?> request) {
-        String language = ServiceConfiguration.getInstance().getDefaultLanguage();
-        if (request.isSetRequestedLanguage()) {
-            language = request.getRequestedLanguage(); 
-        }
-        return language;
-    }
-    
+
     protected void addProcedureParameter(OwsOperation opsMeta) {
         addProcedureParameter(opsMeta, getCache().getProcedures());
     }
-    
+
     protected void addProcedureParameter(OwsOperation opsMeta, Collection<String> procedures) {
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
             opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.procedure, procedures);
@@ -187,11 +179,11 @@ public abstract class AbstractOperationDAO implements OperationDAO {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.procedure);
         }
     }
-    
+
     protected void addFeatureOfInterestParameter(OwsOperation opsMeta, String version) {
         addFeatureOfInterestParameter(opsMeta, SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version));
     }
-    
+
     protected void addFeatureOfInterestParameter(OwsOperation opsMeta, Collection<String> featuresOfInterest) {
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.featureOfInterest, featuresOfInterest);
@@ -199,11 +191,11 @@ public abstract class AbstractOperationDAO implements OperationDAO {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.featureOfInterest);
         }
     }
-    
+
     protected void addObservablePropertyParameter(OwsOperation opsMeta) {
         addObservablePropertyParameter(opsMeta, getCache().getObservableProperties());
     }
-    
+
     protected void addObservablePropertyParameter(OwsOperation opsMeta, Collection<String> observedProperties) {
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.observedProperty, observedProperties);
@@ -211,11 +203,11 @@ public abstract class AbstractOperationDAO implements OperationDAO {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.observedProperty);
         }
     }
-    
+
     protected void addOfferingParameter(OwsOperation opsMeta) {
         addOfferingParameter(opsMeta, getCache().getOfferings());
     }
-    
+
     protected void addOfferingParameter(OwsOperation opsMeta, Collection<String> offerings) {
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.offering, offerings);

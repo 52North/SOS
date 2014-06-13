@@ -28,6 +28,8 @@
  */
 package org.n52.sos.service;
 
+import static org.n52.sos.config.SettingDefinitionProvider.ORDER_0;
+
 import java.util.Collections;
 import java.util.Set;
 
@@ -43,7 +45,7 @@ import com.google.common.collect.Sets;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class ServiceSettings implements SettingDefinitionProvider {
@@ -64,9 +66,11 @@ public class ServiceSettings implements SettingDefinitionProvider {
     public static final String ADD_OUTPUTS_TO_SENSOR_ML = "service.addOutputsToSensorML";
 
     public static final String STRICT_SPATIAL_FILTERING_PROFILE = "service.strictSpatialFilteringProfile";
-    
+
     public static final String  VALIDATE_RESPONSE = "service.response.validate";
-    
+
+    public static final String DEFAULT_LANGUAGE = "service.defaultLanguage";
+
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Service").setOrder(2);
 
     public static final UriSettingDefinition SERVICE_URL_DEFINITION = new UriSettingDefinition()
@@ -79,6 +83,13 @@ public class ServiceSettings implements SettingDefinitionProvider {
                             + "(e.g. <code>http://localhost:8080/52nSOS/sos</code> or <code>http://localhost:8080/52nSOS/service</code>)."
                             + " The path to a specific binding (like <code>/soap</code>) will appended to this URL."
                             + " For detailed information, please read the <a href=\"https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation\">documentation</a>");
+
+        public static final StringSettingDefinition DEFAULT_LANGUAGE_DEFINITION = new StringSettingDefinition()
+                .setGroup(GROUP)
+                .setOrder(ORDER_0)
+                .setKey(DEFAULT_LANGUAGE)
+                .setTitle("Default language")
+            .setDescription("Default Language for the Abstract and Title").setDefaultValue("eng");
 
     public static final IntegerSettingDefinition MAX_GET_OBSERVATION_RESULTS_DEFINITION =
             new IntegerSettingDefinition()
@@ -158,7 +169,7 @@ public class ServiceSettings implements SettingDefinitionProvider {
                     .setTitle("Should this SOS support strict Spatial Filtering Profile?")
                     .setDescription(
                             "Whether the SOS should support strict SOS 2.0 Spatial Filtering Profile. That means each observation should contain a om:parameter with sampling geometry. Else the SOS allows observations without om:parameter with sampling geometry!");
-    
+
     public static final BooleanSettingDefinition VALIDATE_RESPONSE_DEFINITION =
             new BooleanSettingDefinition()
                     .setGroup(GROUP)
@@ -168,9 +179,10 @@ public class ServiceSettings implements SettingDefinitionProvider {
                     .setTitle("Should this SOS validate the XML response in non debug mode?")
                     .setDescription(
                             "Whether the SOS should validate the XML response when the debug mode is disables!");
-    
+
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = Sets.<SettingDefinition<?, ?>> newHashSet(
             SERVICE_URL_DEFINITION,
+            DEFAULT_LANGUAGE_DEFINITION,
             MAX_GET_OBSERVATION_RESULTS_DEFINITION,
             // SUPPORTS_QUALITY_DEFINITION,
             SENSOR_DIRECTORY_DEFINITION, USE_DEFAULT_PREFIXES_DEFINITION,

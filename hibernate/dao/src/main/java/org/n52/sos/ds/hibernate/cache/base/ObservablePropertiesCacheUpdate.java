@@ -42,15 +42,17 @@ import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
-import org.n52.sos.exception.CodedException;
 import org.n52.sos.util.CollectionHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+
 /**
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
@@ -81,11 +83,11 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                 try {
                     getCache().setOfferingsForObservableProperty(obsPropIdentifier,
                             new OfferingDAO().getOfferingIdentifiersForObservableProperty(obsPropIdentifier, getSession()));
-                } catch (CodedException e) {
+                } catch (OwsExceptionReport e) {
                     getErrors().add(e);
                 }
                 getCache().setProceduresForObservableProperty(obsPropIdentifier,
-                        new ProcedureDAO().getProcedureIdentifiersForObservableProperty(obsPropIdentifier, getSession()));                
+                        new ProcedureDAO().getProcedureIdentifiersForObservableProperty(obsPropIdentifier, getSession()));
             }
         }
         LOGGER.debug("Executing ObservablePropertiesCacheUpdate ({})", getStopwatchResult());

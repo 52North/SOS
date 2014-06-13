@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NOfferingMetadata" table="i18noffering">
+		<id name="id" type="long">
+			<column name="id" />
+			<generator class="native">
+				<param name="sequence">i18nOfferingId_seq</param>
+			</generator>
+		</id>
+		<many-to-one name="objectId" class="org.n52.sos.ds.hibernate.entities.Offering" fetch="select" lazy="no-proxy" foreign-key="i18nOfferingOfferingFk">
+			<column index="i18nOfferingIdx" name="objectId" not-null="true" unique-key="i18nOfferingIdentity" />
+		</many-to-one>
+		<property name="locale" type="locale">
+			<column name="locale" />
+		</property>
+		<property name="name" type="string">
+			<column name="name" />
+		</property>
+		<property name="description" type="string">
+			<column name="description" />
+		</property>
+	</class>
+</hibernate-mapping>

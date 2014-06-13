@@ -29,9 +29,11 @@
 package org.n52.sos.ds.hibernate.util.procedure;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 
 import org.hibernate.Session;
+
 import org.n52.sos.convert.Converter;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.convert.ConverterRepository;
@@ -113,7 +115,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
     public SosProcedureDescription createSosProcedureDescription(
             Procedure procedure,
             String requestedDescriptionFormat, String requestedServiceVersion,
-            Map<String, Procedure> loadedProcedures, String i18n, Session session) throws
+            Map<String, Procedure> loadedProcedures, Locale i18n, Session session) throws
             OwsExceptionReport {
         if (procedure == null) {
             throw new NoApplicableCodeException()
@@ -149,7 +151,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      * @throws OwsExceptionReport If an error occurs
      */
     public SosProcedureDescription createSosProcedureDescriptionFromValidProcedureTime(
-            Procedure procedure, ValidProcedureTime vpt, String version, String i18n, Session session)
+            Procedure procedure, ValidProcedureTime vpt, String version, Locale i18n, Session session)
             throws OwsExceptionReport {
         String descriptionFormat = getFormat(vpt);
         Optional<SosProcedureDescription> description = create(procedure, vpt, i18n, session);
@@ -162,7 +164,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
     }
 
     public SosProcedureDescription createSosProcedureDescription(Procedure procedure,
-            String requestedDescriptionFormat, String requestedServiceVersion, String i18n, Session session) throws OwsExceptionReport {
+            String requestedDescriptionFormat, String requestedServiceVersion, Locale i18n, Session session) throws OwsExceptionReport {
         return createSosProcedureDescription(procedure,
                 requestedDescriptionFormat,
                 requestedServiceVersion,
@@ -219,7 +221,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
         return ConverterRepository.getInstance().hasConverter(from, to);
     }
 
-    private Optional<SosProcedureDescription> create(Procedure procedure, ValidProcedureTime vpt, String i18n, Session session) throws OwsExceptionReport {
+    private Optional<SosProcedureDescription> create(Procedure procedure, ValidProcedureTime vpt, Locale i18n, Session session) throws OwsExceptionReport {
         Optional<DescriptionCreationStrategy> strategy = getCreationStrategy(procedure, vpt);
         if (strategy.isPresent()) {
             return Optional.fromNullable(strategy.get().create(procedure, i18n, session));
@@ -260,7 +262,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      */
     private void enrich(SosProcedureDescription desc, Procedure procedure,
                 String version, String format, TimePeriod validTime,
-                Map<String, Procedure> cache, String language,
+                Map<String, Procedure> cache, Locale language,
                 Session session) throws OwsExceptionReport {
         ProcedureDescriptionEnrichments enrichments
             = ProcedureDescriptionEnrichments.create()

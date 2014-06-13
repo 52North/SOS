@@ -35,10 +35,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.sos.binding.Binding;
 import org.n52.sos.binding.BindingRepository;
@@ -88,25 +92,24 @@ import org.n52.sos.request.GetCapabilitiesRequest;
 import org.n52.sos.request.operator.RequestOperatorKey;
 import org.n52.sos.request.operator.RequestOperatorRepository;
 import org.n52.sos.response.GetCapabilitiesResponse;
-import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.I18NHelper;
+import org.n52.sos.i18n.LocaleHelper;
 import org.n52.sos.util.MultiMaps;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SetMultiMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
  * Implementation of the interface IGetCapabilitiesDAO
- * 
+ *
  * @since 4.0.0
  */
 public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
@@ -306,16 +309,11 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
         return sections;
     }
 
-    private SosServiceIdentification getServiceIdentification(final GetCapabilitiesRequest request,
-            final String version) throws OwsExceptionReport {
-        final SosServiceIdentification serviceIdentification;
-        if (request.isSetRequestedLanguage()) {
-            serviceIdentification = getConfigurator().getServiceIdentification(request.getRequestedLanguage());
-        } else {
-            serviceIdentification =
-                    getConfigurator()
-                            .getServiceIdentification(ServiceConfiguration.getInstance().getDefaultLanguage());
-        }
+    private SosServiceIdentification getServiceIdentification(
+            GetCapabilitiesRequest request, String version) throws OwsExceptionReport {
+        Locale locale = LocaleHelper.fromRequest(request);
+        SosServiceIdentification serviceIdentification = getConfigurator()
+                .getServiceIdentification(locale);
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
             serviceIdentification.setProfiles(getProfiles());
         }
@@ -349,7 +347,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
 
     /**
      * Get the OperationsMetadat for all supported operations
-     * 
+     *
      * @param service
      *            Requested service
      * @param version
@@ -374,8 +372,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
                 new OwsParameterValuePossibleValues(GeometryHandler.getInstance().addOgcCrsPrefix(getCache().getEpsgCodes())));
         // language
         operationsMetadata.addCommonValue(OWSConstants.AdditionalRequestParams.language.name(),
-                new OwsParameterValuePossibleValues(getCache().getSupportedLanguages()));
-        
+                new OwsParameterValuePossibleValues(Collections2.transform(getCache().getSupportedLanguages(), LocaleHelper.toStringFunction())));
 
         // FIXME: OpsMetadata for InsertSensor, InsertObservation SOS 2.0
         final Set<RequestOperatorKey> requestOperatorKeyTypes =
@@ -412,7 +409,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
 
     /**
      * Get the FilterCapabilities
-     * 
+     *
      * @param version
      *            Requested service version
      * @return FilterCapabilities
@@ -482,12 +479,12 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
 
     /**
      * Get the contents for SOS 1.0.0 capabilities
-     * 
+     *
      * @param version
      *            Requested service version
      * @return Offerings for contents
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * If an error occurs
      */
@@ -587,12 +584,12 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
 
     /**
      * Get the contents for SOS 2.0 capabilities
-     * 
+     *
      * @param version
      *            Requested service version
      * @return Offerings for contents
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * If an error occurs
      */
@@ -657,7 +654,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
                         setUpFeatureOfInterestTypesForOffering(offering, sosObservationOffering);
                         setUpProcedureDescriptionFormatForOffering(sosObservationOffering, version);
                         setUpResponseFormatForOffering(version, sosObservationOffering);
-                        
+
 
                         sosOfferings.add(sosObservationOffering);
                     }
@@ -680,7 +677,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
 
     /**
      * Set SpatialFilterCapabilities to FilterCapabilities
-     * 
+     *
      * @param filterCapabilities
      *            FilterCapabilities
      * @param version
@@ -726,7 +723,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
 
     /**
      * Set TemporalFilterCapabilities to FilterCapabilities
-     * 
+     *
      * @param filterCapabilities
      *            FilterCapabilities
      * @param version
@@ -764,7 +761,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
 
     /**
      * Set ScalarFilterCapabilities to FilterCapabilities
-     * 
+     *
      * @param filterCapabilities
      *            FilterCapabilities
      */
@@ -785,12 +782,12 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
 
     /**
      * Get FOIs contained in an offering
-     * 
+     *
      * @param offering
      *            Offering identifier
      * @return FOI identifiers
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * If an error occurs
      */
@@ -837,10 +834,10 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
 
     /**
      * Get extensions and merge MergableExtension of the same class.
-     * 
+     *
      * @return Extensions
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })

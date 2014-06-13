@@ -28,22 +28,26 @@
  */
 package org.n52.sos.ogc.ows;
 
+import org.n52.sos.i18n.MultilingualString;
+
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Set;
 
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionGroup;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.FileSettingDefinition;
+import org.n52.sos.config.settings.MultilingualStringSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 
 import com.google.common.collect.Sets;
 
 /**
  * Setting definitions for the OWS Service Identification.
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class SosServiceIdentificationFactorySettings implements SettingDefinitionProvider {
@@ -60,29 +64,23 @@ public class SosServiceIdentificationFactorySettings implements SettingDefinitio
     public static final String KEYWORDS = "serviceIdentification.keywords";
 
     public static final String ABSTRACT = "serviceIdentification.abstract";
-    
-    public static final String ABTRACT_TITLE_LANGUAGE = "serviceIdentification.language";
 
     public static final String FEES = "serviceIdentification.fees";
 
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Service Identification")
             .setOrder(1);
 
-    public static final StringSettingDefinition ABTRACT_TITLE_LANGUAGE_DEFINITION = new StringSettingDefinition().setGroup(GROUP)
-            .setOrder(ORDER_0).setKey(ABTRACT_TITLE_LANGUAGE).setTitle("Abstract/Title language")
-            .setDescription("Language for the Abstract and Fitle").setDefaultValue("eng");
-    
-    public static final StringSettingDefinition TITLE_DEFINITION = new StringSettingDefinition().setGroup(GROUP)
+    public static final MultilingualStringSettingDefinition TITLE_DEFINITION = new MultilingualStringSettingDefinition().setGroup(GROUP)
             .setOrder(ORDER_1).setKey(TITLE).setTitle("Title").setDescription("SOS Service Title.")
-            .setDefaultValue("52N SOS");
+            .setDefaultValue(new MultilingualString().addLocalization(Locale.ENGLISH, "52N SOS"));
 
     public static final StringSettingDefinition KEYWORDS_DEFINITION = new StringSettingDefinition().setGroup(GROUP)
             .setOrder(ORDER_2).setKey(KEYWORDS).setTitle("Keywords")
             .setDescription("Comma separated SOS service keywords.").setOptional(true);
 
-    public static final StringSettingDefinition ABSTRACT_DEFINITION = new StringSettingDefinition().setGroup(GROUP)
+    public static final MultilingualStringSettingDefinition ABSTRACT_DEFINITION = new MultilingualStringSettingDefinition().setGroup(GROUP)
             .setOrder(ORDER_3).setKey(ABSTRACT).setTitle("SOS Abstract").setDescription("SOS service abstract.")
-            .setDefaultValue("52North Sensor Observation Service - Data Access for the Sensor Web");
+            .setDefaultValue(new MultilingualString().addLocalization(Locale.ENGLISH, "52North Sensor Observation Service - Data Access for the Sensor Web"));
 
     public static final StringSettingDefinition ACCESS_CONSTRAINTS_DEFINITION = new StringSettingDefinition()
             .setGroup(GROUP).setOrder(ORDER_4).setKey(ACCESS_CONSTRAINTS).setTitle("Access Constraints")
@@ -114,8 +112,9 @@ public class SosServiceIdentificationFactorySettings implements SettingDefinitio
                             + "(e.g. <code>WEB-INF/identification.xml</code>).");
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = Sets.<SettingDefinition<?, ?>> newHashSet(
-            ABTRACT_TITLE_LANGUAGE_DEFINITION, TITLE_DEFINITION, ABSTRACT_DEFINITION, SERVICE_TYPE_DEFINITION, 
-            SERVICE_TYPE_CODE_SPACE_DEFINITION, KEYWORDS_DEFINITION, FEES_DEFINITION, ACCESS_CONSTRAINTS_DEFINITION, 
+             TITLE_DEFINITION, ABSTRACT_DEFINITION, SERVICE_TYPE_DEFINITION,
+            SERVICE_TYPE_CODE_SPACE_DEFINITION, KEYWORDS_DEFINITION,
+            FEES_DEFINITION, ACCESS_CONSTRAINTS_DEFINITION,
             FILE_DEFINITION);
 
     @Override

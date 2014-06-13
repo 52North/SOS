@@ -143,13 +143,16 @@ public class SettingDefinitionEncoder {
     private JsonNode encodeDefaultValue(SettingDefinition def) throws JSONException {
         return encodeValue(def.getType(), def.getDefaultValue());
     }
-    
+
     public JsonNode encodeValue(SettingValue def) throws JSONException {
         return encodeValue(def.getType(), def.getValue());
     }
 
     private JsonNode encodeValue(SettingType type, Object value)
             throws IllegalArgumentException {
+        if (value == null) {
+            return nodeFactory.nullNode();
+        }
         switch (type) {
             case TIMEINSTANT:
                 return nodeFactory.textNode(DateTimeHelper.format((TimeInstant) value));

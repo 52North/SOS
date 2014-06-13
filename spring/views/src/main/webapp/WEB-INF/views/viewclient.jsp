@@ -78,6 +78,7 @@
         var app = new SOS.App(options);
         app.display();
     }
+    $(document).ready(initSOSjs);
 </script>
 <style>
     .sos-app-container {

@@ -73,7 +73,7 @@
      */
     function initSOSjs() {
         var options = {
-           url: 'http://localhost:8080<c:url value="/service" />'
+           url: 'http://localhost:8080<c:url value="/sos/kvp" />'
         };
         var app = new SOS.App(options);
         app.display();

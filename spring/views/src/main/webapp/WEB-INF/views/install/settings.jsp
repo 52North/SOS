@@ -48,15 +48,10 @@
 
 <script type="text/javascript">
     function overwriteDefaultSettings(settings) {
-    <c:if test="${not empty settings}">
-        <c:set var="search" value='"' />
-        <c:set var="replace" value='\\"' />
-        <c:forEach items="${settings}" var="entry">
-            <c:if test="${not empty entry.value}">
-                setSetting("${entry.key}","${fn:replace(entry.value, search, replace)}", settings);
-            </c:if>
-        </c:forEach>
-    </c:if>
+		var newSettings = ${settings};
+		for (var key in newSettings) {
+			setSetting(key, newSettings[key], settings);
+		}
     }
 </script>
 

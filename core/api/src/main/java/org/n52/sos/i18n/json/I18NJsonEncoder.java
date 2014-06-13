@@ -10,11 +10,11 @@
  * the following licenses, the combination of the program with the linked
  * library is not considered a "derivative work" of the program:
  *
- * - Apache License, version 2.0
- * - Apache Software License, version 1.0
- * - GNU Lesser General Public License, version 3
- * - Mozilla Public License, versions 1.0, 1.1 and 2.0
- * - Common Development and Distribution License (CDDL), version 1.0
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
  * Therefore the distribution of the program linked with libraries licensed
  * under the aforementioned licenses, is permitted by the copyright holders
@@ -26,13 +26,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.web;
+package org.n52.sos.i18n.json;
 
+import org.n52.sos.exception.JSONException;
+
+import java.util.Iterator;
 import java.util.Locale;
-
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import java.util.Map.Entry;
 
 import org.n52.sos.i18n.LocaleHelper;
 import org.n52.sos.i18n.LocalizedString;
@@ -42,7 +42,18 @@ import org.n52.sos.i18n.metadata.I18NFeatureMetadata;
 import org.n52.sos.i18n.metadata.I18NObservablePropertyMetadata;
 import org.n52.sos.i18n.metadata.I18NOfferingMetadata;
 import org.n52.sos.i18n.metadata.I18NProcedureMetadata;
+import org.n52.sos.util.JSONUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+/**
+ * TODO JavaDoc
+ *
+ * @author Christian Autermann
+ */
 public class I18NJsonEncoder {
 
     private static final String DESCRIPTION = "description";
@@ -56,94 +67,95 @@ public class I18NJsonEncoder {
     private static final String TYPE_PROCEDURE = "procedure";
     private static final String TYPE_OBSERVABLE_PROPERTY = "observableProperty";
     private static final String I18N = "i18n";
+    private final JsonNodeFactory nodeFactory = JSONUtils.nodeFactory();
 
-    private JSONObject encodeInternal(AbstractI18NMetadata i18n)
-            throws JSONException {
-        return new JSONObject()
-                .put(ID, i18n.getIdentifier())
-                .put(NAME, encodeMultilingualString(i18n.getName()))
-                .put(DESCRIPTION, encodeMultilingualString(i18n.getDescription()));
+    private ObjectNode encodeInternal(AbstractI18NMetadata i18n) {
+        ObjectNode node = nodeFactory.objectNode();
+        node.put(ID, i18n.getIdentifier());
+        node.put(NAME, encode(i18n.getName()));
+        node.put(DESCRIPTION, encode(i18n.getDescription()));
+        return node;
     }
 
-    public JSONObject encodeMultilingualString(MultilingualString mls)
-            throws JSONException {
-        JSONObject json = new JSONObject();
-        for (LocalizedString ls : mls) {
-            json.put(LocaleHelper.toString(ls.getLang()), ls.getText());
+    public ObjectNode encode(MultilingualString mls) {
+        ObjectNode json = nodeFactory.objectNode();
+        if (mls != null) {
+            for (LocalizedString ls : mls) {
+                json.put(LocaleHelper.toString(ls.getLang()), ls.getText());
+            }
         }
         return json;
     }
 
-    public JSONObject encode(I18NFeatureMetadata i18n)
-            throws JSONException {
+    public ObjectNode encode(I18NFeatureMetadata i18n) {
         return encodeInternal(i18n).put(TYPE, TYPE_FEATURE);
     }
 
-    public JSONObject encode(I18NObservablePropertyMetadata i18n)
-            throws JSONException {
+    public ObjectNode encode(I18NObservablePropertyMetadata i18n) {
         return encodeInternal(i18n).put(TYPE, TYPE_OBSERVABLE_PROPERTY);
     }
 
-    public JSONObject encode(I18NOfferingMetadata i18n)
-            throws JSONException {
+    public ObjectNode encode(I18NOfferingMetadata i18n) {
         return encodeInternal(i18n).put(TYPE, TYPE_OFFERING);
     }
 
-    public JSONObject encode(I18NProcedureMetadata i18n)
-            throws JSONException {
-        return encodeInternal(i18n)
-                .put(SHORT_NAME, i18n.getShortName())
-                .put(LONG_NAME, i18n.getLongName())
-                .put(TYPE, TYPE_PROCEDURE);
+    public ObjectNode encode(I18NProcedureMetadata i18n) {
+        ObjectNode node = encodeInternal(i18n);
+        node.put(SHORT_NAME, encode(i18n.getShortName()));
+        node.put(LONG_NAME, encode(i18n.getLongName()));
+        node.put(TYPE, TYPE_PROCEDURE);
+        return node;
     }
 
-    public JSONObject encode(Iterable<? extends AbstractI18NMetadata> i18ns)
+    public ObjectNode encode(Iterable<? extends AbstractI18NMetadata> i18ns)
             throws JSONException {
-        JSONArray array = new JSONArray();
+        ObjectNode node = nodeFactory.objectNode();
+        ArrayNode array = node.putArray(I18N);
         for (AbstractI18NMetadata i18n : i18ns) {
-            array.put(encode(i18n));
+            array.add(I18NJsonEncoder.this.encode(i18n));
         }
-        return new JSONObject().put(I18N, array);
+        return node;
     }
 
-    public JSONObject encode(AbstractI18NMetadata i18n)
+    public ObjectNode encode(AbstractI18NMetadata i18n)
             throws JSONException {
         if (i18n instanceof I18NFeatureMetadata) {
-            return encode((I18NFeatureMetadata) i18n);
+            return I18NJsonEncoder.this
+                    .encode((I18NFeatureMetadata) i18n);
         } else if (i18n instanceof I18NOfferingMetadata) {
-            return encode((I18NOfferingMetadata) i18n);
+            return I18NJsonEncoder.this
+                    .encode((I18NOfferingMetadata) i18n);
         } else if (i18n instanceof I18NProcedureMetadata) {
-            return encode((I18NProcedureMetadata) i18n);
+            return I18NJsonEncoder.this
+                    .encode((I18NProcedureMetadata) i18n);
         } else if (i18n instanceof I18NObservablePropertyMetadata) {
-            return encode((I18NObservablePropertyMetadata) i18n);
+            return I18NJsonEncoder.this
+                    .encode((I18NObservablePropertyMetadata) i18n);
         } else {
             throw new JSONException("Unknown type: " + i18n);
         }
     }
 
-    public MultilingualString decodeMultilingualString(JSONObject json)
-            throws JSONException {
+    public MultilingualString decodeMultilingualString(JsonNode json) {
         MultilingualString mls = new MultilingualString();
         decodeMultilingualString(json, mls);
         return mls;
     }
 
-    private void decodeMultilingualString(JSONObject json,
-                                          MultilingualString mls)
-            throws JSONException {
-        JSONArray keys = json.names();
-        int length = keys.length();
-        for (int i = 0; i < length; ++i) {
-            String key = keys.getString(i);
-            Locale locale = LocaleHelper.fromString(key);
-            mls.addLocalization(locale, json.getString(key));
+    private void decodeMultilingualString(JsonNode json,
+                                          MultilingualString mls) {
+        Iterator<Entry<String, JsonNode>> it = json.fields();
+        while (it.hasNext()) {
+            Entry<String, JsonNode> e = it.next();
+            Locale locale = LocaleHelper.fromString(e.getKey());
+            mls.addLocalization(locale, e.getValue().asText());
         }
     }
 
-    public AbstractI18NMetadata decode(JSONObject s)
+    public AbstractI18NMetadata decodeI18NMetadata(JsonNode s)
             throws JSONException {
-        String type = s.getString(TYPE);
-        String id = s.getString(ID);
+        String type = s.path(TYPE).asText();
+        String id = s.path(ID).asText();
         final AbstractI18NMetadata i18n;
         if (type.equals(TYPE_FEATURE)) {
             i18n = new I18NFeatureMetadata(id);
@@ -153,18 +165,14 @@ public class I18NJsonEncoder {
             i18n = new I18NOfferingMetadata(id);
         } else if (type.equals(TYPE_PROCEDURE)) {
             I18NProcedureMetadata pi18n = new I18NProcedureMetadata(id);
-            decodeMultilingualString(s.optJSONObject(LONG_NAME), pi18n
-                                     .getLongName());
-            decodeMultilingualString(s.optJSONObject(SHORT_NAME), pi18n
-                                     .getShortName());
+            decodeMultilingualString(s.path(LONG_NAME), pi18n.getLongName());
+            decodeMultilingualString(s.path(SHORT_NAME), pi18n.getShortName());
             i18n = pi18n;
         } else {
             throw new JSONException("Unknown type: " + type);
         }
-        decodeMultilingualString(s.optJSONObject(NAME), i18n.getName());
-        decodeMultilingualString(s.optJSONObject(DESCRIPTION), i18n
-                                 .getDescription());
+        decodeMultilingualString(s.path(NAME), i18n.getName());
+        decodeMultilingualString(s.path(DESCRIPTION), i18n.getDescription());
         return i18n;
     }
-
 }

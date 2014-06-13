@@ -29,8 +29,10 @@
 package org.n52.sos.config;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.n52.sos.config.settings.BooleanSettingDefinition;
@@ -42,11 +44,13 @@ import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.config.settings.TimeInstantSettingDefinition;
 import org.n52.sos.config.settings.UriSettingDefinition;
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.i18n.MultilingualString;
-import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.i18n.LocaleHelper;
+import org.n52.sos.i18n.MultilingualString;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.util.JSONUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableSet;
 
 
@@ -297,20 +301,21 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
         }
     }
      private MultilingualString parseMultilingualString(String stringValue) {
-        if (nullOrEmpty(stringValue)) {
-            return null;
-        } else {
-            String[] s = stringValue.trim().split("(?<!\\\\)#");
-            MultilingualString ms = new MultilingualString();
-            if ((s.length % 2) == 0) {
-                for (int i = 0; i < s.length; i += 2) {
-                    ms.addLocalization(LocaleHelper.fromString(s[1]), s[i + 1]);
+        MultilingualString ms = new MultilingualString();
+        if (!nullOrEmpty(stringValue)) {
+            try {
+                JsonNode json = JSONUtils.loadString(stringValue);
+                Iterator<String> it = json.fieldNames();
+                while(it.hasNext()) {
+                    String key = it.next();
+                    String value = json.path(key).asText();
+                    ms.addLocalization(LocaleHelper.fromString(key), value);
                 }
-            } else {
+            } catch (IOException ex) {
                 throw new IllegalArgumentException(String.format("Malformed multilingual string: %s", stringValue));
             }
-            return ms;
         }
+        return ms;
     }
 
     /**

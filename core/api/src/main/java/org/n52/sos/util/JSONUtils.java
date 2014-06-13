@@ -38,6 +38,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
+import java.util.Collection;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +50,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 
 /**
@@ -67,6 +74,20 @@ public class JSONUtils {
     private static final ObjectReader READER;
 
     private static final ObjectWriter WRITER;
+
+    private static final Function<Object, JsonNode> TO_JSON_STRING
+                = new Function<Object, JsonNode>() {
+                    @Override
+                    public JsonNode apply(Object object) {
+                        if (object == null) {
+                            return nodeFactory().nullNode();
+                        } else if (object instanceof JsonNode) {
+                            return (JsonNode) object;
+                        } else {
+                            return nodeFactory().textNode(String.valueOf(object));
+                        }
+                    }
+                };
 
     static {
         final ObjectMapper mapper =
@@ -155,5 +176,19 @@ public class JSONUtils {
 
     public static JsonNode loadString(final String json) throws IOException {
         return loadReader(new StringReader(json));
+    }
+
+    public static ObjectNode toJSON(Map<String, ?> map) {
+        ObjectNode node = nodeFactory().objectNode();
+        if (map != null) {
+            node.putAll(Maps.transformValues(map, TO_JSON_STRING));
+        }
+        return node;
+    }
+
+    public static ArrayNode toJSON(Collection<?> coll) {
+        ArrayNode node = nodeFactory().arrayNode();
+        node.addAll(Collections2.transform(coll, TO_JSON_STRING));
+        return node;
     }
 }

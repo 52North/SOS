@@ -34,25 +34,27 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-
-import org.codehaus.jettison.json.JSONException;
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingDefinitionGroup;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.StringHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import org.n52.sos.config.SettingDefinition;
+import org.n52.sos.config.SettingDefinitionGroup;
+import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.exception.JSONException;
+import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.JSONUtils;
+import org.n52.sos.util.StringHelper;
+
+
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 /*
@@ -78,9 +80,9 @@ public class SettingDefinitonController extends AbstractController {
         } else {
             grouped = sortByGroup(defs, showAll, Collections.EMPTY_SET);
         }
-        return getEncoder().encode(grouped).toString(4);
+        return JSONUtils.print(getEncoder().encode(grouped));
     }
-    
+
     protected Map<SettingDefinitionGroup, Set<SettingDefinition>> sortByGroup(Set<SettingDefinition<?, ?>> defs, boolean showAll, Set<String> only) {
         Map<SettingDefinitionGroup, Set<SettingDefinition>> map =
                 new HashMap<SettingDefinitionGroup, Set<SettingDefinition>>();
@@ -103,7 +105,7 @@ public class SettingDefinitonController extends AbstractController {
             if (CollectionHelper.isEmpty(only)) {
                 return group.isShowInDefaultSettings();
             }
-            return only.contains(group.getTitle());    
+            return only.contains(group.getTitle());
         }
         return true;
     }

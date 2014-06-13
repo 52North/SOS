@@ -109,8 +109,7 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
         try {
             return sm.getSettingFactory().newSettingValue(def, stringValue);
         } catch (Exception e) {
-            throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_VALIDATE_PARAMETER,
-                    def.getTitle(), stringValue));
+            throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_VALIDATE_PARAMETER, def.getTitle(), stringValue));
         }
     }
 

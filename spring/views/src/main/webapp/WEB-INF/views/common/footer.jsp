@@ -29,10 +29,10 @@
 
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-</div>
-</div>
-</div>
-</div>
+            </div> <!-- EOF content -->
+        </div> <!-- EOF container -->
+    </div> <!-- EOF main -->
+</div> <!--  EOF wrap -->
 <div id="footer">
     <div id="f_top">
         <div id="f_navigation">
@@ -96,6 +96,6 @@
             52&deg;North Initiative for Geospatial Open Source Software GmbH. All Rights Reserved.
         </small>
     </div>
-</div>
+</div> <!--  EOF footer -->
 </body>
 </html>

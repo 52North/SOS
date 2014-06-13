@@ -30,19 +30,21 @@ package org.n52.sos.web;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public interface ControllerConstants {
     String MEDIA_TYPE_APPLICATION_JSON = "application/json; charset=UTF-8";
 
     /**
      * @since 4.0.0
-     * 
+     *
      */
     interface Views {
         String INDEX = "index";
 
         String CLIENT = "client";
+
+        String VIEW_CLIENT = "viewclient";
 
         String LICENSE = "license";
 
@@ -83,15 +85,15 @@ public interface ControllerConstants {
         String ADMIN_CACHE = "admin/cache";
 
         String ADMIN_SENSOR_DESCRIPTIONS = "admin/sensors";
-        
+
         String ADMIN_CAPABILITIES_SETTINGS = "admin/capabilities";
-        
+
         String ADMIN_RENAME_OBSERVABLE_PROPERTIES = "admin/observableProperties";
     }
 
     /**
      * @since 4.0.0
-     * 
+     *
      */
     interface Paths {
         String ROOT = "/";
@@ -103,6 +105,8 @@ public interface ControllerConstants {
         String LICENSE = "/license";
 
         String CLIENT = "/client";
+
+        String VIEW_CLIENT ="/viewclient";
 
         String GET_INVOLVED = "/get-involved";
 
@@ -119,7 +123,7 @@ public interface ControllerConstants {
         String ADMIN_SETTINGS_UPDATE = "/admin/settings";
 
         String ADMIN_DATABASE = "/admin/datasource";
-        
+
         String ADMIN_SENSORS_DESCRIPTIONS = "/admin/sensors";
 
         String ADMIN_LIBRARY_LIST = "/admin/libs";
@@ -143,7 +147,7 @@ public interface ControllerConstants {
         String ADMIN_CACHE = "/admin/cache";
 
         String ADMIN_CACHE_SUMMARY = "/admin/cache/summary";
-        
+
         String ADMIN_CACHE_LOADING = "/admin/cache/loading";
 
         String ADMIN_RELOAD_CAPABILITIES_CACHE = "/admin/cache/reload";
@@ -159,13 +163,13 @@ public interface ControllerConstants {
         String ADMIN_DATABASE_DELETE_DELETED_OBSERVATIONS = "/admin/datasource/deleteDeletedObservations";
 
         String ADMIN_RENAME_OBSERVABLE_PROPERTIES = "/admin/observableProperties";
-        
+
         String ADMIN_RESET = "/admin/reset";
 
         String ADMIN_LOGGING = "/admin/logging";
 
         String ADMIN_LOGGING_FILE_DOWNLOAD = "/admin/logging/file";
-        
+
         String ADMIN_CAPABILITIES_SETTINGS = "/admin/capabilities";
 
         String INSTALL_ROOT = "/install";
@@ -185,13 +189,13 @@ public interface ControllerConstants {
         String LOGIN = "/login";
 
         String LOGOUT = "/j_spring_security_logout";
-        
+
 		String OFFERING_EXTENSIONS_AJAX_ENDPOINT = "/admin/capabilities/ajax/offeringExtensions";
-		
+
         String CAPABILITIES_EXTENSION_AJAX_ENDPOINT = "/admin/capabilities/ajax/capabilitiesExtensions";
-        
+
         String STATIC_CAPABILITIES_AJAX_ENDPOINT = "/admin/capabilities/ajax/staticCapabilities";
-        
+
         String VALIDATION_AJAX_ENDPOINT = "/admin/capabilities/ajax/validation";
     }
 

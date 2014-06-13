@@ -80,15 +80,14 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <!-- TODO is class menu-item11 working? -->
-                                            <a id="sosjs-menuitem" class="menu-item11" href="<c:url value="/viewclient" />">
+                                            <a id="viewclient-menuitem" class="menu-item2" href="<c:url value="/viewclient" />">
                                                 <span class="menu-title">SOS.js</span>
                                             </a> 
                                         </li>
                                     </c:if>
                                     <c:if test="${sos:hasAdministrator()}">
                                         <li>
-                                            <a id="admin-menuitem" class="menu-item2" href="<c:url value="/admin/index" />">
+                                            <a id="admin-menuitem" class="menu-item3" href="<c:url value="/admin/index" />">
                                                 <span class="menu-title">Admin</span>
                                             </a>
                                             <sec:authorize access="hasRole('ROLE_ADMIN')">
@@ -164,7 +163,7 @@
                                     </c:if>
                                     <sec:authorize access="hasRole('ROLE_ADMIN')">
                                         <li style="float: right;">
-                                            <a id="logout-menuitem" class="menu-item3" href="<c:url value="/j_spring_security_logout" />">
+                                            <a id="logout-menuitem" class="menu-item4" href="<c:url value="/j_spring_security_logout" />">
                                                 <span class="menu-title">Logout</span>
                                             </a>
                                         </li>

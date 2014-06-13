@@ -28,6 +28,8 @@
  */
 package org.n52.sos.coding.json;
 
+import org.n52.sos.util.JSONUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +39,7 @@ import java.net.URL;
 
 import org.n52.sos.decode.json.JSONDecodingException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

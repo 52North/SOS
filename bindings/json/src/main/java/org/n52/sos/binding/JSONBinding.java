@@ -35,9 +35,11 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.coding.OperationKey;
 import org.n52.sos.coding.json.JSONConstants;
-import org.n52.sos.coding.json.JSONUtils;
 import org.n52.sos.decode.Decoder;
 import org.n52.sos.decode.OperationDecoderKey;
 import org.n52.sos.exception.HTTPException;
@@ -46,10 +48,9 @@ import org.n52.sos.exception.ows.concrete.NoDecoderForKeyException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.sos.util.JSONUtils;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.http.MediaTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

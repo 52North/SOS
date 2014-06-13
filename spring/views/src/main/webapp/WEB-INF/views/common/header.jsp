@@ -79,6 +79,12 @@
                                                 <span class="menu-title">Test Client</span>
                                             </a>
                                         </li>
+                                        <li>
+                                            <!-- TODO is class menu-item11 working? -->
+                                            <a id="sosjs-menuitem" class="menu-item11" href="<c:url value="/viewclient" />">
+                                                <span class="menu-title">SOS.js</span>
+                                            </a> 
+                                        </li>
                                     </c:if>
                                     <c:if test="${sos:hasAdministrator()}">
                                         <li>

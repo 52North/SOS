@@ -2,4 +2,4 @@ target
 .classpath
 .project
 .settings
-nb-*.xml
+nb*.xml

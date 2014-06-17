@@ -80,7 +80,7 @@
     }
     $(document).ready(initSOSjs);
 </script>
-<style>
+<style type="text/css">
     .sos-app-container {
         position: relative;
     }

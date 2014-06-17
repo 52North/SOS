@@ -270,7 +270,11 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null &&
               table.uomTitle = ob.uomTitle;
             }
             if(table.foiName.length < 1) {
-              table.foiName = ob.fois[0].features[0].attributes.name;
+              var foi = res.getFeatureOfInterestFromObservationRecord(ob);
+
+              if(foi) {
+                table.foiName = foi.attributes.name;
+              }
             }
             table.data.push([SOS.Utils.isoToJsTimestamp(ob.time), ob.result.value]);
           }
@@ -2056,8 +2060,11 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null &&
             object: null,
             id: "sosMap",
             options: {
+              /* Use centre and zoom, or params.restrictedExtent to set the
+                 map's initial view */
               defaultProjection: new OpenLayers.Projection("EPSG:4326"),
               centre: new OpenLayers.LonLat(0, 0),
+              zoom: 0,
               params: {
                 projection: "EPSG:4326",
                 displayProjection: new OpenLayers.Projection("EPSG:4326")
@@ -2085,6 +2092,7 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null &&
             object: null,
             id: "sosMapBaseLayer",
             options: {
+              useOsm: false,      // Set true to use OSM instead of WMS
               label: "OpenLayers WMS",
               url: "http://vmap0.tiles.osgeo.org/wms/vmap0?",
               params: {
@@ -2242,10 +2250,14 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null &&
        */
       initBaseLayer: function() {
         var map = this.config.map.object;
+        var baseLayer;
 
         // Setup the map's base layer, and its controls
-        var baseLayer = new OpenLayers.Layer.WMS(this.config.baseLayer.options.label, this.config.baseLayer.options.url, this.config.baseLayer.options.params, this.config.baseLayer.options.extras);
-
+        if(this.config.baseLayer.options.useOsm) {
+          baseLayer = new OpenLayers.Layer.OSM();
+        } else {
+          baseLayer = new OpenLayers.Layer.WMS(this.config.baseLayer.options.label, this.config.baseLayer.options.url, this.config.baseLayer.options.params, this.config.baseLayer.options.extras);
+        }
         map.addLayers([baseLayer]);
 
         this.config.baseLayer.object = baseLayer;
@@ -2257,9 +2269,13 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null &&
       initView: function() {
         var map = this.config.map.object;
         var centre = this.config.map.options.centre || new OpenLayers.LonLat(0, 0);
+        var zoom = this.config.map.options.zoom || 0;
 
-        map.setCenter(centre);
-        map.zoomToMaxExtent();
+        if(zoom) {
+          map.setCenter(centre, zoom);
+        } else {
+          map.zoomToMaxExtent();
+        }
       },
   
       /**
@@ -2460,6 +2476,16 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null &&
                 changeMonth: true,
                 onSelect: function(s, ui) {jQuery(this).trigger('change');}
               },
+              offerings: {
+                useFqn: false
+              },
+              observedProperties: {
+                /* Toggle fully-qualified name (FQN) in menus.  For example:
+                   FQN: "urn:ogc:def:phenomenon:OGC:1.0.30:air_temperature"
+                   Name: "Air Temperature"
+                   If useFqn is false, we use Name, otherwise FQN */
+                useFqn: false
+              },
               createNewItem: false,
               promptForSelection: true,
               plotTableControlsSection: {
@@ -2609,11 +2635,23 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null &&
 
           for(var i = 0, len = offerings.length; i < len; i++) {
             ids.push(offerings[i].id);
-            names.push(offerings[i].name);
+
+            // Optionally transform from fully-qualified name (FQN) to name
+            if(this.config.menu.options.offerings.useFqn) {
+              names.push(offerings[i].name);
+            } else {
+              names.push(SOS.Utils.toTitleCase(SOS.Utils.toDisplayName(SOS.Utils.fqnToName(offerings[i].name))));
+            }
           }
         } else {
           ids = this.sos.getOfferingIds();
-          names = this.sos.getOfferingNames();
+
+          // Optionally transform from fully-qualified name (FQN) to name
+          if(this.config.menu.options.offerings.useFqn) {
+            names = this.sos.getOfferingNames();
+          } else {
+            names = SOS.Utils.toTitleCase(SOS.Utils.toDisplayName(SOS.Utils.fqnToName(this.sos.getOfferingNames())));
+          }
         }
 
         for(var i = 0, len = ids.length; i < len; i++) {
@@ -2771,7 +2809,13 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null &&
         if(SOS.Utils.isValidObject(item) && SOS.Utils.isValidObject(item.offering)) {
           var offering = this.sos.getOffering(item.offering.id);
           ids = offering.getObservedPropertyIds();
-          names = SOS.Utils.toTitleCase(SOS.Utils.toDisplayName(SOS.Utils.urnToName(offering.getObservedPropertyNames())));
+
+          // Optionally transform from fully-qualified name (FQN) to name
+          if(this.config.menu.options.observedProperties.useFqn) {
+            names = offering.getObservedPropertyIds();
+          } else {
+            names = SOS.Utils.toTitleCase(SOS.Utils.toDisplayName(SOS.Utils.fqnToName(offering.getObservedPropertyNames())));
+          }
 
           for(var i = 0, len = ids.length; i < len; i++) {
             var entry = {value: ids[i], label: names[i]};
@@ -3815,7 +3859,6 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null &&
           app: {
             object: null,
             id: "sosApp",
-            step: -1,
             components: {
               menu: null,
               map: null,
@@ -3834,8 +3877,25 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null &&
                 useOfferingTimePeriod: false,
                 ms: 31 * 8.64e7
               },
+              foi: {
+                getTemporalCoverage: true
+              },
               observation: {
                 useFoiId: true
+              },
+              /* Any properties set on sub-objects of this, will be passed
+                 down to the corresponding component on instantiation.
+                 For example:
+                 components: {
+                   plot: {
+                     plot: {options: {zoom: {interactive: false}}},
+                     format: {value: {digits: 1}}
+                   }
+                 }
+              */
+              components: {
+                table: {table: {options: {scrollable: true}}},
+                menu: {menu: {step: -1}}
               },
               info: SOS.App.Resources.config.app.options.info
             }
@@ -3888,6 +3948,13 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null &&
        */
       setOverviewOptions: function(options) {
         jQuery.extend(true, this.config.overview.options, options);
+      },
+
+      /**
+       * Set options for the app components
+       */
+      setAppComponentsOptions: function(options) {
+        jQuery.extend(true, this.config.app.options.components, options);
       },
 
       /**
@@ -3955,8 +4022,7 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null &&
         components.infoHelp.config.info.id = this.config.app.id + "InfoHelpBox";
 
         // Set any component-specific initial options
-        components.menu.config.menu.step = this.config.app.step;
-        components.table.setTableOptions({scrollable: true});
+        this.applyComponentsOptions();
 
         /* Optionally show data overview.  Using an application-level overview
            allows the selections made on the components (plot, table) to talk
@@ -3976,7 +4042,28 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null &&
         // For external listeners (application-level plumbing)
         this.sos.events.triggerEvent("sosAppInitComponents");
       },
- 
+  
+      /**
+       * Apply any options that have been set for this app's components
+       */
+      applyComponentsOptions: function() {
+        var components = this.config.app.components;
+        var confs = this.config.app.options.components;
+
+        /* If a component configuration object exists with the same name as a
+           component of this app, then set the configured properties on the
+           component */
+        if(confs) {
+          for(var p in components) {
+            if(SOS.Utils.isValidObject(confs[p])) {
+              if(SOS.Utils.isValidObject(components[p])) {
+                jQuery.extend(true, components[p].config, confs[p]);
+              }
+            }
+          }
+        }
+      },
+
       /**
        * Setup the behaviour for this app's components
        */
@@ -4078,7 +4165,9 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null &&
               this.setContentFromTemplate(/\[%lon%\]/, parseFloat(point.x).toFixed(2));
               this.setContentFromTemplate(/\[%lat%\]/, parseFloat(point.y).toFixed(2));
               // Get data availability over all offerings at this FOI
-              this.sos.getTemporalCoverageForFeatureOfInterestId(item.foi.id);
+              if(self.config.app.options.foi.getTemporalCoverage) {
+                this.sos.getTemporalCoverageForFeatureOfInterestId(item.foi.id);
+              }
             }
           }
         });
@@ -4212,7 +4301,7 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null &&
         // If app container div doesn't exist, create one on the fly
         if(ac.length < 1) {
           ac = jQuery('<div id="' + this.config.app.id + 'Container" class="sos-app-container"/>');
-          jQuery('#sos-js').append(ac);
+          jQuery('body').append(ac);
         }
 
         // If app menu container div doesn't exist, create one on the fly

@@ -95,13 +95,15 @@ public class SosService extends ConfiguratedHttpServlet {
         return request;
     }
 
-    private void logResponse(HttpServletResponse response, long count) {
-    	LOGGER.debug("Outgoing response for request No. {} is committed = {}", count, response.isCommitted());
+    private void logResponse(HttpServletResponse response, long count, long start) {
+        long duration = System.currentTimeMillis() - start;
+        LOGGER.debug("Outgoing response for request No. {} is committed = {} (took {}ms)", count, response.isCommitted(), duration);
     }
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
+        long start = System.currentTimeMillis();
         long currentCount = counter.incrementAndGet();
         logRequest(request, currentCount);
         try {
@@ -109,13 +111,14 @@ public class SosService extends ConfiguratedHttpServlet {
         } catch (HTTPException exception) {
             onHttpException(request, response, exception);
         } finally {
-            logResponse(response, currentCount);
+            logResponse(response, currentCount, start);
         }
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
+        long start = System.currentTimeMillis();
         long currentCount = counter.incrementAndGet();
         logRequest(request, currentCount);
         try {
@@ -123,13 +126,14 @@ public class SosService extends ConfiguratedHttpServlet {
         } catch (HTTPException exception) {
             onHttpException(request, response, exception);
         } finally {
-            logResponse(response, currentCount);
+            logResponse(response, currentCount, start);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
+        long start = System.currentTimeMillis();
         long currentCount = counter.incrementAndGet();
         logRequest(request, currentCount);
         try {
@@ -137,13 +141,14 @@ public class SosService extends ConfiguratedHttpServlet {
         } catch (HTTPException exception) {
             onHttpException(request, response, exception);
         } finally {
-            logResponse(response, currentCount);
+            logResponse(response, currentCount, start);
         }
     }
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
+        long start = System.currentTimeMillis();
         long currentCount = counter.incrementAndGet();
         logRequest(request, currentCount);
         try {
@@ -151,13 +156,14 @@ public class SosService extends ConfiguratedHttpServlet {
         } catch (HTTPException exception) {
             onHttpException(request, response, exception);
         } finally {
-            logResponse(response, currentCount);
+            logResponse(response, currentCount, start);
         }
     }
 
     @Override
     protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
+        long start = System.currentTimeMillis();
         long currentCount = counter.incrementAndGet();
         logRequest(request, currentCount);
         Binding binding = null;
@@ -176,7 +182,7 @@ public class SosService extends ConfiguratedHttpServlet {
                 onHttpException(request, response, exception);
             }
         } finally {
-            logResponse(response, currentCount);
+            logResponse(response, currentCount, start);
         }
     }
 

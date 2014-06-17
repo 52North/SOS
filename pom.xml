@@ -76,9 +76,9 @@
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
         <!-- managed dependencies with ${project.version} will be wrong in submodules
             with different versions -->
-        <sos.version>4.1.0-SNAPSHOT</sos.version>
-        <do.version>0.2.0-SNAPSHOT</do.version>
-        <rest-binding.version>0.2.0-SNAPSHOT</rest-binding.version>
+        <sos.version>4.0.1</sos.version>
+        <do.version>0.1.2</do.version>
+        <rest-binding.version>0.1.2</rest-binding.version>
     </properties>
     <dependencyManagement>
         <dependencies>

@@ -41,20 +41,21 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.cache.ContentCacheUpdate;
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.cache.ctrl.action.CompleteCacheUpdate;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Classes that saves the cache state after each apply. Actual functionality is
  * delegated to subclasses.
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheController {
@@ -74,7 +75,7 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
 
     private volatile WritableContentCache cache;
 
-    private ReentrantLock lock = new ReentrantLock();
+    private final ReentrantLock lock = new ReentrantLock();
 
     public ContentCacheControllerImpl() {
         loadOrCreateCache();
@@ -116,7 +117,7 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
             f.delete();
         } else {
             LOGGER.debug("No cache temp file found at '{}'", f.getAbsolutePath());
-            
+
             // cache file doesn't exist, try to load cache from datasource
             try {
                 update();
@@ -255,8 +256,8 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
     @Override
     public boolean isUpdateInProgress() {
         return current != null;
-    }    
-    
+    }
+
     @Override
     public void update() throws OwsExceptionReport {
         update(new CompleteCacheUpdate());
@@ -304,7 +305,8 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
     }
 
     private class CompleteUpdate extends Update {
-        private ConcurrentLinkedQueue<PartialUpdate> updates = new ConcurrentLinkedQueue<PartialUpdate>();
+        private final ConcurrentLinkedQueue<PartialUpdate> updates
+                = new ConcurrentLinkedQueue<PartialUpdate>();
 
         private final Lock lock = new ReentrantLock();
 

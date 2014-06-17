@@ -36,6 +36,6 @@
 		<p class="lead">${param.leadParagraph}</p>
 	</div>
 	<div class="span3 header-img-span">
-		<img src="<c:url value="/static/images/52n-logo-220x80.png"/>"/>
+		<img src="<c:url value="/static/images/52n-logo-220x80.png"/>" alt="52North Logo"/>
 	</div>
 </div>

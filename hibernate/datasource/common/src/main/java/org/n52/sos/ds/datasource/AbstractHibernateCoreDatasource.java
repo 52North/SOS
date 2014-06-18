@@ -331,6 +331,26 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
         this.maxPoolSizeDefault = maxPoolSizeDefault;
     }
     
+    @Override
+    public Properties getDatasourceProperties(Properties current, Map<String, Object> changed) {
+        return getDatasourceProperties(mergeProperties(current, changed));
+    }
+    
+    /**
+     * Merge current properties with changed settings
+     *
+     * @param current
+     *            Current properties
+     * @param changed
+     *            Changed settings
+     * @return Updated settings
+     */
+    protected Map<String, Object> mergeProperties(Properties current, Map<String, Object> changed) {
+        Map<String, Object> settings = parseDatasourceProperties(current);
+        settings.putAll(changed);
+        return settings;
+    }
+    
     /**
      * Parse datasource properties to map
      *
@@ -339,5 +359,30 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Map with String key and Object value
      */
     protected abstract Map<String, Object> parseDatasourceProperties(Properties current);
+    
+    /**
+     * Converts the given connection settings into a valid JDBC string.
+     * 
+     * @param settings
+     *            the connection settings, containing keys from
+     *            {@link AbstractHibernateDatasource} (<code>HOST_KEY</code>,
+     *            <code>PORT_KEY</code>, ...).
+     * @return a valid JDBC connection string
+     */
+    protected abstract String toURL(Map<String, Object> settings);
+    
+    /**
+     * Parses the given JDBC string searching for host, port and database
+     * 
+     * @param url
+     *            the JDBC string to parse
+     * @return an array with three strings:
+     *         <ul>
+     *         <li>[0] - Host
+     *         <li>[1] - Port (parseable int as string)
+     *         <li>[2] - Database
+     *         </ul>
+     */
+    protected abstract String[] parseURL(String url);
 
 }

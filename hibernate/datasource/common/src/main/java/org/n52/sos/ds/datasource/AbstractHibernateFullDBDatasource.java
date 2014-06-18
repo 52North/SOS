@@ -218,31 +218,31 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         return createDialect().getClass().getCanonicalName();
     }
 
-    /**
-     * Converts the given connection settings into a valid JDBC string.
-     * 
-     * @param settings
-     *            the connection settings, containing keys from
-     *            {@link AbstractHibernateDatasource} (<code>HOST_KEY</code>,
-     *            <code>PORT_KEY</code>, ...).
-     * @return a valid JDBC connection string
-     */
-    protected abstract String toURL(Map<String, Object> settings);
-
-    /**
-     * Parses the given JDBC string searching for host, port and database
-     * 
-     * @param url
-     *            the JDBC string to parse
-     * @return an array with three strings:
-     *         <ul>
-     *         <li>[0] - Host
-     *         <li>[1] - Port (parseable int as string)
-     *         <li>[2] - Database
-     *         </ul>
-     */
-    protected abstract String[] parseURL(String url);
-
+//    /**
+//     * Converts the given connection settings into a valid JDBC string.
+//     * 
+//     * @param settings
+//     *            the connection settings, containing keys from
+//     *            {@link AbstractHibernateDatasource} (<code>HOST_KEY</code>,
+//     *            <code>PORT_KEY</code>, ...).
+//     * @return a valid JDBC connection string
+//     */
+//    protected abstract String toURL(Map<String, Object> settings);
+//
+//    /**
+//     * Parses the given JDBC string searching for host, port and database
+//     * 
+//     * @param url
+//     *            the JDBC string to parse
+//     * @return an array with three strings:
+//     *         <ul>
+//     *         <li>[0] - Host
+//     *         <li>[1] - Port (parseable int as string)
+//     *         <li>[2] - Database
+//     *         </ul>
+//     */
+//    protected abstract String[] parseURL(String url);
+//
 //    /**
 //     * @param usernameDefault
 //     *            the usernameDefault to set

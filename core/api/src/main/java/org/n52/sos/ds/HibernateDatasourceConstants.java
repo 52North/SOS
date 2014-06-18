@@ -67,10 +67,14 @@ public interface HibernateDatasourceConstants {
     String HIBERNATE_RESOURCES = "HIBERNATE_RESOURCES";
 
     String HIBERNATE_DIRECTORY = "HIBERNATE_DIRECTORY";
+    
+    String HIBERNATE_ANNOTADED_CLASSES = "HIBERNATE_ANNOTADED_CLASSES";
 
     String PATH_SEPERATOR = ";";
 
     String PROVIDED_JDBC = "PROVIDED_JDBC";
 
     String HIBERNATE_DRIVER_CLASS = "hibernate.connection.driver_class";
+    
+    String HIBERNATE_DEFAULT_OGM_PACKAGE = "org.n52.sos.ds.hibernate.ogm.entities";
 }

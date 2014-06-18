@@ -268,7 +268,8 @@ public class Configurator implements Cleanupable {
         ServiceConfiguration.getInstance();
         
         initializeConnectionProviders();
-
+        CacheFeederDAORepository.createInstance(getDatasourceDaoIdentificator());
+        
         serviceIdentificationFactory = new SosServiceIdentificationFactory();
         serviceProviderFactory = new SosServiceProviderFactory();
         OperationDAORepository.createInstance(getDatasourceDaoIdentificator());

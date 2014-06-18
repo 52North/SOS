@@ -35,10 +35,10 @@ import java.util.Properties;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.jdbc.Work;
 import org.hibernate.service.ServiceRegistry;
-import org.hibernate.service.ServiceRegistryBuilder;
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.DataConnectionProvider;
 import org.n52.sos.ds.Datasource;
@@ -134,11 +134,6 @@ HibernateDatasourceConstants {
     }
     
     @Override
-    public String getConnectionProviderIdentifier() {
-        return HibernateDatasourceConstants.ORM_CONNECTION_PROVIDER_IDENTIFIER;
-    }
-    
-    @Override
     public void initialize(Properties properties) throws ConfigurationException {
         final DatasourceCallback datasourceCallback
                 = getDatasourceCallback(properties);
@@ -153,7 +148,7 @@ HibernateDatasourceConstants {
 
             configuration.registerTypeOverride(new UtcTimestampType());
             ServiceRegistry serviceRegistry =
-                    new ServiceRegistryBuilder().applySettings(configuration.getProperties()).buildServiceRegistry();
+                    new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
             this.sessionFactory = configuration.buildSessionFactory(serviceRegistry);
             Session s = this.sessionFactory.openSession();
             try {

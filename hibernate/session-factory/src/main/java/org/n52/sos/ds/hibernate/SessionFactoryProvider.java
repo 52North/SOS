@@ -46,7 +46,9 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
 import org.n52.sos.ds.ConnectionProviderException;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,8 +83,8 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
         }
         Session session = getConnection();
         Connection conn = ((SessionImplementor) session).connection();
-        DatabaseMetadata databaseMetadata = new DatabaseMetadata(conn, dialect);
-        String[] udpateSql = configuration.generateSchemaUpdateScript(dialect, databaseMetadata);
+        DatabaseMetadata databaseMetadata = new DatabaseMetadata(conn, dialect, configuration);
+        String[] udpateSql = SchemaUpdateScript.toStringArray(configuration.generateSchemaUpdateScriptList(dialect, databaseMetadata));
         returnConnection(session);
         StringBuilder updateSqlString = new StringBuilder();
         for (String sqlLine : udpateSql) {
@@ -147,5 +149,10 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
             cleanup();
             throw new ConfigurationException(exceptionText, urise);
         }
+    }
+    
+    @Override
+    public String getConnectionProviderIdentifier() {
+        return HibernateDatasourceConstants.ORM_CONNECTION_PROVIDER_IDENTIFIER;
     }
 }

@@ -740,23 +740,23 @@
             <dependencies>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>hiberante-ogm-session-factory</artifactId>
+                    <artifactId>mongoDB-client</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>hiberante-envirocar-common</artifactId>
+                    <artifactId>envirocar-common</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>hiberante-envirocar-dao</artifactId>
+                    <artifactId>envirocar-dao</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>hiberante-envirocar-feature</artifactId>
+                    <artifactId>envirocar-feature</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>hiberante-envirocar-datasource</artifactId>
+                    <artifactId>envirocar-datasource</artifactId>
                 </dependency>
             </dependencies>
         </profile>

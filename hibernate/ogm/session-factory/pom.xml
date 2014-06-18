@@ -28,6 +28,12 @@
 			<groupId>org.hibernate.ogm</groupId>
 			<artifactId>hibernate-ogm-mongodb</artifactId>
 		</dependency>
+		
+		<dependency>
+		    <groupId>org.jboss.jbossts</groupId>
+		    <artifactId>jbossjta</artifactId>
+		    <version>4.16.4.Final</version>
+		</dependency>
 	</dependencies>
 
 	<!-- Hibernate Core Dependencies -->

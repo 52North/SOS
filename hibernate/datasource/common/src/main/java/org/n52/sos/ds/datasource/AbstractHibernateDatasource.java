@@ -609,11 +609,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     @Override
-    public Properties getDatasourceProperties(Properties current, Map<String, Object> changed) {
-        return getDatasourceProperties(mergeProperties(current, changed));
-    }
-
-    @Override
     public void checkPostCreation(Properties properties) {
         if (checkIfExtensionDirectoryExists()) {
             StringBuilder builder =
@@ -709,21 +704,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 LOG.error("Error closing statement", e);
             }
         }
-    }
-
-    /**
-     * Merge current properties with changed settings
-     *
-     * @param current
-     *            Current properties
-     * @param changed
-     *            Changed settings
-     * @return Updated settings
-     */
-    protected Map<String, Object> mergeProperties(Properties current, Map<String, Object> changed) {
-        Map<String, Object> settings = parseDatasourceProperties(current);
-        settings.putAll(changed);
-        return settings;
     }
 
     /**
@@ -1062,4 +1042,5 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return Checked schema
      */
     protected abstract String[] checkDropSchema(String[] dropSchema);
+    
 }

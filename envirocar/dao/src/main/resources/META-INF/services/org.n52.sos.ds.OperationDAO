@@ -1,0 +1,3 @@
+org.n52.sos.ds.envirocar.EnviroCarDescribeSensorDAO
+org.n52.sos.ds.envirocar.EnviroCarGetFeatureOfInterestDAO
+org.n52.sos.ds.envirocar.EnviroCarGetObservationDAO

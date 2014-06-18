@@ -38,6 +38,9 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
  * Mock NOOP implementation of CacheFeederDAO used to prevent NoImplementationFoundException.
  */
 public class MockCacheFeederDAO implements CacheFeederDAO {
+    
+    public static final String DATASOURCE_DAO_IDENTIFIER = "hibernate.orm";
+    
     @Override
     public void updateCache(WritableContentCache capabilitiesCache)
             throws OwsExceptionReport {
@@ -52,6 +55,6 @@ public class MockCacheFeederDAO implements CacheFeederDAO {
 
     @Override
     public String getDatasourceDaoIdentifier() {
-        return "mock";
+        return DATASOURCE_DAO_IDENTIFIER;
     }
 }

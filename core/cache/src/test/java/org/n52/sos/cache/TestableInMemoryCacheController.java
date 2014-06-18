@@ -32,6 +32,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.n52.sos.cache.ctrl.ContentCacheControllerImpl;
+import org.n52.sos.ds.CacheFeederDAORepository;
+import org.n52.sos.ds.MockCacheFeederDAO;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
@@ -44,6 +46,7 @@ public class TestableInMemoryCacheController extends ContentCacheControllerImpl 
 
     public static void setUp() {
         try {
+            CacheFeederDAORepository.createInstance(MockCacheFeederDAO.DATASOURCE_DAO_IDENTIFIER);
             tempFile = File.createTempFile("TestableInMemoryCacheController", "");
         } catch (IOException ex) {
             throw new RuntimeException(ex);

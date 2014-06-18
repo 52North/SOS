@@ -201,17 +201,17 @@ function generateSettings(settings, settingValues, container, tabbed) {
 
         var onAdd = function(e) {
             var $block = createBlock();
-            $block.css("display", "none")
+            $block.css("display", "none");
             $(e.srcElement).parents(".block").after($block);
             $block.fadeIn();
-        }
+        };
 
         var onRemove = function(e) {
             var $oldBlock = $(e.srcElement).parents(".block");
             $oldBlock.fadeOut(function() {
                 $oldBlock.remove();
                  // no block is left; add an empty one
-                if ($blocks.find(".block").length == 0) {
+                if ($blocks.find(".block").length === 0) {
                     var $newBlock = createBlock();
                     $newBlock.css("display", "none");
                     $controls.append($newBlock);
@@ -219,7 +219,7 @@ function generateSettings(settings, settingValues, container, tabbed) {
                 }
             });
             onChange();
-        }
+        };
 
         var onChange = function() {
             var value = {};
@@ -230,7 +230,7 @@ function generateSettings(settings, settingValues, container, tabbed) {
                 if (lang) { value[lang] = text; }
             });
             $setting.find("input[type=hidden]").val(JSON.stringify(value));
-        }
+        };
 
         var createBlock = function (lang, text) {
             var $block = $("<div>")
@@ -292,7 +292,7 @@ function generateSettings(settings, settingValues, container, tabbed) {
             $lang.on("change", onChange);
             $text.on("change", onChange);
             return $block;
-        }
+        };
 
         $setting.addClass("multilingual");
 
@@ -329,7 +329,7 @@ function generateSettings(settings, settingValues, container, tabbed) {
         }
 
         // no default value; add empty block
-        if ($blocks.find(".block").length==0) {
+        if ($blocks.find(".block").length === 0) {
             $blocks.append(createBlock());
         }
 

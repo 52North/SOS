@@ -28,41 +28,34 @@
  */
 package org.n52.sos.binding.rest.resources.observations;
 
-import java.io.IOException;
+import net.opengis.om.x20.OMObservationType;
 
-import org.apache.xmlbeans.XmlException;
-import org.n52.sos.binding.rest.requests.RequestHandler;
-import org.n52.sos.binding.rest.requests.RestRequest;
-import org.n52.sos.binding.rest.requests.RestResponse;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.InsertObservationRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
-public class ObservationsRequestHandler extends RequestHandler {
+public class ObservationsCollectionPostRequest implements IObservationsRequest {
 
-    @Override
-    public RestResponse handleRequest(RestRequest request) throws OwsExceptionReport, XmlException, IOException
+    private InsertObservationRequest insertObservationRequest;
+    
+    private OMObservationType[] xb_OMObservationCollection;
+
+    public ObservationsCollectionPostRequest(InsertObservationRequest insertObservationRequest,
+            OMObservationType[] xb_OMObservationCollection) {
+        this.insertObservationRequest = insertObservationRequest;
+        this.xb_OMObservationCollection = xb_OMObservationCollection;
+    }
+    
+    public InsertObservationRequest getInsertObservationRequest()
     {
-        if (isGetRequest(request)) {
-            return new ObservationsGetRequestHandler().handleRequest(request);
-
-        } else if (request instanceof ObservationsPostRequest || request instanceof ObservationsCollectionPostRequest){
-            //return new ObservationsPostRequestHandler().handleRequest((ObservationsPostRequest)request);
-            return new ObservationsPostRequestHandler().handleRequest(request);
-
-        } else if (request instanceof ObservationsDeleteRequest) {
-            return new ObservationsDeleteRequestHandler().handleRequest((ObservationsDeleteRequest)request);
-            
-        } 
-        throw logRequestTypeNotSupportedByThisHandlerAndCreateException(request,this.getClass().getName());
+        return insertObservationRequest;
     }
 
-    private boolean isGetRequest(RestRequest request)
+    public OMObservationType[] getXb_OMObservationCollection()
     {
-        return request instanceof ObservationsSearchRequest ||
-                request instanceof ObservationsGetRequest;
+        return xb_OMObservationCollection;
     }
 
 }

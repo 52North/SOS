@@ -46,6 +46,7 @@ import org.n52.sos.binding.rest.resources.capabilities.CapabilitiesGetResponse;
 import org.n52.sos.binding.rest.resources.features.FeatureByIdResponse;
 import org.n52.sos.binding.rest.resources.features.FeaturesGetEncoder;
 import org.n52.sos.binding.rest.resources.features.FeaturesResponse;
+import org.n52.sos.binding.rest.resources.observations.ObservationsCollectionPostResponse;
 import org.n52.sos.binding.rest.resources.observations.ObservationsDeleteEncoder;
 import org.n52.sos.binding.rest.resources.observations.ObservationsDeleteRespone;
 import org.n52.sos.binding.rest.resources.observations.ObservationsGetByIdResponse;
@@ -128,7 +129,8 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
             {
                 return new CapabilitiesGetEncoder();
             } 
-            else if (restResponse instanceof ObservationsPostResponse) 
+            else if (restResponse instanceof ObservationsPostResponse || 
+                    restResponse instanceof ObservationsCollectionPostResponse) 
             {
                 return new ObservationsPostEncoder();
             } 

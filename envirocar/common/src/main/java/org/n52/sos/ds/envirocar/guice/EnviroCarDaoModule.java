@@ -26,45 +26,31 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.ogm.envirocar.entities;
+package org.n52.sos.ds.envirocar.guice;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import org.envirocar.server.core.dao.MeasurementDao;
+import org.envirocar.server.core.dao.PhenomenonDao;
+import org.envirocar.server.core.dao.SensorDao;
+import org.envirocar.server.core.dao.TrackDao;
+import org.envirocar.server.mongo.dao.MongoMeasurementDao;
+import org.envirocar.server.mongo.dao.MongoPhenomenonDao;
+import org.envirocar.server.mongo.dao.MongoSensorDao;
+import org.envirocar.server.mongo.dao.MongoTrackDao;
+import org.n52.sos.ds.envirocar.EnviroCarDaoFactory;
 
-@Entity(name="phenomenon")
-public class ObservableProperty {
-    
-    @Id
-    private String id;
-    
-    private String unit;
+import com.google.inject.AbstractModule;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
-    /**
-     * @return the id
-     */
-    public String getId() {
-        return id;
-    }
+public class EnviroCarDaoModule extends AbstractModule {
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    /**
-     * @return the unit
-     */
-    public String getUnit() {
-        return unit;
-    }
-
-    /**
-     * @param unit the unit to set
-     */
-    public void setUnit(String unit) {
-        this.unit = unit;
+    @Override
+    protected void configure() {
+        install(new FactoryModuleBuilder()
+        .implement(PhenomenonDao.class, MongoPhenomenonDao.class)
+        .implement(MeasurementDao.class, MongoMeasurementDao.class)
+        .implement(SensorDao.class, MongoSensorDao.class)
+        .implement(TrackDao.class, MongoTrackDao.class)
+                .build(EnviroCarDaoFactory.class));
     }
 
 }

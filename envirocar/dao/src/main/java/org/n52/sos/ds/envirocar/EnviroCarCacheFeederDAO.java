@@ -29,30 +29,22 @@
 package org.n52.sos.ds.envirocar;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
+import org.envirocar.server.core.dao.SensorDao;
+import org.envirocar.server.core.filter.TrackFilter;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
 import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.CacheFeederDAO;
-import org.n52.sos.ds.EnviroCarHibernateConstants;
-import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ds.envirocar.cache.EnviroCarInitialCacheUptate;
-import org.n52.sos.ds.envirocar.cache.base.EnviroCarOfferingCacheUpdate;
-import org.n52.sos.ds.hibernate.CacheFeederSettingDefinitionProvider;
-import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
+import org.n52.sos.ds.EnviroCarConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EnviroCarCacheFeederDAO extends HibernateSessionHolder implements CacheFeederDAO {
+import com.google.common.collect.Sets;
+
+public class EnviroCarCacheFeederDAO extends EnviroCarDaoFactoryHolder implements CacheFeederDAO {
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EnviroCarCacheFeederDAO.class);
@@ -67,70 +59,68 @@ public class EnviroCarCacheFeederDAO extends HibernateSessionHolder implements C
         return cacheThreadCount;
     }
 
-    @Setting(CacheFeederSettingDefinitionProvider.CACHE_THREAD_COUNT)
-    public void setCacheThreadCount(int threads) throws ConfigurationException {
-        Validation.greaterZero("Cache Thread Count", threads);
-        this.cacheThreadCount = threads;
-    }
 
     @Override
     public void updateCache(WritableContentCache cache) throws OwsExceptionReport {
         checkCacheNotNull(cache);
-        List<OwsExceptionReport> errors = CollectionHelper.synchronizedList();
-        Session session = null;
-        try {
-            EnviroCarInitialCacheUptate update = new EnviroCarInitialCacheUptate(getCacheThreadCount());
-            session = getSession();
-            update.setCache(cache);
-            update.setErrors(errors);
-            update.setSession(session);
-
-            LOGGER.info("Starting cache update");
-            long cacheUpdateStartTime = System.currentTimeMillis();
-
-            update.execute();
-
-            logCacheLoadTime(cacheUpdateStartTime);
-        } catch (HibernateException he) {
-            LOGGER.error("Error while updating ContentCache!", he);
-        } finally {
-            returnSession(session);
-        }
-        if (!errors.isEmpty()) {
-            throw new CompositeOwsException(errors);
-        }
+        getOfferings(cache);
+        getObservableProperties(cache);
+        
+//        List<OwsExceptionReport> errors = CollectionHelper.synchronizedList();
+//        Session session = null;
+//        try {
+//            EnviroCarInitialCacheUptate update = new EnviroCarInitialCacheUptate(getCacheThreadCount());
+//            session = getSession();
+//            update.setCache(cache);
+//            update.setErrors(errors);
+//            update.setSession(session);
+//
+//            LOGGER.info("Starting cache update");
+//            long cacheUpdateStartTime = System.currentTimeMillis();
+//
+//            update.execute();
+//
+//            logCacheLoadTime(cacheUpdateStartTime);
+//        } catch (HibernateException he) {
+//            LOGGER.error("Error while updating ContentCache!", he);
+//        } finally {
+//            returnSession(session);
+//        }
+//        if (!errors.isEmpty()) {
+//            throw new CompositeOwsException(errors);
+//        }
     }
 
     @Override
     public void updateCacheOfferings(WritableContentCache cache, Collection<String> offeringsNeedingUpdate)
             throws OwsExceptionReport {
         checkCacheNotNull(cache);
-        if (CollectionHelper.isEmpty(offeringsNeedingUpdate)) {
-            return;
-        }
-        List<OwsExceptionReport> errors = CollectionHelper.synchronizedList();
-        Session session = getSession();
-        EnviroCarOfferingCacheUpdate update = new EnviroCarOfferingCacheUpdate(getCacheThreadCount(), offeringsNeedingUpdate);
-        update.setCache(cache);
-        update.setErrors(errors);
-        update.setSession(session);
-        
-        LOGGER.info("Starting offering cache update for {} offering(s)", offeringsNeedingUpdate.size());
-        long cacheUpdateStartTime = System.currentTimeMillis();
-
-        try {
-            update.execute();
-        } catch (HibernateException he) {
-            LOGGER.error("Error while updating ContentCache!", he);
-        } finally {
-            returnSession(session);
-        }
-
-        logCacheLoadTime(cacheUpdateStartTime);
-
-        if (!errors.isEmpty()) {
-            throw new CompositeOwsException(errors);
-        }
+//        if (CollectionHelper.isEmpty(offeringsNeedingUpdate)) {
+//            return;
+//        }
+//        List<OwsExceptionReport> errors = CollectionHelper.synchronizedList();
+//        Session session = getSession();
+//        EnviroCarOfferingCacheUpdate update = new EnviroCarOfferingCacheUpdate(getCacheThreadCount(), offeringsNeedingUpdate);
+//        update.setCache(cache);
+//        update.setErrors(errors);
+//        update.setSession(session);
+//        
+//        LOGGER.info("Starting offering cache update for {} offering(s)", offeringsNeedingUpdate.size());
+//        long cacheUpdateStartTime = System.currentTimeMillis();
+//
+//        try {
+//            update.execute();
+//        } catch (HibernateException he) {
+//            LOGGER.error("Error while updating ContentCache!", he);
+//        } finally {
+//            returnSession(session);
+//        }
+//
+//        logCacheLoadTime(cacheUpdateStartTime);
+//
+//        if (!errors.isEmpty()) {
+//            throw new CompositeOwsException(errors);
+//        }
     }
 
     private void checkCacheNotNull(WritableContentCache cache) {
@@ -143,12 +133,86 @@ public class EnviroCarCacheFeederDAO extends HibernateSessionHolder implements C
         Period cacheLoadPeriod = new Period(startTime, System.currentTimeMillis());
         LOGGER.info("Cache load finished in {} ({} seconds)",
                 PeriodFormat.getDefault().print(cacheLoadPeriod.normalizedStandard()),
-                cacheLoadPeriod.toStandardSeconds());         
+                cacheLoadPeriod.toStandardSeconds());
     }
 
     @Override
     public String getDatasourceDaoIdentifier() {
-        return EnviroCarHibernateConstants.ENVIROCAR_DATASOURCE_DAO_IDENTIFIER;
+        return EnviroCarConstants.ENVIROCAR_DATASOURCE_DAO_IDENTIFIER;
+    }
+
+
+    private void getOfferings(WritableContentCache cache) throws OwsExceptionReport {
+        SensorDao sensorDAO = getEnviroCarDaoFactory().getSensorDAO();
+        Set<String> s = Sets.newHashSet(sensorDAO.getTypes());
+        cache.setOfferings(s);
+        for (String offering : s) {
+            cache.setNameForOffering(offering, offering);
+            // procedures
+            cache.setProceduresForOffering(offering, Sets.newHashSet(offering));
+            // Observable properties
+            cache.setObservablePropertiesForOffering(offering, getObservablePropertyIdentifier(offering, getEnviroCarDaoFactory()));
+
+            // Observation types
+//            cache.setObservationTypesForOffering(offering, );
+
+            // Features of Interest
+//            List<String> featureOfInterestIdentifiers =
+//                    featureDAO.getFeatureOfInterestIdentifiersForOffering(offering, session);
+//            cache.setFeaturesOfInterestForOffering(offering,
+//                    getValidFeaturesOfInterestFrom(featureOfInterestIdentifiers));
+//            cache.setFeatureOfInterestTypesForOffering(offering,
+//                    getFeatureOfInterestTypes(featureOfInterestIdentifiers, session));
+//
+//            // Spatial Envelope
+//            cache.setEnvelopeForOffering(offering, getEnvelopeForOffering(featureOfInterestIdentifiers, session));
+//            // Spatial Filtering Profile Spatial Envelope
+//            addSpatialFilteringProfileEnvelopeForOffering(offering, offeringId, session);
+            
+//            getCache().setNameForOffering(prefixedOfferingId, getOfferingName(prefixedOfferingId, offeringName));
+//            getCache().setMinPhenomenonTimeForOffering(offeringId, ote.getMinPhenomenonTime());
+//            getCache().setMaxPhenomenonTimeForOffering(offeringId, ote.getMaxPhenomenonTime());
+//            getCache().setMinResultTimeForOffering(offeringId, ote.getMinResultTime());
+//            getCache().setMaxResultTimeForOffering(offeringId, ote.getMaxResultTime());
+        }
+    }
+
+
+    private Collection<String> getObservablePropertyIdentifier(String offering, EnviroCarDaoFactory enviroCarDaoFactory) {
+//        enviroCarDaoFactory.getMeasurementDAO().get(new MeasurementFilter())
+        return null;
+    }
+
+
+    private void getObservableProperties(WritableContentCache cache) {
+//        List<ObservableProperty> ops = new ObservablePropertyDAO().getObservablePropertyObjects(getSession());
+//        //if ObservationConstellation is supported load them all at once, otherwise query obs directly
+//        if (HibernateHelper.isEntitySupported(ObservationConstellation.class, getSession())) {
+//            Map<String, Collection<ObservationConstellationInfo>> ociMap = ObservationConstellationInfo.mapByObservableProperty(
+//                    new ObservationConstellationDAO().getObservationConstellationInfo(getSession()));
+//            for (ObservableProperty op : ops) {
+//                final String obsPropIdentifier = op.getIdentifier();
+//                Collection<ObservationConstellationInfo> ocis = ociMap.get(obsPropIdentifier);
+//                if (CollectionHelper.isNotEmpty(ocis)) {
+//                    getCache().setOfferingsForObservableProperty(obsPropIdentifier,
+//                            DatasourceCacheUpdateHelper.getAllOfferingIdentifiersFromObservationConstellationInfos(ocis));
+//                    getCache().setProceduresForObservableProperty(obsPropIdentifier,
+//                            DatasourceCacheUpdateHelper.getAllProcedureIdentifiersFromObservationConstellationInfos(ocis));
+//                }
+//            }
+//        } else {
+//            for (ObservableProperty op : ops) {
+//                final String obsPropIdentifier = op.getIdentifier();
+//                try {
+//                    getCache().setOfferingsForObservableProperty(obsPropIdentifier,
+//                            new OfferingDAO().getOfferingIdentifiersForObservableProperty(obsPropIdentifier, getSession()));
+//                } catch (CodedException e) {
+//                    getErrors().add(e);
+//                }
+//                getCache().setProceduresForObservableProperty(obsPropIdentifier,
+//                        new ProcedureDAO().getProcedureIdentifiersForObservableProperty(obsPropIdentifier, getSession()));                
+//            }
+//        }
     }
 
 }

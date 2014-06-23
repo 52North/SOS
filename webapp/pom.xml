@@ -740,7 +740,7 @@
             <dependencies>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>mongoDB-client</artifactId>
+                    <artifactId>mongodb-client</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>

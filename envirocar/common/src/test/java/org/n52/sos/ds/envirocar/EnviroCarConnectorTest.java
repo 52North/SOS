@@ -26,15 +26,33 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.envirocar.cache.base;
+package org.n52.sos.ds.envirocar;
 
-import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
+import java.util.List;
+import java.util.Properties;
 
-public class EnviroCarFeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
+import org.envirocar.server.mongo.MongoDB;
+import org.envirocar.server.mongo.dao.MongoSensorDao;
+import org.n52.sos.ds.ConnectionProviderException;
 
-    @Override
-    public void execute() {
-        // TODO Auto-generated method stub
+public class EnviroCarConnectorTest {
+
+    public static void main(String[] args) throws ConnectionProviderException {
+        Properties p = new Properties();
+        p.put(MongoDB.HOST_PROPERTY, "localhost");
+        p.put(MongoDB.PORT_PROPERTY, "27017");
+        p.put(MongoDB.DATABASE_PROPERTY, "envirocar");
+        p.put(MongoDB.USER_PROPERTY, "");
+        p.put(MongoDB.PASS_PROPERTY, "");
+
+        EnviroCarConnector enviroCarConnector = new EnviroCarConnector();
+        enviroCarConnector.initialize(p);
+
+        MongoSensorDao dao = (MongoSensorDao)((EnviroCarDaoFactory) enviroCarConnector.getConnection()).getSensorDAO();
+        List<String> types = dao.getTypes();
+        for (String string : types) {
+            System.out.println(string);
+        }
 
     }
 

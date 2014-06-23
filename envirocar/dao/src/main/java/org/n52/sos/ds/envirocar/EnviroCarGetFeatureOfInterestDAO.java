@@ -29,7 +29,7 @@
 package org.n52.sos.ds.envirocar;
 
 import org.n52.sos.ds.AbstractGetFeatureOfInterestDAO;
-import org.n52.sos.ds.EnviroCarHibernateConstants;
+import org.n52.sos.ds.EnviroCarConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
@@ -43,7 +43,7 @@ public class EnviroCarGetFeatureOfInterestDAO extends AbstractGetFeatureOfIntere
 
     @Override
     public String getDatasourceDaoIdentifier() {
-        return EnviroCarHibernateConstants.ENVIROCAR_DATASOURCE_DAO_IDENTIFIER;
+        return EnviroCarConstants.ENVIROCAR_DATASOURCE_DAO_IDENTIFIER;
     }
 
     @Override

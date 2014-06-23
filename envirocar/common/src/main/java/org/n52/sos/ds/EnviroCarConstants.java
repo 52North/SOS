@@ -26,24 +26,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.envirocar.cache;
+package org.n52.sos.ds;
 
-import org.n52.sos.ds.hibernate.cache.CompositeCacheUpdate;
-import org.n52.sos.ds.hibernate.cache.ParallelCacheUpdate;
-import org.n52.sos.ds.envirocar.cache.base.EnviroCarFeatureOfInterestCacheUpdate;
-import org.n52.sos.ds.envirocar.cache.base.EnviroCarObservablePropertiesCacheUpdate;
-import org.n52.sos.ds.envirocar.cache.base.EnviroCarObservationTimeCacheUpdate;
-import org.n52.sos.ds.envirocar.cache.base.EnviroCarOfferingCacheUpdate;
-import org.n52.sos.ds.envirocar.cache.base.EnviroCarProcedureCacheUpdate;
+public interface EnviroCarConstants {
 
-public class EnviroCarInitialCacheUptate extends CompositeCacheUpdate {
-
-    public EnviroCarInitialCacheUptate(int threadCount) {
-        //execute all updates except offerings and procedures in parallel, then execute offering and procedure updates
-        //(which spawn their own threads)
-        super(new ParallelCacheUpdate(threadCount, new EnviroCarObservablePropertiesCacheUpdate(),
-                new EnviroCarFeatureOfInterestCacheUpdate(), new EnviroCarObservationTimeCacheUpdate()),
-                new EnviroCarOfferingCacheUpdate(threadCount), new EnviroCarProcedureCacheUpdate(threadCount));
-    }
-
+    String ENVIROCAR_CONNECTION_PROVIDER_IDENTIFIER = "envirocar";
+    
+    String ENVIROCAR_DATASOURCE_DAO_IDENTIFIER = "envirocar";
 }

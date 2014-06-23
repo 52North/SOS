@@ -26,16 +26,20 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.envirocar.cache.base;
+package org.n52.sos.ds.envirocar;
 
-import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
+import org.envirocar.server.core.dao.MeasurementDao;
+import org.envirocar.server.core.dao.PhenomenonDao;
+import org.envirocar.server.core.dao.SensorDao;
+import org.envirocar.server.core.dao.TrackDao;
 
-public class EnviroCarProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
+public interface EnviroCarDaoFactory {
 
-    @Override
-    public void execute() {
-        // TODO Auto-generated method stub
-
-    }
-
+    PhenomenonDao getPhenomenonDAO();
+    
+    MeasurementDao  getMeasurementDAO();
+    
+    SensorDao getSensorDAO();
+    
+    TrackDao getTrackDAO();
 }

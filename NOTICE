@@ -14,6 +14,11 @@ This project includes:
   52°North SOS - Cache under GPLv2
   52°North SOS - Coding Modules under GPLv2
   52°North SOS - Core Modules under GPLv2
+  52°North SOS - enviroCar Common under GPLv2
+  52°North SOS - enviroCar DAOs under GPLv2
+  52°North SOS - enviroCar Datasources under GPLv2
+  52°North SOS - enviroCar Feature Query DAO under GPLv2
+  52°North SOS - enviroCar Module under GPLv2
   52°North SOS - Example Data under GPLv2
   52°North SOS - Extension Delete Observation under GPLv2
   52°North SOS - Extension Delete Observation - Hibernate DAO under GPLv2
@@ -33,17 +38,12 @@ This project includes:
   52°North SOS - Hibernate Common Datasource under GPLv2
   52°North SOS - Hibernate DAOs under GPLv2
   52°North SOS - Hibernate Datasources under GPLv2
-  52°North SOS - Hibernate enviroCar DAOs under GPLv2
-  52°North SOS - Hibernate enviroCar Datasources under GPLv2
-  52°North SOS - Hibernate enviroCar Feature Query DAO under GPLv2
-  52°North SOS - Hibernate enviroCar Module under GPLv2
   52°North SOS - Hibernate Feature Query DAO under GPLv2
   52°North SOS - Hibernate H2 under GPLv2
   52°North SOS - Hibernate H2 Datasource under GPLv2
   52°North SOS - Hibernate Mappings under GPLv2
   52°North SOS - Hibernate Module under GPLv2
   52°North SOS - Hibernate MySQL Datasource under GPLv2
-  52°North SOS - Hibernate OGM Common under GPLv2
   52°North SOS - Hibernate OGM Common Datasource under GPLv2
   52°North SOS - Hibernate OGM Datasources under GPLv2
   52°North SOS - Hibernate OGM Module under GPLv2
@@ -57,6 +57,7 @@ This project includes:
   52°North SOS - JSON Coding under GPLv2
   52°North SOS - JSON Common under GPLv2
   52°North SOS - KVP Binding under GPLv2
+  52°North SOS - MongoDB Client under GPLv2
   52°North SOS - Operation Request Operators under GPLv2
   52°North SOS - OWS 1.1.0 XML Request Coding under GPLv2
   52°North SOS - POX Binding under GPLv2
@@ -94,6 +95,7 @@ This project includes:
   Apache Solr Solrj under Apache 2
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   ClassMate under The Apache Software License, Version 2.0
+  Code Generation Library under ASF 2.0
   Commons Codec under The Apache Software License, Version 2.0
   Commons Compress under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
@@ -103,9 +105,15 @@ This project includes:
   CORS Filter under The Apache Software License, Version 2.0
   Data Mapper for Jackson under The Apache Software License, Version 2.0
   dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
+  enviroCar server core under AGPLv3
+  enviroCar server mongo backend under AGPLv3
   FindBugs-jsr305 under The Apache Software License, Version 2.0
   GeoDB Core under BSD style, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
+  Google Guice - Core Library under The Apache Software License, Version 2.0
+  Google Guice - Extensions - AssistedInject under The Apache Software License, Version 2.0
+  Google Guice - Extensions - MultiBindings under The Apache Software License, Version 2.0
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
+  Guice Plugin under The Apache Software License, Version 2.0
   H2 Database Engine under The H2 License, Version 1.0
   Hamcrest All under New BSD License
   Hamcrest Core under BSD style
@@ -133,6 +141,8 @@ This project includes:
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail API jar under CDDL or GPLv2+CE
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
+  javax.inject under The Apache Software License, Version 2.0
+  jbcrypt under ISC/BSD License
   JBoss Logging 3 under Apache License, version 2.0
   JBoss Logging I18n Annotations under Public Domain
   JBossTS jbossjta under LGPL 2.1
@@ -149,6 +159,7 @@ This project includes:
   Log4j Implemented Over SLF4J under Apache Software Licenses
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
+  Logging via SLF4J under The Apache Software License, Version 2.0
   Lucene Common Analyzers under Apache 2
   Lucene Core under Apache 2
   Lucene Facets under Apache 2
@@ -165,6 +176,7 @@ This project includes:
   mchange-commons-java library under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   Mockito under The MIT License
   MongoDB Java Driver under The Apache Software License, Version 2.0
+  morphia under The Apache Software License, Version 2.0
   Mozilla Rhino under Mozilla Public License, Version 2.0
   MySQL java connector under The GNU General Public License, Version 2
   null under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
@@ -193,6 +205,7 @@ This project includes:
   ParaNamer Core under BSD
   Postgis JDBC Driver under GNU Lesser General Public License
   PostgreSQL JDBC Driver under BSD License
+  ProxyToys Core under BSD license, http://proxytoys.codehaus.org/license.html
   SaxonB under Mozilla Public License Version 1.0
   servlet-api under CDDL 1.1 or GPL2 w/ CPE
   SLF4J API Module under MIT License

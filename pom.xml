@@ -30,7 +30,6 @@
         <module>coding</module>
         <module>operations</module>
         <module>envirocar</module>
-        <module>mongoDB</module>
         <module>hibernate</module>
         <module>extensions</module>
         <module>spring</module>
@@ -73,7 +72,6 @@
         <hibernate.spatial.version>4.3-52N</hibernate.spatial.version>
         <sqlite.version>3.7.2</sqlite.version>
         <jackson.version>2.3.3</jackson.version>
-        <morphia.version>0.107</morphia.version>
 
         <!-- 52N dependency versions -->
         <n52.common.xml.version>1.1.5</n52.common.xml.version>
@@ -269,7 +267,7 @@
             </dependency>
              <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>mongoDB-client</artifactId>
+                <artifactId>mongodb-client</artifactId>
                 <version>${sos.version}</version>
             </dependency>
             <dependency>
@@ -549,26 +547,10 @@
             </dependency>
             <!-- MongoDB -->
             <dependency>
-				<groupId>org.mongodb</groupId>
-				<artifactId>mongo-java-driver</artifactId>
-				<version>2.12.2</version>
+				<groupId>org.envirocar.server</groupId>
+           		<artifactId>mongo</artifactId>
+        		<version>1.1.0-SNAPSHOT</version>
 			</dependency>
-            <dependency>
-                <dependency>
-					<groupId>org.mongodb.morphia</groupId>
-					<artifactId>morphia</artifactId>
-                <version>${morphia.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mongodb.morphia</groupId>
-                <artifactId>morphia-guice-plugin</artifactId>
-                <version>${morphia.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mongodb.morphia</groupId>
-                <artifactId>morphia-logging-slf4j</artifactId>
-                <version>${morphia-version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-gml-v311</artifactId>

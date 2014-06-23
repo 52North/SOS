@@ -22,4 +22,10 @@
 		<version>4.3-52N</version>
 		<license>GNU Lesser General Public License (LGPL) version 2.1</license>
 	</artifact>
+	<artifact>
+        <groupId>com.thoughtworks.proxytoys</groupId>
+        <artifactId>proxytoys</artifactId>
+        <version>1.0</version>
+        <license>BSD license, http://proxytoys.codehaus.org/license.html</license>
+    </artifact>
 </license-lookup>

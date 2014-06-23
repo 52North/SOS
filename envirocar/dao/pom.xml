@@ -20,6 +20,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>envirocar-common</artifactId>
+        </dependency>
         <!-- TODO remove after changing from document to type saving in resultTemplate -->
         <dependency>
             <groupId>${project.groupId}</groupId>

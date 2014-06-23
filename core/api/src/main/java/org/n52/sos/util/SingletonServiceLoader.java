@@ -33,6 +33,7 @@ import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
 import org.n52.sos.ds.ConnectionProviderIdentificator;
+import org.n52.sos.ds.DatasourceDaoIdentifier;
 import org.n52.sos.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,6 +117,12 @@ public class SingletonServiceLoader<T> implements Producer<T> {
                 if (currentImplementation instanceof ConnectionProviderIdentificator) {
                     if (datasourceIdentifier.equalsIgnoreCase(
                             ((ConnectionProviderIdentificator) currentImplementation).getConnectionProviderIdentifier())) {
+                        implementation = currentImplementation;
+                    }
+                }
+                if (currentImplementation instanceof DatasourceDaoIdentifier) {
+                    if (datasourceIdentifier.equalsIgnoreCase(
+                            ((DatasourceDaoIdentifier) currentImplementation).getDatasourceDaoIdentifier())) {
                         implementation = currentImplementation;
                     }
                 }

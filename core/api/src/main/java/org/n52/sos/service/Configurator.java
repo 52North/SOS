@@ -275,7 +275,7 @@ public class Configurator implements Cleanupable {
         OperationDAORepository.createInstance(getDatasourceDaoIdentificator());
         ServiceOperatorRepository.getInstance();
         CodingRepository.getInstance();
-        featureQueryHandler = loadAndConfigure(FeatureQueryHandler.class, false, getConnectionProviderIdentificator());
+        featureQueryHandler = loadAndConfigure(FeatureQueryHandler.class, false, getDatasourceDaoIdentificator());
         ConverterRepository.getInstance();
         RequestOperatorRepository.getInstance();
         BindingRepository.getInstance();

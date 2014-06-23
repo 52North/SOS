@@ -41,6 +41,7 @@ import org.n52.sos.convert.Converter;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.convert.ConverterRepository;
 import org.n52.sos.ds.AbstractDescribeSensorDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -84,6 +85,11 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
      */
     public DescribeSensorDAO() {
         super(SosConstants.SOS);
+    }
+    
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 
     @Override

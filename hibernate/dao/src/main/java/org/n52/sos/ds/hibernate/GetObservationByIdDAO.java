@@ -37,6 +37,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.AbstractGetObservationByIdDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.AbstractSpatialFilteringProfileDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
@@ -71,6 +72,11 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
      */
     public GetObservationByIdDAO() {
         super(SosConstants.SOS);
+    }
+    
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 
     @Override

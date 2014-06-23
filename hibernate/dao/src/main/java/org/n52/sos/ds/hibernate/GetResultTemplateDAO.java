@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.sos.ds.AbstractGetResultTemplateDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
@@ -54,6 +55,11 @@ public class GetResultTemplateDAO extends AbstractGetResultTemplateDAO {
      */
     public GetResultTemplateDAO() {
         super(SosConstants.SOS);
+    }
+    
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 
     @Override

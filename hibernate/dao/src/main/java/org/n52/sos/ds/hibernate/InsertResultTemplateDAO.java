@@ -33,6 +33,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.ds.AbstractInsertResultTemplateDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
@@ -70,6 +71,11 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
      */
     public InsertResultTemplateDAO() {
         super(SosConstants.SOS);
+    }
+    
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 
     @Override

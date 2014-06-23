@@ -10,7 +10,7 @@
     <artifactId>hibernate-datasource-common</artifactId>
     <packaging>jar</packaging>
     <name>52°North SOS - Hibernate Common Datasource</name>
-    <description>52°North Sensor Observation Service Hibernate common module</description>
+    <description>52°North Sensor Observation Service Hibernate common datasource module</description>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

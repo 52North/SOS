@@ -53,6 +53,7 @@ import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
 import org.hibernate.spatial.dialect.postgis.PostgisDialect;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.ds.FeatureQueryHandler;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.CodespaceDAO;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
@@ -528,5 +529,10 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
     @Override
     public int getDefault3DEPSG() {
         return GeometryHandler.getInstance().getDefault3DEPSG();
+    }
+
+    @Override
+    public String getConnectionProviderIdentifier() {
+        return HibernateDatasourceConstants.ORM_CONNECTION_PROVIDER_IDENTIFIER;
     }
 }

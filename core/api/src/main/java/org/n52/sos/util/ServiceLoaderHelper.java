@@ -29,11 +29,18 @@
 package org.n52.sos.util;
 
 import java.util.Iterator;
+import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
+import org.n52.sos.ds.DatasourceDaoIdentifier;
 import org.n52.sos.exception.ows.concrete.NoImplementationFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServiceLoaderHelper {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceLoaderHelper.class);
+    
     /**
      * Return an implementation of a class, loaded by the ServiceLoader
      * 
@@ -47,6 +54,38 @@ public class ServiceLoaderHelper {
         Iterator<T> i = sl.iterator();
         //TODO throw exception if more than one implementation is found?
         impl = i.hasNext() ? i.next() : null;
+        if (impl == null) {
+            throw new NoImplementationFoundException(clazz);
+        }
+        return impl;
+    }
+    
+    /**
+     * Return an implementation of a class, loaded by the ServiceLoader
+     * 
+     * @param clazz The class to load
+     * @param datasourceIdentificator The identificator for the loaded class
+     * @return An implementation of the class
+     * @throws NoImplementationFoundException
+     */
+    public static <T> T loadImplementation(Class<T> clazz, String datasourceIdentificator) throws NoImplementationFoundException {
+        T impl = null;
+        ServiceLoader<T> sl = ServiceLoader.load(clazz);
+        Iterator<T> i = sl.iterator();
+        T currentImplementation = null;
+        while (i.hasNext() && impl == null) {
+            try {
+                currentImplementation = i.next();
+            } catch (ServiceConfigurationError sce) {
+                LOG.warn(String.format("Implementation for %s could be loaded!", clazz), sce);
+            }
+            if (currentImplementation instanceof DatasourceDaoIdentifier) {
+                if (datasourceIdentificator.equalsIgnoreCase(
+                        ((DatasourceDaoIdentifier) currentImplementation).getDatasourceDaoIdentifier())) {
+                    impl = currentImplementation;
+                }
+            }
+        }
         if (impl == null) {
             throw new NoImplementationFoundException(clazz);
         }

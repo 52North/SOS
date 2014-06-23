@@ -42,18 +42,33 @@ import org.n52.sos.util.AbstractConfiguringServiceLoaderRepository;
  * @since 4.0.0
  */
 public class OperationDAORepository extends AbstractConfiguringServiceLoaderRepository<OperationDAO> {
-	
-	private static class LazyHolder {
-		private static final OperationDAORepository INSTANCE = new OperationDAORepository();
-		
-		private LazyHolder() {};
-	}
+
+    private static class LazyHolder {
+        private static final OperationDAORepository INSTANCE = new OperationDAORepository();
+
+        private LazyHolder() {
+        };
+    }
+    
+    private static String datasourceDaoIdentficator;
 
     /**
      * @return Returns a singleton instance of the CodingRepository.
      */
     public static OperationDAORepository getInstance() {
         return LazyHolder.INSTANCE;
+    }
+
+    /**
+     * @return Returns a singleton instance of the CodingRepository.
+     */
+    public static OperationDAORepository createInstance(String datasourceDaoIdentficator) {
+        setDatasourceDaoIdentficator(datasourceDaoIdentficator);
+        return getInstance();
+    }
+
+    private static void setDatasourceDaoIdentficator(String datasourceDaoIdentficator) {
+        OperationDAORepository.datasourceDaoIdentficator = datasourceDaoIdentficator;
     }
 
     /** Implemented ISosOperationDAO */
@@ -82,8 +97,19 @@ public class OperationDAORepository extends AbstractConfiguringServiceLoaderRepo
     protected void processConfiguredImplementations(final Set<OperationDAO> daos) throws ConfigurationException {
         operationDaos.clear();
         for (final OperationDAO dao : daos) {
-            operationDaos.put(dao.getOperationDAOKeyType(), dao);
+            if (checkDatasourceDaoIdentifications(dao)) {
+                operationDaos.put(dao.getOperationDAOKeyType(), dao);
+            }
         }
+    }
+
+    protected boolean checkDatasourceDaoIdentifications(DatasourceDaoIdentifier datasourceDaoIdentifier) {
+        if (datasourceDaoIdentficator.equalsIgnoreCase(datasourceDaoIdentifier
+                .getDatasourceDaoIdentifier()) || DatasourceDaoIdentifier.IDEPENDET_IDENTIFIER.equals(datasourceDaoIdentifier
+                .getDatasourceDaoIdentifier())) {
+            return true;
+        }
+        return false;
     }
 
     /**

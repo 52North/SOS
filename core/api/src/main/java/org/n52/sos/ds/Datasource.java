@@ -40,7 +40,7 @@ import org.n52.sos.config.SettingDefinitionGroup;
  *
  * @since 4.0.0
  */
-public interface Datasource {
+public interface Datasource extends ConnectionProviderIdentificator, DatasourceDaoIdentifier {
 
     SettingDefinitionGroup BASE_GROUP = new SettingDefinitionGroup().setTitle("Database Configuration").setOrder(1);
 

@@ -141,6 +141,10 @@
 		<td style="padding:3px;width:70%;">The <a target="_blank" href="http://www.wupperverband.de/">Wupperverband</a> for water, humans and the environment (Germany)</td>
 	</tr>
 	<tr>
+		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.ivl.se/english"><img alt="IVL Swedish Environmental Research Institute" align="middle" width="196" src="static/images/funding/ivl_eng_rgb_70mm.png" /></a></td>
+		<td style="padding:3px;width:70%;">The <a target="_blank" href="http://www.ivl.se/english">IVL Swedish Environmental Research Institute</a> is an independent, non-profit research institute, owned by a foundation jointly established by the Swedish Government and Swedish industry.</td>
+	</tr>
+	<tr>
 		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.dlr.de"><img alt="German Aerospace Centre" align="middle" width="172" src="static/images/funding/DLR-logo.jpg" /></a></td>
 		<td style="padding:3px;width:70%;">The <a target="_blank" href="http://www.dlr.de">German Aerospace Centre</a> (Deutsches Zentrum fuer Luft- und Raumfahrt, DLR) and part of their <a target="_blank" href="http://www.dlr.de/eoc/en/desktopdefault.aspx/tabid-5400/10196_read-21914/">Environmental and Crisis Information System</a> (Umwelt- und Kriseninformationssystem, UKis)</td>
 	</tr>

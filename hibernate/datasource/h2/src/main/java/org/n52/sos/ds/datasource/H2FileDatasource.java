@@ -149,11 +149,6 @@ public class H2FileDatasource extends AbstractH2Datasource {
     }
 
     @Override
-    protected String[] checkDropSchema(String[] dropSchema) {
-        return dropSchema;
-    }
-
-    @Override
     public void prepare(Map<String, Object> settings) {
         initGeoDB(settings);
     }

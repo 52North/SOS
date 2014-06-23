@@ -936,7 +936,18 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
      *         observationHasOffering
      */
     protected String[] checkCreateSchema(String[] script) {
-        // creates upper case hexStrings from table names hashCode() with prefix
+        return checkScriptForGeneratedAndDuplicatedEntries(script);
+    }
+    
+    /**
+     * Remove generated foreign key definition and duplicated entries.
+     *
+     * @param script
+     *            Not checked script.
+     * @return Checked script without duplicate foreign key
+     */
+    protected String[] checkScriptForGeneratedAndDuplicatedEntries(String[] script) {
+     // creates upper case hexStrings from table names hashCode() with prefix
         // 'FK'
         Set<String> generatedForeignKeys =
                 Sets.newHashSet(getGeneratedForeignKeyFor("observationHasOffering"),
@@ -963,7 +974,7 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
         Set<String> nonDublicated = Sets.newLinkedHashSet(checkedSchema);
         return nonDublicated.toArray(new String[nonDublicated.size()]);
     }
-
+ 
     /**
      * Create the beginning character of a generated foreign key from a table
      * name hasCode()
@@ -975,6 +986,18 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
      */
     private String getGeneratedForeignKeyFor(String tableName) {
         return new StringBuilder("FK").append(Integer.toHexString(tableName.hashCode()).toUpperCase()).toString();
+    }
+
+    /**
+     * Check if drop schema contains alter table ... drop constraint ... . Due
+     * to dynamic generation some constraints are generated and differ.
+     *
+     * @param dropSchema
+     *            Schema to check
+     * @return Checked schema
+     */
+    protected String[] checkDropSchema(String[] dropSchema) {
+        return checkScriptForGeneratedAndDuplicatedEntries(dropSchema);
     }
 
     @Override
@@ -1042,14 +1065,4 @@ public abstract class AbstractHibernateDatasource implements Datasource, SQLCons
      *             If the SQL connection creation fails
      */
     protected abstract Connection openConnection(Map<String, Object> settings) throws SQLException;
-
-    /**
-     * Check if drop schema contains alter table ... drop constraint ... . Due
-     * to dynamic generation some constraints are generated and differ.
-     *
-     * @param dropSchema
-     *            Schema to check
-     * @return Checked schema
-     */
-    protected abstract String[] checkDropSchema(String[] dropSchema);
 }

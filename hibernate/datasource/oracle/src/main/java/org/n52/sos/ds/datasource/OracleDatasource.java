@@ -327,9 +327,4 @@ public class OracleDatasource extends AbstractHibernateFullDBDatasource {
                     + "included in the server classpath. ", e);
         }
     }
-
-    @Override
-    protected String[] checkDropSchema(String[] dropSchema) {
-        return dropSchema;
-    }
 }

@@ -110,9 +110,4 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
             throw new RuntimeException(ex);
         }
     }
-
-    @Override
-    protected String[] checkDropSchema(String[] dropSchema) {
-        return dropSchema;
-    }
 }

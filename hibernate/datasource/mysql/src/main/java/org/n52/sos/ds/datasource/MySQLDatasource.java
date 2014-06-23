@@ -95,7 +95,7 @@ public class MySQLDatasource extends AbstractHibernateFullDBDatasource {
         setPasswordDefault(PASSWORD_DEFAULT_VALUE);
         setPasswordDescription(PASSWORD_DESCRIPTION);
         setDatabaseDefault(DATABASE_DEFAULT_VALUE);
-        setDatabaseDescription(HOST_DESCRIPTION);
+        setDatabaseDescription(DATABASE_DESCRIPTION);
         setHostDefault(HOST_DEFAULT_VALUE);
         setHostDescription(HOST_DESCRIPTION);
         setPortDefault(PORT_DEFAULT_VALUE);
@@ -160,26 +160,6 @@ public class MySQLDatasource extends AbstractHibernateFullDBDatasource {
                 String.format("jdbc:mysql://%s:%d/%s", settings.get(HOST_KEY), settings.get(PORT_KEY),
                         settings.get(DATABASE_KEY));
         return url;
-    }
-
-    @Override
-    protected String[] checkDropSchema(String[] dropSchema) {
-        String hexStringToCheck =
-                new StringBuilder("FK").append(Integer.toHexString("observationHasOffering".hashCode()).toUpperCase())
-                        .toString();
-        boolean duplicate = false;
-        List<String> checkedSchema = Lists.newLinkedList();
-        for (String string : dropSchema) {
-            if (string.contains(hexStringToCheck)) {
-                if (!duplicate) {
-                    checkedSchema.add(string);
-                    duplicate = true;
-                }
-            } else {
-                checkedSchema.add(string);
-            }
-        }
-        return checkedSchema.toArray(new String[checkedSchema.size()]);
     }
 
     @Override

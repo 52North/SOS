@@ -245,15 +245,7 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
                 checkedSchema.add(string);
             }
         }
-        // remove dublicated entries
-        Set<String> set = Sets.newHashSet(checkedSchema);
-        List<String> nonDublicated = Lists.newLinkedList();
-        for (String string : checkedSchema) {
-            if (set.contains(string)) {
-                nonDublicated.add(string);
-            }
-        }
-        return nonDublicated.toArray(new String[nonDublicated.size()]);
+        return checkScriptForGeneratedAndDuplicatedEntries(checkedSchema.toArray(new String[checkedSchema.size()]));
     }
     
 }

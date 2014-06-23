@@ -264,23 +264,5 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
             throw new SQLException(ex);
         }
     }
-    
-    @Override
-    protected String[] checkCreateSchema(String[] script) {
-        return script;  
-        
-    }
-
-    @Override
-    protected String[] checkDropSchema(String[] dropSchema) {
-        return dropSchema;
-//        List<String> checkedSchema = Lists.newLinkedList();
-//        for (String string : dropSchema) {
-//            if (!string.startsWith("alter")) {
-//                checkedSchema.add(string);
-//            }
-//        }
-//        return checkedSchema.toArray(new String[checkedSchema.size()]);
-    }
 
 }

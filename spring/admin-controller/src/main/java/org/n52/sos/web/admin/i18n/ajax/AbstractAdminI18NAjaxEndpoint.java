@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -83,13 +84,6 @@ public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetada
     }
 
     @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(BadRequestException.class)
-    public String onError(BadRequestException e) {
-        return e.getMessage();
-    }
-
-    @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchIdentifierException.class)
     public String onError(NoSuchIdentifierException e) {
@@ -109,14 +103,15 @@ public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetada
 
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/{id}",
+    @RequestMapping(params = "id",
                     method = RequestMethod.GET,
                     produces = MediaType.APPLICATION_JSON_VALUE)
-    public String get(@PathVariable String id)
+    public String get(@RequestParam("id") String id)
             throws NoImplementationFoundException,
                    JSONException,
                    NoSuchIdentifierException,
                    OwsExceptionReport {
+        LOGGER.debug("Getting I18N for {}", id);
         checkIdentifier(id);
         T i18n = getDao().getMetadata(id);
         if (i18n == null) {
@@ -126,25 +121,21 @@ public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetada
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/{id}",
-                    method = RequestMethod.POST,
+    @RequestMapping(method = RequestMethod.POST,
                     consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void update(@PathVariable String id, @RequestBody String json)
+    public void update(@RequestBody String json)
             throws NoImplementationFoundException,
                    JSONException,
                    NoSuchIdentifierException,
-                   BadRequestException,
                    OwsExceptionReport,
                    IOException {
-        checkIdentifier(id);
+
         @SuppressWarnings("unchecked")
         T i18n = (T) encoder.decodeI18NMetadata(JSONUtils.loadString(json));
-        if (!i18n.getIdentifier().equals(id)) {
-            throw new BadRequestException("Mismatching identifiers");
-        } else {
-            LOGGER.debug("Saving I18N: {}", i18n);
-            getDao().saveMetadata(i18n);
-        }
+        LOGGER.debug("Updating I18N for {}", i18n.getIdentifier());
+        checkIdentifier(i18n.getIdentifier());
+        LOGGER.debug("Saving I18N: {}", i18n);
+        getDao().saveMetadata(i18n);
     }
 
     private void checkIdentifier(String id)

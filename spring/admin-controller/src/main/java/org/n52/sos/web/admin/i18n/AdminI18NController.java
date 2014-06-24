@@ -28,17 +28,26 @@
  */
 package org.n52.sos.web.admin.i18n;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeSet;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import org.n52.sos.cache.ContentCache;
+import org.n52.sos.service.Configurator;
+import org.n52.sos.util.JSONUtils;
 import org.n52.sos.web.ControllerConstants;
 
 /**
  * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.1.0
- *
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.ADMIN_I18N)
@@ -46,6 +55,17 @@ public class AdminI18NController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() {
-        return new ModelAndView(ControllerConstants.Views.ADMIN_I18N);
+        Map<String, String> model = new HashMap<String, String>(4);
+        ContentCache cache = Configurator.getInstance().getCache();
+        model.put("offerings", asJSONArray(cache.getOfferings()));
+        model.put("procedures", asJSONArray(cache.getProcedures()));
+        model.put("features", asJSONArray(cache.getFeaturesOfInterest()));
+        model.put("observableProperties", asJSONArray(cache
+                  .getObservableProperties()));
+        return new ModelAndView(ControllerConstants.Views.ADMIN_I18N, model);
+    }
+
+    private static String asJSONArray(Collection<String> coll) {
+        return JSONUtils.print(JSONUtils.toJSON(new TreeSet<String>(coll)));
     }
 }

@@ -229,7 +229,7 @@ function generateSettings(settings, settingValues, container, tabbed) {
                     text = $block.find("input.text").val();
                 if (lang) { value[lang] = text; }
             });
-            $setting.find("input[type=hidden]").val(JSON.stringify(value));
+            $setting.find("input[type=hidden]").val(JSON.stringify(value)).trigger("change");
         };
 
         var createBlock = function (lang, text) {

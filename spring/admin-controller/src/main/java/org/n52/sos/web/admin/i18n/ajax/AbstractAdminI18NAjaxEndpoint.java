@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -44,17 +43,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.n52.sos.cache.ContentCache;
+import org.n52.sos.cache.ContentCacheUpdate;
 import org.n52.sos.ds.I18NDAO;
+import org.n52.sos.exception.JSONException;
 import org.n52.sos.exception.NoSuchIdentifierException;
 import org.n52.sos.exception.ows.concrete.NoImplementationFoundException;
 import org.n52.sos.i18n.I18NDAORepository;
 import org.n52.sos.i18n.json.I18NJsonEncoder;
-import org.n52.sos.exception.JSONException;
 import org.n52.sos.i18n.metadata.AbstractI18NMetadata;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.JSONUtils;
 import org.n52.sos.web.AbstractController;
+
+import com.google.common.base.Optional;
 
 public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetadata> extends AbstractController {
 
@@ -136,6 +138,8 @@ public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetada
         checkIdentifier(i18n.getIdentifier());
         LOGGER.debug("Saving I18N: {}", i18n);
         getDao().saveMetadata(i18n);
+        ContentCacheUpdate update = getContentCacheUpdate(i18n);
+        Configurator.getInstance().getCacheController().update(update);
     }
 
     private void checkIdentifier(String id)
@@ -160,5 +164,14 @@ public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetada
     protected abstract boolean isValid(ContentCache cache, String id);
 
     protected abstract T create(String id);
+
+    protected ContentCacheUpdate getContentCacheUpdate(final T i18n) {
+        return new ContentCacheUpdate() {
+            @Override public void execute() {
+                // ignore no longer available locales to skip a complete update
+                getCache().addSupportedLanguage(i18n.getLocales());
+            }
+        };
+    }
 
 }

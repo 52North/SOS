@@ -32,8 +32,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.n52.sos.cache.ContentCache;
+import org.n52.sos.cache.ContentCacheUpdate;
+import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.i18n.metadata.I18NOfferingMetadata;
 import org.n52.sos.web.ControllerConstants;
+
+import com.google.common.base.Optional;
 
 @Controller
 @RequestMapping(ControllerConstants.Paths.OFFERING_I18N_AJAX_ENDPOINT)
@@ -52,6 +56,19 @@ public class OfferingI18NAjaxEndpoint extends AbstractAdminI18NAjaxEndpoint<I18N
     @Override
     protected Class<I18NOfferingMetadata> getType() {
         return I18NOfferingMetadata.class;
+    }
+
+    @Override
+    protected ContentCacheUpdate getContentCacheUpdate(
+            final I18NOfferingMetadata i18n) {
+        return new ContentCacheUpdate() {
+            @Override
+            public void execute() {
+                getCache().addSupportedLanguage(i18n.getLocales());
+                getCache().setI18nNameForOffering(i18n.getIdentifier(), i18n.getName());
+                getCache().setI18nDescriptionForOffering(i18n.getIdentifier(), i18n.getDescription());
+            }
+        };
     }
 
 }

@@ -45,10 +45,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
 import org.n52.sos.config.SettingValue;
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.Datasource;
+import org.n52.sos.ds.ConnectionProviderIdentificator;
+import org.n52.sos.ds.DatasourceDaoIdentifier;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.web.ControllerConstants;
@@ -93,6 +94,8 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
         Properties properties = datasource.getDatasourceProperties(c.getDatabaseSettings());
         // save the used datasource class
         properties.put(Datasource.class.getCanonicalName(), datasource.getClass().getCanonicalName());
+        properties.put(ConnectionProviderIdentificator.CONNECTION_PROVIDER_IDENTIFIER, datasource.getConnectionProviderIdentifier());
+        properties.put(DatasourceDaoIdentifier.DATASOURCE_DAO_IDENTIFIER, datasource.getDatasourceDaoIdentifier());
         try {
             if (c.isDropSchema()) {
                 String[] dropSchema = datasource.dropSchema(c.getDatabaseSettings());

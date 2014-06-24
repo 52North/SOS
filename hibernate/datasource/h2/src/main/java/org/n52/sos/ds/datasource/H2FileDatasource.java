@@ -41,7 +41,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
@@ -114,10 +113,6 @@ public class H2FileDatasource extends AbstractH2Datasource {
         return settings;
     }
 
-    private String toURL(Map<String, Object> settings) {
-        return String.format(JDBC_URL_FORMAT, settings.get(h2Database.getKey()));
-    }
-
     @Override
     public boolean checkSchemaCreation(Map<String, Object> settings) {
         String path = (String) settings.get(h2Database.getKey());
@@ -151,5 +146,15 @@ public class H2FileDatasource extends AbstractH2Datasource {
     @Override
     public void prepare(Map<String, Object> settings) {
         initGeoDB(settings);
+    }
+
+    @Override
+    protected String toURL(Map<String, Object> settings) {
+        return String.format(JDBC_URL_FORMAT, settings.get(h2Database.getKey()));
+    }
+
+    @Override
+    protected String[] parseURL(String url) {
+        return new String[0];
     }
 }

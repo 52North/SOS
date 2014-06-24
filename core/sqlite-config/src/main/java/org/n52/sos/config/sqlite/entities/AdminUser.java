@@ -30,17 +30,14 @@ package org.n52.sos.config.sqlite.entities;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import org.n52.sos.config.AdministratorUser;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
  */
-@Entity(name = "administrator_user")
+@Entity(name="administrator_user")
 public class AdminUser implements Serializable, AdministratorUser {
     private static final long serialVersionUID = -6073682567042001348L;
     public static final String USERNAME_PROPERTY = "username";

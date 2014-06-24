@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.n52.sos.ds.AbstractFeatureQueryHandler;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
@@ -75,6 +76,11 @@ public class FeatureQueryHandlerMock extends AbstractFeatureQueryHandler {
     @Override
     public String insertFeature(SamplingFeature samplingFeature, Object connection) throws OwsExceptionReport {
         return UUID.randomUUID().toString();
+    }
+
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 
 }

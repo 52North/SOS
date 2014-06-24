@@ -408,7 +408,9 @@ public class WritableCache extends ReadableCache implements WritableContentCache
 
     @Override
     public void setI18nNameForOffering(String offering, MultilingualString name) {
-        notNull(DESCRIPTION, name);
+        notNullOrEmpty(OFFERING, offering);
+        notNull(NAME, name);
+        getI18nNameForOfferingsMap().remove(offering);
         for (LocalizedString ls : name) {
             setI18nNameForOffering(offering, ls.getText(), ls.getLang());
         }
@@ -417,7 +419,9 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     @Override
     public void setI18nDescriptionForOffering(String offering,
                                               MultilingualString description) {
+        notNullOrEmpty(OFFERING, offering);
         notNull(DESCRIPTION, description);
+        getI18nDescriptionForOfferingsMap().remove(offering);
         for (LocalizedString ls : description) {
             setI18nDescriptionForOffering(offering, ls.getText(), ls.getLang());
         }

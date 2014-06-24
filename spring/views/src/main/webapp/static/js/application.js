@@ -333,10 +333,12 @@ function generateSettings(settings, settingValues, container, tabbed) {
             $blocks.append(createBlock());
         }
 
-        $description = $("<span>")
-            .addClass("help-block")
-            .html(setting.description)
-            .appendTo($controls);
+        if (setting.description) {
+            $description = $("<span>")
+                .addClass("help-block")
+                .html(setting.description)
+                .appendTo($controls);
+        }
 
         onChange();
     }
@@ -386,10 +388,9 @@ function generateSettings(settings, settingValues, container, tabbed) {
     }
 
     function generateSection(section, $container, settingValues) {
-        if (!section.title) {
-            return;
+        if (section.title) {
+            $("<legend>").text(section.title).appendTo($container);
         }
-        $("<legend>").text(section.title).appendTo($container);
         if (section.description) {
             $("<p>").html(section.description).appendTo($container);
         }

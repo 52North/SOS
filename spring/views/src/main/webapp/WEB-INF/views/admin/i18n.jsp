@@ -47,7 +47,7 @@
 
 <script type="text/javascript" src="<c:url value="/static/js/jquery.additions.js" />"></script>
 <script type="text/javascript" src="<c:url value="/static/js/EventMixin.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/js/i18n/I18NProceduresController.js" />"></script>
+<script type="text/javascript" src="<c:url value="/static/js/I18NController.js" />"></script>
 
 
 <jsp:include page="../common/logotitle.jsp">
@@ -56,303 +56,79 @@
 </jsp:include>
 
 <style type="text/css">
-    .btn-icon { height: 30px; }
-    .btn-icon i { margin-right: 0px !important; }
-    .btn-single { margin-bottom: 1px;}
-    #stcaps-publish { margin-bottom: -11px; }
-    #back-top {
-        position: fixed;
-        bottom: 30px;
-        margin-left: -150px;
-    }
-    #back-top a {
-        width: 108px;
-        display: block;
-        text-align: center;
-        font: 11px Arial, Helvetica, sans-serif;
-        text-transform: uppercase;
-        text-decoration: none;
-        color: #bbb;
-        /* background color transition */
-        -webkit-transition: 1s;
-        -moz-transition: 1s;
-        transition: 1s;
-    }
-    #back-top a:hover {
-        color: #000;
-    }
-    #back-top i {
-        display: block;
-        margin-bottom: 7px;
-        margin-left: 48px;
-        -webkit-border-radius: 15px;
-        -moz-border-radius: 15px;
-        border-radius: 15px;
-        -webkit-transition: 1s;
-        -moz-transition: 1s;
-        transition: 1s;
-    }
+.i18ncontainer { margin-left: 2px; }
+.multilingual input.text { width: 655px; }
+.multilingual .control-label { font-weight: bold; }
 </style>
 
 <script type="text/javascript">
-    jQuery(document).ready(function($) {
-        $(window).scroll(function () {
-            var pos = $(this).scrollTop();
-            if (pos > "fast" && pos < $(document).height() 
-                                    - ($(this).height() + 400)) {
-                $('#back-top').fadeIn();
-            } else {
-                $('#back-top').fadeOut();
-            }
-        });
-        $('#back-top a').click(function () {
-            $('body, html').animate({
-                scrollTop: 0
-            }, 400);
-            return false;
-        });
-    });
-
     function xml2string(xml) {
-        return typeof(xml) === "string" ? xml : xml.xml ? xml.xml 
-                : new XMLSerializer().serializeToString(xml); 
+        return typeof(xml) === "string" ? xml : xml.xml ? xml.xml
+                : new XMLSerializer().serializeToString(xml);
     }
 </script>
 
 <div id="current-setting"></div>
 
 <ul class="nav nav-tabs">
-    <liclass="active"><a href="#i18n-procedures" data-toggle="tab">I18N Procedures</a></li>
-    <li><a href="#i18n-offerings" data-toggle="tab">I18N Offerings</a></li>
-    <li><a href="#i18n-observableProperties" data-toggle="tab">I18N ObservbaleProperties</a></li>
-    <li><a href="#i18n-features" data-toggle="tab">I18N Features</a></li>
+    <li class="active"><a href="#i18n-procedures" data-toggle="tab">Procedures</a></li>
+    <li><a href="#i18n-offerings" data-toggle="tab">Offerings</a></li>
+    <li><a href="#i18n-observableProperties" data-toggle="tab">Observable Properties</a></li>
+    <li><a href="#i18n-features" data-toggle="tab">Features</a></li>
 </ul>
 <div class="tab-content">
-    <div class="active tab-pane" id="i18n-procedure">
-        <div class="row">
-            <div class="span12 form-inline" style="margin-bottom: 5px;">
-                <select id="stcaps-id">
-                    <option disabled="disabled" selected="selected" style="display: none;" value="">
-                        I18N Procedures
-                    </option>
-                </select>
-                <!-- <div class="btn-group">
-                    <button id="stcaps-save" title="Save Capabilities" type="button" class="btn btn-icon stcaps-edit-button"><i class="icon-ok"></i></button>
-                    <button id="stcaps-delete" title="Delete Capabilities" type="button" class="btn btn-icon stcaps-edit-button"><i class="icon-remove"></i></button>
-                    <button id="stcaps-load-current-button" title="Load current capabilities document into the editor" type="button" class="btn btn-icon stcaps-edit-button"><i class="icon-download-alt"></i></button>
-                    <button id="stcaps-validate" title="Validate" type="button" class="btn btn-icon"><i class="icon-wrench"></i></button>
-                </div>
-                <button id="stcaps-addnew" title="Add a new static capabilities document" type="button" class="btn btn-icon btn-single"><i class="icon-plus"></i></button>
-                <div id="stcaps-add-new-form" class="input-append input-prepend control-group" style="display: none;">
-                    <input class="input-xlarge" id="stcaps-add-new-form-input" type="text" placeholder="Identifier"/>
-                    <div class="btn-group">
-                        <button type="button" title="Add" class="btn btn-icon stcaps-add-new-form-button" id="stcaps-add-new-form-ok"><i class="icon-ok"></i></button>
-                        <button type="button" title="Dismiss" class="btn btn-icon stcaps-add-new-form-button" id="stcaps-add-new-form-cancel"><i class="icon-remove"></i></button>
-                    </div>
-                </div>
-                <div id="stcaps-publish" title="Publish this document" class="pull-right" data-toggleButton-style-enabled="info" data-toggleButtons-height="29">
-                    <input type="checkbox" disabled="disabled">
-                </div> -->
-            </div>
-        </div>
-        <textarea id="stcaps-editor" class="span12"></textarea>
-    </div>
-    <div class="tab-pane" id="i18n-offerings">
-        <div class="row">
-            <div class="span12 form-inline" style="margin-bottom: 5px;">
-                <select id="off-id">
-                    <option disabled="disabled" selected="selected" style="display: none;" value="">
-                        I18N Offerings
-                    </option>
-                </select>
-                <!--<div class="btn-group">
-                    <button id="stcaps-save" title="Save Capabilities" type="button" class="btn btn-icon stcaps-edit-button"><i class="icon-ok"></i></button>
-                    <button id="stcaps-delete" title="Delete Capabilities" type="button" class="btn btn-icon stcaps-edit-button"><i class="icon-remove"></i></button>
-                    <button id="stcaps-load-current-button" title="Load current capabilities document into the editor" type="button" class="btn btn-icon stcaps-edit-button"><i class="icon-download-alt"></i></button>
-                    <button id="stcaps-validate" title="Validate" type="button" class="btn btn-icon"><i class="icon-wrench"></i></button>
-                </div>
-                <button id="stcaps-addnew" title="Add a new static capabilities document" type="button" class="btn btn-icon btn-single"><i class="icon-plus"></i></button>
-                <div id="stcaps-add-new-form" class="input-append input-prepend control-group" style="display: none;">
-                    <input class="input-xlarge" id="stcaps-add-new-form-input" type="text" placeholder="Identifier"/>
-                    <div class="btn-group">
-                        <button type="button" title="Add" class="btn btn-icon stcaps-add-new-form-button" id="stcaps-add-new-form-ok"><i class="icon-ok"></i></button>
-                        <button type="button" title="Dismiss" class="btn btn-icon stcaps-add-new-form-button" id="stcaps-add-new-form-cancel"><i class="icon-remove"></i></button>
-                    </div>
-                </div>
-                <div id="stcaps-publish" title="Publish this document" class="pull-right" data-toggleButton-style-enabled="info" data-toggleButtons-height="29">
-                    <input type="checkbox" disabled="disabled">
-                </div>-->
-            </div>
-        </div>
-        <textarea id="stcaps-editor" class="span12"></textarea>
-    </div>
-    <div class="tab-pane" id="i18n-observableProperties">
-        <div class="row">
-            <div class="span12 form-inline" style="margin-bottom: 5px;">
-                <select id="obsProp-id">
-                    <option disabled="disabled" selected="selected" style="display: none;" value="">
-                        I18N ObservableProperties
-                    </option>
-                </select>
-                <!--<div class="btn-group">
-                    <button id="stcaps-save" title="Save Capabilities" type="button" class="btn btn-icon stcaps-edit-button"><i class="icon-ok"></i></button>
-                    <button id="stcaps-delete" title="Delete Capabilities" type="button" class="btn btn-icon stcaps-edit-button"><i class="icon-remove"></i></button>
-                    <button id="stcaps-load-current-button" title="Load current capabilities document into the editor" type="button" class="btn btn-icon stcaps-edit-button"><i class="icon-download-alt"></i></button>
-                    <button id="stcaps-validate" title="Validate" type="button" class="btn btn-icon"><i class="icon-wrench"></i></button>
-                </div>
-                <button id="stcaps-addnew" title="Add a new static capabilities document" type="button" class="btn btn-icon btn-single"><i class="icon-plus"></i></button>
-                <div id="stcaps-add-new-form" class="input-append input-prepend control-group" style="display: none;">
-                    <input class="input-xlarge" id="stcaps-add-new-form-input" type="text" placeholder="Identifier"/>
-                    <div class="btn-group">
-                        <button type="button" title="Add" class="btn btn-icon stcaps-add-new-form-button" id="stcaps-add-new-form-ok"><i class="icon-ok"></i></button>
-                        <button type="button" title="Dismiss" class="btn btn-icon stcaps-add-new-form-button" id="stcaps-add-new-form-cancel"><i class="icon-remove"></i></button>
-                    </div>
-                </div>
-                <div id="stcaps-publish" title="Publish this document" class="pull-right" data-toggleButton-style-enabled="info" data-toggleButtons-height="29">
-                    <input type="checkbox" disabled="disabled">
-                </div> -->
-            </div>
-        </div>
-        <textarea id="stcaps-editor" class="span12"></textarea>
-    </div>
-        <div class="tab-pane" id="i18n-features">
-        <div class="row">
-            <div class="span12 form-inline" style="margin-bottom: 5px;">
-                <select id="feat-id">
-                    <option disabled="disabled" selected="selected" style="display: none;" value="">
-                        I18N Features
-                    </option>
-                </select>
-                <!--<div class="btn-group">
-                    <button id="stcaps-save" title="Save Capabilities" type="button" class="btn btn-icon stcaps-edit-button"><i class="icon-ok"></i></button>
-                    <button id="stcaps-delete" title="Delete Capabilities" type="button" class="btn btn-icon stcaps-edit-button"><i class="icon-remove"></i></button>
-                    <button id="stcaps-load-current-button" title="Load current capabilities document into the editor" type="button" class="btn btn-icon stcaps-edit-button"><i class="icon-download-alt"></i></button>
-                    <button id="stcaps-validate" title="Validate" type="button" class="btn btn-icon"><i class="icon-wrench"></i></button>
-                </div>
-                <button id="stcaps-addnew" title="Add a new static capabilities document" type="button" class="btn btn-icon btn-single"><i class="icon-plus"></i></button>
-                <div id="stcaps-add-new-form" class="input-append input-prepend control-group" style="display: none;">
-                    <input class="input-xlarge" id="stcaps-add-new-form-input" type="text" placeholder="Identifier"/>
-                    <div class="btn-group">
-                        <button type="button" title="Add" class="btn btn-icon stcaps-add-new-form-button" id="stcaps-add-new-form-ok"><i class="icon-ok"></i></button>
-                        <button type="button" title="Dismiss" class="btn btn-icon stcaps-add-new-form-button" id="stcaps-add-new-form-cancel"><i class="icon-remove"></i></button>
-                    </div>
-                </div>
-                <div id="stcaps-publish" title="Publish this document" class="pull-right" data-toggleButton-style-enabled="info" data-toggleButtons-height="29">
-                    <input type="checkbox" disabled="disabled">
-                </div>-->
-            </div>
-        </div>
-        <textarea id="stcaps-editor" class="span12"></textarea>
-    </div>
+    <div class="active tab-pane" id="i18n-procedures"></div>
+    <div class="tab-pane" id="i18n-offerings"></div>
+    <div class="tab-pane" id="i18n-observableProperties"></div>
+    <div class="tab-pane" id="i18n-features"></div>
 </div>
 
 <p id="back-top" style="display: none;"><a href="#top"><i class="icon-chevron-up"></i>Back to Top</a></p>
-
 <script type="text/javascript">
-    var baseUrl = "<c:url value="/"/>",
-        i18npc = new I18NProceduresController(baseUrl);
-    
-    var changed = 0;
-
-    function onChange() {
-        if (++changed < 3) {
-            return;
-        }
-        var code = function(e) {
-                return "<code>" + e + "</code>"; 
-            },
-            toCodeList = function(a) { 
-                return (a.length > 1 ? a.slice(0, -1).map(code).join(", ") + " and " : "") + code(a[a.length-1]); 
-            },
-            verb = function(col) { 
-                return col.length === 1 ? "is" : "are"; 
-            },
-            ext = function(col) { 
-                return "Extension" + (col.length === 1 ? "" : "s"); 
-            },
-            formatCapabilitiesExtensions = function() {
-                var hasEnabled = cec.hasEnabledExtensions(),
-                    hasDisabled = cec.hasDisabledExtensions(),
-                    html = "";
-                if (hasEnabled || hasDisabled) {
-                    html += "<p>";
-                    if (hasEnabled) {
-                        var active = cec.getEnabledExtensions();
-                        html += " The Capabilities "+ ext(active) + " " + toCodeList(active) + " " + verb(active) + " active";
-                    }
-                    if (hasDisabled) {
-                        var inactive = cec.getDisabledExtensions();
-                        html += (hasEnabled) ? " while" : ("The Capabilties " + ext(inactive)) + " ";
-                        html += toCodeList(inactive) + " " + verb(inactive) + " inactive";
-                    }
-                    html + ".</p>";
-                }
-                return html;
-            },
-            formatOfferingExtensions = function() {
-                var html = "", 
-                    offs = {},
-                    copy = function(name, col) {
-                        for (var a in col) {
-                            if (col.hasOwnProperty(a) && col[a].length > 0) {
-                                (offs[a] = offs[a] || {})[name] = col[a];
-                            }
-                        }
-                    };
-
-                if (oec.hasEnabledExtensions()) 
-                    copy("active", oec.getEnabledExtensions());
-                if (oec.hasDisabledExtensions()) 
-                    copy("inactive", oec.getDisabledExtensions());
-                
-
-                for (var key in offs) {
-                    html += "<p>";
-                    if (offs[key].active) {
-                        html += " " + ext(offs[key].active) + " " 
-                             + toCodeList(offs[key].active) + " " 
-                             + verb(offs[key].active) 
-                             + " active for Offering " + code(key);
-                        if (offs[key].inactive) {
-                            html += " while " + toCodeList(offs[key].inactive) 
-                                 + " " + verb(offs[key].inactive) + " not";
-                        }
-                        html += ".";
-                    } else if (offs[key].inactive) {
-                        html += ext(offs[key].inactive) + " " 
-                             + toCodeList(offs[key].inactive) + " " 
-                             + verb(offs[key].inactive) 
-                             + " inactive for Offering " + code(key) + ".";
-                    }
-                    html += "</p>";
-                }
-                return html;
-            },
-            html = "",
-            lead = "",
-            $cs = $("#current-setting");
-
-
-        if (i18npc.isStatic()) {
-            lead  = "The current Capabilities are based on the <strong>static</strong> capabilities " + code(scc.getCurrent()) + ".";
-        } else {
-            lead  = "The current Capabilities are based on the <strong>dynamic</strong> capabilities.";
-            html += formatCapabilitiesExtensions();
-            html += formatOfferingExtensions();
-        }
-        $("p.lead").fadeOut("fast", function() {
-            $(this).children().remove().addBack().html(lead).fadeIn("fast");
-        });
-        if ($cs.children().length === 0) {
-            $cs.hide().html(html).fadeIn();
-        } else {
-            $cs.fadeOut("fast", function() {
-                $(this).children().remove().addBack().html(html).fadeIn("fast");  
-            });
-        }
-    }
-
-    i18npc.on("change", onChange).on("ready", onChange);
+</script>
+<script type="text/javascript">
+	new I18NController({
+		name: "Procedure",
+		div: "#i18n-procedures",
+		identifiers: ${procedures},
+		url: "<c:url value="/admin/i18n/ajax/procedures" />",
+		properties: {
+			name: "Name",
+			description: "Description",
+			shortName: "Short Name",
+			longName: "Long Name"
+		},
+	});
+	new I18NController({
+		name: "Offering",
+		div: "#i18n-offerings",
+		identifiers: ${offerings},
+		url: "<c:url value="/admin/i18n/ajax/offerings" />",
+		properties: {
+			name: "Name",
+			description: "Description"
+		},
+	});
+	new I18NController({
+		name: "Observable Property",
+		div: "#i18n-observableProperties",
+		identifiers: ${observableProperties},
+		url: "<c:url value="/admin/i18n/ajax/observableProperties" />",
+		properties: {
+			name: "Name",
+			description: "Description"
+		},
+	});
+	new I18NController({
+		name: "Feature",
+		div: "#i18n-features",
+		identifiers: ${features},
+		url: "<c:url value="/admin/i18n/ajax/features" />",
+		properties: {
+			name: "Name",
+			description: "Description"
+		},
+	});
 
 </script>
 

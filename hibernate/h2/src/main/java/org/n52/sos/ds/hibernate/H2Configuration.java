@@ -55,6 +55,7 @@ import org.n52.sos.cache.ctrl.ScheduledContentCacheControllerSettings;
 import org.n52.sos.config.sqlite.SQLiteSessionFactory;
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.ConnectionProviderIdentificator;
+import org.n52.sos.ds.Datasource;
 import org.n52.sos.ds.DatasourceDaoIdentifier;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.exception.ConfigurationException;
@@ -93,8 +94,7 @@ public class H2Configuration {
             put(HIBERNATE_CONNECTION_DRIVER_CLASS, H2_DRIVER);
             put(HIBERNATE_DIALECT, GeoDBDialect.class.getName());
             put(SessionFactoryProvider.HIBERNATE_RESOURCES, getResources());
-            put(ConnectionProviderIdentificator.CONNECTION_PROVIDER_IDENTIFIER, HibernateDatasourceConstants.ORM_CONNECTION_PROVIDER_IDENTIFIER);
-            put(DatasourceDaoIdentifier.DATASOURCE_DAO_IDENTIFIER, HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER);
+            put(Datasource.class.getCanonicalName(), MockDatasource.class.getCanonicalName());
         }
 
         private List<String> getResources() {

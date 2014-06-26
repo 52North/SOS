@@ -45,11 +45,26 @@ public class CacheFeederDAORepository {
 		private LazyHolder() {};
 	}
 
+	private static String datasourceDaoIdentficator;
+	
+	
     /**
      * @return Returns a singleton instance of the CacheFeederDAORepository.
      */
     public static CacheFeederDAORepository getInstance() {
         return LazyHolder.INSTANCE;
+    }
+    
+    /**
+     * @return Returns a singleton instance of the CodingRepository.
+     */
+    public static CacheFeederDAORepository createInstance(String datasourceDaoIdentficator) {
+        setDatasourceDaoIdentficator(datasourceDaoIdentficator);
+        return getInstance();
+    }
+    
+    private static void setDatasourceDaoIdentficator(String datasourceDaoIdentficator) {
+        CacheFeederDAORepository.datasourceDaoIdentficator = datasourceDaoIdentficator;
     }
 
     /** Loaded and configured implementation */
@@ -64,7 +79,7 @@ public class CacheFeederDAORepository {
      */
     private CacheFeederDAORepository() throws ConfigurationException {
         try {
-            cacheFeederDAO = ServiceLoaderHelper.loadImplementation(CacheFeederDAO.class);
+            cacheFeederDAO = ServiceLoaderHelper.loadImplementation(CacheFeederDAO.class, datasourceDaoIdentficator);
         } catch (NoImplementationFoundException e) {
             throw new ConfigurationException(e);
         }

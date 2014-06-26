@@ -32,6 +32,8 @@ import java.util.Iterator;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
+import org.n52.sos.ds.ConnectionProviderIdentificator;
+import org.n52.sos.ds.DatasourceDaoIdentifier;
 import org.n52.sos.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,6 +103,49 @@ public class SingletonServiceLoader<T> implements Producer<T> {
         return implementation;
     }
 
+    @Override
+    public final T get(String datasourceIdentifier) {
+        if (implementation == null) {
+            Iterator<? extends T> iter = serviceLoader.iterator();
+            T currentImplementation = null;
+            while (iter.hasNext() && implementation == null) {
+                try {
+                    currentImplementation = iter.next();
+                } catch (ServiceConfigurationError sce) {
+                    LOG.warn(String.format("Implementation for %s could be loaded!", clazz), sce);
+                }
+                if (currentImplementation instanceof ConnectionProviderIdentificator) {
+                    if (datasourceIdentifier.equalsIgnoreCase(
+                            ((ConnectionProviderIdentificator) currentImplementation).getConnectionProviderIdentifier())) {
+                        implementation = currentImplementation;
+                    }
+                }
+                if (currentImplementation instanceof DatasourceDaoIdentifier) {
+                    if (datasourceIdentifier.equalsIgnoreCase(
+                            ((DatasourceDaoIdentifier) currentImplementation).getDatasourceDaoIdentifier())) {
+                        implementation = currentImplementation;
+                    }
+                }
+            }
+            if (implementation == null && defaultImplementation != null) {
+                implementation = defaultImplementation;
+            }
+            if (implementation == null) {
+                String message = String.format("No implementation for %s could be loaded!", clazz);
+                if (failIfNotFound) {
+                    throw new ConfigurationException(message);
+                } else {
+                    LOG.warn(message);
+                }
+            } else {
+                processImplementation(implementation);
+                LOG.info("Implementation for {} successfully loaded: {}", clazz, implementation);
+            }
+        }
+
+        return implementation;
+    }
+
     /**
      * Classes extending this class may overwrite the default (empty)
      * implementation.
@@ -114,4 +159,5 @@ public class SingletonServiceLoader<T> implements Producer<T> {
      */
     protected void processImplementation(T implementation) throws ConfigurationException {
     }
+
 }

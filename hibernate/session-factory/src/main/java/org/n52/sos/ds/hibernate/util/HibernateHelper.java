@@ -36,6 +36,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.engine.query.spi.EntityGraphQueryHint;
 import org.hibernate.engine.spi.NamedQueryDefinition;
 import org.hibernate.engine.spi.NamedSQLQueryDefinition;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
@@ -102,7 +103,7 @@ public final class HibernateHelper {
         SessionFactory sessionFactory = session.getSessionFactory();
         final QueryTranslatorImpl qt =
                 (QueryTranslatorImpl) ast.createQueryTranslator("id", query.getQueryString(), Maps.newHashMap(),
-                        (SessionFactoryImplementor) sessionFactory);
+                        (SessionFactoryImplementor) sessionFactory, null);
         qt.compile(null, false);
         return qt.getSQLString();
     }

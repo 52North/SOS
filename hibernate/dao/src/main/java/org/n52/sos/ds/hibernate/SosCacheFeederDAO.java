@@ -41,6 +41,7 @@ import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.CacheFeederDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.cache.InitialCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.OfferingCacheUpdate;
 import org.n52.sos.exception.ConfigurationException;
@@ -148,5 +149,10 @@ public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFe
         LOGGER.info("Cache load finished in {} ({} seconds)",
                 PeriodFormat.getDefault().print(cacheLoadPeriod.normalizedStandard()),
                 cacheLoadPeriod.toStandardSeconds());         
+    }
+
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 }

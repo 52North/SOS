@@ -50,7 +50,7 @@ public class HibernateUriType extends AbstractStringBasedHibernateUserType<URI> 
         try {
             return new URI(s);
         } catch (URISyntaxException e) {
-            throw new TypeMismatchException(e);
+            throw new TypeMismatchException(String.format("Error while creating URL from %s", s));
         }
     }
 

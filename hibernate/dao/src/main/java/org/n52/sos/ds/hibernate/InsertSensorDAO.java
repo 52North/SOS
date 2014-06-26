@@ -39,6 +39,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.ds.AbstractInsertSensorDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
@@ -89,6 +90,11 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
      */
     public InsertSensorDAO() {
         super(SosConstants.SOS);
+    }
+    
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 
     @Override

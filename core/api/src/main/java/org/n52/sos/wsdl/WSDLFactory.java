@@ -62,6 +62,11 @@ public class WSDLFactory implements Producer<String> {
         }
     }
 
+    @Override
+    public String get(String identification) {
+        return get();
+    }
+
     private String getWSDL() throws Exception {
         final WSDLBuilder builder = new WSDLBuilder();
         if (Configurator.getInstance() != null) {

@@ -35,7 +35,12 @@ import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import org.n52.sos.ds.ConnectionProvider;
+import org.n52.sos.ds.ConnectionProviderIdentificator;
+import org.n52.sos.ds.DatasourceDaoIdentifier;
+import org.n52.sos.ds.OperationDAO;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.service.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,6 +108,22 @@ public abstract class AbstractServiceLoaderRepository<T> {
         }
         LOG.debug("Found {} implementations for {}", implementations.size(), this.type);
         return new HashSet<T>(implementations);
+    }
+
+    protected boolean checkConnectionProviderIdentifications(ConnectionProviderIdentificator connectionProviderIdentificator) {
+        ConnectionProvider dataConnectionProvider = getConfigurator().getDataConnectionProvider();
+        ConnectionProvider featureConnectionProvider = getConfigurator().getFeatureConnectionProvider();
+        if (dataConnectionProvider.getConnectionProviderIdentifier().equalsIgnoreCase(
+                connectionProviderIdentificator.getConnectionProviderIdentifier())
+                || featureConnectionProvider.getConnectionProviderIdentifier().equalsIgnoreCase(
+                        connectionProviderIdentificator.getConnectionProviderIdentifier())) {
+            return true;
+        }
+        return false;
+    }
+    
+    private Configurator getConfigurator() {
+        return Configurator.getInstance();
     }
 
     protected abstract void processImplementations(Set<T> implementations) throws ConfigurationException;

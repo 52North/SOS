@@ -47,8 +47,8 @@ public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment
             I18NDAO<I18NObservablePropertyMetadata> dao = I18NDAORepository.
                     getInstance().getDAO(I18NObservablePropertyMetadata.class);
             if (dao != null) {
-                Set<String> ids = getCache() .getObservablePropertiesForProcedure(getIdentifier());
-                Collection<I18NObservablePropertyMetadata> metadata = dao .getMetadata(ids, getLocale());
+                Set<String> ids = getCache().getObservablePropertiesForProcedure(getIdentifier());
+                Collection<I18NObservablePropertyMetadata> metadata = dao.getMetadata(ids, getLocale());
                 for (I18NObservablePropertyMetadata i18n : metadata) {
                     AbstractPhenomenon abstractPhenomenon = new AbstractPhenomenon(i18n.getIdentifier());
                     I18NHibernateHelper.addLanguageSpecificNameToFeature(abstractPhenomenon, i18n);

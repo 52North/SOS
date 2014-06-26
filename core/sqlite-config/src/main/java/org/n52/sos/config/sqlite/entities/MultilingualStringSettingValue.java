@@ -32,10 +32,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
 
 import org.n52.sos.config.SettingType;
@@ -52,6 +54,10 @@ public class MultilingualStringSettingValue extends AbstractSettingValue<Multili
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "lang")
     @Column(name = "value")
+    @CollectionTable(name = "multilingual_string_settings_values",
+                     joinColumns = @JoinColumn(
+                             name = "identifier",
+                             referencedColumnName = "identifier"))
     private Map<String, String> value;
 
     @Override

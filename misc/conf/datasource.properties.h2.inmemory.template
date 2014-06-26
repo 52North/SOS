@@ -4,10 +4,6 @@ org.n52.sos.ds.Datasource=org.n52.sos.ds.datasource.H2InMemoryDatasource
 # path to mapping files
 HIBERNATE_DIRECTORY=/mapping/core;/mapping/old/observation;/mapping/transactional/mapping/old/spatialFilteringProfile;
 
-# identifier for DAOs and connection provider
-datasource.dao.identifier=hibernate.orm
-connection.provider.identifier=hibernate.orm
-
 # hibernate/h2 inmemory configuration
 hibernate.connection.username=sa
 hibernate.connection.password=

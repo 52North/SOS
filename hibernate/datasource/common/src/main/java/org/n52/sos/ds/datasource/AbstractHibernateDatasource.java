@@ -75,7 +75,7 @@ import com.google.common.collect.Sets;
  */
 public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreDatasource implements SQLConstants{
     private static final Logger LOG = LoggerFactory.getLogger(AbstractHibernateDatasource.class);
-    
+
 //    protected static final String USERNAME_TITLE = "User Name";
 //
 //    protected static final String PASSWORD_TITLE = "Password";
@@ -248,8 +248,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return Database schema settings definition
      */
     protected StringSettingDefinition createSchemaDefinition() {
-        return new StringSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
-                .setKey(SCHEMA_KEY).setTitle(SCHEMA_TITLE).setDescription(SCHEMA_DESCRIPTION)
+        return new StringSettingDefinition()
+                .setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_1)
+                .setKey(SCHEMA_KEY)
+                .setTitle(SCHEMA_TITLE)
+                .setDescription(SCHEMA_DESCRIPTION)
                 .setDefaultValue(SCHMEA_DEFAULT_VALUE);
     }
 
@@ -259,9 +263,13 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return Old concept settings definition
      */
     protected BooleanSettingDefinition createOldConceptDefinition() {
-        return new BooleanSettingDefinition().setDefaultValue(OLD_CONCEPT_DEFAULT_VALUE).setTitle(OLD_CONCEPT_TITLE)
-                .setDescription(OLD_CONCEPT_DESCRIPTION).setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_2).setKey(OLD_CONCEPT_KEY);
+        return new BooleanSettingDefinition()
+                .setDefaultValue(OLD_CONCEPT_DEFAULT_VALUE)
+                .setTitle(OLD_CONCEPT_TITLE)
+                .setDescription(OLD_CONCEPT_DESCRIPTION)
+                .setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_2)
+                .setKey(OLD_CONCEPT_KEY);
     }
 
     /**
@@ -270,9 +278,13 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return Transactional support settings definition
      */
     protected BooleanSettingDefinition createTransactionalDefinition() {
-        return new BooleanSettingDefinition().setDefaultValue(TRANSACTIONAL_DEFAULT_VALUE)
-                .setTitle(TRANSACTIONAL_TITLE).setDescription(TRANSACTIONAL_DESCRIPTION).setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_3).setKey(TRANSACTIONAL_KEY);
+        return new BooleanSettingDefinition()
+                .setDefaultValue(TRANSACTIONAL_DEFAULT_VALUE)
+                .setTitle(TRANSACTIONAL_TITLE)
+                .setDescription(TRANSACTIONAL_DESCRIPTION)
+                .setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_3)
+                .setKey(TRANSACTIONAL_KEY);
     }
 
     /**
@@ -281,9 +293,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return Spatial Filtering Profile support settings definition
      */
     protected BooleanSettingDefinition createSpatialFilteringProfileDefinition() {
-        return new BooleanSettingDefinition().setDefaultValue(SPATIAL_FILTERING_PROFILE_DEFAULT_VALUE)
-                .setTitle(SPATIAL_FILTERING_PROFILE_TITLE).setDescription(SPATIAL_FILTERING_PROFILE_DESCRIPTION)
-                .setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
+        return new BooleanSettingDefinition()
+                .setDefaultValue(SPATIAL_FILTERING_PROFILE_DEFAULT_VALUE)
+                .setTitle(SPATIAL_FILTERING_PROFILE_TITLE)
+                .setDescription(SPATIAL_FILTERING_PROFILE_DESCRIPTION)
+                .setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_4)
                 .setKey(SPATIAL_FILTERING_PROFILE_KEY);
     }
 
@@ -293,10 +308,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return JDBC driver settings definition
      */
     protected BooleanSettingDefinition createProvidedJdbcDriverDefinition() {
-        return new BooleanSettingDefinition().setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE)
-                .setTitle(PROVIDED_JDBC_DRIVER_TITLE).setDescription(PROVIDED_JDBC_DRIVER_DESCRIPTION)
-                .setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE).setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_5).setKey(PROVIDED_JDBC_DRIVER_KEY);
+        return new BooleanSettingDefinition()
+                .setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE)
+                .setTitle(PROVIDED_JDBC_DRIVER_TITLE)
+                .setDescription(PROVIDED_JDBC_DRIVER_DESCRIPTION)
+                .setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE)
+                .setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_5)
+                .setKey(PROVIDED_JDBC_DRIVER_KEY);
     }
 
 //    /**
@@ -327,8 +346,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return JDBC batch size settings definition
      */
     protected IntegerSettingDefinition createBatchSizeDefinition() {
-        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_8)
-                .setKey(BATCH_SIZE_KEY).setTitle(BATCH_SIZE_TITLE).setDescription(BATCH_SIZE_DESCRIPTION)
+        return new IntegerSettingDefinition()
+                .setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_8)
+                .setKey(BATCH_SIZE_KEY)
+                .setTitle(BATCH_SIZE_TITLE)
+                .setDescription(BATCH_SIZE_DESCRIPTION)
                 .setDefaultValue(BATCH_SIZE_DEFAULT_VALUE);
     }
 
@@ -388,7 +411,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     private boolean isOldConceptDatasource(Map<String, Object> settings) {
         Boolean oldConcept = (Boolean) settings.get(this.oldConceptDefiniton.getKey());
-        return oldConcept != null && oldConcept.booleanValue();
+        return oldConcept != null && oldConcept;
     }
 
     /**
@@ -407,7 +430,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             String spatialFilteringProfilePath) {
         if (isSpatialFilteringProfileDatasource()) {
             Boolean spatialFilteringProfile = (Boolean) settings.get(this.spatialFilteringProfileDefinition.getKey());
-            if (spatialFilteringProfile != null && spatialFilteringProfile.booleanValue()) {
+            if (spatialFilteringProfile != null && spatialFilteringProfile) {
                 config.addDirectory(resource(spatialFilteringProfilePath));
             }
         }
@@ -532,7 +555,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (metaData != null) {
             ResultSet rs = metaData.getSchemas();
             while (rs.next()) {
-                if (StringHelper.isNotEmpty(rs.getString("TABLE_SCHEM")) && rs.getString("TABLE_SCHEM").equals(schema)) {
+                if (StringHelper.isNotEmpty(rs.getString("TABLE_SCHEM")) &&
+                    rs.getString("TABLE_SCHEM").equals(schema)) {
                     return rs.getString("TABLE_SCHEM");
                 }
             }
@@ -613,7 +637,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (checkIfExtensionDirectoryExists()) {
             StringBuilder builder =
                     new StringBuilder(properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY));
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_EXTENSION_READONLY);
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR)
+                    .append(HIBERNATE_MAPPING_EXTENSION_READONLY);
             properties.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
         }
     }
@@ -718,20 +743,21 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         StringBuilder builder = new StringBuilder();
         builder.append(HIBERNATE_MAPPING_CORE_PATH);
         if (isOldConceptDatasource(settings)) {
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
-                    HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH);
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR)
+                    .append(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH);
             addSpatialFilteringProfilePathToDirList(builder, settings,
                     HIBERNATE_MAPPING_OLD_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH);
         } else if (isSeriesConceptDatasource(settings)) {
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
-                    HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR)
+                    .append(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
             addSpatialFilteringProfilePathToDirList(builder, settings,
                     HIBERNATE_MAPPING_SERIES_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH);
         }
         if (isTransactionalDatasource()) {
             Boolean t = (Boolean) settings.get(transactionalDefiniton.getKey());
-            if (t != null && t.booleanValue()) {
-                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
+            if (t != null && t) {
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR)
+                        .append(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
             }
         }
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
@@ -753,8 +779,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             final String spatialFilteringProfilePath) {
         if (isSpatialFilteringProfileDatasource()) {
             Boolean spatialFilteringProfile = (Boolean) settings.get(spatialFilteringProfileDefinition.getKey());
-            if (spatialFilteringProfile != null && spatialFilteringProfile.booleanValue()) {
-                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(spatialFilteringProfilePath);
+            if (spatialFilteringProfile != null && spatialFilteringProfile) {
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR)
+                        .append(spatialFilteringProfilePath);
             }
         }
     }
@@ -918,7 +945,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected String[] checkCreateSchema(String[] script) {
         return checkScriptForGeneratedAndDuplicatedEntries(script);
     }
-    
+
     /**
      * Remove generated foreign key definition and duplicated entries.
      *
@@ -929,11 +956,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected String[] checkScriptForGeneratedAndDuplicatedEntries(String[] script) {
      // creates upper case hexStrings from table names hashCode() with prefix
         // 'FK'
-        Set<String> generatedForeignKeys =
-                Sets.newHashSet(getGeneratedForeignKeyFor("observationHasOffering"),
-                        getGeneratedForeignKeyFor("relatedFeatureHasRole"),
-                        getGeneratedForeignKeyFor("offeringAllowedFeatureType"),
-                        getGeneratedForeignKeyFor("offeringAllowedObservationType"));
+        Set<String> generatedForeignKeys = Sets.newHashSet(
+                getGeneratedForeignKeyFor("observationHasOffering"),
+                getGeneratedForeignKeyFor("relatedFeatureHasRole"),
+                getGeneratedForeignKeyFor("offeringAllowedFeatureType"),
+                getGeneratedForeignKeyFor("offeringAllowedObservationType"));
         List<String> checkedSchema = Lists.newLinkedList();
         for (String string : script) {
             if (string.startsWith("alter table")) {
@@ -954,11 +981,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         Set<String> nonDublicated = Sets.newLinkedHashSet(checkedSchema);
         return nonDublicated.toArray(new String[nonDublicated.size()]);
     }
- 
+
     /**
      * Create the beginning character of a generated foreign key from a table
      * name hasCode()
-     * 
+     *
      * @param string
      *            Table name
      * @return Beginning characters of a generated foreign key like
@@ -967,7 +994,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     private String getGeneratedForeignKeyFor(String tableName) {
         return new StringBuilder("FK").append(Integer.toHexString(tableName.hashCode()).toUpperCase()).toString();
     }
-   
+
     /**
      * Check if drop schema contains alter table ... drop constraint ... . Due
      * to dynamic generation some constraints are generated and differ.
@@ -998,12 +1025,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     @Override
     public void executePostCreateSchema(Map<String, Object> databaseSettings) {
     }
-    
+
     @Override
     public String getConnectionProviderIdentifier() {
         return HibernateDatasourceConstants.ORM_CONNECTION_PROVIDER_IDENTIFIER;
     }
-    
+
     @Override
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
@@ -1055,5 +1082,5 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      *             If the SQL connection creation fails
      */
     protected abstract Connection openConnection(Map<String, Object> settings) throws SQLException;
-    
+
 }

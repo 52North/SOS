@@ -244,5 +244,13 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
         }
         return checkScriptForGeneratedAndDuplicatedEntries(checkedSchema.toArray(new String[checkedSchema.size()]));
     }
-    
+
+    @Override
+    public Properties getDatasourceProperties(Map<String, Object> settings) {
+        Properties p = super.getDatasourceProperties(settings);
+        p.put(HibernateConstants.C3P0_PREFERRED_TEST_QUERY, "SELECT 1");
+        return p;
+    }
+
+
 }

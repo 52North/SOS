@@ -32,7 +32,7 @@ import org.hibernate.cfg.AvailableSettings;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public interface HibernateConstants {
 
@@ -95,24 +95,26 @@ public interface HibernateConstants {
     String C3P0_TIMEOUT = AvailableSettings.C3P0_TIMEOUT;
 
     String C3P0_MAX_STATEMENTS = AvailableSettings.C3P0_MAX_STATEMENTS;
-    
+
+    String C3P0_PREFERRED_TEST_QUERY = "hibernate.c3p0.preferredTestQuery";
+
     String JDBC_BATCH_SIZE = AvailableSettings.STATEMENT_BATCH_SIZE;
 
     //FIXME Not a valid property, remove?
     @Deprecated
     String CONNECTION_AUTO_RECONNECT = "hibernate.connection.autoReconnect";
-    
+
     //FIXME Not a valid property, remove?
-    @Deprecated    
+    @Deprecated
     String CONNECTION_AUTO_RECONNECT_FOR_POOLS = "hibernate.connection.autoReconnectForPools";
 
     //FIXME Not a valid property, remove?
-    @Deprecated    
+    @Deprecated
     String CONNECTION_TEST_ON_BORROW = "hibernate.connection.testOnBorrow";
 
     String MAX_FETCH_DEPTH = AvailableSettings.MAX_FETCH_DEPTH;
-    
-    String CONNECION_FINDER = org.hibernate.spatial.HibernateSpatialConfiguration.AvailableSettings.CONNECTION_FINDER; 
+
+    String CONNECION_FINDER = org.hibernate.spatial.HibernateSpatialConfiguration.AvailableSettings.CONNECTION_FINDER;
 
     int LIMIT_EXPRESSION_DEPTH = 1000;
 

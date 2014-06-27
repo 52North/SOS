@@ -43,7 +43,7 @@ import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernateDatasource {
 //    private String usernameDefault, usernameDescription;
@@ -138,7 +138,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
 //    protected SettingDefinition<?, ?> createMaxPoolSizeDefinition(final Integer defaultValue) {
 //        return createMaxPoolSizeDefinition().setDefaultValue(defaultValue);
 //    }
-    
+
     protected StringSettingDefinition createSchemaDefinition(final String defaultValue) {
         return createSchemaDefinition().setDescription(schemaDescription).setDefaultValue(defaultValue);
     }
@@ -163,7 +163,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         p.put(HibernateConstants.DRIVER_CLASS, getDriverClass());
         p.put(HibernateConstants.C3P0_MIN_SIZE, settings.get(MIN_POOL_SIZE_KEY).toString());
         p.put(HibernateConstants.C3P0_MAX_SIZE, settings.get(MAX_POOL_SIZE_KEY).toString());
-        p.put(HibernateConstants.C3P0_IDLE_TEST_PERIOD, "1");
+        p.put(HibernateConstants.C3P0_IDLE_TEST_PERIOD, "30");
         p.put(HibernateConstants.C3P0_ACQUIRE_INCREMENT, "1");
         p.put(HibernateConstants.C3P0_TIMEOUT, "0");
         p.put(HibernateConstants.C3P0_MAX_STATEMENTS, "0");
@@ -220,7 +220,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
 
 //    /**
 //     * Converts the given connection settings into a valid JDBC string.
-//     * 
+//     *
 //     * @param settings
 //     *            the connection settings, containing keys from
 //     *            {@link AbstractHibernateDatasource} (<code>HOST_KEY</code>,
@@ -231,7 +231,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
 //
 //    /**
 //     * Parses the given JDBC string searching for host, port and database
-//     * 
+//     *
 //     * @param url
 //     *            the JDBC string to parse
 //     * @return an array with three strings:

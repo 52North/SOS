@@ -44,20 +44,7 @@ import org.n52.sos.util.JavaHelper;
 import com.google.common.collect.Sets;
 
 public abstract class AbstractHibernateCoreDatasource implements Datasource, HibernateDatasourceConstants {
-    
-    private String usernameDefault, usernameDescription;
 
-    private String passwordDefault, passwordDescription;
-
-    private String databaseDefault, databaseDescription;
-
-    private String hostDefault, hostDescription;
-
-    private int portDefault;
-
-    private String portDescription;
-    
-    private int minPoolSizeDefault, maxPoolSizeDefault;
 
     protected static final String USERNAME_TITLE = "User Name";
 
@@ -84,7 +71,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     protected static final String PORT_KEY = "jdbc.port";
 
     protected static final String PORT_TITLE = "Database Port";
-    
+
     protected static final String USERNAME_KEY = HibernateConstants.CONNECTION_USERNAME;
 
     protected static final String PASSWORD_KEY = HibernateConstants.CONNECTION_PASSWORD;
@@ -116,21 +103,34 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     protected static final String MAX_POOL_SIZE_DESCRIPTION = "Maximum size of the ConnectionPool";
 
     protected static final Integer MAX_POOL_SIZE_DEFAULT_VALUE = 30;
-    
+    private String usernameDefault;
+    private String usernameDescription;
+    private String passwordDefault;
+    private String passwordDescription;
+    private String databaseDefault;
+    private String databaseDescription;
+    private String hostDefault;
+    private String hostDescription;
+    private int portDefault;
+    private String portDescription;
+    private int minPoolSizeDefault;
+    private int maxPoolSizeDefault;
+
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        Set<SettingDefinition<?, ?>> set =
-                Sets.<SettingDefinition<?, ?>> newHashSet(createUsernameDefinition(usernameDefault),
-                        createPasswordDefinition(passwordDefault), createDatabaseDefinition(databaseDefault),
-                        createHostDefinition(hostDefault), createPortDefinition(portDefault),
+        return Sets.<SettingDefinition<?, ?>> newHashSet(
+                        createUsernameDefinition(usernameDefault),
+                        createPasswordDefinition(passwordDefault),
+                        createDatabaseDefinition(databaseDefault),
+                        createHostDefinition(hostDefault),
+                        createPortDefinition(portDefault),
                         createMinPoolSizeDefinition(minPoolSizeDefault),
                         createMaxPoolSizeDefinition(maxPoolSizeDefault));
-        return set;
     }
-    
+
     @Override
-    public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(final Properties current) {
-        final Map<String, Object> settings = parseDatasourceProperties(current);
+    public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties current) {
+        Map<String, Object> settings = parseDatasourceProperties(current);
         return Sets.<SettingDefinition<?, ?>> newHashSet(
                 createUsernameDefinition((String) settings.get(USERNAME_KEY)),
                 createPasswordDefinition((String) settings.get(PASSWORD_KEY)),
@@ -140,15 +140,18 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
                 createMinPoolSizeDefinition(JavaHelper.asInteger(settings.get(MIN_POOL_SIZE_KEY))),
                 createMaxPoolSizeDefinition(JavaHelper.asInteger(settings.get(MAX_POOL_SIZE_KEY))));
     }
-    
+
     /**
      * Create settings definition for username
      *
      * @return Username settings definition
      */
     protected StringSettingDefinition createUsernameDefinition() {
-        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
-                .setKey(USERNAME_KEY).setTitle(USERNAME_TITLE);
+        return new StringSettingDefinition()
+                .setGroup(BASE_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_1)
+                .setKey(USERNAME_KEY)
+                .setTitle(USERNAME_TITLE);
     }
 
     /**
@@ -157,8 +160,11 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Password settings definition
      */
     protected StringSettingDefinition createPasswordDefinition() {
-        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_2)
-                .setKey(PASSWORD_KEY).setTitle(PASSWORD_TITLE);
+        return new StringSettingDefinition()
+                .setGroup(BASE_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_2)
+                .setKey(PASSWORD_KEY)
+                .setTitle(PASSWORD_TITLE);
     }
 
     /**
@@ -167,8 +173,12 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return database name settings definition
      */
     protected StringSettingDefinition createDatabaseDefinition() {
-        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_3)
-                .setKey(DATABASE_KEY).setTitle(DATABASE_TITLE).setDescription(DATABASE_DESCRIPTION)
+        return new StringSettingDefinition()
+                .setGroup(BASE_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_3)
+                .setKey(DATABASE_KEY)
+                .setTitle(DATABASE_TITLE)
+                .setDescription(DATABASE_DESCRIPTION)
                 .setDefaultValue(DATABASE_DEFAULT_VALUE);
     }
 
@@ -178,8 +188,12 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Host settings definition
      */
     protected StringSettingDefinition createHostDefinition() {
-        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
-                .setKey(HOST_KEY).setTitle(HOST_TITLE).setDescription(HOST_DESCRIPTION)
+        return new StringSettingDefinition()
+                .setGroup(BASE_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_4)
+                .setKey(HOST_KEY)
+                .setTitle(HOST_TITLE)
+                .setDescription(HOST_DESCRIPTION)
                 .setDefaultValue(HOST_DEFAULT_VALUE);
     }
 
@@ -189,18 +203,25 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Port settings definition
      */
     protected IntegerSettingDefinition createPortDefinition() {
-        return new IntegerSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_5)
-                .setKey(PORT_KEY).setTitle(PORT_TITLE);
+        return new IntegerSettingDefinition()
+                .setGroup(BASE_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_5)
+                .setKey(PORT_KEY)
+                .setTitle(PORT_TITLE);
     }
-    
+
     /**
      * Create settings definition for minimal connection pool size
      *
      * @return Minimal connection pool size settings definition
      */
     protected IntegerSettingDefinition createMinPoolSizeDefinition() {
-        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_6)
-                .setKey(MIN_POOL_SIZE_KEY).setTitle(MIN_POOL_SIZE_TITLE).setDescription(MIN_POOL_SIZE_DESCRIPTION)
+        return new IntegerSettingDefinition()
+                .setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_6)
+                .setKey(MIN_POOL_SIZE_KEY)
+                .setTitle(MIN_POOL_SIZE_TITLE)
+                .setDescription(MIN_POOL_SIZE_DESCRIPTION)
                 .setDefaultValue(MIN_POOL_SIZE_DEFAULT_VALUE);
     }
 
@@ -210,44 +231,60 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Maximal connection pool size settings definition
      */
     protected IntegerSettingDefinition createMaxPoolSizeDefinition() {
-        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_7)
-                .setKey(MAX_POOL_SIZE_KEY).setTitle(MAX_POOL_SIZE_TITLE).setDescription(MAX_POOL_SIZE_DESCRIPTION)
+        return new IntegerSettingDefinition()
+                .setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_7)
+                .setKey(MAX_POOL_SIZE_KEY)
+                .setTitle(MAX_POOL_SIZE_TITLE)
+                .setDescription(MAX_POOL_SIZE_DESCRIPTION)
                 .setDefaultValue(MAX_POOL_SIZE_DEFAULT_VALUE);
     }
-    
-    protected StringSettingDefinition createUsernameDefinition(final String defaultValue) {
-        return createUsernameDefinition().setDescription(usernameDescription).setDefaultValue(defaultValue);
+
+    protected StringSettingDefinition createUsernameDefinition(String defaultValue) {
+        return createUsernameDefinition()
+                .setDescription(usernameDescription)
+                .setDefaultValue(defaultValue);
     }
 
-    protected StringSettingDefinition createPasswordDefinition(final String defaultValue) {
-        return createPasswordDefinition().setDescription(passwordDescription).setDefaultValue(defaultValue);
+    protected StringSettingDefinition createPasswordDefinition(String defaultValue) {
+        return createPasswordDefinition()
+                .setDescription(passwordDescription)
+                .setDefaultValue(defaultValue);
     }
 
-    protected StringSettingDefinition createDatabaseDefinition(final String defaultValue) {
-        return createDatabaseDefinition().setDescription(databaseDescription).setDefaultValue(defaultValue);
+    protected StringSettingDefinition createDatabaseDefinition(String defaultValue) {
+        return createDatabaseDefinition()
+                .setDescription(databaseDescription)
+                .setDefaultValue(defaultValue);
     }
 
-    protected StringSettingDefinition createHostDefinition(final String defaultValue) {
-        return createHostDefinition().setDescription(hostDescription).setDefaultValue(defaultValue);
+    protected StringSettingDefinition createHostDefinition(String defaultValue) {
+        return createHostDefinition()
+                .setDescription(hostDescription)
+                .setDefaultValue(defaultValue);
     }
 
-    protected IntegerSettingDefinition createPortDefinition(final int defaultValue) {
-        return createPortDefinition().setDescription(portDescription).setDefaultValue(defaultValue);
+    protected IntegerSettingDefinition createPortDefinition(int defaultValue) {
+        return createPortDefinition()
+                .setDescription(portDescription)
+                .setDefaultValue(defaultValue);
     }
 
-    protected SettingDefinition<?, ?> createMinPoolSizeDefinition(final Integer defaultValue) {
-        return createMinPoolSizeDefinition().setDefaultValue(defaultValue);
+    protected SettingDefinition<?, ?> createMinPoolSizeDefinition(Integer defaultValue) {
+        return createMinPoolSizeDefinition()
+                .setDefaultValue(defaultValue);
     }
 
-    protected SettingDefinition<?, ?> createMaxPoolSizeDefinition(final Integer defaultValue) {
-        return createMaxPoolSizeDefinition().setDefaultValue(defaultValue);
+    protected SettingDefinition<?, ?> createMaxPoolSizeDefinition(Integer defaultValue) {
+        return createMaxPoolSizeDefinition()
+                .setDefaultValue(defaultValue);
     }
-    
+
     /**
      * @param usernameDefault
      *            the usernameDefault to set
      */
-    public void setUsernameDefault(final String usernameDefault) {
+    public void setUsernameDefault(String usernameDefault) {
         this.usernameDefault = usernameDefault;
     }
 
@@ -255,7 +292,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @param usernameDescription
      *            the usernameDescription to set
      */
-    public void setUsernameDescription(final String usernameDescription) {
+    public void setUsernameDescription(String usernameDescription) {
         this.usernameDescription = usernameDescription;
     }
 
@@ -263,7 +300,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @param passwordDefault
      *            the passwordDefault to set
      */
-    public void setPasswordDefault(final String passwordDefault) {
+    public void setPasswordDefault(String passwordDefault) {
         this.passwordDefault = passwordDefault;
     }
 
@@ -271,7 +308,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @param passwordDescription
      *            the passwordDescription to set
      */
-    public void setPasswordDescription(final String passwordDescription) {
+    public void setPasswordDescription(String passwordDescription) {
         this.passwordDescription = passwordDescription;
     }
 
@@ -279,7 +316,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @param databaseDefault
      *            the databaseDefault to set
      */
-    public void setDatabaseDefault(final String databaseDefault) {
+    public void setDatabaseDefault(String databaseDefault) {
         this.databaseDefault = databaseDefault;
     }
 
@@ -287,7 +324,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @param databaseDescription
      *            the databaseDescription to set
      */
-    public void setDatabaseDescription(final String databaseDescription) {
+    public void setDatabaseDescription(String databaseDescription) {
         this.databaseDescription = databaseDescription;
     }
 
@@ -295,7 +332,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @param hostDefault
      *            the hostDefault to set
      */
-    public void setHostDefault(final String hostDefault) {
+    public void setHostDefault(String hostDefault) {
         this.hostDefault = hostDefault;
     }
 
@@ -303,7 +340,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @param hostDescription
      *            the hostDescription to set
      */
-    public void setHostDescription(final String hostDescription) {
+    public void setHostDescription(String hostDescription) {
         this.hostDescription = hostDescription;
     }
 
@@ -311,7 +348,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @param portDefault
      *            the portDefault to set
      */
-    public void setPortDefault(final int portDefault) {
+    public void setPortDefault(int portDefault) {
         this.portDefault = portDefault;
     }
 
@@ -319,23 +356,23 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @param portDescription
      *            the portDescription to set
      */
-    public void setPortDescription(final String portDescription) {
+    public void setPortDescription(String portDescription) {
         this.portDescription = portDescription;
     }
-    
-    public void setMinPoolSizeDefault(final int minPoolSizeDefault) {
+
+    public void setMinPoolSizeDefault(int minPoolSizeDefault) {
         this.minPoolSizeDefault = minPoolSizeDefault;
     }
 
-    public void setMaxPoolSizeDefault(final int maxPoolSizeDefault) {
+    public void setMaxPoolSizeDefault(int maxPoolSizeDefault) {
         this.maxPoolSizeDefault = maxPoolSizeDefault;
     }
-    
+
     @Override
     public Properties getDatasourceProperties(Properties current, Map<String, Object> changed) {
         return getDatasourceProperties(mergeProperties(current, changed));
     }
-    
+
     /**
      * Merge current properties with changed settings
      *
@@ -350,7 +387,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
         settings.putAll(changed);
         return settings;
     }
-    
+
     /**
      * Parse datasource properties to map
      *
@@ -359,10 +396,10 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Map with String key and Object value
      */
     protected abstract Map<String, Object> parseDatasourceProperties(Properties current);
-    
+
     /**
      * Converts the given connection settings into a valid JDBC string.
-     * 
+     *
      * @param settings
      *            the connection settings, containing keys from
      *            {@link AbstractHibernateDatasource} (<code>HOST_KEY</code>,
@@ -370,10 +407,10 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return a valid JDBC connection string
      */
     protected abstract String toURL(Map<String, Object> settings);
-    
+
     /**
      * Parses the given JDBC string searching for host, port and database
-     * 
+     *
      * @param url
      *            the JDBC string to parse
      * @return an array with three strings:

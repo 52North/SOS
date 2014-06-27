@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -92,7 +93,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
     public InsertObservationDAO() {
         super(SosConstants.SOS);
     }
-    
+
     @Override
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
@@ -235,14 +236,16 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
 
             // if this is a JDBCException, pass the underlying SQLException as the causedBy exception
             // so that we can show the actual error in the OwsExceptionReport when batching
-            Exception causedBy;
             if (he instanceof JDBCException) {
-                causedBy = ((JDBCException) he).getSQLException();
+                SQLException sqle = ((JDBCException) he).getSQLException();
+                CompositeOwsException  e = new CompositeOwsException();
+                for (Throwable next : sqle) {
+                    e.add(new NoApplicableCodeException().causedBy(next));
+                }
+                throw e.setStatus(status);
             } else {
-                causedBy = he;
+                throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg).setStatus(status);
             }
-
-            throw new NoApplicableCodeException().causedBy(causedBy).withMessage(exceptionMsg).setStatus(status);
         } finally {
             sessionHolder.returnSession(session);
         }

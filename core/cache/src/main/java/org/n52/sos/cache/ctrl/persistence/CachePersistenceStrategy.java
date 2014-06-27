@@ -26,38 +26,26 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.cache;
+package org.n52.sos.cache.ctrl.persistence;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
-import static org.n52.sos.cache.Existing.existing;
 
-import org.junit.Test;
-import org.n52.sos.cache.ctrl.ContentCacheControllerImpl;
+import org.n52.sos.cache.ContentCache;
+import org.n52.sos.cache.WritableContentCache;
+
+import com.google.common.base.Optional;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * TODO JavaDoc
  *
- * @since 4.0.0
+ * @author Christian Autermann
  */
-public class PersistingCacheControllerTest extends AbstractCacheControllerTest {
-    public static final String IDENTIFIER = "identifier";
+public interface CachePersistenceStrategy {
+    Optional<WritableContentCache> load();
 
-    @Test
-    public void testSerialization() {
-        assertThat(getTempFile(), is(not(existing())));
-        ContentCacheControllerImpl cc = new TestableInMemoryCacheController();
-        assertThat(cc.getCache().getObservationIdentifiers(), is(empty()));
-        cc.getCache().addObservationIdentifier(IDENTIFIER);
-        assertThat(cc.getCache().getObservationIdentifiers(), contains(IDENTIFIER));
-        cc.cleanup();
-        assertThat(getTempFile(), is(existing()));
-        cc = new TestableInMemoryCacheController();
-        assertThat(getTempFile(), is(existing()));
-        assertThat(cc.getCache().getObservationIdentifiers(), contains(IDENTIFIER));
-    }
+    void persistOnPartialUpdate(ContentCache cache);
+
+    void persistOnCompleteUpdate(ContentCache cache);
+
+    void persistOnShutdown(ContentCache cache);
 
 }

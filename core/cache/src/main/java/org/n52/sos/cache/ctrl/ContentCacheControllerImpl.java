@@ -40,8 +40,8 @@ import org.slf4j.LoggerFactory;
 import org.n52.sos.cache.ContentCacheUpdate;
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.cache.ctrl.action.CompleteCacheUpdate;
-import org.n52.sos.cache.ctrl.persistence.AsyncCachePersistingStrategy;
 import org.n52.sos.cache.ctrl.persistence.CachePersistenceStrategy;
+import org.n52.sos.cache.ctrl.persistence.CachePersistenceStrategyFactory;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.google.common.base.Optional;
@@ -71,7 +71,7 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
     }
 
     public ContentCacheControllerImpl() {
-        this(new AsyncCachePersistingStrategy());
+        this(CachePersistenceStrategyFactory.getInstance().create());
     }
 
     private void loadOrCreateCache() {

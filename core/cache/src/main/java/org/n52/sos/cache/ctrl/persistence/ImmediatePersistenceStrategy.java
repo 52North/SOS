@@ -26,51 +26,38 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.cache;
+package org.n52.sos.cache.ctrl.persistence;
 
 import java.io.File;
-import java.io.IOException;
 
-import org.n52.sos.cache.ctrl.ContentCacheControllerImpl;
-import org.n52.sos.cache.ctrl.persistence.CachePersistenceStrategy;
-import org.n52.sos.cache.ctrl.persistence.ImmediatePersistenceStrategy;
-import org.n52.sos.ds.CacheFeederDAORepository;
-import org.n52.sos.ds.MockCacheFeederDAO;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import org.n52.sos.cache.ContentCache;
 
-public class TestableInMemoryCacheController extends ContentCacheControllerImpl {
-    private static File tempFile;
+public class ImmediatePersistenceStrategy
+        extends AbstractPersistingCachePersistenceStrategy {
 
-    public TestableInMemoryCacheController() {
-        super(new ImmediatePersistenceStrategy(tempFile));
-        setUpdateInterval(Integer.MAX_VALUE);
+    public ImmediatePersistenceStrategy() {
     }
 
-    public static void setUp() {
-        try {
-            CacheFeederDAORepository.createInstance(MockCacheFeederDAO.DATASOURCE_DAO_IDENTIFIER);
-            tempFile = File.createTempFile("TestableInMemoryCacheController", "");
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    public static void deleteTempFile() {
-        tempFile.delete();
-    }
-
-    public static File getTempFile() {
-        return tempFile;
+    public ImmediatePersistenceStrategy(File cacheFile) {
+        super(cacheFile);
     }
 
     @Override
-    public void setCache(WritableContentCache wcc) {
-        super.setCache(wcc);
+    public void persistOnPartialUpdate(ContentCache cache) {
+        this.persistCache(cache);
     }
 
     @Override
-    public void update() throws OwsExceptionReport {
-        // noop
+    public void persistOnCompleteUpdate(ContentCache cache) {
+        this.persistCache(cache);
     }
+
+    @Override
+    public void persistOnShutdown(ContentCache cache) {
+        this.persistCache(cache);
+    }
+
 }

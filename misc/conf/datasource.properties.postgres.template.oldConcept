@@ -4,10 +4,6 @@ org.n52.sos.ds.Datasource=org.n52.sos.ds.datasource.PostgresDatasource
 # path to mapping files
 HIBERNATE_DIRECTORY=/mapping/core;/mapping/old/observation;/mapping/transactional;/mapping/old/spatialFilteringProfile;
 
-# identifier for DAOs and connection provider
-datasource.dao.identifier=hibernate.orm
-connection.provider.identifier=hibernate.orm
-
 # hibernate/postgres configuration
 
 hibernate.connection.username=postgres

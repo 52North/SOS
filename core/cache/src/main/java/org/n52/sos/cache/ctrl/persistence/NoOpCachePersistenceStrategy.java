@@ -26,51 +26,33 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.cache;
+package org.n52.sos.cache.ctrl.persistence;
 
-import java.io.File;
-import java.io.IOException;
+import org.n52.sos.cache.ContentCache;
+import org.n52.sos.cache.WritableContentCache;
 
-import org.n52.sos.cache.ctrl.ContentCacheControllerImpl;
-import org.n52.sos.cache.ctrl.persistence.CachePersistenceStrategy;
-import org.n52.sos.cache.ctrl.persistence.ImmediatePersistenceStrategy;
-import org.n52.sos.ds.CacheFeederDAORepository;
-import org.n52.sos.ds.MockCacheFeederDAO;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import com.google.common.base.Optional;
 
+/**
+ * @author Christian Autermann
+ */
+public class NoOpCachePersistenceStrategy implements CachePersistenceStrategy {
 
-public class TestableInMemoryCacheController extends ContentCacheControllerImpl {
-    private static File tempFile;
-
-    public TestableInMemoryCacheController() {
-        super(new ImmediatePersistenceStrategy(tempFile));
-        setUpdateInterval(Integer.MAX_VALUE);
-    }
-
-    public static void setUp() {
-        try {
-            CacheFeederDAORepository.createInstance(MockCacheFeederDAO.DATASOURCE_DAO_IDENTIFIER);
-            tempFile = File.createTempFile("TestableInMemoryCacheController", "");
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    public static void deleteTempFile() {
-        tempFile.delete();
-    }
-
-    public static File getTempFile() {
-        return tempFile;
+    @Override
+    public void persistOnPartialUpdate(ContentCache cache) {
     }
 
     @Override
-    public void setCache(WritableContentCache wcc) {
-        super.setCache(wcc);
+    public void persistOnCompleteUpdate(ContentCache cache) {
     }
 
     @Override
-    public void update() throws OwsExceptionReport {
-        // noop
+    public void persistOnShutdown(ContentCache cache) {
     }
+
+    @Override
+    public Optional<WritableContentCache> load() {
+        return Optional.absent();
+    }
+
 }

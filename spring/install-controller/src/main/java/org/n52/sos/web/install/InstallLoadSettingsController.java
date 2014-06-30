@@ -73,8 +73,13 @@ public class InstallLoadSettingsController extends AbstractController {
         JsonNode settings = JSONUtils.loadString(config);
         Iterator<String> i = settings.fieldNames();
         while (i.hasNext()) {
+            String value;
             String key = i.next();
-            String value = settings.path(key).asText();
+            if (settings.path(key).isContainerNode()) {
+                value = JSONUtils.print(settings.path("key"));
+            } else {
+                value = settings.path(key).asText();
+            }
             // skip null values
             if (value == null || value.equals("null")) {
                 LOG.warn("Value for setting with key {} is null", key);

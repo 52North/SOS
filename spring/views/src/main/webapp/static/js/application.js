@@ -217,8 +217,8 @@ function generateSettings(settings, settingValues, container, tabbed) {
                     $controls.append($newBlock);
                     $newBlock.fadeIn();
                 }
+                onChange();
             });
-            onChange();
         };
 
         var onChange = function() {

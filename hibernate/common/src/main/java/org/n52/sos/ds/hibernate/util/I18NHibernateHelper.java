@@ -40,8 +40,9 @@ import org.n52.sos.ogc.gml.CodeType;
  *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.0
- *
+ * @deprecated nowhere used
  */
+@Deprecated
 public class I18NHibernateHelper {
 
     /**
@@ -72,8 +73,7 @@ public class I18NHibernateHelper {
             AbstractFeature abstractFeature, AbstractI18NMetadata i18n) {
         if (i18n != null) {
             for (LocalizedString name : i18n.getName()) {
-                //FIXME autermann: create a setting to control in which format the locale is outputted
-                abstractFeature.addName(new CodeType(name.getText(), LocaleHelper.toString(name.getLang())));
+                abstractFeature.addName(name.asCodeType());
             }
         }
     }

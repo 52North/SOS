@@ -612,28 +612,6 @@ public interface WritableContentCache extends ContentCache {
     void removeNameForOffering(String offering);
 
     /**
-     * Remove the name for the specified language (not null) and the specified
-     * offering or all names for the specified offering.
-     *
-     * @param offering
-     *            the offering
-     * @param i18n
-     *            the language
-     */
-    void removeI18nNameForOffering(String offering, String i18n);
-
-    /**
-     * Remove the description for the specified language (not null) and the
-     * specified offering or all descriptions for the specified offering.
-     *
-     * @param offering
-     *            the offering
-     * @param i18n
-     *            the language
-     */
-    void removeI18nDescriptionForOffering(String offering, String i18n);
-
-    /**
      * Dissociate all observable properties with the specified composite
      * phenomenon.
      *
@@ -1297,33 +1275,8 @@ public interface WritableContentCache extends ContentCache {
      *            the offering
      * @param name
      *            the name
-     * @param i18n
-     *            the language
-     */
-    void setI18nNameForOffering(String offering, String name, Locale i18n);
-
-    /**
-     * Sets the name of the specified language and the specified offering.
-     *
-     * @param offering
-     *            the offering
-     * @param name
-     *            the name
      */
     void setI18nNameForOffering(String offering, MultilingualString name);
-
-    /**
-     * Sets the description of the specified language and the specified
-     * offering.
-     *
-     * @param offering
-     *            the offering
-     * @param description
-     *            the description
-     * @param i18n
-     *            the language
-     */
-    void setI18nDescriptionForOffering(String offering, String description, Locale i18n);
 
     /**
      * Sets the description of the specified language and the specified

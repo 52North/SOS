@@ -154,10 +154,10 @@ public class SosServiceIdentificationFactory extends LazyThreadSafeProducer<SosS
         SosServiceIdentification serviceIdentification
                 = new SosServiceIdentification();
         if (this.title != null) {
-            serviceIdentification.setTitle(LocaleHelper.filter(this.title, locale));
+            serviceIdentification.setTitle(this.title.filter(locale));
         }
         if (this.abstrakt != null) {
-            serviceIdentification.setAbstract(LocaleHelper.filter(this.abstrakt, locale));
+            serviceIdentification.setAbstract(this.abstrakt.filter(locale));
         }
         if (this.constraints != null) {
             serviceIdentification.setAccessConstraints(Arrays.asList(this.constraints));

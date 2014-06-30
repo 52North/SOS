@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.cache.base;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -51,17 +52,22 @@ import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 import org.n52.sos.i18n.I18NDAORepository;
+import org.n52.sos.i18n.LocaleHelper;
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.i18n.metadata.I18NOfferingMetadata;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CacheHelper;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.Constants;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -83,18 +89,21 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
     private final Collection<ObservationConstellationInfo> observationConstellationInfos;
 
+    private final Offering offering;
+
     private boolean obsConstSupported;
 
     /**
      * Constructor. Note: never pass in Hibernate objects that have been loaded by a session in a different thread
      *
-     * @param dsOfferingId
+     * @param offering
      *            Offering identifier
      * @param observationConstellationInfos
      *            Observation Constellation info collection, passed in from parent update if supported
      */
-    public OfferingCacheUpdateTask(String dsOfferingId, Collection<ObservationConstellationInfo> observationConstellationInfos) {
-        this.offeringId = dsOfferingId;
+    public OfferingCacheUpdateTask(Offering offering, Collection<ObservationConstellationInfo> observationConstellationInfos) {
+        this.offering = offering;
+        this.offeringId = offering.getIdentifier();
         this.observationConstellationInfos = observationConstellationInfos;
     }
 
@@ -138,12 +147,53 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     }
 
     protected void addOfferingNamesAndDescriptionsToCache(String offeringId, Session session) throws OwsExceptionReport {
+        final MultilingualString name;
+        final MultilingualString description;
+
         I18NDAO<I18NOfferingMetadata> dao = I18NDAORepository.getInstance().getDAO(I18NOfferingMetadata.class);
+
         if (dao != null) {
             I18NOfferingMetadata metadata = dao.getMetadata(offeringId);
-            getCache().setI18nNameForOffering(offeringId, metadata.getName());
-            getCache().setI18nDescriptionForOffering(offeringId, metadata.getDescription());
+            name = metadata.getName();
+            description = metadata.getDescription();
+        } else {
+            name = new MultilingualString();
+            description = new MultilingualString();
+            Locale defaultLocale = ServiceConfiguration.getInstance().getDefaultLanguage();
+            if (offering.isSetName()) {
+                final Locale locale;
+                if (offering.isSetCodespaceName()) {
+                    locale = LocaleHelper.fromString(offering.getCodespaceName().getCodespace());
+                } else {
+                    locale = defaultLocale;
+
+                }
+                name.addLocalization(locale, offering.getName());
+            } else {
+                String offeringName = offeringId;
+                if (offeringName.startsWith("http")) {
+                    offeringName = offeringName.substring(offeringName.lastIndexOf(Constants.SLASH_CHAR) + 1, offeringName.length());
+                } else if (offeringName.startsWith("urn")) {
+                    offeringName = offeringName.substring(offeringName.lastIndexOf(Constants.COLON_CHAR) + 1, offeringName.length());
+                }
+                if (offeringName.contains(Constants.NUMBER_SIGN_STRING)) {
+                    offeringName = offeringName.substring(offeringName.lastIndexOf(Constants.NUMBER_SIGN_CHAR) + 1, offeringName.length());
+                }
+                name.addLocalization(defaultLocale, offeringName);
+            }
+            if (offering.isSetDescription()) {
+                final Locale locale;
+                if (offering.isSetCodespaceName()) {
+                    locale = LocaleHelper.fromString(offering.getCodespaceName().getCodespace());
+                } else {
+                    locale = defaultLocale;
+                }
+                description.addLocalization(locale, offering.getDescription());
+            }
         }
+
+        getCache().setI18nDescriptionForOffering(offeringId, description);
+        getCache().setI18nNameForOffering(offeringId, name);
     }
 
     protected Map<ProcedureFlag, Set<String>> getProcedureIdentifier(Session session) throws OwsExceptionReport {

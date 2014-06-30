@@ -35,7 +35,11 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 
+import org.n52.sos.i18n.LocalizedString;
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.sos.SosEnvelope;
+
+import com.vividsolutions.jts.geom.MultiLineString;
 
 /**
  * This encapsulates relationships between the different metadata components of
@@ -632,7 +636,7 @@ public interface ContentCache extends Serializable {
      *            the language
      * @return the name of the offering or null
      */
-    String getI18nNameForOffering(String offering, Locale i18n);
+    LocalizedString getI18nNameForOffering(String offering, Locale i18n);
 
     /**
      * Get all names of the specified offering.
@@ -641,7 +645,7 @@ public interface ContentCache extends Serializable {
      *            the offering
      * @return the names of the offering or null
      */
-    Map<Locale, String> getI18nNamesForOffering(String offering);
+    MultilingualString getI18nNamesForOffering(String offering);
 
     /**
      * Check if there are I18N names for the specified offering and language.
@@ -663,7 +667,7 @@ public interface ContentCache extends Serializable {
      *            the language
      * @return the description of the offering or null
      */
-    String getI18nDescriptionForOffering(String offering, Locale i18n);
+    LocalizedString getI18nDescriptionForOffering(String offering, Locale i18n);
 
     /**
      * Check if there is a I18N description for the specified offering and language.
@@ -675,6 +679,15 @@ public interface ContentCache extends Serializable {
      * @return <code>true</code>, if there are I18N names for the
      */
     boolean hasI18NDescriptionForOffering(String offering, Locale i18n);
+
+    /**
+     * Get all descriptions of the specified offering.
+     *
+     * @param offering
+     *            the offering
+     * @return the names of the offering or null
+     */
+    MultilingualString getI18nDescriptionsForOffering(String offering);
 
     /**
      * Get the composite phenomenons associated with the specified offering.

@@ -41,6 +41,7 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.util.CollectionHelper;
@@ -365,9 +366,9 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     private Map<String, String> nameForOfferings = newSynchronizedMap();
 
-    private Map<String, Map<Locale, String>> i18nNameForOfferings = newSynchronizedMap();
+    private Map<String, MultilingualString> i18nNameForOfferings = newSynchronizedMap();
 
-    private Map<String, Map<Locale, String>> i18nDescriptionForOfferings = newSynchronizedMap();
+    private Map<String, MultilingualString> i18nDescriptionForOfferings = newSynchronizedMap();
 
     private Set<Integer> epsgCodes = newSynchronizedSet();
 
@@ -611,14 +612,14 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     /**
      * @return the relating offering -> language / offering name
      */
-    protected Map<String,  Map<Locale, String>> getI18nNameForOfferingsMap() {
+    protected Map<String,  MultilingualString> getI18nNameForOfferingsMap() {
         return this.i18nNameForOfferings;
     }
 
     /**
      * @return the relating offering -> language / offering description
      */
-    protected Map<String,  Map<Locale, String>> getI18nDescriptionForOfferingsMap() {
+    protected Map<String,  MultilingualString> getI18nDescriptionForOfferingsMap() {
         return this.i18nDescriptionForOfferings;
     }
 

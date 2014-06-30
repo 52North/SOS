@@ -36,6 +36,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.n52.sos.service.ServiceConfiguration;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
@@ -55,6 +57,26 @@ public class MultilingualString implements Iterable<LocalizedString> {
 
     public Optional<LocalizedString> getLocalization(Locale lang) {
         return Optional.fromNullable(getLocalizations().get(lang));
+    }
+
+    public Optional<LocalizedString> getLocalizationOrDefault(Locale lang) {
+        Optional<LocalizedString> localization = getLocalization(lang);
+        if (localization.isPresent()) {
+            return localization;
+        }
+        return getDefaultLocalization();
+    }
+
+    public Optional<LocalizedString> getDefaultLocalization() {
+        return getLocalization(getDefaultLocale());
+    }
+
+     public MultilingualString filter(Locale locale) {
+        if (locale == null) {
+            return isShowAllLocales() ? this : only(getDefaultLocale());
+        } else {
+            return hasLocale(locale) ? only(locale) : only(getDefaultLocale());
+        }
     }
 
     public Set<Locale> getLocales() {
@@ -121,4 +143,11 @@ public class MultilingualString implements Iterable<LocalizedString> {
         return mls;
     }
 
+    protected boolean isShowAllLocales() {
+        return ServiceConfiguration.getInstance().isShowAllLanguageValues();
+    }
+
+    protected Locale getDefaultLocale() {
+        return ServiceConfiguration.getInstance().getDefaultLanguage();
+    }
 }

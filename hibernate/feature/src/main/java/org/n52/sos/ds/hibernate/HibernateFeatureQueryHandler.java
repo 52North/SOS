@@ -431,34 +431,30 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             samplingFeature.addName(featureDAO.getName(feature));
             samplingFeature.setDescription(featureDAO.getDescription(feature));
         } else {
+            I18NFeatureMetadata i18n = i18nDAO.getMetadata(feature.getIdentifier());
             if (requestedLocale != null) {
                 // specific locale was requested
-                I18NFeatureMetadata i18n = i18nDAO.getMetadata(feature.getIdentifier(), requestedLocale);
-                Optional<LocalizedString> name = i18n.getName().getLocalization(requestedLocale);
+                Optional<LocalizedString> name = i18n.getName().getLocalizationOrDefault(requestedLocale);
                 if (name.isPresent()) {
                     samplingFeature.addName(name.get().asCodeType());
                 }
-                Optional<LocalizedString> description = i18n.getDescription().getLocalization(requestedLocale);
+                Optional<LocalizedString> description = i18n.getDescription().getLocalizationOrDefault(requestedLocale);
                 if (description.isPresent()) {
                     samplingFeature.setDescription(description.get().getText());
                 }
             } else {
-                Locale defaultLocale = ServiceConfiguration.getInstance().getDefaultLanguage();
-                final I18NFeatureMetadata i18n;
                 if (ServiceConfiguration.getInstance().isShowAllLanguageValues()) {
-                    // load all names
-                    i18n = i18nDAO.getMetadata(feature.getIdentifier());
+                    for (LocalizedString name : i18n.getName()) {
+                        samplingFeature.addName(name.asCodeType());
+                    }
                 } else {
-                    // load only name in default locale
-                    i18n = i18nDAO.getMetadata(feature.getIdentifier(), defaultLocale);
-                }
-                for (LocalizedString name : i18n.getName()) {
-                    // either all or default only
-                    samplingFeature.addName(name.asCodeType());
+                    Optional<LocalizedString> name = i18n.getName().getDefaultLocalization();
+                    if (name.isPresent()) {
+                        samplingFeature.addName(name.get().asCodeType());
+                    }
                 }
                 // choose always the description in the default locale
-                Optional<LocalizedString> description = i18n.getDescription()
-                        .getLocalization(defaultLocale);
+                Optional<LocalizedString> description = i18n.getDescription().getDefaultLocalization();
                 if (description.isPresent()) {
                     samplingFeature.setDescription(description.get().getText());
                 }

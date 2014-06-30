@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.cache.base;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -59,11 +58,8 @@ import org.n52.sos.ds.hibernate.entities.TOffering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 import org.n52.sos.exception.CodedException;
-import org.n52.sos.i18n.LocaleHelper;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CacheHelper;
-import org.n52.sos.util.Constants;
 
 import com.google.common.collect.Lists;
 
@@ -127,8 +123,6 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                 if (shouldOfferingBeProcessed(offeringId)) {
                     String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
                     cache.addOffering(prefixedOfferingId);
-                    addOfferingNameToCache(prefixedOfferingId, offering);
-                    addOfferingDescriptionToCache(prefixedOfferingId, offering);
 
                     if (offering instanceof TOffering) {
                         TOffering tOffering = (TOffering) offering;
@@ -182,7 +176,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         Collection<OfferingCacheUpdateTask> offeringUpdateTasks = Lists.newArrayList();
         for (Offering offering : getOfferingsToUpdate()){
             if (shouldOfferingBeProcessed(offering.getIdentifier())) {
-                offeringUpdateTasks.add(new OfferingCacheUpdateTask(offering.getIdentifier(),
+                offeringUpdateTasks.add(new OfferingCacheUpdateTask(offering,
                         getOfferingObservationConstellationInfo().get(offering.getIdentifier())));
             }
         }
@@ -207,45 +201,6 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
             getErrors().add(ce);
         }
         return false;
-    }
-
-    private void addOfferingNameToCache(String offeringId, Offering offering) {
-        if (offering.isSetName()) {
-            if (offering.isSetCodespaceName()) {
-                Locale locale = LocaleHelper.fromString(offering.getCodespaceName().getCodespace());
-                getCache().setI18nNameForOffering(offeringId, offering.getName(), locale);
-            } else {
-                getCache().setI18nNameForOffering(offeringId, offering.getName(),
-                        ServiceConfiguration.getInstance().getDefaultLanguage());
-
-            }
-        } else {
-            String offeringName = offeringId;
-            if (offeringName.startsWith("http")) {
-                offeringName = offeringName.substring(offeringName.lastIndexOf(Constants.SPACE_CHAR) + 1, offeringName.length());
-            } else if (offeringName.startsWith("urn")) {
-                offeringName = offeringName.substring(offeringName.lastIndexOf(Constants.COLON_CHAR) + 1, offeringName.length());
-            }
-            if (offeringName.contains(Constants.NUMBER_SIGN_STRING)) {
-                offeringName = offeringName.substring(offeringName.lastIndexOf(Constants.NUMBER_SIGN_CHAR) + 1, offeringName.length());
-            }
-            getCache().setI18nNameForOffering(offeringId, offeringName,
-                    ServiceConfiguration.getInstance().getDefaultLanguage());
-        }
-
-    }
-
-    private void addOfferingDescriptionToCache(String offeringId, Offering offering) {
-        if (offering.isSetDescription()) {
-            if (offering.isSetCodespaceName()) {
-                Locale locale = LocaleHelper.fromString(offering.getCodespaceName().getCodespace());
-                getCache().setI18nDescriptionForOffering(offeringId, offering.getDescription(), locale);
-            } else {
-                getCache().setI18nDescriptionForOffering(offeringId, offering.getDescription(),
-                        ServiceConfiguration.getInstance().getDefaultLanguage());
-            }
-
-        }
     }
 
     protected Set<String> getObservationTypesFromObservationType(Set<ObservationType> observationTypes) {

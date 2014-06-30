@@ -31,11 +31,12 @@ package org.n52.sos.cache;
 import static org.n52.sos.util.SosHelper.getHierarchy;
 
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
 
+import org.n52.sos.i18n.LocalizedString;
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.util.CollectionHelper;
 
@@ -154,37 +155,42 @@ public class ReadableCache extends AbstractContentCache {
 
 
     @Override
-    public String getI18nNameForOffering(String offering, Locale i18n) {
-        Map<Locale, String> map = getI18nNameForOfferingsMap().get(offering);
+    public LocalizedString getI18nNameForOffering(String offering, Locale i18n) {
+        MultilingualString map = getI18nNameForOfferingsMap().get(offering);
         if (map != null) {
-            return map.get(i18n);
+            return map.getLocalization(i18n).orNull();
         }
         return null;
     }
 
     @Override
-    public Map<Locale, String> getI18nNamesForOffering(String offering) {
+    public MultilingualString getI18nNamesForOffering(String offering) {
         return getI18nNameForOfferingsMap().get(offering);
     }
 
 
     @Override
     public boolean hasI18NNamesForOffering(String offering, Locale i18n) {
-        return getI18nNameForOfferingsMap().containsKey(offering) && getI18nNamesForOffering(offering).containsKey(i18n);
+        return getI18nNameForOfferingsMap().containsKey(offering) && getI18nNamesForOffering(offering).hasLocale(i18n);
     }
 
     @Override
-    public String getI18nDescriptionForOffering(String offering, Locale i18n) {
-        Map<Locale, String> map = getI18nDescriptionForOfferingsMap().get(offering);
+    public LocalizedString getI18nDescriptionForOffering(String offering, Locale i18n) {
+        MultilingualString map = getI18nDescriptionForOfferingsMap().get(offering);
         if (map != null) {
-            return map.get(i18n);
+            return map.getLocalization(i18n).orNull();
         }
         return null;
     }
 
     @Override
+    public MultilingualString getI18nDescriptionsForOffering(String offering) {
+        return getI18nDescriptionForOfferingsMap().get(offering);
+    }
+
+    @Override
     public boolean hasI18NDescriptionForOffering(String offering, Locale i18n) {
-        return getI18nDescriptionForOfferingsMap().containsKey(offering) && getI18nDescriptionForOfferingsMap().get(offering).containsKey(i18n);
+        return getI18nDescriptionForOfferingsMap().containsKey(offering) && getI18nDescriptionForOfferingsMap().get(offering).hasLocale(i18n);
     }
 
     @Override

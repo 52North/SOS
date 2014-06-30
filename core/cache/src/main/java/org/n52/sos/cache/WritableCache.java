@@ -31,14 +31,12 @@ package org.n52.sos.cache;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -46,7 +44,6 @@ import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.util.CollectionHelper;
 
-import com.google.common.base.Strings;
 import com.vividsolutions.jts.geom.Envelope;
 
 
@@ -374,46 +371,11 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
-    public void setI18nNameForOffering(String offering, String name, Locale i18n) {
-        notNullOrEmpty(OFFERING, offering);
-        notNullOrEmpty(NAME, name);
-        notNull(I18N, i18n);
-        LOG.trace("Setting Name of Offering {} and language {} to {}", offering, i18n, name);
-        Map<Locale, String> map = null;
-        if (getI18nNameForOfferingsMap().containsKey(offering)) {
-            map = getI18nNameForOfferingsMap().get(offering);
-        } else {
-            map = newSynchronizedMap();
-        }
-        map.put(i18n, name);
-        getI18nNameForOfferingsMap().put(offering, map);
-
-    }
-
-    @Override
-    public void setI18nDescriptionForOffering(String offering, String description, Locale i18n) {
-        notNullOrEmpty(OFFERING, offering);
-        notNullOrEmpty(DESCRIPTION, description);
-        notNull(I18N, i18n);
-        LOG.trace("Setting Description of Offering {} and language {} to {}", offering, i18n, description);
-        Map<Locale, String> map = null;
-        if (getI18nDescriptionForOfferingsMap().containsKey(offering)) {
-            map = getI18nDescriptionForOfferingsMap().get(offering);
-        } else {
-            map = newSynchronizedMap();
-        }
-        map.put(i18n, description);
-        getI18nDescriptionForOfferingsMap().put(offering, map);
-    }
-
-    @Override
     public void setI18nNameForOffering(String offering, MultilingualString name) {
         notNullOrEmpty(OFFERING, offering);
         notNull(NAME, name);
-        getI18nNameForOfferingsMap().remove(offering);
-        for (LocalizedString ls : name) {
-            setI18nNameForOffering(offering, ls.getText(), ls.getLang());
-        }
+        LOG.trace("Setting I18N Name of Offering {} to {}", offering, name);
+        getI18nNameForOfferingsMap().put(offering, name);
     }
 
     @Override
@@ -421,10 +383,8 @@ public class WritableCache extends ReadableCache implements WritableContentCache
                                               MultilingualString description) {
         notNullOrEmpty(OFFERING, offering);
         notNull(DESCRIPTION, description);
-        getI18nDescriptionForOfferingsMap().remove(offering);
-        for (LocalizedString ls : description) {
-            setI18nDescriptionForOffering(offering, ls.getText(), ls.getLang());
-        }
+        LOG.trace("Setting I18N Description of Offering {} to {}", offering, description);
+        getI18nDescriptionForOfferingsMap().put(offering, description);
     }
 
     @Override
@@ -724,34 +684,6 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         notNullOrEmpty(OFFERING, offering);
         LOG.trace("Removing name for offering {}", offering);
         getNameForOfferingsMap().remove(offering);
-    }
-
-    @Override
-    public void removeI18nNameForOffering(String offering, String i18n) {
-        notNullOrEmpty(OFFERING, offering);
-        if (Strings.isNullOrEmpty(i18n)) {
-            LOG.trace("Removing i18n names for offering {}", offering);
-            getI18nNameForOfferingsMap().remove(offering);
-        } else {
-            if (getI18nNameForOfferingsMap().containsKey(offering)) {
-                LOG.trace("Removing name for language {} and offering {}", i18n, offering);
-                getI18nNameForOfferingsMap().get(offering).remove(i18n);
-            }
-        }
-    }
-
-    @Override
-    public void removeI18nDescriptionForOffering(String offering, String i18n) {
-        notNullOrEmpty(OFFERING, offering);
-        if (Strings.isNullOrEmpty(i18n)) {
-            LOG.trace("Removing i18n names for offering {}", offering);
-            getI18nDescriptionForOfferingsMap().remove(offering);
-        } else {
-            if (getI18nDescriptionForOfferingsMap().containsKey(offering)) {
-                LOG.trace("Removing name for language {} and offering {}", i18n, offering);
-                getI18nDescriptionForOfferingsMap().get(offering).remove(i18n);
-            }
-        }
     }
 
     @Override

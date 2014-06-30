@@ -36,8 +36,8 @@ import com.google.common.collect.ImmutableSet;
 
 public class HibernateMetadataCache {
     private static HibernateMetadataCache instance;
-    private final Set<String> supportedEntities;
     private static final Object lock = new Object();
+    private final Set<String> supportedEntities;
 
     private HibernateMetadataCache(Session session) {
         this.supportedEntities = initSupportedEntities(session);
@@ -60,8 +60,6 @@ public class HibernateMetadataCache {
         synchronized (lock) {
             if (instance == null) {
                 instance = new HibernateMetadataCache(session);
-            } else {
-                throw new IllegalStateException("Already initialized");
             }
         }
     }

@@ -63,16 +63,6 @@ public class LocaleHelper {
         return decoder;
     }
 
-    public static MultilingualString filter(MultilingualString string, Locale locale) {
-        if (locale != null) {
-            return string.only(locale);
-        } else if (ServiceConfiguration.getInstance().isShowAllLanguageValues()) {
-            return string;
-        } else {
-            return string.only(ServiceConfiguration.getInstance().getDefaultLanguage());
-        }
-    }
-
     private static class Decoder implements Function<String, Locale> {
         private final LoadingCache<String, Locale> cache = CacheBuilder
                 .newBuilder().build(new CacheLoaderImpl());

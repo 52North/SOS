@@ -34,10 +34,14 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.n52.sos.cache.ContentCache;
+import org.n52.sos.i18n.LocalizedString;
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceConfiguration;
+
+import com.google.common.base.Optional;
 
 /**
  * Helper class for I18N support
@@ -66,26 +70,32 @@ public class I18NHelper {
      *
      * @param offering
      *            {@link SosOffering} to add names
-     * @param i18n
+     * @param requestedLocale
      *            the specific language
      */
-    public static void addOfferingNames(SosOffering offering, Locale i18n) {
-        if (i18n != null && getCache().hasI18NNamesForOffering(offering.getIdentifier(), i18n)) {
-            offering.addName(getCache().getI18nNameForOffering(offering.getIdentifier(), i18n), LocaleHelper.toString(i18n));
+    public static void addOfferingNames(SosOffering offering, Locale requestedLocale) {
+        String identifier = offering.getIdentifier();
+        Locale defaultLanguage = getDefaultLanguage();
+        if (requestedLocale != null && getCache().hasI18NNamesForOffering(identifier, requestedLocale)) {
+            offering.addName(getCache().getI18nNameForOffering(identifier, requestedLocale).asCodeType());
         } else {
             if (ServiceConfiguration.getInstance().isShowAllLanguageValues()) {
-                Map<Locale, String> i18nNames = getCache().getI18nNamesForOffering(offering.getIdentifier());
-                if (i18nNames != null) {
-                    for (Locale codespace : i18nNames.keySet()) {
-                        offering.addName(i18nNames.get(codespace), LocaleHelper.toString(codespace));
+                MultilingualString names = getCache().getI18nNamesForOffering(identifier);
+                if (names != null) {
+                    for (LocalizedString name : names) {
+                        offering.addName(name.asCodeType());
                     }
                 }
             } else {
-                offering.addName(getCache().getI18nNameForOffering(offering.getIdentifier(), getDefaultLanguage()), LocaleHelper.toString(getDefaultLanguage()));
+                LocalizedString name = getCache()
+                        .getI18nNameForOffering(identifier, defaultLanguage);
+                if (name != null) {
+                    offering.addName(name.asCodeType());
+                }
             }
         }
         if (!offering.isSetName()) {
-            offering.addName(getCache().getNameForOffering(offering.getIdentifier()));
+            offering.addName(getCache().getNameForOffering(identifier));
         }
     }
 
@@ -108,17 +118,18 @@ public class I18NHelper {
      *
      * @param offering
      *            {@link SosOffering} to add description
-     * @param i18n
+     * @param locale
      *            the specific language
      */
-    public static void addOfferingDescription(SosOffering offering, Locale i18n) {
-        if (i18n != null
-                && getCache().hasI18NDescriptionForOffering(offering.getIdentifier(), i18n)) {
-            offering.setDescription(getCache().getI18nDescriptionForOffering(offering.getIdentifier(), i18n));
-        }
-        if (!offering.isSetDescription()) {
-            offering.setDescription(getCache().getI18nDescriptionForOffering(offering.getIdentifier(),
-                    getDefaultLanguage()));
+    public static void addOfferingDescription(SosOffering offering, Locale locale) {
+        MultilingualString descriptions = getCache()
+                .getI18nDescriptionsForOffering(offering.getIdentifier());
+        if (descriptions != null) {
+            Optional<LocalizedString> description = descriptions
+                    .getLocalizationOrDefault(locale);
+            if (description.isPresent()) {
+                offering.setDescription(description.get().getText());
+            }
         }
     }
 

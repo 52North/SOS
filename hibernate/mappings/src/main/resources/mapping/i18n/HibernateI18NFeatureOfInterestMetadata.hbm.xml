@@ -13,7 +13,7 @@
            	<column index="i18nFeatureIdx" name="objectId" not-null="true" unique-key="i18nFeatureIdentity" />
         </many-to-one>
         <property name="locale" type="locale">
-            <column name="locale" />
+            <column name="locale"  not-null="true" unique-key="i18nFeatureIdentity"/>
         </property>
 		<property name="name" type="string">
             <column name="name" />

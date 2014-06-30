@@ -12,8 +12,8 @@
         <many-to-one name="objectId" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="select" lazy="no-proxy" foreign-key="i18nProcedureProcedureFk">
            	<column index="i18nProcedureIdx" name="objectId" not-null="true" unique-key="i18nProcedureIdentity" />
         </many-to-one>
- 		<property name="locale" type="locale">
-            <column name="locale" />
+ 		<property name="locale" type="locale" >
+            <column name="locale" not-null="true" unique-key="i18nProcedureIdentity" />
         </property>
         <property name="name" type="string">
             <column name="name" />

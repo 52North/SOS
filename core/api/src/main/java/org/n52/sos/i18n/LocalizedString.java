@@ -31,6 +31,7 @@ package org.n52.sos.i18n;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+import java.io.Serializable;
 import java.util.Locale;
 
 import org.n52.sos.ogc.gml.CodeType;
@@ -45,6 +46,7 @@ import com.google.common.base.Objects;
  */
 public class LocalizedString {
     private static final Locale NULL_LOCALE = new Locale("");
+    private static final long serialVersionUID = 8336541273458492969L;
     private final Locale lang;
     private final String text;
 

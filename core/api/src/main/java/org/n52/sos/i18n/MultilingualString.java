@@ -28,6 +28,7 @@
  */
 package org.n52.sos.i18n;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -43,7 +44,8 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
-public class MultilingualString implements Iterable<LocalizedString> {
+public class MultilingualString implements Iterable<LocalizedString>, Serializable {
+    private static final long serialVersionUID = -1120455418520277338L;
     private final Map<Locale, LocalizedString> localizations = Maps.newHashMap();
 
     public MultilingualString addLocalization(Locale lang, String value) {

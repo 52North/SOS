@@ -278,6 +278,7 @@ public abstract class AbstractHibernateI18NDAO<T extends AbstractIdentifierNameD
                 scroll.close();
             }
         }
+        session.flush();
     }
 
     protected void fillSosObject(H h18n, S i18n) {

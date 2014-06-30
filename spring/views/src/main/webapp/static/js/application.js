@@ -197,17 +197,17 @@ function generateSettings(settings, settingValues, container, tabbed) {
     }
 
     function generateMultilingualSetting($setting, setting, settingValues) {
-        var $label, $hidden, $wrapper, defaultValue, key, $controls, $description, $blocks;
+        var $label, $hidden, key, $controls, $description, $blocks;
 
         var onAdd = function(e) {
             var $block = createBlock();
             $block.css("display", "none");
-            $(e.srcElement).parents(".block").after($block);
+            $(this).parents(".block").after($block);
             $block.fadeIn();
         };
 
         var onRemove = function(e) {
-            var $oldBlock = $(e.srcElement).parents(".block");
+            var $oldBlock = $(this).parents(".block");
             $oldBlock.fadeOut(function() {
                 $oldBlock.remove();
                  // no block is left; add an empty one

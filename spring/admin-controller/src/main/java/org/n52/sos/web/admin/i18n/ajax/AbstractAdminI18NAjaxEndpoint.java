@@ -55,6 +55,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.JSONUtils;
 import org.n52.sos.web.AbstractController;
+import org.n52.sos.web.ControllerConstants;
 
 import com.google.common.base.Optional;
 
@@ -95,7 +96,7 @@ public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetada
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+                    produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public String get()
             throws NoImplementationFoundException, JSONException,
                    OwsExceptionReport {
@@ -107,7 +108,7 @@ public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetada
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(params = "id",
                     method = RequestMethod.GET,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+                    produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public String get(@RequestParam("id") String id)
             throws NoImplementationFoundException,
                    JSONException,

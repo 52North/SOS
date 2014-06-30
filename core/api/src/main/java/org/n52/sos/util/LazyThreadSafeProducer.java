@@ -28,8 +28,6 @@
  */
 package org.n52.sos.util;
 
-import static org.n52.sos.service.ServiceSettings.DEFAULT_LANGUAGE;
-
 import java.util.Locale;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -54,7 +52,6 @@ public abstract class LazyThreadSafeProducer<T> implements Producer<T> {
                 }
             });
     private T nullLocale = null;
-    private Locale defaultLocale;
 
     protected void setRecreate() {
         lock.writeLock().lock();
@@ -64,16 +61,6 @@ public abstract class LazyThreadSafeProducer<T> implements Producer<T> {
             lock.writeLock().unlock();
         }
         this.cache.invalidateAll();
-    }
-
-    @Setting(DEFAULT_LANGUAGE)
-    public void setDefaultLocale(String defaultLocale) {
-        Validation.notNullOrEmpty("Default language as three character string", defaultLocale);
-        this.defaultLocale = LocaleHelper.fromString(defaultLocale);
-    }
-
-    public Locale getDefaultLocale() {
-        return defaultLocale;
     }
 
     @Override

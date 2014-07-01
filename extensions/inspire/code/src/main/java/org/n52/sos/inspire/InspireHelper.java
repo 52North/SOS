@@ -29,7 +29,11 @@
 package org.n52.sos.inspire;
 
 import java.net.URI;
+import java.util.Locale;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.config.annotation.Configurable;
@@ -39,17 +43,15 @@ import org.n52.sos.inspire.settings.InspireSettings;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.Validation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
 /**
  * Helper class for INSPIRE
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
- * 
+ *
  */
 @Configurable
 public class InspireHelper {
@@ -63,21 +65,21 @@ public class InspireHelper {
     private boolean enabled = false;
 
     private boolean fullExtendedCapabilities = false;
-    
+
     private URI metadataUrlURL;
-    
+
     private String metadataUrlMediatType;
-    
+
     private String conformityTitle;
-    
+
     private String conformityDateOfCreation;
-    
+
     private String metadataDate;
 
     private InspireLanguageISO6392B defaultLanguage = null;
 
     private Set<InspireLanguageISO6392B> supportedLanguages = Sets.newHashSet();
-    
+
     private boolean useAuthority = false;
 
     /**
@@ -99,7 +101,7 @@ public class InspireHelper {
 
     /**
      * Set the INSPIRE id
-     * 
+     *
      * @param inspireId
      *            the INSPIRE id to set
      */
@@ -111,7 +113,7 @@ public class InspireHelper {
 
     /**
      * Get the INSPIRE id
-     * 
+     *
      * @return the INSPIRE id
      */
     public String getInspireId() {
@@ -120,7 +122,7 @@ public class InspireHelper {
 
     /**
      * Set the default language
-     * 
+     *
      * @param defaultLanguage
      *            the default language to set
      */
@@ -132,7 +134,7 @@ public class InspireHelper {
 
     /**
      * Get the default language
-     * 
+     *
      * @return the default language
      */
     public InspireLanguageISO6392B getDefaultLanguage() {
@@ -141,7 +143,7 @@ public class InspireHelper {
 
     /**
      * Get the supported languages
-     * 
+     *
      * @return the supporte languages
      */
     public Set<InspireLanguageISO6392B> getSupportedLanguages() {
@@ -157,7 +159,7 @@ public class InspireHelper {
     private void updateSupportedLanguages() {
         supportedLanguages.clear();
         supportedLanguages.add(getDefaultLanguage());
-        for (String language : Configurator.getInstance().getCache().getSupportedLanguages()) {
+        for (Locale language : Configurator.getInstance().getCache().getSupportedLanguages()) {
             try {
                 supportedLanguages.add(InspireLanguageISO6392B.fromValue(language));
             } catch (IllegalArgumentException iae) {
@@ -168,7 +170,7 @@ public class InspireHelper {
 
     /**
      * Set the indicator to enable/disable the INSPIRE ExtendedCapabilities
-     * 
+     *
      * @param enabled
      *            the indicator to set
      */
@@ -179,7 +181,7 @@ public class InspireHelper {
 
     /**
      * Is the INSPIRE ExtendedCapabilities enabled
-     * 
+     *
      * @return <code>true</code>, if the INSPIRE ExtendedCapabilities enabled
      */
     public boolean isEnabled() {
@@ -188,7 +190,7 @@ public class InspireHelper {
 
     /**
      * Set the indicator to use the full or minimal INSPIRE ExtendedCapabilities
-     * 
+     *
      * @param fullExtendedCapabilities
      *            indicator to set
      */
@@ -199,24 +201,24 @@ public class InspireHelper {
 
     /**
      * Should the full or minimal INSPIRE ExtendedCapabilities be used
-     * 
+     *
      * @return <code>true</code>, if the full INSPIRE ExtendedCapabilities
      *         should be use
      */
     public boolean isFullExtendedCapabilities() {
         return fullExtendedCapabilities;
     }
-    
-    
+
+
     @Setting(InspireSettings.INSPIRE_METADATA_URL_URL_KEY)
     public void setMetadataUrlURL(URI url) {
         this.metadataUrlURL = url;
     }
-    
+
     public URI getMetadataUrlURL() {
         return metadataUrlURL;
     }
-    
+
     public boolean isSetMetadataUrlURL() {
         return getMetadataUrlURL() != null;
     }
@@ -225,11 +227,11 @@ public class InspireHelper {
     public void setMetadataUrlMediaType(String mediaType) {
         this.metadataUrlMediatType = mediaType;
     }
-    
+
     public String getMetadataUrlMediaType() {
         return metadataUrlMediatType;
     }
-    
+
     public boolean isSetMetadataUrlMediaType() {
         return StringHelper.isNotEmpty(getMetadataUrlMediaType());
     }
@@ -238,41 +240,41 @@ public class InspireHelper {
     public void setMetadataDate(String time) {
         this.metadataDate = time;
     }
-    
+
     public String getMetadataDate() {
         return metadataDate;
     }
-    
+
     @Setting(InspireSettings.INSPIRE_CONFORMITY_TITLE_KEY)
     public void setConformityTitle(String title) {
         this.conformityTitle = title;
     }
-    
+
     public String getConformityTitle() {
         return conformityTitle;
     }
-    
+
     @Setting(InspireSettings.INSPIRE_CONFORMITY_DATE_OF_CREATION_KEY)
     public void setConformityDateOfCreation(String time) {
         this.conformityDateOfCreation = time;
     }
-    
+
     public String getConformityDateOfCreation() {
         return conformityDateOfCreation;
     }
-    
+
     @Setting(InspireSettings.INSPIRE_USE_AUTHORITY_KEY)
     public void setUseAuthority(boolean useAuthority) {
         this.useAuthority = useAuthority;
     }
-    
+
     public boolean isUseAuthority() {
         return useAuthority;
     }
 
     /**
      * Check the requested language.
-     * 
+     *
      * @param language
      *            Requested language
      * @return {@link InspireLanguageISO6392B} from the requested language or

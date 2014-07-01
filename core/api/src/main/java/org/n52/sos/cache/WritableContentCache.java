@@ -29,9 +29,12 @@
 package org.n52.sos.cache;
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.sos.SosEnvelope;
 
@@ -39,9 +42,9 @@ import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Extension of {@code ContentCache} to allow the manipulation of the cache.
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public interface WritableContentCache extends ContentCache {
@@ -52,7 +55,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Allow the specified observation type for the passed offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param allowedObservationType
@@ -62,7 +65,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Allow the specified observation types for the passed offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param allowedObservationTypes
@@ -72,7 +75,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Allow the specified featureOfInterest type for the passed offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param allowedFeatureOfInterestType
@@ -82,7 +85,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Allow the specified featureOfInterest types for the passed offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param allowedFeatureOfInterestTypes
@@ -92,7 +95,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Associate the specified composite phenomenon with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param compositePhenomenon
@@ -102,7 +105,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Add the specified epsg code.
-     * 
+     *
      * @param epsgCode
      *            the new epsg code
      */
@@ -110,7 +113,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Add the specified epsg codes.
-     * 
+     *
      * @param epsgCodes
      *            the new epsg codes
      */
@@ -118,7 +121,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Add the specified feature of interest.
-     * 
+     *
      * @param featureOfInterest
      *            the feature of interest
      */
@@ -126,7 +129,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Associate the specified feature of interest with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param feature
@@ -137,7 +140,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Associate the specified result template with the specified feature of
      * interest.
-     * 
+     *
      * @param resultTemplate
      *            the result template
      * @param featureOfInterest
@@ -147,7 +150,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Add the specified feature of interest.
-     * 
+     *
      * @param featureOfInterest
      *            the feature of interest
      */
@@ -156,7 +159,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Associate the specified features of interest with the specified result
      * template.
-     * 
+     *
      * @param resultTemplate
      *            the result template
      * @param featuresOfInterest
@@ -167,7 +170,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Associate the specified observable property to the specified composite
      * phenomenon.
-     * 
+     *
      * @param compositePhenomenon
      *            the composite phenomenon
      * @param observableProperty
@@ -177,7 +180,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Associate the specified observable property with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param observableProperty
@@ -187,7 +190,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Associate the specified observable property with the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
      * @param observableProperty
@@ -198,7 +201,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Associate the specified observable property with the specified result
      * template.
-     * 
+     *
      * @param resultTemplate
      *            the result template
      * @param observableProperty
@@ -208,7 +211,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Add the specified observation identifier.
-     * 
+     *
      * @param observationIdentifier
      *            the observation identifier
      */
@@ -217,7 +220,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Associate the specified observation identifier with the specified
      * procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
      * @param observationIdentifier
@@ -227,7 +230,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Add the specified observation identifiers.
-     * 
+     *
      * @param observationIdentifier
      *            the observation identifiers
      */
@@ -235,7 +238,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Associate the specified observation type with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param observationType
@@ -246,7 +249,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Associate the specified featureOfInterest type with the specified
      * offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param featureOfInterestType
@@ -256,7 +259,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Associate the specified observable property to the specified offering.
-     * 
+     *
      * @param observableProperty
      *            the observable property
      * @param offering
@@ -266,7 +269,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Associate the specified offering with the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
      * @param offering
@@ -277,7 +280,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Associate the specified parent feature with the specified feature of
      * interest.
-     * 
+     *
      * @param featureOfInterest
      *            the feature of interest
      * @param parentFeature
@@ -288,7 +291,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Associate the specified parent features with the specified feature of
      * interest.
-     * 
+     *
      * @param featureOfInterest
      *            the feature of interest
      * @param parentFeatures
@@ -298,7 +301,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Associate the specified parent procedure with the specified procedure
-     * 
+     *
      * @param procedure
      *            the procedure
      * @param parentProcedure
@@ -308,7 +311,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Associate the specified parent procedures with the specified procedure
-     * 
+     *
      * @param procedure
      *            the procedure
      * @param parentProcedures
@@ -318,7 +321,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Add the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
      */
@@ -326,7 +329,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Associate the specified procedure with the specified feature of interest.
-     * 
+     *
      * @param featureOfInterest
      *            the feature of interest
      * @param procedure
@@ -336,7 +339,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Associate the specified procedure with the specified observable property.
-     * 
+     *
      * @param observableProperty
      *            the observable property
      * @param procedure
@@ -346,7 +349,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Associate the specified procedure with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param procedure
@@ -357,7 +360,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Associate the specified hidden child procedure with the specified
      * offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param procedure
@@ -367,7 +370,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Add the specified procedures.
-     * 
+     *
      * @param procedure
      *            the procedures
      */
@@ -375,7 +378,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Associate the specified related feature with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param relatedFeature
@@ -385,7 +388,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Associate the specified related features with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param relatedFeatures
@@ -395,7 +398,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Add the specified result template.
-     * 
+     *
      * @param resultTemplate
      *            the result template
      */
@@ -403,7 +406,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Associate the specified result template with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param resultTemplate
@@ -413,7 +416,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Add the specified result templates.
-     * 
+     *
      * @param resultTemplates
      *            the result templates
      */
@@ -421,7 +424,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Associate the specified role with the specified related feature.
-     * 
+     *
      * @param relatedFeature
      *            the related feature
      * @param role
@@ -432,7 +435,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Dissociate the specified allowed observation type with the specified
      * offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param allowedObservationType
@@ -442,7 +445,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all allowed observation type with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      */
@@ -451,7 +454,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Dissociate the specified composite phenomenon with the specified
      * offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param compositePhenomenon
@@ -461,7 +464,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all composite phenomenon with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      */
@@ -469,7 +472,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the envelope for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      */
@@ -477,7 +480,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the Spatial Filtering Profile envelope for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      */
@@ -485,7 +488,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the specified epsg code.
-     * 
+     *
      * @param epsgCode
      *            the epsg code
      */
@@ -493,7 +496,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the specified epsg codes.
-     * 
+     *
      * @param epsgCode
      *            the epsg codes
      */
@@ -501,7 +504,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the specified feature of interest.
-     * 
+     *
      * @param featureOfInterest
      *            the feature of interest
      */
@@ -509,7 +512,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate the specified feature with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param featureOfInterest
@@ -520,7 +523,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Dissociate the specified feature of interest with the specified result
      * template.
-     * 
+     *
      * @param resultTemplate
      *            the result template
      * @param featureOfInterest
@@ -530,7 +533,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the specified features of interest.
-     * 
+     *
      * @param featuresOfInterest
      *            the features of interest
      */
@@ -538,7 +541,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all features of interest with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      */
@@ -546,7 +549,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all features of interest with the specified result template.
-     * 
+     *
      * @param resultTemplate
      *            the result template
      */
@@ -554,7 +557,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the maximal phenomenon time for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      */
@@ -562,7 +565,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the minimal phenomenon time for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      */
@@ -570,7 +573,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the maximal phenomenon time for the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
      */
@@ -578,7 +581,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the minimal phenomenon time for the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
      */
@@ -586,7 +589,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the maximal result time for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      */
@@ -594,7 +597,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the minimal result time for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      */
@@ -602,38 +605,16 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the name for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      */
     void removeNameForOffering(String offering);
 
     /**
-     * Remove the name for the specified language (not null) and the specified
-     * offering or all names for the specified offering.
-     * 
-     * @param offering
-     *            the offering
-     * @param i18n
-     *            the language
-     */
-    void removeI18nNameForOffering(String offering, String i18n);
-
-    /**
-     * Remove the description for the specified language (not null) and the
-     * specified offering or all descriptions for the specified offering.
-     * 
-     * @param offering
-     *            the offering
-     * @param i18n
-     *            the language
-     */
-    void removeI18nDescriptionForOffering(String offering, String i18n);
-
-    /**
      * Dissociate all observable properties with the specified composite
      * phenomenon.
-     * 
+     *
      * @param compositePhenomenon
      *            the composite phenomenon
      */
@@ -641,7 +622,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all observable properties with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      */
@@ -649,7 +630,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all observable properties with the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
      */
@@ -657,7 +638,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all observable properties with the specified result template.
-     * 
+     *
      * @param resultTemplate
      *            the result template
      */
@@ -666,7 +647,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Dissociate the specified observable property with the specified composite
      * phenomenon.
-     * 
+     *
      * @param compositePhenomenon
      *            the composite phenomenon
      * @param observableProperty
@@ -676,7 +657,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate the specified observable property with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param observableProperty
@@ -687,7 +668,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Dissociate the specified observable property with the specified
      * procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
      * @param observableProperty
@@ -698,7 +679,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Dissociate the specified observable property with the specified result
      * template.
-     * 
+     *
      * @param resultTemplate
      *            the result template
      * @param observableProperty
@@ -708,7 +689,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the specified observation identifier.
-     * 
+     *
      * @param observationIdentifier
      *            the observation identifier
      */
@@ -717,7 +698,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Dissociate the specified observation identifier with the specified
      * procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
      * @param observationIdentifier
@@ -727,7 +708,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the specified observation identifier.
-     * 
+     *
      * @param observationIdentifier
      *            the observation identifier
      */
@@ -735,7 +716,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all observation identifiers with the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
      */
@@ -744,7 +725,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Dissociate the specified featureOfInterest type with the specified
      * offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param featureOfInterestType
@@ -754,7 +735,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all featureOfInterest types with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      */
@@ -762,7 +743,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate the specified observation type with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param observationType
@@ -772,7 +753,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all observation types with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      */
@@ -780,7 +761,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate the specified offering with the specified observable property.
-     * 
+     *
      * @param observableProperty
      *            the observable property
      * @param offering
@@ -790,7 +771,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate the specified offering with the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
      * @param offering
@@ -800,7 +781,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all offerings with the specified observable property.
-     * 
+     *
      * @param observableProperty
      *            the observable property
      */
@@ -808,7 +789,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all offerings with the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
      */
@@ -816,7 +797,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
      */
@@ -825,7 +806,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Dissociate the specified procedure with the specified feature of
      * interest.
-     * 
+     *
      * @param featureOfInterest
      *            the feature of interest
      * @param procedure
@@ -836,7 +817,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Dissociate the specified procedure with the specified observable
      * property.
-     * 
+     *
      * @param observableProperty
      *            the observable property
      * @param procedure
@@ -846,7 +827,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate the specified procedure with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param procedure
@@ -856,7 +837,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate the specified procedure with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param procedure
@@ -866,7 +847,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
      */
@@ -874,7 +855,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all procedures with the specified feature of interest.
-     * 
+     *
      * @param featureOfInterest
      *            the feature of interest
      */
@@ -882,7 +863,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all procedures with the specified observable property.
-     * 
+     *
      * @param observableProperty
      *            the observable property
      */
@@ -890,7 +871,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all procedures with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      */
@@ -898,7 +879,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate the specified related feature with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param relatedFeature
@@ -908,7 +889,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all related features with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      */
@@ -916,7 +897,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the specified result template.
-     * 
+     *
      * @param resultTemplate
      *            the result template
      */
@@ -925,7 +906,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Dissociate the specified result template with the specified result
      * template.
-     * 
+     *
      * @param offering
      *            the offering
      * @param resultTemplate
@@ -935,7 +916,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the specified result templates.
-     * 
+     *
      * @param resultTemplates
      *            the result templates
      */
@@ -943,7 +924,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all result templates with the specified result template.
-     * 
+     *
      * @param offering
      *            the offering
      */
@@ -951,7 +932,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate the specified role with the specified related feature.
-     * 
+     *
      * @param relatedFeature
      *            the related feature
      * @param role
@@ -961,7 +942,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Dissociate all roles with the specified related feature.
-     * 
+     *
      * @param relatedFeature
      *            the related feature
      */
@@ -970,7 +951,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Dissociate all roles with the specified related feature that are not
      * contained in the specified collection.
-     * 
+     *
      * @param features
      *            the related features for which the roles should kept
      */
@@ -978,7 +959,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the allowed observation types for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param allowedObservationTypes
@@ -988,7 +969,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the allowed featureOfInterest types for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param allowedFeatureOfInterestTypes
@@ -998,7 +979,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the composite phenomenon for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param compositePhenomenons
@@ -1008,7 +989,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the default EPSG code.
-     * 
+     *
      * @param defaultEPSGCode
      *            the new default ESPG code
      */
@@ -1016,7 +997,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the specified envelope for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param envelope
@@ -1026,7 +1007,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the specified envelope for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param envelope
@@ -1037,7 +1018,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Updates the Spatial Filtering Profile envelope for the specified offering
      * to include the specified envelope.
-     * 
+     *
      * @param offering
      *            the offering
      * @param envelope
@@ -1048,7 +1029,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Updates the Spatial Filtering Profile envelope for the specified offering
      * to include the specified envelope.
-     * 
+     *
      * @param offering
      *            the offering
      * @param envelope
@@ -1058,7 +1039,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the new global phenomenon envelope.
-     * 
+     *
      * @param min
      *            the minimal phenomenon time
      * @param max
@@ -1069,7 +1050,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Update the global phenomenon time by extending the global envelope to
      * include the specified {@code ITime}.
-     * 
+     *
      * @param eventTime
      *            the time to include
      */
@@ -1083,7 +1064,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the new global result envelope.
-     * 
+     *
      * @param min
      *            the minimal result time
      * @param max
@@ -1094,7 +1075,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Update the global result time by extending the global envelope to include
      * the specified {@code ITime}.
-     * 
+     *
      * @param eventTime
      *            the time to include
      */
@@ -1108,7 +1089,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the features of interest.
-     * 
+     *
      * @param featuresOfInterest
      *            the features of interest
      */
@@ -1116,7 +1097,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the features of interest for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param featuresOfInterest
@@ -1126,7 +1107,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the global spatial envelope.
-     * 
+     *
      * @param globalEnvelope
      *            the new spatial envelope
      */
@@ -1134,7 +1115,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Updates the global spatial envelope to include the specified envelope.
-     * 
+     *
      * @param e
      *            the envelope
      */
@@ -1148,7 +1129,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the global maximal phenomenon time.
-     * 
+     *
      * @param maxEventTime
      *            the max phenomenon time
      */
@@ -1157,7 +1138,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Sets the maximal phenomenon time for the specified offering to the
      * specified time.
-     * 
+     *
      * @param offering
      *            the offering
      * @param maxTime
@@ -1168,7 +1149,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Sets the maximal phenomenon time for the specified procedure to the
      * specified time.
-     * 
+     *
      * @param procedure
      *            the procedure
      * @param maxTime
@@ -1178,7 +1159,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the global minimal phenomenon time.
-     * 
+     *
      * @param minEventTime
      *            the min phenomenon time
      */
@@ -1187,7 +1168,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Sets the minimal phenomenon time for the specified offering to the
      * specified time.
-     * 
+     *
      * @param offering
      *            the offering
      * @param minTime
@@ -1198,7 +1179,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Sets the minimal phenomenon time for the specified procedure to the
      * specified time.
-     * 
+     *
      * @param procedure
      *            the procedure
      * @param minTime
@@ -1209,7 +1190,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Updates the phenomenon time envelope of the specified offering to include
      * the specified event time.
-     * 
+     *
      * @param offering
      *            the offering
      * @param eventTime
@@ -1220,7 +1201,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Updates the phenomenon time envelope of the specified procedure to
      * include the specified event time.
-     * 
+     *
      * @param procedure
      *            the procedure
      * @param eventTime
@@ -1230,7 +1211,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the global maximal result time.
-     * 
+     *
      * @param maxResultTime
      *            the max result time
      */
@@ -1239,7 +1220,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Sets the maximal result time for the specified offering to the specified
      * time.
-     * 
+     *
      * @param offering
      *            the offering
      * @param maxTime
@@ -1249,7 +1230,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the global minimal result time.
-     * 
+     *
      * @param minResultTime
      *            the min result time
      */
@@ -1258,7 +1239,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Sets the minimal result time for the specified offering to the specified
      * time.
-     * 
+     *
      * @param offering
      *            the offering
      * @param minTime
@@ -1269,7 +1250,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Updates the result time envelope of the specified offering to include the
      * specified result time.
-     * 
+     *
      * @param offering
      *            the offering
      * @param resultTime
@@ -1279,7 +1260,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the name of the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param name
@@ -1289,32 +1270,28 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the name of the specified language and the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param name
      *            the name
-     * @param i18n
-     *            the language
      */
-    void setI18nNameForOffering(String offering, String name, String i18n);
+    void setI18nNameForOffering(String offering, MultilingualString name);
 
     /**
      * Sets the description of the specified language and the specified
      * offering.
-     * 
+     *
      * @param offering
      *            the offering
-     * @param name
+     * @param description
      *            the description
-     * @param i18n
-     *            the language
      */
-    void setI18nDescriptionForOffering(String offering, String description, String i18n);
+    void setI18nDescriptionForOffering(String offering, MultilingualString description);
 
     /**
      * Sets the observable properties for the specified composite phenomenon.
-     * 
+     *
      * @param compositePhenomenon
      *            the composite phenomenon
      * @param observableProperties
@@ -1325,7 +1302,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the observable properties for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param observableProperties
@@ -1335,7 +1312,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the observable properties for the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
      * @param observableProperties
@@ -1345,7 +1322,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the observable properties for the specified result template.
-     * 
+     *
      * @param resultTemplate
      *            the result template
      * @param observableProperties
@@ -1355,7 +1332,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the observation identifiers.
-     * 
+     *
      * @param observationIdentifiers
      *            the observation identifiers
      */
@@ -1363,7 +1340,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the observation identifiers for the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
      * @param observationIdentifiers
@@ -1373,7 +1350,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the observation types for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param observationTypes
@@ -1383,7 +1360,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the featureOfInterest types for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param featureOfInterestTypes
@@ -1393,7 +1370,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the specified offerings for the specified observable property.
-     * 
+     *
      * @param observableProperty
      *            the observable property
      * @param offerings
@@ -1403,7 +1380,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the offerings for the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
      * @param offerings
@@ -1413,7 +1390,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the procedures.
-     * 
+     *
      * @param procedures
      *            the procedures
      */
@@ -1421,7 +1398,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the procedures for the specified feature of interest.
-     * 
+     *
      * @param featureOfInterest
      *            the feature of interest
      * @param procedures
@@ -1431,7 +1408,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the procedures for the specified observable property.
-     * 
+     *
      * @param observableProperty
      *            the observable property
      * @param procedures
@@ -1441,7 +1418,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the procedures for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param procedures
@@ -1452,7 +1429,7 @@ public interface WritableContentCache extends ContentCache {
     /**
      * Sets the hidden child procedures for the specified offering. To create a
      * sensor system for SOS 2.0.
-     * 
+     *
      * @param offering
      *            the offering
      * @param procedures
@@ -1462,7 +1439,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the related features for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param relatedFeatures
@@ -1472,7 +1449,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the result template for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      * @param resultTemplates
@@ -1482,7 +1459,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the roles for the specified related feature.
-     * 
+     *
      * @param relatedFeature
      *            the related feature
      * @param roles
@@ -1602,7 +1579,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Add the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      */
@@ -1610,7 +1587,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Sets the offerings.
-     * 
+     *
      * @param offerings
      *            the offerings
      */
@@ -1618,7 +1595,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Add the specified offerings.
-     * 
+     *
      * @param offerings
      *            the offerings
      */
@@ -1626,7 +1603,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
      */
@@ -1634,7 +1611,7 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Remove the specified offerings.
-     * 
+     *
      * @param offerings
      *            the offerings
      */
@@ -1642,31 +1619,31 @@ public interface WritableContentCache extends ContentCache {
 
     /**
      * Add the specified language.
-     * 
+     *
      * @param language
      *            the new language
      */
-    void addSupportedLanguage(String language);
+    void addSupportedLanguage(Locale language);
 
     /**
      * Add the specified languages.
-     * 
+     *
      * @param languages
      *            the new languages
      */
-    void addSupportedLanguage(Collection<String> languages);
+    void addSupportedLanguage(Collection<Locale> languages);
 
     /**
      * Clear the specified languages.
-     * 
+     *
      */
     void clearSupportedLanguage();
 
     /**
      * Remove the specified language.
-     * 
+     *
      * @param language
      *            the new language to remove
      */
-    void removeSupportedLanguage(String language);
+    void removeSupportedLanguage(Locale language);
 }

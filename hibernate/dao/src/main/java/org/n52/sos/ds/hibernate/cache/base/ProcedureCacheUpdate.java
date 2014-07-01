@@ -34,6 +34,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.hibernate.internal.util.collections.CollectionHelper;
+
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
@@ -43,9 +44,11 @@ import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
-import org.n52.sos.exception.CodedException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -53,7 +56,7 @@ import com.google.common.collect.Sets;
 /**
  * @author Christian Autermann <c.autermann@52north.org>
  * @author Shane StClair <shane@axiomalaska.com>
- * 
+ *
  * @since 4.0.0
  */
 public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<ProcedureCacheUpdateTask> {
@@ -62,15 +65,15 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
     private static final String THREAD_GROUP_NAME = "procedure-cache-update";
 
     private final ProcedureDAO procedureDAO = new ProcedureDAO();
-    
+
     private final OfferingDAO offeringDAO = new OfferingDAO();
-    
+
     private final ObservablePropertyDAO observablePropertyDAO = new ObservablePropertyDAO();
-    
+
     private Map<String, Collection<String>> procedureMap;
-    
-    private Map<String,Collection<ObservationConstellationInfo>> procObsConstInfoMap;    
-    
+
+    private Map<String,Collection<ObservationConstellationInfo>> procObsConstInfoMap;
+
     /**
      * constructor
      * @param threads Thread count
@@ -85,7 +88,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
                 new ObservationConstellationDAO().getObservationConstellationInfo(getSession()));
         }
         return procObsConstInfoMap;
-    }    
+    }
 
     private Map<String, Collection<String>> getProcedureMap() {
         if (procedureMap == null) {
@@ -93,10 +96,10 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         }
         return procedureMap;
     }
-    
+
     @Override
     protected ProcedureCacheUpdateTask[] getUpdatesToExecute() {
-        Collection<ProcedureCacheUpdateTask> procedureUpdateTasks = Lists.newArrayList();        
+        Collection<ProcedureCacheUpdateTask> procedureUpdateTasks = Lists.newArrayList();
         Set<String> procedureIdentifiers = getProcedureMap().keySet();
         for (String procedureIdentifier : procedureIdentifiers) {
             procedureUpdateTasks.add(new ProcedureCacheUpdateTask(procedureIdentifier));
@@ -110,13 +113,13 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         LOGGER.debug("Executing ProcedureCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
         boolean obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class, getSession());
-        
+
         Map<String, Collection<String>> procedureMap = procedureDAO.getProcedureIdentifiers(getSession());
         for (Entry<String, Collection<String>> entry : procedureMap.entrySet()) {
             String procedureIdentifier = entry.getKey();
             Collection<String> parentProcedures = entry.getValue();
             getCache().addProcedure(procedureIdentifier);
-            
+
             if (obsConstSupported) {
                 Collection<ObservationConstellationInfo> ocis = getProcedureObservationConstellationInfo().get(procedureIdentifier);
                 if (CollectionHelper.isNotEmpty(ocis)) {
@@ -129,7 +132,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
                 try {
                     getCache().setOfferingsForProcedure(procedureIdentifier, Sets.newHashSet(
                             offeringDAO.getOfferingIdentifiersForProcedure(procedureIdentifier, getSession())));
-                } catch (CodedException ce) {
+                } catch (OwsExceptionReport ce) {
                     LOGGER.error("Error while querying offering identifiers for procedure!", ce);
                     getErrors().add(ce);
                 }
@@ -142,7 +145,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
             }
         }
         LOGGER.debug("Finished executing ProcedureCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
-        
+
         //multi-threaded execution
         LOGGER.debug("Executing ProcedureCacheUpdate (Multi-Threaded Tasks)");
         startStopwatch();

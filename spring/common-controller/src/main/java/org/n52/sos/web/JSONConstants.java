@@ -30,10 +30,12 @@ package org.n52.sos.web;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public interface JSONConstants {
+    String MULTILINGUAL_TYPE = "multilingual";
+
     String BINDING_KEY = "binding";
 
     String BINDINGS_KEY = "bindings";
@@ -45,9 +47,9 @@ public interface JSONConstants {
     String OBSERVATION_ENCODINGS_KEY = "observationEncodings";
 
     String PROCEDURE_ENCODINGS_KEY = "procedureEncodings";
-    
+
     String EXTENDED_CAPABILITIES_EXTENSION_KEY = "extendedCapabilitiesExtensions";
-    
+
     String EXTENDED_CAPABILITIES_DOMAIN_KEY = "extendedCapabilitiesDomain";
 
     String OFFERING_EXTENSION_EXTENSION_KEY = "offeringExtensionExtensions";

@@ -26,79 +26,18 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-/**
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
-
- *
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- *
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- *
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- *
-
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- */
 package org.n52.sos.service;
 
 import static org.n52.sos.util.ConfiguringSingletonServiceLoader.loadAndConfigure;
 
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.sos.binding.BindingRepository;
 import org.n52.sos.cache.ContentCache;
@@ -137,15 +76,13 @@ import org.n52.sos.tasking.Tasking;
 import org.n52.sos.util.Cleanupable;
 import org.n52.sos.util.ConfiguringSingletonServiceLoader;
 import org.n52.sos.util.Producer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
 /**
  * Singleton class reads the configFile and builds the RequestOperator and DAO;
  * configures the logger.
- * 
+ *
  * @since 4.0.0
  */
 public class Configurator implements Cleanupable {
@@ -180,7 +117,7 @@ public class Configurator implements Cleanupable {
      * @param basepath
      * @return Returns an instance of the SosConfigurator. This method is used
      *         to implement the singelton pattern
-     * 
+     *
      * @throws ConfigurationException
      *             if the initialization failed
      */
@@ -245,12 +182,12 @@ public class Configurator implements Cleanupable {
             if (e.getCause() != null && e.getCause() instanceof OwsExceptionReport) {
                 throw (OwsExceptionReport) e.getCause();
             } else {
-                throw new NoApplicableCodeException().withMessage("Could not request object from %s", factory);
+                throw new NoApplicableCodeException().withMessage("Could not request object from %s", factory).causedBy(e);
             }
         }
     }
-    
-    protected static <T> T get(final Producer<T> factory, String language) throws OwsExceptionReport {
+
+    protected static <T> T get(final Producer<T> factory, Locale language) throws OwsExceptionReport {
         try {
             return factory.get(language);
         } catch (final Exception e) {
@@ -293,7 +230,7 @@ public class Configurator implements Cleanupable {
 
     /**
      * private constructor due to the singelton pattern.
-     * 
+     *
      * @param connectionProviderConfig
      *            Connection provider configuration properties
      * @param basepath
@@ -350,7 +287,7 @@ public class Configurator implements Cleanupable {
         contentCacheController = loadAndConfigure(ContentCacheController.class, false);
         tasking = new Tasking();
         profileHandler = loadAndConfigure(ProfileHandler.class, false, new DefaultProfileHandler());
-        
+
         SosEventBus.fire(new ConfiguratorInitializedEvent());
         LOGGER.info("\n******\n Configurator initialization finished\n******\n");
     }
@@ -363,16 +300,16 @@ public class Configurator implements Cleanupable {
     public SosServiceIdentification getServiceIdentification() throws OwsExceptionReport {
         return get(serviceIdentificationFactory);
     }
-    
+
     /**
      * @return Returns the service identification for the specific language
      *         <p/>
      * @throws OwsExceptionReport
      */
-    public SosServiceIdentification getServiceIdentification(String lanugage) throws OwsExceptionReport {
+    public SosServiceIdentification getServiceIdentification(Locale lanugage) throws OwsExceptionReport {
         return get(serviceIdentificationFactory, lanugage);
     }
-    
+
     public SosServiceIdentificationFactory getServiceIdentificationFactory() throws OwsExceptionReport {
         return (SosServiceIdentificationFactory) serviceIdentificationFactory;
     }
@@ -409,7 +346,7 @@ public class Configurator implements Cleanupable {
 
     /**
      * @return the implemented cache feeder DAO
-     * @deprecated use {@link CacheFeederDAORepository.getCacheFeederDAO()} instead.  
+     * @deprecated use {@link CacheFeederDAORepository.getCacheFeederDAO()} instead.
      */
     @Deprecated
     public CacheFeederDAO getCacheFeederDAO() {
@@ -491,7 +428,7 @@ public class Configurator implements Cleanupable {
     /**
      * Returns the default token seperator for results.
      * <p/>
-     * 
+     *
      * @return the tokenSeperator.
      * @deprecated Use ServiceConfiguration.getInstance().getTokenSeparator()
      */
@@ -584,7 +521,7 @@ public class Configurator implements Cleanupable {
 
     /**
      * Get service URL.
-     * 
+     *
      * @return the service URL
      * @deprecated Use ServiceConfiguration.getInstance().getServiceURL()
      */

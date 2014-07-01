@@ -26,71 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-/**
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
-
- *
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- *
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- *
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- *
-
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- */
 package org.n52.sos.ds.hibernate;
 
 import java.util.Collection;
@@ -107,9 +42,12 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.ds.AbstractGetFeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
+import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
@@ -131,18 +69,17 @@ import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
+import org.n52.sos.i18n.LocaleHelper;
 import org.n52.sos.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
  * Implementation of the abstract class AbstractGetFeatureOfInterestDAO
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO implements HibernateSqlQueryConstants {
 
@@ -224,7 +161,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Check if the request contains spatial filters
-     * 
+     *
      * @param request
      *            GetFeatureOfInterest request to check
      * @return <code>true</code>, if the request contains spatial filters
@@ -235,7 +172,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Check if the request contains feature identifiers
-     * 
+     *
      * @param request
      *            GetFeatureOfInterest request to check
      * @return <code>true</code>, if the request contains feature identifiers
@@ -246,7 +183,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Check if the request contains spatial filters and feature identifiers
-     * 
+     *
      * @param request
      *            GetFeatureOfInterest request to check
      * @return <code>true</code>, if the request contains spatial filters and
@@ -258,7 +195,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Check if the requested version is SOS 1.0.0
-     * 
+     *
      * @param request
      *            GetFeatureOfInterest request to check
      * @return <code>true</code>, if the requested version is SOS 1.0.0
@@ -269,7 +206,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Get featureOfInterest as a feature collection
-     * 
+     *
      * @param request
      *            GetFeatureOfInterest request
      * @param session
@@ -289,10 +226,8 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
             .setFeatureIdentifiers(foiIDs)
             .setSpatialFilters(request.getSpatialFilters())
             .setConnection(session)
-            .setVersion(request.getVersion());
-        if (request.isSetRequestedLanguage()) {
-            queryObject.setI18N(request.getRequestedLanguage());
-        }
+            .setVersion(request.getVersion())
+            .setI18N(LocaleHelper.fromRequest(request));
         return new FeatureCollection(getConfigurator().getFeatureQueryHandler().getFeatures(queryObject));
     }
 
@@ -300,7 +235,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
      * Adds the identifiers from <tt>featureIdentifiers</tt> to the
      * <tt>foiIDs</tt> if the feature is an relatedFeature and a child is
      * already contained in <tt>foiIDs</tt>
-     * 
+     *
      * @param foiIDs
      *            Feature identifiers
      * @param featureIdentifiers
@@ -322,7 +257,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Get featureOfInterest identifiers for requested parameters
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
@@ -362,7 +297,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Query FeatureOfInterest identifiers for old observation concept
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
@@ -381,7 +316,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     /**
      * Get Hibernate Criteria for query FeatureOfInterest identifiers for old
      * observation concept
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
@@ -416,7 +351,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Query FeatureOfInterest identifiers for series concept
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
@@ -436,7 +371,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Query FeatureOfInterest identifiers for SOS 1.0.0 request
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
@@ -466,7 +401,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     /**
      * Get Hibernate Criteria for query FeatureOfInterest identifiers for series
      * observation concept (SOS 1.0.0)
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
@@ -487,7 +422,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     /**
      * Get Detached Criteria for series concept. Criteria results are
      * FeatureOfInterest entities.
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
@@ -515,7 +450,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     /**
      * Get Detached Criteria for SOS 1.0.0 and series concept. Criteria results
      * are FeatureOfInterest entities.
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
@@ -536,7 +471,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     /**
      * Get Detached Criteria for SOS 1.0.0 and series concept. Criteria results
      * are Series entities.
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
@@ -576,7 +511,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Check if named queries for GetFeatureOfInterest requests are available
-     * 
+     *
      * @param req
      *            GetFeatureOFInterest request
      * @param session
@@ -623,7 +558,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Execute named query for GetFeatureOfInterest request
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session

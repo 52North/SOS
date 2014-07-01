@@ -76,7 +76,7 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * constructor
-     * 
+     *
      * @param identifier
      *            identifier
      */
@@ -86,7 +86,7 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * constructor
-     * 
+     *
      * @param identifier
      *            identifier
      * @param gmlId
@@ -118,7 +118,7 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * Get the string identifier of this abstract feature
-     * 
+     *
      * @return Identifier of this abstract feature
      */
     public String getIdentifier() {
@@ -127,7 +127,7 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * Get {@link CodeWithAuthority} identifier of this abstract feature
-     * 
+     *
      * @return Returns the identifier of this abstract feature .
      */
     public CodeWithAuthority getIdentifierCodeWithAuthority() {
@@ -136,9 +136,10 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * Set observation identifier
-     * 
+     *
      * @param identifier
      *            the identifier to set
+     * @return this
      */
     public AbstractGML setIdentifier(CodeWithAuthority identifier) {
         this.identifier = identifier;
@@ -147,9 +148,10 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * Set observation identifier
-     * 
+     *
      * @param identifier
      *            the identifier to set
+     * @return this
      */
     public AbstractGML setIdentifier(String identifier) {
         setIdentifier(new CodeWithAuthority(identifier));
@@ -167,7 +169,7 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * Get feature names
-     * 
+     *
      * @return Feature names
      */
     public List<CodeType> getName() {
@@ -176,16 +178,17 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * Add feature names
-     * 
+     *
      * @param name
      *            Feature names to ad
+     * @return this
      */
     public AbstractGML setName(final List<CodeType> name) {
         this.names.clear();
         this.names = name;
         return this;
     }
-    
+
     public AbstractGML setName(final CodeType name) {
         this.names.clear();
         this.names.add(name);
@@ -194,6 +197,7 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * @param name
+     * @return this
      */
     public AbstractGML addName(final CodeType name) {
         if (name != null && name.isSetValue()) {
@@ -204,22 +208,24 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * Add a feature name
-     * 
+     *
      * @param name
      *            Feature name to add
+     * @return this
      */
     public AbstractGML addName(final String name) {
         addName(new CodeType(name));
         return this;
     }
-    
+
     /**
      * Add a feature name
-     * 
+     *
      * @param name
      *            Feature name to add
       * @param codespace
      *            Codespace of the feature name
+     * @return this
      */
     public AbstractGML addName(final String name, final String codespace) {
         addName(new CodeType(name, codespace));
@@ -228,7 +234,7 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * Check whether feature has a names
-     * 
+     *
      * @return <code>true</code> if feature has names
      */
     public boolean isSetName() {
@@ -237,7 +243,7 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * Get first feature name or null if feature has no names
-     * 
+     *
      * @return First feature name or null if feature has no names
      */
     public CodeType getFirstName() {
@@ -249,7 +255,7 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * Get feature description
-     * 
+     *
      * @return Feature description
      */
     public String getDescription() {
@@ -258,9 +264,10 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * Set feature description
-     * 
+     *
      * @param description
      *            Feature description to set
+     * @return this
      */
     public AbstractGML setDescription(final String description) {
         this.description = description;
@@ -269,7 +276,7 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * Check whether feature has a description
-     * 
+     *
      * @return <code>true</code> if feature a description
      */
     public boolean isSetDescription() {
@@ -278,7 +285,7 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * Get GML id
-     * 
+     *
      * @return GML id
      */
     public String getGmlId() {
@@ -287,7 +294,7 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * Set GML id
-     * 
+     *
      * @param gmlId
      *            GML id to set
      */
@@ -297,17 +304,17 @@ public abstract class AbstractGML implements Serializable{
 
     /**
      * Check whether GML id is set
-     * 
+     *
      * @return <code>true</code> if GML id is set
      */
     public boolean isSetGmlID() {
         return StringHelper.isNotEmpty(getGmlId());
     }
-    
+
     /**
      * Check whether feature is still contained in XML document by sign
      * {@link Constants#NUMBER_SIGN_STRING}.
-     * 
+     *
      * @return <code>true</code> if feature is still contained in XML document
      */
     public boolean isReferenced() {

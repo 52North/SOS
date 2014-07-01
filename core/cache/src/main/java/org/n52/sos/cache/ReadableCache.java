@@ -26,90 +26,28 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-/**
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
-
- *
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- *
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- *
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- *
-
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- */
 package org.n52.sos.cache;
 
 import static org.n52.sos.util.SosHelper.getHierarchy;
 
-import java.util.Map;
+import java.util.Locale;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+
+import org.n52.sos.i18n.LocalizedString;
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.util.CollectionHelper;
 
 /**
  * {@code ContentCache} implementation that offers a readable interface to the
  * cache. All methods return unmodifiable views of the cache.
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class ReadableCache extends AbstractContentCache {
@@ -214,40 +152,45 @@ public class ReadableCache extends AbstractContentCache {
     public String getNameForOffering(final String offering) {
         return getNameForOfferingsMap().get(offering);
     }
-    
+
 
     @Override
-    public String getI18nNameForOffering(String offering, String i18n) {
-        Map<String, String> map = getI18nNameForOfferingsMap().get(offering);
+    public LocalizedString getI18nNameForOffering(String offering, Locale i18n) {
+        MultilingualString map = getI18nNameForOfferingsMap().get(offering);
         if (map != null) {
-            return map.get(i18n);
+            return map.getLocalization(i18n).orNull();
         }
         return null;
     }
-    
+
     @Override
-    public Map<String, String> getI18nNamesForOffering(String offering) {
+    public MultilingualString getI18nNamesForOffering(String offering) {
         return getI18nNameForOfferingsMap().get(offering);
     }
-    
+
 
     @Override
-    public boolean hasI18NNamesForOffering(String offering, String i18n) {
-        return getI18nNameForOfferingsMap().containsKey(offering) && getI18nNamesForOffering(offering).containsKey(i18n);
+    public boolean hasI18NNamesForOffering(String offering, Locale i18n) {
+        return getI18nNameForOfferingsMap().containsKey(offering) && getI18nNamesForOffering(offering).hasLocale(i18n);
     }
 
     @Override
-    public String getI18nDescriptionForOffering(String offering, String i18n) {
-        Map<String, String> map = getI18nDescriptionForOfferingsMap().get(offering);
+    public LocalizedString getI18nDescriptionForOffering(String offering, Locale i18n) {
+        MultilingualString map = getI18nDescriptionForOfferingsMap().get(offering);
         if (map != null) {
-            return map.get(i18n);
+            return map.getLocalization(i18n).orNull();
         }
         return null;
     }
 
     @Override
-    public boolean hasI18NDescriptionForOffering(String offering, String i18n) {
-        return getI18nDescriptionForOfferingsMap().containsKey(offering) && getI18nDescriptionForOfferingsMap().get(offering).containsKey(i18n);
+    public MultilingualString getI18nDescriptionsForOffering(String offering) {
+        return getI18nDescriptionForOfferingsMap().get(offering);
+    }
+
+    @Override
+    public boolean hasI18NDescriptionForOffering(String offering, Locale i18n) {
+        return getI18nDescriptionForOfferingsMap().containsKey(offering) && getI18nDescriptionForOfferingsMap().get(offering).hasLocale(i18n);
     }
 
     @Override
@@ -584,17 +527,17 @@ public class ReadableCache extends AbstractContentCache {
     }
 
     @Override
-    public Set<String> getSupportedLanguages() {
+    public Set<Locale> getSupportedLanguages() {
         return copyOf(getSupportedLanguageSet());
     }
-    
+
     @Override
     public boolean hasSupportedLanguage() {
         return CollectionHelper.isNotEmpty(getSupportedLanguageSet());
     }
-    
+
     @Override
-    public boolean isLanguageSupported(final String language) {
+    public boolean isLanguageSupported(final Locale language) {
         return getSupportedLanguageSet().contains(language);
     }
 }

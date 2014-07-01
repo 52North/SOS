@@ -28,37 +28,31 @@
  */
 package org.n52.sos.i18n;
 
+import java.util.Map;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.sos.ds.I18NDAO;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.i18n.metadata.AbstractI18NMetadata;
 import org.n52.sos.util.AbstractConfiguringServiceLoaderRepository;
-import org.n52.sos.util.CollectionHelper;
+
+import com.google.common.collect.Maps;
 
 /**
  * I18N DAO repository
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
- * 
+ *
  */
+@SuppressWarnings("rawtypes")
 public class I18NDAORepository extends AbstractConfiguringServiceLoaderRepository<I18NDAO> {
+    private static final Logger LOG = LoggerFactory.getLogger(I18NDAORepository.class);
+    private final Map<Class<? extends AbstractI18NMetadata>, I18NDAO<?>> daos = Maps.newHashMap();
 
-    private I18NDAO dao;
-
-    /**
-     * Lazy holder for this repository
-     * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
-     * @since 4.1.0
-     * 
-     */
-    private static class LazyHolder {
-        private static final I18NDAORepository INSTANCE = new I18NDAORepository();
-
-        private LazyHolder() {
-        };
-    }
 
     /**
      * private constructor
@@ -69,8 +63,34 @@ public class I18NDAORepository extends AbstractConfiguringServiceLoaderRepositor
     }
 
     /**
+     * Get the available DAO
+     *
+     * @param <T> the meta data type
+     * @param c the meta data class
+     * @return the loaded DAO
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends AbstractI18NMetadata> I18NDAO<T> getDAO(Class<T> c) {
+        // TODO check for subtypes
+        return (I18NDAO<T>) daos.get(c);
+    }
+
+    @Override
+    protected  void processConfiguredImplementations(Set<I18NDAO> implementations) throws ConfigurationException {
+        this.daos.clear();
+        for (I18NDAO<?> dao : implementations) {
+            if (dao.isSupported()){
+                I18NDAO<?> prev = daos.put(dao.getType(), dao);
+                if (prev != null) {
+                    LOG.warn("Duplicate implementation of I18N DAO for %s: %s, %s", dao.getType(), dao, prev);
+                }
+            }
+        }
+    }
+
+    /**
      * Get the singleton instance of the I18NDAORepository.
-     * 
+     *
      * @return Returns a singleton instance of the I18NDAORepository.
      */
     public static I18NDAORepository getInstance() {
@@ -78,24 +98,17 @@ public class I18NDAORepository extends AbstractConfiguringServiceLoaderRepositor
     }
 
     /**
-     * Get the available DAO
-     * 
-     * @return the loaded DAO
+     * Lazy holder for this repository
+     *
+     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @since 4.1.0
+     *
      */
-    public I18NDAO getDAO() {
-        return dao;
-    }
+    private static class LazyHolder {
+        private static final I18NDAORepository INSTANCE = new I18NDAORepository();
 
-    @Override
-    protected void processConfiguredImplementations(Set<I18NDAO> implementations) throws ConfigurationException {
-        if (CollectionHelper.isNotEmpty(implementations)) {
-            if (implementations.size() > 1) {
-                throw new ConfigurationException(String.format("Only one implementation of %s is allowed!",
-                        I18NDAO.class.getName()));
-            }
-            dao = implementations.iterator().next();
+        private LazyHolder() {
         }
-
     }
 
 }

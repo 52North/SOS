@@ -26,71 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-/**
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
-
- *
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- *
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- *
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- *
-
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- */
 package org.n52.sos.ds.hibernate.dao;
 
 import java.sql.Timestamp;
@@ -109,6 +44,9 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
@@ -136,25 +74,23 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract Hibernate data access class for observations.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.0
- * 
+ *
  */
 public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescriptionDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractObservationDAO.class);
-    
+
     /**
      * Get all observation identifiers
-     * 
+     *
      * @param session
      *            Hibernate session
      * @return Observation identifiers
@@ -163,7 +99,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Check if there are numeric observations for the offering
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -174,7 +110,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Check if there are boolean observations for the offering
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -185,7 +121,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Check if there are count observations for the offering
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -196,7 +132,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Check if there are category observations for the offering
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -207,7 +143,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Check if there are text observations for the offering
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -218,7 +154,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Check if there are blob observations for the offering
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -229,7 +165,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Check if there are geometry observations for the offering
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -240,7 +176,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Check if there are geometry observations for the offering
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -251,7 +187,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Get min phenomenon time from observations
-     * 
+     *
      * @param session
      *            Hibernate session Hibernate session
      * @return min time
@@ -260,40 +196,40 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Get max phenomenon time from observations
-     * 
+     *
      * @param session
      *            Hibernate session Hibernate session
-     * 
+     *
      * @return max time
      */
     public abstract DateTime getMaxPhenomenonTime(Session session);
 
     /**
      * Get min result time from observations
-     * 
+     *
      * @param session
      *            Hibernate session Hibernate session
-     * 
+     *
      * @return min time
      */
     public abstract DateTime getMinResultTime(Session session);
 
     /**
      * Get max phenomenon time from observations
-     * 
+     *
      * @param session
      *            Hibernate session Hibernate session
-     * 
+     *
      * @return max time
      */
     public abstract DateTime getMaxResultTime(Session session);
 
     /**
      * Get global temporal bounding box
-     * 
+     *
      * @param session
      *            Hibernate session the session
-     * 
+     *
      * @return the global getEqualRestiction bounding box over all observations,
      *         or <tt>null</tt>
      */
@@ -301,7 +237,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Get Hibernate Criteria for result model
-     * 
+     *
      * @param resultModel
      *            Result model
      * @param session
@@ -312,7 +248,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Create an observation object from SOS value
-     * 
+     *
      * @param value
      *            SOS value
      * @param session
@@ -324,7 +260,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     /**
      * Add observation identifier (procedure, observableProperty,
      * featureOfInterest) to observation
-     * 
+     *
      * @param observationIdentifiers
      *            Observation identifiers
      * @param observation
@@ -338,7 +274,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     /**
      * Get default Hibernate Criteria to query observations, default flag ==
      * <code>false</code>
-     * 
+     *
      * @param session
      *            Hiberante session
      * @return Default Criteria
@@ -348,13 +284,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     /**
      * Get default Hibernate Criteria to query observation info, default flag ==
      * <code>false</code>
-     * 
+     *
      * @param session
      *            Hiberante session
      * @return Default Criteria
      */
     public abstract Criteria getDefaultObservationInfoCriteria(Session session);
-    
+
     public Criteria getDefaultObservationCriteria(Class<?> clazz, Session session) {
         return session.createCriteria(clazz)
                 .add(Restrictions.eq(AbstractObservation.DELETED, false))
@@ -364,7 +300,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     /**
      * Get Hibernate Criteria for querying observations with parameters
      * featureOfInterst and procedure
-     * 
+     *
      * @param feature
      *            FeatureOfInterest to query for
      * @param procedure
@@ -379,7 +315,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     /**
      * Get Hibernate Criteria for querying observations with parameters
      * featureOfInterst and offering
-     * 
+     *
      * @param feature
      *            FeatureOfInterest to query for
      * @param offering
@@ -393,7 +329,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Query observation by identifier
-     * 
+     *
      * @param identifier
      *            Observation identifier (gml:identifier)
      * @param session
@@ -404,7 +340,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Get Hibernate Criteria for observation with restriction procedure
-     * 
+     *
      * @param procedure
      *            Procedure parameter
      * @param session
@@ -416,7 +352,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     /**
      * Get Hibernate Criteria for observation with restriction
      * observableProperty
-     * 
+     *
      * @param observableProperty
      * @param session
      *            Hibernate session
@@ -426,7 +362,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Get Hibernate Criteria for observation with restriction featureOfInterest
-     * 
+     *
      * @param featureOfInterest
      * @param session
      *            Hibernate session
@@ -437,7 +373,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     /**
      * Get Hibernate Criteria for observation with restrictions procedure and
      * observableProperty
-     * 
+     *
      * @param procedure
      * @param observableProperty
      * @param session
@@ -449,7 +385,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     /**
      * Get Hibernate Criteria for observation with restrictions procedure,
      * observableProperty and featureOfInterest
-     * 
+     *
      * @param procedure
      * @param observableProperty
      * @param featureOfInterest
@@ -462,18 +398,18 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Get all observation identifiers for a procedure.
-     * 
+     *
      * @param procedureIdentifier
      * @param session
      * @return Collection of observation identifiers
      */
-    public abstract Collection<String> getObservationIdentifiers(String procedureIdentifier, Session session);    
+    public abstract Collection<String> getObservationIdentifiers(String procedureIdentifier, Session session);
 
     /**
      * Get Hibernate Criteria for observation with restriction procedure Insert
      * a multi value observation for observation constellations and
      * featureOfInterest
-     * 
+     *
      * @param observationConstellations
      *            Observation constellation objects
      * @param feature
@@ -483,7 +419,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @param codespaceCache
      *            Map based codespace object cache to prevent redundant queries
      * @param unitCache
-     *            Map based unit object cache to prevent redundant queries            
+     *            Map based unit object cache to prevent redundant queries
      * @param session
      *            Hibernate session
      * @throws OwsExceptionReport
@@ -502,7 +438,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     /**
      * Insert a single observation for observation constellations and
      * featureOfInterest without local caching for codespaces and units
-     * 
+     *
      * @param observationConstellations
      *            Observation constellation objects
      * @param feature
@@ -512,7 +448,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @param session
      *            Hibernate session
      * @throws OwsExceptionReport
-     */    
+     */
     public void insertObservationSingleValue(Set<ObservationConstellation> hObservationConstellations,
             FeatureOfInterest hFeature, OmObservation sosObservation, Session session) throws OwsExceptionReport {
         insertObservationSingleValue(hObservationConstellations, hFeature, sosObservation, null, null, session);
@@ -521,7 +457,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     /**
      * Insert a single observation for observation constellations and
      * featureOfInterest with local caching for codespaces and units
-     * 
+     *
      * @param observationConstellations
      *            Observation constellation objects
      * @param feature
@@ -531,7 +467,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @param codespaceCache
      *            Map cache for codespace objects (to prevent redundant querying)
      * @param unitCache
-     *            Map cache for unit objects (to prevent redundant querying)      
+     *            Map cache for unit objects (to prevent redundant querying)
      * @param session
      *            Hibernate session
      * @throws OwsExceptionReport
@@ -601,10 +537,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             return hUnit;
         }
     }
-    
+
     /**
      * Add observation identifier (gml:identifier) to Hibernate Criteria
-     * 
+     *
      * @param criteria
      *            Hibernate Criteria
      * @param identifier
@@ -619,7 +555,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     /**
      * Add offerings to observation and return the observation identifiers
      * procedure and observableProperty
-     * 
+     *
      * @param hObservation
      *            Observation to add offerings
      * @param hObservationConstellations
@@ -655,7 +591,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     /**
      * Insert om:parameter into database. Differs between Spatial Filtering
      * Profile parameter and others.
-     * 
+     *
      * @param parameter
      *            om:Parameter to insert
      * @param observation
@@ -682,7 +618,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Check if there are observations for the offering
-     * 
+     *
      * @param clazz
      *            Observation sub class
      * @param offeringIdentifier
@@ -702,7 +638,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Get min phenomenon time from observations
-     * 
+     *
      * @param session
      *            Hibernate session Hibernate session
      * @return min time
@@ -723,10 +659,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Get max phenomenon time from observations
-     * 
+     *
      * @param session
      *            Hibernate session Hibernate session
-     * 
+     *
      * @return max time
      */
     @SuppressWarnings("rawtypes")
@@ -760,10 +696,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Get min result time from observations
-     * 
+     *
      * @param session
      *            Hibernate session Hibernate session
-     * 
+     *
      * @return min time
      */
     @SuppressWarnings("rawtypes")
@@ -782,10 +718,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Get max phenomenon time from observations
-     * 
+     *
      * @param session
      *            Hibernate session Hibernate session
-     * 
+     *
      * @return max time
      */
     @SuppressWarnings("rawtypes")
@@ -805,10 +741,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Get global temporal bounding box
-     * 
+     *
      * @param session
      *            Hibernate session the session
-     * 
+     *
      * @return the global getEqualRestiction bounding box over all observations,
      *         or <tt>null</tt>
      */
@@ -835,7 +771,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Get order for {@link SosIndeterminateTime} value
-     * 
+     *
      * @param indetTime
      *            Value to get order for
      * @return Order
@@ -851,7 +787,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Get projection for {@link SosIndeterminateTime} value
-     * 
+     *
      * @param indetTime
      *            Value to get projection for
      * @return Projection to use to determine indeterminate time extrema
@@ -867,10 +803,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Get the AbstractObservation property to filter on for an {@link SosIndeterminateTime}
-     * 
+     *
      * @param indetTime
      *            Value to get property for
-     * @return String property to filter on 
+     * @return String property to filter on
      */
     protected String getIndeterminateTimeFilterProperty(final SosIndeterminateTime indetTime) {
         if (indetTime.equals(SosIndeterminateTime.first)) {
@@ -886,7 +822,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * observation has the extrema time (max for latest, min for first).
      * Note: use this method *after* adding all other applicable restrictions so that they will apply to the
      * min/max observation time determination.
-     * 
+     *
      * @param c
      *          Criteria to add the restriction to
      * @param sosIndeterminateTime
@@ -897,7 +833,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         // get extrema indeterminate time
         c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
         Timestamp indeterminateExtremaTime = (Timestamp) c.uniqueResult();
-        
+
         // reset criteria
         // see http://stackoverflow.com/a/1472958/193435
         c.setProjection(null);
@@ -909,10 +845,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         // not really necessary to return the Criteria object, but useful if we want to chain
         return c;
     }
-    
+
     /**
      * Create Hibernate Criteria for Class
-     * 
+     *
      * @param clazz
      *            Class
      * @param session
@@ -927,7 +863,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Add phenomenon and result time to observation object
-     * 
+     *
      * @param observation
      *            Observation object
      * @param phenomenonTime
@@ -945,7 +881,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Add phenomenon time to observation object
-     * 
+     *
      * @param observation
      *            Observation object
      * @param phenomenonTime
@@ -965,7 +901,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Add result time to observation object
-     * 
+     *
      * @param observation
      *            Observation object
      * @param resultTime
@@ -999,7 +935,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Add valid time to observation object
-     * 
+     *
      * @param observation
      *            Observation object
      * @param validTime
@@ -1014,7 +950,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Update observations, set deleted flag
-     * 
+     *
      * @param scroll
      *            Observations to update
      * @param deleteFlag
@@ -1036,7 +972,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             }
         }
     }
-    
+
     /**
      * Check if a Spatial Filtering Profile filter is requested and add to criteria
      * @param c Criteria to add crtierion
@@ -1053,16 +989,16 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             }
             c.add(Subqueries.propertyIn(AbstractObservation.ID, spatialFilteringProfileDAO.getDetachedCriteriaFor(request.getSpatialFilter())));
         }
-        
+
     }
 
     /**
      * Inner class to carry observation identifiers (featureOfInterest,
      * observableProperty, procedure)
-     * 
+     *
      * @author Carsten Hollmann <c.hollmann@52north.org>
      * @since 4.0.0
-     * 
+     *
      */
     protected class ObservationIdentifiers {
 

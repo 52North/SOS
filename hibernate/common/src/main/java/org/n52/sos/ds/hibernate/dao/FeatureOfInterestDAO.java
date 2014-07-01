@@ -26,71 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-/**
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
-
- *
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- *
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- *
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- *
-
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- */
 package org.n52.sos.ds.hibernate.dao;
 
 import static org.n52.sos.util.http.HTTPStatus.BAD_REQUEST;
@@ -107,6 +42,9 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
@@ -129,14 +67,12 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.HTTPStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
 /**
  * Hibernate data access class for featureOfInterest
- * 
+ *
  * @author CarstenHollmann
  * @since 4.0.0
  */
@@ -152,7 +88,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
 
     /**
      * Get featureOfInterest object for identifier
-     * 
+     *
      * @param identifier
      *            FeatureOfInterest identifier
      * @param session
@@ -169,7 +105,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
 
     /**
      * Get featureOfInterest identifiers for observation constellation
-     * 
+     *
      * @param observationConstellation
      *            Observation constellation
      * @param session
@@ -179,7 +115,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
      */
     @SuppressWarnings("unchecked")
     public List<String> getFeatureOfInterestIdentifiersForObservationConstellation(
-            final ObservationConstellation observationConstellation, final Session session) throws CodedException {
+            final ObservationConstellation observationConstellation, final Session session) throws OwsExceptionReport {
         if (HibernateHelper.isNamedQuerySupported(
                 SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OBSERVATION_CONSTELLATION, session)) {
             Query namedQuery =
@@ -219,7 +155,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
 
     /**
      * Get featureOfInterest identifiers for an offering identifier
-     * 
+     *
      * @param offeringIdentifiers
      *            Offering identifier
      * @param session
@@ -229,7 +165,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
      */
     @SuppressWarnings({ "unchecked" })
     public List<String> getFeatureOfInterestIdentifiersForOffering(final String offeringIdentifiers,
-            final Session session) throws CodedException {
+            final Session session) throws OwsExceptionReport {
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OFFERING, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OFFERING);
             namedQuery.setParameter(OFFERING, offeringIdentifiers);
@@ -257,7 +193,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
 
     /**
      * Get featureOfInterest objects for featureOfInterest identifiers
-     * 
+     *
      * @param identifiers
      *            FeatureOfInterest identifiers
      * @param session
@@ -279,7 +215,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
 
     /**
      * Get all featureOfInterest objects
-     * 
+     *
      * @param session
      *            Hibernate session
      * @return FeatureOfInterest objects
@@ -294,7 +230,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
     /**
      * Load FOI identifiers and parent ids for use in the cache. Just loading the ids allows us to not load
      * the geometry columns, XML, etc.
-     * 
+     *
      * @param session
      * @return Map keyed by FOI identifiers, with value collections of parent FOI identifiers if supported
      */
@@ -312,8 +248,8 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
         criteria.setProjection(projectionList);
         //return as List<Object[]> even if there's only one column for consistency
         criteria.setResultTransformer(NoopTransformerAdapter.INSTANCE);
-        
-        LOGGER.debug("QUERY getFeatureOfInterestIdentifiersWithParents(): {}", HibernateHelper.getSqlString(criteria));        
+
+        LOGGER.debug("QUERY getFeatureOfInterestIdentifiersWithParents(): {}", HibernateHelper.getSqlString(criteria));
         @SuppressWarnings("unchecked")
         List<Object[]> results = criteria.list();
         Map<String,Collection<String>> foiMap = Maps.newHashMap();
@@ -334,7 +270,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
 
     /**
      * Get all featureOfInterest identifiers
-     * 
+     *
      * @param session
      *            Hibernate session
      * @return FeatureOfInterest identifiers
@@ -350,7 +286,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
 
     /**
      * Insert and/or get featureOfInterest object for identifier
-     * 
+     *
      * @param identifier
      *            FeatureOfInterest identifier
      * @param url
@@ -382,7 +318,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
 
     /**
      * Insert featureOfInterest relationship
-     * 
+     *
      * @param parentFeature
      *            Parent featureOfInterest
      * @param childFeature
@@ -400,7 +336,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
     /**
      * Insert featureOfInterest/related feature relations if relatedFeatures
      * exists for offering.
-     * 
+     *
      * @param featureOfInterest
      *            FeatureOfInerest
      * @param offering
@@ -422,7 +358,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
 
     /**
      * Insert featureOfInterest if it is supported
-     * 
+     *
      * @param featureOfInterest
      *            SOS featureOfInterest to insert
      * @param session

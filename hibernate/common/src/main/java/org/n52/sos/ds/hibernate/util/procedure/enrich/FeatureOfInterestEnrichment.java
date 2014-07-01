@@ -94,8 +94,8 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
         FeatureQueryHandlerQueryObject object = new FeatureQueryHandlerQueryObject();
         object.setFeatureIdentifiers(featureOfInterestIDs);
         object.setConnection(session);
-        if (isSetI18N()) {
-            object.setI18N(getI18N());
+        if (isSetLocale()) {
+            object.setI18N(getLocale());
         }
         return Configurator.getInstance().getFeatureQueryHandler().getFeatures(object);
     }

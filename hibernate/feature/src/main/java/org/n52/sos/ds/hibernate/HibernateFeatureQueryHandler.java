@@ -26,71 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-/**
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
-
- *
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- *
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- *
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- *
-
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- */
 package org.n52.sos.ds.hibernate;
 
 import java.util.ArrayList;
@@ -99,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -110,52 +46,46 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.internal.util.collections.CollectionHelper;
 import org.hibernate.spatial.criterion.SpatialProjections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.I18NDAO;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
-import org.n52.sos.ds.hibernate.dao.i18n.AbstractFeatureI18NDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.TFeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.i18n.AbstractFeatureI18N;
-import org.n52.sos.ds.hibernate.entities.i18n.I18NFeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.I18NHibernateHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
+import org.n52.sos.i18n.I18NDAORepository;
+import org.n52.sos.i18n.LocalizedString;
+import org.n52.sos.i18n.metadata.I18NFeatureMetadata;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
-/**
- * Feature handler class for features stored in the database
- * 
- * @since 4.0.0
- */
+
 @Configurable
 public class HibernateFeatureQueryHandler implements FeatureQueryHandler, HibernateSqlQueryConstants {
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateFeatureQueryHandler.class);
@@ -333,11 +263,11 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.n52.sos.ds.FeatureQueryHandler#insertFeature(org.n52.sos.ogc.om.features
      * .samplingFeatures.SamplingFeature, java.lang.Object)
-     * 
+     *
      * FIXME check semantics of this method in respect to its name and the
      * documentation in the super class
      */
@@ -406,7 +336,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
     /**
      * Creates a map with FOI identifier and SOS feature
      * <p/>
-     * 
+     *
      * @param features
      *            FeatureOfInterest objects
      * @param queryObject
@@ -449,14 +379,12 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
 
     /**
      * Creates a SOS feature from the FeatureOfInterest object
-     * 
+     *
      * @param feature
      *            FeatureOfInterest object
      * @param version
      *            SOS version
-     *            <p/>
      * @return SOS feature
-     *         <p/>
      * @throws OwsExceptionReport
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -471,19 +399,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             identifier.setValue(null);
         }
         final SamplingFeature sampFeat = new SamplingFeature(identifier);
-        boolean languageSupport;
-        if (queryObject.isSetI18N()) {
-            languageSupport = I18NHibernateHelper.getLanguageSpecificData(feature, sampFeat, queryObject.getI18N(), false, session);
-        } else {
-            languageSupport =
-                    I18NHibernateHelper.getLanguageSpecificData(feature, sampFeat,
-                            ServiceConfiguration.getInstance().getDefaultLanguage(), ServiceConfiguration
-                                    .getInstance().isShowAllLanguageValues(), session);
-        }
-        if (!languageSupport) {
-            sampFeat.addName(featureOfInterestDAO.getName(feature));
-            sampFeat.setDescription(featureOfInterestDAO.getDescription(feature));
-        }
+        addNameAndDescription(queryObject, feature, sampFeat, featureOfInterestDAO);
         sampFeat.setGeometry(getGeomtery(feature));
         sampFeat.setFeatureType(feature.getFeatureOfInterestType().getFeatureOfInterestType());
         sampFeat.setUrl(feature.getUrl());
@@ -501,6 +417,49 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             }
         }
         return sampFeat;
+    }
+
+    private void addNameAndDescription(FeatureQueryHandlerQueryObject query,
+                                       FeatureOfInterest feature,
+                                       SamplingFeature samplingFeature,
+                                       FeatureOfInterestDAO featureDAO)
+            throws OwsExceptionReport {
+        I18NDAO<I18NFeatureMetadata> i18nDAO = I18NDAORepository.getInstance().getDAO(I18NFeatureMetadata.class);
+        Locale requestedLocale = query.getI18N();
+        if (i18nDAO == null) {
+            // no i18n support
+            samplingFeature.addName(featureDAO.getName(feature));
+            samplingFeature.setDescription(featureDAO.getDescription(feature));
+        } else {
+            I18NFeatureMetadata i18n = i18nDAO.getMetadata(feature.getIdentifier());
+            if (requestedLocale != null) {
+                // specific locale was requested
+                Optional<LocalizedString> name = i18n.getName().getLocalizationOrDefault(requestedLocale);
+                if (name.isPresent()) {
+                    samplingFeature.addName(name.get().asCodeType());
+                }
+                Optional<LocalizedString> description = i18n.getDescription().getLocalizationOrDefault(requestedLocale);
+                if (description.isPresent()) {
+                    samplingFeature.setDescription(description.get().getText());
+                }
+            } else {
+                if (ServiceConfiguration.getInstance().isShowAllLanguageValues()) {
+                    for (LocalizedString name : i18n.getName()) {
+                        samplingFeature.addName(name.asCodeType());
+                    }
+                } else {
+                    Optional<LocalizedString> name = i18n.getName().getDefaultLocalization();
+                    if (name.isPresent()) {
+                        samplingFeature.addName(name.get().asCodeType());
+                    }
+                }
+                // choose always the description in the default locale
+                Optional<LocalizedString> description = i18n.getDescription().getDefaultLocalization();
+                if (description.isPresent()) {
+                    samplingFeature.setDescription(description.get().getText());
+                }
+            }
+        }
     }
 
     protected String insertFeatureOfInterest(final SamplingFeature samplingFeature, final Session session)
@@ -542,7 +501,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
 
     /**
      * Get the geometry from featureOfInterest object.
-     * 
+     *
      * @param feature
      * @return geometry
      * @throws OwsExceptionReport

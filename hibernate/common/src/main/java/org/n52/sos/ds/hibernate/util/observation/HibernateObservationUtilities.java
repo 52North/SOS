@@ -30,10 +30,12 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
+
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
@@ -53,7 +55,7 @@ import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class HibernateObservationUtilities {
     private HibernateObservationUtilities() {
@@ -83,7 +85,7 @@ public class HibernateObservationUtilities {
 
     /**
      * Create SOS internal observation from Observation objects
-     * 
+     *
      * @param o
      *            List of Observation objects
      * @param spf
@@ -95,9 +97,9 @@ public class HibernateObservationUtilities {
      *            Requested result model
      * @param s
      *            Hibernate session
-     * 
+     *
      * @return SOS internal observation
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs
      * @throws ConverterException
@@ -108,9 +110,9 @@ public class HibernateObservationUtilities {
             ConverterException {
         return createSosObservationsFromObservations(o, spf, v, rm, ServiceConfiguration.getInstance().getDefaultLanguage(), s);
     }
-    
+
     public static List<OmObservation> createSosObservationsFromObservations(Collection<AbstractObservation> o,
-            Map<Long, AbstractSpatialFilteringProfile> spf, String v, String rm, String lang, Session s) throws OwsExceptionReport,
+            Map<Long, AbstractSpatialFilteringProfile> spf, String v, String rm, Locale lang, Session s) throws OwsExceptionReport,
             ConverterException {
         return new ObservationOmObservationCreator(o, spf, v, rm, lang, s).create();
     }
@@ -130,7 +132,7 @@ public class HibernateObservationUtilities {
 
     /**
      * Create SOS internal observation from ObservationConstellation
-     * 
+     *
      * @param oc
      *            ObservationConstellation object
      * @param fois
@@ -150,16 +152,16 @@ public class HibernateObservationUtilities {
             throws OwsExceptionReport, ConverterException {
         return createSosObservationFromObservationConstellation(oc, fois, version, ServiceConfiguration.getInstance().getDefaultLanguage(), session);
     }
-    
+
     public static Collection<? extends OmObservation> createSosObservationFromObservationConstellation(
-            ObservationConstellation oc, List<String> fois, String version, String language, Session session)
+            ObservationConstellation oc, List<String> fois, String version, Locale language, Session session)
             throws OwsExceptionReport, ConverterException {
         return new ObservationConstellationOmObservationCreator(oc, fois, version, language, session).create();
     }
 
     /**
      * Create SOS internal observation from Series
-     * 
+     *
      * @param series
      *            Series object
      * @param version
@@ -176,16 +178,16 @@ public class HibernateObservationUtilities {
             Session session) throws OwsExceptionReport, ConverterException {
         return createSosObservationFromSeries(series, version, ServiceConfiguration.getInstance().getDefaultLanguage(), session);
     }
-    
+
     public static Collection<? extends OmObservation> createSosObservationFromSeries(Series series, String version,
-           String language, Session session) throws OwsExceptionReport, ConverterException {
+           Locale language, Session session) throws OwsExceptionReport, ConverterException {
         return new SeriesOmObservationCreator(series, version, language, session).create();
     }
 
     /**
      * Unfold observation with MultiObservationValue to multiple observations
      * with SingleObservationValue
-     * 
+     *
      * @param o
      *            OmObservation to unfold
      * @return OmObservation list
@@ -198,7 +200,7 @@ public class HibernateObservationUtilities {
 
     /**
      * Get observation ids from observation objects
-     * 
+     *
      * @param observations
      *            Collection of observation objects
      * @return Observation ids as Set

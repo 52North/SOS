@@ -67,7 +67,7 @@
                     <input type="checkbox" name="overwrite_tables" />
                     <strong>Delete existing tables</strong> &mdash; This will delete all existing tables in the database.
                 </label>
-                <span style="display: none;" class="help-block"><span class="label label-important">Warning!</span> 
+                <span style="display: none;" class="help-block"><span class="label label-important">Warning!</span>
                     This will erase the entire database.</span>
             </div>
         </div>
@@ -77,7 +77,7 @@
                     <input type="checkbox" name="update_tables" />
                     <strong>Force updating existing tables</strong> &mdash; This will update all existing tables in the database if needed.
                 </label>
-                <span style="display: none;" class="help-block"><span class="label label-important">Warning!</span> 
+                <span style="display: none;" class="help-block"><span class="label label-important">Warning!</span>
                      EXPERIMENTAL!!! This updates the entire database if needed. Or check /misc/db for an update script!</span>
             </div>
         </div>
@@ -96,10 +96,10 @@
         var datasource, selected,
             $datasource = $("#datasource"),
             $settings = $("#settings"),
-            $actions = $("#actions"), 
+            $actions = $("#actions"),
             $create = $("#create"),
             $overwrite = $("#overwrite"),
-            $update = $("#update");          
+            $update = $("#update");
 
         for (datasource in datasources) {
             if (datasources.hasOwnProperty(datasource)) {
@@ -110,17 +110,16 @@
             }
         }
         datasource = null;
-        
+
         $datasource.change(function() {
             var d = $(this).val();
             if (d !== datasource) {
                 datasource = d;
-                
+
                 /* create settings */
                 $settings.slideUp("fast", function() {
                     $settings.children().remove();
-                    generateSettings(datasources[d].settings,
-                                     $settings, false);
+                    generateSettings(datasources[d].settings, {}, $settings, false);
                     /* save settings as default values
                      * to keep them between switches */
                     $settings.find(":input").on("change", function() {
@@ -134,11 +133,11 @@
                     });
                     $settings.slideDown("fast");
                 });
-                
+
                 /* adjust actions */
                 $actions.slideUp("fast", function() {
                     var schema = datasources[d].needsSchema;
-                    $create.hide(); 
+                    $create.hide();
                     $overwrite.hide();
                     $update.hide();
                     if (schema) {
@@ -149,12 +148,12 @@
                 });
             }
         });
-		
+
 		$("input[name=create_tables]").change(function() {
 			var $update_tables = $("input[name=update_tables]");
             if ($(this).attr("checked")) {
 				if ($update_tables.attr("checked")) {
-					$update_tables.attr({ 
+					$update_tables.attr({
 						"checked": false})
 						.parent().next().toggle("fast");
 				}
@@ -169,12 +168,12 @@
             var $create_tables = $("input[name=create_tables]");
 			var $update_tables = $("input[name=update_tables]");
             if ($(this).attr("checked")) {
-                $create_tables.attr({ 
-                    "checked": "checked", 
+                $create_tables.attr({
+                    "checked": "checked",
                     "disabled": true })
                 .parent("label").addClass("muted");
 				if ($update_tables.attr("checked")) {
-					$update_tables.attr({ 
+					$update_tables.attr({
 						"checked": false})
 						.parent().next().toggle("fast");
 				}
@@ -183,20 +182,20 @@
                     .parent("label").removeClass("muted");
             }
         });
-        
+
         $("input[name=update_tables]").click(function(){
             $(this).parent().next().toggle("fast");
         });
-		
+
 		$("input[name=update_tables]").change(function() {
             var $create_tables = $("input[name=create_tables]");
 			var $overwrite_tables = $("input[name=overwrite_tables]");
             if ($(this).attr("checked")) {
-                $create_tables.attr({ 
+                $create_tables.attr({
                     "checked": false}).removeAttr("disabled")
                     .parent("label").removeClass("muted");
 				if ($overwrite_tables.attr("checked")) {
-					$overwrite_tables.attr({ 
+					$overwrite_tables.attr({
 						"checked": false})
 						.parent().next().toggle("fast");
 				}
@@ -208,7 +207,7 @@
         if (selected) {
             $datasource.val(selected).trigger("change");
         }
-    
+
     });
 </script>
 

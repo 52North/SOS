@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NFeatureOfInterestMetadata" table="i18nfeatureOfInterest">
+        <id name="id" type="long">
+            <column name="id" />
+            <generator class="native">
+            	<param name="sequence">i18nfeatureOfInterestId_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="objectId" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" fetch="select" lazy="no-proxy" foreign-key="i18nFeatureFeatureFk">
+           	<column index="i18nFeatureIdx" name="objectId" not-null="true" unique-key="i18nFeatureIdentity" />
+        </many-to-one>
+        <property name="locale" type="locale">
+            <column name="locale"  not-null="true" unique-key="i18nFeatureIdentity"/>
+        </property>
+		<property name="name" type="string">
+            <column name="name" />
+        </property>
+        <property name="description" type="string">
+            <column name="description" />
+        </property>
+   </class>
+</hibernate-mapping>

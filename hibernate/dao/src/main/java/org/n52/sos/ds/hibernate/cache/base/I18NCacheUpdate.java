@@ -28,28 +28,30 @@
  */
 package org.n52.sos.ds.hibernate.cache.base;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Locale;
 
-import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.i18n.AbstractFeatureI18NDAO;
-import org.n52.sos.ds.hibernate.dao.i18n.I18NCapabiliesDAO;
-import org.n52.sos.ds.hibernate.entities.i18n.AbstractFeatureI18N;
-import org.n52.sos.ds.hibernate.entities.i18n.I18NCapabilities;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.SosServiceIdentificationFactory;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.JavaHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.sos.ds.I18NDAO;
+import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
+import org.n52.sos.i18n.I18NDAORepository;
+import org.n52.sos.i18n.metadata.AbstractI18NMetadata;
+import org.n52.sos.i18n.metadata.I18NFeatureMetadata;
+import org.n52.sos.i18n.metadata.I18NObservablePropertyMetadata;
+import org.n52.sos.i18n.metadata.I18NOfferingMetadata;
+import org.n52.sos.i18n.metadata.I18NProcedureMetadata;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.service.Configurator;
+
 /**
  * Cache update class for I18N
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
- * 
+ *
  */
 public class I18NCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
 
@@ -60,37 +62,25 @@ public class I18NCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
         LOGGER.info("Executing I18NCacheUpdate");
         startStopwatch();
         try {
-            if (HibernateHelper.isEntitySupported(I18NCapabilities.class, getSession())) {
-                List<I18NCapabilities> i18nCapabilitiesCodespace =
-                        new I18NCapabiliesDAO().getI18NCapabilitiesObjects(getSession());
-                SosServiceIdentificationFactory serviceIdentificationFactory =
-                        Configurator.getInstance().getServiceIdentificationFactory();
-                for (I18NCapabilities i18nCapabilities : i18nCapabilitiesCodespace) {
-                    String codespace = i18nCapabilities.getCodespace().getCodespace();
-                    serviceIdentificationFactory.addLanguageTitle(codespace, i18nCapabilities.getTitle());
-                    serviceIdentificationFactory.addLanguageAbstract(codespace, i18nCapabilities.getAbstract());
-                    getCache().addSupportedLanguage(codespace);
-                }
-            }
-            addLanguagesFromI18NDAOs();
+            getCache().addSupportedLanguage(Configurator.getInstance().getServiceIdentificationFactory().getAvailableLocales());
+            getCache().addSupportedLanguage(getEntityLocales(I18NFeatureMetadata.class));
+            getCache().addSupportedLanguage(getEntityLocales(I18NOfferingMetadata.class));
+            getCache().addSupportedLanguage(getEntityLocales(I18NObservablePropertyMetadata.class));
+            getCache().addSupportedLanguage(getEntityLocales(I18NProcedureMetadata.class));
         } catch (OwsExceptionReport ce) {
             getErrors().add(ce);
         }
         LOGGER.info("Finished executing I18NCacheUpdate ({})", getStopwatchResult());
     }
 
-    /**
-     * Add languages, contained in the specific tables, to the supported
-     * languages cache
-     */
-    private void addLanguagesFromI18NDAOs() {
-        for (Object clazz : JavaHelper.getSubclasses(AbstractFeatureI18N.class)) {
-            if (clazz instanceof Class<?>) {
-                AbstractFeatureI18NDAO i18ndao = DaoFactory.getInstance().getI18NDAO((Class<?>) clazz, getSession());
-                if (i18ndao != null) {
-                    getCache().addSupportedLanguage(i18ndao.getCodespaceAsString(getSession()));
-                }
-            }
+    private Collection<Locale> getEntityLocales(Class<? extends AbstractI18NMetadata> type)
+            throws OwsExceptionReport {
+        I18NDAO<? extends AbstractI18NMetadata> dao
+                = I18NDAORepository.getInstance().getDAO(type);
+        if (dao != null) {
+            return dao.getAvailableLocales();
+        } else {
+            return Collections.emptySet();
         }
     }
 }

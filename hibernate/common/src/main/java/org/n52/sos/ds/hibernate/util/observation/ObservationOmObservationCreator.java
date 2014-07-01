@@ -26,76 +26,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-/**
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
-
- *
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- *
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- *
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- *
-
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- */
 package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -103,6 +39,9 @@ import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
@@ -144,8 +83,6 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.XmlHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -153,7 +90,7 @@ import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
@@ -161,7 +98,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationOmObservationCreator.class);
 
     private final Collection<AbstractObservation> observations;
-    
+
     private final String resultModel;
 
     private final Map<String, AbstractFeature> features = Maps.newHashMap();
@@ -184,7 +121,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     /**
      * Constructor
-     * 
+     *
      * @param observations
      *            Collection of observation objects
      * @param spatialFilteringProfile
@@ -216,10 +153,10 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         this.featureQueryHandler = getFeatureQueryHandler();
         this.encodeProcedureInObservation = getActiveProfile().isEncodeProcedureInObservation();
     }
-    
+
     /**
      * Constructor
-     * 
+     *
      * @param observations
      *            Collection of observation objects
      * @param spatialFilteringProfile
@@ -234,7 +171,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
      */
     public ObservationOmObservationCreator(Collection<AbstractObservation> observations,
             Map<Long, AbstractSpatialFilteringProfile> spatialFilteringProfile, String version, String resultModel,
-            String language, Session session) {
+            Locale language, Session session) {
         super(version, language, session);
         this.resultModel = resultModel;
         if (observations == null) {
@@ -313,12 +250,12 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     /**
      * Get observation value from all value tables for an Observation object
-     * 
+     *
      * @param hObservation
      *            Observation object
-     * 
+     *
      * @return Observation value
-     * 
+     *
      * @throws OwsExceptionReport
      * @throws CodedException
      */

@@ -28,33 +28,38 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Set;
 
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.i18n.AbstractFeatureI18NDAO;
-import org.n52.sos.ds.hibernate.entities.i18n.AbstractFeatureI18N;
-import org.n52.sos.ds.hibernate.util.I18NHibernateHelper;
-import org.n52.sos.i18n.I18NObservablePropertyObject;
+import org.n52.sos.ds.I18NDAO;
+import org.n52.sos.i18n.I18NDAORepository;
+import org.n52.sos.i18n.LocalizedString;
+import org.n52.sos.i18n.metadata.I18NObservablePropertyMetadata;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
+import com.google.common.base.Optional;
+
 public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment {
-    
-    
+
     @Override
-    public void enrich() throws OwsExceptionReport {
-        if (isSetI18N()) {
-            AbstractFeatureI18NDAO i18ndao = DaoFactory.getInstance().getI18NDAO(I18NObservablePropertyObject.class, getSession());
-            if (i18ndao != null) {
-                List<AbstractFeatureI18N> objects = i18ndao.getObjectsForCodespaceString(getI18N(), getSession());
-                for (AbstractFeatureI18N abstractI18N : objects) {
-                    AbstractPhenomenon abstractPhenomenon = new AbstractPhenomenon(abstractI18N.getObjectId().getIdentifier());
-                    I18NHibernateHelper.addLanguageSpecificNameToFeature(abstractPhenomenon, abstractI18N);
+    public void enrich()
+            throws OwsExceptionReport {
+        if (isSetLocale()) {
+            I18NDAO<I18NObservablePropertyMetadata> dao = I18NDAORepository.
+                    getInstance().getDAO(I18NObservablePropertyMetadata.class);
+            if (dao != null) {
+                Set<String> ids = getCache().getObservablePropertiesForProcedure(getIdentifier());
+                Collection<I18NObservablePropertyMetadata> metadata = dao.getMetadata(ids);
+                for (I18NObservablePropertyMetadata i18n : metadata) {
+                    AbstractPhenomenon abstractPhenomenon = new AbstractPhenomenon(i18n.getIdentifier());
+                    Optional<LocalizedString> name = i18n.getName().getLocalizationOrDefault(getLocale());
+                    if (name.isPresent()) {
+                        abstractPhenomenon.addName(name.get().asCodeType());
+                    }
                     getDescription().addPhenomenon(abstractPhenomenon);
                 }
             }
         }
     }
-
-
 }

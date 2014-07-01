@@ -28,46 +28,32 @@
  */
 package org.n52.sos.ogc.ows;
 
+
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.xmlbeans.XmlObject;
+
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosServiceIdentification {
     private XmlObject serviceIdentification;
-
-    private List<OwsLanguageString> titles = Lists.newArrayList();
-
-    private List<OwsLanguageString> abstracts = Lists.newArrayList();
-    
-    private String title;
-    
-    private String abstrakt;
-
+    private MultilingualString title;
+    private MultilingualString abstrakt;
     private String serviceType;
-
     private String serviceTypeCodeSpace;
-
     private String fees;
-
-    private SortedSet<String> accessConstraints = new TreeSet<String>();
-
+    private final SortedSet<String> accessConstraints = new TreeSet<String>();
     private final SortedSet<String> versions = new TreeSet<String>();
-
     private final SortedSet<String> profiles = new TreeSet<String>();
-
     private final SortedSet<String> keywords = new TreeSet<String>();
 
     public XmlObject getServiceIdentification() {
@@ -123,126 +109,78 @@ public class SosServiceIdentification {
         return CollectionHelper.isNotEmpty(getKeywords());
     }
 
-    public String getTitle() {
-        if (Strings.isNullOrEmpty(title) && hasTitles()) {
-            return getTitles().iterator().next().getValue();
-        }
+    public MultilingualString getTitle() {
         return title;
     }
 
-    public boolean hasTitle() {
-        return StringHelper.isNotEmpty(getTitle()) || hasTitles();
-    }
-
-    public void setTitle(final String title) {
+    public void setTitle(MultilingualString title) {
         this.title = title;
-        addTitle(new OwsLanguageString(title));
     }
 
-    public String getAbstract() {
-        if (Strings.isNullOrEmpty(abstrakt) && hasAbstracts()) {
-            return getAbstracts().iterator().next().getValue();
-        }
+    public boolean hasTitle() {
+        return this.title != null;
+    }
+
+    public MultilingualString getAbstract() {
         return abstrakt;
     }
 
-    public boolean hasAbstract() {
-        return StringHelper.isNotEmpty(getAbstract()) || hasAbstracts();
-    }
-
-    public void setAbstract(final String abstrakt) {
+    public void setAbstract(MultilingualString abstrakt) {
         this.abstrakt = abstrakt;
-        addAbstract(new OwsLanguageString(abstrakt));
-    }
-    
-    public List<OwsLanguageString> getTitles() {
-        return titles;
     }
 
-    public boolean hasTitles() {
-        return CollectionHelper.isNotEmpty(getTitles());
-    }
-    
-    public void setTitles(List<OwsLanguageString> titles) {
-        getTitles().addAll(titles);
-    }
-    
-    public void addTitle(OwsLanguageString title) {
-        getTitles().add(title);
-    }
-    
-    public void clearTitles() {
-        getTitles().clear();
-    }
- 
-    public List<OwsLanguageString> getAbstracts() {
-        return abstracts;
-    }
-
-    public boolean hasAbstracts() {
-        return CollectionHelper.isNotEmpty(getAbstracts());
-    }
-    
-    public void setAbstracts(List<OwsLanguageString> abstrakts) {
-        getAbstracts().addAll(abstrakts);
-    }
-    
-    public void addAbstract(OwsLanguageString abstrakt) {
-        getAbstracts().add(abstrakt);
-    }
-    
-    public void clearAbstracts() {
-        getAbstracts().clear();
+    public boolean hasAbstract() {
+        return this.abstrakt != null;
     }
 
     public String getServiceType() {
         return serviceType;
     }
 
-    public boolean hasServiceType() {
-        return StringHelper.isNotEmpty(getServiceType());
-    }
-
     public void setServiceType(final String serviceType) {
         this.serviceType = serviceType;
+    }
+
+    public boolean hasServiceType() {
+        return StringHelper.isNotEmpty(getServiceType());
     }
 
     public String getServiceTypeCodeSpace() {
         return serviceTypeCodeSpace;
     }
 
-    public boolean hasServiceTypeCodeSpace() {
-        return StringHelper.isNotEmpty(getServiceTypeCodeSpace());
-    }
-
     public void setServiceTypeCodeSpace(final String serviceTypeCodeSpace) {
         this.serviceTypeCodeSpace = serviceTypeCodeSpace;
+    }
+
+    public boolean hasServiceTypeCodeSpace() {
+        return StringHelper.isNotEmpty(getServiceTypeCodeSpace());
     }
 
     public String getFees() {
         return fees;
     }
 
-    public boolean hasFees() {
-        return StringHelper.isNotEmpty(getFees());
-    }
-
     public void setFees(final String fees) {
         this.fees = fees;
     }
 
+    public boolean hasFees() {
+        return StringHelper.isNotEmpty(getFees());
+    }
+
     public SortedSet<String> getAccessConstraints() {
-        return accessConstraints;
+        return Collections.unmodifiableSortedSet(accessConstraints);
+    }
+
+    public void setAccessConstraints(Collection<String> accessConstraints) {
+        this.accessConstraints.addAll(accessConstraints);
     }
 
     public boolean hasAccessConstraints() {
         return CollectionHelper.isNotEmpty(getAccessConstraints());
     }
 
-    public void setAccessConstraints(Collection<String> accessConstraints) {
-        this.accessConstraints.addAll(accessConstraints);
-    }
-    
     public void addAccessConstraint(final String accessConstraints) {
         this.accessConstraints.add(accessConstraints);
     }

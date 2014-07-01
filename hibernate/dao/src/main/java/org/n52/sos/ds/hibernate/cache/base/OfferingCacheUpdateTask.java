@@ -31,11 +31,16 @@ package org.n52.sos.ds.hibernate.cache.base;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
+import org.n52.sos.ds.I18NDAO;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.cache.ProcedureFlag;
@@ -45,32 +50,32 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ds.hibernate.dao.i18n.AbstractFeatureI18NDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.i18n.AbstractFeatureI18N;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.concrete.GenericThrowableWrapperException;
-import org.n52.sos.i18n.I18NOfferingObject;
+import org.n52.sos.i18n.I18NDAORepository;
+import org.n52.sos.i18n.LocaleHelper;
+import org.n52.sos.i18n.MultilingualString;
+import org.n52.sos.i18n.metadata.I18NOfferingMetadata;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CacheHelper;
 import org.n52.sos.util.CollectionHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.sos.util.Constants;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
@@ -78,24 +83,27 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     @SuppressWarnings("unused")
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferingCacheUpdateTask.class);
 
-    private FeatureOfInterestDAO featureDAO = new FeatureOfInterestDAO();
+    private final FeatureOfInterestDAO featureDAO = new FeatureOfInterestDAO();
 
-    private String offeringId;
+    private final String offeringId;
 
-    private Collection<ObservationConstellationInfo> observationConstellationInfos;
+    private final Collection<ObservationConstellationInfo> observationConstellationInfos;
+
+    private final Offering offering;
 
     private boolean obsConstSupported;
-    
+
     /**
      * Constructor. Note: never pass in Hibernate objects that have been loaded by a session in a different thread
-     * 
-     * @param dsOfferingId
+     *
+     * @param offering
      *            Offering identifier
-     * @param observationConstellatinInfos
+     * @param observationConstellationInfos
      *            Observation Constellation info collection, passed in from parent update if supported
      */
-    public OfferingCacheUpdateTask(String dsOfferingId, Collection<ObservationConstellationInfo> observationConstellationInfos) {
-        this.offeringId = dsOfferingId;
+    public OfferingCacheUpdateTask(Offering offering, Collection<ObservationConstellationInfo> observationConstellationInfos) {
+        this.offering = offering;
+        this.offeringId = offering.getIdentifier();
         this.observationConstellationInfos = observationConstellationInfos;
     }
 
@@ -103,7 +111,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         // process all offering updates here (in multiple threads) which have the potential to perform large
         // queries that aren't able to be loaded all at once. many (but not all) of these can be avoided
         // if ObservationConstellation is supported
-        
+
         // NOTE: Don't perform queries or load obecjts here unless you have to, since they are performed once per offering
 
         String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
@@ -138,30 +146,61 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         addSpatialFilteringProfileEnvelopeForOffering(prefixedOfferingId, offeringId, session);
     }
 
-    protected void addOfferingNamesAndDescriptionsToCache(String offeringId, Session session) {
-        AbstractFeatureI18NDAO i18ndao = DaoFactory.getInstance().getI18NDAO(I18NOfferingObject.class, session);
-        if (i18ndao != null) {
-            List<AbstractFeatureI18N> objects = i18ndao.getObjectsForIdentifier(offeringId, session);
-            if (CollectionHelper.isNotEmpty(objects)) {
-                for (AbstractFeatureI18N abstractI18N : objects) {
-                    if (abstractI18N.isSetName()) {
-                        getCache().setI18nNameForOffering(offeringId, abstractI18N.getName(),
-                                abstractI18N.getCodespace().getCodespace());
-                    }
-                    if (abstractI18N.isSetDescription()) {
-                        getCache().setI18nDescriptionForOffering(offeringId, abstractI18N.getDescription(),
-                                abstractI18N.getCodespace().getCodespace());
-                    }
+    protected void addOfferingNamesAndDescriptionsToCache(String offeringId, Session session) throws OwsExceptionReport {
+        final MultilingualString name;
+        final MultilingualString description;
+
+        I18NDAO<I18NOfferingMetadata> dao = I18NDAORepository.getInstance().getDAO(I18NOfferingMetadata.class);
+
+        if (dao != null) {
+            I18NOfferingMetadata metadata = dao.getMetadata(offeringId);
+            name = metadata.getName();
+            description = metadata.getDescription();
+        } else {
+            name = new MultilingualString();
+            description = new MultilingualString();
+            Locale defaultLocale = ServiceConfiguration.getInstance().getDefaultLanguage();
+            if (offering.isSetName()) {
+                final Locale locale;
+                if (offering.isSetCodespaceName()) {
+                    locale = LocaleHelper.fromString(offering.getCodespaceName().getCodespace());
+                } else {
+                    locale = defaultLocale;
+
                 }
+                name.addLocalization(locale, offering.getName());
+            } else {
+                String offeringName = offeringId;
+                if (offeringName.startsWith("http")) {
+                    offeringName = offeringName.substring(offeringName.lastIndexOf(Constants.SLASH_CHAR) + 1, offeringName.length());
+                } else if (offeringName.startsWith("urn")) {
+                    offeringName = offeringName.substring(offeringName.lastIndexOf(Constants.COLON_CHAR) + 1, offeringName.length());
+                }
+                if (offeringName.contains(Constants.NUMBER_SIGN_STRING)) {
+                    offeringName = offeringName.substring(offeringName.lastIndexOf(Constants.NUMBER_SIGN_CHAR) + 1, offeringName.length());
+                }
+                name.addLocalization(defaultLocale, offeringName);
+            }
+            if (offering.isSetDescription()) {
+                final Locale locale;
+                if (offering.isSetCodespaceName()) {
+                    locale = LocaleHelper.fromString(offering.getCodespaceName().getCodespace());
+                } else {
+                    locale = defaultLocale;
+                }
+                description.addLocalization(locale, offering.getDescription());
             }
         }
+
+        getCache().setI18nDescriptionForOffering(offeringId, description);
+        getCache().setI18nNameForOffering(offeringId, name);
     }
 
-    protected Map<ProcedureFlag, Set<String>> getProcedureIdentifier(Session session) throws CodedException {
+    protected Map<ProcedureFlag, Set<String>> getProcedureIdentifier(Session session) throws OwsExceptionReport {
         Set<String> procedures = new HashSet<String>(0);
         Set<String> hiddenChilds = new HashSet<String>(0);
         if (obsConstSupported) {
-            if (CollectionHelper.isNotEmpty(observationConstellationInfos)) {                
+            if (CollectionHelper.isNotEmpty(observationConstellationInfos)) {
                 procedures.addAll(DatasourceCacheUpdateHelper.getAllProcedureIdentifiersFromObservationConstellationInfos(
                         observationConstellationInfos, ProcedureFlag.PARENT));
                 hiddenChilds.addAll(DatasourceCacheUpdateHelper.getAllProcedureIdentifiersFromObservationConstellationInfos(
@@ -188,7 +227,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         return features;
     }
 
-    protected Set<String> getObservablePropertyIdentifier(Session session) throws CodedException {
+    protected Set<String> getObservablePropertyIdentifier(Session session) throws OwsExceptionReport {
         if (obsConstSupported) {
             if (CollectionHelper.isNotEmpty(observationConstellationInfos)) {
                 return DatasourceCacheUpdateHelper.getAllObservablePropertyIdentifiersFromObservationConstellationInfos(
@@ -208,7 +247,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         }
     }
 
-    protected Set<String> getObservationTypes(Session session) throws CodedException {
+    protected Set<String> getObservationTypes(Session session) throws OwsExceptionReport {
         if (obsConstSupported) {
             if (CollectionHelper.isNotEmpty(observationConstellationInfos)) {
                 Set<String> observationTypes = Sets.newHashSet();
@@ -226,7 +265,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         }
     }
 
-    private Set<String> getObservationTypesFromObservations(Session session) throws CodedException {
+    private Set<String> getObservationTypesFromObservations(Session session) throws OwsExceptionReport {
         AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
         Set<String> observationTypes = Sets.newHashSet();
         if (observationDAO.checkNumericObservationsFor(offeringId, session)) {
@@ -267,7 +306,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         return Sets.newHashSet();
     }
 
-    
+
     protected SosEnvelope getEnvelopeForOffering(Collection<String> featureOfInterestIdentifiers, Session session)
             throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(featureOfInterestIdentifiers)) {
@@ -281,8 +320,8 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
     /**
      * Get SpatialFilteringProfile envelope if exist and supported
-     * 
-     * @param offeringID
+     *
+     * @param prefixedOfferingId
      *            Offering identifier used in requests and responses
      * @param offeringID
      *            Database Offering identifier to get envelope for
@@ -307,10 +346,6 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             getOfferingInformationFromDbAndAddItToCacheMaps(getSession());
         } catch (OwsExceptionReport owse) {
             getErrors().add(owse);
-        } catch (Exception e) {
-            getErrors().add(
-                    new GenericThrowableWrapperException(e)
-                            .withMessage("Error while processing offering cache update task!"));
         }
     }
 }

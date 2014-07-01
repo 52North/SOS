@@ -26,77 +26,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-/**
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
-
- *
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
-
- *
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
-
- *
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
-
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
-
- *
-
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
-
- */
 package org.n52.sos.ds.hibernate.util.procedure;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 
 import org.hibernate.Session;
+
 import org.n52.sos.convert.Converter;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.convert.ConverterRepository;
@@ -178,7 +115,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
     public SosProcedureDescription createSosProcedureDescription(
             Procedure procedure,
             String requestedDescriptionFormat, String requestedServiceVersion,
-            Map<String, Procedure> loadedProcedures, String i18n, Session session) throws
+            Map<String, Procedure> loadedProcedures, Locale i18n, Session session) throws
             OwsExceptionReport {
         if (procedure == null) {
             throw new NoApplicableCodeException()
@@ -214,7 +151,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      * @throws OwsExceptionReport If an error occurs
      */
     public SosProcedureDescription createSosProcedureDescriptionFromValidProcedureTime(
-            Procedure procedure, ValidProcedureTime vpt, String version, String i18n, Session session)
+            Procedure procedure, ValidProcedureTime vpt, String version, Locale i18n, Session session)
             throws OwsExceptionReport {
         String descriptionFormat = getFormat(vpt);
         Optional<SosProcedureDescription> description = create(procedure, vpt, i18n, session);
@@ -227,7 +164,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
     }
 
     public SosProcedureDescription createSosProcedureDescription(Procedure procedure,
-            String requestedDescriptionFormat, String requestedServiceVersion, String i18n, Session session) throws OwsExceptionReport {
+            String requestedDescriptionFormat, String requestedServiceVersion, Locale i18n, Session session) throws OwsExceptionReport {
         return createSosProcedureDescription(procedure,
                 requestedDescriptionFormat,
                 requestedServiceVersion,
@@ -284,7 +221,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
         return ConverterRepository.getInstance().hasConverter(from, to);
     }
 
-    private Optional<SosProcedureDescription> create(Procedure procedure, ValidProcedureTime vpt, String i18n, Session session) throws OwsExceptionReport {
+    private Optional<SosProcedureDescription> create(Procedure procedure, ValidProcedureTime vpt, Locale i18n, Session session) throws OwsExceptionReport {
         Optional<DescriptionCreationStrategy> strategy = getCreationStrategy(procedure, vpt);
         if (strategy.isPresent()) {
             return Optional.fromNullable(strategy.get().create(procedure, i18n, session));
@@ -325,7 +262,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      */
     private void enrich(SosProcedureDescription desc, Procedure procedure,
                 String version, String format, TimePeriod validTime,
-                Map<String, Procedure> cache, String language,
+                Map<String, Procedure> cache, Locale language,
                 Session session) throws OwsExceptionReport {
         ProcedureDescriptionEnrichments enrichments
             = ProcedureDescriptionEnrichments.create()

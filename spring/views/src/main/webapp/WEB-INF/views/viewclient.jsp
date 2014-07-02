@@ -33,31 +33,13 @@
 <jsp:include page="common/header.jsp">
     <jsp:param name="activeMenu" value="viewclient" />
 </jsp:include>
-<%--
-    STYLES
---%>
-<link rel="stylesheet" href="<c:url value="/static/css/sosjs/dependencies/jquery-ui.min.css" />" type="text/css"/>
-<link rel="stylesheet" href="<c:url value="/static/css/sosjs/SOS.Styles.css" />" type="text/css"/>
-<%--
-    JavaScript
- --%>
-<script type="text/javascript" src="<c:url value="/static/js/sosjs/dependencies/proj4js-combined.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/js/sosjs/dependencies/OpenLayers.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/js/sosjs/dependencies/jquery.min.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/js/sosjs/dependencies/jquery-ui.min.js" />"></script>
-<!--[if lte IE 8]><script type="text/javascript" src="<c:url value="/static/js/sosjs/dependencies/excanvas.min.js" />"></script><![endif]-->
-<script type="text/javascript" src="<c:url value="/static/js/sosjs/dependencies/jquery.flot.min.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/js/sosjs/dependencies/jquery.flot.selection.min.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/js/sosjs/dependencies/jquery.flot.axislabels.min.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/js/sosjs/dependencies/jquery.flot.navigate.min.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/js/sosjs/SOS.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/js/sosjs/SOS.Ui.js" />"></script>
+
 <%--
     JSP parameters
  --%>
 <jsp:include page="common/logotitle.jsp">
     <jsp:param name="title" value="52&deg;North SOS.js based View Client" />
-    <jsp:param name="leadParagraph" value="A demonstration of the full sos-js application, a Javascript client to display and analyse time series data provided via standardized OGC Sensor Observation Service instances." />
+    <jsp:param name="leadParagraph" value="A lightweight JavaScript SOS client." />
 </jsp:include>
 
 <script type="text/javascript">
@@ -65,36 +47,14 @@
     if (window.location.pathname.slice(-1) === "/") {
         window.location.href = window.location.href.slice(0, -1);
     }
-
-    SOS.Proxy.disable();
-    
-    /**
-     * Initializes the page
-     */
-    function initSOSjs() {
-        var options = {
-           url: 'http://localhost:8080<c:url value="/sos/kvp" />'
-        };
-        var app = new SOS.App(options);
-        app.display();
-    }
-    $(document).ready(initSOSjs);
 </script>
-<style type="text/css">
-    .sos-app-container {
-        position: relative;
-    }
-    .sos-app {
-        width: 100%;
-    }
-    .sos-menu-controls-container {
-        position: absolute;
-        left: 3em;
-        top: 220px;
-    }
-</style>
-<div onload="initSOSjs()">
-    <p>To learn more about the project go to the project page: <a title="sos-js project page" href="https://github.com/52North/sos-js">https://github.com/52North/sos-js</a></p>
+
+<div>
+    <p>A demonstration of the sos-js application, a JavaScript client to display and analyse time series data provided via standardized OGC Sensor Observation Service instances. To learn more about the project go to the project page: <a title="sos-js project page" href="https://github.com/52North/sos-js">https://github.com/52North/sos-js</a></p>
 </div>
-<div id="sos-js"></div>
+
+<iframe src="sos-js" width="940" height="600" name="sosjsframe" marginheight="0" marginwidth="0" frameborder="0">
+	<p>Your browser does not support frames, go to <a href="sos-js">SOS.js page</a>.</p>
+</iframe>
+
 <jsp:include page="common/footer.jsp" />

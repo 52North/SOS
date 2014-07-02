@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  */
 @Controller
-@RequestMapping({ ControllerConstants.Paths.ROOT, ControllerConstants.Paths.VIEW_CLIENT })
+@RequestMapping({ ControllerConstants.Paths.VIEW_CLIENT })
 public class ViewClientController extends AbstractController {
 
     @RequestMapping(method = RequestMethod.GET)

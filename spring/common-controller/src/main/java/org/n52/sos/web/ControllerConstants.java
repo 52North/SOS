@@ -45,6 +45,8 @@ public interface ControllerConstants {
         String CLIENT = "client";
 
         String VIEW_CLIENT = "viewclient";
+        
+        String SOSJS_CLIENT = "sos-js";
 
         String LICENSE = "license";
 
@@ -107,6 +109,8 @@ public interface ControllerConstants {
         String CLIENT = "/client";
 
         String VIEW_CLIENT ="/viewclient";
+        
+        String SOSJS_CLIENT = "/sos-js";
 
         String GET_INVOLVED = "/get-involved";
 

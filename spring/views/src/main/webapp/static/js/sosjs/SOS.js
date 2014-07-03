@@ -26,34 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-/*
-* Copyright (C) 2012-2014 52�North Initiative for Geospatial Open Source
-* Software GmbH
-*
-* This program is free software; you can redistribute it and/or modify it
-* under the terms of the GNU General Public License version 2 as published
-* by the Free Software Foundation.
-*
-* If the program is linked with libraries which are licensed under one of
-* the following licenses, the combination of the program with the linked
-* library is not considered a "derivative work" of the program:
-*
-* - Apache License, version 2.0
-* - Apache Software License, version 1.0
-* - GNU Lesser General Public License, version 3
-* - Mozilla Public License, versions 1.0, 1.1 and 2.0
-* - Common Development and Distribution License (CDDL), version 1.0
-*
-* Therefore the distribution of the program linked with libraries licensed
-* under the aforementioned licenses, is permitted by the copyright holders
-* if the distribution is compliant with both the GNU General Public
-* License version 2 and the aforementioned licenses.
-*
-* This program is distributed in the hope that it will be useful, but
-* WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-* Public License for more details.
-*/
+
 /******************************************************************************
 * Project: SOS
 * Module:  SOS.js
@@ -372,6 +345,48 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null) {
       },
 
       /**
+       * Get an SOS.Offering object given an offering name
+       */
+      getOfferingByName: function(name) {
+        var offering;
+
+        if(this.haveValidCapabilitiesObject()) {
+          for(var id in this.SOSCapabilities.contents.offeringList) {
+            if(this.SOSCapabilities.contents.offeringList[id].name == name) {
+              offering = this.getOffering(id);
+            }
+          }
+        }
+
+        return offering;
+      },
+
+      /**
+       * Get a list of SOS.Offering objects that include the given procedure
+       */
+      getOfferingsForProcedureId: function(procedureId) {
+        var result = [];
+
+        if(this.haveValidCapabilitiesObject()) {
+          var offIds = this.getOfferingIds();
+
+          for(var i = 0, olen = offIds.length; i < olen; i++) {
+            var offering = this.getOffering(offIds[i]);
+            var procIds = offering.getProcedureIds();
+
+            for(var j = 0, plen = procIds.length; j < plen; j++) {
+              if(procIds[j] == procedureId) {
+                result.push(offering);
+                break;
+              }
+            }
+          }
+        }
+
+        return result;
+      },
+
+      /**
        * Get the feature-of-interest (FOI) IDs
        */
       getFeatureOfInterestIds: function() {
@@ -399,9 +414,7 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null) {
             var o = this.SOSCapabilities.contents.offeringList[offId];
 
             if(OpenLayers.Util.indexOf(o.featureOfInterestIds, foiId) > -1) {
-              o.id = offId;
-              this.copyMandatoryObjectProperties(o);
-              result.push(new SOS.Offering(o));
+              result.push(this.getOffering(offId));
             }
           }
         }
@@ -635,7 +648,9 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null) {
 
           if(SOS.Utils.isValidObject(filter)) {
             if(SOS.Utils.isValidObject(filter.foiId)) {
-              if(r.fois[0].features[0].attributes.id == filter.foiId) {
+              var foi = this.getFeatureOfInterestFromObservationRecord(r);
+
+              if(foi && foi.attributes.id == filter.foiId) {
                 record = this.SOSObservations.measurements[i];
               }
             } else if(SOS.Utils.isValidObject(filter.observedProperty)) {
@@ -660,11 +675,32 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null) {
       addPropertiesToObservationRecord: function(record) {
         if(SOS.Utils.isValidObject(record)) {
           record.time = record.samplingTime.timeInstant.timePosition;
-          record.observedPropertyTitle = SOS.Utils.toTitleCase(SOS.Utils.toDisplayName(SOS.Utils.urnToName(record.observedProperty)));
+          record.observedPropertyTitle = SOS.Utils.toTitleCase(SOS.Utils.toDisplayName(SOS.Utils.fqnToName(record.observedProperty)));
           record.uomTitle = SOS.Utils.toDisplayUom(record.result.uom);
         }
 
         return record;
+      },
+
+      /**
+       * Ascertain that the given observation record has FOI properties
+       */
+      observationRecordHasValidFeatureOfInterest: function(ob, opts) {
+        var opts = opts || {foisIndex: 0, featuresIndex: 0};
+
+        return (SOS.Utils.isValidObject(ob.fois) &&
+                SOS.Utils.isValidObject(ob.fois[opts.foisIndex]) &&
+                SOS.Utils.isValidObject(ob.fois[opts.foisIndex].features) &&
+                SOS.Utils.isValidObject(ob.fois[opts.foisIndex].features[opts.featuresIndex]));
+      },
+
+      /**
+       * Get the FOI object from the given observation record
+       */
+      getFeatureOfInterestFromObservationRecord: function(ob, opts) {
+        var opts = opts || {foisIndex: 0, featuresIndex: 0};
+
+        return ob.fois[opts.foisIndex].features[opts.featuresIndex];
       },
 
       /**
@@ -835,26 +871,27 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null) {
        * Get the observed property Names
        */
       getObservedPropertyNames: function() {
-        return SOS.Utils.urnToName(SOS.Utils.getUniqueList(this.observedProperties));
+        return SOS.Utils.fqnToName(SOS.Utils.getUniqueList(this.observedProperties));
       },
 
       /**
-       * Filter this offering's observed properties list via URNs or names
+       * Filter this offering's observed properties list via fully-qualified
+       * names or names.  A fully-qualified name (FQN) is a URL, URN...
        */
       filterObservedProperties: function(list) {
         if(!SOS.Utils.isArray(list)) {
           list = [list];
         }
-        /* list can be URNs or names.  Ensure we have URNs only.  If we've
-           already filtered, we must use the stored original list of URNs */
+        /* list can be FQNs or names.  Ensure we have FQNs only.  If we've
+           already filtered, we must use the stored original list of FQNs */
         var masterList = (SOS.Utils.isValidObject(this.observedPropertiesOriginal) ? this.observedPropertiesOriginal : this.observedProperties);
-        var urns = SOS.Utils.lookupUrnFromName(list, masterList);
+        var fqns = SOS.Utils.lookupFqnFromName(list, masterList);
 
         // Store original list of observed properties so it can be restored
         if(!SOS.Utils.isValidObject(this.observedPropertiesOriginal)) {
           this.observedPropertiesOriginal = this.observedProperties;
         }
-        this.observedProperties = urns;
+        this.observedProperties = fqns;
       },
 
       /**
@@ -963,6 +1000,11 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null) {
         '\r': "(carriage return)"
       },
 
+      fullyQualifiedNames: {
+        url: {test: /^\s*http/i, re: /^.*\/(.+)$/, s: "$1"},
+        urn: {test: /^\s*urn/i, re: /^.*:/, s: ""}
+      },
+ 
       isValidObject: function(x) {
         return (typeof x !== "undefined" && x !== null);
       },
@@ -1024,41 +1066,97 @@ if(typeof OpenLayers !== "undefined" && OpenLayers !== null) {
         return y;
       },
 
-      urnToName: function(x) {
+      _fqnToName: function(x, re, s) {
+        return x.replace(re, s);
+      },
+
+      _lookupFqnFromName: function(x, a, re, s) {
         var y = x;
 
-        if(typeof x == "string") {
-          y = x.replace(/^.*:/, "");
-        } else if(this.isArray(x)) {
-          y = [];
-
-          for(var i = 0, len = x.length; i < len; i++) {
-            y.push(this.urnToName(x[i]));
+        for(var i = 0, len = a.length; i < len; i++) {
+          if(this._fqnToName(a[i], re, s) === x) {
+            y = a[i];
+            break;
           }
         }
 
         return y;
       },
 
-      lookupUrnFromName: function(x, a) {
+      fqnToName: function(x, opts) {
         var y = x;
+        var fqn = this.fullyQualifiedNames;
 
-        if(typeof x == "string") {
-          for(var i = 0, len = a.length; i < len; i++) {
-            if(this.urnToName(a[i]) === x) {
-              y = a[i];
-              break;
+        if(this.isValidObject(fqn)) {
+          if(typeof x == "string") {
+            if(opts && opts.hasOwnProperty("re") && opts.hasOwnProperty("s")) {
+              // User-defined transform from fully-qualified name (FQN) to name
+              y = this._fqnToName(x, opts.re, opts.s);
+            } else {
+              if((fqn.url.test).test(x)) {
+                // FQN is a URL
+                y = this._fqnToName(x, fqn.url.re, fqn.url.s);
+              } else {
+                // FQN is a URN
+                y = this._fqnToName(x, fqn.urn.re, fqn.urn.s);
+              }
             }
-          }
-        } else if(this.isArray(x)) {
-          y = [];
+          } else if(this.isArray(x)) {
+            y = [];
 
-          for(var i = 0, len = x.length; i < len; i++) {
-            y.push(this.lookupUrnFromName(x[i], a));
+            for(var i = 0, len = x.length; i < len; i++) {
+              y.push(this.fqnToName(x[i], opts));
+            }
           }
         }
 
         return y;
+      },
+
+      lookupFqnFromName: function(x, a, opts) {
+        var y = x;
+        var fqn = this.fullyQualifiedNames;
+
+        if(this.isValidObject(fqn)) {
+          if(typeof x == "string") {
+            if(opts && opts.hasOwnProperty("re") && opts.hasOwnProperty("s")) {
+              // User-defined transform from fully-qualified name (FQN) to name
+              y = this._lookupFqnFromName(x, a, opts.re, opts.s);
+            } else {
+              if((fqn.url.test).test(a[0])) {
+                // FQN is a URL
+                y = this._lookupFqnFromName(x, a, fqn.url.re, fqn.url.s);
+              } else {
+                // FQN is a URN
+                y = this._lookupFqnFromName(x, a, fqn.urn.re, fqn.urn.s);
+              }
+            }
+          } else if(this.isArray(x)) {
+            y = [];
+
+            for(var i = 0, len = x.length; i < len; i++) {
+              y.push(this.lookupFqnFromName(x[i], a, opts));
+            }
+          }
+        }
+
+        return y;
+      },
+
+      urlToName: function(x) {
+        return this.fqnToName(x, this.fullyQualifiedNames.url);
+      },
+
+      lookupUrlFromName: function(x, a) {
+        return this.lookupFqnFromName(x, a, this.fullyQualifiedNames.url);
+      },
+
+      urnToName: function(x) {
+        return this.fqnToName(x, this.fullyQualifiedNames.urn);
+      },
+
+      lookupUrnFromName: function(x, a) {
+        return this.lookupFqnFromName(x, a, this.fullyQualifiedNames.urn);
       },
 
       toDisplayUom: function(x) {

@@ -70,14 +70,4 @@
             <organizationUrl>http://52north.org/</organizationUrl>
         </contributor>
     </contributors>
-    <dependencyManagement>
-        <dependencies>
-            <!-- XML Beans Generated Classes -->
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>rest-xml</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>

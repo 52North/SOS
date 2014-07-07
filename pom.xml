@@ -1213,7 +1213,7 @@
     </repositories>
     <profiles>
         <profile>
-            <id>develop</id>
+            <id>debug</id>
             <properties>
                 <config.logger.level.test.global>ERROR</config.logger.level.test.global>
                 <config.logger.level.test.n52>ERROR</config.logger.level.test.n52>

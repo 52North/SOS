@@ -17,10 +17,6 @@
         <module>client-controller</module>
         <module>views</module>
     </modules>
-    <properties>
-        <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
-        <org.springframework.version>3.2.6.RELEASE</org.springframework.version>
-    </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -98,7 +94,7 @@
                     <exclusion>
                         <groupId>commons-logging</groupId>
                         <artifactId>commons-logging</artifactId>
-                    </exclusion>                   
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>

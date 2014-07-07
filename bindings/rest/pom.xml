@@ -80,22 +80,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-release-plugin</artifactId>
-                        <configuration>
-                            <preparationGoals>clean</preparationGoals>
-                            <autoVersionSubmodules>true</autoVersionSubmodules>
-                            <tagBase>${svn.url}tags</tagBase>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

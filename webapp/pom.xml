@@ -16,7 +16,6 @@
         <databaseConfigurationFile>${project.parent.basedir}/misc/conf/datasource.properties</databaseConfigurationFile>
         <!-- do not overwrite this one! -->
         <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/configuration.db</sqliteSettingDatabaseTargetFile>
-        <sos.test.suite.version>1.0.0-M4</sos.test.suite.version>
     </properties>
     <build>
         <finalName>${conf.sos.name}</finalName>
@@ -139,6 +138,9 @@
         </pluginManagement>
     </build>
     <dependencies>
+
+        <!-- LOGGING -->
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
@@ -155,6 +157,9 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
+
+        <!-- CORE -->
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>profile-xml</artifactId>
@@ -181,6 +186,13 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>gc-dao</artifactId>
+        </dependency>
+
+        <!-- CODING -->
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>coding-ows-v110</artifactId>
         </dependency>
         <dependency>
@@ -193,12 +205,43 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>coding-sos-v100</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-json</artifactId>
+        </dependency>
+                <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-wml-v20</artifactId>
+        </dependency>
+
+        <!-- OPERATIONS -->
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>core-v20</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>gc-dao</artifactId>
+            <artifactId>enhanced-v20</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>transactional-v20</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>resultHandling-v20</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>core-v100</artifactId>
+        </dependency>
+
+
+        <!-- HIBERNATE -->
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-session-factory</artifactId>
@@ -215,47 +258,126 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-feature</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-datasource-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-datasource-postgres</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-datasource-mysql</artifactId>
+        </dependency>
+        <dependency>
+		    <groupId>${project.groupId}</groupId>
+		    <artifactId>hibernate-datasource-h2</artifactId>
+		</dependency>
+
+        <!-- BINDINGS -->
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>binding-kvp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>binding-soap</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>binding-pox</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>binding-json</artifactId>
+        </dependency>
+
+        <!-- REST BINDING -->
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>rest-code</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>rest-xml</artifactId>
+        </dependency>
+
+         <!-- GET DATA AVAILABILITY -->
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gda-operation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gda-hibernate</artifactId>
+        </dependency>
+
+        <!-- DELETE OBSERVATION -->
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>do-xml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>do-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>do-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>do-hibernate</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>do-kvp</artifactId>
+        </dependency>
+
+
         <!-- dependencies for integration test -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-xml-gml-v321</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-h2</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-xml-sweCommon-v20</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>test-suite-common</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-xml-sweCommon-v101</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>test-suite-sos-20</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-xml-sensorML-v101</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-xml-om-v20</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-xml-sampling-v20</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>test</artifactId>
+            <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-xml-ows-v110</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-xml-sos-v20</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-xml-sos-v100</artifactId>
-        </dependency>
+
+
         <!-- #### Spring dependencies #### -->
         <dependency>
             <groupId>com.thetransactioncompany</groupId>
@@ -269,7 +391,9 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
-        <!-- installer/admin/client dependencies -->
+
+        <!-- ADMINISTRATION INTERFACE -->
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>client-controller</artifactId>
@@ -288,257 +412,18 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-datasource-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-datasource-postgres</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-datasource-mysql</artifactId>
-        </dependency>
-        <dependency>
-		    <groupId>${project.groupId}</groupId>
-		    <artifactId>hibernate-datasource-h2</artifactId>
-		</dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>views</artifactId>
             <type>war</type>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>test-suite-common</artifactId>
-            <version>${sos.test.suite.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>test-suite-sos-20</artifactId>
-            <version>${sos.test.suite.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>3.2.0.RELEASE</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>3.2.0.RELEASE</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>binding-kvp</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>binding-soap</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>binding-pox</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>enhanced-v20</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>transactional-v20</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>resultHandling-v20</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>gda-operation</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>gda-hibernate</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-xml</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-json</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-hibernate</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-kvp</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>rest-code</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- third party -->
+
+        <!-- THIRD PARTY -->
         <dependency>
 			<groupId>org.n52.sensorweb.sos</groupId>
 			<artifactId>third-party-ncname-resolver</artifactId>
-         </dependency>
+        </dependency>
+
     </dependencies>
     <profiles>
-        <profile>
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>binding-kvp</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>binding-soap</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>enhanced-v20</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>hibernate-dao</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>transactional-v20</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>resultHandling-v20</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>develop</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>binding-kvp</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>binding-soap</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>binding-pox</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>binding-json</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>enhanced-v20</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>hibernate-dao</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>transactional-v20</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>resultHandling-v20</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>coding-sos-v100</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>coding-json</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>core-v100</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>coding-wml-v20</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>gda-operation</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>gda-hibernate</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-xml</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-core</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-hibernate</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-kvp</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-json</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>rest-code</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>rest-xml</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
         <profile>
             <id>oracle</id>
             <dependencies>
@@ -554,202 +439,6 @@
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-datasource-sqlserver</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>both</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>binding-kvp</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>binding-soap</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>kvp</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>binding-kvp</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>soap</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>binding-soap</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>pox</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>binding-pox</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>json</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>binding-json</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>coding-json</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>sosV100</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>coding-sos-v100</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>core-v100</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>enhancedV20</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>enhanced-v20</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>hibernate-dao</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>transactionalV20</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>transactional-v20</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>hibernate-dao</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>resultHandlingV20</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>resultHandling-v20</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>hibernate-dao</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>wml</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>coding-wml-v20</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>gda</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>gda-operation</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>gda-hibernate</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>do</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-xml</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-core</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-hibernate</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-kvp</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>restful</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-xml</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-core</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-hibernate</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-kvp</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>rest-code</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>rest-xml</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>diagram</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>52n-sos-coding-diagram</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>task</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>52n-sos-getResultTasking</artifactId>
                 </dependency>
             </dependencies>
         </profile>
@@ -826,91 +515,11 @@
             <dependencies>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>binding-kvp</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>binding-soap</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>binding-pox</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>binding-json</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>enhanced-v20</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>hibernate-dao</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-datasource-oracle</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>transactional-v20</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>resultHandling-v20</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>coding-sos-v100</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>coding-json</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>core-v100</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>coding-wml-v20</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>gda-operation</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>gda-hibernate</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-xml</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-core</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-hibernate</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-kvp</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>do-json</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>rest-code</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>rest-xml</artifactId>
+                    <artifactId>hibernate-datasource-sqlserver</artifactId>
                 </dependency>
             </dependencies>
         </profile>
@@ -955,24 +564,24 @@
                                     <cargo.remote.username>${remote.user}</cargo.remote.username>
 									<cargo.remote.password>${remote.password}</cargo.remote.password>
 
-                                     -->
-							</configuration>
-								<deployables>
-									<deployable>
-										<groupId>${project.groupId}</groupId>
-										<artifactId>${project.artifactId}</artifactId>
-										<type>war</type>
-									</deployable>
-								</deployables>
-							<!-- Deployer and Deployables configuration -->
-							<deployer>
-								<type>remote</type>
-							</deployer>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
+                                -->
+                            </configuration>
+                            <deployables>
+                                <deployable>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>${project.artifactId}</artifactId>
+                                    <type>war</type>
+                                </deployable>
+                            </deployables>
+                            <!-- Deployer and Deployables configuration -->
+                            <deployer>
+                                <type>remote</type>
+                            </deployer>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <!-- ################################################################################
         ######################## Profiles to preconfigure the webapp ########################
         ################################################################################# -->

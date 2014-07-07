@@ -1,30 +1,34 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.n52.sensorweb.sos</groupId>
-    <artifactId>52n-sos-third-party</artifactId>
-    <version>4.1.0-SNAPSHOT</version>
-  </parent>
-  <artifactId>third-party-ncname-resolver</artifactId>
-  <name>52°North Third Party - NCName resolver</name>
-  <description>Provides an implementation to determine if any given String is NCName conform according to the W3C XML specification.</description>
-  <packaging>jar</packaging>
-  <licenses>
-    <license>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.n52.sensorweb.sos</groupId>
+        <artifactId>52n-sos-third-party</artifactId>
+        <version>4.1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>third-party-ncname-resolver</artifactId>
+    <name>52°North Third Party - NCName resolver</name>
+    <description>Provides an implementation to determine if any given String is NCName conform according to the W3C XML specification.</description>
+    <packaging>jar</packaging>
+    <licenses>
+        <license>
             <name>
-                    BSD 2-clause &quot;Simplified&quot; or &quot;FreeBSD&quot;
-                    License
+                BSD 2-clause &quot;Simplified&quot; or &quot;FreeBSD&quot;
+                License
             </name>
             <url>http://www.spdx.org/licenses/BSD-2-Clause</url>
             <comments>This license type is derived from the term "Aduna BSD like license".</comments>
-    </license>
-  </licenses>
-  <dependencies>
-      <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>4.11</version>
-          <scope>test</scope>
-      </dependency>   
-  </dependencies>  
+        </license>
+    </licenses>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>

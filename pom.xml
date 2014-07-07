@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <!-- Remove the parent in the case of 52°North repos are not available -->
     <parent>
         <groupId>org.n52</groupId>
@@ -76,10 +76,14 @@
         <!-- Remove third party ncname resolver from SOS and use OXF instead -->
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
         <!-- managed dependencies with ${project.version} will be wrong in submodules
-            with different versions -->
+        with different versions -->
         <sos.version>4.1.0-SNAPSHOT</sos.version>
         <do.version>0.2.0-SNAPSHOT</do.version>
         <rest-binding.version>0.2.0-SNAPSHOT</rest-binding.version>
+        <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
+        <org.springframework.version>3.2.6.RELEASE</org.springframework.version>
+        <saxon.version>9.1.0.8</saxon.version>
+        <sos.test.suite.version>1.0.0-M4</sos.test.suite.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -337,13 +341,19 @@
                 <artifactId>junit</artifactId>
                 <version>4.11</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-core</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
-				<groupId>org.testng</groupId>
-				<artifactId>testng</artifactId>
-				<version>6.8.8</version>
-				<scope>test</scope>
-		    </dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>6.8.8</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
@@ -463,13 +473,13 @@
                 <artifactId>postgis-jdbc</artifactId>
                 <version>${postgis.version}</version>
                 <exclusions>
-                	 <exclusion>
+                    <exclusion>
                         <groupId>postgresql</groupId>
-  						<artifactId>postgresql</artifactId>
+                        <artifactId>postgresql</artifactId>
                     </exclusion>
                     <exclusion>
-                         <groupId>org.postgresql</groupId>
-                		 <artifactId>postgresql</artifactId>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -558,7 +568,190 @@
                 <artifactId>52n-xml-soap-v12</artifactId>
                 <version>${n52.common.xml.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-waterML-v20</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-waterML-dr-v20</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.xmlbeans</groupId>
+                <artifactId>xmlbeans-xpath</artifactId>
+                <version>2.6.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>net.sf.saxon</groupId>
+                        <artifactId>saxon</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>net.sourceforge.saxon</groupId>
+                <artifactId>saxon</artifactId>
+                <version>${saxon.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sourceforge.saxon</groupId>
+                <artifactId>saxon</artifactId>
+                <version>${saxon.version}</version>
+                <classifier>xpath</classifier>
+            </dependency>
+            <dependency>
+                <groupId>net.sourceforge.saxon</groupId>
+                <artifactId>saxon</artifactId>
+                <version>${saxon.version}</version>
+                <classifier>dom</classifier>
+            </dependency>
             <!-- Spring -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${org.springframework.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${org.springframework.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${org.springframework.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+                <version>${org.springframework.version}</version>
+                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${org.springframework.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${org.springframework.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-core</artifactId>
+                <version>${org.springframework.security.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-config</artifactId>
+                <version>${org.springframework.security.version}</version>
+                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-web</artifactId>
+                <version>${org.springframework.security.version}</version>
+                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-taglibs</artifactId>
+                <version>${org.springframework.security.version}</version>
+                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>test-suite-common</artifactId>
+                <version>${sos.test.suite.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>test-suite-sos-20</artifactId>
+                <version>${sos.test.suite.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${org.springframework.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jettison</groupId>
+                <artifactId>jettison</artifactId>
+                <version>1.3.2</version>
+            </dependency>
+            <dependency>
+                <groupId>jstl</groupId>
+                <artifactId>jstl</artifactId>
+                <version>1.2</version>
+            </dependency>
             <dependency>
                 <groupId>com.thetransactioncompany</groupId>
                 <artifactId>cors-filter</artifactId>
@@ -685,9 +878,9 @@
                 <version>${sos.version}</version>
             </dependency>
             <dependency>
-            	<groupId>xmlunit</groupId>
-            	<artifactId>xmlunit</artifactId>
-            	<version>1.5</version>
+                <groupId>xmlunit</groupId>
+                <artifactId>xmlunit</artifactId>
+                <version>1.5</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -702,9 +895,9 @@
                 </configuration>
             </plugin>
             <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>license-maven-plugin</artifactId>
-                <version>1.5</version> <executions> <execution> <id>download-licenses</id>
-                <goals> <goal>download-licenses</goal> </goals> </execution> </executions>
-                </plugin> -->
+            <version>1.5</version> <executions> <execution> <id>download-licenses</id>
+            <goals> <goal>download-licenses</goal> </goals> </execution> </executions>
+            </plugin> -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
@@ -764,8 +957,8 @@
                 </executions>
             </plugin>
             <plugin>
-				<groupId>com.mycila</groupId>
-				<artifactId>license-maven-plugin</artifactId>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
                 <inherited>false</inherited>
                 <configuration>
                     <aggregate>true</aggregate>
@@ -789,7 +982,7 @@
                         <include>**/*.xsl</include>
                         <include>**/*.sql</include>
                     </includes>
-                     <strictCheck>true</strictCheck>
+                    <strictCheck>true</strictCheck>
                     <properties>
                         <inceptionYear>2012</inceptionYear>
                         <latestYearOfContribution>${currentYearDynamic}</latestYearOfContribution>
@@ -797,7 +990,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                    	<id>check-license</id>
+                        <id>check-license</id>
                         <phase>initialize</phase>
                         <goals>
                             <goal>format</goal>
@@ -835,8 +1028,8 @@
                                 <pluginExecution>
                                     <pluginExecutionFilter>
                                         <groupId>org.jasig.maven</groupId>
-									    <artifactId>maven-notice-plugin</artifactId>
-									    <versionRange>[1.0.6.1,)</versionRange>
+                                        <artifactId>maven-notice-plugin</artifactId>
+                                        <versionRange>[1.0.6.1,)</versionRange>
                                         <goals>
                                             <goal>check</goal>
                                         </goals>
@@ -865,7 +1058,7 @@
                     </executions>
                     <configuration>
                         <!-- xmlbeans plugin only used to generate the classes not for compiling
-                            or jar generation. -->
+                        or jar generation. -->
                         <noJavac>true</noJavac>
                         <memoryInitialSize>256</memoryInitialSize>
                         <memoryMaximumSize>256</memoryMaximumSize>
@@ -906,9 +1099,9 @@
                     <version>2.4</version>
                 </plugin>
                 <plugin>
-					<groupId>com.mycila</groupId>
-					<artifactId>license-maven-plugin</artifactId>
-					<version>2.5</version>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>2.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -940,11 +1133,11 @@
                     <artifactId>cargo-maven2-plugin</artifactId>
                     <version>1.3.2</version>
                 </plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.16</version>
-				</plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.16</version>
+                </plugin>
                 <plugin>
                     <artifactId>maven-release-plugin</artifactId>
                     <configuration>
@@ -965,9 +1158,9 @@
         </pluginManagement>
     </build>
     <scm>
-    	<connection>scm:git:git://github.com/52North/SOS.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/52North/SOS.git</developerConnection>
-		<url>https://github.com/52North/SOS</url>
+        <connection>scm:git:git://github.com/52North/SOS.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/52North/SOS.git</developerConnection>
+        <url>https://github.com/52North/SOS</url>
     </scm>
     <repositories>
         <repository>
@@ -1034,21 +1227,9 @@
             </properties>
         </profile>
         <profile>
-            <id>diagram</id>
-            <modules>
-                <module>../52n-sos-coding-diagram</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>task</id>
-            <modules>
-                <module>../52n-sos-getResultTasking</module>
-            </modules>
-        </profile>
-        <profile>
             <id>release</id>
             <!-- a profile which shall be activated if a release is performed, it
-                is also automatic activated in the ci environment. -->
+            is also automatic activated in the ci environment. -->
             <activation>
                 <property>
                     <name>env</name>
@@ -1062,7 +1243,7 @@
                         <artifactId>maven-release-plugin</artifactId>
                         <configuration>
                             <!-- no build in release:prepare (takes to long time), so in bad cases
-                                release fails on perform -->
+                            release fails on perform -->
                             <preparationGoals>clean</preparationGoals>
                             <autoVersionSubmodules>true</autoVersionSubmodules>
                             <tagBase>https://svn.52north.org/svn/swe/main/SOS/Service/tags/</tagBase>
@@ -1072,28 +1253,28 @@
                 </plugins>
             </build>
         </profile>
-		<profile>
+        <profile>
             <id>create-license-list</id>
             <build>
                 <plugins>
-                  <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>license-maven-plugin</artifactId>
-                    <version>1.5</version>
-                    <configuration>
-                        <useMissingFile>true</useMissingFile>
-                        <fileTemplate>misc/license-as-csv.ftl</fileTemplate>
-                    </configuration>
-                    <executions>
-                      <execution>
-                        <id>first</id>
-                        <goals>
-                          <goal>aggregate-add-third-party</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                      </execution>
-                    </executions>
-                  </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                        <version>1.5</version>
+                        <configuration>
+                            <useMissingFile>true</useMissingFile>
+                            <fileTemplate>misc/license-as-csv.ftl</fileTemplate>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>first</id>
+                                <goals>
+                                    <goal>aggregate-add-third-party</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -1101,28 +1282,28 @@
             <id>notice</id>
             <build>
                 <plugins>
-                  <plugin>
-					   <groupId>org.jasig.maven</groupId>
-					   <artifactId>maven-notice-plugin</artifactId>
-					   <version>1.0.6.1</version>
-					   <configuration>
-					      <noticeTemplate>misc/NOTICE.template</noticeTemplate>
-					      <licenseMapping>
-					         <param>http://52north.github.io/cdn/licenses/license-mappings.xml</param>
-					         <param>misc/license-mappings.xml</param>
-					      </licenseMapping>
-					      <generateChildNotices>false</generateChildNotices>
-					   </configuration>
-					   <executions>
-					      <execution>
-					         <id>check-license</id>
-					         <phase>initialize</phase>
-					         <goals>
-					            <goal>generate</goal>
-					         </goals>
-					      </execution>
-					   </executions>
-					</plugin>
+                    <plugin>
+                        <groupId>org.jasig.maven</groupId>
+                        <artifactId>maven-notice-plugin</artifactId>
+                        <version>1.0.6.1</version>
+                        <configuration>
+                            <noticeTemplate>misc/NOTICE.template</noticeTemplate>
+                            <licenseMapping>
+                                <param>http://52north.github.io/cdn/licenses/license-mappings.xml</param>
+                                <param>misc/license-mappings.xml</param>
+                            </licenseMapping>
+                            <generateChildNotices>false</generateChildNotices>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>check-license</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>

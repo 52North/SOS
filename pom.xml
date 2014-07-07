@@ -32,7 +32,6 @@
         <module>hibernate</module>
         <module>extensions</module>
         <module>spring</module>
-        <module>data</module>
         <module>third-party</module>
         <module>webapp</module>
     </modules>
@@ -307,11 +306,6 @@
                 <artifactId>test</artifactId>
                 <version>${sos.version}</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>example-data</artifactId>
-                <version>${sos.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>

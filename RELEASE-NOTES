@@ -35,6 +35,10 @@ Changes since last release
       	  * send paging requests and process each chunk
       	  * chunk size is configurable via settings
       * reduced latency for GetObservation response
+    * Add datasource dependent DAO and ConnectionProvider loading
+      * This allows to include DAOs and ConnectionProvider for different datasources in the same SOS which can be selected during the installation.
+      * Corresponding to the selected datasource, the required DAOs and ConnectionProvider are loaded during the initialization.
+      * https://github.com/52North/SOS/commit/d906f74267e8efcc51e53703a391aafb29119178
  
  --- Changes ---
  
@@ -45,7 +49,22 @@ Changes since last release
     * Remove support for raw SQL execution in the admin interface because of security constraints 
       * https://github.com/52North/SOS/commit/ff5f8dd86f97024337f51492009559f11492bd7d
     * Update dependency versions:
-      * joda-time (2.3), json-schema-validator (2.2.3), json-schema-core (1.2.1), springframework (3.2.6)
+      * joda-time (2.3)
+      * json-schema-validator (2.2.3)
+      * json-schema-core (1.2.1)
+      * springframework (3.2.6)
+      * PostgreSQL JDBC (9.3-1101-jdbc4)
+      * PostGIS JDBC (2.1.3)
+      * Hibernate (4.3.5.Fina)
+    * Reduced Maven build profiles 
+      * https://github.com/52North/SOS/commit/279f815fd7372ab5cb3ac06add2995486f0c2402
+    * Switch to Java 7 as compiler/source/target version
+      * https://github.com/52North/SOS/commit/b1c172cd2b087b4a76eed8648e32952dee55c098
+    * Asynchronous cache serialization (see issue Cache serialization performance issue)
+      * https://github.com/52North/SOS/commit/09dcbdf8180bc0b7f260d435385254f58e50a78c
+    * Better SQL Exceptions: Create a composite exception and add all Throwable as a single exception.
+      * https://github.com/52North/SOS/commit/5b1ebe002aabc2d9108eaf196f8927605b77fc9b
+      
  
  --- Fixed bugs ---
    
@@ -58,6 +77,11 @@ Changes since last release
       * https://github.com/52North/SOS/commit/3dc6205
     * Fix SOS 1.0 schemaLocation randomly missing after restarts (https://github.com/52North/SOS/issues/45)
       * https://github.com/52North/SOS/commit/f849cc9
+    * Fix for Cache serialization performance issue
+      * After each InsertObservation the cache was directly serialized to the file. Thus, the insert requests were getting slower the more data were available.
+      * https://github.com/52North/SOS/commit/b1c172cd2b087b4a76eed8648e32952dee55c098
+    * Fix problem with duplicated entries in generated SQL scripts.
+      * https://github.com/52North/SOS/commit/6e70d910e6f8f7140d79f65c83250cf5370b73fc
  
  
 Release 52n-sos-4.0.1

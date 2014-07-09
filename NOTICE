@@ -14,7 +14,6 @@ This project includes:
   52°North SOS - Cache under GPLv2
   52°North SOS - Coding Modules under GPLv2
   52°North SOS - Core Modules under GPLv2
-  52°North SOS - Example Data under GPLv2
   52°North SOS - Extension Delete Observation under GPLv2
   52°North SOS - Extension Delete Observation - Hibernate DAO under GPLv2
   52°North SOS - Extension Delete Observation - JSON under GPLv2
@@ -73,13 +72,12 @@ This project includes:
   52°North SOS - Web Views under GPLv2
   52°North SOS - Webapp under GPLv2
   52°North Third Party - NCName resolver under BSD 2-clause "Simplified" or "FreeBSD"
-                    License
+                License
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   Commons Codec under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
-  Commons Logging under The Apache Software License, Version 2.0
   Core Hibernate O/RM functionality under GNU Lesser General Public License
   CORS Filter under The Apache Software License, Version 2.0
   dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)

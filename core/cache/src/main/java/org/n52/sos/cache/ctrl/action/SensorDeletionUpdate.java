@@ -82,10 +82,6 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
             }
         }
 
-        final Set<String> observationIdentifiers = cache.getObservationIdentifiersForProcedure(procedure);
-        cache.removeObservationIdentifiersForProcedure(procedure);
-        cache.removeObservationIdentifiers(observationIdentifiers);
-
         Set<String> offeringsNeedingReload = Sets.newHashSet();
         for (String offering : cache.getOfferingsForProcedure(procedure)) {
             cache.removeProcedureForOffering(offering, procedure);

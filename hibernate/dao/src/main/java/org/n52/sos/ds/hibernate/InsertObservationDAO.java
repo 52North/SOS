@@ -28,16 +28,18 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.util.Collection;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
+import org.hibernate.JDBCException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.n52.sos.ds.AbstractInsertObservationDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
@@ -66,6 +68,7 @@ import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.HTTPStatus;
 
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -74,7 +77,7 @@ import com.google.common.collect.Table;
 /**
  * Implementation of the abstract class AbstractInsertObservationDAO
  * @since 4.0.0
- * 
+ *
  */
 public class InsertObservationDAO extends AbstractInsertObservationDAO {
     private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
@@ -82,12 +85,17 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
     private final FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
 
     private static final int FLUSH_THRESHOLD = 50;
-    
+
     /**
      * constructor
      */
     public InsertObservationDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 
     @Override
@@ -97,8 +105,8 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
         response.setService(request.getService());
         response.setVersion(request.getVersion());
         Session session = null;
-        Transaction transaction = null;        
-        
+        Transaction transaction = null;
+
         // TODO: check unit and set if available and not defined in DB
         try {
             session = sessionHolder.getSession();
@@ -109,19 +117,19 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
 
             //cache/tracking objects to avoid redundant queries
             Map<AbstractFeature,FeatureOfInterest> featureCache = Maps.newHashMap();
-            Table<OmObservationConstellation,String,ObservationConstellation> obsConstOfferingHibernateObsConstTable = 
-                    HashBasedTable.create();            
-            Map<OmObservationConstellation,Collection<String>> obsConstOfferingCheckedMap = Maps.newHashMap();
-            Map<AbstractFeature,Collection<String>> relatedFeatureCheckedMap = Maps.newHashMap();
+            Table<OmObservationConstellation,String,ObservationConstellation> obsConstOfferingHibernateObsConstTable =
+                    HashBasedTable.create();
             Map<String,Codespace> codespaceCache = Maps.newHashMap();
             Map<String,Unit> unitCache = Maps.newHashMap();
-            
+
+            HashMultimap<OmObservationConstellation, String> obsConstOfferingCheckedMap = HashMultimap.create();
+            HashMultimap<AbstractFeature,String> relatedFeatureCheckedMap = HashMultimap.create();
 
             //counter for batch flushing
             int obsCount = 0;
 
             for (final OmObservation sosObservation : request.getObservations()) {
-                //check 
+                //check
                 if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()
                         && HibernateHelper.isEntitySupported(SpatialFilteringProfile.class, session)
                         && !sosObservation.isSetSpatialFilteringProfileParameter()) {
@@ -145,29 +153,26 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
                 for (final String offeringID : sosObsConst.getOfferings()) {
                     ObservationConstellation hObservationConstellation = obsConstOfferingHibernateObsConstTable.get(sosObsConst, offeringID);
                     if (hObservationConstellation == null) {
-                        if (!hasKeyOfferingBeenChecked(sosObsConst, offeringID, obsConstOfferingCheckedMap)) {
-                            try { 
-                                hObservationConstellation =
-                                        observationConstellationDAO.checkObservationConstellation(sosObsConst, offeringID,
-                                                session, Sos2Constants.InsertObservationParams.observationType.name());
+                        if (!obsConstOfferingCheckedMap.containsEntry(sosObsConst, offeringID)) {
+                            try {
+                                hObservationConstellation = observationConstellationDAO.checkObservationConstellation(sosObsConst, offeringID, session, Sos2Constants.InsertObservationParams.observationType.name());
                                 //add to cache table
                                 obsConstOfferingHibernateObsConstTable.put(sosObsConst, offeringID, hObservationConstellation);
                             } catch (final OwsExceptionReport owse) {
                                 exceptions.add(owse);
                             }
                             //mark as checked
-                            markKeyOfferingAsChecked(sosObsConst, offeringID, obsConstOfferingCheckedMap);
+                            obsConstOfferingCheckedMap.put(sosObsConst, offeringID);
                         }
                     }
                     if (hObservationConstellation != null) {
                         //get feature from local cache or create if necessary
                         hFeature = getFeature(sosObsConst.getFeatureOfInterest(), featureCache, session);
-                        
+
                         //only do feature checking once for each AbstractFeature/offering combo
-                        if (!hasKeyOfferingBeenChecked(sosObsConst.getFeatureOfInterest(), offeringID, relatedFeatureCheckedMap)) {
-                            featureOfInterestDAO.checkOrInsertFeatureOfInterestRelatedFeatureRelation(hFeature,
-                                    hObservationConstellation.getOffering(), session);
-                            markKeyOfferingAsChecked(sosObsConst.getFeatureOfInterest(), offeringID, relatedFeatureCheckedMap);
+                        if (!relatedFeatureCheckedMap.containsEntry(sosObsConst.getFeatureOfInterest(), offeringID)) {
+                            featureOfInterestDAO.checkOrInsertFeatureOfInterestRelatedFeatureRelation(hFeature, hObservationConstellation.getOffering(), session);
+                            relatedFeatureCheckedMap.put(sosObsConst.getFeatureOfInterest(), offeringID);
                         }
 
                         hObservationConstellations.add(hObservationConstellation);
@@ -180,7 +185,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
                         observationDAO.insertObservationSingleValue(hObservationConstellations, hFeature, sosObservation,
                                 codespaceCache, unitCache, session);
                     } else if (sosObservation.getValue() instanceof MultiObservationValues) {
-                        observationDAO.insertObservationMultiValue(hObservationConstellations, hFeature, sosObservation, 
+                        observationDAO.insertObservationMultiValue(hObservationConstellations, hFeature, sosObservation,
                                 codespaceCache, unitCache, session);
                     }
                 }
@@ -221,13 +226,25 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
                  * "Observation with same values already contained in database";
                  * exceptionMsg =
                  * "Observation identifier already contained in database"; }
-                 * 
+                 *
                  * }
                  */
 
                 status = HTTPStatus.BAD_REQUEST;
             }
-            throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg).setStatus(status);
+
+            // if this is a JDBCException, pass the underlying SQLException as the causedBy exception
+            // so that we can show the actual error in the OwsExceptionReport when batching
+            if (he instanceof JDBCException) {
+                SQLException sqle = ((JDBCException) he).getSQLException();
+                CompositeOwsException  e = new CompositeOwsException();
+                for (Throwable next : sqle) {
+                    e.add(new NoApplicableCodeException().causedBy(next));
+                }
+                throw e.setStatus(status);
+            } else {
+                throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg).setStatus(status);
+            }
         } finally {
             sessionHolder.returnSession(session);
         }
@@ -257,29 +274,9 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
         return hFeature;
     }
 
-    private <T> boolean hasKeyOfferingBeenChecked(T key, String offeringId,
-            Map<T,Collection<String>> map) {
-        return getKeyCheckedOfferingIds(key, map).contains(offeringId); 
-    }
-
-    private <T> void markKeyOfferingAsChecked(T key, String offeringId,
-            Map<T,Collection<String>> map) {
-        getKeyCheckedOfferingIds(key, map).add(offeringId); 
-    }
-    
-    private <T> Collection<String> getKeyCheckedOfferingIds(T key,
-            Map<T,Collection<String>> map) {
-        Collection<String> offeringIds = map.get(key);
-        if (offeringIds == null) {
-            offeringIds = Sets.newHashSet();
-            map.put(key, offeringIds);
-        }
-        return offeringIds;
-    }
-    
     /**
      * Get parent offerings for requested procedure and observable property
-     * 
+     *
      * @param sosObsConst
      *            Requested observation constellation
      * @return Requested offering and valid parent procedure offerings.

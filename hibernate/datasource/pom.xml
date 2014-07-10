@@ -10,7 +10,7 @@
     <artifactId>hibernate-datasource</artifactId>
     <packaging>pom</packaging>
     <name>52°North SOS - Hibernate Datasources</name>
-    <description>52°North Sensor Observation Service Hibernate common module</description>
+    <description>52°North Sensor Observation Service Hibernate datasource module</description>
     <modules>
         <module>postgres</module>
         <module>h2</module>

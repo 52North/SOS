@@ -26,7 +26,7 @@
 	<swes:extension xsi:type="swe:TextPropertyType">
 		<swe:Text>
 			<swe:identifier>language</swe:identifier>
-			<swe:value>deu</swe:value>
+			<swe:value>ger</swe:value>
 		</swe:Text>
 	</swes:extension>
 

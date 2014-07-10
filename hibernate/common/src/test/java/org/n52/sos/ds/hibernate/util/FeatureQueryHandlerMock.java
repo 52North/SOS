@@ -36,6 +36,7 @@ import java.util.UUID;
 
 import org.n52.sos.ds.AbstractFeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
@@ -108,6 +109,10 @@ public class FeatureQueryHandlerMock extends AbstractFeatureQueryHandler {
     @Override
     public int getStorage3DEPSG() {
         return getStorage3DEPSG();
+    }
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 
     @Override

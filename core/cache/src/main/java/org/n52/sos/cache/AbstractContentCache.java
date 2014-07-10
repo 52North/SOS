@@ -332,6 +332,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     private SetMultiMap<String, String> observablePropertiesForProcedures = newSynchronizedSetMultiMap();
 
+    @Deprecated
     private SetMultiMap<String, String> observationIdentifiersForProcedures = newSynchronizedSetMultiMap();
 
     private SetMultiMap<String, String> observationTypesForOfferings = newSynchronizedSetMultiMap();
@@ -374,6 +375,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     private Set<String> featuresOfInterest = newSynchronizedSet();
 
+    @Deprecated
     private Set<String> observationIdentifiers = newSynchronizedSet();
 
     private Set<String> procedures = newSynchronizedSet();
@@ -493,6 +495,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     /**
      * @return the relating procedure -> observation identifier
      */
+    @Deprecated
     protected SetMultiMap<String, String> getObservationIdentifiersForProceduresMap() {
         return this.observationIdentifiersForProcedures;
     }
@@ -661,6 +664,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     /**
      * @return the observation identifiers
      */
+    @Deprecated
     protected Set<String> getObservationIdentifiersSet() {
         return this.observationIdentifiers;
     }
@@ -744,12 +748,11 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                 childProceduresForProcedures, compositePhenomenonForOfferings, featuresOfInterestForOfferings,
                 featuresOfInterestForResultTemplates, observablePropertiesForCompositePhenomenons,
                 observablePropertiesForOfferings, observablePropertiesForProcedures,
-                observationIdentifiersForProcedures, observationTypesForOfferings,
-                observedPropertiesForResultTemplates, offeringsForObservableProperties, offeringsForProcedures,
+                observationTypesForOfferings, observedPropertiesForResultTemplates, offeringsForObservableProperties, offeringsForProcedures,
                 parentFeaturesForFeaturesOfInterest, parentProceduresForProcedures, proceduresForFeaturesOfInterest,
                 proceduresForObservableProperties, proceduresForOfferings, hiddenChildProceduresForOfferings,
                 relatedFeaturesForOfferings, resultTemplatesForOfferings, rolesForRelatedFeatures,
-                envelopeForOfferings, nameForOfferings, i18nNameForOfferings, i18nDescriptionForOfferings, epsgCodes, featuresOfInterest, observationIdentifiers,
+                envelopeForOfferings, nameForOfferings, i18nNameForOfferings, i18nDescriptionForOfferings, epsgCodes, featuresOfInterest,
                 procedures, resultTemplates, offerings, globalEnvelope, globalResultTimeEnvelope,
                 globalPhenomenonTimeEnvelope, supportedLanguages);
     }
@@ -783,9 +786,6 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                             other.getObservablePropertiesForOfferingsMap())
                     && Objects.equal(this.observablePropertiesForProcedures,
                             other.getObservablePropertiesForProceduresMap())
-                    && Objects.equal(this.observationIdentifiersForProcedures,
-                            other.getObservationIdentifiersForProceduresMap())
-                    && Objects.equal(this.observationTypesForOfferings, other.getObservationTypesForOfferingsMap())
                     && Objects.equal(this.observedPropertiesForResultTemplates,
                             other.getObservablePropertiesForResultTemplatesMap())
                     && Objects.equal(this.offeringsForObservableProperties,
@@ -810,7 +810,6 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                     && Objects.equal(this.i18nDescriptionForOfferings, other.getI18nDescriptionForOfferingsMap())
                     && Objects.equal(this.epsgCodes, other.getEpsgCodesSet())
                     && Objects.equal(this.featuresOfInterest, other.getFeaturesOfInterestSet())
-                    && Objects.equal(this.observationIdentifiers, other.getObservationIdentifiersSet())
                     && Objects.equal(this.procedures, other.getProceduresSet())
                     && Objects.equal(this.resultTemplates, other.getResultTemplatesSet())
                     && Objects.equal(this.globalEnvelope, other.getGlobalEnvelope())

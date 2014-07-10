@@ -29,9 +29,7 @@
 package org.n52.sos.ds.datasource;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
@@ -49,7 +47,6 @@ import org.hibernate.spatial.dialect.postgis.PostgisDialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -245,15 +242,15 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
                 checkedSchema.add(string);
             }
         }
-        // remove dublicated entries
-        Set<String> set = Sets.newHashSet(checkedSchema);
-        List<String> nonDublicated = Lists.newLinkedList();
-        for (String string : checkedSchema) {
-            if (set.contains(string)) {
-                nonDublicated.add(string);
-            }
-        }
-        return nonDublicated.toArray(new String[nonDublicated.size()]);
+        return checkScriptForGeneratedAndDuplicatedEntries(checkedSchema.toArray(new String[checkedSchema.size()]));
     }
-    
+
+    @Override
+    public Properties getDatasourceProperties(Map<String, Object> settings) {
+        Properties p = super.getDatasourceProperties(settings);
+        p.put(HibernateConstants.C3P0_PREFERRED_TEST_QUERY, "SELECT 1");
+        return p;
+    }
+
+
 }

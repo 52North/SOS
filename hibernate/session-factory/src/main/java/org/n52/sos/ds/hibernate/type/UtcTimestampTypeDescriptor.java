@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.type;
 
+import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -74,6 +75,16 @@ public class UtcTimestampTypeDescriptor extends TimestampTypeDescriptor {
             @Override
             protected X doExtract(ResultSet rs, String name, WrapperOptions options) throws SQLException {
                 return javaTypeDescriptor.wrap(rs.getTimestamp(name, Calendar.getInstance(UTC)), options);
+            }
+
+            @Override
+            protected X doExtract(CallableStatement statement, int index, WrapperOptions options) throws SQLException {
+                    return javaTypeDescriptor.wrap( statement.getTimestamp( index , Calendar.getInstance(UTC)), options );
+            }
+
+            @Override
+            protected X doExtract(CallableStatement statement, String name, WrapperOptions options) throws SQLException {
+                    return javaTypeDescriptor.wrap( statement.getTimestamp( name, Calendar.getInstance(UTC) ), options );
             }
         };
     }

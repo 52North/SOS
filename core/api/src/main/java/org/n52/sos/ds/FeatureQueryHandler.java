@@ -44,7 +44,7 @@ import org.n52.sos.ogc.sos.SosEnvelope;
  * @since 4.0.0
  * 
  */
-public interface FeatureQueryHandler {
+public interface FeatureQueryHandler extends DatasourceDaoIdentifier {
 
     /**
      * Query feature data from data source for an identifier

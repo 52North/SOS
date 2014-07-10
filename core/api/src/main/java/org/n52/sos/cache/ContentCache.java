@@ -346,6 +346,7 @@ public interface ContentCache extends Serializable {
     /**
      * @return all observation identifiers
      */
+    @Deprecated
     Set<String> getObservationIdentifiers();
 
     /**
@@ -356,6 +357,7 @@ public interface ContentCache extends Serializable {
      *
      * @return {@code true} if it exists
      */
+    @Deprecated
     boolean hasObservationIdentifier(String observationIdentifier);
 
     /**
@@ -366,6 +368,7 @@ public interface ContentCache extends Serializable {
      *
      * @return the observation identifiers
      */
+    @Deprecated
     Set<String> getObservationIdentifiersForProcedure(String procedure);
 
     /**

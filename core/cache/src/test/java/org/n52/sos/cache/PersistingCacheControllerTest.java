@@ -40,7 +40,7 @@ import org.n52.sos.cache.ctrl.ContentCacheControllerImpl;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class PersistingCacheControllerTest extends AbstractCacheControllerTest {
@@ -56,7 +56,7 @@ public class PersistingCacheControllerTest extends AbstractCacheControllerTest {
         cc.cleanup();
         assertThat(getTempFile(), is(existing()));
         cc = new TestableInMemoryCacheController();
-        assertThat(getTempFile(), is(not(existing())));
+        assertThat(getTempFile(), is(existing()));
         assertThat(cc.getCache().getObservationIdentifiers(), contains(IDENTIFIER));
     }
 

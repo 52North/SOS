@@ -1,7 +1,7 @@
 # the datasource class (only needed for the admin)
 org.n52.sos.ds.Datasource=org.n52.sos.ds.datasource.PostgresDatasource
 
-# (currently absolute) path to mapping files
+# path to mapping files
 HIBERNATE_DIRECTORY=/mapping/core;/mapping/old/observation;/mapping/transactional;/mapping/old/spatialFilteringProfile;
 
 # hibernate/postgres configuration

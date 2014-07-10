@@ -12,19 +12,23 @@
   <licenses>
     <license>
             <name>
-                    BSD 2-clause &quot;Simplified&quot; or &quot;FreeBSD&quot;
-                    License
+                BSD 2-clause &quot;Simplified&quot; or &quot;FreeBSD&quot;
+                License
             </name>
             <url>http://www.spdx.org/licenses/BSD-2-Clause</url>
             <comments>This license type is derived from the term "Aduna BSD like license".</comments>
-    </license>
-  </licenses>
-  <dependencies>
-      <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>4.11</version>
-          <scope>test</scope>
-      </dependency>   
-  </dependencies>  
+        </license>
+    </licenses>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>

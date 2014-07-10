@@ -28,6 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.cache.base;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 
@@ -36,12 +39,16 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
+
 /**
  *
  * @author Christian Autermann <c.autermann@52north.org>
  *
  * @since 4.0.0
  */
+@Deprecated
 public class ObservationIdentifiersCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationIdentifiersCacheUpdate.class);
 

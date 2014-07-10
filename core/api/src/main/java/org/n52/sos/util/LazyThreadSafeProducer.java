@@ -32,9 +32,7 @@ import java.util.Locale;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.i18n.LocaleHelper;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -66,7 +64,8 @@ public abstract class LazyThreadSafeProducer<T> implements Producer<T> {
     @Override
     public T get()
             throws ConfigurationException {
-        return get(null);
+        Locale l = null;
+        return get(l);
     }
 
     @Override
@@ -90,6 +89,11 @@ public abstract class LazyThreadSafeProducer<T> implements Producer<T> {
                 }
             }
         }
+    }
+    
+    @Override
+    public T get(String identification) {
+        return get();
     }
 
     protected abstract T create(Locale language)

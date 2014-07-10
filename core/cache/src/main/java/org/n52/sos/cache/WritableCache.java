@@ -91,6 +91,7 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
+    @Deprecated
     public void addObservationIdentifier(final String observationIdentifier) {
         notNullOrEmpty(OBSERVATION_IDENTIFIER, observationIdentifier);
         LOG.trace("Adding ObservationIdentifier {}", observationIdentifier);
@@ -136,6 +137,7 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
+    @Deprecated
     public void addObservationIdentifiers(final Collection<String> observationIdentifiers) {
         noNullValues(OBSERVATION_IDENTIFIERS, observationIdentifiers);
         for (final String observationIdentifier : observationIdentifiers) {
@@ -152,6 +154,7 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
+    @Deprecated
     public void removeObservationIdentifier(final String observationIdentifier) {
         notNullOrEmpty(OBSERVATION_IDENTIFIER, observationIdentifier);
         LOG.trace("Removing ObservationIdentifier {}", observationIdentifier);
@@ -159,6 +162,7 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
+    @Deprecated
     public void removeObservationIdentifiers(final Collection<String> observationIdentifiers) {
         noNullValues(OBSERVATION_IDENTIFIERS, observationIdentifiers);
         for (final String observationIdentifier : observationIdentifiers) {
@@ -304,6 +308,7 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
+    @Deprecated
     public void setObservationIdentifiers(final Collection<String> observationIdentifiers) {
         LOG.trace("Setting ObservationIdentifiers");
         getObservationIdentifiersSet().clear();
@@ -482,6 +487,7 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
+    @Deprecated
     public void addObservationIdentifierForProcedure(final String procedure, final String observationIdentifier) {
         notNullOrEmpty(PROCEDURE, procedure);
         notNullOrEmpty(OBSERVABLE_PROPERTY, observationIdentifier);
@@ -749,6 +755,7 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
+    @Deprecated
     public void removeObservationIdentifierForProcedure(final String procedure, final String observationIdentifier) {
         notNullOrEmpty(PROCEDURE, procedure);
         notNullOrEmpty(OBSERVATION_IDENTIFIER, observationIdentifier);
@@ -757,6 +764,7 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
+    @Deprecated
     public void removeObservationIdentifiersForProcedure(final String procedure) {
         notNullOrEmpty(PROCEDURE, procedure);
         LOG.trace("Removing observationIdentifiers for procedure {}", procedure);
@@ -976,6 +984,7 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
+    @Deprecated
     public void setObservationIdentifiersForProcedure(final String procedure,
             final Collection<String> observationIdentifiers) {
         notNullOrEmpty(PROCEDURE, procedure);

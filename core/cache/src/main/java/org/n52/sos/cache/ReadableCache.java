@@ -74,6 +74,7 @@ public class ReadableCache extends AbstractContentCache {
     }
 
     @Override
+    @Deprecated
     public Set<String> getObservationIdentifiers() {
         return copyOf(getObservationIdentifiersSet());
     }
@@ -274,6 +275,7 @@ public class ReadableCache extends AbstractContentCache {
     }
 
     @Override
+    @Deprecated
     public Set<String> getObservationIdentifiersForProcedure(final String procedure) {
         return copyOf(getObservationIdentifiersForProceduresMap().get(procedure));
     }
@@ -367,6 +369,7 @@ public class ReadableCache extends AbstractContentCache {
     }
 
     @Override
+    @Deprecated
     public boolean hasObservationIdentifier(final String observationIdentifier) {
         return getObservationIdentifiers().contains(observationIdentifier);
     }

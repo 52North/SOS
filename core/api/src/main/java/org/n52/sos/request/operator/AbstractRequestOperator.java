@@ -65,6 +65,7 @@ import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.service.profile.Profile;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -324,18 +325,21 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
             throws OwsExceptionReport {
         if (observationID == null || observationID.isEmpty()) {
             throw new MissingParameterValueException(parameterName);
-        } else if (!getCache().hasObservationIdentifier(observationID)) {
-            throw new InvalidParameterValueException(parameterName, observationID);
+//        } else if (!getCache().hasObservationIdentifier(observationID)) {
+//            throw new InvalidParameterValueException(parameterName, observationID);
         }
     }
 
     protected void checkObservationIDs(final Collection<String> observationIDs, final String parameterName)
             throws OwsExceptionReport {
+        if (CollectionHelper.isEmpty(observationIDs)) {
+            throw new MissingParameterValueException(parameterName);
+        }
         if (observationIDs != null) {
             final CompositeOwsException exceptions = new CompositeOwsException();
-            for (final String procedureID : observationIDs) {
+            for (final String observationID : observationIDs) {
                 try {
-                    checkObservationID(procedureID, parameterName);
+                    checkObservationID(observationID, parameterName);
                 } catch (final OwsExceptionReport owse) {
                     exceptions.add(owse);
                 }

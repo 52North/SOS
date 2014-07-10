@@ -169,6 +169,7 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
     /**
      * Removes the observation identifier from the cache (if it exists).
      */
+    @Deprecated
     protected void updateIdentifiers() {
         final String procedure = o.getObservationConstellation().getProcedure().getIdentifier();
         final String identifier = o.getIdentifierCodeWithAuthority() == null ? null : o.getIdentifierCodeWithAuthority().getValue();

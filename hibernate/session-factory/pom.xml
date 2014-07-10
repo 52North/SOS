@@ -30,19 +30,4 @@
             <artifactId>hibernate-spatial</artifactId>
         </dependency>
     </dependencies>
-    <profiles>
-        <profile>
-            <id>postgresql</id>
-            <dependencies>
-                <dependency>
-                    <groupId>postgresql</groupId>
-                    <artifactId>postgresql</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.postgis</groupId>
-                    <artifactId>postgis-jdbc</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
 </project>

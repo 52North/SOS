@@ -54,6 +54,8 @@ import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.I18NDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.sos.ds.hibernate.dao.CodespaceDAO;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
@@ -584,5 +586,10 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         } else {
             return Collections.emptyMap();
         }
+    }
+
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 }

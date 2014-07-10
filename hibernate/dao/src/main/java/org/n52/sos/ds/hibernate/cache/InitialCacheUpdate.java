@@ -67,7 +67,7 @@ public class InitialCacheUpdate extends CompositeCacheUpdate {
         //(which spawn their own threads)
         super(new ParallelCacheUpdate(threadCount, new SridCacheUpdate(), new ObservablePropertiesCacheUpdate(),
                 new FeatureOfInterestCacheUpdate(), new RelatedFeaturesCacheUpdate(), new CompositePhenomenonCacheUpdate(),
-                new ObservationIdentifiersCacheUpdate(), new ResultTemplateCacheUpdate(), new ObservationTimeCacheUpdate()),
+                new ResultTemplateCacheUpdate(), new ObservationTimeCacheUpdate()),
                 new I18NCacheUpdate(),new OfferingCacheUpdate(threadCount), new ProcedureCacheUpdate(threadCount));
     }
 }

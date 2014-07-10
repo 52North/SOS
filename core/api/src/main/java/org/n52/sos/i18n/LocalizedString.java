@@ -44,7 +44,7 @@ import com.google.common.base.Objects;
  * @author Christian Autermann
  * @since 4.2.0
  */
-public class LocalizedString {
+public class LocalizedString implements Serializable {
     private static final Locale NULL_LOCALE = new Locale("");
     private static final long serialVersionUID = 8336541273458492969L;
     private final Locale lang;

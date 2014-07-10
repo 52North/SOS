@@ -48,6 +48,9 @@ public interface Producer<T> {
      * @return Default producer result
      */
     T get();
+    
+    
+    T get(String identification);
 
     /**
      * Get language specific Producer result

@@ -50,6 +50,9 @@ import org.n52.sos.ds.CacheFeederDAO;
 import org.n52.sos.ds.CacheFeederDAORepository;
 import org.n52.sos.ds.ConnectionProvider;
 import org.n52.sos.ds.DataConnectionProvider;
+import org.n52.sos.ds.ConnectionProviderIdentificator;
+import org.n52.sos.ds.Datasource;
+import org.n52.sos.ds.DatasourceDaoIdentifier;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.IFeatureConnectionProvider;
@@ -77,6 +80,7 @@ import org.n52.sos.util.Cleanupable;
 import org.n52.sos.util.ConfiguringSingletonServiceLoader;
 import org.n52.sos.util.Producer;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 /**
@@ -96,8 +100,8 @@ public class Configurator implements Cleanupable {
     private static final Lock INIT_LOCK = new ReentrantLock();
 
     /**
-     * @return Returns the instance of the Configurator. <tt>null</tt> will
-     *         be returned if the parameterized
+     * @return Returns the instance of the Configurator. <tt>null</tt> will be
+     *         returned if the parameterized
      *         {@link #createInstance(Properties, String)} method was not
      *         invoked before. Usually this will be done in the SOS.
      *         <p/>
@@ -228,6 +232,10 @@ public class Configurator implements Cleanupable {
 
     private Set<String> providedJdbcDrivers = Sets.newHashSet();
 
+    private String connectionProviderIdentificator;
+
+    private String datasourceDaoIdentificator;
+
     /**
      * private constructor due to the singelton pattern.
      *
@@ -241,19 +249,57 @@ public class Configurator implements Cleanupable {
     private Configurator(final Properties connectionProviderConfig, final String basepath)
             throws ConfigurationException {
         if (basepath == null) {
-            final String message = "No basepath available!";
-            LOGGER.info(message);
-            throw new ConfigurationException(message);
+            logAndThrowConfigurationException("No basepath available!");
         }
         if (connectionProviderConfig == null) {
-            final String message = "No connection provider configuration available!";
-            LOGGER.info(message);
-            throw new ConfigurationException(message);
+            logAndThrowConfigurationException("No connection provider configuration available!");
         }
-
         this.basepath = basepath;
         dataConnectionProviderProperties = connectionProviderConfig;
+        getIdentificators(dataConnectionProviderProperties);
+        if (Strings.isNullOrEmpty(connectionProviderIdentificator)) {
+            logAndThrowConfigurationException("No connection provider identificator available!");
+        }
+        if (Strings.isNullOrEmpty(datasourceDaoIdentificator)) {
+            logAndThrowConfigurationException("No datasource DAO identificator available!");
+        }
         LOGGER.info("Configurator initialized: [basepath={}]", this.basepath, dataConnectionProviderProperties);
+    }
+
+    /**
+     * Get the {@link ConnectionProviderIdentificator} and
+     * {@link DatasourceDaoIdentifier} values from {@link Datasource}
+     * implementation
+     * 
+     * @param dataConnectionProviderProperties
+     *            Datasource properties
+     */
+    private void getIdentificators(Properties dataConnectionProviderProperties2) {
+        String className = dataConnectionProviderProperties.getProperty(Datasource.class.getCanonicalName());
+        if (className == null) {
+            LOGGER.error("Can not find datasource class in datasource.properties!");
+            throw new ConfigurationException("Missing Datasource Property!");
+        }
+        try {
+            Datasource datasource = (Datasource) Class.forName(className).newInstance();
+            connectionProviderIdentificator = datasource.getConnectionProviderIdentifier();
+            datasourceDaoIdentificator = datasource.getDatasourceDaoIdentifier();
+        } catch (ClassNotFoundException ex) {
+            LOGGER.error("Can not instantiate Datasource!", ex);
+            throw new ConfigurationException(ex);
+        } catch (InstantiationException ex) {
+            LOGGER.error("Can not instantiate Datasource!", ex);
+            throw new ConfigurationException(ex);
+        } catch (IllegalAccessException ex) {
+            LOGGER.error("Can not instantiate Datasource!", ex);
+            throw new ConfigurationException(ex);
+        }
+
+    }
+
+    private void logAndThrowConfigurationException(String message) {
+        LOGGER.info(message);
+        throw new ConfigurationException(message);
     }
 
     /**
@@ -268,13 +314,14 @@ public class Configurator implements Cleanupable {
         ServiceConfiguration.getInstance();
 
         initializeConnectionProviders();
+        CacheFeederDAORepository.createInstance(getDatasourceDaoIdentificator());
 
         serviceIdentificationFactory = new SosServiceIdentificationFactory();
         serviceProviderFactory = new SosServiceProviderFactory();
-        OperationDAORepository.getInstance();
+        OperationDAORepository.createInstance(getDatasourceDaoIdentificator());
         ServiceOperatorRepository.getInstance();
         CodingRepository.getInstance();
-        featureQueryHandler = loadAndConfigure(FeatureQueryHandler.class, false);
+        featureQueryHandler = loadAndConfigure(FeatureQueryHandler.class, false, getDatasourceDaoIdentificator());
         ConverterRepository.getInstance();
         RequestResponseModifierRepository.getInstance();
         RequestOperatorRepository.getInstance();
@@ -561,10 +608,10 @@ public class Configurator implements Cleanupable {
         checkForProvidedJdbc();
         dataConnectionProvider =
                 ConfiguringSingletonServiceLoader.<ConnectionProvider> loadAndConfigure(DataConnectionProvider.class,
-                        true);
+                        true, getConnectionProviderIdentificator());
         featureConnectionProvider =
                 ConfiguringSingletonServiceLoader.<ConnectionProvider> loadAndConfigure(
-                        IFeatureConnectionProvider.class, false);
+                        IFeatureConnectionProvider.class, false, getConnectionProviderIdentificator());
         dataConnectionProvider.initialize(dataConnectionProviderProperties);
         if (featureConnectionProvider != null) {
             featureConnectionProvider
@@ -597,5 +644,19 @@ public class Configurator implements Cleanupable {
         cleanup(contentCacheController);
         cleanup(tasking);
         instance = null;
+    }
+
+    /**
+     * @return the connectionProviderIdentificator
+     */
+    public String getConnectionProviderIdentificator() {
+        return connectionProviderIdentificator;
+    }
+
+    /**
+     * @return the datasourceDaoIdentificator
+     */
+    public String getDatasourceDaoIdentificator() {
+        return datasourceDaoIdentificator;
     }
 }

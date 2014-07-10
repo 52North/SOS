@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.AbstractGetObservationDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.AbstractSpatialFilteringProfileDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
@@ -143,7 +144,11 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
     public GetObservationDAO() {
         super(SosConstants.SOS);
     }
-
+    
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    }
     @Override
     public GetObservationResponse getObservation(final GetObservationRequest sosRequest) throws OwsExceptionReport {
         if (sosRequest.getVersion().equals(Sos1Constants.SERVICEVERSION)

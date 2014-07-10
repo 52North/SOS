@@ -297,22 +297,6 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     }
 
     @Test
-    public void should_contain_observation_id_after_InsertObservation() throws OwsExceptionReport {
-        updateCacheWithSingleObservation(PROCEDURE);
-
-        assertTrue("observation id NOT in cache", getCache().getObservationIdentifiers().contains(OBSERVATION_ID));
-    }
-
-    @Test
-    public void should_contain_observation_id_to_offering_relation_after_InsertObservation() throws OwsExceptionReport {
-        insertObservationPreparation();
-
-        assertTrue("procedure -> observation-identifier relation NOT in cache", !getCache()
-                .getObservationIdentifiersForProcedure(PROCEDURE).isEmpty()
-                && getCache().getObservationIdentifiersForProcedure(PROCEDURE).contains(OBSERVATION_ID));
-    }
-
-    @Test
     public void should_contain_procedure_after_InsertSensor() throws OwsExceptionReport {
 
         updateCacheWithInsertSensor(PROCEDURE);
@@ -565,22 +549,6 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     }
 
     @Test
-    public void should_not_contain_procedure_to_observation_ids_relations_after_DeleteSensor()
-            throws OwsExceptionReport {
-        deleteSensorPreparation();
-
-        assertTrue("procedure -> observation ids relations STILL in cache", getCache()
-                .getObservationIdentifiersForProcedure(PROCEDURE).isEmpty());
-    }
-
-    @Test
-    public void should_not_contain_removed_observation_ids_after_DeleteSensor() throws OwsExceptionReport {
-        deleteSensorPreparation();
-
-        assertTrue("observation identifiers STILL in cache", getCache().getObservationIdentifiers().isEmpty());
-    }
-
-    @Test
     public void should_not_contain_offering_observable_property_relations_after_DeleteSensor()
             throws OwsExceptionReport {
         deleteSensorPreparation();
@@ -784,22 +752,6 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
         assertTrue("offering -> observation type relation NOT in cache",
                 getCache().getObservationTypesForOffering(OFFERING).contains(OBS_TYPE_SWE_ARRAY_OBSERVATION));
-    }
-
-    @Test
-    public void should_contain_observation_id_after_InsertResult() throws OwsExceptionReport {
-        insertResultPreparation();
-
-        assertTrue("observation id NOT in cache", getCache().getObservationIdentifiers().contains(OBSERVATION_ID));
-    }
-
-    @Test
-    public void should_contain_observation_id_to_offering_relation_after_InsertResult() throws OwsExceptionReport {
-        updateCacheWithInsertSensor(PROCEDURE);
-        insertResultPreparation();
-
-        assertTrue("procedure -> observation-identifier relation NOT in cache", getCache()
-                .getObservationIdentifiersForProcedure(PROCEDURE).contains(OBSERVATION_ID));
     }
 
     @Test

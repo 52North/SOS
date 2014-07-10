@@ -556,7 +556,7 @@ public enum InspireLanguageISO6392B {
      */
     public static InspireLanguageISO6392B fromValue(String v) {
         for (InspireLanguageISO6392B c : InspireLanguageISO6392B.values()) {
-            if (c.value.equals(v)) {
+            if (c.value.equalsIgnoreCase(v)) {
                 return c;
             }
         }
@@ -576,7 +576,7 @@ public enum InspireLanguageISO6392B {
      */
     public static InspireLanguageISO6392B fromValue(InspireEuLanguageISO6392B v) {
         for (InspireLanguageISO6392B c : InspireLanguageISO6392B.values()) {
-            if (c.value.equals(v.value())) {
+            if (c.value.equalsIgnoreCase(v.value())) {
                 return c;
             }
         }
@@ -594,7 +594,7 @@ public enum InspireLanguageISO6392B {
      */
     public static InspireLanguageISO6392B fromValue(Locale v) {
         for (InspireLanguageISO6392B c : InspireLanguageISO6392B.values()) {
-            if (c.value.equals(v.getISO3Country())) {
+            if (c.value.equalsIgnoreCase(v.getISO3Country()) || c.value.equalsIgnoreCase(v.getISO3Language())) {
                 return c;
             }
         }

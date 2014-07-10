@@ -177,7 +177,7 @@ public class InspireEncoderTest {
     
     private void validate(XmlObject xmlObject) throws SAXException, IOException {
         SchemaFactory sf = SchemaFactory.newInstance(
-        XMLConstants.W3C_XML_SCHEMA_NS_URI );
+        XMLConstants.XML_NS_URI );
         Schema schema = sf.newSchema(InspireEncoderTest.class.getResource("/inspire_dls/1.0/inspire_dls.xsd"));
         Validator validator = schema.newValidator();
         validator.validate(new DOMSource(xmlObject.getDomNode()));

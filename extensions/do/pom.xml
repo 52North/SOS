@@ -29,27 +29,6 @@
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd_HH-mm</maven.build.timestamp.format>
     </properties>
-    <profiles>
-        <profile>
-            <id>release</id>
-            <!-- a profile which shall be activated if a release is performed -->
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-release-plugin</artifactId>
-                        <configuration>
-                            <!-- no build in release:prepare (takes to long time), so in bad cases
-                            release fails on perform -->
-                            <preparationGoals>clean</preparationGoals>
-                            <autoVersionSubmodules>true</autoVersionSubmodules>
-                            <tagBase>https://svn.52north.org/svn/projects/internal/2012_DLR-UKIS-I/52n-sos-extension-delete-observation/tags</tagBase>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
     <scm>
         <connection>scm:svn:https://svn.52north.org/svn/projects/internal/2012_DLR-UKIS-I/52n-sos-extension-delete-observation/trunk/</connection>
         <developerConnection>scm:svn:https://svn.52north.org/svn/projects/internal/2012_DLR-UKIS-I/52n-sos-extension-delete-observation/trunk/</developerConnection>

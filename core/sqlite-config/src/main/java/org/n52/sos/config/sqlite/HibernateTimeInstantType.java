@@ -51,7 +51,7 @@ public class HibernateTimeInstantType extends AbstractStringBasedHibernateUserTy
         try {
             return decodeTimeInstant(s);
         } catch (DateTimeParseException e) {
-            throw new TypeMismatchException(e);
+            throw new TypeMismatchException(String.format("Error while creating Time from %s", s));
         }
     }
 

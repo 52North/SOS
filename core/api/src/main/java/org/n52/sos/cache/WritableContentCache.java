@@ -215,6 +215,7 @@ public interface WritableContentCache extends ContentCache {
      * @param observationIdentifier
      *            the observation identifier
      */
+    @Deprecated
     void addObservationIdentifier(String observationIdentifier);
 
     /**
@@ -226,6 +227,7 @@ public interface WritableContentCache extends ContentCache {
      * @param observationIdentifier
      *            the observation identifier
      */
+    @Deprecated
     void addObservationIdentifierForProcedure(String procedure, String observationIdentifier);
 
     /**
@@ -234,6 +236,7 @@ public interface WritableContentCache extends ContentCache {
      * @param observationIdentifier
      *            the observation identifiers
      */
+    @Deprecated
     void addObservationIdentifiers(Collection<String> observationIdentifier);
 
     /**
@@ -693,6 +696,7 @@ public interface WritableContentCache extends ContentCache {
      * @param observationIdentifier
      *            the observation identifier
      */
+    @Deprecated
     void removeObservationIdentifier(String observationIdentifier);
 
     /**
@@ -704,6 +708,7 @@ public interface WritableContentCache extends ContentCache {
      * @param observationIdentifier
      *            the observation identifier
      */
+    @Deprecated
     void removeObservationIdentifierForProcedure(String procedure, String observationIdentifier);
 
     /**
@@ -712,6 +717,7 @@ public interface WritableContentCache extends ContentCache {
      * @param observationIdentifier
      *            the observation identifier
      */
+    @Deprecated
     void removeObservationIdentifiers(Collection<String> observationIdentifier);
 
     /**
@@ -720,6 +726,7 @@ public interface WritableContentCache extends ContentCache {
      * @param procedure
      *            the procedure
      */
+    @Deprecated
     void removeObservationIdentifiersForProcedure(String procedure);
 
     /**
@@ -1336,6 +1343,7 @@ public interface WritableContentCache extends ContentCache {
      * @param observationIdentifiers
      *            the observation identifiers
      */
+    @Deprecated
     void setObservationIdentifiers(Collection<String> observationIdentifiers);
 
     /**
@@ -1346,6 +1354,7 @@ public interface WritableContentCache extends ContentCache {
      * @param observationIdentifiers
      *            the observation identifiers
      */
+    @Deprecated
     void setObservationIdentifiersForProcedure(String procedure, Collection<String> observationIdentifiers);
 
     /**

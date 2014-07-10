@@ -100,7 +100,7 @@ public class CacheImplTest {
     @Test
     public void should_return_different_hashCodes_for_different_instances() {
         WritableCache cache = new WritableCache();
-        cache.setObservationIdentifiers(Collections.singleton("o_1"));
+        cache.setProcedures(Collections.singleton("p_1"));
         assertNotEquals("hashCode() of different caches are equal", cache.hashCode(), new ReadableCache());
     }
 

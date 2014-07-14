@@ -36,7 +36,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSrid;
 import org.n52.sos.util.StringHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
-
+@Deprecated
 public abstract class AbstractSpatialFilteringProfile implements Serializable, HasGeometry, HasCoordinate, HasSrid {
 
     public static final String OBSERVATION = "observation";

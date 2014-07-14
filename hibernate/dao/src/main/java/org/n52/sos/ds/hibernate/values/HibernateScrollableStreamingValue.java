@@ -108,7 +108,11 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
             OmObservation observation = observationTemplate.cloneTemplate();
             ObservationValue resultObject = (ObservationValue) scrollableResult.get()[0];
             addValuesToObservation(observation, resultObject);
-            addSpatialFilteringProfile(observation, resultObject.getObservationId());
+            if (resultObject.hasSamplingGeometry()) {
+                observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
+            } else {
+                addSpatialFilteringProfile(observation, resultObject.getObservationId());
+            }
             session.evict(resultObject);
             return observation;
         } catch (final HibernateException he) {

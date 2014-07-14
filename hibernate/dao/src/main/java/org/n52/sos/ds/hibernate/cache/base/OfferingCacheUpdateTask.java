@@ -272,6 +272,9 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         if (spatialFilteringProfileDAO != null) {
             getCache().setSpatialFilteringProfileEnvelopeForOffering(prefixedOfferingId,
                     spatialFilteringProfileDAO.getEnvelopeForOfferingId(offeringID, session));
+        } else {
+            getCache().setSpatialFilteringProfileEnvelopeForOffering(prefixedOfferingId,
+                  DaoFactory.getInstance().getObservationDAO(session).getSpatialFilteringProfileEnvelopeForOfferingId(offeringID, session));
         }
     }
 

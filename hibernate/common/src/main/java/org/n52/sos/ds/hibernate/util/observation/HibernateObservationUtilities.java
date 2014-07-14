@@ -102,13 +102,22 @@ public class HibernateObservationUtilities {
      * @throws ConverterException
      *             If procedure creation fails
      */
+    @Deprecated
     public static List<OmObservation> createSosObservationsFromObservations(Collection<AbstractObservation> o,
             Map<Long, AbstractSpatialFilteringProfile> spf, String v, String rm, Session s) throws OwsExceptionReport,
             ConverterException {
         return new ObservationOmObservationCreator(o, spf, v, rm, s).create();
 
     }
+    
+    public static List<OmObservation> createSosObservationsFromObservations(Collection<AbstractObservation> o,
+            String v, String rm, Session s) throws OwsExceptionReport,
+            ConverterException {
+        return new ObservationOmObservationCreator(o, v, rm, s).create();
 
+    }
+
+    @Deprecated
     public static OmObservation createSosObservationFromObservation(AbstractObservation o,
             AbstractSpatialFilteringProfile spf, String v, String rm, Session s) throws OwsExceptionReport, ConverterException {
         Map<Long, AbstractSpatialFilteringProfile> spfMap = Maps.newHashMap();
@@ -116,6 +125,15 @@ public class HibernateObservationUtilities {
             spfMap.put(spf.getObservation().getObservationId(), spf);
         }
         List<OmObservation> c = new ObservationOmObservationCreator(Sets.newHashSet(o), spfMap, v, rm, s).create();
+        if (CollectionHelper.isNotEmpty(c)) {
+            return (OmObservation) c.iterator().next();
+        }
+        return null;
+    }
+    
+    public static OmObservation createSosObservationFromObservation(AbstractObservation o,
+            String v, String rm, Session s) throws OwsExceptionReport, ConverterException {
+        List<OmObservation> c = new ObservationOmObservationCreator(Sets.newHashSet(o), v, rm, s).create();
         if (CollectionHelper.isNotEmpty(c)) {
             return (OmObservation) c.iterator().next();
         }

@@ -37,8 +37,11 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasPhenomenonTime;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasResultTime;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSamplingGeometry;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValidTime;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract class for value time
@@ -48,7 +51,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
  * 
  */
 public abstract class AbstractObservationTime implements Serializable, HasDeletedFlag, HasOfferings, HasPhenomenonTime,
-        HasResultTime, HasValidTime, HasObservationId {
+        HasResultTime, HasValidTime, HasObservationId, HasSamplingGeometry {
 
     private static final long serialVersionUID = 8704397558609682891L;
 
@@ -67,6 +70,8 @@ public abstract class AbstractObservationTime implements Serializable, HasDelete
     private Set<Offering> offerings = new HashSet<Offering>(0);
 
     private boolean deleted;
+
+    private Geometry samplingGeometry;
 
     @Override
     public long getObservationId() {
@@ -157,6 +162,21 @@ public abstract class AbstractObservationTime implements Serializable, HasDelete
         } else {
             getOfferings().add((Offering) offerings);
         }
+    }
+    
+    @Override
+    public Geometry getSamplingGeometry() {
+        return samplingGeometry;
+    }
+    
+    @Override
+    public void setSamplingGeometry(Geometry samplingGeometry) {
+        this.samplingGeometry = samplingGeometry;
+    }
+    
+    @Override
+    public boolean hasSamplingGeometry() {
+        return getSamplingGeometry() != null && !getSamplingGeometry().isEmpty();
     }
 
 }

@@ -51,9 +51,12 @@ import org.n52.sos.ds.hibernate.entities.interfaces.TextValue;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
 import org.n52.sos.ds.hibernate.util.observation.SpatialFilteringProfileAdder;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
@@ -65,7 +68,10 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.XmlHelper;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract class for streaming values
@@ -367,6 +373,18 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
             value.setUnit(abstractValue.getUnit().getUnit());
         }
         return value;
+    }
+    
+    protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
+            throws OwsExceptionReport {
+        final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
+        final ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
+        namedValue.setName(referenceType);
+        // TODO add lat/long version
+        Geometry geometry = samplingGeometry;
+        namedValue.setValue(new org.n52.sos.ogc.om.values.GeometryValue(GeometryHandler.getInstance()
+                .switchCoordinateAxisOrderIfNeeded(geometry)));
+        return namedValue;
     }
 
 }

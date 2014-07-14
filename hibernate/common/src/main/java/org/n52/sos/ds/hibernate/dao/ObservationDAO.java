@@ -75,6 +75,7 @@ import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
+import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
@@ -548,5 +549,10 @@ public class ObservationDAO extends AbstractObservationDAO {
         c.add(Restrictions.not(Restrictions.in("p." + Procedure.ID, procedureIds)));
         c.add(Restrictions.not(Restrictions.in("op." + ObservableProperty.ID, observablePropertyIds)));
         c.add(Restrictions.not(Restrictions.in("f." + FeatureOfInterest.ID, featureIds)));
+    }
+
+    @Override
+    public SosEnvelope getSpatialFilteringProfileEnvelopeForOfferingId(String offeringID, Session session) throws OwsExceptionReport {
+       return getSpatialFilteringProfileEnvelopeForOfferingId(ObservationInfo.class, offeringID, session);
     }
 }

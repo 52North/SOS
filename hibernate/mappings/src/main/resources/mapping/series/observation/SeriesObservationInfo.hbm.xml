@@ -50,5 +50,8 @@
                 <column name="offeringId" not-null="true" index="obshasoffofferingidx" />
             </many-to-many>
         </set>
+        <property name="samplingGeometry" type="org.hibernate.spatial.GeometryType">
+            <column name="samplingGeometry" index="samplingGeomidx"/>
+        </property>
     </class>
 </hibernate-mapping>

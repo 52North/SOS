@@ -11,7 +11,7 @@
             </generator>
         </id>
         <property name="codespace" type="string">
-            <column name="codespace" not-null="true" unique="true" />
+            <column name="codespace" not-null="true" unique-key="codespaceUK"/>
         </property>
     </class>
 </hibernate-mapping>

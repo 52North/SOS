@@ -14,7 +14,7 @@
             <column name="featureOfInterestTypeId" not-null="true" />
         </many-to-one>
         <property name="identifier" type="string">
-            <column name="identifier" unique="true"/>
+            <column name="identifier" unique-key="foiIdentifierUK"/>
         </property>
         <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="featureCodespaceFk">
             <column name="codespaceId" />
@@ -29,21 +29,21 @@
             <column name="descriptionXml" />
         </property>
         <property name="url" type="string">
-            <column name="url" unique="true" />
+            <column name="url" unique-key="obsUrl" />
         </property>
         <!-- supports types big_decimal and string -->
         <!--  
         <property name="longitude" type="big_decimal">
-           <column name="longitude" unique="true" />
+           <column name="longitude" unique-key="featLonLatUk" />
         </property>
         <property name="latitude" type="big_decimal">
-        	<column name="latitude" unique="true" />
+        	<column name="latitude" unique-key="featLonLatUk" />
         </property>
         <property name="altitude" type="big_decimal">
-        	<column name="altitude" unique="true" />
+        	<column name="altitude" />
         </property>
         <property name="srid" type="integer">
-        	<column name="srid" unique="true" />
+        	<column name="srid" />
         </property> 
         -->
     </class>

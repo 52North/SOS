@@ -10,7 +10,7 @@
             </generator>
         </id>
         <property name="featureOfInterestType" type="string">
-            <column name="featureOfInterestType" not-null="true" unique="true" />
+            <column name="featureOfInterestType" not-null="true" unique-key="featureTypeUK"/>
         </property>
     </class>
 </hibernate-mapping>

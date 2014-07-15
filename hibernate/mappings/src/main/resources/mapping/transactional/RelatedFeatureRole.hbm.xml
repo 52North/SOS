@@ -10,7 +10,7 @@
             </generator>
         </id>
         <property name="relatedFeatureRole" type="string">
-            <column name="relatedFeatureRole" not-null="true" unique="true" />
+            <column name="relatedFeatureRole" not-null="true" unique-key="relFeatRoleUK"/>
         </property>
     </class>
 </hibernate-mapping>

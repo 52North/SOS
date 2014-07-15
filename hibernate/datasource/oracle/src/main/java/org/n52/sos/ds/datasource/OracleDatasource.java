@@ -224,7 +224,7 @@ public class OracleDatasource extends AbstractHibernateFullDBDatasource {
         String schema = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn);
+            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
             // fix problem with quoted tables
             schema = (String)settings.get(SCHEMA_KEY);
             settings.put(SCHEMA_KEY, null);

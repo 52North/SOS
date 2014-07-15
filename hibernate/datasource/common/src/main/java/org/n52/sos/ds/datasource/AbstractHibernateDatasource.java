@@ -50,6 +50,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
@@ -462,7 +463,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn);
+            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
             String[] dropScript =
                     checkDropSchema(getConfig(settings).generateDropSchemaScript(getDialectInternal(), metadata));
             return dropScript;
@@ -478,9 +479,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn);
-            String[] dropScript = getConfig(settings).generateSchemaUpdateScript(getDialectInternal(), metadata);
-            return dropScript;
+            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
+            List<SchemaUpdateScript> upSchema = getConfig(settings).generateSchemaUpdateScriptList(getDialectInternal(), metadata);
+            return SchemaUpdateScript.toStringArray(upSchema);
         } catch (SQLException ex) {
             throw new ConfigurationException(ex);
         } finally {
@@ -493,7 +494,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn);
+            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
             getConfig(settings).validateSchema(getDialectInternal(), metadata);
         } catch (SQLException ex) {
             throw new ConfigurationException(ex);
@@ -504,8 +505,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         }
     }
 
-    protected DatabaseMetadata getDatabaseMetadata(Connection conn) throws SQLException {
-        return new DatabaseMetadata(conn, getDialectInternal(), true);
+    protected DatabaseMetadata getDatabaseMetadata(Connection conn, CustomConfiguration customConfiguration) throws SQLException {
+        return new DatabaseMetadata(conn, getDialectInternal(), customConfiguration, true);
     }
 
     @Override
@@ -514,7 +515,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         try {
             /* check if any of the needed tables is existing */
             conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn);
+            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
             Iterator<Table> iter = getConfig(settings).getTableMappings();
             String catalog = checkCatalog(conn);
             String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
@@ -595,7 +596,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn);
+            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
             validatePrerequisites(conn, metadata, settings);
         } catch (SQLException ex) {
             throw new ConfigurationException(ex);

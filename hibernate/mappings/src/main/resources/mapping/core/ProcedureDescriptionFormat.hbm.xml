@@ -10,8 +10,7 @@
             </generator>
         </id>
         <property name="procedureDescriptionFormat" type="string">
-        	<!-- TODO set unique="true" to avoid duplicate entries -->
-            <column name="procedureDescriptionFormat" not-null="true" />
+            <column name="procedureDescriptionFormat" not-null="true" unique-key="procDescFormatUK" />
         </property>
     </class>
 </hibernate-mapping>

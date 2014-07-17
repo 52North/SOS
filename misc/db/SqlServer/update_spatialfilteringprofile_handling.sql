@@ -27,10 +27,8 @@
 -- Public License for more details.
 --
 
-ALTER TABLE observation ADD samplingGeometry GEOMETRY;
+ALTER TABLE sos.dbo.observation ADD samplingGeometry GEOMETRY;
 
-CREATE INDEX samplingGeomidx ON observation (samplingGeometry);
+UPDATE sos.dbo.observation SET sos.dbo.observation.samplingGeometry = spf.geom FROM sos.dbo.spatialFilteringProfile spf WHERE sos.dbo.observation.observationid = spf.observation;
 
-UPDATE observation SET samplingGeometry = spf.geom FROM spatialFilteringProfile spf WHERE observationId = spf.observation;
-
-DROP TABLE spatialFilteringProfile;
+DROP TABLE sos.dbo.spatialFilteringProfile;

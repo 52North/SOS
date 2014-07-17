@@ -27,10 +27,10 @@
 -- Public License for more details.
 --
 
-ALTER TABLE observation ADD samplingGeometry GEOMETRY;
+ALTER TABLE observation ADD COLUMN samplingGeometry GEOMETRY;
 
-CREATE INDEX samplingGeomidx ON observation (samplingGeometry);
-
-UPDATE observation SET samplingGeometry = spf.geom FROM spatialFilteringProfile spf WHERE observationId = spf.observation;
+SET SQL_SAFE_UPDATES=0;
+UPDATE observation SET observation.samplingGeometry = (Select spf.geom FROM spatialFilteringProfile spf WHERE observation.observationid = spf.observation);
+SET SQL_SAFE_UPDATES=1;
 
 DROP TABLE spatialFilteringProfile;

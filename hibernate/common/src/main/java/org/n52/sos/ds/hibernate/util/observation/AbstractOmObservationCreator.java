@@ -34,11 +34,20 @@ import org.hibernate.Session;
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.FeatureQueryHandler;
+import org.n52.sos.ds.hibernate.entities.AbstractSpatialFilteringProfile;
+import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.service.profile.Profile;
+import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.JTSHelper;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * TODO JavaDoc
@@ -88,5 +97,17 @@ public abstract class AbstractOmObservationCreator {
 
     public Session getSession() {
         return session;
+    }
+    
+    protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
+            throws OwsExceptionReport {
+        final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
+        final ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
+        namedValue.setName(referenceType);
+        // TODO add lat/long version
+        Geometry geometry = samplingGeometry;
+        namedValue.setValue(new GeometryValue(GeometryHandler.getInstance()
+                .switchCoordinateAxisOrderIfNeeded(geometry)));
+        return namedValue;
     }
 }

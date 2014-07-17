@@ -60,6 +60,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.1.0
  *
  */
+@Deprecated
 public class SpatialFilteringProfileAdder {
 
     private boolean strictSpatialFilteringProfile;

@@ -80,6 +80,7 @@ import com.vividsolutions.jts.geom.Geometry;
  *            Concrete SpatialFilteringProfile entity
  */
 @Configurable
+@Deprecated
 public abstract class AbstractSpatialFilteringProfileDAO<T extends AbstractSpatialFilteringProfile> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSpatialFilteringProfileDAO.class);

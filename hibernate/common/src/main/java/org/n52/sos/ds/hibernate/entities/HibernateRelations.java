@@ -532,4 +532,16 @@ public interface HibernateRelations {
          */
         void setObservationId(final long observationId);
     }
+    
+    interface HasSamplingGeometry {
+        
+        String SAMPLING_GEOMETRY = "samplingGeometry";
+        
+        Geometry getSamplingGeometry();
+        
+        void setSamplingGeometry(Geometry samplingGeometry);
+        
+        boolean hasSamplingGeometry();
+        
+    }
 }

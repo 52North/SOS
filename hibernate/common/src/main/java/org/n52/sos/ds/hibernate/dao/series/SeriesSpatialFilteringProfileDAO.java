@@ -53,6 +53,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.0.0
  *
  */
+@Deprecated
 public class SeriesSpatialFilteringProfileDAO extends AbstractSpatialFilteringProfileDAO<SeriesSpatialFilteringProfile> {
 
     @Override

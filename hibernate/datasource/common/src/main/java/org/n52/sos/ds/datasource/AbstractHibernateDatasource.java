@@ -73,34 +73,34 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
-public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreDatasource implements SQLConstants{
+public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreDatasource implements SQLConstants {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractHibernateDatasource.class);
 
-//    protected static final String USERNAME_TITLE = "User Name";
-//
-//    protected static final String PASSWORD_TITLE = "Password";
-//
-//    protected static final String DATABASE_KEY = "jdbc.database";
-//
-//    protected static final String DATABASE_TITLE = "Database";
-//
-//    protected static final String DATABASE_DESCRIPTION =
-//            "Set this to the name of the database you want to use for SOS.";
-//
-//    protected static final String DATABASE_DEFAULT_VALUE = "sos";
-//
-//    protected static final String HOST_KEY = "jdbc.host";
-//
-//    protected static final String HOST_TITLE = "Host";
-//
-//    protected static final String HOST_DESCRIPTION =
-//            "Set this to the IP/net location of the database server. The default value for is \"localhost\".";
-//
-//    protected static final String HOST_DEFAULT_VALUE = "localhost";
-//
-//    protected static final String PORT_KEY = "jdbc.port";
-//
-//    protected static final String PORT_TITLE = "Database Port";
+    // protected static final String USERNAME_TITLE = "User Name";
+    //
+    // protected static final String PASSWORD_TITLE = "Password";
+    //
+    // protected static final String DATABASE_KEY = "jdbc.database";
+    //
+    // protected static final String DATABASE_TITLE = "Database";
+    //
+    // protected static final String DATABASE_DESCRIPTION =
+    // "Set this to the name of the database you want to use for SOS.";
+    //
+    // protected static final String DATABASE_DEFAULT_VALUE = "sos";
+    //
+    // protected static final String HOST_KEY = "jdbc.host";
+    //
+    // protected static final String HOST_TITLE = "Host";
+    //
+    // protected static final String HOST_DESCRIPTION =
+    // "Set this to the IP/net location of the database server. The default value for is \"localhost\".";
+    //
+    // protected static final String HOST_DEFAULT_VALUE = "localhost";
+    //
+    // protected static final String PORT_KEY = "jdbc.port";
+    //
+    // protected static final String PORT_TITLE = "Database Port";
 
     protected static final String SCHEMA_KEY = HibernateConstants.DEFAULT_SCHEMA;
 
@@ -128,21 +128,24 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected static final boolean TRANSACTIONAL_DEFAULT_VALUE = true;
 
-    protected static final String SPATIAL_FILTERING_PROFILE_TITLE = "Spatial Filtering Profile";
-
+    @Deprecated
+    protected static final String SPATIAL_FILTERING_PROFILE_TITLE = "!!! DEPRECATED !!! Old Spatial Filtering Profile";
+    @Deprecated
     protected static final String SPATIAL_FILTERING_PROFILE_DESCRIPTION =
-            "Should the database support the Spatial Filtering Profile?";
-
+            "Should the database support the OLD Spatial Filtering Profile handling? Due to performance inprovements the the samplingGeometry was moved to the observation table. You can update you data by running the update_spatialfilteringprofile_handling.sql script (SOS/misc/db/...)!";
+    @Deprecated
     protected static final String SPATIAL_FILTERING_PROFILE_KEY = "sos.spatialFilteringProfile";
+    @Deprecated
+    protected static final boolean SPATIAL_FILTERING_PROFILE_DEFAULT_VALUE = false;
 
-    protected static final boolean SPATIAL_FILTERING_PROFILE_DEFAULT_VALUE = true;
-
-//    protected static final String USERNAME_KEY = HibernateConstants.CONNECTION_USERNAME;
-//
-//    protected static final String PASSWORD_KEY = HibernateConstants.CONNECTION_PASSWORD;
-//
-//    protected static final String C3P0_CONNECTION_POOL =
-//            "org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider";
+    // protected static final String USERNAME_KEY =
+    // HibernateConstants.CONNECTION_USERNAME;
+    //
+    // protected static final String PASSWORD_KEY =
+    // HibernateConstants.CONNECTION_PASSWORD;
+    //
+    // protected static final String C3P0_CONNECTION_POOL =
+    // "org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider";
 
     protected static final Boolean PROVIDED_JDBC_DRIVER_DEFAULT_VALUE = false;
 
@@ -153,21 +156,25 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected static final String PROVIDED_JDBC_DRIVER_KEY = "sos.jdbc.provided";
 
-//    protected static final String MIN_POOL_SIZE_KEY = "jdbc.pool.min";
-//
-//    protected static final String MIN_POOL_SIZE_TITLE = "Minimum ConnectionPool size";
-//
-//    protected static final String MIN_POOL_SIZE_DESCRIPTION = "Minimum size of the ConnectionPool";
-//
-//    protected static final Integer MIN_POOL_SIZE_DEFAULT_VALUE = 10;
-//
-//    protected static final String MAX_POOL_SIZE_KEY = "jdbc.pool.max";
-//
-//    protected static final String MAX_POOL_SIZE_TITLE = "Maximum ConnectionPool size";
-//
-//    protected static final String MAX_POOL_SIZE_DESCRIPTION = "Maximum size of the ConnectionPool";
-//
-//    protected static final Integer MAX_POOL_SIZE_DEFAULT_VALUE = 30;
+    // protected static final String MIN_POOL_SIZE_KEY = "jdbc.pool.min";
+    //
+    // protected static final String MIN_POOL_SIZE_TITLE =
+    // "Minimum ConnectionPool size";
+    //
+    // protected static final String MIN_POOL_SIZE_DESCRIPTION =
+    // "Minimum size of the ConnectionPool";
+    //
+    // protected static final Integer MIN_POOL_SIZE_DEFAULT_VALUE = 10;
+    //
+    // protected static final String MAX_POOL_SIZE_KEY = "jdbc.pool.max";
+    //
+    // protected static final String MAX_POOL_SIZE_TITLE =
+    // "Maximum ConnectionPool size";
+    //
+    // protected static final String MAX_POOL_SIZE_DESCRIPTION =
+    // "Maximum size of the ConnectionPool";
+    //
+    // protected static final Integer MAX_POOL_SIZE_DEFAULT_VALUE = 30;
 
     protected static final String BATCH_SIZE_KEY = "jdbc.batch.size";
 
@@ -185,62 +192,69 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     private boolean transactionalDatasource = true;
 
+    @Deprecated
     private final BooleanSettingDefinition spatialFilteringProfileDefinition =
             createSpatialFilteringProfileDefinition();
 
+    @Deprecated
     private boolean spatialFilteringProfileDatasource = true;
 
-//    /**
-//     * Create settings definition for username
-//     *
-//     * @return Username settings definition
-//     */
-//    protected StringSettingDefinition createUsernameDefinition() {
-//        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
-//                .setKey(USERNAME_KEY).setTitle(USERNAME_TITLE);
-//    }
-//
-//    /**
-//     * Create settings definition for password
-//     *
-//     * @return Password settings definition
-//     */
-//    protected StringSettingDefinition createPasswordDefinition() {
-//        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_2)
-//                .setKey(PASSWORD_KEY).setTitle(PASSWORD_TITLE);
-//    }
-//
-//    /**
-//     * Create settings definition for database name
-//     *
-//     * @return database name settings definition
-//     */
-//    protected StringSettingDefinition createDatabaseDefinition() {
-//        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_3)
-//                .setKey(DATABASE_KEY).setTitle(DATABASE_TITLE).setDescription(DATABASE_DESCRIPTION)
-//                .setDefaultValue(DATABASE_DEFAULT_VALUE);
-//    }
-//
-//    /**
-//     * Create settings definition for host
-//     *
-//     * @return Host settings definition
-//     */
-//    protected StringSettingDefinition createHostDefinition() {
-//        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
-//                .setKey(HOST_KEY).setTitle(HOST_TITLE).setDescription(HOST_DESCRIPTION)
-//                .setDefaultValue(HOST_DEFAULT_VALUE);
-//    }
-//
-//    /**
-//     * Create settings definition for port
-//     *
-//     * @return Port settings definition
-//     */
-//    protected IntegerSettingDefinition createPortDefinition() {
-//        return new IntegerSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_5)
-//                .setKey(PORT_KEY).setTitle(PORT_TITLE);
-//    }
+    // /**
+    // * Create settings definition for username
+    // *
+    // * @return Username settings definition
+    // */
+    // protected StringSettingDefinition createUsernameDefinition() {
+    // return new
+    // StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
+    // .setKey(USERNAME_KEY).setTitle(USERNAME_TITLE);
+    // }
+    //
+    // /**
+    // * Create settings definition for password
+    // *
+    // * @return Password settings definition
+    // */
+    // protected StringSettingDefinition createPasswordDefinition() {
+    // return new
+    // StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_2)
+    // .setKey(PASSWORD_KEY).setTitle(PASSWORD_TITLE);
+    // }
+    //
+    // /**
+    // * Create settings definition for database name
+    // *
+    // * @return database name settings definition
+    // */
+    // protected StringSettingDefinition createDatabaseDefinition() {
+    // return new
+    // StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_3)
+    // .setKey(DATABASE_KEY).setTitle(DATABASE_TITLE).setDescription(DATABASE_DESCRIPTION)
+    // .setDefaultValue(DATABASE_DEFAULT_VALUE);
+    // }
+    //
+    // /**
+    // * Create settings definition for host
+    // *
+    // * @return Host settings definition
+    // */
+    // protected StringSettingDefinition createHostDefinition() {
+    // return new
+    // StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
+    // .setKey(HOST_KEY).setTitle(HOST_TITLE).setDescription(HOST_DESCRIPTION)
+    // .setDefaultValue(HOST_DEFAULT_VALUE);
+    // }
+    //
+    // /**
+    // * Create settings definition for port
+    // *
+    // * @return Port settings definition
+    // */
+    // protected IntegerSettingDefinition createPortDefinition() {
+    // return new
+    // IntegerSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_5)
+    // .setKey(PORT_KEY).setTitle(PORT_TITLE);
+    // }
 
     /**
      * Create settings definition for database schema
@@ -248,12 +262,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return Database schema settings definition
      */
     protected StringSettingDefinition createSchemaDefinition() {
-        return new StringSettingDefinition()
-                .setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_1)
-                .setKey(SCHEMA_KEY)
-                .setTitle(SCHEMA_TITLE)
-                .setDescription(SCHEMA_DESCRIPTION)
+        return new StringSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
+                .setKey(SCHEMA_KEY).setTitle(SCHEMA_TITLE).setDescription(SCHEMA_DESCRIPTION)
                 .setDefaultValue(SCHMEA_DEFAULT_VALUE);
     }
 
@@ -263,13 +273,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return Old concept settings definition
      */
     protected BooleanSettingDefinition createOldConceptDefinition() {
-        return new BooleanSettingDefinition()
-                .setDefaultValue(OLD_CONCEPT_DEFAULT_VALUE)
-                .setTitle(OLD_CONCEPT_TITLE)
-                .setDescription(OLD_CONCEPT_DESCRIPTION)
-                .setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_2)
-                .setKey(OLD_CONCEPT_KEY);
+        return new BooleanSettingDefinition().setDefaultValue(OLD_CONCEPT_DEFAULT_VALUE).setTitle(OLD_CONCEPT_TITLE)
+                .setDescription(OLD_CONCEPT_DESCRIPTION).setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_2).setKey(OLD_CONCEPT_KEY);
     }
 
     /**
@@ -278,13 +284,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return Transactional support settings definition
      */
     protected BooleanSettingDefinition createTransactionalDefinition() {
-        return new BooleanSettingDefinition()
-                .setDefaultValue(TRANSACTIONAL_DEFAULT_VALUE)
-                .setTitle(TRANSACTIONAL_TITLE)
-                .setDescription(TRANSACTIONAL_DESCRIPTION)
-                .setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_3)
-                .setKey(TRANSACTIONAL_KEY);
+        return new BooleanSettingDefinition().setDefaultValue(TRANSACTIONAL_DEFAULT_VALUE)
+                .setTitle(TRANSACTIONAL_TITLE).setDescription(TRANSACTIONAL_DESCRIPTION).setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_3).setKey(TRANSACTIONAL_KEY);
     }
 
     /**
@@ -293,12 +295,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return Spatial Filtering Profile support settings definition
      */
     protected BooleanSettingDefinition createSpatialFilteringProfileDefinition() {
-        return new BooleanSettingDefinition()
-                .setDefaultValue(SPATIAL_FILTERING_PROFILE_DEFAULT_VALUE)
-                .setTitle(SPATIAL_FILTERING_PROFILE_TITLE)
-                .setDescription(SPATIAL_FILTERING_PROFILE_DESCRIPTION)
-                .setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_4)
+        return new BooleanSettingDefinition().setDefaultValue(SPATIAL_FILTERING_PROFILE_DEFAULT_VALUE)
+                .setTitle(SPATIAL_FILTERING_PROFILE_TITLE).setDescription(SPATIAL_FILTERING_PROFILE_DESCRIPTION)
+                .setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
                 .setKey(SPATIAL_FILTERING_PROFILE_KEY);
     }
 
@@ -308,37 +307,35 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return JDBC driver settings definition
      */
     protected BooleanSettingDefinition createProvidedJdbcDriverDefinition() {
-        return new BooleanSettingDefinition()
-                .setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE)
-                .setTitle(PROVIDED_JDBC_DRIVER_TITLE)
-                .setDescription(PROVIDED_JDBC_DRIVER_DESCRIPTION)
-                .setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE)
-                .setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_5)
-                .setKey(PROVIDED_JDBC_DRIVER_KEY);
+        return new BooleanSettingDefinition().setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE)
+                .setTitle(PROVIDED_JDBC_DRIVER_TITLE).setDescription(PROVIDED_JDBC_DRIVER_DESCRIPTION)
+                .setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE).setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_5).setKey(PROVIDED_JDBC_DRIVER_KEY);
     }
 
-//    /**
-//     * Create settings definition for minimal connection pool size
-//     *
-//     * @return Minimal connection pool size settings definition
-//     */
-//    protected IntegerSettingDefinition createMinPoolSizeDefinition() {
-//        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_6)
-//                .setKey(MIN_POOL_SIZE_KEY).setTitle(MIN_POOL_SIZE_TITLE).setDescription(MIN_POOL_SIZE_DESCRIPTION)
-//                .setDefaultValue(MIN_POOL_SIZE_DEFAULT_VALUE);
-//    }
-//
-//    /**
-//     * Create settings definition for maximal connection pool size
-//     *
-//     * @return Maximal connection pool size settings definition
-//     */
-//    protected IntegerSettingDefinition createMaxPoolSizeDefinition() {
-//        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_7)
-//                .setKey(MAX_POOL_SIZE_KEY).setTitle(MAX_POOL_SIZE_TITLE).setDescription(MAX_POOL_SIZE_DESCRIPTION)
-//                .setDefaultValue(MAX_POOL_SIZE_DEFAULT_VALUE);
-//    }
+    // /**
+    // * Create settings definition for minimal connection pool size
+    // *
+    // * @return Minimal connection pool size settings definition
+    // */
+    // protected IntegerSettingDefinition createMinPoolSizeDefinition() {
+    // return new
+    // IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_6)
+    // .setKey(MIN_POOL_SIZE_KEY).setTitle(MIN_POOL_SIZE_TITLE).setDescription(MIN_POOL_SIZE_DESCRIPTION)
+    // .setDefaultValue(MIN_POOL_SIZE_DEFAULT_VALUE);
+    // }
+    //
+    // /**
+    // * Create settings definition for maximal connection pool size
+    // *
+    // * @return Maximal connection pool size settings definition
+    // */
+    // protected IntegerSettingDefinition createMaxPoolSizeDefinition() {
+    // return new
+    // IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_7)
+    // .setKey(MAX_POOL_SIZE_KEY).setTitle(MAX_POOL_SIZE_TITLE).setDescription(MAX_POOL_SIZE_DESCRIPTION)
+    // .setDefaultValue(MAX_POOL_SIZE_DEFAULT_VALUE);
+    // }
 
     /**
      * Create settings definition for JDBC batch size
@@ -346,12 +343,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return JDBC batch size settings definition
      */
     protected IntegerSettingDefinition createBatchSizeDefinition() {
-        return new IntegerSettingDefinition()
-                .setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_8)
-                .setKey(BATCH_SIZE_KEY)
-                .setTitle(BATCH_SIZE_TITLE)
-                .setDescription(BATCH_SIZE_DESCRIPTION)
+        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_8)
+                .setKey(BATCH_SIZE_KEY).setTitle(BATCH_SIZE_TITLE).setDescription(BATCH_SIZE_DESCRIPTION)
                 .setDefaultValue(BATCH_SIZE_DEFAULT_VALUE);
     }
 
@@ -426,6 +419,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @param spatialFilteringProfilePath
      *            Spatial Filtering Profile mapping files path
      */
+    @Deprecated
     private void addSpatialFilteringProfilePathToConfig(CustomConfiguration config, Map<String, Object> settings,
             String spatialFilteringProfilePath) {
         if (isSpatialFilteringProfileDatasource()) {
@@ -555,8 +549,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (metaData != null) {
             ResultSet rs = metaData.getSchemas();
             while (rs.next()) {
-                if (StringHelper.isNotEmpty(rs.getString("TABLE_SCHEM")) &&
-                    rs.getString("TABLE_SCHEM").equals(schema)) {
+                if (StringHelper.isNotEmpty(rs.getString("TABLE_SCHEM")) && rs.getString("TABLE_SCHEM").equals(schema)) {
                     return rs.getString("TABLE_SCHEM");
                 }
             }
@@ -637,8 +630,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (checkIfExtensionDirectoryExists()) {
             StringBuilder builder =
                     new StringBuilder(properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY));
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR)
-                    .append(HIBERNATE_MAPPING_EXTENSION_READONLY);
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_EXTENSION_READONLY);
             properties.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
         }
     }
@@ -743,21 +735,20 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         StringBuilder builder = new StringBuilder();
         builder.append(HIBERNATE_MAPPING_CORE_PATH);
         if (isOldConceptDatasource(settings)) {
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR)
-                    .append(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH);
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
+                    HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH);
             addSpatialFilteringProfilePathToDirList(builder, settings,
                     HIBERNATE_MAPPING_OLD_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH);
         } else if (isSeriesConceptDatasource(settings)) {
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR)
-                    .append(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
+                    HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
             addSpatialFilteringProfilePathToDirList(builder, settings,
                     HIBERNATE_MAPPING_SERIES_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH);
         }
         if (isTransactionalDatasource()) {
             Boolean t = (Boolean) settings.get(transactionalDefiniton.getKey());
             if (t != null && t) {
-                builder.append(SessionFactoryProvider.PATH_SEPERATOR)
-                        .append(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
             }
         }
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
@@ -775,13 +766,13 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @param spatialFilteringProfilePath
      *            Spatial Filtering Profile mapping files path
      */
+    @Deprecated
     private void addSpatialFilteringProfilePathToDirList(final StringBuilder builder, Map<String, Object> settings,
             final String spatialFilteringProfilePath) {
         if (isSpatialFilteringProfileDatasource()) {
             Boolean spatialFilteringProfile = (Boolean) settings.get(spatialFilteringProfileDefinition.getKey());
             if (spatialFilteringProfile != null && spatialFilteringProfile) {
-                builder.append(SessionFactoryProvider.PATH_SEPERATOR)
-                        .append(spatialFilteringProfilePath);
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(spatialFilteringProfilePath);
             }
         }
     }
@@ -825,6 +816,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return <code>true</code>, if properties contains Spatial Filtering
      *         Profile mapping path
      */
+    @Deprecated
     protected boolean isSpatialFilteringProfile(Properties properties) {
         String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
         return p == null || p.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)
@@ -836,6 +828,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      *
      * @return Spatial Filtering Profile setting definition
      */
+    @Deprecated
     protected BooleanSettingDefinition getSpatialFilteringProfileDefiniton() {
         return spatialFilteringProfileDefinition;
     }
@@ -919,6 +912,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      *
      * @return <code>true</code>, if it has Spatial Filtering Profile
      */
+    @Deprecated
     public boolean isSpatialFilteringProfileDatasource() {
         return spatialFilteringProfileDatasource;
     }
@@ -929,6 +923,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @param spatialFilteringProfileDatasource
      *            the spatialFilteringProfileDatasource to set
      */
+    @Deprecated
     public void setSpatialFilteringProfile(boolean spatialFilteringProfileDatasource) {
         this.spatialFilteringProfileDatasource = spatialFilteringProfileDatasource;
     }
@@ -954,13 +949,13 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return Checked script without duplicate foreign key
      */
     protected String[] checkScriptForGeneratedAndDuplicatedEntries(String[] script) {
-     // creates upper case hexStrings from table names hashCode() with prefix
+        // creates upper case hexStrings from table names hashCode() with prefix
         // 'FK'
-        Set<String> generatedForeignKeys = Sets.newHashSet(
-                getGeneratedForeignKeyFor("observationHasOffering"),
-                getGeneratedForeignKeyFor("relatedFeatureHasRole"),
-                getGeneratedForeignKeyFor("offeringAllowedFeatureType"),
-                getGeneratedForeignKeyFor("offeringAllowedObservationType"));
+        Set<String> generatedForeignKeys =
+                Sets.newHashSet(getGeneratedForeignKeyFor("observationHasOffering"),
+                        getGeneratedForeignKeyFor("relatedFeatureHasRole"),
+                        getGeneratedForeignKeyFor("offeringAllowedFeatureType"),
+                        getGeneratedForeignKeyFor("offeringAllowedObservationType"));
         List<String> checkedSchema = Lists.newLinkedList();
         for (String string : script) {
             if (string.startsWith("alter table")) {
@@ -1043,14 +1038,15 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     protected abstract String getDriverClass();
 
-//    /**
-//     * Parse datasource properties to map
-//     *
-//     * @param current
-//     *            Current datasource properties
-//     * @return Map with String key and Object value
-//     */
-//    protected abstract Map<String, Object> parseDatasourceProperties(Properties current);
+    // /**
+    // * Parse datasource properties to map
+    // *
+    // * @param current
+    // * Current datasource properties
+    // * @return Map with String key and Object value
+    // */
+    // protected abstract Map<String, Object>
+    // parseDatasourceProperties(Properties current);
 
     /**
      * Check if the required extensions are available

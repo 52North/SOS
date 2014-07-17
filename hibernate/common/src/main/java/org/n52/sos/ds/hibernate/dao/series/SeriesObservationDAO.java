@@ -79,6 +79,7 @@ import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
+import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
@@ -789,5 +790,10 @@ public class SeriesObservationDAO extends AbstractObservationDAO {
         Criteria c = getSeriesObservationCriteriaFor(request, features, null, null, session).createAlias(SeriesObservation.SERIES, "s");
         c.add(Restrictions.not(Restrictions.in("s." + Series.ID, seriesIDs)));
         return c.setReadOnly(true).scroll(ScrollMode.FORWARD_ONLY);
+    }
+
+    @Override
+    public SosEnvelope getSpatialFilteringProfileEnvelopeForOfferingId(String offeringID, Session session) throws OwsExceptionReport {
+        return getSpatialFilteringProfileEnvelopeForOfferingId(SeriesObservationTime.class, offeringID, session);
     }    
 }

@@ -910,7 +910,8 @@
                             <skipPoms>false</skipPoms>-->
                             <gitDescribe>
                                 <!-- Faster to get just branch if skip = true -->
-                                <skip>false</skip>
+                                <!--  true to solve https://github.com/ktoso/maven-git-commit-id-plugin/issues/61 -->
+                                <skip>true</skip>
                             </gitDescribe>
                             <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>
                         </configuration>

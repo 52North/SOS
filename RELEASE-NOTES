@@ -77,7 +77,7 @@ Changes since last release
         '!!! DEPRECATED !!! Old Spatial Filtering Profile' at the 'Datasource configuration' installation page.
       * For each supported DBMS an update script is available (/misc/db/..) to add the new column, copy the 
         samplingGeometries and remove the spatialfilteringprofile table.
-      * https://github.com/52North/SOS/commit/
+      * https://github.com/52North/SOS/commit/65e8a4d7867f3e19c3c444438f79df5a3616fb8d
       
  
  --- Fixed bugs ---
@@ -98,6 +98,8 @@ Changes since last release
       * https://github.com/52North/SOS/commit/b1c172cd2b087b4a76eed8648e32952dee55c098
     * Fix problem with duplicated entries in generated SQL scripts.
       * https://github.com/52North/SOS/commit/6e70d910e6f8f7140d79f65c83250cf5370b73fc
+    * Fix #74: Exception when executing SOS 1.0.0 DescribeSensor requests
+      * https://github.com/52North/SOS/commit/
  
  
 Release 52n-sos-4.0.1

@@ -69,6 +69,7 @@ import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.XmlHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -164,10 +165,14 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
         if (abstractValue.isSetDescription()) {
             observation.setDescription(abstractValue.getDescription());
         }
+        Value<?> value = getValueFrom(abstractValue);
+        if (!observation.getObservationConstellation().isSetObservationType()) {
+            observation.getObservationConstellation().setObservationType(OMHelper.getObservationTypeFor(value));
+        }
         observation.setResultTime(createResutlTime(abstractValue.getResultTime()));
         observation.setValidTime(createValidTime(abstractValue.getValidTimeStart(), abstractValue.getValidTimeEnd()));
         observation.setValue(new SingleObservationValue(createPhenomenonTime(abstractValue),
-                getValueFrom(abstractValue)));
+                value));
     }
 
     /**
@@ -190,6 +195,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
      * 
      * @return the spatialFilteringProfileAdder
      */
+    @Deprecated
     protected SpatialFilteringProfileAdder getSpatialFilteringProfileAdder() {
         return spatialFilteringProfileAdder;
     }
@@ -200,6 +206,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
      * @param spatialFilteringProfileAdder
      *            the spatialFilteringProfileAdder to set
      */
+    @Deprecated
     protected void setSpatialFilteringProfileAdder(SpatialFilteringProfileAdder spatialFilteringProfileAdder) {
         this.spatialFilteringProfileAdder = spatialFilteringProfileAdder;
     }
@@ -210,6 +217,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
      * @return <code>true</code>, if the {@link SpatialFilteringProfileAdder} is
      *         set
      */
+    @Deprecated
     protected boolean isSetSpatialFilteringProfileAdder() {
         return getSpatialFilteringProfileAdder() != null;
     }

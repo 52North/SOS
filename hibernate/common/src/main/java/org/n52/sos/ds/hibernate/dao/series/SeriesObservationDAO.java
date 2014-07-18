@@ -47,6 +47,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Observation;
@@ -85,6 +86,8 @@ import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Hibernate data access class for series observations
@@ -795,5 +798,14 @@ public class SeriesObservationDAO extends AbstractObservationDAO {
     @Override
     public SosEnvelope getSpatialFilteringProfileEnvelopeForOfferingId(String offeringID, Session session) throws OwsExceptionReport {
         return getSpatialFilteringProfileEnvelopeForOfferingId(SeriesObservationTime.class, offeringID, session);
-    }    
+    }
+
+    @Override
+    public List<Geometry> getSamplingGeometries(String feature, Session session) {
+        Criteria criteria = session.createCriteria(SeriesObservationTime.class).createAlias(SeriesObservation.SERIES, "s");
+        criteria.createCriteria("s." + Series.FEATURE_OF_INTEREST).add(eq(FeatureOfInterest.IDENTIFIER, feature));
+        criteria.addOrder(Order.asc(AbstractObservationTime.PHENOMENON_TIME_START));
+        criteria.setProjection(Projections.property(AbstractObservationTime.SAMPLING_GEOMETRY));
+        return criteria.list();
+    }  
 }

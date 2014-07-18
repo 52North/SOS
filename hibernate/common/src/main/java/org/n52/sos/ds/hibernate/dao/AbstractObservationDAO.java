@@ -1161,4 +1161,6 @@ public abstract class AbstractObservationDAO extends TimeCreator {
         }
         return null;
     }
+
+    public abstract List<Geometry> getSamplingGeometries(String feature,  Session session);
 }

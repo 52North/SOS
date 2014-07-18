@@ -81,7 +81,7 @@ public class HibernateFeatureQueryHandlerTest extends HibernateFeatureQueryHandl
         final String type = SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_POINT;
         FeatureOfInterest feature = create(1, id, null, "name", "url", createFeatureOfInterestType(1, type));
         String version = Sos2Constants.SERVICEVERSION;
-        AbstractFeature result = createSosAbstractFeature(feature, version);
+        AbstractFeature result = createSosAbstractFeature(feature, version, null);
         final AbstractFeature expectedResult =
                 SamplingFeatureBuilder.aSamplingFeature().setFeatureType(type).setIdentifier(id).build();
         assertThat(expectedResult, is(result));
@@ -124,7 +124,7 @@ public class HibernateFeatureQueryHandlerTest extends HibernateFeatureQueryHandl
         GeometryFactory factory = JTSHelper.getGeometryFactoryForSRID(Constants.EPSG_WGS84);
         Geometry geometry = factory.createPoint(randomCoordinate());
         FeatureOfInterest feature = create(1, "id", geometry, "name", "url", createFeatureOfInterestType(1, "type"));
-        AbstractFeature sosFeature = createSosAbstractFeature(feature, Sos2Constants.SERVICEVERSION);
+        AbstractFeature sosFeature = createSosAbstractFeature(feature, Sos2Constants.SERVICEVERSION, null);
 
         assertThat(GeometryHandler.getInstance().isAxisOrderSwitchRequired(Constants.EPSG_WGS84), is(true));
         assertThat(sosFeature, is(notNullValue()));
@@ -159,7 +159,7 @@ public class HibernateFeatureQueryHandlerTest extends HibernateFeatureQueryHandl
         assertThat(GeometryHandler.getInstance().isAxisOrderSwitchRequired(2181), is(false));
 
         FeatureOfInterest feature = create(1, "id", geometry, "name", "url", createFeatureOfInterestType(1, "type"));
-        AbstractFeature sosFeature = createSosAbstractFeature(feature, Sos2Constants.SERVICEVERSION);
+        AbstractFeature sosFeature = createSosAbstractFeature(feature, Sos2Constants.SERVICEVERSION, null);
 
         assertThat(GeometryHandler.getInstance().isAxisOrderSwitchRequired(Constants.EPSG_WGS84), is(true));
         assertThat(sosFeature, is(notNullValue()));

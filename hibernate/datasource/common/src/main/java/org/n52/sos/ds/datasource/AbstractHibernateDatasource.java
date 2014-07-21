@@ -819,8 +819,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     @Deprecated
     protected boolean isSpatialFilteringProfile(Properties properties) {
         String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
-        return p == null || p.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)
-                || p.contains(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
+        return p == null || p.contains(HIBERNATE_MAPPING_OLD_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH)
+                || p.contains(HIBERNATE_MAPPING_SERIES_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH);
     }
 
     /**

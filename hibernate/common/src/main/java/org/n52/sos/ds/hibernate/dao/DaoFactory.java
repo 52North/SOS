@@ -120,6 +120,7 @@ public class DaoFactory {
      * @throws org.n52.sos.ogc.ows.OwsExceptionReport
      * @deprecated use {@link #getSpatialFilteringProfileDAO()}
      */
+    @Deprecated
     public AbstractSpatialFilteringProfileDAO<?> getSpatialFilteringProfileDAO(Session session) throws OwsExceptionReport {
         return getSpatialFilteringProfileDAO();
     }

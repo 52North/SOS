@@ -248,7 +248,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
 
     private SosProcedureDescription convertProcedureDescription(SosProcedureDescription procedureDescription,
             DescribeSensorRequest request) throws CodedException {
-        if (!procedureDescription.getDescriptionFormat().equals(request.getProcedureDescriptionFormat())) {
+        if (!getPossibleProcedureDescriptionFormats(request.getProcedureDescriptionFormat()).contains(procedureDescription.getDescriptionFormat())) {
             Converter<SosProcedureDescription, SosProcedureDescription> converter =
                     ConverterRepository.getInstance().getConverter(procedureDescription.getDescriptionFormat(),
                             request.getProcedureDescriptionFormat());

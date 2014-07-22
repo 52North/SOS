@@ -53,6 +53,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * 
  */
 @Configurable
+@Deprecated
 public class SpatialFilteringProfileDAO extends AbstractSpatialFilteringProfileDAO<SpatialFilteringProfile> {
 
     @Override

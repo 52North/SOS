@@ -58,6 +58,7 @@ import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
+import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OptionNotSupportedException;
@@ -75,6 +76,7 @@ import org.n52.sos.request.GetResultRequest;
 import org.n52.sos.response.GetResultResponse;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -323,16 +325,22 @@ public class GetResultDAO extends AbstractGetResultDAO {
             throws OwsExceptionReport {
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
             if (!HibernateHelper.isEntitySupported(SpatialFilteringProfile.class, session)) {
-                throw new OptionNotSupportedException().at(Sos2Constants.GetObservationParams.spatialFilter)
-                        .withMessage("The SOS 2.0 Spatial Filtering Profile is not supported by this service!");
-            }
-            Set<Long> observationIds =
-                    DaoFactory.getInstance().getSpatialFilteringProfileDAO(session)
-                            .getObservationIdsForSpatialFilter(request.getSpatialFilter(), session);
-            if (observationIds != null && CollectionHelper.isEmpty(observationIds)) {
-                criteria.add(Restrictions.eq(Observation.ID, Long.MIN_VALUE));
-            } else if (CollectionHelper.isNotEmpty(observationIds)) {
-                criteria.add(Restrictions.in(Observation.ID, observationIds));
+                criteria.add(SpatialRestrictions.filter(
+                        AbstractObservation.SAMPLING_GEOMETRY,
+                        request.getSpatialFilter().getOperator(),
+                        GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(
+                                request.getSpatialFilter().getGeometry())));
+//                throw new OptionNotSupportedException().at(Sos2Constants.GetObservationParams.spatialFilter)
+//                        .withMessage("The SOS 2.0 Spatial Filtering Profile is not supported by this service!");
+            } else {
+                Set<Long> observationIds =
+                        DaoFactory.getInstance().getSpatialFilteringProfileDAO(session)
+                                .getObservationIdsForSpatialFilter(request.getSpatialFilter(), session);
+                if (observationIds != null && CollectionHelper.isEmpty(observationIds)) {
+                    criteria.add(Restrictions.eq(Observation.ID, Long.MIN_VALUE));
+                } else if (CollectionHelper.isNotEmpty(observationIds)) {
+                    criteria.add(Restrictions.in(Observation.ID, observationIds));
+                }
             }
         }
     }

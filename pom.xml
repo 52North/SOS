@@ -17,11 +17,11 @@
     <inceptionYear>2012</inceptionYear>
     <packaging>pom</packaging>
     <issueManagement>
-        <system>Bugzilla</system>
-        <url>https://bugzilla.52north.org/</url>
+        <system>GitHub issues</system>
+        <url>https://github.com/52North/SOS/issues?state=open</url>
     </issueManagement>
     <ciManagement>
-        <system>hudson</system>
+        <system>Jenkins</system>
         <url>http://build.dev.52north.org/jenkins/job/sos-dev/</url>
     </ciManagement>
     <modules>
@@ -932,6 +932,32 @@
             <goals> <goal>download-licenses</goal> </goals> </execution> </executions>
             </plugin> -->
             <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>git-commit-id</id>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                        	<dateFormat>yyyy-MM-dd HH:mm:ssZ</dateFormat>
+                            <!-- Only changing prefix since properties conflicts with jgit above
+                            <prefix>git-commit-id</prefix>-->
+                            <!-- We're using a pom in this example
+                            <skipPoms>false</skipPoms>-->
+                            <gitDescribe>
+                                <!-- Faster to get just branch if skip = true -->
+                                <!--  true to solve https://github.com/ktoso/maven-git-commit-id-plugin/issues/61 -->
+                                <skip>true</skip>
+                            </gitDescribe>
+                            <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
                 <configuration>
@@ -940,6 +966,7 @@
                     <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>
                     <revisionOnScmFailure>0</revisionOnScmFailure>
                     <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+                    <shortRevisionLength>5</shortRevisionLength>
                 </configuration>
                 <executions>
                     <execution>
@@ -949,7 +976,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -1112,10 +1139,17 @@
                     </configuration>
                 </plugin>
                 <plugin>
+	                <groupId>pl.project13.maven</groupId>
+	                <artifactId>git-commit-id-plugin</artifactId>
+	                <version>2.1.9</version>
+                </plugin>
+                <!-- 
+                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>buildnumber-maven-plugin</artifactId>
-                    <version>1.2</version>
-                </plugin>
+                    <version>1.3</version>
+                </plugin> 
+                -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>

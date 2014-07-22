@@ -11,7 +11,7 @@
         </id>
         <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
         <property name="identifier" type="string">
-            <column name="identifier" unique="true"/>
+            <column name="identifier" not-null="true" unique-key="obsPropIdentifierUK" />
         </property>
         <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="obsPropCodespaceIdentifierFk">
             <column name="codespace" />

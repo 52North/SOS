@@ -36,18 +36,24 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.spatial.criterion.SpatialProjections;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
+import org.n52.sos.ds.hibernate.entities.AbstractSpatialFilteringProfile;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
@@ -55,8 +61,10 @@ import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
+import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -72,9 +80,14 @@ import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
+import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.GeometryHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -292,8 +305,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     public abstract Criteria getDefaultObservationInfoCriteria(Session session);
 
     public Criteria getDefaultObservationCriteria(Class<?> clazz, Session session) {
-        return session.createCriteria(clazz)
-                .add(Restrictions.eq(AbstractObservation.DELETED, false))
+        return session.createCriteria(clazz).add(Restrictions.eq(AbstractObservation.DELETED, false))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
@@ -426,12 +438,12 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *             If an error occurs
      */
     public void insertObservationMultiValue(Set<ObservationConstellation> observationConstellations,
-            FeatureOfInterest feature, OmObservation containerObservation, Map<String,Codespace> codespaceCache,
-            Map<String,Unit> unitCache, Session session) throws OwsExceptionReport {
+            FeatureOfInterest feature, OmObservation containerObservation, Map<String, Codespace> codespaceCache,
+            Map<String, Unit> unitCache, Session session) throws OwsExceptionReport {
         List<OmObservation> unfoldObservations = HibernateObservationUtilities.unfoldObservation(containerObservation);
         for (OmObservation sosObservation : unfoldObservations) {
-            insertObservationSingleValue(observationConstellations, feature, sosObservation,
-                    codespaceCache, unitCache, session);
+            insertObservationSingleValue(observationConstellations, feature, sosObservation, codespaceCache,
+                    unitCache, session);
         }
     }
 
@@ -465,7 +477,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @param sosObservation
      *            SOS observation to insert
      * @param codespaceCache
-     *            Map cache for codespace objects (to prevent redundant querying)
+     *            Map cache for codespace objects (to prevent redundant
+     *            querying)
      * @param unitCache
      *            Map cache for unit objects (to prevent redundant querying)
      * @param session
@@ -474,8 +487,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     @SuppressWarnings("rawtypes")
     public void insertObservationSingleValue(Set<ObservationConstellation> hObservationConstellations,
-            FeatureOfInterest hFeature, OmObservation sosObservation, Map<String,Codespace> codespaceCache,
-            Map<String,Unit> unitCache, Session session) throws OwsExceptionReport {
+            FeatureOfInterest hFeature, OmObservation sosObservation, Map<String, Codespace> codespaceCache,
+            Map<String, Unit> unitCache, Session session) throws OwsExceptionReport {
         SingleObservationValue<?> value = (SingleObservationValue) sosObservation.getValue();
         AbstractObservation hObservation = createObservationFromValue(value.getValue(), session);
         hObservation.setDeleted(false);
@@ -490,8 +503,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 addOfferingsToObaservationAndGetProcedureObservableProperty(hObservation, hObservationConstellations);
         observationIdentifiers.setFeatureOfInterest(hFeature);
         addObservationIdentifiersToObservation(observationIdentifiers, hObservation, session);
+        if (sosObservation.isSetSpatialFilteringProfileParameter()) {
+            hObservation.setSamplingGeometry(GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(
+                    sosObservation.getSpatialFilteringProfileParameter().getValue().getValue()));
+        }
+
         session.saveOrUpdate(hObservation);
-        //don't flush here because we may be batching
+        // don't flush here because we may be batching
 
         if (sosObservation.isSetParameter()) {
             insertParameter(sosObservation.getParameter(), hObservation, session);
@@ -499,17 +517,21 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     }
 
     /**
-     * If the local codespace cache isn't null, use it when retrieving codespaces.
-     * @param codespace Codespace
-     * @param localCache Cache (possibly null)
+     * If the local codespace cache isn't null, use it when retrieving
+     * codespaces.
+     * 
+     * @param codespace
+     *            Codespace
+     * @param localCache
+     *            Cache (possibly null)
      * @param session
      * @return Codespace
      */
-    protected Codespace getCodespace(String codespace, Map<String,Codespace> localCache, Session session) {
+    protected Codespace getCodespace(String codespace, Map<String, Codespace> localCache, Session session) {
         if (localCache != null && localCache.containsKey(codespace)) {
             return localCache.get(codespace);
         } else {
-            //query codespace and set cache
+            // query codespace and set cache
             Codespace hCodespace = new CodespaceDAO().getOrInsertCodespace(codespace, session);
             if (localCache != null) {
                 localCache.put(codespace, hCodespace);
@@ -520,16 +542,19 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * If the local unit cache isn't null, use it when retrieving unit.
-     * @param unit Unit
-     * @param localCache Cache (possibly null)
+     * 
+     * @param unit
+     *            Unit
+     * @param localCache
+     *            Cache (possibly null)
      * @param session
      * @return Unit
      */
-    protected Unit getUnit(String unit, Map<String,Unit> localCache, Session session) {
+    protected Unit getUnit(String unit, Map<String, Unit> localCache, Session session) {
         if (localCache != null && localCache.containsKey(unit)) {
             return localCache.get(unit);
         } else {
-            //query unit and set cache
+            // query unit and set cache
             Unit hUnit = new UnitDAO().getOrInsertUnit(unit, session);
             if (localCache != null) {
                 localCache.put(unit, hUnit);
@@ -605,8 +630,12 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             Session session) throws OwsExceptionReport {
         for (NamedValue<?> namedValue : parameter) {
             if (Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
-                DaoFactory.getInstance().getSpatialFilteringProfileDAO(session)
-                        .insertSpatialfilteringProfile((NamedValue<Geometry>) namedValue, observation, session);
+                AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
+                        DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
+                if (spatialFilteringProfileDAO != null) {
+                    spatialFilteringProfileDAO.insertSpatialfilteringProfile((NamedValue<Geometry>) namedValue,
+                            observation, session);
+                }
             } else {
                 throw new OptionNotSupportedException().at("om:parameter").withMessage(
                         "The om:parameter support is not yet implemented!");
@@ -802,7 +831,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     }
 
     /**
-     * Get the AbstractObservation property to filter on for an {@link SosIndeterminateTime}
+     * Get the AbstractObservation property to filter on for an
+     * {@link SosIndeterminateTime}
      *
      * @param indetTime
      *            Value to get property for
@@ -818,15 +848,16 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     }
 
     /**
-     * Add an indeterminate time restriction to a criteria. This allows for multiple results if more than one
-     * observation has the extrema time (max for latest, min for first).
-     * Note: use this method *after* adding all other applicable restrictions so that they will apply to the
-     * min/max observation time determination.
+     * Add an indeterminate time restriction to a criteria. This allows for
+     * multiple results if more than one observation has the extrema time (max
+     * for latest, min for first). Note: use this method *after* adding all
+     * other applicable restrictions so that they will apply to the min/max
+     * observation time determination.
      *
      * @param c
-     *          Criteria to add the restriction to
+     *            Criteria to add the restriction to
      * @param sosIndeterminateTime
-     *          Indeterminate time restriction to add
+     *            Indeterminate time restriction to add
      * @return Modified criteria
      */
     protected Criteria addIndeterminateTimeRestriction(Criteria c, SosIndeterminateTime sosIndeterminateTime) {
@@ -842,7 +873,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         // get observations with exactly the extrema time
         c.add(Restrictions.eq(getIndeterminateTimeFilterProperty(sosIndeterminateTime), indeterminateExtremaTime));
 
-        // not really necessary to return the Criteria object, but useful if we want to chain
+        // not really necessary to return the Criteria object, but useful if we
+        // want to chain
         return c;
     }
 
@@ -974,20 +1006,34 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     }
 
     /**
-     * Check if a Spatial Filtering Profile filter is requested and add to criteria
-     * @param c Criteria to add crtierion
-     * @param request GetObservation request
-     * @param session Hiberante Session
-     * @throws OwsExceptionReport If Spatial Filteirng Profile is not supported or an error occurs.
+     * Check if a Spatial Filtering Profile filter is requested and add to
+     * criteria
+     * 
+     * @param c
+     *            Criteria to add crtierion
+     * @param request
+     *            GetObservation request
+     * @param session
+     *            Hiberante Session
+     * @throws OwsExceptionReport
+     *             If Spatial Filteirng Profile is not supported or an error
+     *             occurs.
      */
-    protected void checkAndAddSpatialFilteringProfileCriterion(Criteria c, GetObservationRequest request, Session session) throws OwsExceptionReport {
+    protected void checkAndAddSpatialFilteringProfileCriterion(Criteria c, GetObservationRequest request,
+            Session session) throws OwsExceptionReport {
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
-            AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO = DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
-            if (spatialFilteringProfileDAO == null) {
-                throw new OptionNotSupportedException().at(Sos2Constants.GetObservationParams.spatialFilter)
-                        .withMessage("The SOS 2.0 Spatial Filtering Profile is not supported by this service!");
+            AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
+                    DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
+            if (spatialFilteringProfileDAO != null) {
+                c.add(Subqueries.propertyIn(AbstractObservation.ID,
+                        spatialFilteringProfileDAO.getDetachedCriteriaFor(request.getSpatialFilter())));
+            } else {
+                c.add(SpatialRestrictions.filter(
+                        AbstractObservation.SAMPLING_GEOMETRY,
+                        request.getSpatialFilter().getOperator(),
+                        GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(
+                                request.getSpatialFilter().getGeometry())));
             }
-            c.add(Subqueries.propertyIn(AbstractObservation.ID, spatialFilteringProfileDAO.getDetachedCriteriaFor(request.getSpatialFilter())));
         }
 
     }
@@ -1054,4 +1100,58 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
 
     }
+
+    public abstract SosEnvelope getSpatialFilteringProfileEnvelopeForOfferingId(String offeringID, Session session)
+            throws OwsExceptionReport;
+
+    protected SosEnvelope getSpatialFilteringProfileEnvelopeForOfferingId(Class clazz, String offeringID,
+            Session session) throws OwsExceptionReport {
+        try {
+            // XXX workaround for Hibernate Spatial's lack of support for
+            // GeoDB's extent aggregate see
+            // http://www.hibernatespatial.org/pipermail/hibernatespatial-users/2013-August/000876.html
+            Dialect dialect = ((SessionFactoryImplementor) session.getSessionFactory()).getDialect();
+            if (GeometryHandler.getInstance().isSpatialDatasource()
+                    && HibernateHelper.supportsFunction(dialect, HibernateConstants.FUNC_EXTENT)) {
+                Criteria criteria = session.createCriteria(clazz);
+                criteria.setProjection(SpatialProjections.extent(AbstractObservationTime.SAMPLING_GEOMETRY));
+                criteria.createCriteria(AbstractObservation.OFFERINGS).add(
+                        Restrictions.eq(Offering.IDENTIFIER, offeringID));
+                LOGGER.debug("QUERY getEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
+                Geometry geom = (Geometry) criteria.uniqueResult();
+                geom = GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(geom);
+                if (geom != null) {
+                    return new SosEnvelope(geom.getEnvelopeInternal(), GeometryHandler.getInstance().getDefaultEPSG());
+                }
+            } else {
+                final Envelope envelope = new Envelope();
+                Criteria criteria = session.createCriteria(clazz);
+                Criteria createCriteria = criteria.createCriteria(AbstractObservationTime.SAMPLING_GEOMETRY);
+                createCriteria.createCriteria(AbstractObservation.OFFERINGS).add(
+                        Restrictions.eq(Offering.IDENTIFIER, offeringID));
+                LOGGER.debug("QUERY getEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
+                @SuppressWarnings("unchecked")
+                final List<AbstractObservationTime> observationTimes = criteria.list();
+                if (CollectionHelper.isNotEmpty(observationTimes)) {
+                    for (final AbstractObservationTime observationTime : observationTimes) {
+                        if (observationTime.hasSamplingGeometry()) {
+                            final Geometry geom = observationTime.getSamplingGeometry();
+                            if (geom != null && geom.getEnvelopeInternal() != null) {
+                                envelope.expandToInclude(geom.getEnvelopeInternal());
+                            }
+                        }
+                    }
+                    if (!envelope.isNull()) {
+                        return new SosEnvelope(envelope, GeometryHandler.getInstance().getDefaultEPSG());
+                    }
+                }
+            }
+        } catch (final HibernateException he) {
+            throw new NoApplicableCodeException().causedBy(he).withMessage(
+                    "Exception thrown while requesting feature envelope for observation ids");
+        }
+        return null;
+    }
+
+    public abstract List<Geometry> getSamplingGeometries(String feature,  Session session);
 }

@@ -115,7 +115,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     private final boolean encodeProcedureInObservation;
 
-    private final SpatialFilteringProfileAdder spatialFilteringProfileAdder;
+    private SpatialFilteringProfileAdder spatialFilteringProfileAdder;
 
     private List<OmObservation> observationCollection;
 
@@ -189,12 +189,30 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         this.encodeProcedureInObservation = getActiveProfile().isEncodeProcedureInObservation();
     }
 
+    public ObservationOmObservationCreator(Collection<AbstractObservation> observations, String version, String resultModel,
+            Session session) {
+        super(version, session);
+        this.resultModel = resultModel;
+        if (observations == null) {
+            this.observations = Collections.emptyList();
+        } else {
+            this.observations = observations;
+        }
+        this.procedureConverter = new HibernateProcedureConverter();
+        this.featureQueryHandler = getFeatureQueryHandler();
+        this.encodeProcedureInObservation = getActiveProfile().isEncodeProcedureInObservation();
+    }
+
     private Collection<AbstractObservation> getObservations() {
         return observations;
     }
 
     private SpatialFilteringProfileAdder getSpatialFilteringProfileAdder() {
         return spatialFilteringProfileAdder;
+    }
+    
+    private boolean isSetSpatialFilteringProfileAdder() {
+        return getSpatialFilteringProfileAdder() != null;
     }
 
     private String getResultModel() {
@@ -390,7 +408,11 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
                     createObservationConstellation(hObservation, procedureId, phenomenonId, featureId);
             final OmObservation sosObservation = createNewObservation(obsConst, hObservation, value);
             // add SpatialFilteringProfile
-            getSpatialFilteringProfileAdder().add(hObservation.getObservationId(), sosObservation);
+            if (hObservation.hasSamplingGeometry()) {
+                sosObservation.addParameter(createSpatialFilteringProfileParameter(hObservation.getSamplingGeometry()));
+            } else if (isSetSpatialFilteringProfileAdder()) {
+                getSpatialFilteringProfileAdder().add(hObservation.getObservationId(), sosObservation);
+            }
             observationCollection.add(sosObservation);
             getSession().evict(hObservation);
             // TODO check for ScrollableResult vs

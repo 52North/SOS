@@ -589,4 +589,16 @@ public interface HibernateRelations {
         boolean isSetLocale();
     }
 
+    
+    interface HasSamplingGeometry {
+        
+        String SAMPLING_GEOMETRY = "samplingGeometry";
+        
+        Geometry getSamplingGeometry();
+        
+        void setSamplingGeometry(Geometry samplingGeometry);
+        
+        boolean hasSamplingGeometry();
+        
+    }
 }

@@ -146,7 +146,6 @@ HibernateDatasourceConstants {
 
             // set timestamp mapping to a special type to ensure time is always
             // queried in UTC
-
             configuration.registerTypeOverride(new UtcTimestampType());
             ServiceRegistry serviceRegistry =
                     new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();

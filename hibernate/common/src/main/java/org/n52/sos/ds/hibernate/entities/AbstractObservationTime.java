@@ -38,7 +38,10 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasPhenomenonTime;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasResultTime;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSamplingGeometry;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValidTime;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract class for value time
@@ -55,7 +58,8 @@ public abstract class AbstractObservationTime
                    HasPhenomenonTime,
                    HasResultTime,
                    HasValidTime,
-                   HasObservationId {
+                   HasObservationId,
+                   HasSamplingGeometry {
 
     private static final long serialVersionUID = 8704397558609682891L;
 
@@ -67,6 +71,8 @@ public abstract class AbstractObservationTime
     private Date validTimeEnd;
     private Set<Offering> offerings = new HashSet<Offering>(0);
     private boolean deleted;
+
+    private Geometry samplingGeometry;
 
     @Override
     public long getObservationId() {
@@ -163,4 +169,20 @@ public abstract class AbstractObservationTime
             getOfferings().add((Offering) offerings);
         }
     }
+    
+    @Override
+    public Geometry getSamplingGeometry() {
+        return samplingGeometry;
+    }
+    
+    @Override
+    public void setSamplingGeometry(Geometry samplingGeometry) {
+        this.samplingGeometry = samplingGeometry;
+    }
+    
+    @Override
+    public boolean hasSamplingGeometry() {
+        return getSamplingGeometry() != null && !getSamplingGeometry().isEmpty();
+    }
+
 }

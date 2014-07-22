@@ -10,8 +10,8 @@
             </generator>
         </id>
         <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
-		<property name="identifier" type="string">
-            <column name="identifier" not-null="true" unique="true"/>
+        <property name="identifier" type="string">
+            <column name="identifier" not-null="true" unique-key="offIdentifierUK"/>
         </property>
         <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="offCodespaceIdentifierFk">
             <column name="codespace" />

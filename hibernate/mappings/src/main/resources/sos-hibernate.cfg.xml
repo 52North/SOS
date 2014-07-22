@@ -7,6 +7,7 @@
         <property name="hibernate.current_session_context_class">thread</property>
         <property name="hibernate.cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
         <property name="hibernate.max_fetch_depth">1</property>
+        <property name="hibernate.schema_update.unique_constraint_strategy">RECREATE_QUIETLY</property>
         <!-- <property name="hibernate.connection.oracle.jdbc.V8Compatible">true</property> -->
         <!-- No sql output in std out.-->
         <!--

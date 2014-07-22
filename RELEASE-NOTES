@@ -13,7 +13,8 @@ Changes since last release
  
     * Binding selection by ContentType at /sos and /service
     * Add columns to mapping files for an easier integration of the Timeseries API (only for Series concept)
-      * Added first/latest time (all) and value (only OM_Measurement) columns to series table and update these columns during insertion process
+      * Added first/latest time (all) and value (only OM_Measurement) columns to series table and update 
+        these columns during insertion process
     * Add Microsoft SQL Server support
       * https://github.com/52North/SOS/commit/e288e502fbc1f0b833bad1e90d60b36c491d0792
     * Create JSON cache dump in admin interface
@@ -36,8 +37,10 @@ Changes since last release
       	  * chunk size is configurable via settings
       * reduced latency for GetObservation response
     * Add datasource dependent DAO and ConnectionProvider loading
-      * This allows to include DAOs and ConnectionProvider for different datasources in the same SOS which can be selected during the installation.
-      * Corresponding to the selected datasource, the required DAOs and ConnectionProvider are loaded during the initialization.
+      * This allows to include DAOs and ConnectionProvider for different datasources in the same SOS which 
+         can be selected during the installation.
+      * Corresponding to the selected datasource, the required DAOs and ConnectionProvider are loaded during 
+        the initialization.
       * https://github.com/52North/SOS/commit/d906f74267e8efcc51e53703a391aafb29119178
  
  --- Changes ---
@@ -55,7 +58,7 @@ Changes since last release
       * springframework (3.2.6)
       * PostgreSQL JDBC (9.3-1101-jdbc4)
       * PostGIS JDBC (2.1.3)
-      * Hibernate (4.3.5.Fina)
+      * Hibernate (4.3.5.Final)
     * Reduced Maven build profiles 
       * https://github.com/52North/SOS/commit/279f815fd7372ab5cb3ac06add2995486f0c2402
     * Switch to Java 7 as compiler/source/target version
@@ -64,12 +67,24 @@ Changes since last release
       * https://github.com/52North/SOS/commit/09dcbdf8180bc0b7f260d435385254f58e50a78c
     * Better SQL Exceptions: Create a composite exception and add all Throwable as a single exception.
       * https://github.com/52North/SOS/commit/5b1ebe002aabc2d9108eaf196f8927605b77fc9b
+    * Name unique constraints in mapping files
+      * constraints are updated if you check 'Force updating existing tables' at the 'Datasource configuration' 
+        installation page.
+      * https://github.com/52North/SOS/commit/8e005c7b21f4c51bd238a8eeafdd592d8953c750
+    * Move samplingGeometry from separate table (spatialfilteringprofile) to observation table
+      * Improved performance if samplingGeometries are set.
+      * Old concept with spatialfilteringprofile table is still supported. To use the old concept check 
+        '!!! DEPRECATED !!! Old Spatial Filtering Profile' at the 'Datasource configuration' installation page.
+      * For each supported DBMS an update script is available (/misc/db/..) to add the new column, copy the 
+        samplingGeometries and remove the spatialfilteringprofile table.
+      * https://github.com/52North/SOS/commit/65e8a4d7867f3e19c3c444438f79df5a3616fb8d
       
  
  --- Fixed bugs ---
    
     * Check if JSON binding is supported before testing
-    * Show Spatial Filtering Profile key in the Profile section of the Capabilities.ServiceIdentification if strict Spatial Filtering Profile is selected
+    * Show Spatial Filtering Profile key in the Profile section of the Capabilities.ServiceIdentification if 
+      strict Spatial Filtering Profile is selected
       * https://github.com/52North/SOS/commit/437fd75
     * Fix TimeRange decoding
       * https://github.com/52North/SOS/commit/4151647
@@ -78,10 +93,13 @@ Changes since last release
     * Fix SOS 1.0 schemaLocation randomly missing after restarts (https://github.com/52North/SOS/issues/45)
       * https://github.com/52North/SOS/commit/f849cc9
     * Fix for Cache serialization performance issue
-      * After each InsertObservation the cache was directly serialized to the file. Thus, the insert requests were getting slower the more data were available.
+      * After each InsertObservation the cache was directly serialized to the file. Thus, the insert requests were 
+        getting slower the more data were available.
       * https://github.com/52North/SOS/commit/b1c172cd2b087b4a76eed8648e32952dee55c098
     * Fix problem with duplicated entries in generated SQL scripts.
       * https://github.com/52North/SOS/commit/6e70d910e6f8f7140d79f65c83250cf5370b73fc
+    * Fix #74: Exception when executing SOS 1.0.0 DescribeSensor requests
+      * https://github.com/52North/SOS/commit/
  
  
 Release 52n-sos-4.0.1
@@ -135,7 +153,8 @@ Release 52n-sos-4.0.0
     * [Bug 993] Cache Update blocks all operations
     * [Bug 996] Installer finishes smoothly when "PostgreSQL/PostGIS Core" datasource is selected but not tables exists
     * [Bug 997] FeatureOfInterest JSON Encoding with wrong "name"
-    * [Bug 1001] Could not finish set-up using installer: Could not connect to the database: ERROR: relation "codespaceid_seq" already exists. Command: create sequence public.codespaceId_seq
+    * [Bug 1001] Could not finish set-up using installer: Could not connect to the database: ERROR: relation "codespaceid_seq" already exists. 
+                 Command: create sequence public.codespaceId_seq
     * [Bug 1005] Spatial Filtering Profile filtering does not work after refactoring the Hibernate GetObservation request processing (r22393)
     
 Release 52n-sos-4.0.0-RC6
@@ -250,7 +269,8 @@ Release 52n-sos-4.0.0-RC1
 
     * [Bug 860] - Dynamic generation of sensor description if descriptionURL and descriptionXml are not set
     * [Bug 919] - InvalidRequest exception when send SOAP-InsertObservation request with OM_SWEArrayObservation type
-    * [Bug 920] - org.hibernate.LazyInitializationException: illegal access to loading collection in OfferingCacheUpdateTask's getRelatedFeatureIdentifiersFrom(TOffering offering)
+    * [Bug 920] - org.hibernate.LazyInitializationException: illegal access to loading collection in OfferingCacheUpdateTask's 
+                  getRelatedFeatureIdentifiersFrom(TOffering offering)
     * [Bug 922] - Implement Related Feature Handling
     * [Bug 929] - Reload Capabilities Cache fails if there is a deleted procedure in the database 
     * [Bug 930] - Extension "SplitDataArrayIntoObservations"

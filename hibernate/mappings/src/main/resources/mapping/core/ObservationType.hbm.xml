@@ -10,7 +10,7 @@
             </generator>
         </id>
         <property name="observationType" type="string">
-            <column name="observationType" not-null="true" unique="true" />
+            <column name="observationType" not-null="true" unique-key="observationTypeUK"/>
         </property>
     </class>
 </hibernate-mapping>

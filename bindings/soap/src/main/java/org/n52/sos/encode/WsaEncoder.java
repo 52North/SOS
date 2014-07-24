@@ -29,24 +29,33 @@
 package org.n52.sos.encode;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
+import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.http.MediaTypes;
 import org.n52.sos.w3c.SchemaLocation;
+import org.n52.sos.wsa.WsaActionHeader;
 import org.n52.sos.wsa.WsaConstants;
 import org.n52.sos.wsa.WsaHeader;
+import org.n52.sos.wsa.WsaMessageIDHeader;
+import org.n52.sos.wsa.WsaRelatesToHeader;
+import org.n52.sos.wsa.WsaReplyToHeader;
+import org.n52.sos.wsa.WsaToHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3.x2005.x08.addressing.ActionDocument;
+import org.w3.x2005.x08.addressing.MessageIDDocument;
+import org.w3.x2005.x08.addressing.RelatesToDocument;
+import org.w3.x2005.x08.addressing.ReplyToDocument;
+import org.w3.x2005.x08.addressing.ToDocument;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -55,7 +64,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  * 
  */
-public class WsaEncoder implements Encoder<Map<QName, String>, WsaHeader> {
+public class WsaEncoder implements Encoder<XmlObject, WsaHeader> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WsaEncoder.class);
 
@@ -98,27 +107,64 @@ public class WsaEncoder implements Encoder<Map<QName, String>, WsaHeader> {
     }
 
     @Override
-    public Map<QName, String> encode(WsaHeader response) throws OwsExceptionReport {
-        return encode(response, null);
+    public XmlObject encode(WsaHeader wsaHeader) throws OwsExceptionReport {
+        return encode(wsaHeader, null);
     }
 
     @Override
-    public Map<QName, String> encode(WsaHeader response, Map<HelperValues, String> additionalValues)
-            throws OwsExceptionReport {
-        if (response == null) {
-            throw new UnsupportedEncoderInputException(this, response);
+    public XmlObject encode(WsaHeader wsaHeader, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+        if (wsaHeader == null) {
+            throw new UnsupportedEncoderInputException(this, wsaHeader);
         }
-        Map<QName, String> wsaHeaderValues = new HashMap<QName, String>(3);
-        if (response.getReplyToAddress() != null && !response.getReplyToAddress().isEmpty()) {
-            wsaHeaderValues.put(WsaConstants.QN_TO, response.getReplyToAddress());
+        if (!wsaHeader.isSetValue()) {
+            return null;
         }
-        if (response.getMessageID() != null) {
-            wsaHeaderValues.put(WsaConstants.QN_RELATES_TO, response.getMessageID());
+        if (wsaHeader instanceof WsaReplyToHeader) {
+            return encodeReplyToHeader((WsaReplyToHeader) wsaHeader);
+        } else if (wsaHeader instanceof WsaMessageIDHeader) {
+            return encodeMessageIDHeader((WsaMessageIDHeader) wsaHeader);
+        } else if (wsaHeader instanceof WsaActionHeader) {
+            return encodeActionHeader((WsaActionHeader) wsaHeader);
+        } else if (wsaHeader instanceof WsaToHeader) {
+            return encodeToHeader((WsaToHeader) wsaHeader);
+        } else if (wsaHeader instanceof WsaRelatesToHeader) {
+            return encodeRelatesToHeader((WsaRelatesToHeader) wsaHeader);
+        } else {
+            throw new UnsupportedEncoderInputException(this, wsaHeader);
         }
-        if (response.getActionValue() != null) {
-            wsaHeaderValues.put(WsaConstants.QN_ACTION, response.getActionValue());
-        }
-        return wsaHeaderValues;
+    }
+
+    private XmlObject encodeReplyToHeader(WsaReplyToHeader wsaHeader) {
+        ReplyToDocument replyToDoc =
+                ReplyToDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        replyToDoc.addNewReplyTo().addNewAddress().setStringValue(wsaHeader.getValue());
+        return replyToDoc;
+    }
+
+    private XmlObject encodeRelatesToHeader(WsaRelatesToHeader wsaHeader) {
+        RelatesToDocument relatesToDoc =
+                RelatesToDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        relatesToDoc.addNewRelatesTo().setStringValue(wsaHeader.getValue());
+        return relatesToDoc;
+    }
+
+    private XmlObject encodeMessageIDHeader(WsaMessageIDHeader wsaHeader) {
+        MessageIDDocument messageIDDoc =
+                MessageIDDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        messageIDDoc.addNewMessageID().setStringValue(wsaHeader.getValue());
+        return null;
+    }
+
+    private XmlObject encodeActionHeader(WsaActionHeader wsaHeader) {
+        ActionDocument actionDoc = ActionDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        actionDoc.addNewAction().setStringValue(wsaHeader.getValue());
+        return actionDoc;
+    }
+
+    private XmlObject encodeToHeader(WsaToHeader wsaHeader) {
+        ToDocument toDoc = ToDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        toDoc.addNewTo().setStringValue(wsaHeader.getValue());
+        return toDoc;
     }
 
 }

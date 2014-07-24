@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.AbstractMap;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -51,6 +52,7 @@ import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.service.SoapHeader;
 import org.n52.sos.soap.SoapConstants;
 import org.n52.sos.soap.SoapFault;
 import org.n52.sos.soap.SoapHelper;
@@ -62,6 +64,9 @@ import org.n52.sos.util.OwsHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.SchemaLocation;
 import org.n52.sos.w3c.W3CConstants;
+import org.n52.sos.wsa.WsaActionHeader;
+import org.n52.sos.wsa.WsaConstants;
+import org.n52.sos.wsa.WsaHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.x2003.x05.soapEnvelope.Body;
@@ -192,32 +197,11 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implem
             }
         }
 
-        // if (response.getHeader() != null) {
-        // Map<String, SoapHeader> headers = response.getHeader();
-        // for (String namespace : headers.keySet()) {
-        // SoapHeader header = headers.get(namespace);
-        // if (namespace.equals(WsaConstants.NS_WSA)) {
-        // WsaHeader wsa = (WsaHeader) header;
-        // wsa.setActionValue(action);
-        // }
-        // try {
-        // Encoder encoder = Configurator.getInstance().getEncoder(namespace);
-        // if (encoder != null) {
-        // Map<QName, String> headerElements = (Map<QName, String>)
-        // encoder.encode(header);
-        // for (QName qName : headerElements.keySet()) {
-        // soapResponseMessage.getSOAPHeader().addChildElement(qName)
-        // .setTextContent(headerElements.get(qName));
-        // }
-        // }
-        // } catch (OwsExceptionReport owse) {
-        // throw owse;
-        // }
-        // }
-        //
-        // } else {
-        // soapResponseMessage.getSOAPHeader().detachNode();
-        // }
+        if (response.getHeader() != null) {
+            createSOAP12Header(envelope, response.getHeader(),action);
+        } else {
+            envelope.addNewHeader();
+        }
 
         // TODO for testing an validating
         // checkAndValidateSoapMessage(envelopeDoc);
@@ -225,9 +209,22 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implem
         return envelopeDoc;
     }
 
-    private XmlObject createSOAP12Header() {
-        // TODO implement
-        return null;
+    private void createSOAP12Header(Envelope envelope, List<SoapHeader> headers, String action) throws OwsExceptionReport {
+        Node headerDomNode = envelope.addNewHeader().getDomNode();
+        for (SoapHeader header : headers) {
+            if (WsaConstants.NS_WSA.equals(header.getNamespace()) && header instanceof WsaActionHeader) {
+                ((WsaHeader) header).setValue(action);
+            }
+            try {
+                XmlObject xmObject = CodingHelper.encodeObjectToXml(header.getNamespace(), header);
+                if (xmObject != null) {
+                    Node ownerDoc = headerDomNode.getOwnerDocument().importNode(xmObject.getDomNode().getFirstChild(), true);
+                    headerDomNode.insertBefore(ownerDoc, null);
+                }
+            } catch (OwsExceptionReport owse) {
+                throw owse;
+            }
+        }
     }
 
     private XmlObject createSOAP12Fault(final SoapFault soapFault) {

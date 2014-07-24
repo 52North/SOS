@@ -32,6 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -43,6 +44,7 @@ import org.n52.sos.util.http.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -89,7 +91,7 @@ public class ServiceResponse implements CommunicationObjectWithSoapHeader {
      */
     private final Map<String, String> headerMap = Maps.newHashMap();
 
-    private final Map<String, SoapHeader> soapHeaderMap = Maps.newHashMap();
+    private final List<SoapHeader> soapHeaderMap = Lists.newArrayList();
 
     /**
      * constructor with content and response code
@@ -243,15 +245,15 @@ public class ServiceResponse implements CommunicationObjectWithSoapHeader {
     }
 
     @Override
-    public Map<String, SoapHeader> getSoapHeader() {
-        return Collections.unmodifiableMap(this.soapHeaderMap);
+    public List<SoapHeader> getSoapHeader() {
+        return Collections.unmodifiableList(this.soapHeaderMap);
     }
 
     @Override
-    public void setSoapHeader(Map<String, SoapHeader> header) {
+    public void setSoapHeader(List<SoapHeader> header) {
         this.soapHeaderMap.clear();
         if (header != null) {
-            this.soapHeaderMap.putAll(header);
+            this.soapHeaderMap.addAll(header);
         }
     }
 

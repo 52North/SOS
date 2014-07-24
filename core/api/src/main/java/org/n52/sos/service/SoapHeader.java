@@ -37,5 +37,7 @@ package org.n52.sos.service;
  * 
  */
 public interface SoapHeader {
+    
+    public String getNamespace();
 
 }

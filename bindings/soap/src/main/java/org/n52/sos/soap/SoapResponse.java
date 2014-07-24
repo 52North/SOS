@@ -28,7 +28,7 @@
  */
 package org.n52.sos.soap;
 
-import java.util.Map;
+import java.util.List;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -53,7 +53,7 @@ public class SoapResponse {
     
     private AbstractServiceResponse bodyContent;
 
-    private Map<String, SoapHeader> header;
+    private List<SoapHeader> header;
 
     private OwsExceptionReport exception;
 
@@ -130,11 +130,11 @@ public class SoapResponse {
         return bodyContent;
     }
 
-    public void setHeader(Map<String, SoapHeader> map) {
-        this.header = map;
+    public void setHeader(List<SoapHeader> list) {
+        this.header = list;
     }
 
-    public Map<String, SoapHeader> getHeader() {
+    public List<SoapHeader> getHeader() {
         return header;
     }
 

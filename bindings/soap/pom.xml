@@ -25,6 +25,10 @@
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-soap-v12</artifactId>
         </dependency>
+          <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-wsa-v10</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-ows-v110</artifactId>

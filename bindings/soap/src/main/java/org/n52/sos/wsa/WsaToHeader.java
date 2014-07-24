@@ -26,36 +26,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.service;
+package org.n52.sos.wsa;
 
-import java.util.List;
+public class WsaToHeader extends WsaHeader {
 
-/**
- * Interface to provide SOAP Header support in Request and Response objects.
- * 
- * @author Matthes Rieke
- * 
- * @since 4.0.0
- * 
- */
-public interface CommunicationObjectWithSoapHeader {
-
-    /**
-     * @return the SoapHeader encoded as an InputStream containing XML.
-     */
-    List<SoapHeader> getSoapHeader();
-
-    /**
-     * @param header
-     *            the SoapHeader encoded as an InputStream containing XML.
-     */
-    void setSoapHeader(List<SoapHeader> header);
-
-    /**
-     * Convenience method to check if the SoapHeader is set.
-     * 
-     * @return true if Header is set
-     */
-    boolean isSetSoapHeader();
+    public WsaToHeader(String value) {
+        super(value);
+    }
 
 }

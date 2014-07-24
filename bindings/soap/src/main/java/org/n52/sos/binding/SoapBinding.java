@@ -32,6 +32,7 @@ import static org.n52.sos.util.http.HTTPStatus.BAD_REQUEST;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,13 +63,19 @@ import org.n52.sos.soap.SoapHelper;
 import org.n52.sos.soap.SoapRequest;
 import org.n52.sos.soap.SoapResponse;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.http.HTTPStatus;
 import org.n52.sos.util.http.HTTPUtils;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.http.MediaTypes;
+import org.n52.sos.wsa.WsaMessageIDHeader;
+import org.n52.sos.wsa.WsaReplyToHeader;
+import org.n52.sos.wsa.WsaToHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
@@ -159,7 +166,7 @@ public class SoapBinding extends SimpleBinding {
         SoapResponse soapResponse = new SoapResponse();
         soapResponse.setSoapVersion(chain.getSoapRequest().getSoapVersion());
         soapResponse.setSoapNamespace(chain.getSoapRequest().getSoapNamespace());
-        soapResponse.setHeader(chain.getSoapRequest().getSoapHeader());
+        soapResponse.setHeader(checkSoapHeaders(chain.getSoapRequest().getSoapHeader()));
         chain.setSoapResponse(soapResponse);
     }
 
@@ -215,10 +222,10 @@ public class SoapBinding extends SimpleBinding {
         // TODO allow other bindings to encode response as soap messages
         if (contentType.isCompatible(getDefaultContentType())) {
             checkSoapInjection(chain);
-                HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), checkMediaType(chain),
-                        chain);
+            HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), checkMediaType(chain), chain);
         } else {
-            HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), contentType, chain.getBodyResponse());
+            HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), contentType,
+                    chain.getBodyResponse());
         }
     }
 
@@ -251,12 +258,31 @@ public class SoapBinding extends SimpleBinding {
             final CommunicationObjectWithSoapHeader soapHeaderObject =
                     (CommunicationObjectWithSoapHeader) chain.getBodyResponse();
             if (soapHeaderObject.isSetSoapHeader()) {
-                final Map<String, SoapHeader> header =
+                final List<SoapHeader> headers =
                         ((CommunicationObjectWithSoapHeader) chain.getSoapRequest()).getSoapHeader();
                 // TODO do things
-                chain.getSoapResponse().setHeader(header);
+                chain.getSoapResponse().setHeader(checkSoapHeaders(headers));
             }
         }
+    }
+
+    private List<SoapHeader> checkSoapHeaders(List<SoapHeader> headers) {
+        if (CollectionHelper.isNotEmpty(headers)) {
+            List<SoapHeader> responseHeader = Lists.newArrayListWithCapacity(headers.size());
+            for (SoapHeader header : headers) {
+                if (header instanceof WsaMessageIDHeader) {
+                    responseHeader.add(((WsaMessageIDHeader) header).getRelatesToHeader());
+                } else if (header instanceof WsaReplyToHeader) {
+                    responseHeader.add(((WsaReplyToHeader) header).getToHeader());
+                } else if (header instanceof WsaToHeader) { 
+                    
+                } else {
+                    responseHeader.add(header);
+                }
+            }
+            return responseHeader;
+        }
+        return null;
     }
 
     /**

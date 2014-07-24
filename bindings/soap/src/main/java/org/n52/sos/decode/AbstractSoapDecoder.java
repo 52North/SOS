@@ -29,7 +29,6 @@
 package org.n52.sos.decode;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,21 +42,24 @@ import javax.xml.soap.SOAPMessage;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.exception.swes.InvalidRequestException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.service.SoapHeader;
 import org.n52.sos.soap.SoapRequest;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.LinkedListMultiMap;
 import org.n52.sos.util.ListMultiMap;
 import org.n52.sos.util.W3cHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.wsa.WsaActionHeader;
 import org.n52.sos.wsa.WsaConstants;
-import org.n52.sos.wsa.WsaHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -127,7 +129,7 @@ public abstract class AbstractSoapDecoder implements Decoder<SoapRequest, XmlObj
         }
     }
 
-    protected Map<String, SoapHeader> getSoapHeader(SOAPHeader soapHeader) {
+    protected List<SoapHeader> getSoapHeader(SOAPHeader soapHeader) {
         ListMultiMap<String, SOAPHeaderElement> headersByNamespace =
                 new LinkedListMultiMap<String, SOAPHeaderElement>();
         Iterator<?> headerElements = soapHeader.extractAllHeaderElements();
@@ -135,16 +137,22 @@ public abstract class AbstractSoapDecoder implements Decoder<SoapRequest, XmlObj
             SOAPHeaderElement element = (SOAPHeaderElement) headerElements.next();
             headersByNamespace.add(element.getNamespaceURI(), element);
         }
-        Map<String, SoapHeader> soapHeaders = new HashMap<String, SoapHeader>();
+        List<SoapHeader> soapHeaders = Lists.newArrayList();
         for (String namespace : headersByNamespace.keySet()) {
             try {
                 Decoder<?, List<SOAPHeaderElement>> decoder =
                         CodingRepository.getInstance().getDecoder(
                                 new XmlNamespaceDecoderKey(namespace, SOAPHeaderElement.class));
                 if (decoder != null) {
-                    Object header = decoder.decode(headersByNamespace.get(namespace));
-                    if (header instanceof SoapHeader) {
-                        soapHeaders.put(namespace, (SoapHeader) header);
+                    Object object = decoder.decode(headersByNamespace.get(namespace));
+                    if (object instanceof SoapHeader) {
+                        soapHeaders.add((SoapHeader) object);
+                    } else if (object instanceof List<?>) {
+                        for (Object o : (List<?>)object) {
+                            if (o instanceof SoapHeader) {
+                                soapHeaders.add((SoapHeader) o);
+                            }
+                        }
                     }
                 } else {
                     LOGGER.info("The SOAP-Header elements for namespace '{}' are not supported by this server!",
@@ -157,11 +165,15 @@ public abstract class AbstractSoapDecoder implements Decoder<SoapRequest, XmlObj
         return soapHeaders;
     }
 
-    protected String checkSoapAction(String soapAction, Map<String, SoapHeader> soapHeader) {
+    protected String checkSoapAction(String soapAction, List<SoapHeader> soapHeaders) {
         if (soapAction != null && !soapAction.isEmpty()) {
             return soapAction;
-        } else if (soapHeader != null && soapHeader.containsKey(WsaConstants.NS_WSA)) {
-            return ((WsaHeader) soapHeader.get(WsaConstants.NS_WSA)).getActionValue();
+        } else if (CollectionHelper.isEmpty(soapHeaders)) {
+            for (SoapHeader soapHeader : soapHeaders) {
+                if (WsaConstants.NS_WSA.equals(soapHeader.getNamespace()) && soapHeader instanceof WsaActionHeader) {
+                    return ((WsaActionHeader)soapHeader).getValue();
+                }
+            }
         }
         return null;
     }

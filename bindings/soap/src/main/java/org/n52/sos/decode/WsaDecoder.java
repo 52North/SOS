@@ -38,18 +38,23 @@ import javax.xml.soap.Node;
 import javax.xml.soap.SOAPHeaderElement;
 
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
+import org.n52.sos.wsa.WsaActionHeader;
 import org.n52.sos.wsa.WsaConstants;
 import org.n52.sos.wsa.WsaHeader;
+import org.n52.sos.wsa.WsaMessageIDHeader;
+import org.n52.sos.wsa.WsaReplyToHeader;
+import org.n52.sos.wsa.WsaToHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
  * 
  */
-public class WsaDecoder implements Decoder<WsaHeader, List<SOAPHeaderElement>> {
+public class WsaDecoder implements Decoder<List<WsaHeader>, List<SOAPHeaderElement>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WsaDecoder.class);
 
@@ -77,29 +82,36 @@ public class WsaDecoder implements Decoder<WsaHeader, List<SOAPHeaderElement>> {
     }
 
     @Override
-    public WsaHeader decode(List<SOAPHeaderElement> list) {
-        WsaHeader wsaHeaderRequest = new WsaHeader();
+    public List<WsaHeader> decode(List<SOAPHeaderElement> list) {
+        List<WsaHeader> wsaHeaders = Lists.newArrayListWithCapacity(list.size());
+        boolean to = false;
+        boolean replyTo = false;
+        boolean messageId = false;
+        boolean action = false;
         for (SOAPHeaderElement soapHeaderElement : list) {
             if (soapHeaderElement.getLocalName().equals(WsaConstants.EN_TO)) {
-                wsaHeaderRequest.setToValue(soapHeaderElement.getValue());
+                wsaHeaders.add(new WsaToHeader(soapHeaderElement.getValue()));
+                to = true;
             } else if (soapHeaderElement.getLocalName().equals(WsaConstants.EN_ACTION)) {
-                wsaHeaderRequest.setActionValue(soapHeaderElement.getValue());
+                wsaHeaders.add(new WsaActionHeader(soapHeaderElement.getValue()));
+                action = true;
             } else if (soapHeaderElement.getLocalName().equals(WsaConstants.EN_REPLY_TO)) {
                 Iterator<?> iter = soapHeaderElement.getChildElements();
                 while (iter.hasNext()) {
                     Node node = (Node) iter.next();
                     if (node.getLocalName() != null && node.getLocalName().equals(WsaConstants.EN_ADDRESS)) {
-                        wsaHeaderRequest.setReplyToAddress(node.getValue());
+                        wsaHeaders.add(new WsaReplyToHeader(node.getValue()));
+                        replyTo = true;
                     }
                 }
             } else if (soapHeaderElement.getLocalName().equals(WsaConstants.EN_MESSAGE_ID)) {
-                wsaHeaderRequest.setMessageID(soapHeaderElement.getValue());
+                wsaHeaders.add(new WsaMessageIDHeader(soapHeaderElement.getValue()));
+                messageId = true;
             }
         }
-        if ((wsaHeaderRequest.getToValue() != null || wsaHeaderRequest.getReplyToAddress() != null || wsaHeaderRequest
-                .getMessageID() != null) && wsaHeaderRequest.getActionValue() == null) {
-            wsaHeaderRequest.setActionValue(WsaConstants.WSA_FAULT_ACTION);
+        if ((to || replyTo || messageId) && !action) {
+            wsaHeaders.add(new WsaActionHeader(WsaConstants.WSA_FAULT_ACTION));
         }
-        return wsaHeaderRequest;
+        return wsaHeaders;
     }
 }

@@ -139,7 +139,6 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
             for (final OmObservation sosObservation : request.getObservations()) {
                 // check
                 if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()
-                        && HibernateHelper.isEntitySupported(SpatialFilteringProfile.class, session)
                         && !sosObservation.isSetSpatialFilteringProfileParameter()) {
                     throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
                             .withMessage("The sampling geometry definition is missing in the observation because"
@@ -196,7 +195,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
                 }
 
                 if (!hObservationConstellations.isEmpty()) {
-                    final AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
+                    final AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
                     if (sosObservation.getValue() instanceof SingleObservationValue) {
                         observationDAO.insertObservationSingleValue(hObservationConstellations, hFeature,
                                 sosObservation, codespaceCache, unitCache, session);

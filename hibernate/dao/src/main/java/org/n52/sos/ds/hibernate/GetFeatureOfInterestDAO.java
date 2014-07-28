@@ -295,7 +295,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
         if (isSos100(req)) {
             return queryFeatureIdentifiersForParameterForSos100(req, session);
         }
-        if (HibernateHelper.isEntitySupported(Series.class, session)) {
+        if (HibernateHelper.isEntitySupported(Series.class)) {
             return queryFeatureIdentifiersForParameterForSeries(req, session);
         }
         return queryFeatureIdentifiersOfParameterFromOldObservations(req, session);
@@ -390,7 +390,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     private List<String> queryFeatureIdentifiersForParameterForSos100(GetFeatureOfInterestRequest req, Session session)
             throws OwsExceptionReport {
         Criteria c = null;
-        if (HibernateHelper.isEntitySupported(Series.class, session)) {
+        if (HibernateHelper.isEntitySupported(Series.class)) {
             c = getCriteriaForFeatureIdentifiersOfParameterFromSeriesObservations(req, session);
         } else {
             c = getCriteriaForFeatureIdentifiersOfParameterFromOldObservations(req, session);

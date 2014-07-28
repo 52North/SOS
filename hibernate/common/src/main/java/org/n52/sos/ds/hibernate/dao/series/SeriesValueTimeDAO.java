@@ -33,6 +33,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.dao.AbstractValueDAO;
+import org.n52.sos.ds.hibernate.dao.AbstractValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValueTime;
@@ -52,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * @since 4.1.0
  *
  */
-public class SeriesValueTimeDAO extends AbstractValueDAO {
+public class SeriesValueTimeDAO extends AbstractValueTimeDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeriesValueTimeDAO.class);
 

@@ -107,16 +107,11 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     }
 
     private void checkSettingKeys(final Collection<String> keys, final boolean changeable) {
-        final int maxCount = 14;
-        int counter = 14;
-        boolean spatialFilteringProfile = true;
+        final int maxCount = 13;
+        int counter = 13;
         boolean transactional = true;
         boolean oldConcept = true;
         boolean multiLanguage = true;
-        if (!keys.contains(AbstractHibernateDatasource.SPATIAL_FILTERING_PROFILE_KEY)) {
-            counter--;
-            spatialFilteringProfile = false;
-        }
         if (!keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY)) {
             counter--;
             transactional = false;
@@ -132,7 +127,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         if (changeable) {
             assertEquals(9, keys.size());
         } else {
-            assertEquals((transactional && spatialFilteringProfile && oldConcept) ? maxCount : counter, keys.size());
+            assertEquals((transactional && oldConcept) ? maxCount : counter, keys.size());
         }
         assertTrue(keys.contains(AbstractHibernateDatasource.HOST_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.PORT_KEY));
@@ -148,9 +143,6 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         }
         if (transactional) {
             assertTrue(keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY));
-        }
-        if (spatialFilteringProfile) {
-            assertTrue(keys.contains(AbstractHibernateDatasource.SPATIAL_FILTERING_PROFILE_KEY));
         }
         if (oldConcept) {
             assertTrue(keys.contains(AbstractHibernateDatasource.OLD_CONCEPT_KEY));

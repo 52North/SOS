@@ -34,6 +34,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.n52.sos.ds.hibernate.dao.AbstractObservationTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime;
@@ -45,7 +46,7 @@ import org.n52.sos.util.CollectionHelper;
  * @since 4.0.0
  * 
  */
-public class SeriesObservationTimeDAO {
+public class SeriesObservationTimeDAO extends AbstractObservationTimeDAO {
 
     /**
      * Create criteria for series

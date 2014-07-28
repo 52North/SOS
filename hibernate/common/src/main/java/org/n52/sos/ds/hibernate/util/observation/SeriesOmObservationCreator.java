@@ -127,7 +127,7 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private AbstractFeature getFeatureOfInterest() throws OwsExceptionReport {
+    protected AbstractFeature getFeatureOfInterest() throws OwsExceptionReport {
         FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
         queryObject.addFeatureIdentifier(getSeries().getFeatureOfInterest().getIdentifier()).setConnection(getSession()).setVersion(getVersion());
         final AbstractFeature feature =
@@ -146,7 +146,7 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private SosProcedureDescription getProcedure() throws ConverterException, OwsExceptionReport {
+    protected SosProcedureDescription getProcedure() throws ConverterException, OwsExceptionReport {
         String id = getSeries().getProcedure().getIdentifier();
         Procedure hProcedure = new ProcedureDAO().getProcedureForIdentifier(id, getSession());
         String pdf = hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
@@ -163,7 +163,7 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
      *
      * @return ObservableProperty object
      */
-    private OmObservableProperty getObservableProperty() {
+    protected OmObservableProperty getObservableProperty() {
         String phenID = getSeries().getObservableProperty().getIdentifier();
         String description = getSeries().getObservableProperty().getDescription();
         String unit = queryUnit();
@@ -181,7 +181,7 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
      *            FeatureOfInterest object
      * @return Observation constellation
      */
-    private OmObservationConstellation getObservationConstellation(SosProcedureDescription procedure,
+    protected OmObservationConstellation getObservationConstellation(SosProcedureDescription procedure,
             OmObservableProperty obsProp, AbstractFeature feature) {
         OmObservationConstellation obsConst = new OmObservationConstellation(procedure, obsProp, null, feature, null);
         /* get the offerings to find the templates */

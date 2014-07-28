@@ -39,15 +39,11 @@ import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.AbstractSpatialFilteringProfile;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.interfaces.BlobObservation;
@@ -83,6 +79,8 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.XmlHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -115,8 +113,6 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     private final boolean encodeProcedureInObservation;
 
-    private SpatialFilteringProfileAdder spatialFilteringProfileAdder;
-
     private List<OmObservation> observationCollection;
 
     /**
@@ -135,54 +131,13 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
      *            Hibernate session
      */
     public ObservationOmObservationCreator(Collection<AbstractObservation> observations,
-            Map<Long, AbstractSpatialFilteringProfile> spatialFilteringProfile, String version, String resultModel,
-            Session session) {
-        super(version, session);
-        this.resultModel = resultModel;
-        if (observations == null) {
-            this.observations = Collections.emptyList();
-        } else {
-            this.observations = observations;
-        }
-        if (spatialFilteringProfile == null) {
-            spatialFilteringProfileAdder = new SpatialFilteringProfileAdder();
-        } else {
-            spatialFilteringProfileAdder = new SpatialFilteringProfileAdder(spatialFilteringProfile);
-        }
-        this.procedureConverter = new HibernateProcedureConverter();
-        this.featureQueryHandler = getFeatureQueryHandler();
-        this.encodeProcedureInObservation = getActiveProfile().isEncodeProcedureInObservation();
-    }
-
-    /**
-     * Constructor
-     *
-     * @param observations
-     *            Collection of observation objects
-     * @param spatialFilteringProfile
-     *            Map with spatial filtering profile entities, key observation
-     *            entity id
-     * @param version
-     *            Service version
-     * @param resultModel
-     *            Requested result model
-     * @param session
-     *            Hibernate session
-     */
-    public ObservationOmObservationCreator(Collection<AbstractObservation> observations,
-            Map<Long, AbstractSpatialFilteringProfile> spatialFilteringProfile, String version, String resultModel,
-            Locale language, Session session) {
+            String version, String resultModel, Locale language, Session session) {
         super(version, language, session);
         this.resultModel = resultModel;
         if (observations == null) {
             this.observations = Collections.emptyList();
         } else {
             this.observations = observations;
-        }
-        if (spatialFilteringProfile == null) {
-            spatialFilteringProfileAdder = new SpatialFilteringProfileAdder();
-        } else {
-            spatialFilteringProfileAdder = new SpatialFilteringProfileAdder(spatialFilteringProfile);
         }
         this.procedureConverter = new HibernateProcedureConverter();
         this.featureQueryHandler = getFeatureQueryHandler();
@@ -205,14 +160,6 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     private Collection<AbstractObservation> getObservations() {
         return observations;
-    }
-
-    private SpatialFilteringProfileAdder getSpatialFilteringProfileAdder() {
-        return spatialFilteringProfileAdder;
-    }
-    
-    private boolean isSetSpatialFilteringProfileAdder() {
-        return getSpatialFilteringProfileAdder() != null;
     }
 
     private String getResultModel() {
@@ -239,22 +186,51 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             this.observationCollection = Lists.newLinkedList();
             // now iterate over resultset and create Measurement for each row
             for (AbstractObservation hObservation : getObservations()) {
-                // check remaining heap size and throw exception if minimum is
-                // reached
-                SosHelper.checkFreeMemory();
+//                // check remaining heap size and throw exception if minimum is
+//                // reached
+//                SosHelper.checkFreeMemory();
+//
+//                String procedureId = createProcedure(hObservation);
+//                String featureId = createFeatureOfInterest(hObservation);
+//                String phenomenonId = createPhenomenon(hObservation);
+//                // TODO: add offering ids to response if needed later.
+//                // String offeringID =
+//                // hoc.getOffering().getIdentifier();
+//                // String mimeType = SosConstants.PARAMETER_NOT_SET;
 
-                String procedureId = createProcedure(hObservation);
-                String featureId = createFeatureOfInterest(hObservation);
-                String phenomenonId = createPhenomenon(hObservation);
-                // TODO: add offering ids to response if needed later.
-                // String offeringID =
-                // hoc.getOffering().getIdentifier();
-                // String mimeType = SosConstants.PARAMETER_NOT_SET;
-
-                createValue(hObservation, phenomenonId, procedureId, featureId);
+                observationCollection.add(createObservation(hObservation));
             }
         }
         return this.observationCollection;
+    }
+    
+    protected OmObservation createObservation(AbstractObservation hObservation) throws OwsExceptionReport, ConverterException {
+        LOGGER.trace("Creating Observation...");
+        SosHelper.checkFreeMemory();
+        String procedureId = createProcedure(hObservation);
+        String featureId = createFeatureOfInterest(hObservation);
+        String phenomenonId = createPhenomenon(hObservation);
+        final Value<?> value = getValueFromObservation(hObservation);
+        OmObservation sosObservation = null;
+        if (value != null) {
+            if (hObservation.getUnit() != null) {
+                value.setUnit(hObservation.getUnit().getUnit());
+            }
+            checkOrSetObservablePropertyUnit(getObservedProperty(phenomenonId), value.getUnit());
+            OmObservationConstellation obsConst =
+                    createObservationConstellation(hObservation, procedureId, phenomenonId, featureId);
+            sosObservation = createNewObservation(obsConst, hObservation, value);
+            // add SpatialFilteringProfile
+            if (hObservation.hasSamplingGeometry()) {
+                sosObservation.addParameter(createSpatialFilteringProfileParameter(hObservation.getSamplingGeometry()));
+            }
+            // TODO check for ScrollableResult vs
+            // setFetchSize/setMaxResult
+            // + setFirstResult
+        }
+        getSession().evict(hObservation);
+        LOGGER.trace("Creating Observation done.");
+        return sosObservation;
     }
 
     private void checkOrSetObservablePropertyUnit(AbstractPhenomenon phen, String unit) {
@@ -393,33 +369,6 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         }
         LOGGER.trace("Creating Feature done.");
         return foiID;
-    }
-
-    private void createValue(AbstractObservation hObservation, String phenomenonId, String procedureId,
-            String featureId) throws OwsExceptionReport {
-        LOGGER.trace("Creating Value...");
-        final Value<?> value = getValueFromObservation(hObservation);
-        if (value != null) {
-            if (hObservation.getUnit() != null) {
-                value.setUnit(hObservation.getUnit().getUnit());
-            }
-            checkOrSetObservablePropertyUnit(getObservedProperty(phenomenonId), value.getUnit());
-            OmObservationConstellation obsConst =
-                    createObservationConstellation(hObservation, procedureId, phenomenonId, featureId);
-            final OmObservation sosObservation = createNewObservation(obsConst, hObservation, value);
-            // add SpatialFilteringProfile
-            if (hObservation.hasSamplingGeometry()) {
-                sosObservation.addParameter(createSpatialFilteringProfileParameter(hObservation.getSamplingGeometry()));
-            } else if (isSetSpatialFilteringProfileAdder()) {
-                getSpatialFilteringProfileAdder().add(hObservation.getObservationId(), sosObservation);
-            }
-            observationCollection.add(sosObservation);
-            getSession().evict(hObservation);
-            // TODO check for ScrollableResult vs
-            // setFetchSize/setMaxResult
-            // + setFirstResult
-        }
-        LOGGER.trace("Creating Value done.");
     }
 
     private OmObservationConstellation createObservationConstellation(AbstractObservation hObservation,

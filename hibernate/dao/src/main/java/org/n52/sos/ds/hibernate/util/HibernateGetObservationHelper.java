@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
@@ -43,17 +43,11 @@ import org.hibernate.criterion.HibernateCriterionHelper;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.convert.ConverterException;
-import org.n52.sos.ds.hibernate.dao.AbstractSpatialFilteringProfileDAO;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.AbstractSpatialFilteringProfile;
 import org.n52.sos.ds.hibernate.entities.Observation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
@@ -78,9 +72,10 @@ import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -196,23 +191,28 @@ public class HibernateGetObservationHelper {
             final String version, final String resultModel, final Session session) throws OwsExceptionReport,
             ConverterException {
         if (!observations.isEmpty()) {
-            List<OmObservation> sosObservations = null;
-            AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
-                    DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
-            if (spatialFilteringProfileDAO != null) {
-                Map<Long, AbstractSpatialFilteringProfile> spatialFilteringProfile =
-                        spatialFilteringProfileDAO.getSpatialFilertingProfiles(
-                                HibernateObservationUtilities.getObservationIds(observations), session);
-                sosObservations =
-                        HibernateObservationUtilities.createSosObservationsFromObservations(
-                                new HashSet<AbstractObservation>(observations), spatialFilteringProfile, version,
-                                resultModel, session);
-            } else {
-                sosObservations =
+            List<OmObservation> sosObservations =
                         HibernateObservationUtilities.createSosObservationsFromObservations(
                                 new HashSet<AbstractObservation>(observations), version,
                                 resultModel, session);
-            }
+            final long startProcess = System.currentTimeMillis();
+           
+            LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),
+                    (System.currentTimeMillis() - startProcess));
+            return sosObservations;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+    
+    public static List<OmObservation> toSosObservation(final Collection<AbstractObservation> observations,
+            final String version, final String resultModel, final Locale language, final Session session) throws OwsExceptionReport,
+            ConverterException {
+        if (!observations.isEmpty()) {
+            List<OmObservation> sosObservations =
+                        HibernateObservationUtilities.createSosObservationsFromObservations(
+                                new HashSet<AbstractObservation>(observations), version,
+                                resultModel, language, session);
             final long startProcess = System.currentTimeMillis();
            
             LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),
@@ -242,22 +242,11 @@ public class HibernateGetObservationHelper {
      * @throws ConverterException
      */
     public static OmObservation toSosObservation(AbstractObservation observation, final String version,
-            final String resultModel, final Session session) throws OwsExceptionReport, ConverterException {
+            final String resultModel, final Locale language, final Session session) throws OwsExceptionReport, ConverterException {
         if (observation != null) {
-            OmObservation sosObservation = null;
-            AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
-                    DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
-            if (spatialFilteringProfileDAO != null) {
-                AbstractSpatialFilteringProfile spatialFilteringProfile =
-                        spatialFilteringProfileDAO.getSpatialFilertingProfile(observation.getObservationId(), session);
-                sosObservation =
+            OmObservation sosObservation = 
                         HibernateObservationUtilities.createSosObservationFromObservation(observation,
-                                spatialFilteringProfile, version, resultModel, session);
-            } else {
-                 sosObservation =
-                        HibernateObservationUtilities.createSosObservationFromObservation(observation,
-                                version, resultModel, session);
-            }
+                                version, resultModel, language, session);
             final long startProcess = System.currentTimeMillis();
             
             LOGGER.debug("Time to process one observation needs {} ms!", (System.currentTimeMillis() - startProcess));

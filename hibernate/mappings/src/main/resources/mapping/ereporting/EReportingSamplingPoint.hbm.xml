@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint" table="samplingPoint">
+        <id name="samplingPointId" type="long">
+            <column name="samplingPointId" />
+            <generator class="native">
+            	<param name="sequence">samplingPointId_seq</param>
+            </generator>
+        </id>
+       <property name="identifier" type="string">
+            <column name="identifier" unique-key="sampFeatIdentifierUK"/>
+        </property>
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="sampFeatCodespaceIdFk">
+            <column name="codespace" />
+        </many-to-one>
+          <property name="name" type="string">
+            <column name="name" />
+        </property>
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="sampFeatCodespaceNameFk">
+            <column name="codespaceName" />
+        </many-to-one>
+        <property name="description" type="string">
+            <column name="description" />
+        </property>
+    </class>
+</hibernate-mapping>

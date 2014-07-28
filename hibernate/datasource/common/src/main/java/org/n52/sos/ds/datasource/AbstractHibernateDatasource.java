@@ -391,12 +391,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         config.addDirectory(resource(HIBERNATE_MAPPING_CORE_PATH));
         if (isOldConceptDatasource(settings)) {
             config.addDirectory(resource(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH));
-            addSpatialFilteringProfilePathToConfig(config, settings,
-                    HIBERNATE_MAPPING_OLD_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH);
         } else if (isSeriesConceptDatasource(settings)) {
             config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH));
-            addSpatialFilteringProfilePathToConfig(config, settings,
-                    HIBERNATE_MAPPING_SERIES_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH);
         }
         if (isTransactionalDatasource()) {
             Boolean transactional = (Boolean) settings.get(this.transactionalDefiniton.getKey());
@@ -441,29 +437,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     private boolean isOldConceptDatasource(Map<String, Object> settings) {
         Boolean oldConcept = (Boolean) settings.get(this.oldConceptDefiniton.getKey());
         return oldConcept != null && oldConcept;
-    }
-
-    /**
-     * Add Spatial Filtering Profile mapping files path to configuration if this
-     * is a Spatial Filtering Profile datasource and Spatial Filtering Profile
-     * is activated in the settings
-     *
-     * @param config
-     *            Datasource configuration
-     * @param settings
-     *            Datasource settings
-     * @param spatialFilteringProfilePath
-     *            Spatial Filtering Profile mapping files path
-     */
-    @Deprecated
-    private void addSpatialFilteringProfilePathToConfig(CustomConfiguration config, Map<String, Object> settings,
-            String spatialFilteringProfilePath) {
-        if (isSpatialFilteringProfileDatasource()) {
-            Boolean spatialFilteringProfile = (Boolean) settings.get(this.spatialFilteringProfileDefinition.getKey());
-            if (spatialFilteringProfile != null && spatialFilteringProfile) {
-                config.addDirectory(resource(spatialFilteringProfilePath));
-            }
-        }
     }
 
     /**
@@ -773,13 +746,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (isOldConceptDatasource(settings)) {
             builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
                     HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH);
-            addSpatialFilteringProfilePathToDirList(builder, settings,
-                    HIBERNATE_MAPPING_OLD_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH);
         } else if (isSeriesConceptDatasource(settings)) {
             builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
                     HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
-            addSpatialFilteringProfilePathToDirList(builder, settings,
-                    HIBERNATE_MAPPING_SERIES_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH);
         }
         if (isTransactionalDatasource()) {
             Boolean t = (Boolean) settings.get(transactionalDefiniton.getKey());
@@ -795,29 +764,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             } 
         }
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
-    }
-
-    /**
-     * Add Spatial Filtering Profile mapping files path to directory String if
-     * this is a Spatial Filtering Profile datasource and Spatial Filtering
-     * Profile is activated in the settings
-     *
-     * @param builder
-     *            Mapping files directories String
-     * @param settings
-     *            Datasource settings
-     * @param spatialFilteringProfilePath
-     *            Spatial Filtering Profile mapping files path
-     */
-    @Deprecated
-    private void addSpatialFilteringProfilePathToDirList(final StringBuilder builder, Map<String, Object> settings,
-            final String spatialFilteringProfilePath) {
-        if (isSpatialFilteringProfileDatasource()) {
-            Boolean spatialFilteringProfile = (Boolean) settings.get(spatialFilteringProfileDefinition.getKey());
-            if (spatialFilteringProfile != null && spatialFilteringProfile) {
-                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(spatialFilteringProfilePath);
-            }
-        }
     }
 
     /**
@@ -849,21 +795,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     protected BooleanSettingDefinition getTransactionalDefiniton() {
         return transactionalDefiniton;
-    }
-
-    /**
-     * Check if properties contains Spatial Filtering Profile mapping path
-     *
-     * @param properties
-     *            Datasource properties
-     * @return <code>true</code>, if properties contains Spatial Filtering
-     *         Profile mapping path
-     */
-    @Deprecated
-    protected boolean isSpatialFilteringProfile(Properties properties) {
-        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
-        return p == null || p.contains(HIBERNATE_MAPPING_OLD_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH)
-                || p.contains(HIBERNATE_MAPPING_SERIES_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH);
     }
 
     /**

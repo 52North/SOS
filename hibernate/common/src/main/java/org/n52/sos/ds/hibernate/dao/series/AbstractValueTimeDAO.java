@@ -26,41 +26,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.cache.base;
+package org.n52.sos.ds.hibernate.dao.series;
 
-import java.util.Collection;
-import java.util.Collections;
+import org.n52.sos.ds.hibernate.dao.AbstractValueDAO;
 
-import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public class AbstractValueTimeDAO extends AbstractValueDAO {
 
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Sets;
-
-/**
- *
- * @author Christian Autermann <c.autermann@52north.org>
- *
- * @since 4.0.0
- */
-@Deprecated
-public class ObservationIdentifiersCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ObservationIdentifiersCacheUpdate.class);
-
-    @Override
-    public void execute() {
-        LOGGER.debug("Executing ObservationIdentifiersCacheUpdate");
-        startStopwatch();
-        try {
-            getCache().addObservationIdentifiers(DaoFactory.getInstance().getObservationDAO(getSession()).getObservationIdentifiers(getSession()));
-        } catch (OwsExceptionReport ce) {
-            getErrors().add(ce);
-        }
-        LOGGER.debug("Finished executing ObservationIdentifiersCacheUpdate ({})", getStopwatchResult());
-    }
 }

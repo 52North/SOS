@@ -123,7 +123,7 @@ public abstract class AbstractOmObservationCreator {
         // TODO add lat/long version
         Geometry geometry = samplingGeometry;
         namedValue.setValue(new GeometryValue(GeometryHandler.getInstance()
-                .switchCoordinateAxisOrderIfNeeded(geometry)));
+                .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
         return namedValue;
     }
 }

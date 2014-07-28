@@ -32,10 +32,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
-import org.n52.sos.ds.hibernate.dao.AbstractSpatialFilteringProfileDAO;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
-import org.n52.sos.ds.hibernate.util.observation.SpatialFilteringProfileAdder;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
@@ -124,10 +121,6 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
                 addValuesToObservation(observation, resultObject);
                 if (resultObject.hasSamplingGeometry()) {
                     observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
-                } else  {
-                    if (isSetSpatialFilteringProfileAdder()) {
-                        getSpatialFilteringProfileAdder().add(resultObject.getObservationId(), observation);
-                    }
                 }
                 checkForModifications(observation);
                 session.evict(resultObject);
@@ -165,14 +158,6 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
                         seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize, currentRow, session);
             }
             currentRow += chunkSize;
-            // get SpatialFilteringProfile values
-            AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
-                    DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
-            if (spatialFilteringProfileDAO != null) {
-                setSpatialFilteringProfileAdder(new SpatialFilteringProfileAdder(
-                        spatialFilteringProfileDAO.getSpatialFilertingProfiles(getObservationIds(seriesValuesResult),
-                                session)));
-            }
             setSeriesValuesResult(seriesValuesResult);
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);

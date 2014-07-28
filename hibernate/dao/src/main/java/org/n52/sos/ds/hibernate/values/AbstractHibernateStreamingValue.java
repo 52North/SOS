@@ -49,7 +49,6 @@ import org.n52.sos.ds.hibernate.entities.interfaces.NumericValue;
 import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayValue;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextValue;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
-import org.n52.sos.ds.hibernate.util.observation.SpatialFilteringProfileAdder;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
@@ -86,8 +85,6 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
     private static final long serialVersionUID = -8355955808723620476L;
 
     protected final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
-
-    private SpatialFilteringProfileAdder spatialFilteringProfileAdder;
 
     protected Session session;
 
@@ -188,38 +185,6 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
             ids.add(abstractValue.getObservationId());
         }
         return ids;
-    }
-
-    /**
-     * Get the {@link SpatialFilteringProfileAdder}
-     * 
-     * @return the spatialFilteringProfileAdder
-     */
-    @Deprecated
-    protected SpatialFilteringProfileAdder getSpatialFilteringProfileAdder() {
-        return spatialFilteringProfileAdder;
-    }
-
-    /**
-     * Set the {@link SpatialFilteringProfileAdder}
-     * 
-     * @param spatialFilteringProfileAdder
-     *            the spatialFilteringProfileAdder to set
-     */
-    @Deprecated
-    protected void setSpatialFilteringProfileAdder(SpatialFilteringProfileAdder spatialFilteringProfileAdder) {
-        this.spatialFilteringProfileAdder = spatialFilteringProfileAdder;
-    }
-    
-    /**
-     * Check if the {@link SpatialFilteringProfileAdder} is set
-     * 
-     * @return <code>true</code>, if the {@link SpatialFilteringProfileAdder} is
-     *         set
-     */
-    @Deprecated
-    protected boolean isSetSpatialFilteringProfileAdder() {
-        return getSpatialFilteringProfileAdder() != null;
     }
 
     /**
@@ -391,7 +356,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
         // TODO add lat/long version
         Geometry geometry = samplingGeometry;
         namedValue.setValue(new org.n52.sos.ogc.om.values.GeometryValue(GeometryHandler.getInstance()
-                .switchCoordinateAxisOrderIfNeeded(geometry)));
+                .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
         return namedValue;
     }
 

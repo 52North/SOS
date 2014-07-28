@@ -117,12 +117,12 @@ public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
             session.saveOrUpdate(procedure);
             session.flush();
             // set deleted flag in ObservationConstellation table to true
-            if (HibernateHelper.isEntitySupported(ObservationConstellation.class, session)) {
+            if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
                 new ObservationConstellationDAO().updateObservatioConstellationSetAsDeletedForProcedure(identifier,
                         deleteFlag, session);
             }
             // set deleted flag in Series and Observation table for series concept to true
-            if (HibernateHelper.isEntitySupported(Series.class, session)) {
+            if (HibernateHelper.isEntitySupported(Series.class)) {
                 List<Series> series =
                         new SeriesDAO().updateSeriesSetAsDeletedForProcedureAndGetSeries(identifier, deleteFlag,
                                 session);

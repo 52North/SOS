@@ -90,9 +90,6 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         if (isTransactionalDatasource()) {
             set.add(getTransactionalDefiniton());
         }
-        if (isSpatialFilteringProfileDatasource()) {
-            set.add(getSpatialFilteringProfileDefiniton());
-        }
         if (isMultiLanguageDatasource()) {
             set.add(getMulitLanguageDefiniton());
         }
@@ -113,34 +110,6 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
                 createMaxPoolSizeDefinition(JavaHelper.asInteger(settings.get(MAX_POOL_SIZE_KEY))),
                 createBatchSizeDefinition(JavaHelper.asInteger(settings.get(BATCH_SIZE_KEY))));
     }
-
-//    protected StringSettingDefinition createUsernameDefinition(final String defaultValue) {
-//        return createUsernameDefinition().setDescription(usernameDescription).setDefaultValue(defaultValue);
-//    }
-//
-//    protected StringSettingDefinition createPasswordDefinition(final String defaultValue) {
-//        return createPasswordDefinition().setDescription(passwordDescription).setDefaultValue(defaultValue);
-//    }
-//
-//    protected StringSettingDefinition createDatabaseDefinition(final String defaultValue) {
-//        return createDatabaseDefinition().setDescription(databaseDescription).setDefaultValue(defaultValue);
-//    }
-//
-//    protected StringSettingDefinition createHostDefinition(final String defaultValue) {
-//        return createHostDefinition().setDescription(hostDescription).setDefaultValue(defaultValue);
-//    }
-//
-//    protected IntegerSettingDefinition createPortDefinition(final int defaultValue) {
-//        return createPortDefinition().setDescription(portDescription).setDefaultValue(defaultValue);
-//    }
-//
-//    protected SettingDefinition<?, ?> createMinPoolSizeDefinition(final Integer defaultValue) {
-//        return createMinPoolSizeDefinition().setDefaultValue(defaultValue);
-//    }
-//
-//    protected SettingDefinition<?, ?> createMaxPoolSizeDefinition(final Integer defaultValue) {
-//        return createMaxPoolSizeDefinition().setDefaultValue(defaultValue);
-//    }
 
     protected StringSettingDefinition createSchemaDefinition(final String defaultValue) {
         return createSchemaDefinition().setDescription(schemaDescription).setDefaultValue(defaultValue);
@@ -201,7 +170,6 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         settings.put(MAX_POOL_SIZE_KEY, current.getProperty(HibernateConstants.C3P0_MAX_SIZE));
         settings.put(BATCH_SIZE_KEY, current.getProperty(HibernateConstants.JDBC_BATCH_SIZE));
         settings.put(TRANSACTIONAL_KEY, isTransactional(current));
-        settings.put(SPATIAL_FILTERING_PROFILE_KEY, isSpatialFilteringProfile(current));
         settings.put(PROVIDED_JDBC_DRIVER_KEY,
                 current.getProperty(PROVIDED_JDBC, PROVIDED_JDBC_DRIVER_DEFAULT_VALUE.toString()));
         final String url = current.getProperty(HibernateConstants.CONNECTION_URL);

@@ -32,10 +32,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
-import org.n52.sos.ds.hibernate.dao.AbstractSpatialFilteringProfileDAO;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
-import org.n52.sos.ds.hibernate.util.observation.SpatialFilteringProfileAdder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -126,9 +123,6 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
                 OmObservation observation = observationTemplate.cloneTemplate();
                 AbstractValue resultObject = valuesResult.next();
                 addValuesToObservation(observation, resultObject);
-                if (isSetSpatialFilteringProfileAdder()) {
-                    getSpatialFilteringProfileAdder().add(resultObject.getObservationId(), observation);
-                }
                 checkForModifications(observation);
                 session.evict(resultObject);
                 return observation;
@@ -166,14 +160,6 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
                                 chunkSize, currentRow, session);
             }
             currentRow += chunkSize;
-            // get SpatialFilteringProfile values
-            AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
-                    DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
-            if (spatialFilteringProfileDAO != null) {
-                setSpatialFilteringProfileAdder(new SpatialFilteringProfileAdder(
-                        spatialFilteringProfileDAO.getSpatialFilertingProfiles(getObservationIds(valuesResult),
-                                session)));
-            }
             setObservationValuesResult(valuesResult);
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);

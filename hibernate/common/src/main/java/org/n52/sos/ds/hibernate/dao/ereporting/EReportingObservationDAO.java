@@ -34,7 +34,10 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesObservationDAO;
+import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingBlobObservation;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingBooleanObservation;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingCategoryObservation;
@@ -44,9 +47,12 @@ import org.n52.sos.ds.hibernate.entities.ereporting.EReportingNumericObservation
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservationInfo;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservationTime;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingTextObservation;
 import org.n52.sos.ds.hibernate.entities.series.Series;
+import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
@@ -112,7 +118,24 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO<List<
             SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
         return getSeriesObservationCriteriaFor(series, request, sosIndeterminateTime, session).list();
     }
-
+    
+    @Override
+    protected void addObservationIdentifiersToObservation(ObservationIdentifiers observationIdentifiers,
+            AbstractObservation observation, Session session) throws CodedException {
+        EReportingSeriesIdentifiers identifiers = new EReportingSeriesIdentifiers();
+        identifiers.setFeatureOfInterest(observationIdentifiers.getFeatureOfInterest());
+        identifiers.setObservableProperty(observationIdentifiers.getObservableProperty());
+        identifiers.setProcedure(observationIdentifiers.getProcedure());
+        identifiers.setSamplingPoint(((EReportingObservationIdentifiers)observationIdentifiers).getSamplingPoint());
+        AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
+        Series series =
+                (Series)seriesDAO
+                        .getOrInsertSeries(identifiers,
+                                session);
+        ((SeriesObservation) observation).setSeries(series);
+        seriesDAO.updateSeriesWithFirstLatestValues(series, observation, session);
+    }
+    
     @Override
     protected Class<?> getObservationClass() {
         return EReportingObservation.class;
@@ -166,6 +189,26 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO<List<
     @Override
     protected Class<?> getTextObservationClass() {
         return EReportingTextObservation.class;
+    }
+    
+    protected class EReportingObservationIdentifiers extends ObservationIdentifiers {
+        
+        private EReportingSamplingPoint samplingPoint;
+
+        /**
+         * @return the samplingPoint
+         */
+        public EReportingSamplingPoint getSamplingPoint() {
+            return samplingPoint;
+        }
+
+        /**
+         * @param samplingPoint the samplingPoint to set
+         */
+        public void setSamplingPoint(EReportingSamplingPoint samplingPoint) {
+            this.samplingPoint = samplingPoint;
+        }
+    
     }
 
 }

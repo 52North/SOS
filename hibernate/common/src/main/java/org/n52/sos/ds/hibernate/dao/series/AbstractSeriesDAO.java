@@ -69,7 +69,7 @@ public abstract class AbstractSeriesDAO {
     public abstract Series getOrInsertSeries(SeriesIdentifiers identifiers, final Session session) throws CodedException; 
     
     
-    protected Series getOfInsert(SeriesIdentifiers identifiers, final Session session) throws CodedException {
+    protected Series getOrInsert(SeriesIdentifiers identifiers, final Session session) throws CodedException {
         Criteria criteria = getDefaultAllSeriesCriteria(session);
         identifiers.addIdentifierRestrictionsToCritera(criteria);
         LOGGER.debug("QUERY getOrInsertSeries(feature, observableProperty, procedure): {}",

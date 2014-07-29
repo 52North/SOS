@@ -34,4 +34,22 @@ public class EReportingSamplingPoint extends AbstractIdentifierNameDescriptionEn
 
     private static final long serialVersionUID = -3572902805340991523L;
     
+    public static final String ID = "samplingPointId";
+    
+    private Long samplingPointId;
+
+    /**
+     * @return the samplingPointId
+     */
+    public Long getSamplingPointId() {
+        return samplingPointId;
+    }
+
+    /**
+     * @param samplingPointId the samplingPointId to set
+     */
+    public void setSamplingPointId(Long samplingPointId) {
+        this.samplingPointId = samplingPointId;
+    }
+    
 }

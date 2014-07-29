@@ -26,31 +26,27 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.ereporting;
+package org.n52.sos.ds.hibernate.util.observation;
 
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasEReportingSamplingPoint;
-import org.n52.sos.ds.hibernate.entities.series.Series;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmObservation;
 
-public class EReportingSeries extends Series implements HasEReportingSamplingPoint {
-
-    private static final long serialVersionUID = -2717429959149898898L;
+public class EReportingObservationCreator implements AdditionalObservationCreator<EReportingObservation> {
     
-    private EReportingSamplingPoint samplingPoint;
+    EReportingObservationHelper helper = new EReportingObservationHelper();
 
     @Override
-    public EReportingSamplingPoint getSamplingPoint() {
-        return samplingPoint;
+    public Class<EReportingObservation> getKey() {
+        return EReportingObservation.class;
     }
 
     @Override
-    public EReportingSeries setSamplingPoint(EReportingSamplingPoint samplingPoint) {
-        this.samplingPoint = samplingPoint;
-        return this;
-    }
-
-    @Override
-    public boolean hasSamplingPoint() {
-        return getSamplingPoint() != null;
+    public OmObservation add(OmObservation omObservation, EReportingObservation observation) {
+        for (NamedValue<?> namedValue : helper.createSamplingPointParameter(observation.getEReportingSeries())) {
+            omObservation.addParameter(namedValue);
+        }
+        return omObservation;
     }
 
 }

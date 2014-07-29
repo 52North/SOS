@@ -648,7 +648,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @return ObservaitonIdentifiers object with procedure and
      *         observableProperty
      */
-    private ObservationIdentifiers addOfferingsToObaservationAndGetProcedureObservableProperty(
+    protected ObservationIdentifiers addOfferingsToObaservationAndGetProcedureObservableProperty(
             AbstractObservation hObservation, Set<ObservationConstellation> hObservationConstellations) {
         Iterator<ObservationConstellation> iterator = hObservationConstellations.iterator();
         boolean firstObsConst = true;

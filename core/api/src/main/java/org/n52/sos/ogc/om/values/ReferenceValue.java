@@ -26,31 +26,55 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.ereporting;
+package org.n52.sos.ogc.om.values;
 
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasEReportingSamplingPoint;
-import org.n52.sos.ds.hibernate.entities.series.Series;
+import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.util.StringHelper;
 
-public class EReportingSeries extends Series implements HasEReportingSamplingPoint {
-
-    private static final long serialVersionUID = -2717429959149898898L;
+public class ReferenceValue implements Value<ReferenceType> {
     
-    private EReportingSamplingPoint samplingPoint;
+    private static final long serialVersionUID = -4027273330438374298L;
+    
+    private ReferenceType value;
+    
+    /**
+     * Unit of measure
+     */
+    private String unit;
 
     @Override
-    public EReportingSamplingPoint getSamplingPoint() {
-        return samplingPoint;
+    public void setValue(ReferenceType value) {
+       this.value = value;
     }
 
     @Override
-    public EReportingSeries setSamplingPoint(EReportingSamplingPoint samplingPoint) {
-        this.samplingPoint = samplingPoint;
-        return this;
+    public ReferenceType getValue() {
+        return value;
     }
 
     @Override
-    public boolean hasSamplingPoint() {
-        return getSamplingPoint() != null;
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    @Override
+    public String getUnit() {
+        return unit;
+    }
+    
+    @Override
+    public boolean isSetValue() {
+        return getValue() != null && getValue().isSetHref();
+    }
+
+    @Override
+    public boolean isSetUnit() {
+        return StringHelper.isNotEmpty(getUnit());
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("ReferenceValue [value=%s, unit=%s]", getValue(), getUnit());
     }
 
 }

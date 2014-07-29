@@ -9,7 +9,7 @@
             	<param name="sequence">observationId_seq</param>
             </generator>
         </id>
-        <many-to-one name="series" class="org.n52.sos.ds.hibernate.entities.ereporting.EReporting" fetch="select" lazy="no-proxy" foreign-key="observationSeriesFk">
+        <many-to-one name="series" class="org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries" fetch="select" lazy="no-proxy" foreign-key="observationSeriesFk">
            	<column index="obsSeriesIdx" name="seriesId" not-null="true" unique-key="observationIdentity"/>
         </many-to-one>
          <property name="phenomenonTimeStart" type="timestamp" >

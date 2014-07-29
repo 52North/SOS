@@ -78,7 +78,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
 
     @Override
     public EReportingSeries getOrInsertSeries(SeriesIdentifiers identifiers, Session session) throws CodedException {
-        return (EReportingSeries)getOfInsert(identifiers, session);
+        return (EReportingSeries) super.getOrInsert(identifiers, session);
     }
     
     /**
@@ -104,7 +104,6 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
      */
     public void addEReportingSamplingPointToCriteria(Criteria c, EReportingSamplingPoint samplingPoint) {
         c.add(Restrictions.eq(EReportingSeries.SAMPLING_POINT, samplingPoint));
-
     }
 
     /**
@@ -117,7 +116,6 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
      */
     public void addEReportingSamplingPointToCriteria(Criteria c, Collection<String> samplingPoints) {
         c.createCriteria(EReportingSeries.SAMPLING_POINT).add(Restrictions.in(EReportingSamplingPoint.IDENTIFIER, samplingPoints));
-    
     }
     
 }

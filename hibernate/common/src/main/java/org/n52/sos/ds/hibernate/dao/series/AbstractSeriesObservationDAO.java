@@ -73,7 +73,6 @@ public abstract class AbstractSeriesObservationDAO<T> extends AbstractObservatio
     
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesObservationDAO.class);
     
-    @SuppressWarnings("rawtypes")
     @Override
     protected void addObservationIdentifiersToObservation(ObservationIdentifiers observationIdentifiers,
             AbstractObservation observation, Session session) throws CodedException {

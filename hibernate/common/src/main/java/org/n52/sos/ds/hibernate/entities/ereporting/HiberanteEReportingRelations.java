@@ -36,11 +36,11 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
         
         String SAMPLING_POINT = "samplingPoint";
         
-        EReportingSamplingPoint getEReportingSamplingPoint();
+        EReportingSamplingPoint getSamplingPoint();
         
-        HasEReportingSamplingPoint setEReportingSamplingPoint(EReportingSamplingPoint samplingPoint);
+        HasEReportingSamplingPoint setSamplingPoint(EReportingSamplingPoint samplingPoint);
         
-        boolean hasEReportingSamplingPoint();
+        boolean hasSamplingPoint();
     }
     
     interface HasInspireId {

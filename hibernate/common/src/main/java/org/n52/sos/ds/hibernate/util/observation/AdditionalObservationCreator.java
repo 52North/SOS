@@ -26,31 +26,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.ereporting;
+package org.n52.sos.ds.hibernate.util.observation;
 
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasEReportingSamplingPoint;
-import org.n52.sos.ds.hibernate.entities.series.Series;
+import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ogc.om.OmObservation;
 
-public class EReportingSeries extends Series implements HasEReportingSamplingPoint {
+public interface AdditionalObservationCreator<T extends AbstractObservation> {
 
-    private static final long serialVersionUID = -2717429959149898898L;
+    Class<T> getKey();
     
-    private EReportingSamplingPoint samplingPoint;
-
-    @Override
-    public EReportingSamplingPoint getSamplingPoint() {
-        return samplingPoint;
-    }
-
-    @Override
-    public EReportingSeries setSamplingPoint(EReportingSamplingPoint samplingPoint) {
-        this.samplingPoint = samplingPoint;
-        return this;
-    }
-
-    @Override
-    public boolean hasSamplingPoint() {
-        return getSamplingPoint() != null;
-    }
+    OmObservation add(OmObservation omObservation, T observation);
 
 }

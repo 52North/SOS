@@ -128,16 +128,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected static final boolean TRANSACTIONAL_DEFAULT_VALUE = true;
 
-    @Deprecated
-    protected static final String SPATIAL_FILTERING_PROFILE_TITLE = "!!! DEPRECATED !!! Old Spatial Filtering Profile";
-    @Deprecated
-    protected static final String SPATIAL_FILTERING_PROFILE_DESCRIPTION =
-            "Should the database support the OLD Spatial Filtering Profile handling? Due to performance inprovements the the samplingGeometry was moved to the observation table. You can update you data by running the update_spatialfilteringprofile_handling.sql script (SOS/misc/db/...)!";
-    @Deprecated
-    protected static final String SPATIAL_FILTERING_PROFILE_KEY = "sos.spatialFilteringProfile";
-    @Deprecated
-    protected static final boolean SPATIAL_FILTERING_PROFILE_DEFAULT_VALUE = false;
-
     // protected static final String USERNAME_KEY =
     // HibernateConstants.CONNECTION_USERNAME;
     //
@@ -207,13 +197,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     private final BooleanSettingDefinition transactionalDefiniton = createTransactionalDefinition();
 
     private boolean transactionalDatasource = true;
-
-    @Deprecated
-    private final BooleanSettingDefinition spatialFilteringProfileDefinition =
-            createSpatialFilteringProfileDefinition();
-
-    @Deprecated
-    private boolean spatialFilteringProfileDatasource = true;
 
     private final BooleanSettingDefinition mulitLanguageDefinition = createMultiLanguageDefinition();
 
@@ -313,18 +296,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 .setOrder(SettingDefinitionProvider.ORDER_3).setKey(TRANSACTIONAL_KEY);
     }
 
-    /**
-     * Create settings definition for Spatial Filtering Profile support
-     *
-     * @return Spatial Filtering Profile support settings definition
-     */
-    protected BooleanSettingDefinition createSpatialFilteringProfileDefinition() {
-        return new BooleanSettingDefinition().setDefaultValue(SPATIAL_FILTERING_PROFILE_DEFAULT_VALUE)
-                .setTitle(SPATIAL_FILTERING_PROFILE_TITLE).setDescription(SPATIAL_FILTERING_PROFILE_DESCRIPTION)
-                .setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
-                .setKey(SPATIAL_FILTERING_PROFILE_KEY);
-    }
-
     protected BooleanSettingDefinition createMultiLanguageDefinition() {
         return new BooleanSettingDefinition().setDefaultValue(MULTI_LANGUAGE_DEFAULT_VALUE)
                 .setTitle(MULTI_LANGUAGE_TITLE).setDescription(MULTI_LANGUAGE_DESCRIPTION).setGroup(ADVANCED_GROUP)
@@ -392,7 +363,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (isOldConceptDatasource(settings)) {
             config.addDirectory(resource(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH));
         } else if (isSeriesConceptDatasource(settings)) {
-            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH));
+            // FIXME Database model
+//            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH));
+            config.addDirectory(resource(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH));
         }
         if (isTransactionalDatasource()) {
             Boolean transactional = (Boolean) settings.get(this.transactionalDefiniton.getKey());
@@ -747,8 +720,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
                     HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH);
         } else if (isSeriesConceptDatasource(settings)) {
+            // FIXME Database model
+//            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
+//                    HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
             builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
-                    HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
+                    HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH);
         }
         if (isTransactionalDatasource()) {
             Boolean t = (Boolean) settings.get(transactionalDefiniton.getKey());
@@ -795,16 +771,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     protected BooleanSettingDefinition getTransactionalDefiniton() {
         return transactionalDefiniton;
-    }
-
-    /**
-     * Get Spatial Filtering Profile setting definition
-     *
-     * @return Spatial Filtering Profile setting definition
-     */
-    @Deprecated
-    protected BooleanSettingDefinition getSpatialFilteringProfileDefiniton() {
-        return spatialFilteringProfileDefinition;
     }
 
     protected boolean isMultiLanguage(Properties properties) {
@@ -888,27 +854,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     public void setTransactional(boolean transactionalDatasource) {
         this.transactionalDatasource = transactionalDatasource;
-    }
-
-    /**
-     * Check if the datasource has Spatial Filtering Profile
-     *
-     * @return <code>true</code>, if it has Spatial Filtering Profile
-     */
-    @Deprecated
-    public boolean isSpatialFilteringProfileDatasource() {
-        return spatialFilteringProfileDatasource;
-    }
-
-    /**
-     * Set Spatial Filtering Profile datasource flag
-     *
-     * @param spatialFilteringProfileDatasource
-     *            the spatialFilteringProfileDatasource to set
-     */
-    @Deprecated
-    public void setSpatialFilteringProfile(boolean spatialFilteringProfileDatasource) {
-        this.spatialFilteringProfileDatasource = spatialFilteringProfileDatasource;
     }
 
     /**

@@ -132,7 +132,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
      * @throws CodedException 
      */
     public Series getOrInsertSeries(SeriesIdentifiers identifiers, final Session session) throws CodedException {
-        return getOfInsert(identifiers, session);
+        return getOrInsert(identifiers, session);
     }
 
     @Override

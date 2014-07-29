@@ -62,8 +62,7 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return ImmutableSet.<SettingDefinition<?, ?>> of(getSpatialFilteringProfileDefiniton(),
-                getTransactionalDefiniton());
+        return ImmutableSet.<SettingDefinition<?, ?>> of(getTransactionalDefiniton());
     }
 
     @Override

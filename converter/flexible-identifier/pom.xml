@@ -7,10 +7,10 @@
 		<artifactId>transformation</artifactId>
 		<version>4.2.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>request-response-coordinate-transformer</artifactId>
+	<artifactId>flexible-identifier</artifactId>
 	<packaging>jar</packaging>
-	<name>52°North SOS - Coordinate transformation module</name>
-	<description>52°North SOS - Module to transform coordinates in requests and responses</description>
+	<name>52°North SOS - Flexible identifier convert module</name>
+	<description>52°North SOS - Module to support flexible identifiers in requests and responses</description>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

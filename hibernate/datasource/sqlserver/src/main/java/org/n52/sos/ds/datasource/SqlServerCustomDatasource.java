@@ -34,7 +34,6 @@ public class SqlServerCustomDatasource extends AbstractSqlServerDatasource {
 
     public SqlServerCustomDatasource() {
         super();
-        getSpatialFilteringProfileDefiniton().setDefaultValue(false);
         super.setTransactional(false);
     }
 

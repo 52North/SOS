@@ -28,56 +28,11 @@
  */
 package org.n52.sos.config;
 
-import java.io.File;
-import java.net.URI;
+public class ChoiceSettingValueForTesting extends StringSettingValueForTesting {
 
-import org.n52.sos.ogc.gml.time.TimeInstant;
-
-/**
- * Enum to describe the type of a {@code SettingDefinition} and
- * {@code SettingValue}.
- *
- * @see SettingDefinition
- * @see SettingValue
- * @author Christian Autermann <c.autermann@52north.org>
- * @since 4.0.0
- */
-public enum SettingType {
-    /**
-     * Type for {@link Boolean} and {@code boolean}.
-     */
-    BOOLEAN,
-    /**
-     * Type for {@link Integer} and {@code int}.
-     */
-    INTEGER,
-    /**
-     * Type for {@link File}.
-     */
-    FILE,
-    /**
-     * Type for {@link Double} and {@code double}.
-     */
-    NUMERIC,
-    /**
-     * Type for {@link String}.
-     */
-    STRING,
-    /**
-     * Type for {@link URI}.
-     */
-    URI,
-    /**
-     * Type for {@link TimeInstant}.
-     */
-    TIMEINSTANT,
-    /**
-     * Type for {@link LocalizedString}.
-     */
-    MULTILINGUAL_STRING,
-    /**
-     * Type for a selection.
-     */
-    CHOICE;
+    @Override
+    public SettingType getType() {
+        return SettingType.CHOICE;
+    }
 
 }

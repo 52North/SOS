@@ -53,6 +53,7 @@ import org.n52.sos.config.sqlite.entities.Activatable;
 import org.n52.sos.config.sqlite.entities.AdminUser;
 import org.n52.sos.config.sqlite.entities.Binding;
 import org.n52.sos.config.sqlite.entities.BooleanSettingValue;
+import org.n52.sos.config.sqlite.entities.ChoiceSettingValue;
 import org.n52.sos.config.sqlite.entities.DynamicOfferingExtension;
 import org.n52.sos.config.sqlite.entities.DynamicOfferingExtensionKey;
 import org.n52.sos.config.sqlite.entities.DynamicOwsExtendedCapabilities;
@@ -334,6 +335,11 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
         @Override
         protected SettingValue<MultilingualString> newMultiLingualStringSettingValue() {
             return new MultilingualStringSettingValue();
+        }
+
+        @Override
+        protected SettingValue<String> newChoiceSettingValue() {
+            return new ChoiceSettingValue();
         }
     }
 

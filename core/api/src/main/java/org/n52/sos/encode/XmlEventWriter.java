@@ -122,11 +122,19 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
     }
 
     @Override
+    protected void chars(String chars, boolean escape) throws XMLStreamException {
+        if (escape) {
+            chars = XmlEscapers.xmlContentEscaper().escape(chars);
+        }
+        getXmlWriter().add(getXmlEventFactory().createCharacters(chars));
+    }
+
+    @Override
     protected void end(QName name) throws XMLStreamException {
         getXmlWriter().add(
                 getXmlEventFactory().createEndElement(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart()));
     }
-    
+
     @Override
     protected void endInline(QName name) throws XMLStreamException {
         getXmlWriter().add(
@@ -138,6 +146,7 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
         getXmlWriter().add(getXmlEventFactory().createEndDocument());
     }
 
+    @Override
     protected void finish() throws XMLStreamException {
         flush();
         getXmlWriter().close();
@@ -147,7 +156,7 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
     protected void flush() throws XMLStreamException {
         getXmlWriter().flush();
     }
-    
+
     /**
      * @return
      */

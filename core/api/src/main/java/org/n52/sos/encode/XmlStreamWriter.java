@@ -116,6 +116,13 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
 
     @Override
     protected void chars(String chars) throws XMLStreamException {
+        chars(chars, true);
+    }
+    @Override
+    protected void chars(String chars, boolean escape) throws XMLStreamException {
+        if (escape) {
+            chars = XmlEscapers.xmlContentEscaper().escape(chars);
+        }
         getXmlWriter().writeCharacters(chars);
     }
 
@@ -145,8 +152,9 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
         getXmlWriter().close();
     }
 
+    @Override
     protected void flush() throws XMLStreamException {
         getXmlWriter().flush();
     }
-    
+
 }

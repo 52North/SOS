@@ -176,7 +176,8 @@ public class EReportingHeaderEncoderTest {
                                                         .setIPA("asdfasdf")
                                                         .setSoundLink(URI
                                                                 .create("http://asdfasdf"))
-                                                ))
+                                                )
+                                        )
                                 )
                         )
                 );

@@ -38,6 +38,7 @@ import javax.xml.soap.SOAPConstants;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlCursor.TokenType;
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.OmConstants;
@@ -149,7 +150,7 @@ public final class N52XmlHelper implements Constants {
                 StringBuilder builder = new StringBuilder();
                 builder.append(it.next().getSchemaLocationString());
                 while(it.hasNext()) {
-                    builder.append(it.next().getSchemaLocationString()).append(BLANK_CHAR);
+                    builder.append(BLANK_CHAR).append(it.next().getSchemaLocationString());
                 }
                 return builder.toString();
             }

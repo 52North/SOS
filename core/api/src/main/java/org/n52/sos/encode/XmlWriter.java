@@ -379,13 +379,14 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Write indent to stream
-     * 
+     *
      * @param level
      *            current level
      * @throws XMLStreamException
      *             If an error occurs when writing to {@link OutputStream}
      */
     protected void writeIndent(int level) throws XMLStreamException {
+        chars("\n");
         for (int i = 0; i < level; i++) {
             chars("  ");
         }

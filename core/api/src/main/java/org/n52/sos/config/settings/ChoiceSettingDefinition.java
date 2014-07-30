@@ -26,58 +26,41 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.config;
+package org.n52.sos.config.settings;
 
-import java.io.File;
-import java.net.URI;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.config.SettingType;
 
-/**
- * Enum to describe the type of a {@code SettingDefinition} and
- * {@code SettingValue}.
- *
- * @see SettingDefinition
- * @see SettingValue
- * @author Christian Autermann <c.autermann@52north.org>
- * @since 4.0.0
- */
-public enum SettingType {
-    /**
-     * Type for {@link Boolean} and {@code boolean}.
-     */
-    BOOLEAN,
-    /**
-     * Type for {@link Integer} and {@code int}.
-     */
-    INTEGER,
-    /**
-     * Type for {@link File}.
-     */
-    FILE,
-    /**
-     * Type for {@link Double} and {@code double}.
-     */
-    NUMERIC,
-    /**
-     * Type for {@link String}.
-     */
-    STRING,
-    /**
-     * Type for {@link URI}.
-     */
-    URI,
-    /**
-     * Type for {@link TimeInstant}.
-     */
-    TIMEINSTANT,
-    /**
-     * Type for {@link LocalizedString}.
-     */
-    MULTILINGUAL_STRING,
-    /**
-     * Type for a selection.
-     */
-    CHOICE;
+import com.google.common.base.Preconditions;
+
+public class ChoiceSettingDefinition extends AbstractSettingDefinition<ChoiceSettingDefinition, String> {
+    private final Map<String, String> options = new HashMap<>();
+
+    public ChoiceSettingDefinition() {
+        super(SettingType.CHOICE);
+    }
+
+    public Map<String, String> getOptions() {
+        return Collections.unmodifiableMap(options);
+    }
+
+    public boolean hasOption(String value) {
+        return this.options.containsKey(value);
+    }
+
+    public ChoiceSettingDefinition addOption(String option) {
+        String value = Preconditions.checkNotNull(option);
+        this.options.put(value, value);
+        return this;
+    }
+
+    public ChoiceSettingDefinition addOption(String option, String displayName) {
+        this.options.put(Preconditions.checkNotNull(option), Preconditions
+                         .checkNotNull(displayName));
+        return this;
+    }
 
 }

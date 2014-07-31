@@ -30,6 +30,7 @@ package org.n52.sos.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 
@@ -76,6 +77,16 @@ public abstract class Nillable<T> {
      * @see #isPresent()
      */
     public abstract boolean isAbsent();
+
+    /**
+     * Transforms this {@code Nillable} to the target type.
+     *
+     * @param <X> the target type
+     * @param fun the transformation function
+     *
+     * @return the {@code Nillable}
+     */
+    public abstract <X> Nillable<X> transform(Function<? super T, X> fun);
 
     /**
      * Checks if this {@code Nillable} is {@code null}.
@@ -296,6 +307,11 @@ public abstract class Nillable<T> {
         }
 
         @Override
+        public <X> Nillable<X> transform(Function<? super T, X> fun) {
+            return new Present<>(fun.apply(get()));
+        }
+
+        @Override
         public int hashCode() {
             return Objects.hashCode(this.get());
         }
@@ -310,7 +326,6 @@ public abstract class Nillable<T> {
         public String toString() {
             return get().toString();
         }
-
     }
 
     private static class Nil extends Nillable<Object> {
@@ -348,6 +363,11 @@ public abstract class Nillable<T> {
         @Override
         public Object get() {
             throw new UnsupportedOperationException("instance is nil");
+        }
+
+        @Override
+        public <X> Nillable<X> transform(Function<? super Object, X> fun) {
+            return this.cast();
         }
 
         @Override
@@ -403,6 +423,11 @@ public abstract class Nillable<T> {
         @Override
         public boolean isPresent() {
             return false;
+        }
+
+        @Override
+        public <X> Nillable<X> transform(Function<? super Object, X> fun) {
+            return this.cast();
         }
 
         @Override

@@ -83,8 +83,8 @@ public class Address {
         return this;
     }
 
-    public Collection<Nillable<GeographicalName>> getAddressAreas() {
-        return Collections.unmodifiableCollection(addressAreas);
+    public List<Nillable<GeographicalName>> getAddressAreas() {
+        return Collections.unmodifiableList(addressAreas);
     }
 
     public Address addAddressArea(Nillable<GeographicalName> addressArea) {

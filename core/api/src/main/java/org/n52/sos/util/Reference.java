@@ -55,7 +55,7 @@ public class Reference {
     }
 
     public Reference setType(String type) {
-        this.type = Optional.fromNullable(Strings.nullToEmpty(type));
+        this.type = Optional.fromNullable(Strings.emptyToNull(type));
         return this;
     }
 
@@ -74,7 +74,7 @@ public class Reference {
     }
 
     public Reference setRole(String role) {
-        this.role = Optional.fromNullable(Strings.nullToEmpty(role));
+        this.role = Optional.fromNullable(Strings.emptyToNull(role));
         return this;
     }
 
@@ -83,7 +83,7 @@ public class Reference {
     }
 
     public Reference setArcrole(String arcrole) {
-        this.arcrole = Optional.fromNullable(Strings.nullToEmpty(arcrole));
+        this.arcrole = Optional.fromNullable(Strings.emptyToNull(arcrole));
         return this;
     }
 
@@ -92,7 +92,7 @@ public class Reference {
     }
 
     public Reference setTitle(String title) {
-        this.title = Optional.fromNullable(Strings.nullToEmpty(title));
+        this.title = Optional.fromNullable(Strings.emptyToNull(title));
         return this;
     }
 
@@ -101,7 +101,7 @@ public class Reference {
     }
 
     public Reference setShow(String show) {
-        this.show = Optional.fromNullable(Strings.nullToEmpty(show));
+        this.show = Optional.fromNullable(Strings.emptyToNull(show));
         return this;
     }
 
@@ -110,7 +110,7 @@ public class Reference {
     }
 
     public Reference setActuate(String actuate) {
-        this.actuate = Optional.fromNullable(Strings.nullToEmpty(actuate));
+        this.actuate = Optional.fromNullable(Strings.emptyToNull(actuate));
         return this;
     }
 
@@ -119,8 +119,7 @@ public class Reference {
     }
 
     public Reference setRemoteSchema(String remoteSchema) {
-        this.remoteSchema = Optional.fromNullable(Strings
-                .nullToEmpty(remoteSchema));
+        this.remoteSchema = Optional.fromNullable(Strings.emptyToNull(remoteSchema));
         return this;
     }
 

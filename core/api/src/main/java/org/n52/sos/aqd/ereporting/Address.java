@@ -31,6 +31,7 @@ package org.n52.sos.aqd.ereporting;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.n52.sos.util.Nillable;
 import org.n52.sos.util.Reference;
@@ -45,20 +46,17 @@ import com.google.common.base.Preconditions;
  */
 public class Address {
 
-    private final Collection<GeographicalName> adminUnits = new LinkedList<>();
-    private final Collection<String> locatorDesignators = new LinkedList<>();
-    private final Collection<GeographicalName> locatorNames = new LinkedList<>();
-    private final Collection<Nillable<GeographicalName>> addressAreas
-            = new LinkedList<>();
-    private final Collection<Nillable<GeographicalName>> postNames
-            = new LinkedList<>();
+    private final List<GeographicalName> adminUnits = new LinkedList<>();
+    private final List<String> locatorDesignators = new LinkedList<>();
+    private final List<GeographicalName> locatorNames = new LinkedList<>();
+    private final List<Nillable<GeographicalName>> addressAreas = new LinkedList<>();
+    private final List<Nillable<GeographicalName>> postNames = new LinkedList<>();
     private Nillable<String> postCode = Nillable.missing();
-    private final Collection<Nillable<GeographicalName>> thoroughfares
-            = new LinkedList<>();
+    private final List<Nillable<GeographicalName>> thoroughfares = new LinkedList<>();
     private Nillable<Reference> addressFeature = Nillable.missing();
 
-    public Collection<GeographicalName> getAdminUnits() {
-        return Collections.unmodifiableCollection(adminUnits);
+    public List<GeographicalName> getAdminUnits() {
+        return Collections.unmodifiableList(adminUnits);
     }
 
     public Address addAdminUnit(GeographicalName adminUnit) {
@@ -66,8 +64,8 @@ public class Address {
         return this;
     }
 
-    public Collection<String> getLocatorDesignators() {
-        return Collections.unmodifiableCollection(locatorDesignators);
+    public List<String> getLocatorDesignators() {
+        return Collections.unmodifiableList(locatorDesignators);
     }
 
     public Address addLocatorDesignator(String locatorDesignator) {
@@ -76,8 +74,8 @@ public class Address {
         return this;
     }
 
-    public Collection<GeographicalName> getLocatorNames() {
-        return Collections.unmodifiableCollection(locatorNames);
+    public List<GeographicalName> getLocatorNames() {
+        return Collections.unmodifiableList(locatorNames);
     }
 
     public Address addLocatorName(GeographicalName locatorName) {
@@ -98,8 +96,8 @@ public class Address {
         return addAddressArea(Nillable.of(addressArea));
     }
 
-    public Collection<Nillable<GeographicalName>> getPostNames() {
-        return Collections.unmodifiableCollection(postNames);
+    public List<Nillable<GeographicalName>> getPostNames() {
+        return Collections.unmodifiableList(postNames);
     }
 
     public Address addPostName(Nillable<GeographicalName> postName) {
@@ -124,8 +122,8 @@ public class Address {
         return setPostCode(Nillable.of(postCode));
     }
 
-    public Collection<Nillable<GeographicalName>> getThoroughfares() {
-        return Collections.unmodifiableCollection(thoroughfares);
+    public List<Nillable<GeographicalName>> getThoroughfares() {
+        return Collections.unmodifiableList(thoroughfares);
     }
 
     public Address addThoroughfare(Nillable<GeographicalName> thoroughfare) {

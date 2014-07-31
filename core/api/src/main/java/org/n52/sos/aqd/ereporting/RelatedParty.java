@@ -28,9 +28,9 @@
  */
 package org.n52.sos.aqd.ereporting;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.n52.sos.util.Nillable;
 import org.n52.sos.util.Reference;
@@ -43,7 +43,7 @@ public class RelatedParty {
     private Nillable<String> organisationName = Nillable.missing();
     private Nillable<String> positionName = Nillable.missing();
     private Nillable<Contact> contact = Nillable.missing();
-    private final Collection<Nillable<Reference>> roles = new LinkedList<>();
+    private final List<Nillable<Reference>> roles = new LinkedList<>();
 
     public Nillable<String> getIndividualName() {
         return individualName;
@@ -97,8 +97,8 @@ public class RelatedParty {
         return setContact(Nillable.of(contact));
     }
 
-    public Collection<Nillable<Reference>> getRoles() {
-        return Collections.unmodifiableCollection(roles);
+    public List<Nillable<Reference>> getRoles() {
+        return Collections.unmodifiableList(roles);
     }
 
     public RelatedParty addRole(Nillable<Reference> role) {

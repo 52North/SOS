@@ -10,11 +10,11 @@
  * the following licenses, the combination of the program with the linked
  * library is not considered a "derivative work" of the program:
  *
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
+ * - Apache License, version 2.0
+ * - Apache Software License, version 1.0
+ * - GNU Lesser General Public License, version 3
+ * - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ * - Common Development and Distribution License (CDDL), version 1.0
  *
  * Therefore the distribution of the program linked with libraries licensed
  * under the aforementioned licenses, is permitted by the copyright holders
@@ -32,18 +32,28 @@ import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 
 public class EReportingChange {
+    private boolean changed;
     private Optional<String> description;
 
     public EReportingChange(String description) {
-        this.description = Optional.fromNullable(description);
+        this(true, description);
     }
 
     public EReportingChange() {
-        this(null);
+        this(false, null);
+    }
+
+    public EReportingChange(boolean changed) {
+        this(changed, null);
+    }
+
+    public EReportingChange(boolean changed, String description) {
+        this.changed = changed;
+        this.description = Optional.fromNullable(description);
     }
 
     public boolean isChange() {
-        return this.description.isPresent();
+        return this.changed;
     }
 
     public Optional<String> getDescription() {

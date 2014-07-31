@@ -31,6 +31,7 @@ package org.n52.sos.aqd.ereporting;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.Time;
@@ -44,9 +45,9 @@ public class EReportingHeader {
     private InspireID inspireID;
     private RelatedParty reportingAuthority;
     private EReportingChange change;
-    private Referenceable<? extends Time> reportingPeriod = Referenceable.of(Nillable.<Time>missing());
-    private final Collection<Referenceable<AbstractFeature>> delete= new LinkedList<>();
-    private final Collection<Referenceable<AbstractFeature>> content= new LinkedList<>();
+    private Referenceable<Time> reportingPeriod = Referenceable.of(Nillable.<Time>missing());
+    private final List<Referenceable<AbstractFeature>> delete= new LinkedList<>();
+    private final List<Referenceable<AbstractFeature>> content= new LinkedList<>();
 
     public EReportingChange getChange() {
         return change;
@@ -66,12 +67,12 @@ public class EReportingHeader {
         return this;
     }
 
-    public Referenceable<? extends Time> getReportingPeriod() {
+    public Referenceable<Time> getReportingPeriod() {
         return reportingPeriod;
     }
 
     public EReportingHeader setReportingPeriod(
-            Referenceable<? extends Time> reportingPeriod) {
+            Referenceable<Time> reportingPeriod) {
         this.reportingPeriod = Preconditions.checkNotNull(reportingPeriod);
         return this;
     }
@@ -86,8 +87,8 @@ public class EReportingHeader {
         return this;
     }
 
-    public Collection<Referenceable<AbstractFeature>> getDelete() {
-        return Collections.unmodifiableCollection(delete);
+    public List<Referenceable<AbstractFeature>> getDelete() {
+        return Collections.unmodifiableList(delete);
     }
 
     public EReportingHeader addDelete(Referenceable<AbstractFeature> delete) {
@@ -99,8 +100,8 @@ public class EReportingHeader {
         return addDelete(Referenceable.of(delete));
     }
 
-    public Collection<Referenceable<AbstractFeature>> getContent() {
-        return Collections.unmodifiableCollection(content);
+    public List<Referenceable<AbstractFeature>> getContent() {
+        return Collections.unmodifiableList(content);
     }
 
     public EReportingHeader addContent(Referenceable<AbstractFeature> content) {

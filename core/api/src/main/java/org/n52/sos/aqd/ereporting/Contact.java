@@ -28,9 +28,9 @@
  */
 package org.n52.sos.aqd.ereporting;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.n52.sos.util.Nillable;
 
@@ -48,10 +48,8 @@ public class Contact {
     private Nillable<String> contactInstructions = Nillable.missing();
     private Nillable<String> electronicMailAddress = Nillable.missing();
     private Nillable<String> hoursOfService = Nillable.missing();
-    private final Collection<Nillable<String>> telephoneFacsimile
-            = new LinkedList<>();
-    private final Collection<Nillable<String>> telephoneVoice
-            = new LinkedList<>();
+    private final List<Nillable<String>> telephoneFacsimile = new LinkedList<>();
+    private final List<Nillable<String>> telephoneVoice = new LinkedList<>();
     private Nillable<String> website = Nillable.missing();
 
     public Nillable<Address> getAddress() {
@@ -109,8 +107,8 @@ public class Contact {
         return setHoursOfService(Nillable.of(hoursOfService));
     }
 
-    public Collection<Nillable<String>> getTelephoneFacsimile() {
-        return Collections.unmodifiableCollection(telephoneFacsimile);
+    public List<Nillable<String>> getTelephoneFacsimile() {
+        return Collections.unmodifiableList(telephoneFacsimile);
     }
 
     public Contact addTelephoneFacsimile(Nillable<String> telephoneFacsimile) {
@@ -123,8 +121,8 @@ public class Contact {
         return this.addTelephoneFacsimile(Nillable.of(telephoneFacsimile));
     }
 
-    public Collection<Nillable<String>> getTelephoneVoice() {
-        return Collections.unmodifiableCollection(telephoneVoice);
+    public List<Nillable<String>> getTelephoneVoice() {
+        return Collections.unmodifiableList(telephoneVoice);
     }
 
     public Contact addTelephoneVoice(Nillable<String> telephoneVoice) {

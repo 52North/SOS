@@ -100,16 +100,18 @@ public abstract class Referenceable<T> {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj instanceof Instance) {
-                Instance<?> that = (Instance) obj;
-                return Objects.equal(this.getInstance(), that.getInstance());
-            }
-            return false;
+            return obj instanceof Instance && Objects
+                   .equal(this.getInstance(), ((Instance) obj).getInstance());
         }
 
         @Override
         public boolean isAbsent() {
-            return obj.isAbsent();
+            return getInstance().isAbsent();
+        }
+
+        @Override
+        public String toString() {
+            return getInstance().toString();
         }
 
     }
@@ -148,16 +150,18 @@ public abstract class Referenceable<T> {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj instanceof Ref) {
-                Ref<?> that = (Ref) obj;
-                return Objects.equal(this.getReference(), that.getReference());
-            }
-            return false;
+            return obj instanceof Ref && Objects
+                   .equal(getReference(), ((Ref) obj).getReference());
         }
 
         @Override
         public boolean isAbsent() {
             return false;
+        }
+
+        @Override
+        public String toString() {
+            return getReference().toString();
         }
     }
 }

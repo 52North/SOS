@@ -31,6 +31,7 @@ package org.n52.sos.aqd.ereporting;
 
 import org.n52.sos.util.Nillable;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 /**
@@ -77,5 +78,34 @@ public class Spelling {
     public Spelling setTransliterationScheme(String transliterationScheme) {
         return this.setTransliterationScheme(Nillable.of(transliterationScheme));
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getText(), getScript(), getTransliterationScheme());
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("text", getText())
+                .add("script", getScript())
+                .add("transliterationScheme", getTransliterationScheme())
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Spelling) {
+            Spelling that = (Spelling) obj;
+            return Objects.equal(this.getText(), that.getText()) &&
+                   Objects.equal(this.getScript(), that.getScript()) &&
+                   Objects.equal(this.getTransliterationScheme(), that.getTransliterationScheme());
+        }
+        return false;
+    }
+
+
+
+
 
 }

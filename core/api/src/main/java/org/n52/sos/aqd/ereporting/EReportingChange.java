@@ -28,10 +28,11 @@
  */
 package org.n52.sos.aqd.ereporting;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 
 public class EReportingChange {
-    private  Optional<String> description;
+    private Optional<String> description;
 
     public EReportingChange(String description) {
         this.description = Optional.fromNullable(description);
@@ -52,4 +53,25 @@ public class EReportingChange {
     public void setDescription(String description) {
         this.description = Optional.fromNullable(description);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getDescription());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof EReportingChange && Objects
+               .equal(getDescription(), ((EReportingChange) obj)
+                      .getDescription());
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("change", isChange())
+                .add("description", getDescription())
+                .toString();
+    }
+
 }

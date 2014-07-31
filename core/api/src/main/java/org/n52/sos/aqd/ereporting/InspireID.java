@@ -28,11 +28,9 @@
  */
 package org.n52.sos.aqd.ereporting;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.util.Nillable;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 public class InspireID {
@@ -72,4 +70,28 @@ public class InspireID {
         return this;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getNamespace(), getLocalId(), getVersionId());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof InspireID) {
+            InspireID that = (InspireID) obj;
+            return Objects.equal(this.getNamespace(), that.getNamespace()) &&
+                   Objects.equal(this.getLocalId(), that.getLocalId()) &&
+                   Objects.equal(this.getVersionId(), that.getVersionId());
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("localId", getLocalId())
+                .add("namespace", getNamespace())
+                .add("versionId", getVersionId())
+                .toString();
+    }
 }

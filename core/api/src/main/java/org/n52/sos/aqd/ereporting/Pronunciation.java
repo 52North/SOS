@@ -32,10 +32,12 @@ import java.net.URI;
 
 import org.n52.sos.util.Nillable;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 /**
  * TODO JavaDoc
+ *
  * @author Christian Autermann
  */
 public class Pronunciation {
@@ -67,6 +69,29 @@ public class Pronunciation {
 
     public Pronunciation setSoundLink(URI soundLink) {
         return setSoundLink(Nillable.of(soundLink));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getIPA(), getSoundLink());
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("ipa", getIPA())
+                .add("soundLink", getSoundLink())
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Pronunciation) {
+            Pronunciation that = (Pronunciation) obj;
+            return Objects.equal(this.getIPA(), that.getIPA()) &&
+                   Objects.equal(this.getSoundLink(), that.getSoundLink());
+        }
+        return false;
     }
 
 }

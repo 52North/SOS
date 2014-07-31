@@ -32,6 +32,7 @@ package org.n52.sos.aqd.ereporting;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.util.Nillable;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 /**
@@ -156,5 +157,48 @@ public class GeographicalName {
     public GeographicalName setGrammaticalNumber(CodeType grammaticalNumber) {
         return setGrammaticalNumber(Nillable.of(grammaticalNumber));
     }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("language", getLanguage())
+                .add("nativeness", getNativeness())
+                .add("nameStatus", getNameStatus())
+                .add("grammaticalGender", getGrammaticalGender())
+                .add("grammaticalNumber", getGrammaticalNumber())
+                .add("pronunciation", getPronunciation())
+                .add("sourceOfName", getSourceOfName())
+                .add("spelling", getSpelling())
+                .toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getLanguage(),getNativeness(),getNameStatus(),
+                getGrammaticalNumber(), getGrammaticalGender(), getPronunciation(),
+                getSourceOfName(), getSpelling());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof GeographicalName) {
+            GeographicalName that = (GeographicalName) obj;
+            return Objects.equal(this.getGrammaticalGender(), that.getGrammaticalGender()) &&
+                   Objects.equal(this.getGrammaticalNumber(), that.getGrammaticalNumber()) &&
+                   Objects.equal(this.getLanguage(), that.getLanguage()) &&
+                   Objects.equal(this.getNameStatus(), that.getNameStatus()) &&
+                   Objects.equal(this.getNativeness(), that.getNativeness()) &&
+                   Objects.equal(this.getPronunciation(), that.getPronunciation()) &&
+                   Objects.equal(this.getSourceOfName(), that.getSourceOfName()) &&
+                   Objects.equal(this.getSpelling(), that.getSpelling());
+        }
+        return false;
+    }
+
+
+
+
+
+
 
 }

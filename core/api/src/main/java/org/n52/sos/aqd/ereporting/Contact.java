@@ -34,10 +34,12 @@ import java.util.LinkedList;
 
 import org.n52.sos.util.Nillable;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 /**
  * TODO JavaDoc
+ *
  * @author Christian Autermann
  */
 public class Contact {
@@ -46,8 +48,10 @@ public class Contact {
     private Nillable<String> contactInstructions = Nillable.missing();
     private Nillable<String> electronicMailAddress = Nillable.missing();
     private Nillable<String> hoursOfService = Nillable.missing();
-    private final Collection<Nillable<String>> telephoneFacsimile = new LinkedList<>();
-    private final Collection<Nillable<String>> telephoneVoice = new LinkedList<>();
+    private final Collection<Nillable<String>> telephoneFacsimile
+            = new LinkedList<>();
+    private final Collection<Nillable<String>> telephoneVoice
+            = new LinkedList<>();
     private Nillable<String> website = Nillable.missing();
 
     public Nillable<Address> getAddress() {
@@ -82,9 +86,9 @@ public class Contact {
     }
 
     public Contact setElectronicMailAddress(
-                                            Nillable<String> electronicMailAddress) {
-        this.electronicMailAddress
-                = Preconditions.checkNotNull(electronicMailAddress);
+            Nillable<String> electronicMailAddress) {
+        this.electronicMailAddress = Preconditions
+                .checkNotNull(electronicMailAddress);
         return this;
     }
 
@@ -110,7 +114,8 @@ public class Contact {
     }
 
     public Contact addTelephoneFacsimile(Nillable<String> telephoneFacsimile) {
-        this.telephoneFacsimile.add(Preconditions.checkNotNull(telephoneFacsimile));
+        this.telephoneFacsimile.add(Preconditions
+                .checkNotNull(telephoneFacsimile));
         return this;
     }
 
@@ -144,4 +149,39 @@ public class Contact {
         return setWebsite(Nillable.of(website));
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getAddress(), getContactInstructions(),
+                                getElectronicMailAddress(), getHoursOfService(),
+                                getTelephoneFacsimile(), getTelephoneVoice(),
+                                getWebsite());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Contact) {
+            Contact that = (Contact) obj;
+            return Objects.equal(getAddress(), that.getAddress()) &&
+                   Objects.equal(getContactInstructions(), that.getContactInstructions()) &&
+                   Objects.equal(getElectronicMailAddress(), that.getElectronicMailAddress()) &&
+                   Objects.equal(getHoursOfService(), that.getHoursOfService()) &&
+                   Objects.equal(getTelephoneFacsimile(), that.getTelephoneFacsimile()) &&
+                   Objects.equal(getTelephoneVoice(), that.getTelephoneVoice()) &&
+                   Objects.equal(getWebsite(), getWebsite());
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("address", getAddress())
+                .add("contactInstructions", getContactInstructions())
+                .add("electronicMailAddress", getElectronicMailAddress())
+                .add("hoursOfService", getHoursOfService())
+                .add("telephoneFacsimile", getTelephoneFacsimile())
+                .add("telephoneVoice", getTelephoneVoice())
+                .add("website", getWebsite())
+                .toString();
+    }
 }

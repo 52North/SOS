@@ -302,16 +302,13 @@ public abstract class Nillable<T> {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj instanceof Present) {
-                Present<?> that = (Present) obj;
-                return Objects.equal(this.get(), that.get());
-            }
-            return false;
+            return obj instanceof Present && Objects
+                   .equal(get(), ((Present) obj).get());
         }
 
         @Override
         public String toString() {
-            return "Nillable.present(" + get().toString() + ")";
+            return get().toString();
         }
 
     }
@@ -360,11 +357,8 @@ public abstract class Nillable<T> {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj instanceof Nil) {
-                Nil that = (Nil) obj;
-                return Objects.equal(this.getNilReason(), that.getNilReason());
-            }
-            return false;
+            return obj instanceof Nil && Objects
+                   .equal(getNilReason(), ((Nil) obj).getNilReason());
         }
 
         @SuppressWarnings("unchecked")
@@ -374,7 +368,7 @@ public abstract class Nillable<T> {
 
         @Override
         public String toString() {
-            return "Nillable.nil(" + getNilReason().orNull() + ")";
+            return "Nillable.nil(\"" + getNilReason().orNull() + "\")";
         }
     }
 

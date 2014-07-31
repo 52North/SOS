@@ -37,6 +37,7 @@ import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.util.Nillable;
 import org.n52.sos.util.Referenceable;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 public class EReportingHeader {
@@ -44,8 +45,8 @@ public class EReportingHeader {
     private RelatedParty reportingAuthority;
     private EReportingChange change;
     private Referenceable<? extends Time> reportingPeriod = Referenceable.of(Nillable.<Time>missing());
-    private final Collection<Referenceable<AbstractFeature>> delete = new LinkedList<>();
-    private final Collection<Referenceable<AbstractFeature>> content = new LinkedList<>();
+    private final Collection<Referenceable<AbstractFeature>> delete= new LinkedList<>();
+    private final Collection<Referenceable<AbstractFeature>> content= new LinkedList<>();
 
     public EReportingChange getChange() {
         return change;
@@ -110,4 +111,40 @@ public class EReportingHeader {
     public EReportingHeader addContent(AbstractFeature content) {
         return addContent(Referenceable.of(content));
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getInspireID(), getReportingAuthority(),
+                                getChange(), getReportingPeriod(), getDelete(),
+                                getContent());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof EReportingHeader) {
+            EReportingHeader that = (EReportingHeader) obj;
+            return Objects.equal(getInspireID(), that.getInspireID()) &&
+                   Objects.equal(getReportingAuthority(), that.getReportingAuthority()) &&
+                   Objects.equal(getChange(), that.getChange()) &&
+                   Objects.equal(getReportingPeriod(), that.getReportingPeriod()) &&
+                   Objects.equal(getDelete(), that.getDelete()) &&
+                   Objects.equal(getContent(), that.getContent());
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("inspireID", getInspireID())
+                .add("reportingAuthority", getReportingAuthority())
+                .add("change", getChange())
+                .add("reportingPeriod", getReportingPeriod())
+                .add("delete", getDelete())
+                .add("content", getContent())
+                .toString();
+    }
+
+
+
 }

@@ -30,6 +30,7 @@ package org.n52.sos.util;
 
 import java.net.URI;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
@@ -122,5 +123,44 @@ public class Reference {
                 .nullToEmpty(remoteSchema));
         return this;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getActuate(), getArcrole(), getHref(),
+            getRemoteSchema(), getRole(), getShow(), getTitle(), getType());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Reference) {
+            Reference that = (Reference) obj;
+            return Objects.equal(getActuate(), that.getActuate())&&
+                   Objects.equal(getArcrole(), that.getArcrole()) &&
+                   Objects.equal(getHref(), that.getHref()) &&
+                   Objects.equal(getRemoteSchema(), that.getRemoteSchema()) &&
+                   Objects.equal(getRole(), that.getRole()) &&
+                   Objects.equal(getShow(), that.getShow()) &&
+                   Objects.equal(getTitle(), that.getTitle()) &&
+                   Objects.equal(getType(), that.getType());
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .omitNullValues()
+                .add("actuate", getActuate().orNull())
+                .add("arcrole", getArcrole().orNull())
+                .add("href", getHref())
+                .add("remoteSchema", getRemoteSchema().orNull())
+                .add("role", getRole().orNull())
+                .add("show", getShow().orNull())
+                .add("title", getTitle().orNull())
+                .add("type", getType().orNull())
+                .toString();
+    }
+
+
 
 }

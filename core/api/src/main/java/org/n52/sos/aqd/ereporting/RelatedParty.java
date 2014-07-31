@@ -35,6 +35,7 @@ import java.util.LinkedList;
 import org.n52.sos.util.Nillable;
 import org.n52.sos.util.Reference;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 public class RelatedParty {
@@ -107,5 +108,35 @@ public class RelatedParty {
 
     public RelatedParty addRole(Reference role) {
         return addRole(Nillable.of(role));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getIndividualName(), getOrganisationName(),
+                                getPositionName(), getContact(), getRoles());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof RelatedParty) {
+            RelatedParty that = (RelatedParty) obj;
+            return Objects.equal(this.getIndividualName(), that.getIndividualName()) &&
+                   Objects.equal(this.getOrganisationName(), that.getOrganisationName()) &&
+                   Objects.equal(this.getPositionName(), that.getPositionName()) &&
+                   Objects.equal(this.getContact(), that.getContact()) &&
+                   Objects.equal(this.getRoles(), that.getRoles());
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("individualName", getIndividualName())
+                .add("organisationName", getOrganisationName())
+                .add("positionName", getPositionName())
+                .add("contact", getContact())
+                .add("roles", getRoles())
+                .toString();
     }
 }

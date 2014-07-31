@@ -66,7 +66,6 @@ import org.n52.sos.w3c.W3CConstants;
 import com.google.common.base.Optional;
 
 public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
-
     private final EReportingHeader header;
 
     public EReportingHeaderEncoder(EReportingHeader header) {
@@ -384,10 +383,8 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
         encodeNillableString(AQDConstants.QN_GN_SOURCE_OF_NAME, v.getSourceOfName());
         encodeNillablePronunciation(AQDConstants.QN_GN_PRONUNCIATION, v.getPronunciation());
         encodeNillableSpelling(AQDConstants.QN_GN_SPELLING, v.getSpelling());
-        encodeNillableCodeType(AQDConstants.QN_GN_GRAMMATICAL_GENDER, v
-                               .getGrammaticalGender());
-        encodeNillableCodeType(AQDConstants.QN_GN_GRAMMATICAL_NUMBER, v
-                               .getGrammaticalNumber());
+        encodeNillableCodeType(AQDConstants.QN_GN_GRAMMATICAL_GENDER, v.getGrammaticalGender());
+        encodeNillableCodeType(AQDConstants.QN_GN_GRAMMATICAL_NUMBER, v.getGrammaticalNumber());
         end(AQDConstants.QN_GN_GEOGRAPHICAL_NAME);
     }
 

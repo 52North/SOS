@@ -38,7 +38,6 @@ import org.n52.sos.w3c.SchemaLocation;
  */
 public interface AQDConstants {
 
-
     String NS_AD = "urn:x-inspire:specification:gmlas:Addresses:3.0";
     String NS_AD_PREFIX = "ad";
     String NS_AM = "http://inspire.ec.europa.eu/schemas/am/3.0";
@@ -116,6 +115,8 @@ public interface AQDConstants {
     String EN_TRANSLITERATION_SCHEME = "transliterationScheme";
     String EN_VERSION_ID = "versionId";
     String EN_WEBSITE = "website";
+
+    QName QN_NIL_REASON = new QName(AN_NIL_REASON);
 
     QName QN_AD_ADDRESS_AREA = new QName(NS_AD, EN_ADDRESS_AREA, NS_AD_PREFIX);
     QName QN_AD_ADDRESS_FEATURE = new QName(NS_AD, EN_ADDRESS_FEATURE, NS_AD_PREFIX);

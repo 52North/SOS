@@ -35,6 +35,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLStreamException;
@@ -57,9 +60,9 @@ import org.n52.sos.aqd.ereporting.GeographicalName;
 import org.n52.sos.aqd.ereporting.Pronunciation;
 import org.n52.sos.aqd.ereporting.RelatedParty;
 import org.n52.sos.aqd.ereporting.Spelling;
-import org.n52.sos.aqd.ereporting.xml.EReportingHeaderEncoder;
 import org.n52.sos.aqd.ereporting.InspireID;
 import org.n52.sos.ogc.gml.CodeType;
+import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.Nillable;
@@ -79,7 +82,7 @@ public class EReportingHeaderEncoderTest {
                         .setVersionId(Nillable.<String>missing()))
                 .setChange(new EReportingChange("Changed because... you know"))
                 .setReportingPeriod(Referenceable.of(Nillable
-                                .present(new TimeInstant(DateTime.now()))))
+                                .<Time>present(new TimeInstant(DateTime.now()))))
                 .setReportingAuthority(new RelatedParty()
                         .setIndividualName(Nillable.<String>missing())
                         .setOrganisationName("Organisation")
@@ -190,6 +193,7 @@ public class EReportingHeaderEncoderTest {
                    SAXException, MalformedURLException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         new EReportingHeaderEncoder(header).write(baos);
+        System.out.println(baos.toString("UTF-8"));
         ByteArrayInputStream in = new ByteArrayInputStream(baos.toByteArray());
         URL schemaFile = new URL(AQDConstants.NS_AQD_SCHEMA);
         Source xmlFile = new StreamSource(in);

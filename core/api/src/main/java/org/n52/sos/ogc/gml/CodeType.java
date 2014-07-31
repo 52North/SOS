@@ -49,7 +49,7 @@ public class CodeType {
     /**
      * Code space
      */
-    private String codeSpace = Constants.EMPTY_STRING;
+    private String codeSpace;
 
     /**
      * constructor

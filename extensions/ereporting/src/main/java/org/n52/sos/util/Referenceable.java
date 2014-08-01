@@ -30,6 +30,7 @@ package org.n52.sos.util;
 
 import java.net.URI;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
@@ -45,6 +46,8 @@ public abstract class Referenceable<T> {
 
     public abstract boolean isAbsent();
 
+    public abstract <X> Referenceable<X> transform(Function<T,X> fun);
+
     @Override
     public abstract int hashCode();
 
@@ -52,11 +55,11 @@ public abstract class Referenceable<T> {
     public abstract boolean equals(Object obj);
 
     public static <T> Referenceable<T> of(URI reference) {
-        return new Ref<>(new Reference().setHref(reference));
+        return new Ref(new Reference().setHref(reference)).cast();
     }
 
     public static <T> Referenceable<T> of(Reference reference) {
-        return new Ref<>(reference);
+        return new Ref(reference).cast();
     }
 
     public static <T> Referenceable<T> of(T obj) {
@@ -114,9 +117,14 @@ public abstract class Referenceable<T> {
             return getInstance().toString();
         }
 
+        @Override
+        public <X> Referenceable<X> transform(Function<T, X> fun) {
+            return Referenceable.of(getInstance().transform(fun));
+        }
+
     }
 
-    private static class Ref<T> extends Referenceable<T> {
+    private static class Ref extends Referenceable<Object> {
         private final Reference reference;
 
         Ref(Reference reference) {
@@ -129,7 +137,7 @@ public abstract class Referenceable<T> {
         }
 
         @Override
-        public Nillable<T> getInstance() {
+        public Nillable<Object> getInstance() {
             throw new NullPointerException();
         }
 
@@ -162,6 +170,16 @@ public abstract class Referenceable<T> {
         @Override
         public String toString() {
             return getReference().toString();
+        }
+
+        @SuppressWarnings("unchecked")
+        <T> Referenceable<T> cast() {
+            return (Referenceable<T>) this;
+        }
+
+        @Override
+        public <X> Referenceable<X> transform(Function<Object, X> fun) {
+            return cast();
         }
     }
 }

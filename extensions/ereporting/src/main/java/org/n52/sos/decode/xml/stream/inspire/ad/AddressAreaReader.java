@@ -30,11 +30,11 @@ package org.n52.sos.decode.xml.stream.inspire.ad;
 
 import javax.xml.namespace.QName;
 
-import org.n52.sos.inspire.aqd.GeographicalName;
-import org.n52.sos.util.AQDConstants;
 import org.n52.sos.decode.xml.stream.NillableSubtagReader;
 import org.n52.sos.decode.xml.stream.XmlReader;
 import org.n52.sos.decode.xml.stream.inspire.gn.GeographicalNameReader;
+import org.n52.sos.inspire.aqd.GeographicalName;
+import org.n52.sos.util.AQDConstants;
 
 /**
  * TODO JavaDoc

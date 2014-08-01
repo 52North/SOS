@@ -47,11 +47,8 @@ public class CodeTypeJSONEncoder extends JSONEncoder<CodeType> {
     }
 
     @Override
-    public JsonNode encodeJSON(CodeType t)
-            throws OwsExceptionReport {
-        return nodeFactory().objectNode()
-                .put(AQDJSONConstants.CODE_SPACE, t.getCodeSpace())
-                .put(AQDJSONConstants.VALUE, t.getValue());
+    public JsonNode encodeJSON(CodeType t) {
+        return encodeCodeType(t);
     }
 
 }

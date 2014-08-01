@@ -43,7 +43,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class AddressJSONEncoder extends JSONEncoder<Address> {
 
-
     public AddressJSONEncoder() {
         super(Address.class);
     }

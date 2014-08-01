@@ -56,11 +56,11 @@ import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @param <T>
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
@@ -68,7 +68,7 @@ public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
 
     private final Set<EncoderKey> encoderKeys;
 
-    public JSONEncoder(Class<T> type, EncoderKey... additionalKeys) {
+    public JSONEncoder(Class<? super T> type, EncoderKey... additionalKeys) {
         Builder<EncoderKey> set = ImmutableSet.builder();
         set.add(new JSONEncoderKey(type));
         set.addAll(Arrays.asList(additionalKeys));

@@ -68,9 +68,9 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
         
         String VALIDATION = "validation";
         
-        String getValidation();
+        Integer getValidation();
         
-        HasValidation setValidation(String validation);
+        HasValidation setValidation(Integer validation);
         
         boolean isSetValidation();
     }
@@ -79,10 +79,28 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
         
         String VERIFICATION = "verification";
         
-        String getVerification();
+        Integer getVerification();
         
-        HasVerification setVerification(String verification);
+        HasVerification setVerification(Integer verification);
         
         boolean isSetVerification();
+    }
+    
+    interface HasAssessmentType {
+        
+        String ASSESSMENTTYPE = "assessmentType";
+        
+        /**
+         * @return the assessmentType
+         */
+        EReportingAssessmentType getAssessmentType();
+
+        /**
+         * @param assessmentType the assessmentType to set
+         */
+        HasAssessmentType setAssessmentType(EReportingAssessmentType assessmentType);
+        
+        boolean isSetAssessmentType();
+        
     }
 }

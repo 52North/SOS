@@ -28,25 +28,192 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmObservation;
+import java.util.List;
+import java.util.Set;
 
-public class EReportingObservationCreator implements AdditionalObservationCreator<EReportingObservation> {
-    
-    EReportingObservationHelper helper = new EReportingObservationHelper();
+import org.n52.sos.aqd.AqdConstants;
+import org.n52.sos.aqd.AqdConstants.ElementType;
+import org.n52.sos.aqd.AqdUomRepository;
+import org.n52.sos.aqd.AqdUomRepository.Uom;
+import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingBlobObservation;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingBooleanObservation;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingCategoryObservation;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingCountObservation;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingGeometryObservation;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingNumericObservation;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSweDataArrayObservation;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingTextObservation;
+import org.n52.sos.ogc.OGCConstants;
+import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.quality.SosQuality;
+import org.n52.sos.ogc.om.quality.SosQuality.QualityType;
+import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.sos.ogc.swe.simpleType.SweCategory;
+import org.n52.sos.ogc.swe.simpleType.SweCount;
+import org.n52.sos.ogc.swe.simpleType.SweQuantity;
+import org.n52.sos.ogc.swe.simpleType.SweTime;
+import org.n52.sos.util.Constants;
+import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.util.JavaHelper;
+import org.n52.sos.util.SweHelper;
+
+import com.google.common.collect.Lists;
+
+public class EReportingObservationCreator implements AdditionalObservationCreator {
+
+    private EReportingObservationHelper helper = new EReportingObservationHelper();
+
+    private static final Set<AdditionalObservationCreatorKey> KEYS = AdditionalObservationCreatorRepository
+            .encoderKeysForElements(AqdConstants.NS_AQD, EReportingObservation.class, EReportingBlobObservation.class,
+                    EReportingBooleanObservation.class, EReportingCategoryObservation.class,
+                    EReportingCountObservation.class, EReportingGeometryObservation.class,
+                    EReportingNumericObservation.class, EReportingSweDataArrayObservation.class,
+                    EReportingTextObservation.class);
 
     @Override
-    public Class<EReportingObservation> getKey() {
-        return EReportingObservation.class;
+    public Set<AdditionalObservationCreatorKey> getKeys() {
+        return KEYS;
     }
 
     @Override
-    public OmObservation add(OmObservation omObservation, EReportingObservation observation) {
-        for (NamedValue<?> namedValue : helper.createSamplingPointParameter(observation.getEReportingSeries())) {
-            omObservation.addParameter(namedValue);
+    public OmObservation create(OmObservation omObservation, AbstractObservation observation) {
+        if (observation instanceof EReportingObservation) {
+            for (NamedValue<?> namedValue : helper.createSamplingPointParameter(((EReportingObservation) observation)
+                    .getEReportingSeries())) {
+                omObservation.addParameter(namedValue);
+            }
+            // if (omObservation.getValue() instanceof
+            // SingleObservationValue<?>) {
+            // addQualityFlags((SingleObservationValue<?>)omObservation.getValue(),
+            // (EReportingObservation)observation);
+            // }
+            omObservation.setValue(createSweDataArrayValue(omObservation, (EReportingObservation) observation));
+            omObservation.getObservationConstellation().setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
         }
         return omObservation;
+    }
+
+    private void addQualityFlags(SingleObservationValue<?> value, EReportingObservation observation) {
+        value.addQuality(new SosQuality(ElementType.Validation.name(), null, Integer.toString(observation
+                .getValidation()), ElementType.Validation.getDefinition(), QualityType.category));
+        value.addQuality(new SosQuality(ElementType.Verification.name(), null, Integer.toString(observation
+                .getVerification()), ElementType.Verification.getDefinition(), QualityType.category));
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private SingleObservationValue<?> createSweDataArrayValue(OmObservation omObservation,
+            EReportingObservation observation) {
+        SweDataArray sweDataArray = new SweDataArray();
+        sweDataArray.setElementCount(createElementCount(omObservation));
+        sweDataArray.setElementType(createElementType(omObservation.getValue().getValue().getUnit()));
+        sweDataArray.setEncoding(createEncoding(omObservation));
+        sweDataArray.setValues(createValue(omObservation, observation));
+        SweDataArrayValue sweDataArrayValue = new SweDataArrayValue();
+        sweDataArrayValue.setValue(sweDataArray);
+        SingleObservationValue observationValue = new SingleObservationValue(sweDataArrayValue);
+        observationValue.setPhenomenonTime(omObservation.getPhenomenonTime());
+        return observationValue;
+    }
+
+    private SweCount createElementCount(OmObservation omObservation) {
+        return new SweCount().setValue(1);
+    }
+
+    private SweAbstractDataComponent createElementType(String unit) {
+        SweDataRecord dataRecord = new SweDataRecord();
+        dataRecord.setDefinition(AqdConstants.NAME_FIXED_OBSERVATIONS);
+        dataRecord.addField(createField(ElementType.StartTime, createSweTimeSamplingTime(ElementType.StartTime)));
+        dataRecord.addField(createField(ElementType.EndTime, createSweTimeSamplingTime(ElementType.EndTime)));
+        dataRecord.addField(createField(ElementType.Verification, createSweCatagory(ElementType.Verification)));
+        dataRecord.addField(createField(ElementType.Validation, createSweCatagory(ElementType.Validation)));
+        dataRecord.addField(createField(ElementType.Pollutant, createSweQuantity(ElementType.Pollutant, unit)));
+        return dataRecord;
+    }
+
+    private SweField createField(ElementType elementType, SweAbstractDataComponent content) {
+        return new SweField(elementType.name(), content);
+    }
+
+    private SweAbstractDataComponent createSweTimeSamplingTime(ElementType elementType) {
+        SweTime time = new SweTime();
+        time.setDefinition(elementType.getDefinition());
+        if (elementType.isSetUOM()) {
+            time.setUom(elementType.getUOM());
+        }
+        return time;
+    }
+
+    private SweAbstractDataComponent createSweCatagory(ElementType elementType) {
+        return new SweCategory().setDefinition(elementType.getDefinition());
+    }
+
+    private SweAbstractDataComponent createSweQuantity(ElementType elementType, String unit) {
+        SweQuantity quantity = new SweQuantity();
+        quantity.setDefinition(elementType.getDefinition());
+        Uom aqdUom = AqdUomRepository.getAqdUom(unit);
+        if (aqdUom != null) {
+            quantity.setUom(aqdUom.getConceptURI());
+        } else {
+            quantity.setUom(OGCConstants.UNKNOWN);
+        }
+        return quantity;
+    }
+
+    private SweAbstractEncoding createEncoding(OmObservation omObservation) {
+        return SweHelper.createTextEncoding(omObservation);
+    }
+
+    private List<List<String>> createValue(OmObservation omObservation, EReportingObservation observation) {
+        List<String> value = Lists.newArrayListWithCapacity(5);
+        addTimes(value, omObservation.getPhenomenonTime());
+        addIntegerValue(value, observation.getVerification());
+        addIntegerValue(value, observation.getValidation());
+        addPollutant(value, omObservation);
+        List<List<String>> list = Lists.newArrayList();
+        list.add(value);
+        return list;
+    }
+
+    private void addIntegerValue(List<String> list, Integer value) {
+        if (value != null) {
+            list.add(Integer.toString(value));
+        } else {
+            list.add(Constants.EMPTY_STRING);
+        }
+    }
+
+    private void addPollutant(List<String> value, OmObservation omObservation) {
+        if (omObservation.getValue() instanceof SingleObservationValue<?>) {
+            value.add(JavaHelper.asString(omObservation.getValue().getValue().getValue()));
+        } else {
+            value.add(Constants.EMPTY_STRING);
+        }
+    }
+
+    private void addTimes(List<String> value, Time time) {
+        if (time instanceof TimeInstant) {
+            value.add(DateTimeHelper.formatDateTime2IsoString(((TimeInstant) time).getValue()));
+            value.add(DateTimeHelper.formatDateTime2IsoString(((TimeInstant) time).getValue()));
+        } else if (time instanceof TimePeriod) {
+            value.add(DateTimeHelper.formatDateTime2IsoString(((TimePeriod) time).getStart()));
+            value.add(DateTimeHelper.formatDateTime2IsoString(((TimePeriod) time).getEnd()));
+        } else {
+            value.add(Constants.EMPTY_STRING);
+            value.add(Constants.EMPTY_STRING);
+        }
     }
 
 }

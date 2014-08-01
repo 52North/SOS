@@ -68,6 +68,7 @@ import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
@@ -187,6 +188,7 @@ public class HibernateGetObservationHelper {
      * @throws ConverterException
      *             If an error occurs during the conversion
      */
+    @Deprecated
     public static List<OmObservation> toSosObservation(final Collection<AbstractObservation> observations,
             final String version, final String resultModel, final Session session) throws OwsExceptionReport,
             ConverterException {
@@ -205,6 +207,7 @@ public class HibernateGetObservationHelper {
         }
     }
     
+    @Deprecated
     public static List<OmObservation> toSosObservation(final Collection<AbstractObservation> observations,
             final String version, final String resultModel, final Locale language, final Session session) throws OwsExceptionReport,
             ConverterException {
@@ -241,12 +244,60 @@ public class HibernateGetObservationHelper {
      *             If an error occurs during the conversion
      * @throws ConverterException
      */
+    @Deprecated
     public static OmObservation toSosObservation(AbstractObservation observation, final String version,
             final String resultModel, final Locale language, final Session session) throws OwsExceptionReport, ConverterException {
         if (observation != null) {
             OmObservation sosObservation = 
                         HibernateObservationUtilities.createSosObservationFromObservation(observation,
                                 version, resultModel, language, session);
+            final long startProcess = System.currentTimeMillis();
+            
+            LOGGER.debug("Time to process one observation needs {} ms!", (System.currentTimeMillis() - startProcess));
+            return sosObservation;
+        }
+        return null;
+    }
+    
+    public static List<OmObservation> toSosObservation(final Collection<AbstractObservation> observations,
+            final AbstractObservationRequest request, final Session session) throws OwsExceptionReport,
+            ConverterException {
+        if (!observations.isEmpty()) {
+            List<OmObservation> sosObservations =
+                        HibernateObservationUtilities.createSosObservationsFromObservations(
+                                new HashSet<AbstractObservation>(observations), request, session);
+            final long startProcess = System.currentTimeMillis();
+           
+            LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),
+                    (System.currentTimeMillis() - startProcess));
+            return sosObservations;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+    
+    public static List<OmObservation> toSosObservation(final Collection<AbstractObservation> observations,
+            final AbstractObservationRequest request, final Locale language, final Session session) throws OwsExceptionReport,
+            ConverterException {
+        if (!observations.isEmpty()) {
+            List<OmObservation> sosObservations =
+                        HibernateObservationUtilities.createSosObservationsFromObservations(
+                                new HashSet<AbstractObservation>(observations), request, language, session);
+            final long startProcess = System.currentTimeMillis();
+           
+            LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),
+                    (System.currentTimeMillis() - startProcess));
+            return sosObservations;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    public static OmObservation toSosObservation(AbstractObservation observation, final AbstractObservationRequest request, final Locale language, final Session session) throws OwsExceptionReport, ConverterException {
+        if (observation != null) {
+            OmObservation sosObservation = 
+                        HibernateObservationUtilities.createSosObservationFromObservation(observation,
+                                request, language, session);
             final long startProcess = System.currentTimeMillis();
             
             LOGGER.debug("Time to process one observation needs {} ms!", (System.currentTimeMillis() - startProcess));

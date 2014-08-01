@@ -110,15 +110,15 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         final int maxCount = 13;
         int counter = 13;
         boolean transactional = true;
-        boolean oldConcept = true;
+        boolean concept = true;
         boolean multiLanguage = true;
         if (!keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY)) {
             counter--;
             transactional = false;
         }
-        if (!keys.contains(AbstractHibernateDatasource.OLD_CONCEPT_KEY)) {
+        if (!keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY)) {
             counter--;
-            oldConcept = false;
+            concept = false;
         }
         if (!keys.contains(AbstractHibernateDatasource.MULTI_LANGUAGE_KEY) ){
             counter--;
@@ -127,7 +127,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         if (changeable) {
             assertEquals(9, keys.size());
         } else {
-            assertEquals((transactional && oldConcept) ? maxCount : counter, keys.size());
+            assertEquals((transactional && concept) ? maxCount : counter, keys.size());
         }
         assertTrue(keys.contains(AbstractHibernateDatasource.HOST_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.PORT_KEY));
@@ -144,8 +144,8 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         if (transactional) {
             assertTrue(keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY));
         }
-        if (oldConcept) {
-            assertTrue(keys.contains(AbstractHibernateDatasource.OLD_CONCEPT_KEY));
+        if (concept) {
+            assertTrue(keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY));
         }
         if (multiLanguage) {
             assertTrue(keys.contains(AbstractHibernateDatasource.MULTI_LANGUAGE_KEY));

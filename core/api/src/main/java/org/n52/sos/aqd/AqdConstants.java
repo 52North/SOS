@@ -28,66 +28,139 @@
  */
 package org.n52.sos.aqd;
 
-public class AqdConstants {
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    public enum ProcessParameter {
-        AssesmentType("AssesmentType"),
-        CalibrationSamplingPointsOther("CAL-SPother"),
-        CalibrationSamplingPoints("CAL-SPs"),
-        EnvironmentalObjective("EO"),
-        Model("model"),
-        ObjectiveEstimation("objective-estimation"),
-        PrimaryObservationTime("primaryObsTime"),
-        SamplingPoint("SamplingPoint"),
-        MonitoringStation("Station"),
-        VerificationSamplingPoints("VER-SP"),
-        VerificationSamplingPointsOther("VER-SPother");
+import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.util.StringHelper;
+
+public interface AqdConstants {
+
+    String DEFINITION_VERIFICATION = "http://dd.eionet.europa.eu/vocabularies/aq/observationverification";
+    
+    String DEFINITION_VALIDATION = "http://dd.eionet.europa.eu/vocabularies/aq/observationvalidity";
+    
+    String DEFINITION_PRIMARY_OBSERVATION_HOUR = "http://dd.eionet.europa.eu/vocabularyconcept/aq/primaryObservation/hour";
+
+    String NS_AQD = "http://dd.eionet.europa.eu/schemaset/id2011850eu-1.0";
+
+    String NAME_FIXED_OBSERVATIONS = "FixedObservations";
+            
+    enum ElementType {
+        StartTime(OmConstants.PHEN_SAMPLING_TIME, OmConstants.PHEN_UOM_ISO8601),
+        EndTime(OmConstants.PHEN_SAMPLING_TIME, OmConstants.PHEN_UOM_ISO8601),
+        Verification(DEFINITION_VERIFICATION),
+        Validation(DEFINITION_VALIDATION),
+        Pollutant(DEFINITION_PRIMARY_OBSERVATION_HOUR);
         
+        private final String definition;
+        
+        private final String uom;
+        
+        ElementType(String definition) {
+            this.definition = definition;
+            this.uom = null;
+        }
+        
+        ElementType(String definition, String uom) {
+            this.definition = definition;
+            this.uom = uom;
+        }
+        
+        public String getDefinition() {
+            return definition;
+        }
+        
+        public String getUOM() {
+            return uom;
+        }
+        
+        public boolean isSetUOM() {
+            return StringHelper.isNotEmpty(getUOM());
+        }
+    }
+
+    enum ProcessParameter {
+        AssessmentType("AssessmentType"), CalibrationSamplingPointsOther("CAL-SPother"), CalibrationSamplingPoints(
+                "CAL-SPs"), EnvironmentalObjective("EO"), Model("model"), ObjectiveEstimation("objective-estimation"), PrimaryObservationTime(
+                "primaryObsTime"), SamplingPoint("SamplingPoint"), MonitoringStation("Station"), VerificationSamplingPoints(
+                "VER-SP"), VerificationSamplingPointsOther("VER-SPother");
+
         private static final String baseURI = "http://dd.eionet.europa.eu/vocabulary/aq/processparameter/";
-        
+
         private final String id;
-        
+
         private final String conceptURI;
-        
+
         ProcessParameter(String id) {
             this.id = id;
             this.conceptURI = baseURI + id;
         }
-        
+
         public String getId() {
             return id;
         }
-        
+
         public String getConceptURI() {
             return conceptURI;
         }
+
     }
-    
-    public enum AssesmentType {
-        Fixed("fixed"),
-        Interactive("interactive"),
-        Model("model"),
-        Objective("objective");
-        
+
+    enum AssessmentType {
+        Fixed("fixed"), Interactive("interactive"), Model("model"), Objective("objective");
+
         private static final String baseURI = "http://dd.eionet.europa.eu/vocabulary/aq/assessmenttype/";
-        
+
         private final String id;
-        
+
         private final String conceptURI;
-        
-        AssesmentType(String id) {
+
+        AssessmentType(String id) {
             this.id = id;
             this.conceptURI = baseURI + id;
         }
-        
+
         public String getId() {
             return id;
         }
-        
+
         public String getConceptURI() {
             return conceptURI;
         }
+
+        public static AssessmentType from(String v) {
+            for (AssessmentType c : AssessmentType.values()) {
+                if (c.getConceptURI().equals(v) || c.getId().equals(v)) {
+                    return c;
+                }
+            }
+            throw new IllegalArgumentException(v);
+        }
+
+        public static AssessmentType fromConceptURI(String v) {
+            for (AssessmentType c : AssessmentType.values()) {
+                if (c.getConceptURI().equals(v)) {
+                    return c;
+                }
+            }
+            throw new IllegalArgumentException(v);
+        }
+
+        public static AssessmentType fromId(String v) {
+            for (AssessmentType c : AssessmentType.values()) {
+                if (c.getId().equals(v)) {
+                    return c;
+                }
+            }
+            throw new IllegalArgumentException(v);
+        }
+
     }
     
-    
+   
 }

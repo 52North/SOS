@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,8 +53,8 @@ public class AdditionalObservationCreatorRepository extends AbstractConfiguringS
         return LazyHolder.INSTANCE;
     }
     
-    private final Map<Class<?>, AdditionalObservationCreator<?>> additionalObservationCreator =
-            new HashMap<Class<?>, AdditionalObservationCreator<?>>(0);
+    private final Map<AdditionalObservationCreatorKey, AdditionalObservationCreator> additionalObservationCreator =
+            new HashMap<AdditionalObservationCreatorKey, AdditionalObservationCreator>(0);
 
     /**
      * private constructor for singleton
@@ -66,16 +67,41 @@ public class AdditionalObservationCreatorRepository extends AbstractConfiguringS
     }
 
 
-    @SuppressWarnings("rawtypes")
     @Override
     protected void processConfiguredImplementations(Set<AdditionalObservationCreator> additionalObservationCreators)
             throws ConfigurationException {
         this.additionalObservationCreator.clear();
         for (final AdditionalObservationCreator aoc : additionalObservationCreators) {
-                LOGGER.info("Registered AdditionalObservationCreator for {}", aoc.getKey());
-                this.additionalObservationCreator
-                        .put(aoc.getKey(), aoc);
+            for (AdditionalObservationCreatorKey key : aoc.getKeys()) {
+                LOGGER.debug("Registered AdditionalObservationCreator for {}", key);
+                this.additionalObservationCreator.put(key, aoc);
+            }
         }
+    }
+
+    
+    public AdditionalObservationCreator get(AdditionalObservationCreatorKey key) {
+        return additionalObservationCreator.get(key);
+}
+
+    public AdditionalObservationCreator get(String namespace, Class<?> type) {
+            return get(new AdditionalObservationCreatorKey(namespace, type));
+    }
+
+    public boolean hasAdditionalObservationCreatorFor(String namespace, Class<?> type) {
+        return hasAdditionalObservationCreatorFor(new AdditionalObservationCreatorKey(namespace, type));
+    }
+    
+    public boolean hasAdditionalObservationCreatorFor(AdditionalObservationCreatorKey key) {
+            return additionalObservationCreator.containsKey(key);
+    }
+    
+    public static Set<AdditionalObservationCreatorKey> encoderKeysForElements(final String namespace, final Class<?>... elements) {
+        final HashSet<AdditionalObservationCreatorKey> keys = new HashSet<AdditionalObservationCreatorKey>(elements.length);
+        for (final Class<?> x : elements) {
+            keys.add(new AdditionalObservationCreatorKey(namespace, x));
+        }
+        return keys;
     }
 
 }

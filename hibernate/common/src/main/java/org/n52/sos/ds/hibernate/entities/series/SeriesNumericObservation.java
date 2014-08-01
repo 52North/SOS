@@ -31,6 +31,8 @@ package org.n52.sos.ds.hibernate.entities.series;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
+
 /**
  * Hibernate series numeric observation entity
  * 
@@ -38,7 +40,7 @@ import java.math.BigDecimal;
  * 
  */
 public class SeriesNumericObservation extends SeriesObservation implements Serializable,
-        org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation {
+        NumericObservation {
 
     private static final long serialVersionUID = -835034606459038906L;
 

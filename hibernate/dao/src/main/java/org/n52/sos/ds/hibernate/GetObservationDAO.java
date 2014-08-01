@@ -46,9 +46,9 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationDAO;
 import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesDAO;
-import org.n52.sos.ds.hibernate.dao.series.SeriesDAO;
-import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
+import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.series.Series;
@@ -131,7 +131,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             if (HibernateStreamingConfiguration.getInstance().isForceDatasourceStreaming()
                     && CollectionHelper.isEmpty(sosRequest.getFirstLatestTemporalFilter())) {
                 // TODO
-                if (HibernateHelper.isEntitySupported(Series.class)) {
+                if (EntitiyHelper.getInstance().isSeriesSupported()) {
                     sosResponse.setObservationCollection(querySeriesObservationForStreaming(sosRequest, session));
                 } else {
                     sosResponse.setObservationCollection(queryObservationForStreaming(sosRequest, session));
@@ -139,8 +139,8 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             } else {
                 AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
                 // check if series mapping is supported
-                if (observationDAO instanceof SeriesObservationDAO) {
-                    sosResponse.setObservationCollection(querySeriesObservation(sosRequest, (SeriesObservationDAO)observationDAO, session));
+                if (observationDAO instanceof AbstractSeriesObservationDAO) {
+                    sosResponse.setObservationCollection(querySeriesObservation(sosRequest, (AbstractSeriesObservationDAO)observationDAO, session));
                 } else {
                     // if
                     // (getConfigurator().getProfileHandler().getActiveProfile().isShowMetadataOfEmptyObservations())
@@ -244,7 +244,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
         int metadataObservationsCount = 0;
 
-        List<OmObservation> result = HibernateGetObservationHelper.toSosObservation(observations, request.getVersion(), request.getResultModel(), LocaleHelper.fromRequest(request), session);
+        List<OmObservation> result = HibernateGetObservationHelper.toSosObservation(observations, request, LocaleHelper.fromRequest(request), session);
         Set<OmObservationConstellation> timeSeries = Sets.newHashSet();
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowMetadataOfEmptyObservations()
                 || Integer.MAX_VALUE != ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries()) {
@@ -290,7 +290,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
      * @throws ConverterException
      *             If an error occurs during sensor description creation.
      */
-    protected List<OmObservation> querySeriesObservation(GetObservationRequest request, SeriesObservationDAO observationDAO, Session session)
+    protected List<OmObservation> querySeriesObservation(GetObservationRequest request, AbstractSeriesObservationDAO observationDAO, Session session)
             throws OwsExceptionReport, ConverterException {
         if (request.isSetResultFilter()) {
             throw new NotYetSupportedException("result filtering");
@@ -373,7 +373,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
         Collection<AbstractObservation> abstractObservations = Lists.newArrayList();
         abstractObservations.addAll(seriesObservations);
-        result.addAll(HibernateGetObservationHelper.toSosObservation(abstractObservations, request.getVersion(), request.getResultModel(), LocaleHelper.fromRequest(request), session));
+        result.addAll(HibernateGetObservationHelper.toSosObservation(abstractObservations, request, LocaleHelper.fromRequest(request), session));
         return result;
     }
 
@@ -446,7 +446,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             return result;
         }
         Criterion temporalFilterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
-        for (Series series : new SeriesDAO().getSeries(request, features, session)) {
+        for (Series series : DaoFactory.getInstance().getSeriesDAO().getSeries(request, features, session)) {
             Collection<? extends OmObservation> createSosObservationFromSeries =
                     HibernateObservationUtilities
                             .createSosObservationFromSeries(series, request.getVersion(), session);

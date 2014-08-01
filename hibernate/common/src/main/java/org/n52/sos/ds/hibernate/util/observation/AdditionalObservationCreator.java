@@ -28,13 +28,15 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.util.Set;
+
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ogc.om.OmObservation;
 
-public interface AdditionalObservationCreator<T extends AbstractObservation> {
+public interface AdditionalObservationCreator {
 
-    Class<T> getKey();
+    Set<AdditionalObservationCreatorKey> getKeys();
     
-    OmObservation add(OmObservation omObservation, T observation);
+    OmObservation create(OmObservation omObservation, AbstractObservation observation);
 
 }

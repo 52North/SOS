@@ -42,6 +42,14 @@ public class ReferenceValue implements Value<ReferenceType> {
      */
     private String unit;
 
+    
+    public ReferenceValue() {
+    }
+    
+    public ReferenceValue(ReferenceType value) {
+        setValue(value);
+    }
+
     @Override
     public void setValue(ReferenceType value) {
        this.value = value;

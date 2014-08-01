@@ -28,10 +28,28 @@
  */
 package org.n52.sos.aqd;
 
+import org.n52.sos.aqd.AqdConstants.AssessmentType;
 import org.n52.sos.ef.EfEnvironmentalMonitoringFacility;
 
 public class AqdSamplingPoint extends EfEnvironmentalMonitoringFacility {
  
     private static final long serialVersionUID = -5679922725853829576L;
+    
+    private AssessmentType assessmentType;
+
+    /**
+     * @return the assessmentType
+     */
+    public AssessmentType getAssessmentType() {
+        return assessmentType;
+    }
+
+    /**
+     * @param assessmentType the assessmentType to set
+     */
+    public void setAssessmentType(AssessmentType assessmentType) {
+        this.assessmentType = assessmentType;
+    }
+    
 
 }

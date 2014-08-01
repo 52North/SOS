@@ -75,6 +75,9 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
 import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.request.AbstractObservationRequest;
+import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.StringHelper;
@@ -97,7 +100,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     private final Collection<AbstractObservation> observations;
 
-    private final String resultModel;
+    private final AbstractObservationRequest request;
 
     private final Map<String, AbstractFeature> features = Maps.newHashMap();
 
@@ -115,6 +118,35 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     private List<OmObservation> observationCollection;
 
+    
+    public ObservationOmObservationCreator(Collection<AbstractObservation> observations,
+            AbstractObservationRequest request, Locale language, Session session) {
+        super(request.getVersion(), language, session);
+        this.request = request;
+        if (observations == null) {
+            this.observations = Collections.emptyList();
+        } else {
+            this.observations = observations;
+        }
+        this.procedureConverter = new HibernateProcedureConverter();
+        this.featureQueryHandler = getFeatureQueryHandler();
+        this.encodeProcedureInObservation = getActiveProfile().isEncodeProcedureInObservation();
+    }
+    
+    public ObservationOmObservationCreator(Collection<AbstractObservation> observations, AbstractObservationRequest request,
+            Session session) {
+        super(request.getVersion(), session);
+        this.request = request;
+        if (observations == null) {
+            this.observations = Collections.emptyList();
+        } else {
+            this.observations = observations;
+        }
+        this.procedureConverter = new HibernateProcedureConverter();
+        this.featureQueryHandler = getFeatureQueryHandler();
+        this.encodeProcedureInObservation = getActiveProfile().isEncodeProcedureInObservation();
+    }
+    
     /**
      * Constructor
      *
@@ -130,10 +162,10 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
      * @param session
      *            Hibernate session
      */
+    @Deprecated
     public ObservationOmObservationCreator(Collection<AbstractObservation> observations,
             String version, String resultModel, Locale language, Session session) {
         super(version, language, session);
-        this.resultModel = resultModel;
         if (observations == null) {
             this.observations = Collections.emptyList();
         } else {
@@ -142,12 +174,14 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         this.procedureConverter = new HibernateProcedureConverter();
         this.featureQueryHandler = getFeatureQueryHandler();
         this.encodeProcedureInObservation = getActiveProfile().isEncodeProcedureInObservation();
+        this.request = new GetObservationRequest();
+        this.request.setResultModel(resultModel);
     }
 
+    @Deprecated
     public ObservationOmObservationCreator(Collection<AbstractObservation> observations, String version, String resultModel,
             Session session) {
         super(version, session);
-        this.resultModel = resultModel;
         if (observations == null) {
             this.observations = Collections.emptyList();
         } else {
@@ -156,6 +190,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         this.procedureConverter = new HibernateProcedureConverter();
         this.featureQueryHandler = getFeatureQueryHandler();
         this.encodeProcedureInObservation = getActiveProfile().isEncodeProcedureInObservation();
+        this.request = new GetObservationRequest();
+        this.request.setResultModel(resultModel);
     }
 
     private Collection<AbstractObservation> getObservations() {
@@ -163,7 +199,14 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     }
 
     private String getResultModel() {
-        return resultModel;
+        return request.getResultModel();
+    }
+    
+    private String getResponseFormat() {
+        if (request.isSetResponseFormat()) {
+            return request.getResponseFormat();
+        }
+        return Configurator.getInstance().getProfileHandler().getActiveProfile().getObservationResponseFormat();
     }
 
     private SosProcedureDescription getProcedure(String procedureId) {
@@ -224,6 +267,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             if (hObservation.hasSamplingGeometry()) {
                 sosObservation.addParameter(createSpatialFilteringProfileParameter(hObservation.getSamplingGeometry()));
             }
+            checkFoAdditionalObservationCreator(hObservation, sosObservation);
             // TODO check for ScrollableResult vs
             // setFetchSize/setMaxResult
             // + setFirstResult
@@ -231,6 +275,14 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         getSession().evict(hObservation);
         LOGGER.trace("Creating Observation done.");
         return sosObservation;
+    }
+
+    private void checkFoAdditionalObservationCreator(AbstractObservation hObservation, OmObservation sosObservation) {
+        AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass());
+        if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
+            AdditionalObservationCreator creator = AdditionalObservationCreatorRepository.getInstance().get(key);
+            creator.create(sosObservation, hObservation);
+        }
     }
 
     private void checkOrSetObservablePropertyUnit(AbstractPhenomenon phen, String unit) {

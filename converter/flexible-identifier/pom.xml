@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.n52.sensorweb.sos</groupId>
-		<artifactId>transformation</artifactId>
+		<artifactId>converter</artifactId>
 		<version>4.2.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>flexible-identifier</artifactId>
@@ -15,7 +15,6 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>api</artifactId>
-			<optional>true</optional>
 		</dependency>
 	</dependencies>
 </project>

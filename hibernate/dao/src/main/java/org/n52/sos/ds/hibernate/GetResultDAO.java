@@ -43,9 +43,10 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.AbstractGetResultDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
-import org.n52.sos.ds.hibernate.dao.series.SeriesDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Observation;
@@ -118,7 +119,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
                 final SosResultStructure sosResultStructure =
                         new SosResultStructure(resultTemplates.get(0).getResultStructure());
                 final List<AbstractObservation> observations;
-                if (HibernateHelper.isEntitySupported(SeriesObservation.class)) {
+                if (EntitiyHelper.getInstance().isSeriesObservationSupported()) {
                     observations = querySeriesObservation(request, featureIdentifier, session);
                 } else {
                     observations = queryObservation(request, featureIdentifier, session);
@@ -218,7 +219,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
         final Criteria c = createCriteriaFor(SeriesObservation.class, session);
         addSpatialFilteringProfileRestrictions(c, request, session);
 
-        List<Series> series = new SeriesDAO().getSeries(request.getObservedProperty(), featureIdentifiers, session);
+        List<Series> series = DaoFactory.getInstance().getSeriesDAO().getSeries(request.getObservedProperty(), featureIdentifiers, session);
         if (CollectionHelper.isEmpty(series)) {
             return null;
         } else {

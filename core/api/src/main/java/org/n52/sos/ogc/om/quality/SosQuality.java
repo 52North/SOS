@@ -43,6 +43,9 @@ public class SosQuality {
 
     /** value of the quality result */
     private String resultValue;
+    
+    /** value of the quality definition */
+    private String definition;
 
     /** type of the quality object */
     private QualityType qualityType;
@@ -59,10 +62,11 @@ public class SosQuality {
      * @param qualityType
      *            Quality type
      */
-    public SosQuality(String resultName, String resultUnit, String resultValue, QualityType qualityType) {
+    public SosQuality(String resultName, String resultUnit, String resultValue, String definition, QualityType qualityType) {
         this.resultName = resultName;
         this.resultUnit = resultUnit;
         this.resultValue = resultValue;
+        this.definition = definition;
         this.qualityType = qualityType;
     }
 
@@ -122,6 +126,25 @@ public class SosQuality {
     public void setResultUnit(String resultValueUnit) {
         this.resultUnit = resultValueUnit;
     }
+    
+    /**
+     * Get definition
+     * 
+     * @return the definition
+     */
+    public String getDefinition() {
+        return definition;
+    }
+
+    /**
+     * Set definition
+     * 
+     * @param definition
+     *            the definition to set
+     */
+    public void setDefinition(String definition) {
+        this.definition = definition;
+    }
 
     /**
      * Get quality type
@@ -148,7 +171,7 @@ public class SosQuality {
      * @since 4.0.0
      */
     public enum QualityType {
-        quantity, category, text
+        quantity, category, text, quantityRange
     }
 
 }

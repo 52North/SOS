@@ -30,18 +30,16 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Collection;
 
-
-
-
-
-
-
-import org.n52.sos.aqd.AqdConstants.AssesmentType;
+import org.n52.sos.aqd.AqdConstants.AssessmentType;
 import org.n52.sos.aqd.AqdConstants.ProcessParameter;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.ReferenceValue;
+import org.n52.sos.w3c.xlink.W3CHrefAttribute;
 
 import com.google.common.collect.Lists;
 
@@ -49,22 +47,30 @@ public class EReportingObservationHelper {
     
     public Collection<NamedValue<?>> createSamplingPointParameter(EReportingSeries series) {
         Collection<NamedValue<?>> namedValues = Lists.newArrayListWithCapacity(2);
-        namedValues.add(getAssessmentType());
-        namedValues.add(getAssesmentMethod(series));
+        namedValues.add(getAssessmentType(series.getSamplingPoint()));
+        namedValues.add(getAssesmentMethod(series.getSamplingPoint()));
         return namedValues;
     }
 
-    private NamedValue<?> getAssessmentType() {
-        NamedValue<ReferenceType> namedValue = new NamedValue<ReferenceType>();
-        namedValue.setName(new ReferenceType(ProcessParameter.AssesmentType.getConceptURI()));
-        namedValue.setValue(createReferenceValue(AssesmentType.Fixed.getConceptURI()));
+    private NamedValue<?> getAssessmentType(EReportingSamplingPoint samplingPoint) {
+        NamedValue<W3CHrefAttribute> namedValue = new NamedValue<W3CHrefAttribute>();
+        namedValue.setName(new ReferenceType(ProcessParameter.AssessmentType.getConceptURI()));
+        namedValue.setValue(createHrefAttributeValueFromAssessmentType(samplingPoint.getAssessmentType()));
         return namedValue;
     }
 
-    private NamedValue<?> getAssesmentMethod(EReportingSeries series) {
-        NamedValue<ReferenceType> namedValue = new NamedValue<ReferenceType>();
+    private NamedValue<?> getAssesmentMethod(EReportingSamplingPoint samplingPoint) {
+        if (samplingPoint.isSetName()) {
+            NamedValue<ReferenceType> namedValue = new NamedValue<ReferenceType>();
+            namedValue.setName(new ReferenceType(ProcessParameter.SamplingPoint.getConceptURI()));
+            ReferenceValue value = createReferenceValue(samplingPoint.getIdentifier());
+            value.getValue().setTitle(samplingPoint.getName());
+            namedValue.setValue(createReferenceValue(samplingPoint.getIdentifier()));
+            return namedValue;
+        }
+        NamedValue<W3CHrefAttribute> namedValue = new NamedValue<W3CHrefAttribute>();
         namedValue.setName(new ReferenceType(ProcessParameter.SamplingPoint.getConceptURI()));
-        namedValue.setValue(createReferenceValue(series.getSamplingPoint().getIdentifier()));
+        namedValue.setValue(createHrefAttributeValue(samplingPoint.getIdentifier()));
         return namedValue;
     }
     
@@ -72,6 +78,20 @@ public class EReportingObservationHelper {
         ReferenceValue referenceValue = new ReferenceValue();
         referenceValue.setValue(new ReferenceType(value));
         return referenceValue;
+    }
+
+    private HrefAttributeValue createHrefAttributeValue(String value) {
+        HrefAttributeValue hrefAttributeValue = new HrefAttributeValue();
+        hrefAttributeValue.setValue(new W3CHrefAttribute(value));
+        return hrefAttributeValue;
+    }
+
+    private HrefAttributeValue createHrefAttributeValueFromAssessmentType(EReportingAssessmentType assessmentType) {
+        if (assessmentType.isSetUri()) {
+            return createHrefAttributeValue(assessmentType.getUri());
+        } else {
+            return createHrefAttributeValue(AssessmentType.fromId(assessmentType.getAssessmentType()).getConceptURI());
+        }
     }
 
 }

@@ -106,7 +106,7 @@ public class DaoFactory {
             return new SeriesDAO();
         } else {
             throw new NoApplicableCodeException()
-                    .withMessage("Implemented observation DAO is missing!");
+                    .withMessage("Implemented series DAO is missing!");
         }
     }
 
@@ -141,7 +141,7 @@ public class DaoFactory {
             return new SeriesObservationTimeDAO();
         } else {
             throw new NoApplicableCodeException()
-                    .withMessage("Implemented observation DAO is missing!");
+                    .withMessage("Implemented observation time DAO is missing!");
         }
     }
     
@@ -154,7 +154,7 @@ public class DaoFactory {
 //            return new ObserervationValueDAO();
         } else {
             throw new NoApplicableCodeException()
-                    .withMessage("Implemented observation DAO is missing!");
+                    .withMessage("Implemented value DAO is missing!");
         }
     }
     
@@ -167,7 +167,7 @@ public class DaoFactory {
 //            return new ObservationValueTimeDAO();
         } else {
             throw new NoApplicableCodeException()
-                    .withMessage("Implemented observation DAO is missing!");
+                    .withMessage("Implemented value time DAO is missing!");
         }
     }
 

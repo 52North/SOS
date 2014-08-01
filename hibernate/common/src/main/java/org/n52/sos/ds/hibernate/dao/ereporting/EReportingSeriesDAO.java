@@ -48,32 +48,34 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(EReportingSeriesDAO.class);
 
-
     @Override
     protected Class<?> getSeriesClass() {
         return EReportingSeries.class;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) {
-        return null;
+        return getSeriesCriteria(request, features, session).list();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Series> getSeries(String observedProperty, Collection<String> features, Session session) {
-        return null;
+        return getSeriesCriteria(observedProperty, features, session).list();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Session session) {
-        return null;
+        return getSeriesCriteria(procedures, observedProperties, features, session).list();
     }
 
     @Override
     public EReportingSeries getSeriesFor(String procedure, String observableProperty, String featureOfInterest,
             Session session) {
-        return null;
+        return (EReportingSeries) getSeriesCriteriaFor(procedure, observableProperty, featureOfInterest, session).uniqueResult();
     }
 
     @Override

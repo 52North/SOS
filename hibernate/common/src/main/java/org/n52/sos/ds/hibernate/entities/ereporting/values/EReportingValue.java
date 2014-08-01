@@ -28,13 +28,19 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting.values;
 
-import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasValidation;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasVerification;
+import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
 
-public class EReportingValue extends SeriesValue implements HasEReportingSeries {
+public class EReportingValue extends SeriesValue implements HasEReportingSeries, HasValidation, HasVerification {
 
     private static final long serialVersionUID = 996063222630981539L;
+    
+    private Integer validation;
+
+    private Integer verification;
 
     public EReportingSeries getEReportingSeries() {
         if (hasEReportingSeries()) {
@@ -52,5 +58,37 @@ public class EReportingValue extends SeriesValue implements HasEReportingSeries 
     @Override
     public boolean hasEReportingSeries() {
         return getSeries() != null && getSeries() instanceof EReportingSeries;
+    }
+
+    @Override
+    public Integer getVerification() {
+        return verification;
+    }
+
+    @Override
+    public HasVerification setVerification(Integer verification) {
+        this.verification = verification;
+        return this;
+    }
+
+    @Override
+    public boolean isSetVerification() {
+        return getVerification() != null;
+    }
+
+    @Override
+    public Integer getValidation() {
+        return validation;
+    }
+
+    @Override
+    public HasValidation setValidation(Integer validation) {
+        this.validation = validation;
+        return this;
+    }
+
+    @Override
+    public boolean isSetValidation() {
+        return getValidation() != null;
     }
 }

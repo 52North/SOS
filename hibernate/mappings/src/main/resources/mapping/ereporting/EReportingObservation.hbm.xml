@@ -59,6 +59,12 @@
          <property name="samplingGeometry" type="org.hibernate.spatial.GeometryType">
             <column name="samplingGeometry" index="samplingGeomidx" />
         </property>
+        <property name="validation" type="int">
+            <column name="validation" default="-1"/>
+        </property>
+        <property name="verification" type="int">
+            <column name="verification" default="3"/>
+        </property>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingBlobObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" table="blobValue">
         	<key column="observationId" foreign-key="observationBlobValueFk" />
          	<property name="value" type="blob" />

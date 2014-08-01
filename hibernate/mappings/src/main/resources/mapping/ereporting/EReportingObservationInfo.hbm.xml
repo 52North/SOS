@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo" table="observation">
+    <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservationInfo" table="observation">
         <id name="observationId" type="long">
             <column name="observationId" />
             <generator class="native">

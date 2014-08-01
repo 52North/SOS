@@ -557,9 +557,11 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         if (value.getValue().getUnit() != null) {
             hObservation.setUnit(getUnit(value.getValue().getUnit(), unitCache, session));
         }
-        ObservationIdentifiers observationIdentifiers =
-                addOfferingsToObaservationAndGetProcedureObservableProperty(hObservation, hObservationConstellations);
-        observationIdentifiers.setFeatureOfInterest(hFeature);
+        addOfferingsToObservation(hObservation, hObservationConstellations);
+        ObservationIdentifiers observationIdentifiers = createObservationIdentifiers(hObservationConstellations);
+        addProcedureObservablePropertyToObservationIdentifiers(hObservationConstellations, observationIdentifiers);
+        addFeatureOfInterestToObservationIdentifiers(hFeature, observationIdentifiers);
+        addAdditionalObjectsToObservationIdentifiers(observationIdentifiers, sosObservation, session);
         addObservationIdentifiersToObservation(observationIdentifiers, hObservation, session);
         if (sosObservation.isSetSpatialFilteringProfileParameter()) {
             hObservation.setSamplingGeometry(GeometryHandler.getInstance()
@@ -573,6 +575,45 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         if (sosObservation.isSetParameter()) {
             insertParameter(sosObservation.getParameter(), hObservation, session);
         }
+    }
+
+    protected void addOfferingsToObservation(AbstractObservation hObservation,
+            Set<ObservationConstellation> hObservationConstellations) {
+        for (ObservationConstellation observationConstellation : hObservationConstellations) {
+            hObservation.getOfferings().add(observationConstellation.getOffering());
+        }
+    }
+
+    protected ObservationIdentifiers createObservationIdentifiers(Set<ObservationConstellation> hObservationConstellations) {
+        ObservationIdentifiers observationIdentifiers = new ObservationIdentifiers();
+        addProcedureObservablePropertyToObservationIdentifiers(hObservationConstellations, observationIdentifiers);
+        return observationIdentifiers;
+    }
+
+    protected ObservationIdentifiers addProcedureObservablePropertyToObservationIdentifiers(
+            Set<ObservationConstellation> hObservationConstellations, ObservationIdentifiers observationIdentifiers) {
+        if (CollectionHelper.isNotEmpty(hObservationConstellations)) {
+            boolean firstObsConst = true;
+            for (ObservationConstellation observationConstellation : hObservationConstellations) {
+                if (firstObsConst) {
+                    observationIdentifiers.setObservableProperty(observationConstellation.getObservableProperty());
+                    observationIdentifiers.setProcedure(observationConstellation.getProcedure());
+                    firstObsConst = false;
+                }
+            }
+        }
+        return observationIdentifiers;
+    }
+
+    protected ObservationIdentifiers addFeatureOfInterestToObservationIdentifiers(FeatureOfInterest hFeature,
+            ObservationIdentifiers observationIdentifiers) {
+        observationIdentifiers.setFeatureOfInterest(hFeature);
+        return observationIdentifiers;
+    }
+
+    protected ObservationIdentifiers addAdditionalObjectsToObservationIdentifiers(ObservationIdentifiers observationIdentifiers,
+            OmObservation sosObservation, Session session) {
+        return observationIdentifiers;
     }
 
     /**
@@ -636,34 +677,34 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         criteria.add(Restrictions.eq(AbstractObservation.IDENTIFIER, identifier));
     }
 
-    /**
-     * Add offerings to observation and return the observation identifiers
-     * procedure and observableProperty
-     *
-     * @param hObservation
-     *            Observation to add offerings
-     * @param hObservationConstellations
-     *            Observation constellation with offerings, procedure and
-     *            observableProperty
-     * @return ObservaitonIdentifiers object with procedure and
-     *         observableProperty
-     */
-    protected ObservationIdentifiers addOfferingsToObaservationAndGetProcedureObservableProperty(
-            AbstractObservation hObservation, Set<ObservationConstellation> hObservationConstellations) {
-        Iterator<ObservationConstellation> iterator = hObservationConstellations.iterator();
-        boolean firstObsConst = true;
-        ObservationIdentifiers observationIdentifiers = new ObservationIdentifiers();
-        while (iterator.hasNext()) {
-            ObservationConstellation observationConstellation = iterator.next();
-            if (firstObsConst) {
-                observationIdentifiers.setObservableProperty(observationConstellation.getObservableProperty());
-                observationIdentifiers.setProcedure(observationConstellation.getProcedure());
-                firstObsConst = false;
-            }
-            hObservation.getOfferings().add(observationConstellation.getOffering());
-        }
-        return observationIdentifiers;
-    }
+//    /**
+//     * Add offerings to observation and return the observation identifiers
+//     * procedure and observableProperty
+//     *
+//     * @param hObservation
+//     *            Observation to add offerings
+//     * @param hObservationConstellations
+//     *            Observation constellation with offerings, procedure and
+//     *            observableProperty
+//     * @return ObservaitonIdentifiers object with procedure and
+//     *         observableProperty
+//     */
+//    protected ObservationIdentifiers addOfferingsToObaservationAndGetProcedureObservableProperty(
+//            AbstractObservation hObservation, Set<ObservationConstellation> hObservationConstellations) {
+//        Iterator<ObservationConstellation> iterator = hObservationConstellations.iterator();
+//        boolean firstObsConst = true;
+//        ObservationIdentifiers observationIdentifiers = new ObservationIdentifiers();
+//        while (iterator.hasNext()) {
+//            ObservationConstellation observationConstellation = iterator.next();
+//            if (firstObsConst) {
+//                observationIdentifiers.setObservableProperty(observationConstellation.getObservableProperty());
+//                observationIdentifiers.setProcedure(observationConstellation.getProcedure());
+//                firstObsConst = false;
+//            }
+//            hObservation.getOfferings().add(observationConstellation.getOffering());
+//        }
+//        return observationIdentifiers;
+//    }
 
     protected void finalizeObservationInsertion(OmObservation sosObservation, AbstractObservation hObservation,
             Session session) throws OwsExceptionReport {

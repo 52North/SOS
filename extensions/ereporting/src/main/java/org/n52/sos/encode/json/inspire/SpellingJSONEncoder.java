@@ -28,8 +28,9 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.sos.inspire.aqd.Spelling;
+import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
+import org.n52.sos.inspire.aqd.Spelling;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -42,11 +43,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class SpellingJSONEncoder extends JSONEncoder<Spelling> {
 
-    protected static final String TEXT = "text";
-    protected static final String SCRIPT = "script";
-    protected static final String TRANSLITERATION_SCHEME
-            = "transliterationScheme";
-
     public SpellingJSONEncoder() {
         super(Spelling.class);
     }
@@ -55,9 +51,9 @@ public class SpellingJSONEncoder extends JSONEncoder<Spelling> {
     public JsonNode encodeJSON(Spelling t)
             throws OwsExceptionReport {
         ObjectNode j = nodeFactory().objectNode();
-        j.put(TEXT, t.getText());
-        j.put(SCRIPT, encodeObjectToJson(t.getScript()));
-        j.put(TRANSLITERATION_SCHEME, encodeObjectToJson(t.getTransliterationScheme()));
+        j.put(AQDJSONConstants.TEXT, t.getText());
+        j.put(AQDJSONConstants.SCRIPT, encodeObjectToJson(t.getScript()));
+        j.put(AQDJSONConstants.TRANSLITERATION_SCHEME, encodeObjectToJson(t.getTransliterationScheme()));
         return j;
     }
 

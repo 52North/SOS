@@ -28,6 +28,7 @@
  */
 package org.n52.sos.encode.json.inspire;
 
+import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -41,9 +42,6 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 public class CodeTypeJSONEncoder extends JSONEncoder<CodeType> {
 
-    protected static final String CODE_SPACE = "codeSpace";
-    protected static final String VALUE = "value";
-
     public CodeTypeJSONEncoder() {
         super(CodeType.class);
     }
@@ -52,8 +50,8 @@ public class CodeTypeJSONEncoder extends JSONEncoder<CodeType> {
     public JsonNode encodeJSON(CodeType t)
             throws OwsExceptionReport {
         return nodeFactory().objectNode()
-                .put(CODE_SPACE, t.getCodeSpace())
-                .put(VALUE, t.getValue());
+                .put(AQDJSONConstants.CODE_SPACE, t.getCodeSpace())
+                .put(AQDJSONConstants.VALUE, t.getValue());
     }
 
 }

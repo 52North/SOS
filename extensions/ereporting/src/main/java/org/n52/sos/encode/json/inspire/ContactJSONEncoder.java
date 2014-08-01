@@ -28,8 +28,9 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.sos.inspire.aqd.Contact;
+import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
+import org.n52.sos.inspire.aqd.Contact;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -42,14 +43,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class ContactJSONEncoder extends JSONEncoder<Contact> {
 
-    protected static final String WEBSITE = "website";
-    protected static final String TELEPHONE_VOICE = "telephoneVoice";
-    protected static final String HOURS_OF_SERVICE = "hoursOfService";
-    protected static final String TELEPHONE_FACSIMILE = "telephoneFacsimile";
-    protected static final String CONTACT_INSTRUCTIONS = "contactInstructions";
-    protected static final String ADDRESS = "address";
-    protected static final String ELECTRONIC_MAIL_ADDRESS = "electronicMailAddress";
-
     public ContactJSONEncoder() {
         super(Contact.class);
     }
@@ -58,13 +51,13 @@ public class ContactJSONEncoder extends JSONEncoder<Contact> {
     public JsonNode encodeJSON(Contact t)
             throws OwsExceptionReport {
         ObjectNode j = nodeFactory().objectNode();
-        j.put(ADDRESS, encodeObjectToJson(t.getAddress()));
-        j.put(CONTACT_INSTRUCTIONS, encodeObjectToJson(t.getContactInstructions()));
-        j.put(ELECTRONIC_MAIL_ADDRESS, encodeObjectToJson(t.getElectronicMailAddress()));
-        j.put(HOURS_OF_SERVICE, encodeObjectToJson(t.getHoursOfService()));
-        j.put(TELEPHONE_FACSIMILE, encodeObjectToJson(t.getTelephoneFacsimile()));
-        j.put(TELEPHONE_VOICE, encodeObjectToJson(t.getTelephoneVoice()));
-        j.put(WEBSITE, encodeObjectToJson(t.getWebsite()));
+        j.put(AQDJSONConstants.ADDRESS, encodeObjectToJson(t.getAddress()));
+        j.put(AQDJSONConstants.CONTACT_INSTRUCTIONS, encodeObjectToJson(t.getContactInstructions()));
+        j.put(AQDJSONConstants.ELECTRONIC_MAIL_ADDRESS, encodeObjectToJson(t.getElectronicMailAddress()));
+        j.put(AQDJSONConstants.HOURS_OF_SERVICE, encodeObjectToJson(t.getHoursOfService()));
+        j.put(AQDJSONConstants.TELEPHONE_FACSIMILE, encodeObjectToJson(t.getTelephoneFacsimile()));
+        j.put(AQDJSONConstants.TELEPHONE_VOICE, encodeObjectToJson(t.getTelephoneVoice()));
+        j.put(AQDJSONConstants.WEBSITE, encodeObjectToJson(t.getWebsite()));
         return j;
     }
 

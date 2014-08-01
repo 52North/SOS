@@ -28,6 +28,7 @@
  */
 package org.n52.sos.encode.json.inspire;
 
+import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.JSONUtils;
@@ -38,12 +39,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.n52.sos.encode.json.JSONEncoder;
 
 public class EReportingHeaderJSONEncoder extends JSONEncoder<EReportingHeader> {
-    protected static final String REPORTING_PERIOD = "reportingPeriod";
-    protected static final String REPORTING_AUTHORITY = "reportingAuthority";
-    protected static final String INSPIRE_ID = "inspireId";
-    protected static final String CONTENT = "content";
-    protected static final String DELETE = "delete";
-    protected static final String CHANGE = "change";
 
     public EReportingHeaderJSONEncoder() {
         super(EReportingHeader.class);
@@ -53,12 +48,12 @@ public class EReportingHeaderJSONEncoder extends JSONEncoder<EReportingHeader> {
     public JsonNode encodeJSON(EReportingHeader header)
             throws OwsExceptionReport {
         ObjectNode j = JSONUtils.nodeFactory().objectNode();
-        j.put(CHANGE, encodeObjectToJson(header.getChange()));
-        j.put(DELETE, encodeObjectToJson(header.getDelete()));
-        j.put(CONTENT, encodeObjectToJson(header.getContent()));
-        j.put(INSPIRE_ID, encodeObjectToJson(header.getInspireID()));
-        j.put(REPORTING_AUTHORITY, encodeObjectToJson(header.getReportingAuthority()));
-        j.put(REPORTING_PERIOD, encodeObjectToJson(header.getReportingPeriod()));
+        j.put(AQDJSONConstants.CHANGE, encodeObjectToJson(header.getChange()));
+        j.put(AQDJSONConstants.DELETE, encodeObjectToJson(header.getDelete()));
+        j.put(AQDJSONConstants.CONTENT, encodeObjectToJson(header.getContent()));
+        j.put(AQDJSONConstants.INSPIRE_ID, encodeObjectToJson(header.getInspireID()));
+        j.put(AQDJSONConstants.REPORTING_AUTHORITY, encodeObjectToJson(header.getReportingAuthority()));
+        j.put(AQDJSONConstants.REPORTING_PERIOD, encodeObjectToJson(header.getReportingPeriod()));
         return j;
     }
 

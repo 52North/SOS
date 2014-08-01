@@ -28,6 +28,7 @@
  */
 package org.n52.sos.encode.json.inspire;
 
+import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.Reference;
@@ -42,15 +43,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class ReferenceJSONEncoder extends JSONEncoder<Reference> {
 
-    protected static final String TYPE = "type";
-    protected static final String TITLE = "title";
-    protected static final String SHOW = "show";
-    protected static final String ROLE = "role";
-    protected static final String REMOTE_SCHEMA = "remoteSchema";
-    protected static final String ARCROLE = "arcrole";
-    protected static final String ACTUATE = "actuate";
-    protected static final String HREF = "href";
-
     public ReferenceJSONEncoder() {
         super(Reference.class);
     }
@@ -59,27 +51,27 @@ public class ReferenceJSONEncoder extends JSONEncoder<Reference> {
     public JsonNode encodeJSON(Reference t)
             throws OwsExceptionReport {
         ObjectNode ref = nodeFactory().objectNode();
-        ref.put(HREF, t.getHref().toString());
+        ref.put(AQDJSONConstants.HREF, t.getHref().toString());
         if (t.getActuate().isPresent()) {
-            ref.put(ACTUATE, t.getActuate().get());
+            ref.put(AQDJSONConstants.ACTUATE, t.getActuate().get());
         }
         if (t.getArcrole().isPresent()) {
-            ref.put(ARCROLE, t.getArcrole().get());
+            ref.put(AQDJSONConstants.ARCROLE, t.getArcrole().get());
         }
         if (t.getRemoteSchema().isPresent()) {
-            ref.put(REMOTE_SCHEMA, t.getRemoteSchema().get());
+            ref.put(AQDJSONConstants.REMOTE_SCHEMA, t.getRemoteSchema().get());
         }
         if (t.getRole().isPresent()) {
-            ref.put(ROLE, t.getRole().get());
+            ref.put(AQDJSONConstants.ROLE, t.getRole().get());
         }
         if (t.getShow().isPresent()) {
-            ref.put(SHOW, t.getShow().get());
+            ref.put(AQDJSONConstants.SHOW, t.getShow().get());
         }
         if (t.getTitle().isPresent()) {
-            ref.put(TITLE, t.getTitle().get());
+            ref.put(AQDJSONConstants.TITLE, t.getTitle().get());
         }
         if (t.getType().isPresent()) {
-            ref.put(TYPE, t.getType().get());
+            ref.put(AQDJSONConstants.TYPE, t.getType().get());
         }
         return ref;
     }

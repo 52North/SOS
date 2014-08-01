@@ -28,8 +28,9 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.sos.inspire.aqd.GeographicalName;
+import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
+import org.n52.sos.inspire.aqd.GeographicalName;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -42,15 +43,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class GeographicNameJSONEncoder extends JSONEncoder<GeographicalName> {
 
-    protected static final String SPELLING = "spelling";
-    protected static final String SOURCE_OF_NAME = "sourceOfName";
-    protected static final String PRONUNCIATION = "pronunciation";
-    protected static final String NATIVENESS = "nativeness";
-    protected static final String NAME_STATUS = "nameStatus";
-    protected static final String LANGUAGE = "language";
-    protected static final String GRAMMATICAL_NUMBER = "grammaticalNumber";
-    protected static final String GRAMMATICAL_GENDER = "grammaticalGender";
-
     public GeographicNameJSONEncoder() {
         super(GeographicalName.class);
     }
@@ -59,14 +51,14 @@ public class GeographicNameJSONEncoder extends JSONEncoder<GeographicalName> {
     public JsonNode encodeJSON(GeographicalName t)
             throws OwsExceptionReport {
         ObjectNode j = nodeFactory().objectNode();
-        j.put(GRAMMATICAL_GENDER, encodeObjectToJson(t.getGrammaticalGender()));
-        j.put(GRAMMATICAL_NUMBER, encodeObjectToJson(t.getGrammaticalNumber()));
-        j.put(LANGUAGE, encodeObjectToJson(t.getLanguage()));
-        j.put(NAME_STATUS, encodeObjectToJson(t.getNameStatus()));
-        j.put(NATIVENESS, encodeObjectToJson(t.getNativeness()));
-        j.put(PRONUNCIATION, encodeObjectToJson(t.getPronunciation()));
-        j.put(SOURCE_OF_NAME, encodeObjectToJson(t.getSourceOfName()));
-        j.put(SPELLING, encodeObjectToJson(t.getSpelling()));
+        j.put(AQDJSONConstants.GRAMMATICAL_GENDER, encodeObjectToJson(t.getGrammaticalGender()));
+        j.put(AQDJSONConstants.GRAMMATICAL_NUMBER, encodeObjectToJson(t.getGrammaticalNumber()));
+        j.put(AQDJSONConstants.LANGUAGE, encodeObjectToJson(t.getLanguage()));
+        j.put(AQDJSONConstants.NAME_STATUS, encodeObjectToJson(t.getNameStatus()));
+        j.put(AQDJSONConstants.NATIVENESS, encodeObjectToJson(t.getNativeness()));
+        j.put(AQDJSONConstants.PRONUNCIATION, encodeObjectToJson(t.getPronunciation()));
+        j.put(AQDJSONConstants.SOURCE_OF_NAME, encodeObjectToJson(t.getSourceOfName()));
+        j.put(AQDJSONConstants.SPELLING, encodeObjectToJson(t.getSpelling()));
         return j;
     }
 

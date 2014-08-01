@@ -28,9 +28,10 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.sos.inspire.aqd.Pronunciation;
 import org.n52.sos.encode.json.JSONEncoder;
+import org.n52.sos.inspire.aqd.Pronunciation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.util.AQDJSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -42,9 +43,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class PronunciationJSONEncoder extends JSONEncoder<Pronunciation> {
 
-    protected static final String SOUND_LINK = "soundLink";
-    protected static final String IPA = "ipa";
-
     public PronunciationJSONEncoder() {
         super(Pronunciation.class);
     }
@@ -53,8 +51,8 @@ public class PronunciationJSONEncoder extends JSONEncoder<Pronunciation> {
     public JsonNode encodeJSON(Pronunciation t)
             throws OwsExceptionReport {
         ObjectNode j = nodeFactory().objectNode();
-        j.put(IPA, encodeObjectToJson(t.getIPA()));
-        j.put(SOUND_LINK, encodeObjectToJson(t.getSoundLink()));
+        j.put(AQDJSONConstants.IPA, encodeObjectToJson(t.getIPA()));
+        j.put(AQDJSONConstants.SOUND_LINK, encodeObjectToJson(t.getSoundLink()));
         return j;
     }
 

@@ -28,8 +28,9 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.sos.inspire.aqd.InspireID;
+import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
+import org.n52.sos.inspire.aqd.InspireID;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -42,10 +43,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class InspireIdJSONEncoder extends JSONEncoder<InspireID> {
 
-    protected static final String VERSION_ID = "versionId";
-    protected static final String NAMESPACE = "namespace";
-    protected static final String LOCAL_ID = "localId";
-
     public InspireIdJSONEncoder() {
         super(InspireID.class);
     }
@@ -54,9 +51,9 @@ public class InspireIdJSONEncoder extends JSONEncoder<InspireID> {
     public JsonNode encodeJSON(InspireID t)
             throws OwsExceptionReport {
         ObjectNode j = nodeFactory().objectNode();
-        j.put(LOCAL_ID, t.getLocalId());
-        j.put(NAMESPACE, t.getNamespace());
-        j.put(VERSION_ID, encodeObjectToJson(t.getVersionId()));
+        j.put(AQDJSONConstants.LOCAL_ID, t.getLocalId());
+        j.put(AQDJSONConstants.NAMESPACE, t.getNamespace());
+        j.put(AQDJSONConstants.VERSION_ID, encodeObjectToJson(t.getVersionId()));
         return j;
     }
 

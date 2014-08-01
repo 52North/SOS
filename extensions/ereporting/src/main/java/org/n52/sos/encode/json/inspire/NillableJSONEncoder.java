@@ -28,6 +28,7 @@
  */
 package org.n52.sos.encode.json.inspire;
 
+import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.Nillable;
@@ -41,9 +42,6 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 public class NillableJSONEncoder extends JSONEncoder<Nillable<?>> {
 
-    protected static final String REASON = "reason";
-    protected static final String NIL = "nil";
-
     public NillableJSONEncoder() {
         super(Nillable.class);
     }
@@ -55,8 +53,8 @@ public class NillableJSONEncoder extends JSONEncoder<Nillable<?>> {
             return nodeFactory().nullNode();
         } else if (t.isNil()) {
             return nodeFactory().objectNode()
-                    .put(NIL, true)
-                    .put(REASON, t.getNilReason().orNull());
+                    .put(AQDJSONConstants.NIL, true)
+                    .put(AQDJSONConstants.REASON, t.getNilReason().orNull());
         } else {
             return encodeObjectToJson(t.get());
         }

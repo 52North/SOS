@@ -251,6 +251,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-datasource-mysql</artifactId>
         </dependency>
+	<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-datasource-rasdaman</artifactId>
+        </dependency>
         <dependency>
 		    <groupId>${project.groupId}</groupId>
 		    <artifactId>hibernate-datasource-h2</artifactId>

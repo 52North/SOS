@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<parent>
+		<groupId>org.n52.sensorweb.sos</groupId>
+		<artifactId>hibernate-datasource</artifactId>
+		<version>4.1.0-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>hibernate-datasource-rasdaman</artifactId>
+	<packaging>jar</packaging>
+	<name>52°North SOS - Hibernate Rasdaman Datasource</name>
+	<description>52°North Sensor Observation Service Hibernate Rasdaman module</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>hibernate-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>hibernate-datasource-common</artifactId>
+		</dependency>
+		<!-- Hibernate Core Dependencies -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-c3p0</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-spatial</artifactId>
+		</dependency>
+		<!-- Rasdaman dependencies -->
+		<dependency>
+			<groupId>org.asqldb</groupId>
+			<artifactId>asqldb</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.rasdaman</groupId>
+			<artifactId>rasj</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
+</project>

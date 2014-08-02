@@ -1,0 +1,3 @@
+hibernate.connection.url=jdbc:hsqldb:file:/var/hsqldb/test/db
+hibernate.connection.driver_class=org.hsqldb.jdbc.JDBCDriver
+hibernate.dialect=org.hibernate.spatial.dialect.h2geodb.GeoDBDialect

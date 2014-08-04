@@ -28,15 +28,9 @@
  */
 package org.n52.sos.aqd;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.util.StringHelper;
+import org.n52.sos.w3c.SchemaLocation;
 
 public interface AqdConstants {
 
@@ -49,6 +43,12 @@ public interface AqdConstants {
     String NS_AQD = "http://dd.eionet.europa.eu/schemaset/id2011850eu-1.0";
 
     String NAME_FIXED_OBSERVATIONS = "FixedObservations";
+    
+    String SCHEMA_LOCATION_URL_AQD_10 = "http://dd.eionet.europa.eu/schemas/id2011850eu-1.0/AirQualityReporting.xsd";
+
+    SchemaLocation AQD_SCHEMA_LOCATION = new SchemaLocation(NS_AQD, SCHEMA_LOCATION_URL_AQD_10);
+
+	String NS_AQD_PREFIX = "aqd";
             
     enum ElementType {
         StartTime(OmConstants.PHEN_SAMPLING_TIME, OmConstants.PHEN_UOM_ISO8601),

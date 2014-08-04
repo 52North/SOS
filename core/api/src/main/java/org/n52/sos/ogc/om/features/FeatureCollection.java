@@ -87,8 +87,16 @@ public class FeatureCollection extends AbstractFeature implements Iterable<Abstr
         this.members.putAll(members);
     }
 
-    public void addMember(AbstractFeature member) {
-        members.put(member.getIdentifierCodeWithAuthority().getValue(), member);
+    public FeatureCollection addMember(AbstractFeature member) {
+    	if (member.isSetIdentifier()) {
+    		members.put(member.getIdentifierCodeWithAuthority().getValue(), member);
+    		return this;
+    	} else if (member.isSetGmlID()) {
+    		members.put(member.getGmlId(), member);
+    		return this;
+    	}
+    	members.put(member.toString(), member);
+    	return this;
     }
 
     /**

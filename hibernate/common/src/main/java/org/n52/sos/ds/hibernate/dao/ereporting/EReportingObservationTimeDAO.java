@@ -29,7 +29,12 @@
 package org.n52.sos.ds.hibernate.dao.ereporting;
 
 import org.n52.sos.ds.hibernate.dao.series.SeriesObservationTimeDAO;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservationTime;
 
 public class EReportingObservationTimeDAO extends SeriesObservationTimeDAO {
 
+	@Override
+	protected Class<?> getObservationTimeClass() {
+		return EReportingObservationTime.class;
+	}
 }

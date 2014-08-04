@@ -7,6 +7,7 @@ This project includes:
   52North SOS Integration and Compliance 2.0 under Eclipse Public License 1.0
   52North SOS Integration and Compliance Common under Eclipse Public License 1.0
   52°North Aggregated Third Party modules under GPLv2
+  52°North AQD - 1.0 XML Coding under GPLv2
   52°North Sensor Observation Service under GPLv2
   52°North SOS - 2.0 XML Request Coding under GPLv2
   52°North SOS - Administrator Service Operator under GPLv2
@@ -22,7 +23,6 @@ This project includes:
   52°North SOS - Extension Delete Observation - KVP under GPLv2
   52°North SOS - Extension Delete Observation - Operation under GPLv2
   52°North SOS - Extension Delete Observation - XML under GPLv2
-  52°North SOS - Extension for Inspire - Code Module under GPLv2
   52°North SOS - Extension GetDataAvailability under GPLv2
   52°North SOS - Extension GetDataAvailability - Hibernate DAO under GPLv2
   52°North SOS - Extension GetDataAvailability - SOS 2.0 Operation under GPLv2
@@ -62,7 +62,6 @@ This project includes:
   52°North SOS - SOS 1.0.0 XML Request Coding under GPLv2
   52°North SOS - SOS 2.0 Core Profile Operator under GPLv2
   52°North SOS - SOS 2.0 Enhanced Profile Operator under GPLv2
-  52°North SOS - SOS 2.0 Inspire extension under GPLv2
   52°North SOS - SOS 2.0 Result Handling Profile Operator under GPLv2
   52°North SOS - SOS 2.0 Transactional Profile Operator under GPLv2
   52°North SOS - SOS API Module under GPLv2

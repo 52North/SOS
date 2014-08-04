@@ -447,7 +447,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     @Override
     public String[] createSchema(Map<String, Object> settings) {
-        String[] script = getConfig(settings).generateSchemaCreationScript(getDialectInternal());
+        String[] script = this.getConfig(settings).generateSchemaCreationScript(getDialectInternal());
         String[] pre = getPreSchemaScript();
         String[] post = getPostSchemaScript();
 

@@ -53,8 +53,8 @@ import junit.framework.TestCase;
 public class RasdamanDatasourceTest extends TestCase {
 	private static final String SOS_TEST_CONF = "SOS_TEST_CONF";
 	private static final String RASDAMAN_SCHEMA = "public";
-	private static final String RASDAMAN_USER = "SIMONA";
-	private static final String RASDAMAN_PASS = "SIMONA";
+	private static final String RASDAMAN_USER = "SA";
+	private static final String RASDAMAN_PASS = "";
 	private static final String DATABASE_DEFAULT_VALUE = "jdbc:hsqldb:file:/var/hsqldb/db";
 
 	private static String host, user, pass, schema, database;
@@ -82,12 +82,6 @@ public class RasdamanDatasourceTest extends TestCase {
 		Map<String, Object> settings = getDefaultSettings();
 		conn = ds.openConnection(settings);
 		stmt = conn.createStatement();
-
-//		settings = getDefaultSettings();
-//		settings.put(AbstractHibernateDatasource.USERNAME_KEY, userNoRights);
-//		settings.put(AbstractHibernateDatasource.PASSWORD_KEY, passNoRights);
-//		connNoRights = ds.openConnection(settings);
-//		stmtNoRights = connNoRights.createStatement();
 	}
 
 	@Override

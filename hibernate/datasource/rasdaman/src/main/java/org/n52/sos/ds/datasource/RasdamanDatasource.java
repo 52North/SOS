@@ -47,8 +47,10 @@ import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.hibernate.usertype.HibernateGeometryType;
 
 import com.google.common.collect.Sets;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Hibernate datasource implementation for Rasdaman databases.
@@ -103,6 +105,13 @@ public class RasdamanDatasource extends AbstractHibernateFullDBDatasource {
         return false;
     }
 
+    @Override
+    public CustomConfiguration getConfig(java.util.Map<String,Object> settings) {
+    	CustomConfiguration cfg = super.getConfig(settings);
+    	cfg.registerTypeOverride(new HibernateGeometryType(), new String[] { "org.hibernate.spatial.GeometryType", Geometry.class.getName() });
+    	return cfg;
+    };
+    
     @Override
     public void clear(Properties properties) {
         Map<String, Object> settings = parseDatasourceProperties(properties);

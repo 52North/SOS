@@ -10,3 +10,4 @@ org.n52.sos.encode.json.base.BooleanJSONEncoder
 org.n52.sos.encode.json.base.URLJSONEncoder
 org.n52.sos.encode.json.base.FloatJSONEncoder
 org.n52.sos.encode.json.base.DoubleJSONEncoder
+org.n52.sos.encode.json.base.TimeJSONEncoder

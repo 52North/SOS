@@ -48,7 +48,7 @@
 		<dependency>
 			<groupId>org.rasdaman</groupId>
 			<artifactId>rasj</artifactId>
-			<version>1.0</version>
+			<version>9.0.4</version>
 		</dependency>
 	</dependencies>
 </project>

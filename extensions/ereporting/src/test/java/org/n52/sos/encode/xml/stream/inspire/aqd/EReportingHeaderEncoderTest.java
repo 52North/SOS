@@ -28,19 +28,12 @@
  */
 package org.n52.sos.encode.xml.stream.inspire.aqd;
 
-import org.n52.sos.encode.xml.stream.inspire.aqd.EReportingHeaderEncoder;
-import org.n52.sos.util.AQDConstants;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLStreamException;
@@ -60,14 +53,15 @@ import org.n52.sos.inspire.aqd.Contact;
 import org.n52.sos.inspire.aqd.EReportingChange;
 import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.inspire.aqd.GeographicalName;
+import org.n52.sos.inspire.aqd.InspireID;
 import org.n52.sos.inspire.aqd.Pronunciation;
 import org.n52.sos.inspire.aqd.RelatedParty;
 import org.n52.sos.inspire.aqd.Spelling;
-import org.n52.sos.inspire.aqd.InspireID;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.util.AQDConstants;
 import org.n52.sos.util.Nillable;
 import org.n52.sos.util.Reference;
 import org.n52.sos.util.Referenceable;

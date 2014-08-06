@@ -266,7 +266,7 @@ var BaseController = function(options) {
                 .on("click", function(e) {
                     $.scrollToTop(); e.preventDefault();
                 }))
-            .appendTo(this.$div)
+            .appendTo(this.$div);
     }
     this.$controls = $("<div>").addClass("controls").appendTo(this.$div);
 };

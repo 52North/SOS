@@ -26,50 +26,63 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.ereporting;
+package org.n52.sos.ogc.om.values;
 
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasValidation;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasVerification;
 import org.n52.sos.util.StringHelper;
+import org.n52.sos.w3c.xlink.W3CHrefAttribute;
 
-public class AbstractConcreteEReportingObservation extends EReportingObservation implements HasValidation, HasVerification {
+public class HrefAttributeValue implements Value<W3CHrefAttribute> {
 
-    private static final long serialVersionUID = 8411556250138460813L;
+    private static final long serialVersionUID = 1762674768718660098L;
 
-    private String validation;
+    private W3CHrefAttribute value;
+
+    /**
+     * Unit of measure
+     */
+    private String unit;
+
+    public HrefAttributeValue() {
+    }
+
+    public HrefAttributeValue(W3CHrefAttribute value) {
+        setValue(value);
+    }
+
+    @Override
+    public void setValue(W3CHrefAttribute value) {
+       this.value = value;
+    }
+
+    @Override
+    public W3CHrefAttribute getValue() {
+        return value;
+    }
+
+    @Override
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    @Override
+    public String getUnit() {
+        return unit;
+    }
+
+    @Override
+    public boolean isSetValue() {
+        return getValue() != null && getValue().isSetHref();
+    }
+
+
+    @Override
+    public boolean isSetUnit() {
+        return StringHelper.isNotEmpty(getUnit());
+    }
     
-    private String verification;
-    
     @Override
-    public String getVerification() {
-        return verification;
-    }
-
-    @Override
-    public HasVerification setVerification(String verification) {
-        this.verification = verification;
-        return this;
-    }
-
-    @Override
-    public boolean isSetVerification() {
-        return StringHelper.isNotEmpty(getVerification());
-    }
-
-    @Override
-    public String getValidation() {
-        return validation;
-    }
-
-    @Override
-    public HasValidation setValidation(String validation) {
-        this.validation = validation;
-        return this;
-    }
-
-    @Override
-    public boolean isSetValidation() {
-        return StringHelper.isNotEmpty(getValidation());
+    public String toString() {
+        return String.format("HrefAttributeValue [value=%s, unit=%s]", getValue(), getUnit());
     }
 
 }

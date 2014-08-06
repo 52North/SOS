@@ -56,6 +56,8 @@ public interface HibernateDatasourceConstants {
 
     String HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH = HIBERNATE_MAPPING_SERIES_CONCEPT_PATH + "/observation";
     
+    String HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH = HIBERNATE_MAPPING_PATH + "/ereporting";
+    
     String HIBERNATE_MAPPING_I18N_PATH = HIBERNATE_MAPPING_PATH + "/i18n";
 
     String HIBERNATE_MAPPING_EXTENSION = HIBERNATE_MAPPING_PATH + "/extension";
@@ -75,4 +77,20 @@ public interface HibernateDatasourceConstants {
     String HIBERNATE_DRIVER_CLASS = "hibernate.connection.driver_class";
     
     String HIBERNATE_DEFAULT_OGM_PACKAGE = "org.n52.sos.ds.hibernate.ogm.entities";
+    
+    public enum DatabaseConcept {
+        OLD_CONCEPT("Old concept"),
+        SERIES_CONCEPT("Series concept"),
+        EREPORTING_CONCEPT("eReporting concept (extended Series concept)");
+        
+        private final String displayName;
+        
+        private DatabaseConcept(String displayName) {
+           this.displayName = displayName;
+        }
+        
+        public String getDisplayName() {
+            return displayName;
+        }
+    }
 }

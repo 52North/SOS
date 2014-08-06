@@ -42,6 +42,7 @@ import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -522,4 +523,13 @@ public class OmObservation extends AbstractFeature implements Serializable {
         clone.setTupleSeparator(this.getTupleSeparator());
         return clone;
     }
+    
+    @Override
+    public String getGmlId() {
+    	if (Strings.isNullOrEmpty(super.getGmlId()) && isSetObservationID()) {
+    		setGmlId("o_" + getObservationID());
+    	}
+    	return super.getGmlId();
+    }
+   
 }

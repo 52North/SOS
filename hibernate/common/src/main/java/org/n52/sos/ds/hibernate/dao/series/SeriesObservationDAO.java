@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * @since 4.0.0
  * 
  */
-public class SeriesObservationDAO extends AbstractSeriesObservationDAO<List<SeriesObservation>> {
+public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeriesObservationDAO.class);
 

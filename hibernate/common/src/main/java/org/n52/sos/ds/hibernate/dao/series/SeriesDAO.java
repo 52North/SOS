@@ -48,91 +48,33 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeriesDAO.class);
 
-    /**
-     * Get series for GetObservation request and featuresOfInterest
-     * 
-     * @param request
-     *            GetObservation request to get series for
-     * @param features
-     *            FeaturesOfInterest to get series for
-     * @param session
-     *            Hibernate session
-     * @return Series that fit
-     */
+    @Override
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) {
         return getSeriesCriteria(request, features, session).list();
     }
 
-    /**
-     * Create series for parameter
-     * 
-     * @param procedures
-     *            Procedures to get series for
-     * @param observedProperties
-     *            ObservedProperties to get series for
-     * @param features
-     *            FeaturesOfInterest to get series for
-     * @param session
-     *            Hibernate session
-     * @return Series that fir
-     */
+    @Override
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Session session) {
         return getSeriesCriteria(procedures, observedProperties, features, session).list();
     }
 
-    /**
-     * Query series for observedProiperty and featuresOfInterest
-     * 
-     * @param observedProperty
-     *            ObservedProperty to get series for
-     * @param features
-     *            FeaturesOfInterest to get series for
-     * @param session
-     *            Hibernate session
-     * @return Series list
-     */
+    @Override
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(String observedProperty, Collection<String> features, Session session) {
         return getSeriesCriteria(observedProperty, features, session).list();
     }
 
-    /**
-     * Get series for procedure, observableProperty and featureOfInterest
-     * 
-     * @param procedure
-     *            Procedure identifier parameter
-     * @param observableProperty
-     *            ObservableProperty identifier parameter
-     * @param featureOfInterest
-     *            FeatureOfInterest identifier parameter
-     * @param session
-     *            Hibernate session
-     * @return Matching series
-     */
+    @Override
     public Series getSeriesFor(String procedure, String observableProperty, String featureOfInterest, Session session) {
         return (Series) getSeriesCriteriaFor(procedure, observableProperty, featureOfInterest, session).uniqueResult();
     }
 
-    /**
-     * Insert or update and get series for procedure, observable property and
-     * featureOfInterest
-     * 
-     * @param feature
-     *            FeatureOfInterest object
-     * @param observableProperty
-     *            ObservableProperty object
-     * @param procedure
-     *            Procedure object
-     * @param session
-     *            Hibernate session
-     * @return Series object
-     * @throws CodedException 
-     */
+    @Override
     public Series getOrInsertSeries(SeriesIdentifiers identifiers, final Session session) throws CodedException {
-        return getOfInsert(identifiers, session);
+        return getOrInsert(identifiers, session);
     }
 
     @Override

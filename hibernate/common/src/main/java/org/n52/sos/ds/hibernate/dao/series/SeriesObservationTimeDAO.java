@@ -75,7 +75,7 @@ public class SeriesObservationTimeDAO extends AbstractObservationTimeDAO {
      * @return Criteria for time values
      */
     public Criteria getMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(Series series, Collection<String> offerings, Session session) {
-        Criteria criteria = createCriteriaFor(SeriesObservationTime.class, series, session);
+        Criteria criteria = createCriteriaFor(getObservationTimeClass(), series, session);
         if (CollectionHelper.isNotEmpty(offerings)) {
             criteria.createCriteria(SeriesObservationTime.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER, offerings));
         }
@@ -84,5 +84,10 @@ public class SeriesObservationTimeDAO extends AbstractObservationTimeDAO {
                 .add(Projections.max(SeriesObservationTime.PHENOMENON_TIME_END)));
         return criteria;
     }
+
+	@Override
+	protected Class<?> getObservationTimeClass() {
+		return SeriesObservationTime.class;
+	}
 
 }

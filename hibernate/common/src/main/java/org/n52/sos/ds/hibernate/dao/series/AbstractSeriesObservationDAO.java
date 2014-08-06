@@ -69,11 +69,10 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-public abstract class AbstractSeriesObservationDAO<T> extends AbstractObservationDAO {
+public abstract class AbstractSeriesObservationDAO extends AbstractObservationDAO {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesObservationDAO.class);
     
-    @SuppressWarnings("rawtypes")
     @Override
     protected void addObservationIdentifiersToObservation(ObservationIdentifiers observationIdentifiers,
             AbstractObservation observation, Session session) throws CodedException {
@@ -472,7 +471,7 @@ public abstract class AbstractSeriesObservationDAO<T> extends AbstractObservatio
      *            Hibernate session
      * @return Series observations that fit
      */
-    public abstract T getSeriesObservationFor(Series series, List<String> offerings, Session session);
+    public abstract List<SeriesObservation> getSeriesObservationFor(Series series, List<String> offerings, Session session);
     
     /**
      * Query series obserations for series, temporal filter, and offerings
@@ -486,7 +485,7 @@ public abstract class AbstractSeriesObservationDAO<T> extends AbstractObservatio
      *            Hibernate session
      * @return Series observations that fit
      */
-    public abstract T getSeriesObservationFor(Series series, List<String> offerings, Criterion filterCriterion, Session sessionn);
+    public abstract List<SeriesObservation> getSeriesObservationFor(Series series, List<String> offerings, Criterion filterCriterion, Session sessionn);
     
     /**
      * Query first/latest series obserations for series (and offerings)
@@ -500,7 +499,7 @@ public abstract class AbstractSeriesObservationDAO<T> extends AbstractObservatio
      *            Hibernate session
      * @return Series observations that fit
      */
-    public abstract T getSeriesObservationForSosIndeterminateTimeFilter(Series series, List<String> offerings, SosIndeterminateTime sosIndeterminateTime, Session session);
+    public abstract List<SeriesObservation> getSeriesObservationForSosIndeterminateTimeFilter(Series series, List<String> offerings, SosIndeterminateTime sosIndeterminateTime, Session session);
     
     /**
      * Query series observations for GetObservation request and features
@@ -514,7 +513,7 @@ public abstract class AbstractSeriesObservationDAO<T> extends AbstractObservatio
      * @return Series observations that fit
      * @throws OwsExceptionReport
      */
-    public abstract T getSeriesObservationsFor(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport;
+    public abstract List<SeriesObservation> getSeriesObservationsFor(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport;
     
     /**
      * Query series observations for GetObservation request, features, and a
@@ -532,7 +531,7 @@ public abstract class AbstractSeriesObservationDAO<T> extends AbstractObservatio
      * @return Series observations that fit
      * @throws OwsExceptionReport
      */
-    public abstract T getSeriesObservationsFor(GetObservationRequest request, Collection<String> features, Criterion filterCriterion, Session session) throws OwsExceptionReport;
+    public abstract List<SeriesObservation> getSeriesObservationsFor(GetObservationRequest request, Collection<String> features, Criterion filterCriterion, Session session) throws OwsExceptionReport;
     
     /**
      * Query series observations for GetObservation request, features, and an
@@ -549,7 +548,7 @@ public abstract class AbstractSeriesObservationDAO<T> extends AbstractObservatio
      * @return Series observations that fit
      * @throws OwsExceptionReport
      */
-    public abstract T getSeriesObservationsFor(GetObservationRequest request, Collection<String> features, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport;
+    public abstract List<SeriesObservation> getSeriesObservationsFor(GetObservationRequest request, Collection<String> features, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport;
     
     /**
      * Query series observations for GetObservation request, features, and
@@ -571,10 +570,10 @@ public abstract class AbstractSeriesObservationDAO<T> extends AbstractObservatio
      * @return Series observations that fit
      * @throws OwsExceptionReport
      */
-    protected abstract T getSeriesObservationsFor(GetObservationRequest request, Collection<String> features, Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport;
+    protected abstract List<SeriesObservation> getSeriesObservationsFor(GetObservationRequest request, Collection<String> features, Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport;
     
     
-    public abstract T getSeriesObservationsFor(Series series, GetObservationRequest request, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport;
+    public abstract List<SeriesObservation> getSeriesObservationsFor(Series series, GetObservationRequest request, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport;
     
     protected Criteria getSeriesObservationCriteriaFor(Series series, GetObservationRequest request,
             SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {

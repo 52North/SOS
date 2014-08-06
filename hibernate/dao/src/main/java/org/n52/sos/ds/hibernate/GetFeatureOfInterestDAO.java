@@ -44,12 +44,12 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.n52.sos.ds.AbstractGetFeatureOfInterestDAO;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
+import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationInfo;
@@ -295,7 +295,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
         if (isSos100(req)) {
             return queryFeatureIdentifiersForParameterForSos100(req, session);
         }
-        if (HibernateHelper.isEntitySupported(Series.class)) {
+        if (EntitiyHelper.getInstance().isSeriesSupported()) {
             return queryFeatureIdentifiersForParameterForSeries(req, session);
         }
         return queryFeatureIdentifiersOfParameterFromOldObservations(req, session);
@@ -390,7 +390,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     private List<String> queryFeatureIdentifiersForParameterForSos100(GetFeatureOfInterestRequest req, Session session)
             throws OwsExceptionReport {
         Criteria c = null;
-        if (HibernateHelper.isEntitySupported(Series.class)) {
+        if (EntitiyHelper.getInstance().isSeriesSupported()) {
             c = getCriteriaForFeatureIdentifiersOfParameterFromSeriesObservations(req, session);
         } else {
             c = getCriteriaForFeatureIdentifiersOfParameterFromOldObservations(req, session);

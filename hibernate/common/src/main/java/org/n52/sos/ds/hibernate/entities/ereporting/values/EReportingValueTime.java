@@ -28,9 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting.values;
 
-import org.n52.sos.ds.hibernate.entities.series.values.SeriesValueTime;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
+import org.n52.sos.ds.hibernate.entities.series.values.SeriesValueTime;
 
 public class EReportingValueTime extends SeriesValueTime implements HasEReportingSeries {
 

@@ -28,49 +28,29 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting.values;
 
-import org.n52.sos.ds.hibernate.entities.series.values.SeriesGeometryValue;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasValidation;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasVerification;
-import org.n52.sos.util.StringHelper;
+import org.n52.sos.ds.hibernate.entities.interfaces.GeometryValue;
 
-public class EReportingGeometryValue extends SeriesGeometryValue implements HasValidation, HasVerification {
+import com.vividsolutions.jts.geom.Geometry;
+
+public class EReportingGeometryValue extends EReportingValue implements GeometryValue {
 
     private static final long serialVersionUID = -2373267475572678851L;
 
-    private String validation;
-
-    private String verification;
+    private Geometry value;
 
     @Override
-    public String getVerification() {
-        return verification;
+    public Geometry getValue() {
+        return this.value;
     }
 
     @Override
-    public HasVerification setVerification(String verification) {
-        this.verification = verification;
-        return this;
+    public void setValue(Geometry value) {
+        this.value = value;
     }
 
     @Override
-    public boolean isSetVerification() {
-        return StringHelper.isNotEmpty(getVerification());
-    }
-
-    @Override
-    public String getValidation() {
-        return validation;
-    }
-
-    @Override
-    public HasValidation setValidation(String validation) {
-        this.validation = validation;
-        return this;
-    }
-
-    @Override
-    public boolean isSetValidation() {
-        return StringHelper.isNotEmpty(getValidation());
+    public boolean isSetValue() {
+        return value != null;
     }
 
 }

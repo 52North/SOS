@@ -29,9 +29,44 @@
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasAssessmentType;
 
-public class EReportingSamplingPoint extends AbstractIdentifierNameDescriptionEntity {
+public class EReportingSamplingPoint extends AbstractIdentifierNameDescriptionEntity implements HasAssessmentType {
 
     private static final long serialVersionUID = -3572902805340991523L;
+    
+    public static final String ID = "samplingPointId";
+    
+    private Long samplingPointId;
+    
+    private EReportingAssessmentType assessmentType;
+
+    /**
+     * @return the samplingPointId
+     */
+    public Long getSamplingPointId() {
+        return samplingPointId;
+    }
+
+    /**
+     * @param samplingPointId the samplingPointId to set
+     */
+    public EReportingSamplingPoint setSamplingPointId(Long samplingPointId) {
+        this.samplingPointId = samplingPointId;
+        return this;
+    }
+
+    public EReportingAssessmentType getAssessmentType() {
+        return assessmentType;
+    }
+
+    public EReportingSamplingPoint setAssessmentType(EReportingAssessmentType assessmentType) {
+        this.assessmentType = assessmentType;
+        return this;
+    }
+    
+    public boolean isSetAssessmentType() {
+        return getAssessmentType() != null && getAssessmentType().isSetAssessmentType();
+    }
     
 }

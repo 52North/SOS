@@ -9,7 +9,7 @@
             	<param name="sequence">observationId_seq</param>
             </generator>
         </id>
-        <many-to-one name="series" class="org.n52.sos.ds.hibernate.entities.ereporting.EReporting" fetch="select" lazy="no-proxy" foreign-key="observationSeriesFk">
+        <many-to-one name="series" class="org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries" fetch="select" lazy="no-proxy" foreign-key="observationSeriesFk">
            	<column index="obsSeriesIdx" name="seriesId" not-null="true" unique-key="observationIdentity"/>
         </many-to-one>
          <property name="phenomenonTimeStart" type="timestamp" >
@@ -58,6 +58,12 @@
         </set>
          <property name="samplingGeometry" type="org.hibernate.spatial.GeometryType">
             <column name="samplingGeometry" index="samplingGeomidx" />
+        </property>
+        <property name="validation" type="int">
+            <column name="validation" default="-1"/>
+        </property>
+        <property name="verification" type="int">
+            <column name="verification" default="3"/>
         </property>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingBlobObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" table="blobValue">
         	<key column="observationId" foreign-key="observationBlobValueFk" />

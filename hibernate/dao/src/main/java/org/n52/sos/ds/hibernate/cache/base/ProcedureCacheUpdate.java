@@ -112,7 +112,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         //single threaded updates
         LOGGER.debug("Executing ProcedureCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
-        boolean obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class, getSession());
+        boolean obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class);
 
         Map<String, Collection<String>> procedureMap = procedureDAO.getProcedureIdentifiers(getSession());
         for (Entry<String, Collection<String>> entry : procedureMap.entrySet()) {

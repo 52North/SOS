@@ -38,19 +38,19 @@ public class EReportingSeries extends Series implements HasEReportingSamplingPoi
     private EReportingSamplingPoint samplingPoint;
 
     @Override
-    public EReportingSamplingPoint getEReportingSamplingPoint() {
+    public EReportingSamplingPoint getSamplingPoint() {
         return samplingPoint;
     }
 
     @Override
-    public EReportingSeries setEReportingSamplingPoint(EReportingSamplingPoint samplingPoint) {
+    public EReportingSeries setSamplingPoint(EReportingSamplingPoint samplingPoint) {
         this.samplingPoint = samplingPoint;
         return this;
     }
 
     @Override
-    public boolean hasEReportingSamplingPoint() {
-        return getEReportingSamplingPoint() != null;
+    public boolean hasSamplingPoint() {
+        return getSamplingPoint() != null;
     }
 
 }

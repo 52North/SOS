@@ -9,6 +9,8 @@
 	</parent>
 	<artifactId>flexible-identifier</artifactId>
 	<packaging>jar</packaging>
+	<name>52°North SOS - Flexible identifier convert module</name>
+	<description>52°North SOS - Module to support flexible identifiers in requests and responses</description>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

@@ -28,15 +28,11 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
@@ -50,11 +46,12 @@ import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.quality.SosQuality;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -114,7 +111,7 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
             final NilTemplateValue value = new NilTemplateValue();
             value.setUnit(obsProp.getUnit());
             sosObservation
-                    .setValue(new SingleObservationValue(new TimeInstant(), value, new ArrayList<SosQuality>(0)));
+                    .setValue(new SingleObservationValue(new TimeInstant(), value));
             observations.add(sosObservation);
         }
         return observations;

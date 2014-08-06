@@ -28,49 +28,26 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasValidation;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasVerification;
-import org.n52.sos.ds.hibernate.entities.series.SeriesCountObservation;
-import org.n52.sos.util.StringHelper;
+import org.n52.sos.ds.hibernate.entities.interfaces.CountObservation;
 
-public class EReportingCountObservation extends SeriesCountObservation implements HasValidation, HasVerification {
+public class EReportingCountObservation extends EReportingObservation implements CountObservation {
 
     private static final long serialVersionUID = 3755713388467291271L;
 
-    private String validation;
-
-    private String verification;
+    private Integer value;
 
     @Override
-    public String getVerification() {
-        return verification;
+    public Integer getValue() {
+        return this.value;
     }
 
     @Override
-    public HasVerification setVerification(String verification) {
-        this.verification = verification;
-        return this;
+    public void setValue(Integer value) {
+        this.value = value;
     }
 
     @Override
-    public boolean isSetVerification() {
-        return StringHelper.isNotEmpty(getVerification());
+    public boolean isSetValue() {
+        return value != null;
     }
-
-    @Override
-    public String getValidation() {
-        return validation;
-    }
-
-    @Override
-    public HasValidation setValidation(String validation) {
-        this.validation = validation;
-        return this;
-    }
-
-    @Override
-    public boolean isSetValidation() {
-        return StringHelper.isNotEmpty(getValidation());
-    }
-
 }

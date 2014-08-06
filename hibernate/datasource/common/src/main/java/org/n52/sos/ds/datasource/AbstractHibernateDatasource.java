@@ -53,6 +53,7 @@ import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
+import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.ds.DatasourceCallback;
@@ -111,14 +112,22 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected static final String SCHMEA_DEFAULT_VALUE = "public";
 
-    protected static final String OLD_CONCEPT_TITLE = "Old observation concept";
+//    protected static final String OLD_CONCEPT_TITLE = "Old observation concept";
+//
+//    protected static final String OLD_CONCEPT_DESCRIPTION =
+//            "Should the database support the old observation concept or exists the older database model? The new default concept uses series in the observation table instead of direct relations to procedure, observedProperty and featureOfInterest!";
+//
+//    protected static final String OLD_CONCEPT_KEY = "sos.oldConcept";
+//
+//    protected static final boolean OLD_CONCEPT_DEFAULT_VALUE = false;
 
-    protected static final String OLD_CONCEPT_DESCRIPTION =
-            "Should the database support the old observation concept or exists the older database model? The new default concept uses series in the observation table instead of direct relations to procedure, observedProperty and featureOfInterest!";
+    protected static final String DATABASE_CONCEPT_TITLE = "Database concept";
 
-    protected static final String OLD_CONCEPT_KEY = "sos.oldConcept";
+    protected static final String DATABASE_CONCEPT_DESCRIPTION = "Select the database concept this SOS should use";
 
-    protected static final boolean OLD_CONCEPT_DEFAULT_VALUE = false;
+    protected static final String DATABASE_CONCEPT_KEY = "sos.database.concept";
+
+    protected static final String DATABASE_CONCEPT_DEFAULT_VALUE = DatabaseConcept.SERIES_CONCEPT.name();
 
     protected static final String TRANSACTIONAL_TITLE = "Transactional Profile";
 
@@ -128,31 +137,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected static final boolean TRANSACTIONAL_DEFAULT_VALUE = true;
 
-    @Deprecated
-    protected static final String SPATIAL_FILTERING_PROFILE_TITLE = "!!! DEPRECATED !!! Old Spatial Filtering Profile";
-    @Deprecated
-    protected static final String SPATIAL_FILTERING_PROFILE_DESCRIPTION =
-            "Should the database support the OLD Spatial Filtering Profile handling? Due to performance inprovements the the samplingGeometry was moved to the observation table. You can update you data by running the update_spatialfilteringprofile_handling.sql script (SOS/misc/db/...)!";
-    @Deprecated
-    protected static final String SPATIAL_FILTERING_PROFILE_KEY = "sos.spatialFilteringProfile";
-    @Deprecated
-    protected static final boolean SPATIAL_FILTERING_PROFILE_DEFAULT_VALUE = false;
-
-    // protected static final String USERNAME_KEY =
-    // HibernateConstants.CONNECTION_USERNAME;
-    //
-    // protected static final String PASSWORD_KEY =
-    // HibernateConstants.CONNECTION_PASSWORD;
-    //
-    // protected static final String C3P0_CONNECTION_POOL =
-    // "org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider";
-
-//    protected static final String USERNAME_KEY = HibernateConstants.CONNECTION_USERNAME;
-//
-//    protected static final String PASSWORD_KEY = HibernateConstants.CONNECTION_PASSWORD;
-//
-//    protected static final String C3P0_CONNECTION_POOL =
-//            "org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider";
     protected static final String MULTI_LANGUAGE_TITLE = "Multi language support";
 
     protected static final String MULTI_LANGUAGE_DESCRIPTION = "Should the database support multi language?";
@@ -172,26 +156,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected static final String PROVIDED_JDBC_DRIVER_KEY = "sos.jdbc.provided";
 
-    // protected static final String MIN_POOL_SIZE_KEY = "jdbc.pool.min";
-    //
-    // protected static final String MIN_POOL_SIZE_TITLE =
-    // "Minimum ConnectionPool size";
-    //
-    // protected static final String MIN_POOL_SIZE_DESCRIPTION =
-    // "Minimum size of the ConnectionPool";
-    //
-    // protected static final Integer MIN_POOL_SIZE_DEFAULT_VALUE = 10;
-    //
-    // protected static final String MAX_POOL_SIZE_KEY = "jdbc.pool.max";
-    //
-    // protected static final String MAX_POOL_SIZE_TITLE =
-    // "Maximum ConnectionPool size";
-    //
-    // protected static final String MAX_POOL_SIZE_DESCRIPTION =
-    // "Maximum size of the ConnectionPool";
-    //
-    // protected static final Integer MAX_POOL_SIZE_DEFAULT_VALUE = 30;
-
     protected static final String BATCH_SIZE_KEY = "jdbc.batch.size";
 
     protected static final String BATCH_SIZE_TITLE = "Batch size";
@@ -202,18 +166,13 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     private Dialect dialect;
 
-    private final BooleanSettingDefinition oldConceptDefiniton = createOldConceptDefinition();
+//    private final BooleanSettingDefinition oldConceptDefiniton = createOldConceptDefinition();
+
+    private final ChoiceSettingDefinition databaseConceptDefinition = createDatabaseConceptDefinition();
 
     private final BooleanSettingDefinition transactionalDefiniton = createTransactionalDefinition();
 
     private boolean transactionalDatasource = true;
-
-    @Deprecated
-    private final BooleanSettingDefinition spatialFilteringProfileDefinition =
-            createSpatialFilteringProfileDefinition();
-
-    @Deprecated
-    private boolean spatialFilteringProfileDatasource = true;
 
     private final BooleanSettingDefinition mulitLanguageDefinition = createMultiLanguageDefinition();
 
@@ -228,57 +187,63 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
                 .setKey(USERNAME_KEY).setTitle(USERNAME_TITLE);
     }
-//    /**
-//     * Create settings definition for username
-//     *
-//     * @return Username settings definition
-//     */
-//    protected StringSettingDefinition createUsernameDefinition() {
-//        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
-//                .setKey(USERNAME_KEY).setTitle(USERNAME_TITLE);
-//    }
-//
-//    /**
-//     * Create settings definition for password
-//     *
-//     * @return Password settings definition
-//     */
-//    protected StringSettingDefinition createPasswordDefinition() {
-//        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_2)
-//                .setKey(PASSWORD_KEY).setTitle(PASSWORD_TITLE);
-//    }
-//
-//    /**
-//     * Create settings definition for database name
-//     *
-//     * @return database name settings definition
-//     */
-//    protected StringSettingDefinition createDatabaseDefinition() {
-//        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_3)
-//                .setKey(DATABASE_KEY).setTitle(DATABASE_TITLE).setDescription(DATABASE_DESCRIPTION)
-//                .setDefaultValue(DATABASE_DEFAULT_VALUE);
-//    }
-//
-//    /**
-//     * Create settings definition for host
-//     *
-//     * @return Host settings definition
-//     */
-//    protected StringSettingDefinition createHostDefinition() {
-//        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
-//                .setKey(HOST_KEY).setTitle(HOST_TITLE).setDescription(HOST_DESCRIPTION)
-//                .setDefaultValue(HOST_DEFAULT_VALUE);
-//    }
-//
-//    /**
-//     * Create settings definition for port
-//     *
-//     * @return Port settings definition
-//     */
-//    protected IntegerSettingDefinition createPortDefinition() {
-//        return new IntegerSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_5)
-//                .setKey(PORT_KEY).setTitle(PORT_TITLE);
-//    }
+
+    // /**
+    // * Create settings definition for username
+    // *
+    // * @return Username settings definition
+    // */
+    // protected StringSettingDefinition createUsernameDefinition() {
+    // return new
+    // StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
+    // .setKey(USERNAME_KEY).setTitle(USERNAME_TITLE);
+    // }
+    //
+    // /**
+    // * Create settings definition for password
+    // *
+    // * @return Password settings definition
+    // */
+    // protected StringSettingDefinition createPasswordDefinition() {
+    // return new
+    // StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_2)
+    // .setKey(PASSWORD_KEY).setTitle(PASSWORD_TITLE);
+    // }
+    //
+    // /**
+    // * Create settings definition for database name
+    // *
+    // * @return database name settings definition
+    // */
+    // protected StringSettingDefinition createDatabaseDefinition() {
+    // return new
+    // StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_3)
+    // .setKey(DATABASE_KEY).setTitle(DATABASE_TITLE).setDescription(DATABASE_DESCRIPTION)
+    // .setDefaultValue(DATABASE_DEFAULT_VALUE);
+    // }
+    //
+    // /**
+    // * Create settings definition for host
+    // *
+    // * @return Host settings definition
+    // */
+    // protected StringSettingDefinition createHostDefinition() {
+    // return new
+    // StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
+    // .setKey(HOST_KEY).setTitle(HOST_TITLE).setDescription(HOST_DESCRIPTION)
+    // .setDefaultValue(HOST_DEFAULT_VALUE);
+    // }
+    //
+    // /**
+    // * Create settings definition for port
+    // *
+    // * @return Port settings definition
+    // */
+    // protected IntegerSettingDefinition createPortDefinition() {
+    // return new
+    // IntegerSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_5)
+    // .setKey(PORT_KEY).setTitle(PORT_TITLE);
+    // }
 
     /**
      * Create settings definition for database schema
@@ -291,15 +256,30 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 .setDefaultValue(SCHMEA_DEFAULT_VALUE);
     }
 
-    /**
-     * Create settings definition for old concept
-     *
-     * @return Old concept settings definition
-     */
-    protected BooleanSettingDefinition createOldConceptDefinition() {
-        return new BooleanSettingDefinition().setDefaultValue(OLD_CONCEPT_DEFAULT_VALUE).setTitle(OLD_CONCEPT_TITLE)
-                .setDescription(OLD_CONCEPT_DESCRIPTION).setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_2).setKey(OLD_CONCEPT_KEY);
+    // /**
+    // * Create settings definition for old concept
+    // *
+    // * @return Old concept settings definition
+    // */
+    // protected BooleanSettingDefinition createOldConceptDefinition() {
+    // return new
+    // BooleanSettingDefinition().setDefaultValue(OLD_CONCEPT_DEFAULT_VALUE).setTitle(OLD_CONCEPT_TITLE)
+    // .setDescription(OLD_CONCEPT_DESCRIPTION).setGroup(ADVANCED_GROUP)
+    // .setOrder(SettingDefinitionProvider.ORDER_2).setKey(OLD_CONCEPT_KEY);
+    // }
+
+    protected ChoiceSettingDefinition createDatabaseConceptDefinition() {
+        ChoiceSettingDefinition choiceSettingDefinition = new ChoiceSettingDefinition();
+        choiceSettingDefinition.setTitle(DATABASE_CONCEPT_TITLE).setDescription(DATABASE_CONCEPT_DESCRIPTION)
+                .setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_2).setKey(DATABASE_CONCEPT_KEY);
+        choiceSettingDefinition.addOption(DatabaseConcept.SERIES_CONCEPT.name(),
+                DatabaseConcept.SERIES_CONCEPT.getDisplayName());
+        choiceSettingDefinition.addOption(DatabaseConcept.EREPORTING_CONCEPT.name(),
+                DatabaseConcept.EREPORTING_CONCEPT.getDisplayName());
+        choiceSettingDefinition.addOption(DatabaseConcept.OLD_CONCEPT.name(),
+                DatabaseConcept.OLD_CONCEPT.getDisplayName());
+        choiceSettingDefinition.setDefaultValue(DatabaseConcept.SERIES_CONCEPT.name());
+        return choiceSettingDefinition;
     }
 
     /**
@@ -311,18 +291,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         return new BooleanSettingDefinition().setDefaultValue(TRANSACTIONAL_DEFAULT_VALUE)
                 .setTitle(TRANSACTIONAL_TITLE).setDescription(TRANSACTIONAL_DESCRIPTION).setGroup(ADVANCED_GROUP)
                 .setOrder(SettingDefinitionProvider.ORDER_3).setKey(TRANSACTIONAL_KEY);
-    }
-
-    /**
-     * Create settings definition for Spatial Filtering Profile support
-     *
-     * @return Spatial Filtering Profile support settings definition
-     */
-    protected BooleanSettingDefinition createSpatialFilteringProfileDefinition() {
-        return new BooleanSettingDefinition().setDefaultValue(SPATIAL_FILTERING_PROFILE_DEFAULT_VALUE)
-                .setTitle(SPATIAL_FILTERING_PROFILE_TITLE).setDescription(SPATIAL_FILTERING_PROFILE_DESCRIPTION)
-                .setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
-                .setKey(SPATIAL_FILTERING_PROFILE_KEY);
     }
 
     protected BooleanSettingDefinition createMultiLanguageDefinition() {
@@ -389,11 +357,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         CustomConfiguration config = new CustomConfiguration();
         config.configure("/sos-hibernate.cfg.xml");
         config.addDirectory(resource(HIBERNATE_MAPPING_CORE_PATH));
-        if (isOldConceptDatasource(settings)) {
-            config.addDirectory(resource(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH));
-        } else if (isSeriesConceptDatasource(settings)) {
-            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH));
-        }
+        config.addDirectory(resource(getDatabaseConceptMappingDirectory(settings)));
         if (isTransactionalDatasource()) {
             Boolean transactional = (Boolean) settings.get(this.transactionalDefiniton.getKey());
             if (transactional != null && transactional.booleanValue()) {
@@ -415,29 +379,43 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         return config;
     }
 
-    /**
-     * Check if this datasource supported the series concept
-     *
-     * @param settings
-     *            Datasource settings
-     * @return <code>true</code>, if this datasource supported the series
-     *         concept
-     */
-    private boolean isSeriesConceptDatasource(Map<String, Object> settings) {
-        return !isOldConceptDatasource(settings);
+    protected String getDatabaseConceptMappingDirectory(Map<String, Object> settings) {
+        String concept = (String)settings.get(this.databaseConceptDefinition.getKey());
+        switch (DatabaseConcept.valueOf(concept)) {
+        case SERIES_CONCEPT:
+            return HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH;
+        case EREPORTING_CONCEPT:
+            return HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH;
+        case OLD_CONCEPT:
+            return HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH;
+        default:
+            return HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH;
+        }
     }
 
-    /**
-     * Check if this datasource supported the old concept
-     *
-     * @param settings
-     *            Datasource settings
-     * @return <code>true</code>, if this datasource supported the old concept
-     */
-    private boolean isOldConceptDatasource(Map<String, Object> settings) {
-        Boolean oldConcept = (Boolean) settings.get(this.oldConceptDefiniton.getKey());
-        return oldConcept != null && oldConcept;
-    }
+//    /**
+//     * Check if this datasource supported the series concept
+//     *
+//     * @param settings
+//     *            Datasource settings
+//     * @return <code>true</code>, if this datasource supported the series
+//     *         concept
+//     */
+//    private boolean isSeriesConceptDatasource(Map<String, Object> settings) {
+//        return !isOldConceptDatasource(settings);
+//    }
+//
+//    /**
+//     * Check if this datasource supported the old concept
+//     *
+//     * @param settings
+//     *            Datasource settings
+//     * @return <code>true</code>, if this datasource supported the old concept
+//     */
+//    private boolean isOldConceptDatasource(Map<String, Object> settings) {
+//        Boolean oldConcept = (Boolean) settings.get(this.oldConceptDefiniton.getKey());
+//        return oldConcept != null && oldConcept;
+//    }
 
     /**
      * Get File from resource String
@@ -489,7 +467,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         try {
             conn = openConnection(settings);
             DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
-            List<SchemaUpdateScript> upSchema = getConfig(settings).generateSchemaUpdateScriptList(getDialectInternal(), metadata);
+            List<SchemaUpdateScript> upSchema =
+                    getConfig(settings).generateSchemaUpdateScriptList(getDialectInternal(), metadata);
             return SchemaUpdateScript.toStringArray(upSchema);
         } catch (SQLException ex) {
             throw new ConfigurationException(ex);
@@ -514,7 +493,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         }
     }
 
-    protected DatabaseMetadata getDatabaseMetadata(Connection conn, CustomConfiguration customConfiguration) throws SQLException {
+    protected DatabaseMetadata getDatabaseMetadata(Connection conn, CustomConfiguration customConfiguration)
+            throws SQLException {
         return new DatabaseMetadata(conn, getDialectInternal(), customConfiguration, true);
     }
 
@@ -743,13 +723,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected void addMappingFileDirectories(Map<String, Object> settings, Properties p) {
         StringBuilder builder = new StringBuilder();
         builder.append(HIBERNATE_MAPPING_CORE_PATH);
-        if (isOldConceptDatasource(settings)) {
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
-                    HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH);
-        } else if (isSeriesConceptDatasource(settings)) {
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
-                    HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
-        }
+        builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
+                getDatabaseConceptMappingDirectory(settings));
         if (isTransactionalDatasource()) {
             Boolean t = (Boolean) settings.get(transactionalDefiniton.getKey());
             if (t != null && t) {
@@ -766,13 +741,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
     }
 
-    /**
-     * Get the old database schema concept
-     *
-     * @return Old database schema concept
-     */
-    protected BooleanSettingDefinition getOldConceptDefiniton() {
-        return oldConceptDefiniton;
+    protected ChoiceSettingDefinition getDatabaseConceptDefinition() {
+        return databaseConceptDefinition;
     }
 
     /**
@@ -795,16 +765,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     protected BooleanSettingDefinition getTransactionalDefiniton() {
         return transactionalDefiniton;
-    }
-
-    /**
-     * Get Spatial Filtering Profile setting definition
-     *
-     * @return Spatial Filtering Profile setting definition
-     */
-    @Deprecated
-    protected BooleanSettingDefinition getSpatialFilteringProfileDefiniton() {
-        return spatialFilteringProfileDefinition;
     }
 
     protected boolean isMultiLanguage(Properties properties) {
@@ -888,27 +848,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     public void setTransactional(boolean transactionalDatasource) {
         this.transactionalDatasource = transactionalDatasource;
-    }
-
-    /**
-     * Check if the datasource has Spatial Filtering Profile
-     *
-     * @return <code>true</code>, if it has Spatial Filtering Profile
-     */
-    @Deprecated
-    public boolean isSpatialFilteringProfileDatasource() {
-        return spatialFilteringProfileDatasource;
-    }
-
-    /**
-     * Set Spatial Filtering Profile datasource flag
-     *
-     * @param spatialFilteringProfileDatasource
-     *            the spatialFilteringProfileDatasource to set
-     */
-    @Deprecated
-    public void setSpatialFilteringProfile(boolean spatialFilteringProfileDatasource) {
-        this.spatialFilteringProfileDatasource = spatialFilteringProfileDatasource;
     }
 
     /**

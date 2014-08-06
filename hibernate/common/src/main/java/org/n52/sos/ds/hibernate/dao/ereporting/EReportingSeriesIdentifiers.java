@@ -41,7 +41,7 @@ public class EReportingSeriesIdentifiers extends SeriesIdentifiers {
     /**
      * @return the featureOfInterest
      */
-    public EReportingSamplingPoint getEReportingSamplingPoint() {
+    public EReportingSamplingPoint getSamplingPoint() {
         return samplingPoint;
     }
 
@@ -49,39 +49,39 @@ public class EReportingSeriesIdentifiers extends SeriesIdentifiers {
      * @param featureOfInterest
      *            the featureOfInterest to set
      */
-    public void setEReportingSamplingPoint(EReportingSamplingPoint samplingPoint) {
+    public void setSamplingPoint(EReportingSamplingPoint samplingPoint) {
         this.samplingPoint = samplingPoint;
     }
 
-    public boolean isSetEReportingSamplingPoint() {
-        return getEReportingSamplingPoint() != null;
+    public boolean isSetSamplingPoint() {
+        return getSamplingPoint() != null;
     }
 
     @Override
     public void addIdentifierRestrictionsToCritera(Criteria c) {
         super.addIdentifierRestrictionsToCritera(c);
-        if (isSetEReportingSamplingPoint()) {
-            addEReportingSamplingPointToCriteria(c, getEReportingSamplingPoint());
+        if (isSetSamplingPoint()) {
+            addSamplingPointToCriteria(c, getSamplingPoint());
         }
     }
 
     @Override
     public void addValuesToSeries(Series series) {
         super.addValuesToSeries(series);
-        if (isSetEReportingSamplingPoint() && series instanceof EReportingSeries) {
-            ((EReportingSeries) series).setEReportingSamplingPoint(getEReportingSamplingPoint());
+        if (isSetSamplingPoint() && series instanceof EReportingSeries) {
+            ((EReportingSeries) series).setSamplingPoint(getSamplingPoint());
         }
     }
 
     /**
-     * Add EReportingSamplingPoint restriction to Hibernate Criteria
+     * Add SamplingPoint restriction to Hibernate Criteria
      * 
      * @param c
      *            Hibernate Criteria to add restriction
      * @param samplingPoint
-     *            EReportingSamplingPoint to add
+     *            SamplingPoint to add
      */
-    private void addEReportingSamplingPointToCriteria(Criteria c, EReportingSamplingPoint samplingPoint) {
+    private void addSamplingPointToCriteria(Criteria c, EReportingSamplingPoint samplingPoint) {
         c.add(Restrictions.eq(EReportingSeries.SAMPLING_POINT, samplingPoint));
 
     }

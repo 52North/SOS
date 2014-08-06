@@ -28,49 +28,27 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting.values;
 
-import org.n52.sos.ds.hibernate.entities.series.values.SeriesBooleanValue;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasValidation;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasVerification;
-import org.n52.sos.util.StringHelper;
+import org.n52.sos.ds.hibernate.entities.interfaces.BooleanValue;
 
-public class EReportingBooleanValue extends SeriesBooleanValue implements HasValidation, HasVerification {
+public class EReportingBooleanValue extends EReportingValue implements BooleanValue {
 
     private static final long serialVersionUID = -8637723531744594904L;
 
-    private String validation;
-
-    private String verification;
+    private boolean value;
 
     @Override
-    public String getVerification() {
-        return verification;
+    public Boolean getValue() {
+        return this.value;
     }
 
     @Override
-    public HasVerification setVerification(String verification) {
-        this.verification = verification;
-        return this;
+    public boolean isSetValue() {
+        return this.value;
     }
 
     @Override
-    public boolean isSetVerification() {
-        return StringHelper.isNotEmpty(getVerification());
-    }
-
-    @Override
-    public String getValidation() {
-        return validation;
-    }
-
-    @Override
-    public HasValidation setValidation(String validation) {
-        this.validation = validation;
-        return this;
-    }
-
-    @Override
-    public boolean isSetValidation() {
-        return StringHelper.isNotEmpty(getValidation());
+    public void setValue(Boolean value) {
+        this.value = value;
     }
 
 }

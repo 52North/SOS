@@ -57,19 +57,81 @@ public abstract class AbstractSeriesDAO {
 
     protected abstract Class<?> getSeriesClass();
     
+    /**
+     * Get series for GetObservation request and featuresOfInterest
+     * 
+     * @param request
+     *            GetObservation request to get series for
+     * @param features
+     *            FeaturesOfInterest to get series for
+     * @param session
+     *            Hibernate session
+     * @return Series that fit
+     */
     public abstract List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session);
     
+    /**
+     * Query series for observedProiperty and featuresOfInterest
+     * 
+     * @param observedProperty
+     *            ObservedProperty to get series for
+     * @param features
+     *            FeaturesOfInterest to get series for
+     * @param session
+     *            Hibernate session
+     * @return Series list
+     */
     public abstract List<Series> getSeries(String observedProperty, Collection<String> features, Session session);
     
+    /**
+     * Create series for parameter
+     * 
+     * @param procedures
+     *            Procedures to get series for
+     * @param observedProperties
+     *            ObservedProperties to get series for
+     * @param features
+     *            FeaturesOfInterest to get series for
+     * @param session
+     *            Hibernate session
+     * @return Series that fir
+     */
     public abstract List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Session session);
     
+    /**
+     * Get series for procedure, observableProperty and featureOfInterest
+     * 
+     * @param procedure
+     *            Procedure identifier parameter
+     * @param observableProperty
+     *            ObservableProperty identifier parameter
+     * @param featureOfInterest
+     *            FeatureOfInterest identifier parameter
+     * @param session
+     *            Hibernate session
+     * @return Matching series
+     */
     public abstract Series getSeriesFor(String procedure, String observableProperty, String featureOfInterest, Session session);
     
+    /**
+     * Insert or update and get series for procedure, observable property and
+     * featureOfInterest
+     * 
+     * @param feature
+     *            FeatureOfInterest object
+     * @param observableProperty
+     *            ObservableProperty object
+     * @param procedure
+     *            Procedure object
+     * @param session
+     *            Hibernate session
+     * @return Series object
+     * @throws CodedException 
+     */
     public abstract Series getOrInsertSeries(SeriesIdentifiers identifiers, final Session session) throws CodedException; 
     
-    
-    protected Series getOfInsert(SeriesIdentifiers identifiers, final Session session) throws CodedException {
+    protected Series getOrInsert(SeriesIdentifiers identifiers, final Session session) throws CodedException {
         Criteria criteria = getDefaultAllSeriesCriteria(session);
         identifiers.addIdentifierRestrictionsToCritera(criteria);
         LOGGER.debug("QUERY getOrInsertSeries(feature, observableProperty, procedure): {}",

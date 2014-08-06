@@ -243,6 +243,27 @@ public class RasdamanDatasource extends AbstractHibernateFullDBDatasource {
         System.out.println("Connected to database: "+jdbcUrl);
         return conn;
     }
+    
+    @Override
+	protected Map<String, Object> parseDatasourceProperties(Properties current) {
+		final Map<String, Object> settings = new HashMap<String, Object>(current.size());
+		settings.put(SCHEMA_KEY, current.getProperty(HibernateConstants.DEFAULT_SCHEMA));
+		settings.put(USERNAME_KEY, current.getProperty(HibernateConstants.CONNECTION_USERNAME));
+		settings.put(PASSWORD_KEY, current.getProperty(HibernateConstants.CONNECTION_PASSWORD));
+		settings.put(MIN_POOL_SIZE_KEY, current.getProperty(HibernateConstants.C3P0_MIN_SIZE));
+		settings.put(MAX_POOL_SIZE_KEY, current.getProperty(HibernateConstants.C3P0_MAX_SIZE));
+		settings.put(BATCH_SIZE_KEY, current.getProperty(HibernateConstants.JDBC_BATCH_SIZE));
+		settings.put(TRANSACTIONAL_KEY, isTransactional(current));
+		settings.put(SPATIAL_FILTERING_PROFILE_KEY, isSpatialFilteringProfile(current));
+		settings.put(PROVIDED_JDBC_DRIVER_KEY,
+				current.getProperty(PROVIDED_JDBC, PROVIDED_JDBC_DRIVER_DEFAULT_VALUE.toString()));
+		final String url = current.getProperty(HibernateConstants.CONNECTION_URL);
+
+		final String db = url;
+
+		settings.put(createDatabaseDefinition().getKey(), db);
+		return settings;
+	}
 
     @Override
     protected void validatePrerequisites(Connection arg0, DatabaseMetadata arg1, Map<String, Object> arg2) {

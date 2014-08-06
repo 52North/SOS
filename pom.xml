@@ -334,8 +334,14 @@
 			</dependency>
 			<!-- AQD eReporting -->
 			 <dependency>
-				<groupId>org.n52.sensorweb.sos</groupId>
+				<groupId>${project.groupId}</groupId>
 				<artifactId>coding-aqd-v10</artifactId>
+				<version>${sos.version}</version>
+	        </dependency>
+	        <!-- flexible identifiers -->
+	        <dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>flexible-identifier</artifactId>
 				<version>${sos.version}</version>
 	        </dependency>
             <dependency>

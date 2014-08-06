@@ -108,12 +108,6 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
             cache.updateResultTime(resultTime);
             cache.updatePhenomenonTimeForProcedure(procedure, phenomenonTime);
 
-            if (observation.getIdentifierCodeWithAuthority() != null) {
-                final String identifier = observation.getIdentifierCodeWithAuthority().getValue();
-                cache.addObservationIdentifier(identifier);
-                cache.addObservationIdentifierForProcedure(procedure, identifier);
-            }
-
             // update features
             List<SamplingFeature> observedFeatures =
                     sosFeaturesToList(observation.getObservationConstellation().getFeatureOfInterest());
@@ -125,6 +119,9 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
                 String featureOfInterest = sosSamplingFeature.getIdentifierCodeWithAuthority().getValue();
 
                 cache.addFeatureOfInterest(featureOfInterest);
+                if (sosSamplingFeature.isSetName()) {
+                	cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest, sosSamplingFeature.getFirstName().getValue());
+                }
                 cache.addProcedureForFeatureOfInterest(featureOfInterest, procedure);
                 if (sosSamplingFeature.isSetSampledFeatures()) {
                     for (AbstractFeature parentFeature : sosSamplingFeature.getSampledFeatures()) {

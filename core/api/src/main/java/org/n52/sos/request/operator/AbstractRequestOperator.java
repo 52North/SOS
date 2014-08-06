@@ -28,6 +28,7 @@
  */
 package org.n52.sos.request.operator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.sos.cache.ContentCache;
+import org.n52.sos.convert.RequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierRepository;
 import org.n52.sos.ds.OperationDAO;
 import org.n52.sos.ds.OperationDAORepository;
@@ -154,22 +156,39 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private void checkForModifierAndProcess(AbstractServiceRequest<?> request) throws OwsExceptionReport {
-        if (RequestResponseModifierRepository.getInstance().hasRequestResponseModifier(request)) {
-            RequestResponseModifierRepository.getInstance().getRequestResponseModifier(request)
-                    .modifyRequest(request);
-        }
-    }
+	private void checkForModifierAndProcess(AbstractServiceRequest<?> request)
+			throws OwsExceptionReport {
+		if (RequestResponseModifierRepository.getInstance()
+				.hasRequestResponseModifier(request)) {
+			for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : RequestResponseModifierRepository
+					.getInstance().getRequestResponseModifier(request)) {
+				modifier.modifyRequest(request);
+			}
+		}
+	}
 
-    @SuppressWarnings("unchecked")
-    private AbstractServiceResponse checkForModifierAndProcess(AbstractServiceRequest<?> request, AbstractServiceResponse response) throws OwsExceptionReport {
-        if (RequestResponseModifierRepository.getInstance().hasRequestResponseModifier(request, response)) {
-            return RequestResponseModifierRepository.getInstance().getRequestResponseModifier(request, response)
-                    .modifyResponse(request, response);
-        }
-        return response;
-    }
+	private AbstractServiceResponse checkForModifierAndProcess(
+			AbstractServiceRequest<?> request, AbstractServiceResponse response)
+			throws OwsExceptionReport {
+		if (RequestResponseModifierRepository.getInstance()
+				.hasRequestResponseModifier(request, response)) {
+			List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> nonMerger = new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
+			for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : RequestResponseModifierRepository
+					.getInstance()
+					.getRequestResponseModifier(request, response)) {
+				if (modifier.isMerger()) {
+					modifier.modifyResponse(request, response);
+				} else {
+					nonMerger.add(modifier);
+				}
+			}
+			for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : nonMerger) {
+				modifier.modifyResponse(request, response);
+			}
+			return response;
+		}
+		return response;
+	}
 
     protected abstract A receive(Q request) throws OwsExceptionReport;
 

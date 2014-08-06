@@ -203,12 +203,25 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
                 description.addLocalization(locale, offering.getDescription());
             }
         }
-
+        
         getCache().setI18nDescriptionForOffering(offeringId, description);
         getCache().setI18nNameForOffering(offeringId, name);
+        addHumanReadableIdentifier(offeringId, offering, name);
     }
 
-    protected Map<ProcedureFlag, Set<String>> getProcedureIdentifier(Session session) throws OwsExceptionReport {
+    private void addHumanReadableIdentifier(String offeringId,
+			Offering offering, MultilingualString name) {
+		if (name.isEmpty()) {
+			if (offering.isSetName()) {
+				getCache().addOfferingIdentifierHumanReadableName(offeringId, offering.getName());
+			}
+		} else {
+			getCache().addOfferingIdentifierHumanReadableName(offeringId, name.getDefaultLocalization().get().getText());
+		}
+		
+	}
+
+	protected Map<ProcedureFlag, Set<String>> getProcedureIdentifier(Session session) throws OwsExceptionReport {
         Set<String> procedures = new HashSet<String>(0);
         Set<String> hiddenChilds = new HashSet<String>(0);
         if (obsConstSupported) {

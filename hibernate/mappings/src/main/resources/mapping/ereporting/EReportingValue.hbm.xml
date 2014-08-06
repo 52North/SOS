@@ -54,10 +54,10 @@
             <column name="samplingGeometry" index="samplingGeomidx"/>
         </property>
         <property name="validation" type="int">
-            <column name="validation" default="-1"/>
+            <column name="validation" not-null="true" default="-1"/>
         </property>
         <property name="verification" type="int">
-            <column name="verification" default="3"/>
+            <column name="verification" not-null="true" default="3"/>
         </property>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingBlobValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="blobValue">
         	<key column="observationId" foreign-key="observationBlobValueFk" />

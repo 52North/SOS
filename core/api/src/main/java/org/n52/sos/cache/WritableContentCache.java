@@ -33,7 +33,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-
 import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.sos.SosEnvelope;
@@ -208,36 +207,6 @@ public interface WritableContentCache extends ContentCache {
      *            the observable property
      */
     void addObservablePropertyForResultTemplate(String resultTemplate, String observableProperty);
-
-    /**
-     * Add the specified observation identifier.
-     *
-     * @param observationIdentifier
-     *            the observation identifier
-     */
-    @Deprecated
-    void addObservationIdentifier(String observationIdentifier);
-
-    /**
-     * Associate the specified observation identifier with the specified
-     * procedure.
-     *
-     * @param procedure
-     *            the procedure
-     * @param observationIdentifier
-     *            the observation identifier
-     */
-    @Deprecated
-    void addObservationIdentifierForProcedure(String procedure, String observationIdentifier);
-
-    /**
-     * Add the specified observation identifiers.
-     *
-     * @param observationIdentifier
-     *            the observation identifiers
-     */
-    @Deprecated
-    void addObservationIdentifiers(Collection<String> observationIdentifier);
 
     /**
      * Associate the specified observation type with the specified offering.
@@ -434,6 +403,14 @@ public interface WritableContentCache extends ContentCache {
      *            the role
      */
     void addRoleForRelatedFeature(String relatedFeature, String role);
+    
+    void addFeatureOfInterestIdentifierHumanReadableName(String identifier, String humanReadableName);
+    
+    void addObservablePropertyIdentifierHumanReadableName(String identifier, String humanReadableName);
+    
+    void addProcedureIdentifierHumanReadableName(String identifier, String humanReadableName);
+    
+	void addOfferingIdentifierHumanReadableName(String identifier, String humanReadableName);
 
     /**
      * Dissociate the specified allowed observation type with the specified
@@ -691,45 +668,6 @@ public interface WritableContentCache extends ContentCache {
     void removeObservablePropertyForResultTemplate(String resultTemplate, String observableProperty);
 
     /**
-     * Remove the specified observation identifier.
-     *
-     * @param observationIdentifier
-     *            the observation identifier
-     */
-    @Deprecated
-    void removeObservationIdentifier(String observationIdentifier);
-
-    /**
-     * Dissociate the specified observation identifier with the specified
-     * procedure.
-     *
-     * @param procedure
-     *            the procedure
-     * @param observationIdentifier
-     *            the observation identifier
-     */
-    @Deprecated
-    void removeObservationIdentifierForProcedure(String procedure, String observationIdentifier);
-
-    /**
-     * Remove the specified observation identifier.
-     *
-     * @param observationIdentifier
-     *            the observation identifier
-     */
-    @Deprecated
-    void removeObservationIdentifiers(Collection<String> observationIdentifier);
-
-    /**
-     * Dissociate all observation identifiers with the specified procedure.
-     *
-     * @param procedure
-     *            the procedure
-     */
-    @Deprecated
-    void removeObservationIdentifiersForProcedure(String procedure);
-
-    /**
      * Dissociate the specified featureOfInterest type with the specified
      * offering.
      *
@@ -963,6 +901,22 @@ public interface WritableContentCache extends ContentCache {
      *            the related features for which the roles should kept
      */
     void removeRolesForRelatedFeatureNotIn(Collection<String> features);
+    
+    void removeFeatureOfInterestIdentifierForHumanReadableName(String humanReadableName);
+    
+    void removeFeatureOfInterestHumanReadableNameForIdentifier(String identifier);
+    
+    void removeObservablePropertyIdentifierForHumanReadableName(String humanReadableName);
+    
+    void removeObservablePropertyHumanReadableNameForIdentifier(String identifier);
+    
+    void removeProcedureIdentifierForHumanReadableName(String humanReadableName);
+    
+    void removeProcedureHumanReadableNameForIdentifier(String identifier);
+    
+	void removeOfferingIdentifierForHumanReadableName(String humanReadableName);
+
+	void removeOfferingHumanReadableNameForIdentifier(String identifier);
 
     /**
      * Sets the allowed observation types for the specified offering.
@@ -1338,26 +1292,6 @@ public interface WritableContentCache extends ContentCache {
     void setObservablePropertiesForResultTemplate(String resultTemplate, Collection<String> observableProperties);
 
     /**
-     * Sets the observation identifiers.
-     *
-     * @param observationIdentifiers
-     *            the observation identifiers
-     */
-    @Deprecated
-    void setObservationIdentifiers(Collection<String> observationIdentifiers);
-
-    /**
-     * Sets the observation identifiers for the specified procedure.
-     *
-     * @param procedure
-     *            the procedure
-     * @param observationIdentifiers
-     *            the observation identifiers
-     */
-    @Deprecated
-    void setObservationIdentifiersForProcedure(String procedure, Collection<String> observationIdentifiers);
-
-    /**
      * Sets the observation types for the specified offering.
      *
      * @param offering
@@ -1655,4 +1589,13 @@ public interface WritableContentCache extends ContentCache {
      *            the new language to remove
      */
     void removeSupportedLanguage(Locale language);
+    
+    void clearFeatureOfInterestIdentifierHumanReadableNameMaps();
+    
+    void clearObservablePropertyIdentifierHumanReadableNameMaps();
+    
+    void clearProcedureIdentifierHumanReadableNameMaps();
+
+	void clearOfferingIdentifierHumanReadableNameMaps();
+    
 }

@@ -843,4 +843,9 @@ public class CoordianteTransformator implements
         return ServiceConfiguration.getInstance();
     }
 
+	@Override
+	public boolean isMerger() {
+		return false;
+	}
+
 }

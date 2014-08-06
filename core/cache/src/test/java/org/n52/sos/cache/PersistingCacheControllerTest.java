@@ -50,14 +50,14 @@ public class PersistingCacheControllerTest extends AbstractCacheControllerTest {
     public void testSerialization() {
         assertThat(getTempFile(), is(not(existing())));
         ContentCacheControllerImpl cc = new TestableInMemoryCacheController();
-        assertThat(cc.getCache().getObservationIdentifiers(), is(empty()));
-        cc.getCache().addObservationIdentifier(IDENTIFIER);
-        assertThat(cc.getCache().getObservationIdentifiers(), contains(IDENTIFIER));
+        assertThat(cc.getCache().getFeaturesOfInterest(), is(empty()));
+        cc.getCache().addFeatureOfInterest(IDENTIFIER);
+        assertThat(cc.getCache().getFeaturesOfInterest(), contains(IDENTIFIER));
         cc.cleanup();
         assertThat(getTempFile(), is(existing()));
         cc = new TestableInMemoryCacheController();
         assertThat(getTempFile(), is(existing()));
-        assertThat(cc.getCache().getObservationIdentifiers(), contains(IDENTIFIER));
+        assertThat(cc.getCache().getFeaturesOfInterest(), contains(IDENTIFIER));
     }
 
 }

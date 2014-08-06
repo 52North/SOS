@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-
 import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.sos.SosEnvelope;
@@ -342,34 +341,6 @@ public interface ContentCache extends Serializable {
      * @return the observable properties
      */
     Set<String> getObservablePropertiesForProcedure(String procedure);
-
-    /**
-     * @return all observation identifiers
-     */
-    @Deprecated
-    Set<String> getObservationIdentifiers();
-
-    /**
-     * Checks whether the specified identifier exists.
-     *
-     * @param observationIdentifier
-     *            the observation identifier
-     *
-     * @return {@code true} if it exists
-     */
-    @Deprecated
-    boolean hasObservationIdentifier(String observationIdentifier);
-
-    /**
-     * Get the observation identifiers associated with the specified procedure.
-     *
-     * @param procedure
-     *            the procedure
-     *
-     * @return the observation identifiers
-     */
-    @Deprecated
-    Set<String> getObservationIdentifiersForProcedure(String procedure);
 
     /**
      * @return all observation types
@@ -887,5 +858,21 @@ public interface ContentCache extends Serializable {
      * @return <code>true</code>, if the specific lanugage is supported
      */
     boolean isLanguageSupported(Locale language);
+    
+    String getFeatureOfInterestIdentifierForHumanReadableName(String humanReadableName);
+    
+    String getFeatureOfInterestHumanReadableNameForIdentifier(String identifier);
+    
+    String getObservablePropertyIdentifierForHumanReadableName(String humanReadableName);
+    
+    String getObservablePropertyHumanReadableNameForIdentifier(String identifier);
+    
+    String getProcedureIdentifierForHumanReadableName(String humanReadableName);
+    
+    String getProcedureHumanReadableNameForIdentifier(String identifier);
+    
+	String getOfferingIdentifierForHumanReadableName(String humanReadableName);
+    
+    String getOfferingHumanReadableNameForIdentifier(String identifier);
 
 }

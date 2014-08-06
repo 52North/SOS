@@ -222,7 +222,7 @@ function NillableController(options) {
         div: this.$delegateDiv,
         value: isNil ? null : options.value
     }));
-    this.$delegateDiv.removeClass("well well-small")
+    this.$delegateDiv.removeClass("well well-small");
 
     if (isNil) {
         this.$nilReason.show();
@@ -850,7 +850,7 @@ function AddressController(options) {
         label: "Administrative Units",
         delegateOptions: {
             label: "Administrative Unit",
-            helpText: "The name of a unit of administration where a Member State has and/or exercises jurisdictional rights, for local, regional and national governance.",
+            helpText: "The name of a unit of administration where a Member State has and/or exercises jurisdictional rights, for local, regional and national governance."
         },
         helpText: "The name or names of a unit of administration where a Member State has and/or exercises jurisdictional rights, for local, regional and national governance.",
         value: options.value.adminUnits

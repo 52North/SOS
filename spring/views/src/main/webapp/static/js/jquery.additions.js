@@ -27,6 +27,22 @@
  * Public License for more details.
  */
  (function($) {
+    $.scrollToTop = function(duration, complete) {
+        $("html,body").animate({
+            "scrollTop": 0
+        }, duration, "swing", complete);
+        return this;
+    };
+    $.fn.scrollTo = function(duration, complete) {
+        $("html,body").animate({
+            "scrollTop": this.offset().top
+        }, duration, "swing", complete);
+        return this;
+    };
+
+    $.exists = function(selector) {
+        return ($(selector).length > 0);
+    };
 
     $.fn.slideRemove = function(opt) {
         return this.slideUp(opt, function() {

@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2014 52Â°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -38,9 +38,12 @@
     <jsp:param name="leadParagraph" value="" />
 </jsp:include>
 
-
-<div id="erh"></div>
-
+<div class="row">
+    <div class="span4">
+        <ul class="well well-small" id="erh-header"></ul>
+    </div>
+    <div class="span8" id="erh"></div>
+</div>
 <style type="text/css">
     .dropdown-toggle {
         height: 30px;
@@ -48,37 +51,6 @@
     .dropdown-toggle .caret {
         padding-bottom: 4px;
     }
-    /*
-    .string > .controls > input {
-        width: 380px;
-    }
-    .string > .controls {
-        max-width: 400px;
-    }
-
-    .list .item, .string, .nillable, .controls {
-        display: inline-block;
-        margin: 5px;
-        vertical-align: top;
-    }
-    */
-    /*
-    .nillable,
-    .list,
-    .controls {
-        margin: 5px;
-        min-height: 20px;
-        padding: 9px;
-        margin-bottom: 20px;
-        background-color: #f5f5f5;
-        border: 1px solid #e3e3e3;
-        -webkit-border-radius: 3px;
-         -moz-border-radius: 3px;
-              border-radius: 3px;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-         -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-              box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-    }*/
     .list > button,
     .list-item > .btn-group button {
         margin-bottom: 20px;
@@ -86,6 +58,7 @@
     .codetype-codespace {
         margin-right: 5px;
     }
+    .to-top { margin-top: -20px; }
     label.control-label {
         display: block;
         width: 100%;
@@ -96,6 +69,15 @@
         color: #333333;
         border: 0;
         border-bottom: 1px solid #e5e5e5;
+    }
+    .nav.nav-list {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .nav-list>li>a {
+        margin-right: -10px;
+        margin-left: -10px;
     }
 </style>
 
@@ -157,15 +139,183 @@ var util = (function(){
     return util;
 })();
 
+var menu = (function(){
+
+    function clickHandler(target) {
+        return function(e) {
+            $(target).scrollTo(400);
+            e.preventDefault();
+        };
+    }
+
+    function CompositeMenuItem(target, label, parent) {
+        this.length = 2;
+        this.$header = $("<li>")
+            .addClass("nav-header")
+            .append($("<a>")
+            .attr("href", "#")
+            .text(label)
+            .on("click", clickHandler(target)));
+        this.$sublist = $("<ul>").addClass("nav nav-list");
+        this.$list = $("<li>").append(this.$sublist);
+
+        if (parent) {
+            this.addTo(parent);
+        }
+    }
+    CompositeMenuItem.prototype.add = function(el, idx) {
+        idx = idx >= 0 ? idx : this.$sublist.children().length;
+        this.$sublist.insertAt(idx, $(el));
+    };
+    CompositeMenuItem.prototype.addTo = function(menu, index) {
+        menu.add(this.$header, index);
+        menu.add(this.$list, index >= 0 ? index + 1 : -1);
+    };
+    CompositeMenuItem.prototype.remove = function() {
+        this.$header.remove();
+        this.$list.remove();
+    };
+    CompositeMenuItem.prototype.hide = function() {
+        this.$header.hide();
+        this.$list.hide();
+    };
+    CompositeMenuItem.prototype.show = function() {
+        this.$header.show();
+        this.$list.show();
+    };
+
+    function SimpleMenuItem(target, label, parent) {
+        this.length = 1;
+        this.$el = $("<li>")
+            .append($("<a>")
+            .attr("href", "#")
+            .text(label)
+            .on("click", clickHandler(target)));
+
+        if (parent) {
+            this.addTo(parent);
+        }
+    }
+    SimpleMenuItem.prototype.addTo = function(menu, index) {
+        menu.add(this.$el, index);
+    };
+    SimpleMenuItem.prototype.remove = function() {
+        this.$el.remove();
+    };
+    SimpleMenuItem.prototype.hide = function() {
+        this.$el.hide();
+    };
+    SimpleMenuItem.prototype.show = function() {
+        this.$el.show();
+    };
+
+    function RootMenuItem(el) {
+        this.length = 0;
+        this.$list = $(el).addClass("nav nav-list");
+    }
+    RootMenuItem.prototype.remove = function() {
+        this.$list.remove();
+    };
+    RootMenuItem.prototype.add = function(el) {
+        this.$list.append($(el));
+    };
+    RootMenuItem.prototype.hide = function() {
+        this.$list.hide();
+    };
+    RootMenuItem.prototype.show = function() {
+        this.$list.show();
+    };
+
+    return {
+        composite: function(controller, options) {
+            //if (!options.label) return;
+            return new CompositeMenuItem(
+                controller.$div,
+                options.label,
+                options.menu
+            );
+        },
+        simple: function(controller, options) {
+            //if (!options.label) return;
+            return new SimpleMenuItem(
+                controller.$div,
+                options.label,
+                options.menu
+            );
+        },
+        root: function(el) {
+            return new RootMenuItem(el);
+        }
+    };
+})();
+
+var BaseController = function(options) {
+    this.$div = $(options.div).addClass(options.class);
+    if (options.label && options.showLabel !== false) {
+        this.$label = $("<label>")
+            .addClass("control-label")
+            .text(options.label)
+            .appendTo(this.$div);
+        $("<div>")
+            .addClass("to-top")
+            .addClass("pull-right")
+            .append($("<a>")
+                .attr("href", "#")
+                .append($("<small>)")
+                    .text("top"))
+                .on("click", function(e) {
+                    $.scrollToTop(); e.preventDefault();
+                }))
+            .appendTo(this.$div)
+    }
+    this.$controls = $("<div>").addClass("controls").appendTo(this.$div);
+};
+BaseController.prototype = {
+    _addHelpText: function(options) {
+        if (options.helpText) {
+            $("<span>")
+                .addClass("help-block")
+                .text(options.helpText)
+                .appendTo(this.$controls);
+        }
+    }
+};
+
+var CompositeController = function(options) {
+    BaseController.call(this, options);
+    this.menu = menu.composite(this, options);
+    options.value = options.value || {};
+    this._addHelpText(options);
+    this.delegates = {};
+};
+CompositeController.prototype = Object.create(BaseController.prototype);
+
+CompositeController.prototype.val = function() {
+    var ret = {}, key;
+    for (key in this.delegates) {
+        if (this.delegates.hasOwnProperty(key)) {
+            ret[key] = this.delegates[key].val();
+        }
+    }
+    return ret;
+};
+
+var SimpleController = function(options) {
+    BaseController.call(this, options);
+    this.$div.addClass("well well-small");
+    this.menu = menu.simple(this, options);
+};
+SimpleController.prototype = Object.create(BaseController.prototype);
+
 function NillableController(options) {
+    options.delegateOptions = options.delegateOptions || {};
+    options.label = options.label || options.delegateOptions.label;
+    options.delegateOptions.label = options.delegateOptions.label || options.label;
 
-    this.$div = $(options.div).addClass("nillable well well-small");
-    var $controls = $("<div>").addClass("controls").appendTo(this.$div);
+    BaseController.call(this, util.mixin(options, {class: "nillable"}));
 
-    var $header = $("<label>")
-        .addClass("control-label")
-        .text(options.label)
-        .appendTo($controls);
+    this.$div.addClass("well well-small");
+
 
     this.$nilReason = $("<input>")
             .addClass("span2")
@@ -212,303 +362,115 @@ function NillableController(options) {
                 .addClass("btn-group")
                 .append(this.$reasonsButton)
                 .append($reasons)))
-        .appendTo($header);
+        .appendTo(this.$label);
 
     options.value = options.value || {nil: true, reason: "missing"};
-    var isNil = !!options.value.nil;
 
-    this.$delegateDiv = $("<div>").hide().appendTo($controls);
+
+    function CustomMenu() {
+        var parent = arguments[0];
+        this.menus = util.toArray(arguments);
+        this.menus.shift();
+
+        this.hide = function() {
+            for (var i = 0; i < this.menus.length; ++i) {
+                this.menus[i].hide();
+            }
+        };
+        this.remove = function() {
+            for (var i = 0; i < this.menus.length; ++i) {
+                this.menus[i].remove();
+            }
+
+        };
+        this.show = function() {
+            for (var i = 0; i < this.menus.length; ++i) {
+                this.menus[i].show();
+            }
+        };
+        this.addTo = function(menu, index) {
+            if (index >= 0) {
+                for (var i = 0; i < this.menus.length; ++i) {
+                    this.menus[i].addTo(menu, index);
+                    index += this.menus[i].length;
+                }
+            } else {
+                for (var i = 0; i < this.menus.length; ++i) {
+                    this.menus[i].addTo(menu);
+                }
+            }
+        };
+
+        this.length = 0;
+        for (var i = 0; i < this.menus.length; ++i) {
+            this.length += this.menus[i].length;
+        }
+        if (parent) {
+            this.addTo(parent);
+        }
+    }
+    this.isNil = !!options.value.nil;
+
+    this.$delegateDiv = $("<div>").hide().appendTo(this.$controls);
     this.delegate = new options.delegate(util.mixin(options.delegateOptions, {
         div: this.$delegateDiv,
-        value: isNil ? null : options.value
+        value: this.isNil ? null : options.value,
+        showLabel: false
     }));
     this.$delegateDiv.removeClass("well well-small");
 
-    if (isNil) {
+    this.nilmenu = menu.simple(this, options);
+    this.nilmenu.$el.find("a").addClass("muted");
+    this.menu = new CustomMenu(options.menu, this.nilmenu, this.delegate.menu);
+    this._setMenu();
+
+    if (this.isNil) {
         this.$nilReason.show();
         this.setNil(options.value.reason || "missing");
     } else {
         this.$delegateDiv.show();
     }
 }
-util.mixin(NillableController.prototype, {
-    val: function() {
-        return this.nil ? {
-            nil: true, reason: this.$nilReason.val()
-        } : this.delegate.val();
-    },
-    _onNilButtonClick: function(){
-        this.nil = !this.nil;
-        this.$nilButton.toggleClass("btn-warning");
-        this.$reasonsButton.toggleClass("btn-warning");
-        this.$delegateDiv.slideToggle("fast");
-        this.$nilReason.toggleAttr("disabled").verticalSlideToggle("fast");
-    },
-    setNil: function(reason) {
-        this.nil = true;
-        this.$nilButton.addClass("btn-warning");
-        this.$reasonsButton.addClass("btn-warning");
-        this.$nilReason.removeAttr("disabled").val(reason).slideRight();
 
-        // if an animation is used the doesn't become hidden. hide() works...
-        util.defer(util.hitch(this.$delegateDiv, "slideUp", "fast"));
-    }
-});
-
-function StringController(options) {
-    this.$div = $(options.div)
-        .addClass("string well well-small");
-    var $controls = $("<div>")
-        .addClass("controls")
-        .appendTo(this.$div);
-    if (options.label)
-    $("<label>")
-        .addClass("control-label")
-        .text(options.label || "")
-        .appendTo($controls);
-    this.$input = $("<input>")
-        .attr("type", "text")
-        .attr("placeholder", options.placeholder || "")
-        .val(options.value || "")
-        .appendTo($controls);
-    $("<span>")
-        .addClass("help-block")
-        .text(options.helpText)
-        .appendTo($controls);
-}
-util.mixin(StringController.prototype, {
-    val: function() {
-        return this.$input.val();
-    }
-});
-
-function CheckBoxController(options) {
-    this.$div = $(options.div)
-        .addClass("checkbox");
-    var $controls = $("<div>")
-        .addClass("controls")
-        .appendTo(this.$div);
-    $("<label>")
-        .addClass("control-label")
-        .text(options.label || "")
-        .appendTo($controls);
-    var $label = $("<label>")
-        .addClass("checkbox")
-        .text(options.description)
-        .appendTo($controls);
-    this.$input = $("<input>")
-        .attr("type", "checkbox")
-        .appendTo($label);
-
-    if (options.value) {
-        this.$input.checked();
-    }
-
-    $("<span>")
-        .addClass("help-block")
-        .text(options.helpText)
-        .appendTo($controls);
-}
-util.mixin(CheckBoxController.prototype, {
-    val: function() {
-        return this.$input.attr("checked") === "checked";
-    }
-});
-
-
-function InspireIdController(options) {
-    this.$div = $(options.div)
-        .addClass("inspire-id ");
-    options.value = options.value || {};
-    if (options.label)
-        $("<label>")
-            .addClass("control-label")
-            .text(options.label || "Inpire ID")
-            .appendTo(this.$div);
-    var $controls = $("<div>")
-        .addClass("controls")
-        .appendTo(this.$div);
-    if (options.helpText) {
-        $("<span>")
-            .addClass("help-block")
-            .text(options.helpText)
-            .appendTo($controls);
-    }
-    this.localId = new StringController({
-        div: $("<div>").appendTo($controls),
-        value: options.value.localId,
-        placeholder: "Local ID",
-        label: "Local ID",
-        helpText: "A local identifier, assigned by the data provider. The local identifier is unique within the namespace, that is no other spatial object carries the same unique identifier. It is the responsibility of the data provider to guarantee uniqueness of the local identifier within the namespace."
-    });
-    this.namespace = new StringController({
-        div: $("<div>").appendTo($controls),
-        value: options.value.namespace,
-        placeholder: "Namespace",
-        label: "Namespace",
-        helpText: "Namespace uniquely identifying the data source of the spatial object. The namespace value will be owned by the data provider of the spatial object and will be registered in the INSPIRE External Object Identifier Namespaces Register."
-    });
-    this.versionId = new NillableController({
-        div: $("<div>").appendTo($controls),
-        value: options.value.versionId,
-        delegate: StringController,
-        label: "Version ID",
-        delegateOptions: {
-            placeholder: "Version ID",
-            helpText: 'The identifier of the particular version of the spatial object, with a maximum length of 25 characters. If the specification of a spatial object type with an external object identifier includes life-cycle information, the version identifier is used to distinguish between the different versions of a spatial object. Within the set of all versions of a spatial object, the version identifier is unique. The maximum length has been selected to allow for time stamps based on ISO 8601, for example, "2007-02-12T12:12:12+05:30" as the version identifier. The property is void, if the spatial data set does not distinguish between different versions of the spatial object. It is missing, if the spatial object type does not support any life-cycle information.'
-        }
-    });
-}
-util.mixin(InspireIdController.prototype, {
-    val: function() {
-        return {
-            localId: this.localId.val(),
-            namespace: this.namespace.val(),
-            versionId: this.versionId.val()
-        };
-    }
-});
-
-function EReportingHeaderController(options) {
-    this.$div = $(options.div)
-        .addClass("reporting-header");
-    options.value = options.value || {};
-    if (options.label)
-        $("<label>")
-            .addClass("control-label")
-            .text(options.label)
-            .appendTo(this.$div);
-    var $controls = $("<div>")
-        .addClass("controls")
-        .appendTo(this.$div);
-    if (options.helpText) {
-        $("<span>")
-            .addClass("help-block")
-            .text(options.helpText)
-            .appendTo($controls);
-    }
-    this.inpireId = new InspireIdController({
-        div: $("<div>").appendTo($controls),
-        label: "Inspire ID",
-        value: options.value.inspireId,
-        helpText: "External object identifier of the spatial object. An external object identifier is a unique object identifier published by the responsible body, which may be used by external application to reference the spatial object. The identifier is an identifier of the spatial object, not an identifier of the real-world phenomenon."
-    });
-    this.change = new EReportingChangeController({
-        div: $("<div>").appendTo($controls),
-        value: options.value.change
-    });
-    this.reportingAuthority = new ReportingAuthorityController({
-       div: $("<div>").appendTo($controls),
-       label: "Reporting Authority",
-       helpText: "Contact information for the Public Authority responsible for creating or collating the data that represents the Reporting Unit and submitting the data to relevant Authority.",
-       value: options.value.reportingAuthority
-    });
-
-    /*
-    this.reportingPeriod = new TimeController({
-        div: $("<div>").appendTo($controls),
-        label: "Reporting Period",
-        helpText: "Date defining the reporting period. The reporting period may be represented as either a time period (e.g. 2011-01-01 to 2011-12-31) or as a single date representing the reporting year (e.g. 2011)."
-        value: options.value.reportingPeriod
-    });
-    */
-
-    this.content = new ListController({
-        div: $("<div>").appendTo($controls),
-        label: "Contents",
-        delegate: NillableController,
-        delegateOptions: {
-            delegate: ReferenceController,
-            label: "Content",
-            delegateOptions: {
-                helpText: "Content"
-            }
-        },
-        value: options.value.content
-    });
-    this["delete"] = new ListController({
-        div: $("<div>").appendTo($controls),
-        label: "Deletes",
-        delegate: NillableController,
-        delegateOptions: {
-            delegate: ReferenceController,
-            label: "Delete",
-            delegateOptions: {
-                helpText: "Delete"
-            }
-        },
-        value: options.value.content
-    });
+NillableController.prototype = Object.create(BaseController.prototype);
+NillableController.prototype.val =  function() {
+    return this.nil ? {
+        nil: true, reason: this.$nilReason.val()
+    } : this.delegate.val();
 };
-util.mixin(EReportingHeaderController.prototype, {
-    val : function() {
-        return {
-            inspireId: this.inpireId.val(),
-            change: this.change.val(),
-            reportingAuthority: this.reportingAuthority.val(),
-            "delete": this["delete"].val(),
-            content: this.content.val()
-        };
+NillableController.prototype._onNilButtonClick = function(){
+    this.nil = !this.nil;
+    this.$nilButton.toggleClass("btn-warning");
+    this.$reasonsButton.toggleClass("btn-warning");
+    this.$delegateDiv.slideToggle("fast");
+    this.$nilReason.toggleAttr("disabled").verticalSlideToggle("fast");
+    this._setMenu();
+};
+NillableController.prototype._setMenu = function() {
+    if (this.nil) {
+        this.delegate.menu.hide();
+        this.nilmenu.show();
+    } else {
+        this.nilmenu.hide();
+        this.delegate.menu.show();
     }
-});
-
-function EReportingChangeController(options) {
-    this.$div = $(options.div)
-        .addClass("reporting-change");
-    options.value = options.value || {};
-    if (options.label)
-        $("<label>")
-            .addClass("control-label")
-            .text(options.label || "Change")
-            .appendTo(this.$div);
-    var $controls = $("<div>")
-        .addClass("controls")
-        .appendTo(this.$div);
-    if (options.helpText) {
-        $("<span>")
-            .addClass("help-block")
-            .text(options.helpText)
-            .appendTo($controls);
-    }
-    this.change = new CheckBoxController({
-        div: $("<div>").appendTo($controls),
-        label: "Change",
-        description: "Change",
-        helpText: '"true" if changes to previous submission, otherwise "false"',
-        value: options.value.changed
-    });
-    this.description = new StringController({
-        div: $("<div>").appendTo($controls),
-        placeholder: "Description",
-        label: "Change Description",
-        helpText: "States if information has changed from that reported the previous year. If change='false', the information below can be skipped.",
-        value: options.value.description
-    });
-}
-util.mixin(EReportingChangeController.prototype,{
-    val: function() {
-        return {
-            changed: this.change.val(),
-            description: this.description.val()
-        };
-    }
-});
+};
+NillableController.prototype.setNil = function(reason) {
+    this.nil = true;
+    this.$nilButton.addClass("btn-warning");
+    this.$reasonsButton.addClass("btn-warning");
+    this.$nilReason.removeAttr("disabled").val(reason).slideRight();
+    this._setMenu();
+    // if an animation is used the doesn't become hidden. hide() works...
+    util.defer(util.hitch(this.$delegateDiv, "slideUp", "fast"));
+};
 
 function ListController(options) {
-    this.$div = $(options.div)
-        .addClass("list");
-    if (options.label)
-        $("<label>")
-            .addClass("control-label")
-            .text(options.label)
-            .appendTo(this.$div);
-    if (options.helpText) {
-        $("<span>")
-            .addClass("help-block")
-            .text(options.helpText)
-            .appendTo(this.$div);
-    }
+    BaseController.call(this, util.mixin(options, {class: "list"}));
+    this._addHelpText(options);
+
     this.options = options.delegateOptions;
+    this.menu = menu.composite(this, options);
     this.delegate = options.delegate;
     this.$items = $("<div>").addClass("list-items").appendTo(this.$div);
     this.children = [];
@@ -524,633 +486,114 @@ function ListController(options) {
         this._add(util.mixin({}, this.options, { value: options.value[i] }));
     }
 }
-util.mixin(ListController.prototype, {
-    val: function() {
-        return this.children.map(function(c){ return c.val(); });
-    },
-    _add: function(options, index) {
-        var $item = $("<div>").hide()
-            .addClass("list-item")
-            .append($("<div>")
-                .addClass("btn-group")
-                .append($("<button>")
-                    .attr("type", "button")
-                    .addClass("btn")
-                    .on("click", util.hitch(this, this._onAdd))
-                    .append($("<i>").addClass("icon-plus")))
-                .append($("<button>")
-                    .attr("type", "button")
-                    .addClass("btn")
-                    .on("click", util.hitch(this, this._onRemove))
-                    .append($("<i>").addClass("icon-minus"))));
+ListController.prototype = Object.create(BaseController.prototype);
+ListController.prototype.val = function() {
+    return this.children.map(function(c){ return c.val(); });
+};
+ListController.prototype._add = function(options, index) {
+    var $item = $("<div>").hide()
+        .addClass("list-item")
+        .append($("<div>")
+            .addClass("btn-group")
+            .append($("<button>")
+                .attr("type", "button")
+                .addClass("btn")
+                .on("click", util.hitch(this, this._onAdd))
+                .append($("<i>").addClass("icon-plus")))
+            .append($("<button>")
+                .attr("type", "button")
+                .addClass("btn")
+                .on("click", util.hitch(this, this._onRemove))
+                .append($("<i>").addClass("icon-minus"))));
 
-        var options = util.mixin({}, options, { div: $("<div>").appendTo($item) });
-        var delegate = new this.delegate(options);
-        index = index >= 0 ? index : this.children.length;
-        this.children.splice(index, 0, delegate);
-        this.$items.insertAt(index, $item);
-        $item.slideDown("fast");
-    },
-    _remove: function(index) {
-        this.children.splice(index, 1);
-        this.$items.children().eq(index).slideRemove("fast");
-    },
-    _onAdd: function(e) {
-        var $parent = $(e.delegateTarget).parent().parent();
-        this._add(this.options, $parent.hasClass("list-item") ? $parent.index() : -1);
-    },
-    _onRemove: function(e) {
-        this._remove($(e.delegateTarget).parent().parent().index());
+    var options = util.mixin({}, options, {div: $("<div>").appendTo($item)});
+    var delegate = new this.delegate(options);
+    index = index >= 0 ? index : this.children.length;
+    var menuIndex = 0;
+    for (var i = 0; i < index; ++i) {
+        if (this.children[i] && this.children[i].menu) {
+            menuIndex += this.children[i].menu.length;
+        }
     }
-});
+    delegate.menu.addTo(this.menu, menuIndex);
+    this.children.splice(index, 0, delegate);
+    this.$items.insertAt(index, $item);
+    $item.slideDown("fast");
+};
+ListController.prototype._remove = function(index) {
+    var child = this.children.splice(index, 1)[0];
+    child && child.menu && child.menu.remove();
+    this.$items.children().eq(index).slideRemove("fast");
+};
+ListController.prototype._onAdd = function(e) {
+    var $parent = $(e.delegateTarget).parent().parent();
+    this._add(this.options, $parent.hasClass("list-item") ? $parent.index() : -1);
+};
+ListController.prototype._onRemove = function(e) {
+    this._remove($(e.delegateTarget).parent().parent().index());
+};
 
-function ReportingAuthorityController(options) {
-    this.$div = $(options.div)
-        .addClass("reporting-authority");
-    options.value = options.value || {};
-    if (options.label)
-        $("<label>")
-            .addClass("control-label")
-            .text(options.label || "Reporting Authority")
-            .appendTo(this.$div);
-    var $controls = $("<div>")
-        .addClass("controls")
-        .appendTo(this.$div);
-    if (options.helpText) {
-        $("<span>")
-            .addClass("help-block")
-            .text(options.helpText)
-            .appendTo($controls);
-    }
-
-    this.individualName = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: StringController,
-        label: "Individual Name",
-        delegateOptions: {
-            placeholder: "Individual Name",
-            helpText: "Name of the related person."
-        },
-        value: options.value.individualName
-    });
-    this.organisationName = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: StringController,
-        label: "Organsiation Name",
-        delegateOptions: {
-            placeholder: "Organsiation Name",
-            helpText: "Name of the related organisation."
-        },
-        value: options.value.organisationName
-    });
-    this.positionName = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: StringController,
-        label: "Position Name",
-        delegateOptions: {
-            placeholder: "Position Name",
-            helpText: "Position of the party in relation to a resource, such as head of department."
-        },
-        value: options.value.positionName
-    });
-    this.roles = new ListController({
-        div: $("<div>").appendTo($controls),
-        label: "Roles",
-        helpText: "Role(s) of the party in relation to a resource, such as owner.",
-        delegate: NillableController,
-        delegateOptions: {
-            delegate: ReferenceController,
-            label: "Role",
-            delegateOptions: {
-                placeholder: "Role",
-                helpText: "Role of the party in relation to a resource, such as owner."
-            }
-        },
-        value: options.value.roles
-    });
-    this.contact = new ContactController({
-        div: $("<div>").appendTo($controls),
-        label: "Contact",
-        value: options.value.contact,
-        helpText: "Contact information for the related party."
-    });
+function StringController(options) {
+    SimpleController.call(this, util.mixin(options, {class:"string"}));
+    this.$input = $("<input>")
+        .attr("type", "text")
+        .attr("placeholder", options.placeholder)
+        .val(options.value)
+        .appendTo(this.$controls);
+    this._addHelpText(options);
 }
-util.mixin(ReportingAuthorityController.prototype, {
-    val: function() {
-        return {
-            contact: this.contact.val(),
-            individualName: this.individualName.val(),
-            organisationName: this.organisationName.val(),
-            positionName: this.positionName.val(),
-            roles: this.roles.val()
-        };
+StringController.prototype = Object.create(SimpleController.prototype);
+StringController.prototype.val = function() {
+    return this.$input.val();
+};
+
+function CheckBoxController(options) {
+    SimpleController.call(this, util.mixin(options, {class: "checkbox"}));
+    var $label = $("<label>")
+        .addClass("checkbox")
+        .text(options.description)
+        .appendTo(this.$controls);
+    this.$input = $("<input>")
+        .attr("type", "checkbox")
+        .appendTo($label);
+
+    if (options.value) {
+        this.$input.checked();
     }
-});
+    this._addHelpText(options);
+}
+CheckBoxController.prototype = Object.create(SimpleController.prototype);
+CheckBoxController.prototype.val = function() {
+    return this.$input.attr("checked") === "checked";
+};
 
 function ReferenceController(options) {
-    this.$div = $(options.div)
-        .addClass("reference well well-small");
+    SimpleController.call(this, util.mixin(options, {class: "reference"}));
     options.value = options.value || {};
-    if (options.label)
-        $("<label>")
-            .addClass("control-label")
-            .text(options.label || "Reference")
-            .appendTo(this.$div);
-    var $controls = $("<div>")
-        .addClass("controls")
-        .appendTo(this.$div);
-
     this.$href = $("<input>").type("text").attr("placeholder", "URL").val(options.value.href);
     this.$title = $("<input>").type("text").attr("placeholder", "Title").val(options.value.title);
-
-
     $("<div>")
         .addClass("controls-row")
         .append($("<label>").text("Title"))
         .append(this.$title)
         .append($("<label>").text("URL"))
         .append(this.$href)
-        .appendTo($controls);
+        .appendTo(this.$controls);
 
-    if (options.helpText) {
-        $("<span>")
-            .addClass("help-block")
-            .text(options.helpText)
-            .appendTo($controls);
-    }
-
+    this._addHelpText(options);
 }
-util.mixin(ReferenceController.prototype, {
-    val: function() {
-        var href = {href: this.$href.val()};
-        if (this.title.val()) { href.title = this.$title.val(); }
-        return href;
-    }
-});
-
-function ContactController(options) {
-    this.$div = $(options.div)
-        .addClass("contact");
-    options.value = options.value || {};
-    if (options.label)
-        $("<label>")
-            .addClass("control-label")
-            .text(options.label || "Contact")
-            .appendTo(this.$div);
-    var $controls = $("<div>")
-        .addClass("controls")
-        .appendTo(this.$div);
-    if (options.helpText) {
-        $("<span>")
-            .addClass("help-block")
-            .text(options.helpText)
-            .appendTo($controls);
-    }
-
-    this.contactInstructions = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: StringController,
-        label: "Contact Instructions",
-        delegateOptions: {
-            placeholder: "Contact Instructions",
-            helpText: "Supplementary instructions on how or when to contact an individual or organisation."
-        },
-        value: options.value.contactInstructions
-    });
-    this.electronicMailAddress = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: StringController,
-        label: "E-Mail",
-        delegateOptions: {
-            placeholder: "E-Mail",
-            helpText: "An address of the organisation's or individual's electronic mailbox."
-        },
-        value: options.value.electronicMailAddress
-    });
-    this.hoursOfService = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: StringController,
-        label: "Hours of Service",
-        delegateOptions: {
-            placeholder: "Hours of Service",
-            helpText: "Periods of time when the organisation or individual can be contacted."
-        },
-        value: options.value.hoursOfService
-    });
-
-    this.telephoneVoice = new ListController({
-        div: $("<div>").appendTo($controls),
-        label: "Telephone Voice",
-        delegate: NillableController,
-        delegateOptions: {
-            delegate: StringController,
-            label: "Telephone Voice",
-            delegateOptions: {
-                placeholder: "Telephone Voice",
-                helpText: "Telephone number of the organisation or individual."
-            }
-        },
-        value: options.value.telephoneVoice
-    });
-
-    this.telephoneFacsimile = new ListController({
-        div: $("<div>").appendTo($controls),
-        label: "Telephone Facsimile",
-        delegate: NillableController,
-        delegateOptions: {
-            delegate: StringController,
-            label: "Telephone Facsimile",
-            delegateOptions: {
-                placeholder: "Telephone Facsimile",
-                helpText: "Number of a facsimile machine of the organisation or individual."
-            }
-        },
-        value: options.value.telephoneFacsimile
-    });
-
-    this.website = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: StringController,
-        label: "Website",
-        delegateOptions: {
-            placeholder: "Website",
-            helpText: "Pages provided on the World Wide Web by the organisation or individual."
-        },
-        value: options.value.website
-    });
-
-    this.address = new AddressController({
-        div: $("<div>").appendTo($controls),
-        label: "Address",
-        helpText: "Representation of an address spatial object for use in external application schemas that need to include the basic, address information in a readable way. The data type includes the all necessary readable address components as well as the address locator(s), which allows the identification of the address spatial objects, e.g., country, region, municipality, address area, post code, street name and address number. It also includes an optional reference to the full address spatial object. The datatype could be used in application schemas that wish to include address information e.g. in a dataset that registers buildings or properties.",
-        value: options.value.address
-    });
-}
-util.mixin(ContactController.prototype, {
-    val: function() {
-        return {
-            contactInstructions: this.contactInstructions.val(),
-            electronicMailAddress: this.electronicMailAddress.val(),
-            hoursOfService: this.hoursOfService.val(),
-            telephoneVoice: this.telephoneVoice.val(),
-            telephoneFacsimile: this.telephoneFacsimile.val(),
-            address: this.address.val(),
-            website: this.website.val()
-        };
-    }
-});
-
-function AddressController(options) {
-    this.$div = $(options.div)
-        .addClass("address");
-    options.value = options.value || {};
-    if (options.label)
-        $("<label>")
-            .addClass("control-label")
-            .text(options.label || "Address")
-            .appendTo(this.$div);
-    var $controls = $("<div>")
-        .addClass("controls")
-        .appendTo(this.$div);
-    if (options.helpText) {
-        $("<span>")
-            .addClass("help-block")
-            .text(options.helpText)
-            .appendTo($controls);
-    }
-
-
-    this.locatorDesignators = new ListController({
-        div: $("<div>").appendTo($controls),
-        delegate: StringController,
-        label: "Locator Designators",
-        delegateOptions: {
-            label: "Locator Designator",
-            placeholder: "Locator Designator",
-            helpText: "A number or a sequence of characters which allows a user or an application to interpret, parse and format the locator within the relevant scope. A locator may include more locator designators."
-        },
-        value: options.value.locatorDesignators,
-        helpText: "A number or a sequence of characters which allows a user or an application to interpret, parse and format the locator within the relevant scope. A locator may include more locator designators."
-    });
-    this.postCode = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: StringController,
-        label: "Post Code",
-        delegateOptions: {
-            placeholder: "Post Code",
-            helpText: "A code created and maintained for postal purposes to identify a subdivision of addresses and postal delivery points."
-        },
-        value: options.value.postCode,
-        helpText: "A code created and maintained for postal purposes to identify a subdivision of addresses and postal delivery points."
-    });
-
-    this.adminUnits = new ListController({
-        div: $("<div>").appendTo($controls),
-        delegate: GeographicalNameController,
-        label: "Administrative Units",
-        delegateOptions: {
-            label: "Administrative Unit",
-            helpText: "The name of a unit of administration where a Member State has and/or exercises jurisdictional rights, for local, regional and national governance."
-        },
-        helpText: "The name or names of a unit of administration where a Member State has and/or exercises jurisdictional rights, for local, regional and national governance.",
-        value: options.value.adminUnits
-    });
-    this.locatorNames = new ListController({
-        div: $("<div>").appendTo($controls),
-        delegate: GeographicalNameController,
-        label: "Locator Names",
-        delegateOptions: {
-            label: "Locator Name",
-            helpText: "Proper noun applied to the real world entity identified by the locator."
-        },
-        value: options.value.locatorNames,
-        helpText: "Proper noun(s) applied to the real world entity identified by the locator."
-    });
-    this.addressAreas = new ListController({
-        div: $("<div>").appendTo($controls),
-        delegate: NillableController,
-        label: "Address Areas",
-        delegateOptions: {
-            delegate: GeographicalNameController,
-            label: "Address Area",
-            helpText: "The name or names of a geographic area or locality that groups a number of addressable objects for addressing purposes, without being an administrative unit."
-        },
-        value: options.value.addressAreas,
-        helpText: "The name or names of a geographic area or locality that groups a number of addressable objects for addressing purposes, without being an administrative unit."
-    });
-    this.postNames = new ListController({
-        div: $("<div>").appendTo($controls),
-        delegate: NillableController,
-        label: "Post Names",
-        delegateOptions: {
-            delegate: GeographicalNameController,
-            label: "Post Name",
-            helpText: "Name created and maintained for postal purposes to identify a subdivision of addresses and postal delivery points."
-        },
-        value: options.value.postNames,
-        helpText: "One or more names created and maintained for postal purposes to identify a subdivision of addresses and postal delivery points."
-
-    });
-    this.thoroughfares = new ListController({
-        div: $("<div>").appendTo($controls),
-        delegate: NillableController,
-        label: "Thoroughfares",
-        delegateOptions: {
-            delegate: GeographicalNameController,
-            label: "Thoroughfare",
-            helpText: "The name of a passage or way through from one location to another like a road or a waterway."
-        },
-        value: options.value.thoroughfares,
-        helpText: "The name or names of a passage or way through from one location to another like a road or a waterway."
-    });
-    this.addressFeature = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: ReferenceController,
-        label: "Address Feature",
-        delegateOptions: {
-            placeholder: "Address Feature",
-            helpText: "Address Feature"
-        },
-        value: options.value.addressFeature
-    });
-}
-util.mixin(AddressController.prototype, {
-    val: function() {
-        return {
-            addressAreas: this.addressAreas.val(),
-            addressFeature: this.addressFeature.val(),
-            adminUnits: this.adminUnits.val(),
-            locatorDesignators: this.locatorDesignators.val(),
-            locatorNames: this.locatorNames.val(),
-            postCode: this.postCode.val(),
-            postNames: this.postNames.val(),
-            thoroughfares: this.thoroughfares.val()
-        };
-    }
-});
-
-function GeographicalNameController(options) {
-    this.$div = $(options.div)
-        .addClass("geographical-name");
-    options.value = options.value || {};
-    if (options.label)
-        $("<label>")
-            .addClass("control-label")
-            .text(options.label || "Geographical Name")
-            .appendTo(this.$div);
-    var $controls = $("<div>")
-        .addClass("controls")
-        .appendTo(this.$div);
-    if (options.helpText) {
-        $("<span>")
-            .addClass("help-block")
-            .text(options.helpText)
-            .appendTo($controls);
-    }
-
-    this.grammaticalGender = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: CodeTypeController,
-        label: "Grammatical Gender",
-        delegateOptions: {
-            helpText: "Class of nouns reflected in the behaviour of associated words."
-        },
-        value: options.value.grammaticalGender
-    });
-    this.grammaticalNumber = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: CodeTypeController,
-        label: "Grammatical Number",
-        delegateOptions: {
-            helpText: "Grammatical category of nouns that expresses count distinctions."
-        },
-        value: options.value.grammaticalNumber
-    });
-    this.language = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: StringController,
-        label: "Language",
-        delegateOptions: {
-            helpText: 'Language of the name, given as a three letters code, in accordance with either ISO 639-3 or ISO 639-5. More precisely, this definition refers to the language used by the community that uses the name. The code "mul" for "multilingual" should not be used in general. However it can be used in rare cases like official names composed of two names in different languages. For example, "Vitoria-Gasteiz" is such a multilingual official name in Spain. Even if this attribute is "voidable" for pragmatic reasons, it is of first importance in several use cases in the multi-language context of Europe.'
-        },
-        value: options.value.language
-    });
-    this.nameStatus = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: CodeTypeController,
-        label: "Name Status",
-        delegateOptions: {
-            helpText: 'Qualitative information enabling to discern which credit should be given to the name with respect to its standardisation and/or its topicality. The Geographical Names application schema does not explicitly make a preference between different names (e.g. official endonyms) of a specific real world entity. The necessary information for making the preference (e.g. the linguistic status of the administrative or geographic area in question), for a certain use case, must be obtained from other data or information sources. For example, the status of the language of the name may be known through queries on the geometries of named places against the geometry of administrative units recorded in a certain source with the language statuses information.'
-        },
-        value: options.value.nameStatus
-    });
-    this.nativeness = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: CodeTypeController,
-        label: "Nativeness",
-        delegateOptions: {
-            helpText: "Information enabling to acknowledge if the name is the one that is/was used in the area where the spatial object is situated at the instant when the name is/was in use."
-        },
-        value: options.value.nativeness
-    });
-    this.pronunciation = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: PronunciationController,
-        label: "Pronunciation",
-        delegateOptions: {
-            helpText: "Proper, correct or standard (standard within the linguistic community concerned) pronunciation of the geographical name."
-        },
-        value: options.value.pronunciation
-    });
-    this.spelling = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: SpellingController,
-        label: "Spelling",
-        delegateOptions: {
-            helpText: "A proper way of writing the geographical name. Different spellings should only be used for names rendered in different scripts. While a particular GeographicalName should only have one spelling in a given script, providing different spellings in the same script should be done through the provision of different geographical names associated with the same named place."
-        },
-        value: options.value.spelling
-    });
-    this.sourceOfName = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: StringController,
-        label: "Source of Name",
-        delegateOptions: {
-            helpText: "Original data source from which the geographical name is taken from and integrated in the data set providing/publishing it. For some named spatial objects it might refer again to the publishing data set if no other information is available (e.g. Gazetteer, geographical names data set)."
-        },
-        value: options.value.sourceOfName
-    });
-}
-util.mixin(GeographicalNameController.prototype, {
-    val: function() {
-        return {
-            grammaticalGender: this.grammaticalGender.val(),
-            grammaticalNumber: this.grammaticalNumber.val(),
-            language: this.language.val(),
-            nameStatus: this.nameStatus.val(),
-            nativeness: this.nativeness.val(),
-            pronunciation: this.pronunciation.val(),
-            sourceOfName: this.sourceOfName.val(),
-            spelling: this.spelling.val()
-        };
-    }
-});
-
-function PronunciationController(options) {
-    this.$div = $(options.div)
-        .addClass("pronunciation");
-    options.value = options.value || {};
-    if (options.label)
-        $("<label>")
-            .addClass("control-label")
-            .text(options.label)
-            .appendTo(this.$div);
-    var $controls = $("<div>")
-        .addClass("controls")
-        .appendTo(this.$div);
-    if (options.helpText) {
-        $("<span>")
-            .addClass("help-block")
-            .text(options.helpText)
-            .appendTo($controls);
-    }
-    this.ipa = new StringController({
-        div: $("<div>").appendTo($controls),
-        label: "IPA",
-        placeholder: "IPA",
-        helpText: "Proper, correct or standard (standard within the linguistic community concerned) pronunciation of a name, expressed in International Phonetic Alphabet (IPA).",
-        value: options.value.ipa
-    });
-    this.soundLink = new StringController({
-        div: $("<div>").appendTo($controls),
-        label: "Sound Link",
-        placeholder: "Sound Link",
-        helpText: "Proper, correct or standard (standard within the linguistic community concerned) pronunciation of a name, expressed by a link to any sound file.",
-        value: options.value.soundLink
-    });
-}
-util.mixin(PronunciationController.prototype, {
-    val: function() {
-        return {
-            ipa: this.ipa.val(),
-            soundLink: this.soundLink.val()
-        };
-    }
-});
-
-function SpellingController(options) {
-    this.$div = $(options.div)
-        .addClass("spelling");
-    options.value = options.value || {};
-    if (options.label)
-        $("<label>")
-            .addClass("control-label")
-            .text(options.label)
-            .appendTo(this.$div);
-    var $controls = $("<div>")
-        .addClass("controls")
-        .appendTo(this.$div);
-    if (options.helpText) {
-        $("<span>")
-            .addClass("help-block")
-            .text(options.helpText)
-            .appendTo($controls);
-    }
-    this.text = new StringController({
-        div: $("<div>").appendTo($controls),
-        label: "Text",
-        placeholder: "Text",
-        helpText: "Way the name is written.",
-        value: options.value.text
-    });
-    this.script = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: StringController,
-        label: "Script",
-        delegateOptions: {
-            placeholder: "Script",
-            helpText: 'Set of graphic symbols (for example an alphabet) employed in writing the name, expressed using the four letters codes defined in ISO 15924, where applicable (e.g. Cyrillic, Greek, Roman/Latin scripts). The four letter codes for Latin (Roman), Cyrillic and Greek script are "Latn", "Cyrl" and "Grek", respectively. In rare cases other codes could be used (for other scripts than Latin, Greek and Cyrillic). However, this should mainly apply for historical names in historical scripts. This attribute is of first importance in the multi-scriptual context of Europe.'
-        },
-        value: options.value.script
-    });
-    this.transliterationScheme = new NillableController({
-        div: $("<div>").appendTo($controls),
-        delegate: StringController,
-        label: "Transliteration Scheme",
-        delegateOptions: {
-            placeholder: "Transliteration Scheme",
-            helpText: "Method used for the names conversion between different scripts. This attribute should be filled for any transliterated spellings. If the transliteration scheme used is recorded in codelists maintained by ISO or UN, those codes should be preferred."
-        },
-        value: options.value.transliterationScheme
-    });
-}
-util.mixin(SpellingController.prototype, {
-    val: function() {
-        return {
-            text: this.text.val(),
-            script: this.script.val(),
-            transliterationScheme: this.transliterationScheme.val()
-        };
-    }
-});
+ReferenceController.prototype = Object.create(SimpleController.prototype);
+ReferenceController.prototype.val = function() {
+    var href = {href: this.$href.val()};
+    var title = this.$title.val();
+    if (title) {href.title = title;}
+    return href;
+};
 
 function CodeTypeController(options) {
-    this.$div = $(options.div)
-        .addClass("code-type well well-small");
+    SimpleController.call(this, util.mixin(options, {class: "code-type"}));
     options.value = options.value || {};
     options.value = util.isString(options.value) ? {value: options.value} : options.value;
-
-    var $controls = $("<div>")
-        .addClass("controls")
-        .appendTo(this.$div);
-
-    if (options.label) {
-        $("<label>")
-            .addClass("control-label codetype-label")
-            .text(options.label)
-            .appendTo($controls);
-    }
-
     this.$codespace = $("<input>")
         .addClass("codetype-codespace")
         .attr("type", "text")
@@ -1160,33 +603,562 @@ function CodeTypeController(options) {
         .addClass("codetype-value")
         .attr("type", "text")
         .attr("placeholder", "Value")
-        .val(options.value.codespace);
+        .val(options.value.value);
 
     $("<div>")
-        .addClass("controls controls-row")
-        //.append($("<label>").text("Codespace"))
+        .addClass("controls-row")
         .append(this.$codespace)
-        //.append($("<label>").text("Value"))
         .append(this.$value)
-        .appendTo($controls);
+        .appendTo(this.$controls);
 
-    if (options.helpText) {
-        $("<span>")
-            .addClass("help-block codetype-helptext")
-            .text(options.helpText)
-            .appendTo($controls);
-    }
+    this._addHelpText(options);
 }
-util.mixin(CodeTypeController.prototype, {
-    val: function() {
-        var codespace = this.$codespace.val();
-        return codespace ? {
-            codespace: codespace,
-            value: this.$value.val()
-        } : this.$value.val();
-    }
-});
+CodeTypeController.prototype = Object.create(SimpleController.prototype);
+CodeTypeController.prototype.val = function() {
+    var codespace = this.$codespace.val();
+    return codespace ? {
+        codespace: codespace,
+        value: this.$value.val()
+    } : this.$value.val();
+};
 
+function InspireIdController(options) {
+    CompositeController.call(this, util.mixin(options, {class: "inpire-id"}));
+    this.delegates = {
+        localId: new StringController({
+            div: $("<div>").appendTo(this.$controls),
+            value: options.value.localId,
+            menu: this.menu,
+            placeholder: "Local ID",
+            label: "Local ID",
+            helpText: "A local identifier, assigned by the data provider. The local identifier is unique within the namespace, that is no other spatial object carries the same unique identifier. It is the responsibility of the data provider to guarantee uniqueness of the local identifier within the namespace."
+        }),
+        namespace: new StringController({
+            div: $("<div>").appendTo(this.$controls),
+            value: options.value.namespace,
+            menu: this.menu,
+            placeholder: "Namespace",
+            label: "Namespace",
+            helpText: "Namespace uniquely identifying the data source of the spatial object. The namespace value will be owned by the data provider of the spatial object and will be registered in the INSPIRE External Object Identifier Namespaces Register."
+        }),
+        versionId: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            value: options.value.versionId,
+            menu: this.menu,
+            delegate: StringController,
+            delegateOptions: {
+                label: "Version ID",
+                placeholder: "Version ID",
+                helpText: 'The identifier of the particular version of the spatial object, with a maximum length of 25 characters. If the specification of a spatial object type with an external object identifier includes life-cycle information, the version identifier is used to distinguish between the different versions of a spatial object. Within the set of all versions of a spatial object, the version identifier is unique. The maximum length has been selected to allow for time stamps based on ISO 8601, for example, "2007-02-12T12:12:12+05:30" as the version identifier. The property is void, if the spatial data set does not distinguish between different versions of the spatial object. It is missing, if the spatial object type does not support any life-cycle information.'
+            }
+        })
+    };
+}
+InspireIdController.prototype = Object.create(CompositeController.prototype);
+
+function EReportingHeaderController(options) {
+    CompositeController.call(this, util.mixin(options, {class: "reporting-header"}));
+
+    this.delegates = {
+        inspireId: new InspireIdController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            label: "Inspire ID",
+            value: options.value.inspireId,
+            helpText: "External object identifier of the spatial object. An external object identifier is a unique object identifier published by the responsible body, which may be used by external application to reference the spatial object. The identifier is an identifier of the spatial object, not an identifier of the real-world phenomenon."
+        }),
+        change: new EReportingChangeController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            label: "eReporting Change",
+            value: options.value.change
+        }),
+        reportingAuthority: new ReportingAuthorityController({
+           div: $("<div>").appendTo(this.$controls),
+           menu: this.menu,
+           label: "Reporting Authority",
+           helpText: "Contact information for the Public Authority responsible for creating or collating the data that represents the Reporting Unit and submitting the data to relevant Authority.",
+           value: options.value.reportingAuthority
+        }),
+
+        /*
+        reportingPeriod: new TimeController({
+            div: $("<div>").appendTo(this.$controls),
+            label: "Reporting Period",
+            helpText: "Date defining the reporting period. The reporting period may be represented as either a time period (e.g. 2011-01-01 to 2011-12-31) or as a single date representing the reporting year (e.g. 2011)."
+            value: options.value.reportingPeriod
+        }),
+        */
+        content: new ListController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            label: "Contents",
+            delegate: NillableController,
+            delegateOptions: {
+                delegate: ReferenceController,
+                label: "Content",
+                delegateOptions: {
+                    label: "Content",
+                    helpText: "Content"
+                }
+            },
+            value: options.value.content
+        }),
+        delete: new ListController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            label: "Deletes",
+            delegate: NillableController,
+            delegateOptions: {
+                delegate: ReferenceController,
+                label: "Delete",
+                delegateOptions: {
+                    label: "Delete",
+                    helpText: "Delete"
+                }
+            },
+            value: options.value.content
+        })
+    };
+};
+EReportingHeaderController.prototype = Object.create(CompositeController.prototype);
+
+function EReportingChangeController(options) {
+    CompositeController.call(this, util.mixin(options, {class: "reporting-change"}));
+    this.delegates = {
+        changed: new CheckBoxController({
+            div: $("<div>").appendTo(this.$controls),
+            label: "Change",
+            menu: this.menu,
+            description: "Change",
+            helpText: '"true" if changes to previous submission, otherwise "false"',
+            value: options.value.changed
+        }),
+        description: new StringController({
+            div: $("<div>").appendTo(this.$controls),
+            placeholder: "Description",
+            menu: this.menu,
+            label: "Change Description",
+            helpText: "States if information has changed from that reported the previous year. If change='false', the information below can be skipped.",
+            value: options.value.description
+        })
+    };
+}
+EReportingChangeController.prototype = Object.create(CompositeController.prototype);
+
+function ReportingAuthorityController(options) {
+    CompositeController.call(this, util.mixin(options, {class: "reporting-authority"}));
+    this.delegates = {
+        individualName: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            delegate: StringController,
+            menu: this.menu,
+            delegateOptions: {
+                label: "Individual Name",
+                placeholder: "Individual Name",
+                helpText: "Name of the related person."
+            },
+            value: options.value.individualName
+        }),
+        organisationName: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            delegate: StringController,
+            menu: this.menu,
+            delegateOptions: {
+                label: "Organsiation Name",
+                placeholder: "Organsiation Name",
+                helpText: "Name of the related organisation."
+            },
+            value: options.value.organisationName
+        }),
+        positionName: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            delegate: StringController,
+            menu: this.menu,
+            delegateOptions: {
+                label: "Position Name",
+                placeholder: "Position Name",
+                helpText: "Position of the party in relation to a resource, such as head of department."
+            },
+            value: options.value.positionName
+        }),
+        roles: new ListController({
+            div: $("<div>").appendTo(this.$controls),
+            label: "Roles",
+            helpText: "Role(s) of the party in relation to a resource, such as owner.",
+            delegate: NillableController,
+            menu: this.menu,
+            delegateOptions: {
+                delegate: ReferenceController,
+                delegateOptions: {
+                    label: "Role",
+                    placeholder: "Role",
+                    helpText: "Role of the party in relation to a resource, such as owner."
+                }
+            },
+            value: options.value.roles
+        }),
+        contact: new ContactController({
+            div: $("<div>").appendTo(this.$controls),
+            label: "Contact",
+            menu: this.menu,
+            value: options.value.contact,
+            helpText: "Contact information for the related party."
+        })
+    };
+}
+ReportingAuthorityController.prototype = Object.create(CompositeController.prototype);
+
+function ContactController(options) {
+    CompositeController.call(this, util.mixin(options, {class: "contact"}));
+    this.delegates = {
+        contactInstructions: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            delegate: StringController,
+            menu: this.menu,
+            delegateOptions: {
+                label: "Contact Instructions",
+                placeholder: "Contact Instructions",
+                helpText: "Supplementary instructions on how or when to contact an individual or organisation."
+            },
+            value: options.value.contactInstructions
+        }),
+        electronicMailAddress: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            delegate: StringController,
+            menu: this.menu,
+            label: "E-Mail",
+            delegateOptions: {
+                label: "E-Mail",
+                placeholder: "E-Mail",
+                helpText: "An address of the organisation's or individual's electronic mailbox."
+            },
+            value: options.value.electronicMailAddress
+        }),
+        hoursOfService: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            delegate: StringController,
+            menu: this.menu,
+            delegateOptions: {
+                label: "Hours of Service",
+                placeholder: "Hours of Service",
+                helpText: "Periods of time when the organisation or individual can be contacted."
+            },
+            value: options.value.hoursOfService
+        }),
+        telephoneVoice: new ListController({
+            div: $("<div>").appendTo(this.$controls),
+            label: "Phone Numbers",
+            delegate: NillableController,
+            menu: this.menu,
+            delegateOptions: {
+                delegate: StringController,
+                delegateOptions: {
+                    label: "Phone Number",
+                    placeholder: "Phone Number",
+                    helpText: "Telephone number of the organisation or individual."
+                }
+            },
+            value: options.value.telephoneVoice
+        }),
+        telephoneFacsimile: new ListController({
+            div: $("<div>").appendTo(this.$controls),
+            label: "Fax Numbers",
+            delegate: NillableController,
+            menu: this.menu,
+            delegateOptions: {
+                delegate: StringController,
+                delegateOptions: {
+                    label: "Fax Number",
+                    placeholder: "Fax Number",
+                    helpText: "Number of a facsimile machine of the organisation or individual."
+                }
+            },
+            value: options.value.telephoneFacsimile
+        }),
+        website: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: StringController,
+            delegateOptions: {
+                label: "Website",
+                placeholder: "Website",
+                helpText: "Pages provided on the World Wide Web by the organisation or individual."
+            },
+            value: options.value.website
+        }),
+        address: new AddressController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            label: "Address",
+            helpText: "Representation of an address spatial object for use in external application schemas that need to include the basic, address information in a readable way. The data type includes the all necessary readable address components as well as the address locator(s), which allows the identification of the address spatial objects, e.g., country, region, municipality, address area, post code, street name and address number. It also includes an optional reference to the full address spatial object. The datatype could be used in application schemas that wish to include address information e.g. in a dataset that registers buildings or properties.",
+            value: options.value.address
+        })
+    };
+}
+ContactController.prototype = Object.create(CompositeController.prototype);
+
+function AddressController(options) {
+    CompositeController.call(this, util.mixin(options, {class: "address"}));
+    this.delegates = {
+        locatorDesignators: new ListController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: StringController,
+            label: "Locator Designators",
+            delegateOptions: {
+                label: "Locator Designator",
+                placeholder: "Locator Designator",
+                helpText: "A number or a sequence of characters which allows a user or an application to interpret, parse and format the locator within the relevant scope. A locator may include more locator designators."
+            },
+            value: options.value.locatorDesignators,
+            helpText: "A number or a sequence of characters which allows a user or an application to interpret, parse and format the locator within the relevant scope. A locator may include more locator designators."
+        }),
+        postCode: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: StringController,
+            delegateOptions: {
+                label: "Post Code",
+                placeholder: "Post Code",
+                helpText: "A code created and maintained for postal purposes to identify a subdivision of addresses and postal delivery points."
+            },
+            value: options.value.postCode,
+            helpText: "A code created and maintained for postal purposes to identify a subdivision of addresses and postal delivery points."
+        }),
+        adminUnits: new ListController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: GeographicalNameController,
+            label: "Administrative Units",
+            delegateOptions: {
+                label: "Administrative Unit",
+                helpText: "The name of a unit of administration where a Member State has and/or exercises jurisdictional rights, for local, regional and national governance."
+            },
+            helpText: "The name or names of a unit of administration where a Member State has and/or exercises jurisdictional rights, for local, regional and national governance.",
+            value: options.value.adminUnits
+        }),
+        locatorNames: new ListController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: GeographicalNameController,
+            label: "Locator Names",
+            delegateOptions: {
+                label: "Locator Name",
+                helpText: "Proper noun applied to the real world entity identified by the locator."
+            },
+            value: options.value.locatorNames,
+            helpText: "Proper noun(s) applied to the real world entity identified by the locator."
+        }),
+        addressAreas: new ListController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: NillableController,
+            label: "Address Areas",
+            delegateOptions: {
+                delegate: GeographicalNameController,
+                label: "Address Area",
+                delegateOptions: {
+                    label: "Address Area",
+                    helpText: "The name or names of a geographic area or locality that groups a number of addressable objects for addressing purposes, without being an administrative unit."
+                }
+            },
+            value: options.value.addressAreas,
+            helpText: "The name or names of a geographic area or locality that groups a number of addressable objects for addressing purposes, without being an administrative unit."
+        }),
+        postNames: new ListController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: NillableController,
+            label: "Post Names",
+            delegateOptions: {
+                delegate: GeographicalNameController,
+                label: "Post Name",
+                delegateOptions: {
+                    label: "Post Name",
+                    helpText: "Name created and maintained for postal purposes to identify a subdivision of addresses and postal delivery points."
+                }
+            },
+            value: options.value.postNames,
+            helpText: "One or more names created and maintained for postal purposes to identify a subdivision of addresses and postal delivery points."
+        }),
+        thoroughfares: new ListController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: NillableController,
+            label: "Thoroughfares",
+            delegateOptions: {
+                delegate: GeographicalNameController,
+                label: "Thoroughfare",
+                delegateOptions: {
+                    label: "Thoroughfare",
+                    helpText: "The name of a passage or way through from one location to another like a road or a waterway."
+                }
+            },
+            value: options.value.thoroughfares,
+            helpText: "The name or names of a passage or way through from one location to another like a road or a waterway."
+        }),
+        addressFeature: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: ReferenceController,
+            delegateOptions: {
+                label: "Address Feature",
+                placeholder: "Address Feature",
+                helpText: "Address Feature"
+            },
+            value: options.value.addressFeature
+        })
+    };
+}
+AddressController.prototype = Object.create(CompositeController.prototype);
+
+function GeographicalNameController(options) {
+    CompositeController.call(this, util.mixin(options, {class: "geographical-name"}));
+    this.delegates = {
+        grammaticalGender: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: CodeTypeController,
+            delegateOptions: {
+                label: "Grammatical Gender",
+                helpText: "Class of nouns reflected in the behaviour of associated words."
+            },
+            value: options.value.grammaticalGender
+        }),
+        grammaticalNumber: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: CodeTypeController,
+            delegateOptions: {
+                label: "Grammatical Number",
+                helpText: "Grammatical category of nouns that expresses count distinctions."
+            },
+            value: options.value.grammaticalNumber
+        }),
+        language: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: StringController,
+            delegateOptions: {
+                label: "Language",
+                helpText: 'Language of the name, given as a three letters code, in accordance with either ISO 639-3 or ISO 639-5. More precisely, this definition refers to the language used by the community that uses the name. The code "mul" for "multilingual" should not be used in general. However it can be used in rare cases like official names composed of two names in different languages. For example, "Vitoria-Gasteiz" is such a multilingual official name in Spain. Even if this attribute is "voidable" for pragmatic reasons, it is of first importance in several use cases in the multi-language context of Europe.'
+            },
+            value: options.value.language
+        }),
+        nameStatus: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: CodeTypeController,
+            delegateOptions: {
+                label: "Name Status",
+                helpText: 'Qualitative information enabling to discern which credit should be given to the name with respect to its standardisation and/or its topicality. The Geographical Names application schema does not explicitly make a preference between different names (e.g. official endonyms) of a specific real world entity. The necessary information for making the preference (e.g. the linguistic status of the administrative or geographic area in question), for a certain use case, must be obtained from other data or information sources. For example, the status of the language of the name may be known through queries on the geometries of named places against the geometry of administrative units recorded in a certain source with the language statuses information.'
+            },
+            value: options.value.nameStatus
+        }),
+        nativeness: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: CodeTypeController,
+            delegateOptions: {
+                label: "Nativeness",
+                helpText: "Information enabling to acknowledge if the name is the one that is/was used in the area where the spatial object is situated at the instant when the name is/was in use."
+            },
+            value: options.value.nativeness
+        }),
+        pronunciation: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: PronunciationController,
+            delegateOptions: {
+                label: "Pronunciation",
+                helpText: "Proper, correct or standard (standard within the linguistic community concerned) pronunciation of the geographical name."
+            },
+            value: options.value.pronunciation
+        }),
+        spelling: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: SpellingController,
+            delegateOptions: {
+                label: "Spelling",
+                helpText: "A proper way of writing the geographical name. Different spellings should only be used for names rendered in different scripts. While a particular GeographicalName should only have one spelling in a given script, providing different spellings in the same script should be done through the provision of different geographical names associated with the same named place."
+            },
+            value: options.value.spelling
+        }),
+        sourceOfName: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: StringController,
+            delegateOptions: {
+                label: "Source of Name",
+                helpText: "Original data source from which the geographical name is taken from and integrated in the data set providing/publishing it. For some named spatial objects it might refer again to the publishing data set if no other information is available (e.g. Gazetteer, geographical names data set)."
+            },
+            value: options.value.sourceOfName
+        })
+    };
+}
+GeographicalNameController.prototype = Object.create(CompositeController.prototype);
+
+function PronunciationController(options) {
+    CompositeController.call(this, util.mixin(options, {class: "pronunciation"}));
+    this.delegates = {
+        ipa: new StringController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            label: "IPA",
+            placeholder: "IPA",
+            helpText: "Proper, correct or standard (standard within the linguistic community concerned) pronunciation of a name, expressed in International Phonetic Alphabet (IPA).",
+            value: options.value.ipa
+        }),
+        soundLink: new StringController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            label: "Sound Link",
+            placeholder: "Sound Link",
+            helpText: "Proper, correct or standard (standard within the linguistic community concerned) pronunciation of a name, expressed by a link to any sound file.",
+            value: options.value.soundLink
+        })
+    };
+}
+PronunciationController.prototype = Object.create(CompositeController.prototype);
+
+function SpellingController(options) {
+    CompositeController.call(this, util.mixin(options, {class: "spelling"}));
+    this.delegates = {
+        text: new StringController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            label: "Text",
+            placeholder: "Text",
+            helpText: "Way the name is written.",
+            value: options.value.text
+        }),
+        script: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: StringController,
+            delegateOptions: {
+                label: "Script",
+                placeholder: "Script",
+                helpText: 'Set of graphic symbols (for example an alphabet) employed in writing the name, expressed using the four letters codes defined in ISO 15924, where applicable (e.g. Cyrillic, Greek, Roman/Latin scripts). The four letter codes for Latin (Roman), Cyrillic and Greek script are "Latn", "Cyrl" and "Grek", respectively. In rare cases other codes could be used (for other scripts than Latin, Greek and Cyrillic). However, this should mainly apply for historical names in historical scripts. This attribute is of first importance in the multi-scriptual context of Europe.'
+            },
+            value: options.value.script
+        }),
+        transliterationScheme: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: StringController,
+            delegateOptions: {
+                label: "Transliteration Scheme",
+                placeholder: "Transliteration Scheme",
+                helpText: "Method used for the names conversion between different scripts. This attribute should be filled for any transliterated spellings. If the transliteration scheme used is recorded in codelists maintained by ISO or UN, those codes should be preferred."
+            },
+            value: options.value.transliterationScheme
+        })
+    };
+}
+SpellingController.prototype = Object.create(CompositeController.prototype);
 
 var h = {
     "change": {
@@ -1395,9 +1367,13 @@ var h = {
 };
 
 
-var erhc = new EReportingHeaderController({ label: "eReporting Header", div: $("#erh"), value: {} });
+var erhc = new EReportingHeaderController({
+    label: "eReporting Header",
+    div: $("#erh"),
+    menu: menu.root("#erh-header"),
+    value: h
+});
 
 </script>
-
 
 <jsp:include page="../common/footer.jsp" />

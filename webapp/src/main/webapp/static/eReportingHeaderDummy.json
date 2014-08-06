@@ -1,0 +1,208 @@
+{
+    "change": {
+        "changed": true,
+        "description": "Changed because... you know"
+    },
+    "delete": [
+    ],
+    "content": [
+    ],
+    "inspireId": {
+        "localId": "id",
+        "namespace": "namespace",
+        "versionId": {
+            "nil": true,
+            "reason": "missing"
+        }
+    },
+    "reportingAuthority": {
+        "contact": {
+            "address": {
+                "addressAreas": [
+                    {
+                        "nil": true,
+                        "reason": "withheld"
+                    },
+                    {
+                        "grammaticalGender": {
+                            "codespace": "b",
+                            "value": "a"
+                        },
+                        "grammaticalNumber": {
+                            "codespace": "d",
+                            "value": "c"
+                        },
+                        "language": "eng",
+                        "nameStatus": {
+                            "nil": true,
+                            "reason": "unknown"
+                        },
+                        "nativeness": "<asdfasdf",
+                        "pronunciation": {
+                            "ipa": "asdfasdf",
+                            "soundLink": "http://asdfasdf"
+                        },
+                        "sourceOfName": {
+                            "nil": true,
+                            "reason": "missing"
+                        },
+                        "spelling": {
+                            "text": "asdfasdf",
+                            "script": "asdfasdf",
+                            "transliterationScheme": "asdfasdfasdf"
+                        }
+                    }
+                ],
+                "addressFeature": {
+                    "href": "http://asdfasdf"
+                },
+                "adminUnits": [
+                    {
+                        "grammaticalGender": {
+                            "codespace": "b",
+                            "value": "a"
+                        },
+                        "grammaticalNumber": {
+                            "codespace": "d",
+                            "value": "c"
+                        },
+                        "language": "eng",
+                        "nameStatus": {
+                            "nil": true,
+                            "reason": "unknown"
+                        },
+                        "nativeness": "<asdfasdf",
+                        "pronunciation": {
+                            "ipa": "asdfasdf",
+                            "soundLink": "http://asdfasdf"
+                        },
+                        "sourceOfName": {
+                            "nil": true,
+                            "reason": "missing"
+                        },
+                        "spelling": {
+                            "text": "asdfasdf",
+                            "script": "asdfasdf",
+                            "transliterationScheme": "asdfasdfasdf"
+                        }
+                    }
+                ],
+                "locatorDesignators": [
+                    "localtor"
+                ],
+                "locatorNames": [
+                ],
+                "postCode": "12341234",
+                "postNames": [
+                    {
+                        "nil": true,
+                        "reason": "withheld"
+                    },
+                    {
+                        "grammaticalGender": {
+                            "codespace": "b",
+                            "value": "a"
+                        },
+                        "grammaticalNumber": {
+                            "codespace": "d",
+                            "value": "c"
+                        },
+                        "language": "eng",
+                        "nameStatus": {
+                            "nil": true,
+                            "reason": "unknown"
+                        },
+                        "nativeness": "<asdfasdf",
+                        "pronunciation": {
+                            "ipa": "asdfasdf",
+                            "soundLink": "http://asdfasdf"
+                        },
+                        "sourceOfName": {
+                            "nil": true,
+                            "reason": "missing"
+                        },
+                        "spelling": {
+                            "text": "asdfasdf",
+                            "script": "asdfasdf",
+                            "transliterationScheme": "asdfasdfasdf"
+                        }
+                    }
+                ],
+                "thoroughfares": [
+                    {
+                        "nil": true,
+                        "reason": "withheld"
+                    },
+                    {
+                        "grammaticalGender": {
+                            "codespace": "b",
+                            "value": "a"
+                        },
+                        "grammaticalNumber": {
+                            "codespace": "d",
+                            "value": "c"
+                        },
+                        "language": "eng",
+                        "nameStatus": {
+                            "nil": true,
+                            "reason": "unknown"
+                        },
+                        "nativeness": "<asdfasdf",
+                        "pronunciation": {
+                            "ipa": "asdfasdf",
+                            "soundLink": "http://asdfasdf"
+                        },
+                        "sourceOfName": {
+                            "nil": true,
+                            "reason": "missing"
+                        },
+                        "spelling": {
+                            "text": "asdfasdf",
+                            "script": "asdfasdf",
+                            "transliterationScheme": "asdfasdfasdf"
+                        }
+                    }
+                ]
+            },
+            "contactInstructions": {
+                "nil": true,
+                "reason": "missing"
+            },
+            "electronicMailAddress": {
+                "nil": true,
+                "reason": "unknown"
+            },
+            "hoursOfService": "asdfasdf",
+            "telephoneFacsimile": [
+                "1234",
+                {
+                    "nil": true,
+                    "reason": "missing"
+                }
+            ],
+            "telephoneVoice": [
+                "asdfasdf"
+            ],
+            "website": {
+                "nil": true,
+                "reason": "unknown"
+            }
+        },
+        "individualName": {
+            "nil": true,
+            "reason": "missing"
+        },
+        "organisationName": "Organisation",
+        "positionName": "Postionti",
+        "roles": [
+            {
+                "href": "http://hallo"
+            },
+            {
+                "nil": true,
+                "reason": "withheld"
+            }
+        ]
+    },
+    "reportingPeriod": "2014-08-04T09:24:07.957+02:00"
+}

@@ -50,7 +50,7 @@ import junit.framework.TestCase;
  * @since 4.0.0
  *
  */
-public class RasdamanDatasourceTest extends TestCase {
+public class RasdamanDatasourceIT extends TestCase {
 	private static final String SOS_TEST_CONF = "SOS_TEST_CONF";
 	private static final String RASDAMAN_SCHEMA = "public";
 	private static final String RASDAMAN_USER = "SA";

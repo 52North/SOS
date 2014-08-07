@@ -47,6 +47,7 @@ import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
+import org.n52.sos.ds.hibernate.entities.ArrayObservation;
 import org.n52.sos.ds.hibernate.entities.BlobObservation;
 import org.n52.sos.ds.hibernate.entities.BooleanObservation;
 import org.n52.sos.ds.hibernate.entities.CategoryObservation;
@@ -62,7 +63,9 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.TextObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.ArrayValue;
 import org.n52.sos.ds.hibernate.entities.series.Series;
+import org.n52.sos.ds.hibernate.entities.series.SeriesArrayObservation;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
@@ -154,6 +157,11 @@ public class ObservationDAO extends AbstractObservationDAO {
     }
 
     @Override
+   	public boolean checkArrayObservationsFor(String offeringIdentifier, Session session) {
+       	return checkObservationFor(SeriesArrayObservation.class, offeringIdentifier, session);
+   	} 
+    
+    @Override
     public DateTime getMinPhenomenonTime(Session session) {
         return getMinPhenomenonTime(ObservationInfo.class, session);
     }
@@ -211,6 +219,10 @@ public class ObservationDAO extends AbstractObservationDAO {
         } else if (value instanceof SweDataArrayValue) {
             SweDataArrayObservation observation = new SweDataArrayObservation();
             observation.setValue(((SweDataArrayValue) value).getValue().getXml());
+            return observation;
+        } else if (value instanceof ArrayValue) {
+            ArrayObservation observation = new ArrayObservation();
+            observation.setValue(((ArrayValue) value).getValue());
             return observation;
         }
         return new Observation();

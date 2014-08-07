@@ -197,6 +197,17 @@ public abstract class AbstractObservationDAO extends TimeCreator {
     public abstract boolean checkSweDataArrayObservationsFor(String offeringIdentifier, Session session);
 
     /**
+     * Check if there are array observations for the offering
+     * 
+     * @param offeringIdentifier
+     *            Offering identifier
+     * @param session
+     *            Hibernate session
+     * @return If there are observations or not
+     */
+    public abstract boolean checkArrayObservationsFor(String offeringIdentifier, Session session);
+    
+    /**
      * Get min phenomenon time from observations
      * 
      * @param session

@@ -53,7 +53,9 @@ import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Observation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.interfaces.ArrayValue;
 import org.n52.sos.ds.hibernate.entities.series.Series;
+import org.n52.sos.ds.hibernate.entities.series.SeriesArrayObservation;
 import org.n52.sos.ds.hibernate.entities.series.SeriesBlobObservation;
 import org.n52.sos.ds.hibernate.entities.series.SeriesBooleanObservation;
 import org.n52.sos.ds.hibernate.entities.series.SeriesCategoryObservation;
@@ -187,6 +189,11 @@ public class SeriesObservationDAO extends AbstractObservationDAO {
     public boolean checkSweDataArrayObservationsFor(String offeringIdentifier, Session session) {
         return checkObservationFor(SeriesSweDataArrayObservation.class, offeringIdentifier, session);
     }
+    
+    @Override
+	public boolean checkArrayObservationsFor(String offeringIdentifier, Session session) {
+    	return checkObservationFor(SeriesArrayObservation.class, offeringIdentifier, session);
+	} 
 
     /**
      * Query series observation for series and offerings
@@ -621,6 +628,10 @@ public class SeriesObservationDAO extends AbstractObservationDAO {
             SeriesSweDataArrayObservation observation = new SeriesSweDataArrayObservation();
             observation.setValue(((SweDataArrayValue) value).getValue().getXml());
             return observation;
+        } else if (value instanceof ArrayValue) {
+            SeriesArrayObservation observation = new SeriesArrayObservation();
+            observation.setValue(((ArrayValue) value).getValue());
+            return observation;
         }
         return new SeriesObservation();
     }
@@ -807,5 +818,5 @@ public class SeriesObservationDAO extends AbstractObservationDAO {
         criteria.addOrder(Order.asc(AbstractObservationTime.PHENOMENON_TIME_START));
         criteria.setProjection(Projections.property(AbstractObservationTime.SAMPLING_GEOMETRY));
         return criteria.list();
-    }  
+    } 
 }

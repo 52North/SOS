@@ -30,28 +30,30 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
+import rasj.RasGMArray;
+
 /**
  * @since 4.0.0
  * 
  */
-public class ArrayObservation extends Observation implements Serializable, org.n52.sos.ds.hibernate.entities.interfaces.BooleanObservation {
+public class ArrayObservation extends Observation implements Serializable, org.n52.sos.ds.hibernate.entities.interfaces.ArrayObservation {
 
     private static final long serialVersionUID = -4414870432506280754L;
 
-    private boolean value;
+    private RasGMArray value;
 
     @Override
-    public Boolean getValue() {
+    public RasGMArray getValue() {
         return this.value;
     }
 
     @Override
     public boolean isSetValue() {
-        return this.value;
+        return this.value != null;
     }
 
     @Override
-    public void setValue(Boolean value) {
+    public void setValue(RasGMArray value) {
         this.value = value;
     }
 

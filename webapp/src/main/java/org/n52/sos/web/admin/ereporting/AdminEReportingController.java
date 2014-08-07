@@ -28,10 +28,31 @@
  */
 package org.n52.sos.web.admin.ereporting;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
+import org.n52.sos.coding.CodingRepository;
+import org.n52.sos.encode.Encoder;
+import org.n52.sos.encode.json.JSONEncoderKey;
+import org.n52.sos.inspire.aqd.RelatedParty;
+import org.n52.sos.inspire.aqd.ReportObligation;
+import org.n52.sos.inspire.aqd.ReportObligationRepository;
+import org.n52.sos.inspire.aqd.ReportObligationType;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.util.AQDJSONConstants;
+import org.n52.sos.util.JSONUtils;
 import org.n52.sos.web.AbstractController;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * TODO JavaDoc
@@ -39,11 +60,43 @@ import org.n52.sos.web.AbstractController;
  * @author Christian Autermann
  */
 @Controller
+@RequestMapping(value = "/admin/ereporting")
 public class AdminEReportingController extends AbstractController {
 
-    @RequestMapping(value = "/admin/ereporting")
+    private static final Logger LOG = LoggerFactory
+            .getLogger(AdminEReportingController.class);
+
+    @RequestMapping(method = RequestMethod.GET)
     public String get() {
         return "admin/ereporting";
+    }
+
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.GET,
+                    produces = "application/json")
+    public String getJSON() throws OwsExceptionReport {
+        ObjectNode node = JSONUtils.nodeFactory().objectNode();
+        ReportObligationRepository reportObligationRepository = ReportObligationRepository.getInstance();
+        CodingRepository codingRepository = CodingRepository.getInstance();
+        Encoder<JsonNode, ReportObligation> reportObligationEncoder = codingRepository.getEncoder(new JSONEncoderKey(ReportObligation.class));
+        Encoder<JsonNode, RelatedParty> relatedPartyEncoder = codingRepository.getEncoder(new JSONEncoderKey(RelatedParty.class));
+        node.put(AQDJSONConstants.REPORTING_AUTHORITY, relatedPartyEncoder.encode(reportObligationRepository.getReportingAuthority()));
+        ArrayNode ros = node.putArray(AQDJSONConstants.REPORT_OBLIGATIONS);
+        for (ReportObligationType reportObligationType : ReportObligationType.values()) {
+            ReportObligation reportObligation = reportObligationRepository.getReportObligation(reportObligationType);
+            ros.addObject().put(AQDJSONConstants.ID, reportObligationType.name())
+                    .put(AQDJSONConstants.NAME, reportObligationType.getTitle())
+                    .put(AQDJSONConstants.DESCRIPTION, reportObligationType.getDescription())
+                    .put(AQDJSONConstants.VALUE, reportObligationEncoder.encode(reportObligation));
+        }
+        return JSONUtils.print(node);
+    }
+
+    @RequestMapping(method = RequestMethod.POST,
+                    consumes = "application/json")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void save(@RequestBody String json) {
+        LOG.info("Saving {}", json);
     }
 
 }

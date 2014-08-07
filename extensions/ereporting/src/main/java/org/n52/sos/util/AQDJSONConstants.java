@@ -33,6 +33,9 @@ package org.n52.sos.util;
  * @author Christian Autermann
  */
 public interface AQDJSONConstants {
+    String REPORT_OBLIGATIONS = "reportObligations";
+    String ID = "id";
+    String NAME = "name";
     String ACTUATE = "actuate";
     String ADDRESS = "address";
     String ADDRESS_AREAS = "addressAreas";

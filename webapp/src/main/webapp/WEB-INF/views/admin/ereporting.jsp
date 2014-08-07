@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2014 52Â°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -38,12 +38,6 @@
     <jsp:param name="leadParagraph" value="" />
 </jsp:include>
 
-<div class="row">
-    <div class="span4">
-        <ul class="well well-small" id="erh-header"></ul>
-    </div>
-    <div class="span8" id="erh"></div>
-</div>
 <style type="text/css">
     .dropdown-toggle {
         height: 30px;
@@ -81,6 +75,8 @@
     }
 </style>
 
+<div id="e"></div>
+
 <script type="text/javascript">
 
 var util = (function(){
@@ -95,7 +91,7 @@ var util = (function(){
     };
 
     util.isArray = function(o) {
-        return o && (o instanceof Array || typeof o == "array");
+        return o && (o instanceof Array || typeof o === "array");
     };
 
     util.isString = function(o) {
@@ -764,74 +760,6 @@ function InspireIdController(options) {
 }
 InspireIdController.prototype = Object.create(CompositeController.prototype);
 
-function EReportingHeaderController(options) {
-    CompositeController.call(this, util.mixin(options, {class: "reporting-header"}));
-
-    this.delegates = {
-        inspireId: new InspireIdController({
-            div: $("<div>").appendTo(this.$controls),
-            menu: this.menu,
-            label: "Inspire ID",
-            value: options.value.inspireId,
-            helpText: "External object identifier of the spatial object. An external object identifier is a unique object identifier published by the responsible body, which may be used by external application to reference the spatial object. The identifier is an identifier of the spatial object, not an identifier of the real-world phenomenon."
-        }),
-        change: new EReportingChangeController({
-            div: $("<div>").appendTo(this.$controls),
-            menu: this.menu,
-            label: "eReporting Change",
-            value: options.value.change
-        }),
-        reportingPeriod: new NillableController({
-            div: $("<div>").appendTo(this.$controls),
-            menu: this.menu,
-            delegate: TimeController,
-            delegateOptions: {
-                label: "Reporting Period",
-                helpText: "Date defining the reporting period. The reporting period may be represented as either a time period (e.g. 2011-01-01 to 2011-12-31) or as a single date representing the reporting year (e.g. 2011).",
-                value: options.value.reportingPeriod
-            }
-        }),
-        reportingAuthority: new ReportingAuthorityController({
-           div: $("<div>").appendTo(this.$controls),
-           menu: this.menu,
-           label: "Reporting Authority",
-           helpText: "Contact information for the Public Authority responsible for creating or collating the data that represents the Reporting Unit and submitting the data to relevant Authority.",
-           value: options.value.reportingAuthority
-        }),
-        content: new ListController({
-            div: $("<div>").appendTo(this.$controls),
-            menu: this.menu,
-            label: "Contents",
-            delegate: NillableController,
-            delegateOptions: {
-                delegate: ReferenceController,
-                label: "Content",
-                delegateOptions: {
-                    label: "Content",
-                    helpText: "Content"
-                }
-            },
-            value: options.value.content
-        }),
-        delete: new ListController({
-            div: $("<div>").appendTo(this.$controls),
-            menu: this.menu,
-            label: "Deletes",
-            delegate: NillableController,
-            delegateOptions: {
-                delegate: ReferenceController,
-                label: "Delete",
-                delegateOptions: {
-                    label: "Delete",
-                    helpText: "Delete"
-                }
-            },
-            value: options.value.content
-        })
-    };
-};
-EReportingHeaderController.prototype = Object.create(CompositeController.prototype);
-
 function EReportingChangeController(options) {
     CompositeController.call(this, util.mixin(options, {class: "reporting-change"}));
     this.delegates = {
@@ -1269,15 +1197,201 @@ function SpellingController(options) {
 }
 SpellingController.prototype = Object.create(CompositeController.prototype);
 
-$.getJSON("<c:url value="/static/eReportingHeaderDummy.json" />", function(header) {
-    window.erhc = new EReportingHeaderController({
-        label: "eReporting Header",
-        div: $("#erh"),
-        menu: menu.root("#erh-header"),
-        value: header
-    });
-});
 
+function ReportObligationController(options) {
+    CompositeController.call(this, util.mixin(options, {class: "report-obligation"}));
+
+    this.delegates = {
+        inspireId: new InspireIdController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            label: "Inspire ID",
+            value: options.value.inspireId,
+            helpText: "External object identifier of the spatial object. An external object identifier is a unique object identifier published by the responsible body, which may be used by external application to reference the spatial object. The identifier is an identifier of the spatial object, not an identifier of the real-world phenomenon."
+        }),
+        change: new EReportingChangeController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            label: "eReporting Change",
+            value: options.value.change
+        }),
+        reportingPeriod: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: TimeController,
+            delegateOptions: {
+                label: "Reporting Period",
+                helpText: "Date defining the reporting period. The reporting period may be represented as either a time period (e.g. 2011-01-01 to 2011-12-31) or as a single date representing the reporting year (e.g. 2011).",
+                value: options.value.reportingPeriod
+            }
+        })
+    };
+};
+ReportObligationController.prototype = Object.create(CompositeController.prototype);
+
+/*
+content: new ListController({
+    div: $("<div>").appendTo(this.$controls),
+    menu: this.menu,
+    label: "Contents",
+    delegate: NillableController,
+    delegateOptions: {
+        delegate: ReferenceController,
+        label: "Content",
+        delegateOptions: {
+            label: "Content",
+            helpText: "Content"
+        }
+    },
+    value: options.value.content
+}),
+delete: new ListController({
+    div: $("<div>").appendTo(this.$controls),
+    menu: this.menu,
+    label: "Deletes",
+    delegate: NillableController,
+    delegateOptions: {
+        delegate: ReferenceController,
+        label: "Delete",
+        delegateOptions: {
+            label: "Delete",
+            helpText: "Delete"
+        }
+    },
+    value: options.value.content
+})
+*/
+
+function ReportingHeaderController(options) {
+    function createTabHeader(name, target, active) {
+        return $("<li>")
+            .append($("<a>")
+                .attr("href", target)
+                .text(name)
+                .on("click", function(e) {
+                    $(this).tab("show");
+                    e.preventDefault();
+                }));
+    }
+
+    function createTabPane(id, active) {
+        return $("<div>")
+            .addClass("tab-pane")
+            .attr("id", id)
+            .append($("<div>")
+                .addClass("row")
+                .append($("<div>")
+                    .addClass("span4")
+                    .append($("<ul>")
+                        .addClass("content-list well well-small")))
+            .append($("<div>")
+                .addClass("content span8")));
+    }
+    options.value = options.value || {};
+    this.reportObligations = options.value.reportObligations || [];
+    var $content = $(options.div);
+    var $header = $("<ul>");
+    var $contents = $("<div>");
+
+    $content
+        .addClass("tabbable")
+        .append($("<div>")
+            .addClass("pull-right")
+            .append($("<button>")
+                .type("button")
+                .addClass("btn btn-info")
+                .text("Save")
+                .on("click", util.hitch(this, "_onSave"))))
+        .append($header)
+        .append($contents);
+
+    $contents
+        .addClass("tab-content");
+
+    var i, name = "Reporting Authority", id = "flow-reporting-authority";
+    var $pane = createTabPane(id);
+
+    $header.addClass("nav nav-tabs");
+    $header.append(createTabHeader(name, "#" + id));
+    $contents.append($pane);
+
+    this.reportingAuthority = new ReportingAuthorityController({
+        div: $pane.find(".content"),
+        menu: menu.root($pane.find(".content-list")),
+        label: "Reporting Authority",
+        helpText: "Contact information for the Public Authority responsible for creating or collating the data that represents the Reporting Unit and submitting the data to relevant Authority.",
+        value: options.value.reportingAuthority
+    });
+
+    for (i = 0; i < this.reportObligations.length; ++i) {
+        name = "Flow " + this.reportObligations[i].name;
+        id = "flow-" + this.reportObligations[i].id;
+        $pane = createTabPane(id);
+        $header.append(createTabHeader(name, "#" + id));
+        $contents.append($pane);
+        this.reportObligations[i].delegate = new ReportObligationController({
+            div: $pane.find(".content"),
+            menu: menu.root($pane.find(".content-list")),
+            label: "Report Obligation (" + this.reportObligations[i].name + ")",
+            helpText: this.reportObligations[i].description,
+            value: this.reportObligations[i].value
+        });
+    }
+
+    $content.find(".nav>li:first,.tab-pane:first").addClass("active");
+
+}
+ReportingHeaderController.prototype._onSave = function() {
+    var value = this.val();
+    $.ajax({
+        type: "POST",
+        data: JSON.stringify(value),
+        headers: { "Content-Type": "application/json" },
+        complete: function(xhr, status) {
+            switch(status) {
+                case "success":
+                    showSuccess("eReportingHeader settings saved &hellip;");
+                    break;
+                case "error":
+                    showError("Save failed: " + xhr.status + " " + xhr.statusText);
+                    break;
+                case "timeout":
+                    showError("Request timed out &hellip;");
+                    break;
+                case "abort":
+                    showError("Request aborted &hellip;");
+                    break;
+                case "parsererror":
+                    showError("Unparsable response &hellip;");
+                    break;
+            }
+
+        }
+    });
+};
+
+ReportingHeaderController.prototype.val = function() {
+    var i, ro;
+    var ret = {
+        reportingAuthority: this.reportingAuthority.val(),
+        reportObligations: {}
+    };
+
+    for (i = 0; i < this.reportObligations.length; ++i) {
+        ret.reportObligations[this.reportObligations[i].id]
+                = this.reportObligations[i].delegate.val();
+    }
+    return ret;
+};
+
+$.ajax({
+    type: "GET",
+    dataType: "json",
+    headers: {"Accept": "application/json"},
+    success: function(data) {
+        new ReportingHeaderController({ div: "#e", value: data });
+    }
+});
 </script>
 
 <jsp:include page="../common/footer.jsp" />

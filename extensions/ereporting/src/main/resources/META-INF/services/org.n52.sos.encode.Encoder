@@ -12,3 +12,4 @@ org.n52.sos.encode.json.inspire.EReportingChangeJSONEncoder
 org.n52.sos.encode.json.inspire.ContactJSONEncoder
 org.n52.sos.encode.json.inspire.NillableJSONEncoder
 org.n52.sos.encode.json.inspire.AddressJSONEncoder
+org.n52.sos.encode.json.inspire.ReportObligationJSONEncoder

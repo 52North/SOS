@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2014 52Â°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -92,6 +92,10 @@ var util = (function(){
 
     util.toArray = function (obj, offset){
         return Array.prototype.slice.call(obj || [], offset || 0);
+    };
+
+    util.isArray = function(o) {
+        return o && (o instanceof Array || typeof o == "array");
     };
 
     util.isString = function(o) {
@@ -306,6 +310,110 @@ var SimpleController = function(options) {
     this.menu = menu.simple(this, options);
 };
 SimpleController.prototype = Object.create(BaseController.prototype);
+
+function TimeController(options) {
+    SimpleController.call(this, util.mixin(options, {class: "time"}));
+    options.value = options.value || {};
+
+    if (util.isString(options.value)) {
+        this.type = "instant";
+    } else if (util.isArray(options.value)) {
+        this.type = "period";
+    } else if (options.value.href) {
+        this.type = "reference";
+    } else {
+        this.type = null;
+    }
+
+    this.$periodBegin = $("<input>").type("text").attr("placeholder", "Begin Time");
+    this.$periodEnd = $("<input>").type("text").attr("placeholder", "End Time");
+    this.$instant = $("<input>").type("text").attr("placeholder", "Time");
+
+    var $period = $("<div>")
+        .addClass("tab-pane time-period")
+        .append($("<div>")
+            .addClass("controls")
+            .append($("<label>").text("Begin Time"))
+            .append(this.$periodBegin)
+            .append($("<label>").text("End Time"))
+            .append(this.$periodEnd));
+
+    var $instant = $("<div>")
+        .addClass("tab-pane time-instant")
+        .append($("<div>")
+            .addClass("controls")
+            .append($("<label>").text("Time"))
+            .append(this.$instant));
+
+    var $reference = $("<div>");
+    this.reference = new ReferenceController({
+        div: $reference,
+        value: this.type === "reference" ? option.value : null
+    });
+    $reference.addClass("tab-pane time-reference")
+        .removeClass("well well-small");
+
+    this.$controls
+        .addClass("tabbable tabs-left")
+        .append($("<ul>")
+            .addClass("nav nav-tabs")
+            .append($("<li>")
+                .append($("<a>")
+                    .attr("href", "#")
+                    .text("Period")
+                    .data("type", "period")
+                    .data("target", $period)
+                    .on("click", util.hitch(this, this._activateTab))))
+            .append($("<li>")
+                .append($("<a>")
+                    .attr("href", "#")
+                    .text("Instant")
+                    .data("type", "instant")
+                    .data("target", $instant)
+                    .on("click", util.hitch(this, this._activateTab))))
+            .append($("<li>")
+                .append($("<a>")
+                    .attr("href", "#")
+                    .text("Reference")
+                    .data("type", "reference")
+                    .data("target", $reference)
+                    .on("click", util.hitch(this, this._activateTab)))))
+        .append($("<div>")
+            .addClass("tab-content")
+            .append($period)
+            .append($instant)
+            .append($reference));
+}
+
+TimeController.prototype = Object.create(SimpleController.prototype);
+TimeController.prototype._activateTab = function(e) {
+    e.preventDefault();
+    var $this = $(e.delegateTarget);
+    var $target = $this.data("target");
+    this.type = $this.data("type");
+    var $li = $this.parent("li");
+    var $ul = $li.parent("ul");
+    if ($li.hasClass("active")) return;
+    $ul.find(".active").removeClass("active");
+    $ul.next(".tab-content").find(".active").removeClass("active");
+    $li.addClass("active");
+    $target.addClass("active");
+};
+TimeController.prototype.val = function(e) {
+    switch(this.type) {
+        case "instant":
+            return this.$instant.val();
+        case "period":
+            return [
+                this.$periodBegin.val(),
+                this.$periodEnd.val()
+            ];
+        case "reference":
+            return this.reference.val();
+        default:
+            return null;
+    }
+};
 
 function NillableController(options) {
     options.delegateOptions = options.delegateOptions || {};
@@ -673,6 +781,16 @@ function EReportingHeaderController(options) {
             label: "eReporting Change",
             value: options.value.change
         }),
+        reportingPeriod: new NillableController({
+            div: $("<div>").appendTo(this.$controls),
+            menu: this.menu,
+            delegate: TimeController,
+            delegateOptions: {
+                label: "Reporting Period",
+                helpText: "Date defining the reporting period. The reporting period may be represented as either a time period (e.g. 2011-01-01 to 2011-12-31) or as a single date representing the reporting year (e.g. 2011).",
+                value: options.value.reportingPeriod
+            }
+        }),
         reportingAuthority: new ReportingAuthorityController({
            div: $("<div>").appendTo(this.$controls),
            menu: this.menu,
@@ -680,15 +798,6 @@ function EReportingHeaderController(options) {
            helpText: "Contact information for the Public Authority responsible for creating or collating the data that represents the Reporting Unit and submitting the data to relevant Authority.",
            value: options.value.reportingAuthority
         }),
-
-        /*
-        reportingPeriod: new TimeController({
-            div: $("<div>").appendTo(this.$controls),
-            label: "Reporting Period",
-            helpText: "Date defining the reporting period. The reporting period may be represented as either a time period (e.g. 2011-01-01 to 2011-12-31) or as a single date representing the reporting year (e.g. 2011)."
-            value: options.value.reportingPeriod
-        }),
-        */
         content: new ListController({
             div: $("<div>").appendTo(this.$controls),
             menu: this.menu,

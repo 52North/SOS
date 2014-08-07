@@ -186,7 +186,6 @@ public class RasdamanDatasource extends AbstractHibernateFullDBDatasource {
 
     @Override
     protected String toURL(Map<String, Object> settings) {
-//        String url = String.format("jdbc:hsqldb:file:/var/hsqldb/%s", settings.get(DATABASE_KEY));
     	String url = (String) settings.get(DATABASE_KEY);
         return url;
     }
@@ -208,17 +207,6 @@ public class RasdamanDatasource extends AbstractHibernateFullDBDatasource {
 
     @Override
     protected Connection openConnection(Map<String, Object> settings) throws SQLException {
-/*        try {
-            String jdbc = toURL(settings);
-            Class.forName(getDriverClass());
-            String pass = (String) settings.get(HibernateConstants.CONNECTION_PASSWORD);
-            String user = (String) settings.get(HibernateConstants.CONNECTION_USERNAME);
-            pass = "SIMONA";
-            user = "SIMONA";
-            return DriverManager.getConnection(jdbc, user, pass);
-        } catch (ClassNotFoundException ex) {
-            throw new SQLException(ex);
-        }*/
         Connection conn;
         Properties connectionProps = new Properties();
        
@@ -229,13 +217,11 @@ public class RasdamanDatasource extends AbstractHibernateFullDBDatasource {
         connectionProps.put("password", pass);
 
         try {
-//            Class.forName("org.hsqldb.jdbc.JDBCDriver");
         	Class.forName(getDriverClass());
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Could not load the ASQLDB's JDBCDriver", e);
         }
 
-//        final String jdbcUrl = "jdbc:hsqldb:file:" + "/var/hsqldb/db";
         String jdbcUrl = toURL(settings);
         conn = DriverManager.getConnection(
                 jdbcUrl,

@@ -745,9 +745,10 @@ public class HSQLDialect extends Dialect {
 	
 	@Override
 	public SQLExceptionConverter buildSQLExceptionConverter() {
-		// TODO Auto-generated method stub
 		return new SQLExceptionConverter() {
 			
+			private static final long serialVersionUID = 3901164206311402639L;
+
 			@Override
 			public JDBCException convert(SQLException sqlException, String message,
 					String sql) {

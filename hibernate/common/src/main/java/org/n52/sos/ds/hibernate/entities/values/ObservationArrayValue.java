@@ -44,15 +44,15 @@ public class ObservationArrayValue extends ObservationValue implements ArrayValu
     
     private static final long serialVersionUID = 758823783930440013L;
     
-    private RasGMArray value;
+    private Object value;
 
     @Override
-    public RasGMArray getValue() {
+    public Object getValue() {
         return value;
     }
 
     @Override
-    public void setValue(RasGMArray value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 

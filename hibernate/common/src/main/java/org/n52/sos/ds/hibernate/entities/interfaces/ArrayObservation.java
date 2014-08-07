@@ -39,6 +39,6 @@ import rasj.RasGMArray;
  * @since 4.1.0
  * 
  */
-public interface ArrayObservation extends HasValue<RasGMArray>{
+public interface ArrayObservation extends HasValue<Object>{
 
 }

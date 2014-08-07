@@ -45,15 +45,15 @@ public class SeriesArrayValue extends SeriesValue implements ArrayValue {
     
     private static final long serialVersionUID = 503922159414098744L;
     
-    private RasGMArray value;
+    private Object value;
 
     @Override
-    public RasGMArray getValue() {
+    public Object getValue() {
         return value;
     }
 
     @Override
-    public void setValue(RasGMArray value) {
+    public void setValue(Object value) {
        this.value = value;
     }
 

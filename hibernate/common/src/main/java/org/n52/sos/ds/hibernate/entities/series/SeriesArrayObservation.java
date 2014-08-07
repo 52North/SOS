@@ -43,10 +43,10 @@ public class SeriesArrayObservation extends SeriesObservation implements Seriali
 
     private static final long serialVersionUID = -4414870432506280754L;
 
-    private RasGMArray value;
+    private Object value;
 
     @Override
-    public RasGMArray getValue() {
+    public Object getValue() {
         return this.value;
     }
 
@@ -56,7 +56,7 @@ public class SeriesArrayObservation extends SeriesObservation implements Seriali
     }
 
     @Override
-    public void setValue(RasGMArray value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 

@@ -100,7 +100,7 @@
 	</tr>
 	<tr>
 		<td align="center" style="width:25%;"><a target="_blank" href="http://www.zgis.at"><img alt="ZIGS"  align="middle" width="128" src="static/images/contribution/UniSalzburgZGIS_1.jpg"/></a></td>
-		<td align="center" style="width:25%;"><a target="_blank" href="http://52north.org/about/get-involved">Your logo?!<br/>Get involved!</a></td>
+		<td align="center" style="width:25%;"><a target="_blank" href="<c:url value="/get-involved" />">Your logo?!<br/>Get involved!</a></td>
 		<td align="center" style="width:25%;"><img alt="Placeholder" align="middle" width="85" src="static/images/contribution/placeholder.png" /></td>
 	</tr>
 </table>

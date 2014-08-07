@@ -28,10 +28,10 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.inspire.aqd.Spelling;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.util.AQDJSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

@@ -28,15 +28,14 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.sos.util.AQDJSONConstants;
+import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.util.JSONUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import org.n52.sos.encode.json.JSONEncoder;
 
 public class EReportingHeaderJSONEncoder extends JSONEncoder<EReportingHeader> {
 
@@ -56,9 +55,4 @@ public class EReportingHeaderJSONEncoder extends JSONEncoder<EReportingHeader> {
         j.put(AQDJSONConstants.REPORTING_PERIOD, encodeObjectToJson(header.getReportingPeriod()));
         return j;
     }
-
-
-
-
-
 }

@@ -11,6 +11,8 @@ This project includes:
   52°North Sensor Observation Service under GPLv2
   52°North SOS - 2.0 XML Request Coding under GPLv2
   52°North SOS - Administrator Service Operator under GPLv2
+  52°North SOS - AQD 1.0 API Operator under GPLv2
+  52°North SOS - AQD 1.0 Core Profile Operator under GPLv2
   52°North SOS - Binding Modules under GPLv2
   52°North SOS - Cache under GPLv2
   52°North SOS - Coding Modules under GPLv2
@@ -23,6 +25,8 @@ This project includes:
   52°North SOS - Extension Delete Observation - KVP under GPLv2
   52°North SOS - Extension Delete Observation - Operation under GPLv2
   52°North SOS - Extension Delete Observation - XML under GPLv2
+  52°North SOS - Extension for AQD under GPLv2
+  52°North SOS - Extension for AQD coding under GPLv2
   52°North SOS - Extension GetDataAvailability under GPLv2
   52°North SOS - Extension GetDataAvailability - Hibernate DAO under GPLv2
   52°North SOS - Extension GetDataAvailability - SOS 2.0 Operation under GPLv2

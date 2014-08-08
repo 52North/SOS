@@ -121,7 +121,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
                 observation =
                         HibernateGetObservationHelper.toSosObservation(
                                 checkShowMetadtaOfEmptyObservations((SeriesObservation) result.get()[0]),
-                                request.getVersion(), request.getResultModel(), LocaleHelper.fromRequest(request), session);
+                                request, LocaleHelper.fromRequest(request), session);
             } else if (resultObject instanceof Series) {
                 observation =
                         HibernateObservationUtilities

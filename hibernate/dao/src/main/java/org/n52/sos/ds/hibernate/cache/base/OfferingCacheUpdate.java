@@ -185,10 +185,10 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
 
     protected boolean shouldOfferingBeProcessed(String offeringIdentifier) throws OwsExceptionReport {
         try {
-            if (HibernateHelper.isEntitySupported(ObservationConstellation.class, getSession())) {
+            if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
                 return getOfferingObservationConstellationInfo().containsKey(offeringIdentifier);
             } else {
-                AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(getSession());
+                AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
                 Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(getSession());
                 criteria.createCriteria(AbstractObservation.OFFERINGS).add(
                         Restrictions.eq(Offering.IDENTIFIER, offeringIdentifier));

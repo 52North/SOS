@@ -537,7 +537,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             // GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(geom);
         } else {
             if (session != null) {
-                List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO(session).getSamplingGeometries(feature.getIdentifier(), session);
+                List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);
                 int srid = getDefault3DEPSG();
                 if (CollectionHelper.isNotEmpty(geometries)) {
                     List<Coordinate> coordinates = Lists.newLinkedList();
@@ -550,7 +550,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                            srid = geometry.getSRID();
                         }
                         if (!geometry.equalsTopo(lastGeoemtry)) {
-                            coordinates.add(GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(geometry).getCoordinate());
+                            coordinates.add(GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
                             lastGeoemtry = geometry;
                         }
                     }

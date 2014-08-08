@@ -79,26 +79,6 @@ public class DaoFactory {
         return instance;
     }
 
-    /**
-     * Get the currently supported Hibernate Observation data access
-     * implementation
-     *
-     * @param session
-     *                Hibernate session
-     *
-     * @return Currently supported Hibernate Observation data access
-     *         implementation
-     *
-     * @throws OwsExceptionReport
-     *                        If no Hibernate Observation data access is supported
-     * @deprecated  use {@link #getObservationDAO() }
-     */
-    @Deprecated
-    public AbstractObservationDAO getObservationDAO(Session session)
-            throws OwsExceptionReport {
-        return getObservationDAO();
-    }
-
     public AbstractSeriesDAO getSeriesDAO() throws CodedException {
         if (HibernateHelper.isEntitySupported(EReportingObservation.class)) {
             return new EReportingSeriesDAO();

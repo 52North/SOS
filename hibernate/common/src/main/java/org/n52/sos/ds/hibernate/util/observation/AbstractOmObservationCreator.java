@@ -51,6 +51,7 @@ import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.service.profile.Profile;
@@ -185,4 +186,11 @@ public abstract class AbstractOmObservationCreator {
                 getFeatureQueryHandler().getFeatureByID(queryObject);
         return feature;
     }
+    
+    public static String checkVersion(AbstractObservationRequest request) {
+		if (request != null) {
+			return request.getVersion();
+		}
+		return null;
+	}
 }

@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.web.admin.ereporting;
+package org.n52.sos.web.admin;
 
 import java.util.Iterator;
 
@@ -65,10 +65,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 @Controller
 @RequestMapping(value = "/admin/ereporting")
-public class AdminEReportingController extends AbstractController {
+public class AdminEReportingHeaderController extends AbstractController {
 
     private static final Logger LOG = LoggerFactory
-            .getLogger(AdminEReportingController.class);
+            .getLogger(AdminEReportingHeaderController.class);
 
     @RequestMapping(method = RequestMethod.GET)
     public String get() {

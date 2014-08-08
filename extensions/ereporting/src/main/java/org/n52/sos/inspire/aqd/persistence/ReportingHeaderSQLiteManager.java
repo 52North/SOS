@@ -117,7 +117,7 @@ public class ReportingHeaderSQLiteManager {
                                         .getClass()));
                 JsonNode node = encoder.encode(o);
                 String json = JSONUtils.print(node);
-                session.save(new JSONFragment().setID(key).setJSON(json));
+                session.saveOrUpdate(new JSONFragment().setID(key).setJSON(json));
             } catch (OwsExceptionReport ex) {
                 throw new RuntimeException(ex);
             }
@@ -138,19 +138,18 @@ public class ReportingHeaderSQLiteManager {
         @Override
         public T call(Session session)
                 throws OwsExceptionReport {
-            JSONFragment get = (JSONFragment) session
+            JSONFragment entity = (JSONFragment) session
                     .get(JSONFragment.class, this.key);
-            if (get == null) {
-                return null;
-            } else {
-                Decoder<T, JsonNode> decoder
-                        = CodingRepository.getInstance()
-                        .getDecoder(new JsonDecoderKey(type));
-                String json = get.getJSON();
-                JsonNode node = JSONUtils.loadString(json);
-                return decoder.decode(node);
-            }
+            return entity == null ? null : decode(entity);
+        }
 
+        protected T decode(JSONFragment entity)
+                throws OwsExceptionReport {
+            Decoder<T, JsonNode> decoder
+                    = CodingRepository.getInstance()
+                            .getDecoder(new JsonDecoderKey(type));
+            JsonNode node = JSONUtils.loadString(entity.getJSON());
+            return decoder.decode(node);
         }
 
     }

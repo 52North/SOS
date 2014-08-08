@@ -1,0 +1,4 @@
+org.n52.sos.encode.AqdEncoder
+org.n52.sos.encode.aqd.v1.AqdGetObservationResponseEncoder
+org.n52.sos.encode.aqd.v1.AqdGetCapabilitiesResponseEncoder
+org.n52.sos.encode.aqd.v1.AqdDescribeSensorResponseEncoder

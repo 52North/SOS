@@ -33,6 +33,10 @@ import org.n52.sos.util.StringHelper;
 import org.n52.sos.w3c.SchemaLocation;
 
 public interface AqdConstants {
+	
+	String AQD = "AQD";
+	
+	String VERSION = "1.0.0";
 
     String DEFINITION_VERIFICATION = "http://dd.eionet.europa.eu/vocabularies/aq/observationverification";
     

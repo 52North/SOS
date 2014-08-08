@@ -48,15 +48,15 @@ public class EReportingHeaderJSONDecoder extends AbstractJSONDecoder<EReportingH
     public EReportingHeader decodeJSON(JsonNode node, boolean validate)
             throws OwsExceptionReport {
         EReportingHeader header = new EReportingHeader();
-        header.setChange(delegate(EReportingChange.class, node.path(AQDJSONConstants.CHANGE)));
-        header.setInspireID(delegate(InspireID.class, node.path(AQDJSONConstants.INSPIRE_ID)));
-        header.setReportingAuthority(delegate(RelatedParty.class, node.path(AQDJSONConstants.REPORTING_AUTHORITY)));
+        header.setChange(decodeJsonToObject(node.path(AQDJSONConstants.CHANGE), EReportingChange.class));
+        header.setInspireID(decodeJsonToObject(node.path(AQDJSONConstants.INSPIRE_ID), InspireID.class));
+        header.setReportingAuthority(decodeJsonToObject(node.path(AQDJSONConstants.REPORTING_AUTHORITY), RelatedParty.class));
         header.setReportingPeriod(parseReferenceableTime(node.path(AQDJSONConstants.REPORTING_PERIOD)));
         for (JsonNode child : node.path(AQDJSONConstants.CONTENT)) {
-            header.addContent(delegateReferencable(AbstractFeature.class, child));
+            header.addContent(decodeJsonToReferencable(child, AbstractFeature.class));
         }
         for (JsonNode child : node.path(AQDJSONConstants.DELETE)) {
-            header.addDelete(delegateReferencable(AbstractFeature.class, child));
+            header.addDelete(decodeJsonToReferencable(child, AbstractFeature.class));
         }
         return header;
     }

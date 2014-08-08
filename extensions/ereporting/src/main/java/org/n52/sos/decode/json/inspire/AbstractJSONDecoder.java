@@ -30,11 +30,7 @@ package org.n52.sos.decode.json.inspire;
 
 import java.net.URI;
 
-import org.n52.sos.coding.CodingRepository;
-import org.n52.sos.decode.Decoder;
-import org.n52.sos.decode.JsonDecoderKey;
 import org.n52.sos.decode.json.JSONDecoder;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.time.Time;
@@ -138,18 +134,7 @@ public abstract class AbstractJSONDecoder<T> extends JSONDecoder<T> {
                 });
     }
 
-
-     protected <T> T delegate(Class<T> type, JsonNode node) throws OwsExceptionReport {
-        if (node == null || node.isNull() || node.isMissingNode()) { return null; }
-        JsonDecoderKey key = new  JsonDecoderKey(type);
-        Decoder<T, Object> decoder = CodingRepository.getInstance().getDecoder(key);
-        if (decoder == null) {
-            throw new NoApplicableCodeException().withMessage("No JSON Decoder for class {}", type);
-        }
-        return decoder.decode(node);
-    }
-
-    protected <T> Nillable<T> delegateNillable(final Class<T> type, JsonNode node)
+    protected <T> Nillable<T> decodeJsonToNillable(JsonNode node, final Class<T> type)
             throws OwsExceptionReport {
         ThrowableFunction<JsonNode, T> fun
                 = new ThrowableFunction<JsonNode, T>() {
@@ -157,7 +142,7 @@ public abstract class AbstractJSONDecoder<T> extends JSONDecoder<T> {
                     @Override
                     protected T applyThrowable(JsonNode input)
                             throws OwsExceptionReport {
-                        return delegate(type, input);
+                        return decodeJsonToObject(input, type);
                     }
                 };
 
@@ -169,7 +154,7 @@ public abstract class AbstractJSONDecoder<T> extends JSONDecoder<T> {
         return result;
     }
 
-    protected <T> Referenceable<T> delegateReferencable(final Class<T> type, JsonNode node)
+    protected <T> Referenceable<T> decodeJsonToReferencable(JsonNode node, final Class<T> type)
             throws OwsExceptionReport {
         ThrowableFunction<JsonNode, T> fun
                 = new ThrowableFunction<JsonNode, T>() {
@@ -177,7 +162,7 @@ public abstract class AbstractJSONDecoder<T> extends JSONDecoder<T> {
                     @Override
                     protected T applyThrowable(JsonNode input)
                             throws OwsExceptionReport {
-                        return delegate(type, input);
+                        return decodeJsonToObject(input, type);
                     }
                 };
 

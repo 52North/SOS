@@ -46,8 +46,8 @@ public class RelatedPartyJSONDecoder extends AbstractJSONDecoder<RelatedParty> {
     public RelatedParty decodeJSON(JsonNode node, boolean validate)
             throws OwsExceptionReport {
         RelatedParty relatedParty = new RelatedParty();
-        relatedParty.setContact(delegateNillable(Contact.class, node
-                .path(AQDJSONConstants.CONTACT)));
+        relatedParty.setContact(decodeJsonToNillable(node
+                .path(AQDJSONConstants.CONTACT), Contact.class));
         relatedParty.setIndividualName(parseNillableString(node
                 .path(AQDJSONConstants.INDIVIDUAL_NAME)));
         relatedParty.setOrganisationName(parseNillableString(node

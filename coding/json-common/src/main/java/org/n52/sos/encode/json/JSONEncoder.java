@@ -113,6 +113,9 @@ public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
     @Override
     public JsonNode encode(T objectToEncode) throws OwsExceptionReport {
         try {
+            if (objectToEncode == null) {
+                return nodeFactory().nullNode();
+            }
             return encodeJSON(objectToEncode);
         } catch (JSONEncodingException ex) {
             throw new NoApplicableCodeException().causedBy(ex);

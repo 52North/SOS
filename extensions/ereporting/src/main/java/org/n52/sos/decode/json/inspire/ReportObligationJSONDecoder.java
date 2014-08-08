@@ -47,8 +47,8 @@ public class ReportObligationJSONDecoder extends AbstractJSONDecoder<ReportOblig
     public ReportObligation decodeJSON(JsonNode node, boolean validate)
             throws OwsExceptionReport {
         ReportObligation reportObligation = new ReportObligation();
-        reportObligation.setChange(delegate(EReportingChange.class, node.path(AQDJSONConstants.CHANGE)));
-        reportObligation.setInspireID(delegate(InspireID.class, node.path(AQDJSONConstants.INSPIRE_ID)));
+        reportObligation.setChange(decodeJsonToObject(node.path(AQDJSONConstants.CHANGE), EReportingChange.class));
+        reportObligation.setInspireID(decodeJsonToObject(node.path(AQDJSONConstants.INSPIRE_ID), InspireID.class));
         reportObligation.setReportingPeriod(parseReferenceableTime(node.path(AQDJSONConstants.REPORTING_PERIOD)));
         return reportObligation;
     }

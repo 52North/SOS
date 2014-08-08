@@ -50,22 +50,22 @@ public class AddressJSONDecoder extends AbstractJSONDecoder<Address> {
         address.setPostCode(parseNillableString(node
                 .path(AQDJSONConstants.POST_CODE)));
         for (JsonNode n : node.path(AQDJSONConstants.ADDRESS_AREAS)) {
-            address.addAddressArea(delegateNillable(GeographicalName.class, n));
+            address.addAddressArea(decodeJsonToNillable(n, GeographicalName.class));
         }
         for (JsonNode n : node.path(AQDJSONConstants.ADMIN_UNITS)) {
-            address.addAdminUnit(delegate(GeographicalName.class, n));
+            address.addAdminUnit(decodeJsonToObject(n, GeographicalName.class));
         }
         for (JsonNode n : node.path(AQDJSONConstants.LOCATOR_DESIGNATORS)) {
             address.addLocatorDesignator(n.textValue());
         }
         for (JsonNode n : node.path(AQDJSONConstants.LOCATOR_NAMES)) {
-            address.addLocatorName(delegate(GeographicalName.class, n));
+            address.addLocatorName(decodeJsonToObject(n, GeographicalName.class));
         }
         for (JsonNode n : node.path(AQDJSONConstants.POST_NAMES)) {
-            address.addPostName(delegateNillable(GeographicalName.class, n));
+            address.addPostName(decodeJsonToNillable(n, GeographicalName.class));
         }
         for (JsonNode n : node.path(AQDJSONConstants.THOROUGHFARES)) {
-            address.addThoroughfare(delegateNillable(GeographicalName.class, n));
+            address.addThoroughfare(decodeJsonToNillable(n, GeographicalName.class));
         }
         return address;
     }

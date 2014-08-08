@@ -36,10 +36,8 @@ import org.n52.sos.inspire.aqd.Pronunciation;
 import org.n52.sos.inspire.aqd.Spelling;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.AQDJSONConstants;
-import org.n52.sos.util.Functions;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Function;
 
 
 public class GeographicalNameJSONDecoder  extends AbstractJSONDecoder<GeographicalName>{
@@ -66,46 +64,10 @@ public class GeographicalNameJSONDecoder  extends AbstractJSONDecoder<Geographic
                 .path(AQDJSONConstants.NATIVENESS)));
         geographicalName.setSourceOfName(parseNillableString(node
                 .path(AQDJSONConstants.SOURCE_OF_NAME)));
-        geographicalName.setPronunciation(parseNillable(node
-                .path(AQDJSONConstants.PRONUNCIATION))
-                .transform(new Function<JsonNode, Pronunciation>() {
-                    @Override
-                    public Pronunciation apply(JsonNode node) {
-                        return parsePronunciation(node);
-                    }
-
-                }));
-        geographicalName.setSpelling(parseNillable(node
-                .path(AQDJSONConstants.SPELLING))
-                .transform(new Function<JsonNode, Spelling>() {
-
-                    @Override
-                    public Spelling apply(JsonNode node) {
-                        return parseSpelling(node);
-                    }
-
-                }));
+        geographicalName.setPronunciation(decodeJsonToNillable(node
+                .path(AQDJSONConstants.PRONUNCIATION), Pronunciation.class));
+        geographicalName.setSpelling(decodeJsonToNillable(node
+                .path(AQDJSONConstants.SPELLING), Spelling.class));
         return geographicalName;
     }
-
-        private Pronunciation parsePronunciation(JsonNode node) {
-        Pronunciation pronunciation = new Pronunciation();
-        pronunciation
-                .setIPA(parseNillableString(node.path(AQDJSONConstants.IPA)));
-        pronunciation.setSoundLink(parseNillableString(node
-                .path(AQDJSONConstants.SOUND_LINK)).transform(Functions
-                        .stringToURI()));
-        return pronunciation;
-    }
-
-    private Spelling parseSpelling(JsonNode node) {
-        Spelling spelling = new Spelling();
-        spelling.setScript(parseNillableString(node
-                .path(AQDJSONConstants.SCRIPT)));
-        spelling.setText(node.path(AQDJSONConstants.TEXT).textValue());
-        spelling.setTransliterationScheme(parseNillableString(node
-                .path(AQDJSONConstants.SCRIPT)));
-        return spelling;
-    }
-
 }

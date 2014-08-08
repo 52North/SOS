@@ -45,8 +45,8 @@ public class ContactJSONDecoder extends AbstractJSONDecoder<Contact> {
     public Contact decodeJSON(JsonNode node, boolean validate)
             throws OwsExceptionReport {
         Contact contact = new Contact();
-        contact.setAddress(delegateNillable(Address.class, node
-                                            .path(AQDJSONConstants.ADDRESS)));
+        contact.setAddress(decodeJsonToNillable(node
+                                            .path(AQDJSONConstants.ADDRESS), Address.class));
         contact.setContactInstructions(parseNillableString(node
                 .path(AQDJSONConstants.CONTACT_INSTRUCTIONS)));
         contact.setElectronicMailAddress(parseNillableString(node

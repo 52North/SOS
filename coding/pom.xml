@@ -19,6 +19,5 @@
 		<module>wml-v20</module>
 		<module>json</module>
 		<module>json-common</module>
-		<module>aqd-v10</module>
     </modules>
 </project>

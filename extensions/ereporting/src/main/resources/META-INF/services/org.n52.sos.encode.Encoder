@@ -1,0 +1,15 @@
+org.n52.sos.encode.json.inspire.ReferenceableJSONEncoder
+org.n52.sos.encode.json.inspire.SpellingJSONEncoder
+org.n52.sos.encode.json.inspire.GeographicNameJSONEncoder
+org.n52.sos.encode.json.inspire.PronunciationJSONEncoder
+org.n52.sos.encode.json.inspire.IterableJSONEncoder
+org.n52.sos.encode.json.inspire.CodeTypeJSONEncoder
+org.n52.sos.encode.json.inspire.InspireIdJSONEncoder
+org.n52.sos.encode.json.inspire.RelatedPartyJSONEncoder
+org.n52.sos.encode.json.inspire.ReferenceJSONEncoder
+org.n52.sos.encode.json.inspire.EReportingHeaderJSONEncoder
+org.n52.sos.encode.json.inspire.EReportingChangeJSONEncoder
+org.n52.sos.encode.json.inspire.ContactJSONEncoder
+org.n52.sos.encode.json.inspire.NillableJSONEncoder
+org.n52.sos.encode.json.inspire.AddressJSONEncoder
+org.n52.sos.encode.json.inspire.ReportObligationJSONEncoder

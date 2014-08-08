@@ -130,7 +130,11 @@ public class ReportObligationRepository {
     }
 
     private RelatedParty _getReportingAuthority() {
-        return sqlite.loadRelatedParty();
+        RelatedParty reportingAuthority = sqlite.loadRelatedParty();
+        if (reportingAuthority == null) {
+            reportingAuthority = new RelatedParty();
+        }
+        return reportingAuthority;
     }
 
     private void _saveReportObligation(ReportObligationType type,
@@ -139,7 +143,11 @@ public class ReportObligationRepository {
     }
 
     private ReportObligation _getReportObligation(ReportObligationType type) {
-        return sqlite.loadReportObligation(type);
+        ReportObligation reportObligation = sqlite.loadReportObligation(type);
+        if (reportObligation == null) {
+            reportObligation = new ReportObligation();
+        }
+        return reportObligation;
     }
 
     public static ReportObligationRepository getInstance() {

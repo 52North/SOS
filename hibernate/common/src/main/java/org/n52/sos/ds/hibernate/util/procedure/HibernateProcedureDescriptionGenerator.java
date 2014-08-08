@@ -275,6 +275,9 @@ public class HibernateProcedureDescriptionGenerator {
         if (i18nDAO == null) {
             // no locale support
             ProcedureDAO featureDAO = new ProcedureDAO();
+            if (procedure.isSetName()) {
+            	abstractProcess.setHumanReadableIdentifier(procedure.getName());
+            }
             abstractProcess.addName(featureDAO.getName(procedure));
             abstractProcess.setDescription(featureDAO.getDescription(procedure));
         } else {

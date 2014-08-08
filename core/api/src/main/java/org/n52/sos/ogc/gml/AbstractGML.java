@@ -45,6 +45,10 @@ public abstract class AbstractGML implements Serializable{
 
     /** Feature identifier */
     private CodeWithAuthority identifier;
+    
+    private CodeWithAuthority humanReadableIdentifier;
+    
+    private CodeWithAuthority originalIdentifier;
 
     /**
      * List of feature names
@@ -135,7 +139,7 @@ public abstract class AbstractGML implements Serializable{
     }
 
     /**
-     * Set observation identifier
+     * Set identifier
      *
      * @param identifier
      *            the identifier to set
@@ -147,7 +151,7 @@ public abstract class AbstractGML implements Serializable{
     }
 
     /**
-     * Set observation identifier
+     * Set identifier
      *
      * @param identifier
      *            the identifier to set
@@ -165,6 +169,66 @@ public abstract class AbstractGML implements Serializable{
      */
     public boolean isSetIdentifier() {
         return getIdentifierCodeWithAuthority() != null && getIdentifierCodeWithAuthority().isSetValue();
+    }
+    
+    
+    /**
+     * Get the string human readable identifier of this abstract feature
+     *
+     * @return Human readable identifier of this abstract feature
+     */
+    public String getHumanReadableIdentifier() {
+        return getHumanReadableIdentifierCodeWithAuthority().getValue();
+    }
+
+    /**
+     * Get {@link CodeWithAuthority} human readable identifier of this abstract feature
+     *
+     * @return Returns the human readable identifier of this abstract feature .
+     */
+    public CodeWithAuthority getHumanReadableIdentifierCodeWithAuthority() {
+        return humanReadableIdentifier;
+    }
+
+    /**
+     * Set human readable  identifier
+     *
+     * @param identifier
+     *            the human readable identifier to set
+     * @return this
+     */
+    public AbstractGML setHumanReadableIdentifier(CodeWithAuthority humanReadableIdentifier) {
+        this.humanReadableIdentifier = humanReadableIdentifier;
+        return this;
+    }
+
+    /**
+     * Set human readable identifier
+     *
+     * @param identifier
+     *            the human readable identifier to set
+     * @return this
+     */
+    public AbstractGML setHumanReadableIdentifier(String humanReadableIdentifier) {
+        setHumanReadableIdentifier(new CodeWithAuthority(humanReadableIdentifier));
+        return this;
+    }
+
+    /**
+     * @return <tt>true</tt>, if human readable identifier is set and value is not an empty
+     *         string,<br>
+     *         else <tt>false</tt>
+     */
+    public boolean isSetHumanReadableIdentifier() {
+        return getHumanReadableIdentifierCodeWithAuthority() != null && getHumanReadableIdentifierCodeWithAuthority().isSetValue();
+    }
+    
+    public AbstractGML setHumanReadableIdentifierAsIdentifier() {
+    	if (isSetHumanReadableIdentifier()) {
+    		originalIdentifier = getIdentifierCodeWithAuthority();
+    		setIdentifier(getHumanReadableIdentifierCodeWithAuthority());
+    	}
+    	return this;
     }
 
     /**

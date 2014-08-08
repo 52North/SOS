@@ -41,7 +41,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.FeatureQueryHandler;
-import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -377,8 +376,14 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         LOGGER.trace("Creating Phenomenon...");
         final String phenID = hObservation.getObservableProperty().getIdentifier();
         if (!observedProperties.containsKey(phenID)) {
-            final String description = hObservation.getObservableProperty().getDescription();
-            observedProperties.put(phenID, new OmObservableProperty(phenID, description, null, null));
+        	 OmObservableProperty omObservableProperty = createObservableProperty(hObservation.getObservableProperty());
+//            final String description = hObservation.getObservableProperty().getDescription();
+//            OmObservableProperty omObservableProperty = new OmObservableProperty(phenID, description, null, null);
+//            if (hObservation.getObservableProperty().isSetName()) {
+//            	omObservableProperty.setHumanReadableIdentifier(hObservation.getObservableProperty().getName());
+//            	omObservableProperty.setName(new CodeType(hObservation.getObservableProperty().getName()));
+//            }
+            observedProperties.put(phenID, omObservableProperty);
         }
         LOGGER.trace("Creating Phenomenon done.");
         return phenID;
@@ -390,15 +395,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         LOGGER.trace("Creating Procedure...");
         final String procedureId = hObservation.getProcedure().getIdentifier();
         if (!procedures.containsKey(procedureId)) {
-            final Procedure hProcedure = hObservation.getProcedure();
-            final String pdf = hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
-            final SosProcedureDescription procedure;
-            if (encodeProcedureInObservation) {
-                procedure =
-                        procedureConverter.createSosProcedureDescription(hProcedure, pdf, getVersion(), getI18N(), getSession());
-            } else {
-                procedure = new SosProcedureDescriptionUnknowType(procedureId, pdf, null);
-            }
+            final SosProcedureDescription procedure = createProcedure(procedureId);
             procedures.put(procedureId, procedure);
         }
         LOGGER.trace("Creating Procedure done.");
@@ -409,14 +406,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         LOGGER.trace("Creating Feature...");
         final String foiID = hObservation.getFeatureOfInterest().getIdentifier();
         if (!features.containsKey(foiID)) {
-            FeatureQueryHandlerQueryObject featureQueryHandlerQueryObject =
-                    new FeatureQueryHandlerQueryObject().addFeatureIdentifier(foiID).setVersion(getVersion())
-                            .setConnection(getSession());
-            final AbstractFeature featureByID =
-                    featureQueryHandler
-                    .getFeatureByID(featureQueryHandlerQueryObject);
-            //            final AbstractFeature featureByID =
-//            featureQueryHandler.getFeatureByID(foiID, getSession(), getVersion(), -1);
+            final AbstractFeature featureByID = createFeatureOfInterest(foiID);
             features.put(foiID, featureByID);
         }
         LOGGER.trace("Creating Feature done.");

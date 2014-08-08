@@ -71,6 +71,9 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                             .getObservationConstellationInfo(getSession()));
             for (ObservableProperty op : ops) {
                 final String obsPropIdentifier = op.getIdentifier();
+                if (op.isSetName()) {
+                	getCache().addObservablePropertyIdentifierHumanReadableName(obsPropIdentifier, op.getName());
+                }
                 Collection<ObservationConstellationInfo> ocis = ociMap.get(obsPropIdentifier);
                 if (CollectionHelper.isNotEmpty(ocis)) {
                     getCache().setOfferingsForObservableProperty(

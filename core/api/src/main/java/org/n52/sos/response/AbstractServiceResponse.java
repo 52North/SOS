@@ -29,6 +29,9 @@
 package org.n52.sos.response;
 
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.swes.SwesConstants.HasSwesExtension;
+import org.n52.sos.ogc.swes.SwesExtension;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.service.AbstractServiceCommunicationObject;
 import org.n52.sos.util.http.MediaType;
 
@@ -37,9 +40,12 @@ import org.n52.sos.util.http.MediaType;
  * 
  * @since 4.0.0
  */
-public abstract class AbstractServiceResponse extends AbstractServiceCommunicationObject {
+@SuppressWarnings("rawtypes")
+public abstract class AbstractServiceResponse extends AbstractServiceCommunicationObject implements HasSwesExtension<AbstractServiceResponse> {
 
     private MediaType contentType;
+    
+    private SwesExtensions extensions;
 
     public AbstractServiceResponse setContentType(MediaType contentType) {
         this.contentType = contentType;
@@ -60,5 +66,40 @@ public abstract class AbstractServiceResponse extends AbstractServiceCommunicati
     
     public void mergeStreamingData() throws OwsExceptionReport {
         // should be overridden by concrete responses
+    }
+    
+    @Override
+    public SwesExtensions getExtensions() {
+        return extensions;
+    }
+
+    @Override
+    public AbstractServiceResponse setExtensions(final SwesExtensions extensions) {
+        this.extensions = extensions;
+        return this;
+    }
+    
+    @Override
+    public AbstractServiceResponse addExtensions(final SwesExtensions extensions) {
+        if (getExtensions() == null) {
+            setExtensions(extensions);
+        } else {
+            getExtensions().addSwesExtension(extensions.getExtensions());
+        }
+        return this;
+    }
+
+    @Override
+    public AbstractServiceResponse addExtension(final SwesExtension extension) {
+        if (getExtensions() == null) {
+            setExtensions(new SwesExtensions());
+        }
+        getExtensions().addSwesExtension(extension);
+        return this;
+    }
+
+    @Override
+    public boolean isSetExtensions() {
+        return extensions != null && !extensions.isEmpty();
     }
 }

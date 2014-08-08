@@ -62,9 +62,9 @@ public class EReportingSeriesOmObservationCreator extends SeriesOmObservationCre
     public List<OmObservation> create() throws OwsExceptionReport, ConverterException {
         final List<OmObservation> observations = Lists.newLinkedList();
         if (series != null) {
-            SosProcedureDescription procedure = getProcedure();
-            OmObservableProperty obsProp = getObservableProperty();
-            AbstractFeature feature = getFeatureOfInterest();
+            SosProcedureDescription procedure = createProcedure(series.getProcedure().getIdentifier());
+            OmObservableProperty obsProp = createObservableProperty(series.getObservableProperty());
+            AbstractFeature feature = createFeatureOfInterest(series.getFeatureOfInterest().getIdentifier());
 
             final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);
 

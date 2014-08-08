@@ -16,5 +16,9 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>api</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>gda-operation</artifactId>
+		</dependency>
 	</dependencies>
 </project>

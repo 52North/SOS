@@ -332,9 +332,6 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     private SetMultiMap<String, String> observablePropertiesForProcedures = newSynchronizedSetMultiMap();
 
-    @Deprecated
-    private SetMultiMap<String, String> observationIdentifiersForProcedures = newSynchronizedSetMultiMap();
-
     private SetMultiMap<String, String> observationTypesForOfferings = newSynchronizedSetMultiMap();
 
     private SetMultiMap<String, String> featureOfInterestTypesForOfferings = newSynchronizedSetMultiMap();
@@ -375,9 +372,6 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     private Set<String> featuresOfInterest = newSynchronizedSet();
 
-    @Deprecated
-    private Set<String> observationIdentifiers = newSynchronizedSet();
-
     private Set<String> procedures = newSynchronizedSet();
 
     private Set<String> resultTemplates = newSynchronizedSet();
@@ -393,7 +387,23 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     private Map<String, SosEnvelope> spatialFilteringProfileEnvelopeForOfferings = newSynchronizedMap();
 
     private Set<Locale> supportedLanguages = newSynchronizedSet();
-
+    
+    private Map<String, String> featureOfInterestIdentifierForHumanReadableName = newSynchronizedMap();
+    
+    private Map<String, String> featureOfInterestHumanReadableNameForIdentifier = newSynchronizedMap();
+    
+    private Map<String, String> observablePropertyIdentifierForHumanReadableName = newSynchronizedMap();
+    
+    private Map<String, String> observablePropertyHumanReadableNameForIdentifier = newSynchronizedMap();
+    
+    private Map<String, String> procedureIdentifierForHumanReadableName = newSynchronizedMap();
+    
+    private Map<String, String> procedureHumanReadableNameForIdentifier = newSynchronizedMap();
+    
+    private Map<String, String> offeringIdentifierForHumanReadableName = newSynchronizedMap();
+    
+    private Map<String, String> offeringHumanReadableNameForIdentifier = newSynchronizedMap();
+    
     /**
      * @return the relating offering -> max phenomenon time
      */
@@ -490,14 +500,6 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
      */
     protected SetMultiMap<String, String> getObservablePropertiesForOfferingsMap() {
         return this.observablePropertiesForOfferings;
-    }
-
-    /**
-     * @return the relating procedure -> observation identifier
-     */
-    @Deprecated
-    protected SetMultiMap<String, String> getObservationIdentifiersForProceduresMap() {
-        return this.observationIdentifiersForProcedures;
     }
 
     /**
@@ -662,14 +664,6 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     }
 
     /**
-     * @return the observation identifiers
-     */
-    @Deprecated
-    protected Set<String> getObservationIdentifiersSet() {
-        return this.observationIdentifiers;
-    }
-
-    /**
      * @return the procedures
      */
     protected Set<String> getProceduresSet() {
@@ -725,6 +719,38 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     protected Set<Locale> getSupportedLanguageSet() {
         return this.supportedLanguages;
     }
+    
+    protected Map<String, String> getFeatureOfInterestIdentifierForHumanReadableName() {
+    	return featureOfInterestIdentifierForHumanReadableName;
+    }
+    
+    protected Map<String, String> getFeatureOfInterestHumanReadableNameForIdentifier() {
+    	return featureOfInterestHumanReadableNameForIdentifier;
+    }
+    
+    protected Map<String, String> getObservablePropertyIdentifierForHumanReadableName() {
+    	return observablePropertyIdentifierForHumanReadableName;
+    }
+    
+    protected Map<String, String> getObservablePropertyHumanReadableNameForIdentifier() {
+    	return observablePropertyHumanReadableNameForIdentifier;
+    }
+    
+    protected Map<String, String> getProcedureIdentifierForHumanReadableName() {
+    	return procedureIdentifierForHumanReadableName;
+    }
+    
+    protected Map<String, String> getProcedureHumanReadableNameForIdentifier() {
+    	return procedureHumanReadableNameForIdentifier;
+    }
+    
+    protected Map<String, String> getOfferingIdentifierForHumanReadableName() {
+    	return offeringIdentifierForHumanReadableName;
+    }
+    
+    protected Map<String, String> getOfferingHumanReadableNameForIdentifier() {
+    	return offeringHumanReadableNameForIdentifier;
+    }
 
     /**
      * @param defaultEpsgCode
@@ -754,7 +780,10 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                 relatedFeaturesForOfferings, resultTemplatesForOfferings, rolesForRelatedFeatures,
                 envelopeForOfferings, nameForOfferings, i18nNameForOfferings, i18nDescriptionForOfferings, epsgCodes, featuresOfInterest,
                 procedures, resultTemplates, offerings, globalEnvelope, globalResultTimeEnvelope,
-                globalPhenomenonTimeEnvelope, supportedLanguages);
+                globalPhenomenonTimeEnvelope, supportedLanguages, featureOfInterestHumanReadableNameForIdentifier, 
+                featureOfInterestIdentifierForHumanReadableName, observablePropertyHumanReadableNameForIdentifier, 
+                observablePropertyIdentifierForHumanReadableName, procedureHumanReadableNameForIdentifier, procedureIdentifierForHumanReadableName,
+                offeringHumanReadableNameForIdentifier, offeringIdentifierForHumanReadableName);
     }
 
     @Override
@@ -816,7 +845,15 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                     && Objects.equal(this.globalPhenomenonTimeEnvelope, other.getGlobalPhenomenonTimeEnvelope())
                     && Objects.equal(this.globalResultTimeEnvelope, other.getGlobalResultTimeEnvelope())
                     && Objects.equal(this.offerings, other.getOfferingsSet())
-                    && Objects.equal(this.supportedLanguages, other.getSupportedLanguages());
+                    && Objects.equal(this.supportedLanguages, other.getSupportedLanguages())
+                    && Objects.equal(this.featureOfInterestHumanReadableNameForIdentifier, other.getFeatureOfInterestHumanReadableNameForIdentifier())
+                    && Objects.equal(this.featureOfInterestIdentifierForHumanReadableName, other.getFeatureOfInterestIdentifierForHumanReadableName())
+                    && Objects.equal(this.observablePropertyHumanReadableNameForIdentifier, other.getObservablePropertyHumanReadableNameForIdentifier())
+                    && Objects.equal(this.observablePropertyIdentifierForHumanReadableName, other.getObservablePropertyIdentifierForHumanReadableName())
+                    && Objects.equal(this.procedureHumanReadableNameForIdentifier, other.getProcedureHumanReadableNameForIdentifier())
+                    && Objects.equal(this.procedureIdentifierForHumanReadableName, other.getProcedureIdentifierForHumanReadableName())
+                    && Objects.equal(this.offeringHumanReadableNameForIdentifier, other.getOfferingHumanReadableNameForIdentifier())
+                    && Objects.equal(this.offeringIdentifierForHumanReadableName, other.getOfferingIdentifierForHumanReadableName());
         }
         return false;
     }

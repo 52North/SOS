@@ -89,15 +89,11 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
     public List<OmObservation> create() throws OwsExceptionReport, ConverterException {
         final List<OmObservation> observations = Lists.newLinkedList();
         if (getObservationConstellation() != null && getFeatureIds() != null) {
-            SosProcedureDescription procedure = getProcedure();
-            OmObservableProperty obsProp = getObservableProperty();
-
+            SosProcedureDescription procedure = createProcedure(getObservationConstellation().getProcedure().getIdentifier());
+            OmObservableProperty obsProp = createObservableProperty(getObservationConstellation().getObservableProperty());
+            obsProp.setUnit(queryUnit());
             for (final String featureId : getFeatureIds()) {
-                FeatureQueryHandlerQueryObject featureQueryHandlerQueryObject =
-                        new FeatureQueryHandlerQueryObject().addFeatureIdentifier(featureId).setVersion(getVersion())
-                                .setConnection(getSession());
-                final AbstractFeature feature =
-                        getFeatureQueryHandler().getFeatureByID(featureQueryHandlerQueryObject);
+                final AbstractFeature feature = createFeatureOfInterest(featureId);
                 final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);
 
                 final OmObservation sosObservation = new OmObservation();
@@ -114,26 +110,19 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
         return observations;
     }
 
-    private SosProcedureDescription getProcedure() throws ConverterException, OwsExceptionReport {
-        String id = getObservationConstellation().getProcedure().getIdentifier();
-        // final SensorML procedure = new SensorML();
-        // procedure.setIdentifier(procID);
-        Procedure hProcedure = new ProcedureDAO().getProcedureForIdentifier(id, getSession());
-        String pdf = hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
-        if (getActiveProfile().isEncodeProcedureInObservation()) {
-            return new HibernateProcedureConverter().createSosProcedureDescription(hProcedure, pdf, getVersion(),
-                    getSession());
-        } else {
-            return new SosProcedureDescriptionUnknowType(id, pdf, null);
-        }
-    }
-
-    private OmObservableProperty getObservableProperty() {
-        String phenID = getObservationConstellation().getObservableProperty().getIdentifier();
-        String description = getObservationConstellation().getObservableProperty().getDescription();
-        String unit = queryUnit();
-        return new OmObservableProperty(phenID, description, unit, null);
-    }
+//    private SosProcedureDescription getProcedure() throws ConverterException, OwsExceptionReport {
+//        String id = getObservationConstellation().getProcedure().getIdentifier();
+//        // final SensorML procedure = new SensorML();
+//        // procedure.setIdentifier(procID);
+//        Procedure hProcedure = new ProcedureDAO().getProcedureForIdentifier(id, getSession());
+//        String pdf = hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
+//        if (getActiveProfile().isEncodeProcedureInObservation()) {
+//            return new HibernateProcedureConverter().createSosProcedureDescription(hProcedure, pdf, getVersion(),
+//                    getSession());
+//        } else {
+//            return new SosProcedureDescriptionUnknowType(id, pdf, null);
+//        }
+//    }
 
     private OmObservationConstellation getObservationConstellation(SosProcedureDescription procedure,
             OmObservableProperty obsProp, AbstractFeature feature) {

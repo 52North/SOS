@@ -416,8 +416,14 @@
 
 		<!-- AQD eReporting -->
 		 <dependency>
-			<groupId>org.n52.sensorweb.sos</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>coding-aqd-v10</artifactId>
+        </dependency>
+        
+        <!-- flexible identifiers -->
+        <dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>flexible-identifier</artifactId>
         </dependency>
 		
     </dependencies>

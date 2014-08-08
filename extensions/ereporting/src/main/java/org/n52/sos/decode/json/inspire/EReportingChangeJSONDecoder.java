@@ -29,36 +29,24 @@
 package org.n52.sos.decode.json.inspire;
 
 import org.n52.sos.inspire.aqd.EReportingChange;
-import org.n52.sos.inspire.aqd.EReportingHeader;
-import org.n52.sos.inspire.aqd.InspireID;
-import org.n52.sos.inspire.aqd.RelatedParty;
-import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.AQDJSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class EReportingHeaderJSONDecoder extends AbstractJSONDecoder<EReportingHeader> {
 
-    public EReportingHeaderJSONDecoder() {
-        super(EReportingHeader.class);
+public class EReportingChangeJSONDecoder extends AbstractJSONDecoder<EReportingChange> {
+
+    public EReportingChangeJSONDecoder() {
+        super(EReportingChange.class);
     }
 
     @Override
-    public EReportingHeader decodeJSON(JsonNode node, boolean validate)
+    public EReportingChange decodeJSON(JsonNode node, boolean validate)
             throws OwsExceptionReport {
-        EReportingHeader header = new EReportingHeader();
-        header.setChange(delegate(EReportingChange.class, node.path(AQDJSONConstants.CHANGE)));
-        header.setInspireID(delegate(InspireID.class, node.path(AQDJSONConstants.INSPIRE_ID)));
-        header.setReportingAuthority(delegate(RelatedParty.class, node.path(AQDJSONConstants.REPORTING_AUTHORITY)));
-        header.setReportingPeriod(parseReferenceableTime(node.path(AQDJSONConstants.REPORTING_PERIOD)));
-        for (JsonNode child : node.path(AQDJSONConstants.CONTENT)) {
-            header.addContent(delegateReferencable(AbstractFeature.class, child));
-        }
-        for (JsonNode child : node.path(AQDJSONConstants.DELETE)) {
-            header.addDelete(delegateReferencable(AbstractFeature.class, child));
-        }
-        return header;
+        boolean changed = node.path(AQDJSONConstants.CHANGED).asBoolean();
+        String description = node.path(AQDJSONConstants.DESCRIPTION).textValue();
+        return new EReportingChange(changed, description);
     }
 
 }

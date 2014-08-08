@@ -28,37 +28,40 @@
  */
 package org.n52.sos.decode.json.inspire;
 
-import org.n52.sos.inspire.aqd.EReportingChange;
-import org.n52.sos.inspire.aqd.EReportingHeader;
-import org.n52.sos.inspire.aqd.InspireID;
-import org.n52.sos.inspire.aqd.RelatedParty;
-import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.inspire.aqd.Address;
+import org.n52.sos.inspire.aqd.Contact;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.AQDJSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class EReportingHeaderJSONDecoder extends AbstractJSONDecoder<EReportingHeader> {
+public class ContactJSONDecoder extends AbstractJSONDecoder<Contact> {
 
-    public EReportingHeaderJSONDecoder() {
-        super(EReportingHeader.class);
+    public ContactJSONDecoder() {
+        super(Contact.class);
     }
 
     @Override
-    public EReportingHeader decodeJSON(JsonNode node, boolean validate)
+    public Contact decodeJSON(JsonNode node, boolean validate)
             throws OwsExceptionReport {
-        EReportingHeader header = new EReportingHeader();
-        header.setChange(delegate(EReportingChange.class, node.path(AQDJSONConstants.CHANGE)));
-        header.setInspireID(delegate(InspireID.class, node.path(AQDJSONConstants.INSPIRE_ID)));
-        header.setReportingAuthority(delegate(RelatedParty.class, node.path(AQDJSONConstants.REPORTING_AUTHORITY)));
-        header.setReportingPeriod(parseReferenceableTime(node.path(AQDJSONConstants.REPORTING_PERIOD)));
-        for (JsonNode child : node.path(AQDJSONConstants.CONTENT)) {
-            header.addContent(delegateReferencable(AbstractFeature.class, child));
+        Contact contact = new Contact();
+        contact.setAddress(delegateNillable(Address.class, node
+                                            .path(AQDJSONConstants.ADDRESS)));
+        contact.setContactInstructions(parseNillableString(node
+                .path(AQDJSONConstants.CONTACT_INSTRUCTIONS)));
+        contact.setElectronicMailAddress(parseNillableString(node
+                .path(AQDJSONConstants.ELECTRONIC_MAIL_ADDRESS)));
+        contact.setHoursOfService(parseNillableString(node
+                .path(AQDJSONConstants.HOURS_OF_SERVICE)));
+        contact.setWebsite(parseNillableString(node
+                .path(AQDJSONConstants.WEBSITE)));
+        for (JsonNode n : node.path(AQDJSONConstants.TELEPHONE_FACSIMILE)) {
+            contact.addTelephoneFacsimile(parseNillableString(n));
         }
-        for (JsonNode child : node.path(AQDJSONConstants.DELETE)) {
-            header.addDelete(delegateReferencable(AbstractFeature.class, child));
+        for (JsonNode n : node.path(AQDJSONConstants.TELEPHONE_VOICE)) {
+            contact.addTelephoneVoice(parseNillableString(n));
         }
-        return header;
+        return contact;
     }
 
 }

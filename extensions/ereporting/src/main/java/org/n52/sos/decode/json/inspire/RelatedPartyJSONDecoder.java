@@ -28,37 +28,36 @@
  */
 package org.n52.sos.decode.json.inspire;
 
-import org.n52.sos.inspire.aqd.EReportingChange;
-import org.n52.sos.inspire.aqd.EReportingHeader;
-import org.n52.sos.inspire.aqd.InspireID;
+
+import org.n52.sos.inspire.aqd.Contact;
 import org.n52.sos.inspire.aqd.RelatedParty;
-import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.AQDJSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class EReportingHeaderJSONDecoder extends AbstractJSONDecoder<EReportingHeader> {
+public class RelatedPartyJSONDecoder extends AbstractJSONDecoder<RelatedParty> {
 
-    public EReportingHeaderJSONDecoder() {
-        super(EReportingHeader.class);
+    public RelatedPartyJSONDecoder() {
+        super(RelatedParty.class);
     }
 
     @Override
-    public EReportingHeader decodeJSON(JsonNode node, boolean validate)
+    public RelatedParty decodeJSON(JsonNode node, boolean validate)
             throws OwsExceptionReport {
-        EReportingHeader header = new EReportingHeader();
-        header.setChange(delegate(EReportingChange.class, node.path(AQDJSONConstants.CHANGE)));
-        header.setInspireID(delegate(InspireID.class, node.path(AQDJSONConstants.INSPIRE_ID)));
-        header.setReportingAuthority(delegate(RelatedParty.class, node.path(AQDJSONConstants.REPORTING_AUTHORITY)));
-        header.setReportingPeriod(parseReferenceableTime(node.path(AQDJSONConstants.REPORTING_PERIOD)));
-        for (JsonNode child : node.path(AQDJSONConstants.CONTENT)) {
-            header.addContent(delegateReferencable(AbstractFeature.class, child));
+        RelatedParty relatedParty = new RelatedParty();
+        relatedParty.setContact(delegateNillable(Contact.class, node
+                .path(AQDJSONConstants.CONTACT)));
+        relatedParty.setIndividualName(parseNillableString(node
+                .path(AQDJSONConstants.INDIVIDUAL_NAME)));
+        relatedParty.setOrganisationName(parseNillableString(node
+                .path(AQDJSONConstants.ORGANISATION_NAME)));
+        relatedParty.setPositionName(parseNillableString(node
+                .path(AQDJSONConstants.POSITION_NAME)));
+        for (JsonNode n : node.path(AQDJSONConstants.ROLES)) {
+            relatedParty.addRole(parseNillableReference(n));
         }
-        for (JsonNode child : node.path(AQDJSONConstants.DELETE)) {
-            header.addDelete(delegateReferencable(AbstractFeature.class, child));
-        }
-        return header;
+        return relatedParty;
     }
 
 }

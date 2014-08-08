@@ -1,4 +1,3 @@
-org.n52.sos.decode.json.inspire.AbstractJSONDecoder
 org.n52.sos.decode.json.inspire.AddressJSONDecoder
 org.n52.sos.decode.json.inspire.ContactJSONDecoder
 org.n52.sos.decode.json.inspire.EReportingChangeJSONDecoder

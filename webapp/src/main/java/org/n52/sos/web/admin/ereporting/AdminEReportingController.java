@@ -28,6 +28,8 @@
  */
 package org.n52.sos.web.admin.ereporting;
 
+import java.util.Iterator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -39,6 +41,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.n52.sos.coding.CodingRepository;
+import org.n52.sos.decode.Decoder;
+import org.n52.sos.decode.JsonDecoderKey;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.json.JSONEncoderKey;
 import org.n52.sos.inspire.aqd.RelatedParty;
@@ -95,8 +99,26 @@ public class AdminEReportingController extends AbstractController {
     @RequestMapping(method = RequestMethod.POST,
                     consumes = "application/json")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void save(@RequestBody String json) {
+    public void save(@RequestBody String json) throws OwsExceptionReport {
         LOG.info("Saving {}", json);
+        ReportObligationRepository reportObligationRepository = ReportObligationRepository.getInstance();
+        CodingRepository codingRepository = CodingRepository.getInstance();
+        Decoder<ReportObligation, JsonNode> reportObligationDecoder = codingRepository.getDecoder(new JsonDecoderKey(ReportObligation.class));
+        Decoder<RelatedParty, JsonNode> relatedPartyDecoder = codingRepository.getDecoder(new JsonDecoderKey(RelatedParty.class));
+
+        JsonNode node = JSONUtils.loadString(json);
+
+        RelatedParty relatedParty = relatedPartyDecoder.decode(node.path(AQDJSONConstants.REPORTING_AUTHORITY));
+        reportObligationRepository.saveReportingAuthority(relatedParty);
+
+
+        JsonNode obligations = node.path(AQDJSONConstants.REPORT_OBLIGATIONS);
+        Iterator<String> it = obligations.fieldNames();
+        while (it.hasNext()) {
+            String id = it.next();
+            ReportObligation reportObligation = reportObligationDecoder.decode(obligations.path(id));
+            reportObligationRepository.saveReportObligation(ReportObligationType.valueOf(id), reportObligation);
+        }
     }
 
 }

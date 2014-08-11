@@ -35,7 +35,9 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
-import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.inspire.aqd.EReportingHeader;
+import org.n52.sos.inspire.aqd.ReportObligationType;
+import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
@@ -45,6 +47,7 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.JavaHelper;
+import org.n52.sos.util.Referenceable;
 import org.n52.sos.w3c.SchemaLocation;
 
 public class AqdGetObservationResponseEncoder extends
@@ -65,25 +68,18 @@ public class AqdGetObservationResponseEncoder extends
 		FeatureCollection featureCollection = new FeatureCollection();
 		featureCollection.setGmlId("fc_" + JavaHelper.generateID(new DateTime()
 				.toString()));
-		// TODO add eReporting-Header
-		// TODO get all phenTimes for header
-		AbstractFeature eReportingHeader = getEReportingHeader();
+		// TODO get FLOW from response
+		EReportingHeader eReportingHeader = getEReportingHeader(ReportObligationType.E2A);
 		featureCollection.addMember(eReportingHeader);
 		TimePeriod timePeriod = new TimePeriod();
 		for (OmObservation observation : response.getObservationCollection()) {
 			timePeriod.extendToContain(observation.getPhenomenonTime());
 			featureCollection.addMember(observation);
 		}
-//		eReportingHeader.setReportingTime(timePeriod);
+		eReportingHeader.setReportingPeriod(Referenceable.of((Time)timePeriod));
 		Map<HelperValues, String> additionalValues = new EnumMap<HelperValues, String>(HelperValues.class);
 		additionalValues.put(HelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2);
 		additionalValues.put(HelperValues.DOCUMENT, null);
 		return encodeGml(additionalValues, featureCollection);
 	}
-
-	private AbstractFeature getEReportingHeader() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

@@ -22,6 +22,10 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>ereporting</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>binding-kvp</artifactId>
         </dependency>
         <!-- XML Beans Generated Classes -->

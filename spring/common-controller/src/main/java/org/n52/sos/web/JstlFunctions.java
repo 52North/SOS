@@ -68,7 +68,7 @@ public class JstlFunctions {
         return HAS_ADMIN;
     }
 
-    private static boolean hasClass(String c) {
+    public static boolean hasClass(String c) {
         try {
             Class.forName(c);
         } catch (ClassNotFoundException e) {

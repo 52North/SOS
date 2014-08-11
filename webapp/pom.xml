@@ -325,6 +325,12 @@
             <artifactId>do-kvp</artifactId>
         </dependency>
 
+        <!-- EREPORTING -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ereporting</artifactId>
+        </dependency>
+
 
         <!-- dependencies for integration test -->
         <dependency>

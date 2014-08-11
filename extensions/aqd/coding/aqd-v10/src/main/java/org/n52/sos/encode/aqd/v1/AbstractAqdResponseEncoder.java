@@ -41,6 +41,9 @@ import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.OperationEncoderKey;
 import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
+import org.n52.sos.inspire.aqd.EReportingHeader;
+import org.n52.sos.inspire.aqd.ReportObligationRepository;
+import org.n52.sos.inspire.aqd.ReportObligationType;
 import org.n52.sos.ogc.filter.FilterConstants;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.ows.OWSConstants;
@@ -65,8 +68,12 @@ public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceRespon
 
     @Override
     public Set<SchemaLocation> getSchemaLocations() {
-        return Sets.newHashSet(AqdConstants.AQD_SCHEMA_LOCATION);
+        return Sets.newHashSet(AqdConstants.NS_AQD_SCHEMA_LOCATION);
     }
+    
+	protected EReportingHeader getEReportingHeader(ReportObligationType type) {
+		return ReportObligationRepository.getInstance().createHeader(type);
+	}
 
     protected Profile getActiveProfile() {
         return Configurator.getInstance().getProfileHandler().getActiveProfile();

@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode.json.impl;
+package org.n52.sos.encode.json.base;
 
 import static org.n52.sos.util.DateTimeHelper.formatDateTime2IsoString;
 import static org.n52.sos.util.DateTimeHelper.formatDateTime2String;
@@ -49,8 +49,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
  * 
  * @since 4.0.0
  */
-public class TimeEncoder extends JSONEncoder<Time> {
-    public TimeEncoder() {
+public class TimeJSONEncoder extends JSONEncoder<Time> {
+    public TimeJSONEncoder() {
         super(Time.class);
     }
 

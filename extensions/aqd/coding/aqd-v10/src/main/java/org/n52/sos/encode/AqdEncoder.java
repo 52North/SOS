@@ -28,16 +28,28 @@
  */
 package org.n52.sos.encode;
 
+import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 import org.n52.sos.aqd.AqdConstants;
+import org.n52.sos.encode.xml.stream.inspire.aqd.EReportingHeaderEncoder;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.inspire.aqd.EReportingHeader;
+import org.n52.sos.inspire.aqd.ReportObligationRepository;
+import org.n52.sos.inspire.aqd.ReportObligationType;
 import org.n52.sos.ogc.gml.GmlConstants;
+import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.FeatureCollection;
@@ -46,6 +58,7 @@ import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.JavaHelper;
+import org.n52.sos.util.Referenceable;
 import org.n52.sos.w3c.SchemaLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +73,7 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
 
 	private static final Set<EncoderKey> ENCODER_KEY_TYPES = CodingHelper
 			.encoderKeysForElements(AqdConstants.NS_AQD,
-					GetObservationResponse.class, OmObservation.class);
+					GetObservationResponse.class, OmObservation.class, EReportingHeader.class);
 
 	public AqdEncoder() {
 		LOGGER.debug(
@@ -76,7 +89,7 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
 	@Override
 	public Set<SchemaLocation> getSchemaLocations() {
 		return Sets
-				.newHashSet(AqdConstants.AQD_SCHEMA_LOCATION);
+				.newHashSet(AqdConstants.NS_AQD_SCHEMA_LOCATION);
 	}
 
 	@Override
@@ -113,6 +126,8 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
 			return encodeGetObservationResponse((GetObservationResponse) element);
 		} else if (element instanceof OmObservation) {
 			return encodeOmObservation((OmObservation)element);
+		} else if (element instanceof EReportingHeader) {
+			return encodeEReportingHeader((EReportingHeader)element);
 		}
 		throw new UnsupportedEncoderInputException(this, element);
 	}
@@ -122,10 +137,15 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
 		FeatureCollection featureCollection = new FeatureCollection();
 		featureCollection.setGmlId("fc_" + JavaHelper.generateID(new DateTime()
 				.toString()));
-		// TODO add eReporting-Header
+		// TODO get FLOW from response
+		EReportingHeader eReportingHeader = getEReportingHeader(ReportObligationType.E2A);
+		featureCollection.addMember(eReportingHeader);
+		TimePeriod timePeriod = new TimePeriod();
 		for (OmObservation observation : response.getObservationCollection()) {
+			timePeriod.extendToContain(observation.getPhenomenonTime());
 			featureCollection.addMember(observation);
 		}
+		eReportingHeader.setReportingPeriod(Referenceable.of((Time)timePeriod));
 		Map<HelperValues, String> additionalValues = new EnumMap<HelperValues, String>(HelperValues.class);
 		additionalValues.put(HelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2);
 		additionalValues.put(HelperValues.DOCUMENT, null);
@@ -135,5 +155,24 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
 
 	private XmlObject encodeOmObservation(OmObservation element) throws OwsExceptionReport {
 		return CodingHelper.encodeObjectToXml(OmConstants.NS_OM_2, element);
+	}
+	
+	private XmlObject encodeEReportingHeader(EReportingHeader element) throws OwsExceptionReport {
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			new EReportingHeaderEncoder(element).write(baos);
+			return XmlObject.Factory.parse(baos.toString("UTF8"));
+		} catch (XMLStreamException xmlse) {
+	            throw new NoApplicableCodeException().causedBy(xmlse).withMessage("Error encoding response");
+		} catch (XmlException xmle) {
+            throw new NoApplicableCodeException().causedBy(xmle).withMessage("Error encoding response");
+        } catch (UnsupportedEncodingException uee) {
+            throw new NoApplicableCodeException().causedBy(uee).withMessage("Error encoding response");
+        }
+		
+	}
+
+	protected EReportingHeader getEReportingHeader(ReportObligationType type) {
+		return ReportObligationRepository.getInstance().createHeader(type);
 	}
 }

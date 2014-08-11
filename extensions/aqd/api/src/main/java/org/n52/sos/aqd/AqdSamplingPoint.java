@@ -35,6 +35,10 @@ public class AqdSamplingPoint extends EfEnvironmentalMonitoringFacility {
  
     private static final long serialVersionUID = -5679922725853829576L;
     
+    public AqdSamplingPoint() {
+    	setDefaultElementEncoding(AqdConstants.NS_AQD);
+    }
+    
     private AssessmentType assessmentType;
 
     /**

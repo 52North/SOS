@@ -29,7 +29,6 @@
 package org.n52.sos.config;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
@@ -322,16 +321,12 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
      private MultilingualString parseMultilingualString(String stringValue) {
         MultilingualString ms = new MultilingualString();
         if (!nullOrEmpty(stringValue)) {
-            try {
-                JsonNode json = JSONUtils.loadString(stringValue);
-                Iterator<String> it = json.fieldNames();
-                while(it.hasNext()) {
-                    String key = it.next();
-                    String value = json.path(key).asText();
-                    ms.addLocalization(LocaleHelper.fromString(key), value);
-                }
-            } catch (IOException ex) {
-                throw new IllegalArgumentException(String.format("Malformed multilingual string: %s", stringValue));
+            JsonNode json = JSONUtils.loadString(stringValue);
+            Iterator<String> it = json.fieldNames();
+            while(it.hasNext()) {
+                String key = it.next();
+                String value = json.path(key).asText();
+                ms.addLocalization(LocaleHelper.fromString(key), value);
             }
         }
         return ms;

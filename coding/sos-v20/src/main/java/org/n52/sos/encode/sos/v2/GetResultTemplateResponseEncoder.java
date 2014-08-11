@@ -86,7 +86,9 @@ public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder
                         "ResultEncoding element encoding is not supported!");
             }
         } else {
-            XmlObject xml = encodeSwe(resultEncoding.getEncoding());
+        	Map<HelperValues, String> helperValues = new HashMap<HelperValues, String>(1);
+        	helperValues.put(HelperValues.DOCUMENT, null);
+            XmlObject xml = encodeSwe(helperValues, resultEncoding.getEncoding());
             if (xml instanceof TextEncodingDocument) {
                 xbEncoding = (TextEncodingDocument) xml;
             } else {

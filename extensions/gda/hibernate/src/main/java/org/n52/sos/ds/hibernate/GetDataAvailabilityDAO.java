@@ -55,6 +55,7 @@ import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.series.SeriesObservationTimeDAO;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
+import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationInfo;
@@ -437,7 +438,8 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
      * @return Count of available observations
      */
     private Long getCountFor(Series series, GetDataAvailabilityRequest request, Session session) {
-        Criteria criteria = session.createCriteria(SeriesObservationInfo.class);
+        Criteria criteria = session.createCriteria(SeriesObservationInfo.class)
+        		.add(Restrictions.eq(AbstractObservation.DELETED, false));
         criteria.add(Restrictions.eq(SeriesObservationInfo.SERIES, series));
         if (request.isSetOfferings()) {
             criteria.createCriteria(SeriesObservationTime.OFFERINGS).add(

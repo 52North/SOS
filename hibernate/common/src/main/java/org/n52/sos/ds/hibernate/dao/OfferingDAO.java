@@ -119,20 +119,14 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     @SuppressWarnings("unchecked")
     public List<Offering> getOfferingObjectsForCacheUpdate(final Collection<String> identifiers, final Session session) {
     	 Class<?> clazz = Offering.class;
-    	 if (HibernateHelper.isEntitySupported(TOffering.class)) {
+    	 if (HibernateHelper.isEntitySupported(TOffering.class, session)) {
     		 clazz = TOffering.class;
     	 }
     	 Criteria criteria = session.createCriteria(clazz);
 		if (CollectionHelper.isNotEmpty(identifiers)) {
 		    criteria.add(Restrictions.in(Offering.IDENTIFIER, identifiers));
 		}
-//        if (HibernateHelper.isEntitySupported(TOffering.class, session)) {
-//            criteria.setFetchMode(TOffering.FEATURE_OF_INTEREST_TYPES, FetchMode.JOIN);
-//            criteria.setFetchMode(TOffering.OBSERVATION_TYPES, FetchMode.JOIN);
-//            criteria.setFetchMode(TOffering.RELATED_FEATURES, FetchMode.JOIN);
-//        }
-
-        LOGGER.debug("QUERY getOfferingObjects(): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.debug("QUERY getOfferingObjectsForCacheUpdate(): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
 

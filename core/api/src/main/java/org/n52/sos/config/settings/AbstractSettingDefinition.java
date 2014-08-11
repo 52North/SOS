@@ -174,11 +174,11 @@ abstract class AbstractSettingDefinition<S extends AbstractSettingDefinition<S, 
     public boolean equals(Object obj) {
         if (obj instanceof AbstractSettingDefinition) {
             AbstractSettingDefinition<?, ?> o = (AbstractSettingDefinition<?, ?>) obj;
-            return (getKey() == null ? o.getKey() == null : getKey().equals(o.getKey())) 
+            return (getKey() == null ? o.getKey() == null : getKey().equals(o.getKey()))
             		&& (getTitle() == null ? o.getTitle() == null : getTitle().equals(o.getTitle()))
-                    && (getDescription() == null ? o.getDescription() == null : getDescription().equals(o.getDescription())) 
-                    && (getGroup() == null ? o.getGroup() == null : getGroup().equals(o.getGroup())) 
-                    && (getDefaultValue() == null ? o.getDefaultValue() == null : getDefaultValue().equals(o.getDefaultValue()))
+            		&& (getDescription() == null ? o.getDescription() == null : getDescription().equals(o.getDescription())) 
+            		&& (getGroup() == null ? o.getGroup() == null : getGroup().equals(o.getGroup()))
+            		&& (getDefaultValue() == null ? o.getDefaultValue() == null : getDefaultValue().equals(o.getDefaultValue()))
                     && (getType() == o.getType())
                     && (isOptional() == o.isOptional());
         }

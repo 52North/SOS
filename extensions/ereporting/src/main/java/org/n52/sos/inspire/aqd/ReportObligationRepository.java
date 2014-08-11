@@ -35,6 +35,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.n52.sos.inspire.aqd.persistence.ReportingHeaderSQLiteManager;
+import org.n52.sos.service.SosContextListener;
 
 public class ReportObligationRepository {
     private final ReadWriteLock reportingAuthorityLock = new ReentrantReadWriteLock();
@@ -45,6 +46,7 @@ public class ReportObligationRepository {
 
     private ReportObligationRepository() {
         this.obligations = new EnumMap<>(ReportObligationType.class);
+        SosContextListener.registerShutdownHook(sqlite);
     }
 
     public RelatedParty getReportingAuthority() {

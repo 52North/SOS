@@ -14,7 +14,7 @@
     <modules>
         <module>gda</module>
         <module>do</module>
-        <module>ereporting</module>
+        <module>aqd</module>
     </modules>
     <profiles>
         <profile>

@@ -199,6 +199,11 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
 		} else if (feature instanceof SamplingFeature) {
 			return createFeature(feature, additionalValues);
 		} else if (feature instanceof AbstractFeature
+				&& feature.isSetDefaultElementEncoding()) {
+			return CodingHelper.encodeObjectToXml(
+					feature.getDefaultElementEncoding(),
+					feature);
+		} else if (feature instanceof AbstractFeature
 				&& additionalValues.containsKey(HelperValues.ENCODE_NAMESPACE)) {
 			return CodingHelper.encodeObjectToXml(
 					additionalValues.get(HelperValues.ENCODE_NAMESPACE),

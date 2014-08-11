@@ -43,6 +43,8 @@ import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.AbstractObservationRequest;
+import org.n52.sos.request.GetObservationRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -69,7 +71,7 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
             AbstractObservation observation = null;
             try {
                 observation =
-                        DaoFactory.getInstance().getObservationDAO(session).getObservationByIdentifier(id, session);
+                        DaoFactory.getInstance().getObservationDAO().getObservationByIdentifier(id, session);
             } catch (HibernateException he) {
                 if (transaction != null) {
                     transaction.rollback();
@@ -80,8 +82,7 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
             if (observation != null) {
                 so =
                         HibernateObservationUtilities
-                                .createSosObservationsFromObservations(Collections.singleton(observation), null,
-                                        request.getVersion(), null, session).iterator().next();
+                                .createSosObservationsFromObservations(Collections.singleton(observation), getRequest(request), null, session).iterator().next();
                 observation.setDeleted(true);
                 session.saveOrUpdate(observation);
                 session.flush();
@@ -106,7 +107,13 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
         return response;
     }
 
-    @Override
+    private AbstractObservationRequest getRequest(
+			DeleteObservationRequest request) {
+		// TODO Auto-generated method stub
+		return (AbstractObservationRequest) new GetObservationRequest().setService(request.getService()).setVersion(request.getVersion());
+	}
+
+	@Override
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }

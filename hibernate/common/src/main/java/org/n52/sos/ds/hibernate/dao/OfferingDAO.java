@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
@@ -45,9 +44,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
@@ -66,6 +62,8 @@ import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -190,7 +188,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
             c.add(Subqueries.propertyIn(Offering.ID, getDetachedCriteriaOfferingForProcedureFromObservationConstellation(procedureIdentifier, session)));
             c.setProjection(Projections.distinct(Projections.property(Offering.IDENTIFIER)));
         } else {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
+            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
             c = observationDAO.getDefaultObservationInfoCriteria(session);
             c.createCriteria(AbstractObservation.OFFERINGS).setProjection(
                     Projections.distinct(Projections.property(Offering.IDENTIFIER)));
@@ -221,7 +219,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     @SuppressWarnings("unchecked")
     public Collection<String> getOfferingIdentifiersForObservableProperty(final String observablePropertyIdentifier,
             final Session session) throws OwsExceptionReport {
-        final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class, session);
+        final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class);
         Criteria c = null;
         if (flag) {
             c = session.createCriteria(Offering.class);
@@ -229,7 +227,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
                     getDetachedCriteriaOfferingForObservablePropertyFromObservationConstellation(observablePropertyIdentifier, session)));
             c.setProjection(Projections.distinct(Projections.property(Offering.IDENTIFIER)));
         } else {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
+            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
             c = observationDAO.getDefaultObservationInfoCriteria(session);
             c.createCriteria(AbstractObservation.OFFERINGS).setProjection(
                     Projections.distinct(Projections.property(Offering.IDENTIFIER)));
@@ -309,7 +307,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
                     SQL_QUERY_OFFERING_TIME_EXTREMA);
             results = namedQuery.list();
         } else {
-            Criteria criteria = DaoFactory.getInstance().getObservationDAO(session)
+            Criteria criteria = DaoFactory.getInstance().getObservationDAO()
                 .getDefaultObservationInfoCriteria(session)
                 .createAlias(AbstractObservation.OFFERINGS, "off")
                 .setProjection(Projections.projectionList()
@@ -361,7 +359,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
             min = namedQuery.uniqueResult();
         } else {
             Criteria criteria =
-                    DaoFactory.getInstance().getObservationDAO(session).getDefaultObservationInfoCriteria(session);
+                    DaoFactory.getInstance().getObservationDAO().getDefaultObservationInfoCriteria(session);
             addOfferingRestricionForObservation(criteria, offering);
             addMinMaxProjection(criteria, MinMax.MIN, AbstractObservation.PHENOMENON_TIME_START);
             LOGGER.debug("QUERY Series-getMinDate4Offering(offering): {}", HibernateHelper.getSqlString(criteria));
@@ -394,7 +392,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
             maxStart = namedQuery.uniqueResult();
             maxEnd = maxStart;
         } else {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
+            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
             Criteria cstart = observationDAO.getDefaultObservationInfoCriteria(session);
             Criteria cend = observationDAO.getDefaultObservationInfoCriteria(session);
             addOfferingRestricionForObservation(cstart, offering);
@@ -447,7 +445,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
             min = namedQuery.uniqueResult();
         } else {
             Criteria criteria =
-                    DaoFactory.getInstance().getObservationDAO(session).getDefaultObservationInfoCriteria(session);
+                    DaoFactory.getInstance().getObservationDAO().getDefaultObservationInfoCriteria(session);
             addOfferingRestricionForObservation(criteria, offering);
             addMinMaxProjection(criteria, MinMax.MIN, AbstractObservation.RESULT_TIME);
             LOGGER.debug("QUERY getMinResultTime4Offering(offering): {}", HibernateHelper.getSqlString(criteria));
@@ -480,7 +478,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
             maxStart = namedQuery.uniqueResult();
         } else {
             Criteria criteria =
-                    DaoFactory.getInstance().getObservationDAO(session).getDefaultObservationInfoCriteria(session);
+                    DaoFactory.getInstance().getObservationDAO().getDefaultObservationInfoCriteria(session);
             addOfferingRestricionForObservation(criteria, offering);
             addMinMaxProjection(criteria, MinMax.MAX, AbstractObservation.RESULT_TIME);
             LOGGER.debug("QUERY getMaxResultTime4Offering(offering): {}", HibernateHelper.getSqlString(criteria));
@@ -505,7 +503,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     public Map<String, TimePeriod> getTemporalBoundingBoxesForOfferings(final Session session) throws OwsExceptionReport {
         if (session != null) {
             Criteria criteria =
-                    DaoFactory.getInstance().getObservationDAO(session).getDefaultObservationInfoCriteria(session);
+                    DaoFactory.getInstance().getObservationDAO().getDefaultObservationInfoCriteria(session);
             criteria.createAlias(AbstractObservation.OFFERINGS, "off");
             criteria.setProjection(Projections.projectionList()
                     .add(Projections.min(AbstractObservation.PHENOMENON_TIME_START))

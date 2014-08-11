@@ -35,12 +35,8 @@ import java.util.Set;
 
 import org.hibernate.Session;
 import org.n52.sos.convert.ConverterException;
-import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ogc.om.OmObservation;
@@ -59,82 +55,6 @@ public class HibernateObservationUtilities {
     private HibernateObservationUtilities() {
     }
 
-    /**
-     * @deprecated use
-     *             {@link ObservationConstellationDAO#getFirstObservationConstellationForOfferings(org.n52.sos.ds.hibernate.entities.Procedure, org.n52.sos.ds.hibernate.entities.ObservableProperty, java.util.Collection, org.hibernate.Session)
-     * }
-     */
-    @Deprecated
-    public static ObservationConstellation getFirstObservationConstellation(Procedure p, ObservableProperty op,
-            Collection<Offering> o, Session s) {
-        return new ObservationConstellationDAO().getFirstObservationConstellationForOfferings(p, op, o, s);
-    }
-
-    /**
-     * @deprecated use
-     *             {@link ObservationConstellationDAO#getObservationConstellationsForOfferings(org.n52.sos.ds.hibernate.entities.Procedure, org.n52.sos.ds.hibernate.entities.ObservableProperty, java.util.Collection, org.hibernate.Session)
-     * }
-     */
-    @Deprecated
-    public static List<ObservationConstellation> getObservationConstellations(Procedure p, ObservableProperty op,
-            Collection<Offering> o, Session s) {
-        return new ObservationConstellationDAO().getObservationConstellationsForOfferings(p, op, o, s);
-    }
-
-    /**
-     * Create SOS internal observation from Observation objects
-     *
-     * @param o
-     *            List of Observation objects
-     * @param spf
-     *            Map with spatial filtering profile entities, key observation
-     *            entity id
-     * @param v
-     *            Service version
-     * @param rm
-     *            Requested result model
-     * @param s
-     *            Hibernate session
-     *
-     * @return SOS internal observation
-     *
-     * @throws OwsExceptionReport
-     *             If an error occurs
-     * @throws ConverterException
-     *             If procedure creation fails
-     */
-    @Deprecated
-    public static List<OmObservation> createSosObservationsFromObservations(Collection<AbstractObservation> o,
-            String v, String rm, Session s) throws OwsExceptionReport, ConverterException {
-        return new ObservationOmObservationCreator(o, v, rm, s).create();
-    }
-
-    @Deprecated
-    public static List<OmObservation> createSosObservationsFromObservations(Collection<AbstractObservation> o,
-            String v, String rm, Locale l, Session s) throws OwsExceptionReport, ConverterException {
-        return new ObservationOmObservationCreator(o, v, rm, s).create();
-    }
-
-    @Deprecated
-    public static OmObservation createSosObservationFromObservation(AbstractObservation o, String v, String rm,
-            Session s) throws OwsExceptionReport, ConverterException {
-        List<OmObservation> c = new ObservationOmObservationCreator(Sets.newHashSet(o), v, rm, s).create();
-        if (CollectionHelper.isNotEmpty(c)) {
-            return (OmObservation) c.iterator().next();
-        }
-        return null;
-    }
-
-    @Deprecated
-    public static OmObservation createSosObservationFromObservation(AbstractObservation o, String v, String rm,
-            Locale l, Session s) throws OwsExceptionReport, ConverterException {
-        List<OmObservation> c = new ObservationOmObservationCreator(Sets.newHashSet(o), v, rm, s).create();
-        if (CollectionHelper.isNotEmpty(c)) {
-            return (OmObservation) c.iterator().next();
-        }
-        return null;
-    }
-    
     public static List<OmObservation> createSosObservationsFromObservations(Collection<AbstractObservation> o,
             AbstractObservationRequest r, Session s) throws OwsExceptionReport, ConverterException {
         return new ObservationOmObservationCreator(o, r, s).create();

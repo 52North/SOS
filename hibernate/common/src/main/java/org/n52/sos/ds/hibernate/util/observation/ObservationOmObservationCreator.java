@@ -40,11 +40,9 @@ import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.convert.ConverterException;
-import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.interfaces.BlobObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.BooleanObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.CategoryObservation;
@@ -53,7 +51,6 @@ import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
-import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
@@ -72,10 +69,8 @@ import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
@@ -109,91 +104,32 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     private final Set<OmObservationConstellation> observationConstellations = Sets.newHashSet();
 
-    private final HibernateProcedureConverter procedureConverter;
-
-    private final FeatureQueryHandler featureQueryHandler;
-
-    private final boolean encodeProcedureInObservation;
-
     private List<OmObservation> observationCollection;
 
     
     public ObservationOmObservationCreator(Collection<AbstractObservation> observations,
             AbstractObservationRequest request, Locale language, Session session) {
-        super(request.getVersion(), language, session);
+    	super(checkVersion(request), session);
         this.request = request;
         if (observations == null) {
             this.observations = Collections.emptyList();
         } else {
             this.observations = observations;
         }
-        this.procedureConverter = new HibernateProcedureConverter();
-        this.featureQueryHandler = getFeatureQueryHandler();
-        this.encodeProcedureInObservation = getActiveProfile().isEncodeProcedureInObservation();
     }
     
     public ObservationOmObservationCreator(Collection<AbstractObservation> observations, AbstractObservationRequest request,
             Session session) {
-        super(request.getVersion(), session);
+    	super(checkVersion(request), session);
         this.request = request;
         if (observations == null) {
             this.observations = Collections.emptyList();
         } else {
             this.observations = observations;
         }
-        this.procedureConverter = new HibernateProcedureConverter();
-        this.featureQueryHandler = getFeatureQueryHandler();
-        this.encodeProcedureInObservation = getActiveProfile().isEncodeProcedureInObservation();
     }
     
-    /**
-     * Constructor
-     *
-     * @param observations
-     *            Collection of observation objects
-     * @param spatialFilteringProfile
-     *            Map with spatial filtering profile entities, key observation
-     *            entity id
-     * @param version
-     *            Service version
-     * @param resultModel
-     *            Requested result model
-     * @param session
-     *            Hibernate session
-     */
-    @Deprecated
-    public ObservationOmObservationCreator(Collection<AbstractObservation> observations,
-            String version, String resultModel, Locale language, Session session) {
-        super(version, language, session);
-        if (observations == null) {
-            this.observations = Collections.emptyList();
-        } else {
-            this.observations = observations;
-        }
-        this.procedureConverter = new HibernateProcedureConverter();
-        this.featureQueryHandler = getFeatureQueryHandler();
-        this.encodeProcedureInObservation = getActiveProfile().isEncodeProcedureInObservation();
-        this.request = new GetObservationRequest();
-        this.request.setResultModel(resultModel);
-    }
-
-    @Deprecated
-    public ObservationOmObservationCreator(Collection<AbstractObservation> observations, String version, String resultModel,
-            Session session) {
-        super(version, session);
-        if (observations == null) {
-            this.observations = Collections.emptyList();
-        } else {
-            this.observations = observations;
-        }
-        this.procedureConverter = new HibernateProcedureConverter();
-        this.featureQueryHandler = getFeatureQueryHandler();
-        this.encodeProcedureInObservation = getActiveProfile().isEncodeProcedureInObservation();
-        this.request = new GetObservationRequest();
-        this.request.setResultModel(resultModel);
-    }
-
-    private Collection<AbstractObservation> getObservations() {
+	private Collection<AbstractObservation> getObservations() {
         return observations;
     }
 

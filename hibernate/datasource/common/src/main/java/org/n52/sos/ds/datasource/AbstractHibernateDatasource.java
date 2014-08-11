@@ -734,8 +734,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (isMultiLanguageDatasource()) {
             Boolean t = (Boolean) settings.get(mulitLanguageDefinition.getKey());
             if (t != null && t) {
-                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
-                        resource(HIBERNATE_MAPPING_I18N_PATH));
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_I18N_PATH);
             }
         }
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());

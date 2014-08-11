@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -36,6 +37,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
@@ -65,6 +67,9 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
 
     protected static final String DEFAULT_PASSWORD = "";
 
+    protected static final Pattern CREATE_INDEX_PATTERN
+                    = Pattern.compile("^create index [a-z]* on observation \\(samplingGeometry\\)$", Pattern.CASE_INSENSITIVE);
+
     @Override
     protected Dialect createDialect() {
         return new GeoDBDialect();
@@ -76,7 +81,14 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
     }
 
     @Override
-    public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties p) {
+    public String[] createSchema(Map<String, Object> settings) {
+        String[] createSchema = super.createSchema(settings);
+        int index = find(createSchema, CREATE_INDEX_PATTERN);
+        return stripIndex(createSchema, index);
+    }
+
+    @Override
+    public  Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties p) {
         return Collections.emptySet();
     }
 
@@ -117,7 +129,6 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
     public DatasourceCallback getCallback() {
         return DatasourceCallback.chain(super.getCallback(),
                                         new DatasourceCallback() {
-
             @Override
             public Properties onInit(Properties props) {
                 initGeoDB(parseDatasourceProperties(props));
@@ -126,10 +137,8 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
         });
     }
 
-    protected void initGeoDB(Map<String, Object> settings)
-            throws ConfigurationException {
+    protected void initGeoDB(Map<String, Object> settings) throws ConfigurationException {
         try {
-
             Connection cx = openConnection(settings);
             try {
                 GeoDB.InitGeoDB(cx);
@@ -139,6 +148,37 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
         } catch (SQLException ex) {
             throw new ConfigurationException("Could not init GeoDB", ex);
         }
+    }
+
+    public static int find(String[] array, Pattern pattern) {
+        for (int index = 0; index < array.length; ++index) {
+            if (pattern.matcher(array[index]).matches()) {
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    public static <T> T[] stripIndex(T[] array, int idx) {
+        int len = array.length;
+        if (idx < 0 || len == 0) {
+            return array;
+        }
+        T[] copy = createArray(array.getClass(), len - 1);
+        if (idx != 0) {
+            System.arraycopy(array, 0, copy, 0, idx);
+        }
+        if (idx != len - 1) {
+            System.arraycopy(array, idx + 1, copy, idx, len - idx - 1);
+        }
+        return copy;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T[] createArray(Class<?> type, int length) {
+        return ((Object)type == (Object)Object[].class)
+               ? (T[]) new Object[length]
+               : (T[]) Array.newInstance(type.getComponentType(), length);
     }
 
 }

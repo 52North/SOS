@@ -37,6 +37,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
@@ -91,7 +92,7 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
 
     @Override
     protected Map<String, Object> parseDatasourceProperties(Properties current) {
-        Map<String, Object> settings = new HashMap<String, Object>(2);
+        Map<String, Object> settings = new HashMap<>(2);
         settings.put(getTransactionalDefiniton().getKey(), isTransactional(current));
         return settings;
     }
@@ -109,7 +110,7 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
             throw new RuntimeException(ex);
         }
     }
-    
+
     @Override
     protected String toURL(Map<String, Object> settings) {
         return JDBC_URL;
@@ -119,5 +120,5 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
     protected String[] parseURL(String url) {
         return new String[0];
     }
-    
+
 }

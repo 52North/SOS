@@ -27,7 +27,7 @@
         <property name="validTimeEnd" type="timestamp">
             <column name="validTimeEnd" length="29" />
         </property>
-                <set name="offerings" table="observationHasOffering" inverse="false" fetch="select" lazy="false" >
+                <set name="offerings" table="observationHasOffering" inverse="false" fetch="select" lazy="true" >
             <key>
                 <column name="observationId" not-null="true" index="obshasoffobservationidx" />
             </key>

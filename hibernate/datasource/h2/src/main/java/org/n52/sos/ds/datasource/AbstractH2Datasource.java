@@ -138,13 +138,8 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
     }
 
     protected void initGeoDB(Map<String, Object> settings) throws ConfigurationException {
-        try {
-            Connection cx = openConnection(settings);
-            try {
-                GeoDB.InitGeoDB(cx);
-            } finally {
-                cx.close();
-            }
+        try (Connection cx = openConnection(settings)) {
+            GeoDB.InitGeoDB(cx);
         } catch (SQLException ex) {
             throw new ConfigurationException("Could not init GeoDB", ex);
         }
@@ -180,5 +175,4 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
                ? (T[]) new Object[length]
                : (T[]) Array.newInstance(type.getComponentType(), length);
     }
-
 }

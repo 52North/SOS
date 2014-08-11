@@ -29,6 +29,7 @@
 package org.n52.sos.cache.ctrl.persistence;
 
 import org.n52.sos.cache.ContentCache;
+import org.n52.sos.cache.ContentCachePersistenceStrategy;
 import org.n52.sos.cache.WritableContentCache;
 
 import com.google.common.base.Optional;
@@ -36,7 +37,7 @@ import com.google.common.base.Optional;
 /**
  * @author Christian Autermann
  */
-public class NoOpCachePersistenceStrategy implements CachePersistenceStrategy {
+public class NoOpCachePersistenceStrategy implements ContentCachePersistenceStrategy {
 
     @Override
     public void persistOnPartialUpdate(ContentCache cache) {
@@ -53,6 +54,10 @@ public class NoOpCachePersistenceStrategy implements CachePersistenceStrategy {
     @Override
     public Optional<WritableContentCache> load() {
         return Optional.absent();
+    }
+
+    @Override
+    public void cleanup() {
     }
 
 }

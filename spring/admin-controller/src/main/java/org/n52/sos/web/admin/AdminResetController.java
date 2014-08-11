@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
+import org.n52.sos.cache.ContentCachePersistenceStrategy;
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.service.Configurator;
@@ -58,12 +59,23 @@ public class AdminResetController extends AbstractAdminController {
     @RequestMapping(method = RequestMethod.POST)
     public View post() throws ConfigurationException, ConnectionProviderException {
         LOG.debug("Resetting Service.");
+        ContentCachePersistenceStrategy persistenceStrategy = null;
         if (Configurator.getInstance() != null) {
+            persistenceStrategy = Configurator.getInstance()
+                    .getCacheController().getContentCachePersistenceStrategy();
             LOG.debug("Resetting configurator.");
+            // this one also will persist the cache file
             Configurator.getInstance().cleanup();
         }
         getDatabaseSettingsHandler().delete();
+
         getSettingsManager().deleteAll();
+
+        // delete a cache file if present
+        if (persistenceStrategy != null) {
+            persistenceStrategy.cleanup();
+        }
+
         return new RedirectView(ControllerConstants.Paths.LOGOUT, true);
     }
 }

@@ -41,6 +41,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
@@ -105,7 +106,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
 
     @Override
     protected Map<String, Object> parseDatasourceProperties(Properties current) {
-        Map<String, Object> settings = new HashMap<String, Object>(2);
+        Map<String, Object> settings = new HashMap<>(2);
         Matcher matcher = JDBC_URL_PATTERN.matcher(current.getProperty(HibernateConstants.CONNECTION_URL));
         matcher.find();
         settings.put(h2Database.getKey(), matcher.group(1));
@@ -156,5 +157,16 @@ public class H2FileDatasource extends AbstractH2Datasource {
     @Override
     protected String[] parseURL(String url) {
         return new String[0];
+    }
+
+    @Override
+    public void validateSchema(Map<String, Object> settings) {
+        /* can not be validated */
+    }
+
+    @Override
+    public void validateSchema(Properties current,
+                               Map<String, Object> changed) {
+        /* can not be validated */
     }
 }

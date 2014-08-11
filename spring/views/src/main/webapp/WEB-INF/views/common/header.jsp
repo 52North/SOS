@@ -195,3 +195,7 @@
 				</script>
 				<div class="container">
 					<div id="content" class="span12">
+                        <div id="noscript" class="alert alert-danger">
+                           <strong>Warning!</strong> This page makes heavy use of JavaScript and is virtually unusable if JavaScript is disabled.
+                        </div>
+                        <script type="text/javascript">$("#noscript").hide();</script>

@@ -28,14 +28,15 @@
  */
 package org.n52.sos.cache.ctrl.persistence;
 
+import org.n52.sos.cache.ContentCachePersistenceStrategy;
 import org.n52.sos.config.SettingsManager;
 
 public class CachePersistenceStrategyFactory {
     private CachePersistenceStrategyFactory() {
     }
 
-    public CachePersistenceStrategy create() {
-        CachePersistenceStrategy strategy = new AsyncCachePersistenceStrategy();
+    public ContentCachePersistenceStrategy create() {
+        ContentCachePersistenceStrategy strategy = new AsyncCachePersistenceStrategy();
         SettingsManager.getInstance().configure(strategy);
         return strategy;
     }

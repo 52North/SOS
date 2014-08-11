@@ -55,12 +55,7 @@
 		<filters>
 			<filter>profiles/${build.profile.id}/config.properties</filter>
 		</filters>
-		<resources>
-			<resource>
-				<filtering>true</filtering>
-				<directory>src/test/java/org/n52/sos/ds/datasource</directory>
-			</resource>
-		</resources>
+		
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

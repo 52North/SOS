@@ -28,6 +28,8 @@
  */
 package org.n52.sos.cache.ctrl.persistence;
 
+import org.n52.sos.cache.ContentCachePersistenceStrategy;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -46,7 +48,7 @@ import org.n52.sos.service.Configurator;
 import com.google.common.base.Optional;
 
 public abstract class AbstractPersistingCachePersistenceStrategy
-        implements CachePersistenceStrategy {
+        implements ContentCachePersistenceStrategy {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(AbstractPersistingCachePersistenceStrategy.class);
     private static final String CACHE_FILE = "cache.tmp";
@@ -119,6 +121,14 @@ public abstract class AbstractPersistingCachePersistenceStrategy
                     IOUtils.closeQuietly(out);
                 }
             }
+        }
+    }
+
+    @Override
+    public void cleanup() {
+        File f = getCacheFile();
+        if (f != null && f.exists()) {
+            f.delete();
         }
     }
 }

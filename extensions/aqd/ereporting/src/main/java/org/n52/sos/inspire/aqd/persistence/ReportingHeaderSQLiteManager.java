@@ -43,11 +43,12 @@ import org.n52.sos.inspire.aqd.RelatedParty;
 import org.n52.sos.inspire.aqd.ReportObligation;
 import org.n52.sos.inspire.aqd.ReportObligationType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.util.Cleanupable;
 import org.n52.sos.util.JSONUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class ReportingHeaderSQLiteManager {
+public class ReportingHeaderSQLiteManager implements Cleanupable {
     protected static final String REPORTING_AUTHORITY_KEY = "reportingAuthority";
     protected static final String REPORT_OBLIGATION_KEY_PREFIX
             = "reportObligation_";
@@ -58,6 +59,11 @@ public class ReportingHeaderSQLiteManager {
                     return new ReportingHeaderSQLiteSessionFactory();
                 }
             };
+
+    @Override
+    public void cleanup() {
+        this.manager.cleanup();
+    }
 
     public void save(RelatedParty relatedParty) {
         try {

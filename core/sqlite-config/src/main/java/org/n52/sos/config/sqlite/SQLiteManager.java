@@ -34,16 +34,17 @@ import org.hibernate.Transaction;
 
 import org.n52.sos.ds.ConnectionProvider;
 import org.n52.sos.ds.ConnectionProviderException;
+import org.n52.sos.util.Cleanupable;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public abstract class SQLiteManager {
+public abstract class SQLiteManager implements Cleanupable {
     private ConnectionProvider connectionProvider;
 
-    protected ConnectionProvider getConnectionProvider() {
+    public ConnectionProvider getConnectionProvider() {
         synchronized (this) {
             if (!isSetConnectionProvider()) {
                 this.connectionProvider = createDefaultConnectionProvider();
@@ -60,6 +61,15 @@ public abstract class SQLiteManager {
 
     protected boolean isSetConnectionProvider() {
         return this.connectionProvider != null;
+    }
+
+    @Override
+    public void cleanup() {
+        synchronized (this) {
+            if (this.connectionProvider != null) {
+                this.connectionProvider.cleanup();
+            }
+        }
     }
 
     public <T> T execute(HibernateAction<T> action)

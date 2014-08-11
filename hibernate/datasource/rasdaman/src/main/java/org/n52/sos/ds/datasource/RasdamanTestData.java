@@ -28,6 +28,9 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -43,8 +46,10 @@ import org.slf4j.LoggerFactory;
 public class RasdamanTestData {
 	private static final Logger	LOGGER = LoggerFactory.getLogger(RasdamanTestData.class);
 
-	public static final String 	DEFAULT_DB_FILE = "/var/hsqldb/sosdb";
+	public static final String 	DEFAULT_DB_FILE = "/var/hsqldb/dbbun";
+	public static final String	DEFAULT_SQL_SCRIPT_FILE = "src/main/resources/asqldb_batch_example.sql";
 	private String 				dbFile = DEFAULT_DB_FILE;
+	private String				sqlScriptFile = DEFAULT_SQL_SCRIPT_FILE;
 
 	private boolean setUp(final Connection conn) throws SQLException {
 		boolean success = dropTables(conn);
@@ -53,24 +58,43 @@ public class RasdamanTestData {
 		success = success && insertValues(conn);
 		return success;
 	}
+	
+	public String readSqlScript() {
+		String everything = null;
+		try(BufferedReader br = new BufferedReader(new FileReader(sqlScriptFile))) {
+	        StringBuilder sb = new StringBuilder();
+	        String line = br.readLine();
+
+	        while (line != null) {
+	            sb.append(line);
+	            sb.append(System.lineSeparator());
+	            line = br.readLine();
+	        }
+	        everything = sb.toString();
+	    } catch (IOException e) {
+	    	LOGGER.debug("The file " + sqlScriptFile + " can't be found!");
+			e.printStackTrace();
+		}
+		return everything;
+	}
 
 	public boolean createTables(final Connection conn) throws SQLException {
 		boolean success = true;
 		LOGGER.info("Creating tables...");
-		System.out.println("Creating tables");
+		String sqlBatchExample = readSqlScript();
 		String createString =
 				"create table ARRAYVALUE (" +
 						"ObservationId integer NOT NULL, " +
 						"value varchar(40) ARRAY NOT NULL, " +
 						"FOREIGN KEY (ObservationId) REFERENCES observation (ObservationId))";
 
+		success = success && executeQuery(conn, sqlBatchExample, 0);
 		success = success && executeQuery(conn, createString, 0);
 
 		return success;
 	}
 
 	public boolean insertValues(final Connection conn) throws SQLException {
-		System.out.println("inserting values");
 		RasUtil.openDatabase(RasUtil.adminUsername, RasUtil.adminPassword, true);
 		RasUtil.executeRasqlQuery("create collection rastest GreySet",
 				false, false);
@@ -87,7 +111,6 @@ public class RasdamanTestData {
 		RasUtil.executeRasqlQuery("insert into rastest3 values " +
 				"marray x in [0:225, 0:225] values 3c",
 				true, false);
-		System.out.println("Values inserted!");
 		String oidQuery = "select oid(c) from rastest as c";
 		String oid = RasUtil.executeRasqlQuery(oidQuery, true, false).toString();
 		oid = oid.replaceAll("[\\[\\]]", "");
@@ -98,22 +121,18 @@ public class RasdamanTestData {
 		String oid3 = RasUtil.executeRasqlQuery(oidQuery, true, false).toString();
 		oid3 = oid3.replaceAll("[\\[\\]]", "");
 		
-		System.out.println("oid: " + oid + ", oid2: " + oid2 + ", oid3: " + oid3);
 		String[] insertQueries = new String[]{
 				"INSERT INTO ARRAYVALUE VALUES(1, ARRAY['rastest:" + Double.valueOf(oid).intValue() + "'])",
 				"INSERT INTO ARRAYVALUE VALUES(2, ARRAY['rastest2:" + Double.valueOf(oid2).intValue() + "'])",
 				"INSERT INTO ARRAYVALUE VALUES(3, ARRAY['rastest:" + Double.valueOf(oid).intValue() + "'])",
 				"INSERT INTO ARRAYVALUE VALUES(4, ARRAY['rastest2:" + Double.valueOf(oid2).intValue() + "'])",
 				"INSERT INTO ARRAYVALUE VALUES(5, ARRAY['rastest3:" + Double.valueOf(oid3).intValue() + "'])",
-				"INSERT INTO ARRAYVALUE VALUES(6, ARRAY['rastest3:" + Double.valueOf(oid3).intValue() + "'])",
-				"SELECT * FROM ARRAYVALUE"
+				"INSERT INTO ARRAYVALUE VALUES(6, ARRAY['rastest3:" + Double.valueOf(oid3).intValue() + "'])"
 		};
 		for (String query : insertQueries) {
-			System.out.println("Executing query: " + query);
 			if (!executeQuery(conn, query, 0))
 				return false;
 		}
-		System.out.println("Values inserted in hsqldb too!");
 		return true;
 	}
 
@@ -123,9 +142,7 @@ public class RasdamanTestData {
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			ResultSet result = stmt.executeQuery(query);
-			if (query.startsWith("SELECT") && result.next())
-				System.out.println(result.getInt(1));
+			stmt.executeQuery(query);
 		} catch (SQLException e) {
 			if (!errorExpected) {
 				LOGGER.debug("\n>>>> Query failed! <<<<");
@@ -177,7 +194,6 @@ public class RasdamanTestData {
 				jdbcUrl,
 				connectionProps
 				);
-		System.out.println("Connected to database: "+jdbcUrl);
 		return conn;
 	}
 

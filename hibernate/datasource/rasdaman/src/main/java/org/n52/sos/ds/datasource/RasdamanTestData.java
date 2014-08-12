@@ -88,7 +88,7 @@ public class RasdamanTestData {
 						"value varchar(40) ARRAY NOT NULL, " +
 						"FOREIGN KEY (ObservationId) REFERENCES observation (ObservationId))";
 
-		success = success && executeQuery(conn, sqlBatchExample, 0);
+//		success = success && executeQuery(conn, sqlBatchExample, 0);
 		success = success && executeQuery(conn, createString, 0);
 
 		return success;

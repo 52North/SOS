@@ -81,15 +81,15 @@ public class RasdamanDatasourceIT extends TestCase {
 		ds = new RasdamanDatasource();
 		Map<String, Object> settings = getDefaultSettings();
 		conn = ds.openConnection(settings);
-		stmt = conn.createStatement();
+		setStmt(conn.createStatement());
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 
-		if (stmt != null && !stmt.isClosed()) {
-			stmt.close();
+		if (getStmt() != null && !getStmt().isClosed()) {
+			getStmt().close();
 		}
 		if (stmtNoRights != null && !stmtNoRights.isClosed()) {
 			stmtNoRights.close();
@@ -165,5 +165,13 @@ public class RasdamanDatasourceIT extends TestCase {
 		settings.put(AbstractHibernateDatasource.TRANSACTIONAL_KEY, true);
 		settings.put(AbstractHibernateDatasource.DATABASE_KEY, database);
 		return settings;
+	}
+
+	public Statement getStmt() {
+		return stmt;
+	}
+
+	public void setStmt(Statement stmt) {
+		this.stmt = stmt;
 	}
 }

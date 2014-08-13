@@ -392,11 +392,18 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
             JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, localizedMessage);
             JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, message);
         }
+
+        //recurse cause if necessary
+        if (exception.getCause() != null) {
+            exceptionText.append("[CAUSED BY]\n");
+            addExceptionMessages(exceptionText, exception.getCause());
+        }
         
         //recurse SQLException if necessary
         if (exception instanceof SQLException) {
             SQLException sqlException = (SQLException) exception;
             if (sqlException.getNextException() != null) {
+                exceptionText.append("[NEXT SQL EXCEPTION]\n");
                 addExceptionMessages(exceptionText, sqlException.getNextException());
             }
         }

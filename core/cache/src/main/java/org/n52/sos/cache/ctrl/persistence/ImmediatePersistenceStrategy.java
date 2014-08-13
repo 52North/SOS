@@ -30,9 +30,6 @@ package org.n52.sos.cache.ctrl.persistence;
 
 import java.io.File;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.cache.ContentCache;
 
 public class ImmediatePersistenceStrategy

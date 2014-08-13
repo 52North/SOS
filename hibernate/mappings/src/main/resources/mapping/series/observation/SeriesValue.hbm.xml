@@ -51,7 +51,7 @@
             </many-to-many>
         </set>
         <property name="samplingGeometry" type="org.hibernate.spatial.GeometryType">
-            <column name="samplingGeometry" index="samplingGeomidx"/>
+            <column name="samplingGeometry" />
         </property>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.series.values.SeriesBlobValue" extends="org.n52.sos.ds.hibernate.entities.series.values.SeriesValue" table="blobValue">
         	<key column="observationId" foreign-key="observationBlobValueFk" />

@@ -116,7 +116,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             return createSosAbstractFeature((FeatureOfInterest) q.uniqueResult(), version, session);
         } catch (final HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage(
-                    "An error occurs while querying feature data for a featureOfInterest identifier!");
+                    "An error occurred while querying feature data for a featureOfInterest identifier!");
         }
 
     }
@@ -153,7 +153,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             }
         } catch (final HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage(
-                    "An error occurs while querying feature identifiers for a featureOfInterest identifier!");
+                    "An error occurred while querying feature identifiers for a featureOfInterest identifier!");
         }
     }
 

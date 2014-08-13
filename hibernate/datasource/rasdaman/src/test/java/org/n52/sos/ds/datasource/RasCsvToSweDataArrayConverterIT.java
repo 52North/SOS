@@ -1,5 +1,37 @@
+/**
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ *
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+ *
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+ *
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ */
 package org.n52.sos.ds.datasource;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+import java.io.FilenameFilter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -14,12 +46,15 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
-
 import org.hsqldb.ras.RasUtil;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.n52.sos.ds.datasource.AbstractHibernateDatasource;
 import org.n52.sos.ds.datasource.RasdamanDatasource;
 import org.n52.sos.ogc.swe.SweDataArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rasj.RasMArrayByte;
 
@@ -28,32 +63,83 @@ import rasj.RasMArrayByte;
  * @author Simona Badoiu <s.a.badoiu@52north.org>
  *
  */
-public class RasCsvToSweDataArrayConverterIT extends TestCase {
-	public static final String 	DEFAULT_DB_FILE = "/var/hsqldb/testdb";
-	private String 				dbFile = DEFAULT_DB_FILE;
+public class RasCsvToSweDataArrayConverterIT {
+	private static final Logger	LOGGER = LoggerFactory.getLogger(RasdamanTestData.class);
 	
-	private static final String SOS_TEST_CONF = "SOS_TEST_CONF";
+	public static final String 	DEFAULT_DB_LOCATION = "src/test/resources/hsqldb";
+	public static final String	DEFAULT_DB_NAME = "db";
+	public static final String	DEFAULT_DB_FILE = DEFAULT_DB_LOCATION + "/" + DEFAULT_DB_NAME;
+	
+	private static String 		dbFile = DEFAULT_DB_FILE;
+	
 	private static final String RASDAMAN_SCHEMA = "public";
 	private static final String RASDAMAN_USER = "SA";
 	private static final String RASDAMAN_PASS = "";
-	private static final String DATABASE_DEFAULT_VALUE = "jdbc:hsqldb:file:/var/hsqldb/testdb";
+	private static final String DATABASE_DEFAULT_VALUE = "jdbc:hsqldb:file:" + DEFAULT_DB_FILE;
 	
-	private static String host, user, pass, schema, database;
-	private static int port;
-
-	static {
-		initialize();
-	}
+	private static String  user, pass, schema, database;
+	private static Connection conn;
 	
-	private static final void initialize() {
-
-		Properties props = new Properties();
+	@BeforeClass
+	public static void initialize() {
 		schema = RASDAMAN_SCHEMA;
 		user = RASDAMAN_USER;
 		pass = RASDAMAN_PASS;
 		database = DATABASE_DEFAULT_VALUE;
 	}
 	
+	@BeforeClass
+	public static void insertTestData() throws SQLException {
+		boolean success = false;
+		try {
+			conn = getConnection();
+			success = setUp();
+		} catch (final SQLException e) {
+			throw new RuntimeException("Tests FAILED. SQLException occurred while performing tests.", e);
+		} finally {
+			if (conn != null)
+				conn.close();
+		}
+		if (success) {
+			LOGGER.info("All the tables were created");
+		} else {
+			LOGGER.debug("Tables creation failed");
+		}
+	}
+	
+	@AfterClass
+	public static void dropTables() {
+		String dropString = "drop table if exists TESTVALUE";
+		
+		try (Connection conn = getConnection()) {
+			executeQuery(conn, dropString, 0);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@AfterClass
+	public static void dropRasCollections() {
+		RasUtil.openDatabase(RasUtil.adminUsername, RasUtil.adminPassword, true);
+		RasUtil.executeRasqlQuery("drop collection rastestvalue",
+				false, true);
+		RasUtil.executeRasqlQuery("drop collection rastestvalue1",
+				true, true);
+	}
+	
+	@AfterClass
+	public static void deleteDatabase() {
+		File arraydir = new File(DEFAULT_DB_LOCATION);
+        final File[] arrayFiles = arraydir.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String filename) {
+                return filename.startsWith(DEFAULT_DB_NAME + ".");
+            }
+        });
+        
+        for (int i = 0; i < arrayFiles.length; i++) {
+        	arrayFiles[i].delete();
+        }
+	}
 	
 	private static Map<String, Object> getDefaultSettings() {
 		Map<String, Object> settings = new HashMap<String, Object>();
@@ -92,10 +178,6 @@ public class RasCsvToSweDataArrayConverterIT extends TestCase {
 		}
 	}
 	
-	public String rasCsvToTupleList(String csv) {
-		return csv.replace("{", "").replace("}","").replace("\"", "");
-	}
-	
 	public List<List<String>> getLines(String csvRes) {
 		Pattern p = Pattern.compile("\\{(.*?)\\}", Pattern.DOTALL);
 		Matcher m = p.matcher(csvRes);
@@ -122,7 +204,7 @@ public class RasCsvToSweDataArrayConverterIT extends TestCase {
 		return sweArr;
 	}
 	
-	public Connection getConnection() throws SQLException {
+	public static Connection getConnection() throws SQLException {
 		Connection conn;
 		Properties connectionProps = new Properties();
 		connectionProps.put("user", "SA");
@@ -140,7 +222,7 @@ public class RasCsvToSweDataArrayConverterIT extends TestCase {
 		return conn;
 	}
 	
-	public boolean createTables(final Connection conn) throws SQLException {
+	public static boolean createTables() throws SQLException {
 		boolean success = true;
 		String createString =
 				"create table TESTVALUE (" +
@@ -151,7 +233,7 @@ public class RasCsvToSweDataArrayConverterIT extends TestCase {
 		return success;
 	}
 	
-	public boolean insertValues(final Connection conn) throws SQLException {
+	public static boolean insertValues() throws SQLException {
 		RasUtil.openDatabase(RasUtil.adminUsername, RasUtil.adminPassword, true);
 		RasUtil.executeRasqlQuery("create collection rastestvalue GreySet",
 				false, false);
@@ -182,64 +264,34 @@ public class RasCsvToSweDataArrayConverterIT extends TestCase {
 		return true;
 	}
 	
-	private boolean executeQuery(final Connection conn, final String query, final int line) throws SQLException{
-		Statement stmt = null;
-		try {
-			stmt = conn.createStatement();
+	private static boolean executeQuery(final Connection conn, final String query, final int line) throws SQLException{
+		try (Statement stmt = conn.createStatement()) {
 			stmt.executeQuery(query);
 		} catch (SQLException e) {
-			return true;
-		} finally {
-			if (stmt != null) { stmt.close(); }
+			LOGGER.debug("\n>>>> Query failed! <<<<");
+			e.printStackTrace();
+			return false;
 		}
+		LOGGER.info("Success!");
 		return true;
 	}
 	
-	public boolean dropTables(final Connection conn) throws SQLException {
-		String dropString = "drop table if exists TESTVALUE";
-		return executeQuery(conn, dropString, 0);
-	}
-	
-	public void dropRasCollections() {
-		RasUtil.openDatabase(RasUtil.adminUsername, RasUtil.adminPassword, true);
-		RasUtil.executeRasqlQuery("drop collection rastestvalue",
-				false, true);
-		RasUtil.executeRasqlQuery("drop collection rastestvalue1",
-				true, true);
-	}
-	
-	private boolean setUp(final Connection conn) throws SQLException {
-		boolean success = dropTables(conn);
-		dropRasCollections();
-		success = success && createTables(conn);
-		success = success && insertValues(conn);
+	private static boolean setUp() throws SQLException {
+		boolean success = true;
+		dropTables();
+		success = success && createTables();
+		success = success && insertValues();
 		return success;
 	}
 
-	public void insertTestData() throws SQLException {
-		Connection conn = null;
-		try {
-			conn = getConnection();
-			setUp(conn);
-		} catch (final SQLException e) {
-			throw new RuntimeException("Tests FAILED. SQLException occurred while performing tests.", e);
-		} finally {
-			if (conn != null)
-				conn.close();
-		}
-	}
 	
+	
+	@Test
 	public void testCsvToSweDataArray1() {
-		try {
-			insertTestData();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
 		List<List<String>> expected1 = new ArrayList<List<String>>();
 		List<List<String>> expected2 = new ArrayList<List<String>>();
-		List<String> list = new ArrayList<String>();
 		
+		List<String> list = new ArrayList<String>();
 		for (int i = 0; i <= 250; i++) {
 			list = new ArrayList<String>();
 			for (int j = 0; j <= 225; j++) {
@@ -266,8 +318,10 @@ public class RasCsvToSweDataArrayConverterIT extends TestCase {
 		assertEquals(result.get(1), expectedSwe2);
 	}
 	
+	@Test
 	public void testCsvToSweDataArray() {
 		String csv = "{0,0,0,1}, {0,0,0,0,0}, {0,0,0,0}";
+		
 		List<List<String>> expected = new ArrayList<List<String>>();
 		List<String> first = Arrays.asList("0", "0", "0", "1");
 		List<String> second = Arrays.asList("0", "0", "0", "0", "0");
@@ -275,6 +329,7 @@ public class RasCsvToSweDataArrayConverterIT extends TestCase {
 		expected.add(first);
 		expected.add(second);
 		expected.add(third);
+		
 		SweDataArray swedata = new SweDataArray();
 		swedata.setValues(expected);
 		

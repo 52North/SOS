@@ -33,7 +33,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
@@ -46,39 +45,41 @@ import org.slf4j.LoggerFactory;
 public class RasdamanTestData {
 	private static final Logger	LOGGER = LoggerFactory.getLogger(RasdamanTestData.class);
 
-	public static final String 	DEFAULT_DB_FILE = "/var/hsqldb/dbbun";
-	public static final String	DEFAULT_SQL_SCRIPT_FILE = "src/main/resources/asqldb_batch_example.sql";
-	private String 				dbFile = DEFAULT_DB_FILE;
-	private String				sqlScriptFile = DEFAULT_SQL_SCRIPT_FILE;
+	public static final String 	DEFAULT_DB_FILE = "/var/hsqldb/db";
+	public static final String	DEFAULT_SQL_SCRIPT_FILE = "src/test/resources/asqldb_batch_example.sql";
+	public static final String	DEFAULT_USER = "SIMONA";
+	public static final String	DEFAULT_PASSWORD = "SIMONA";
+	private static String 		dbFile = DEFAULT_DB_FILE;
+	private static String		sqlScriptFile = DEFAULT_SQL_SCRIPT_FILE;
 
-	private boolean setUp(final Connection conn) throws SQLException {
+	private static boolean setUp(final Connection conn) throws SQLException {
 		boolean success = dropTables(conn);
 		dropRasCollections();
 		success = success && createTables(conn);
 		success = success && insertValues(conn);
 		return success;
 	}
-	
-	public String readSqlScript() {
+
+	public static String readSqlScript() {
 		String everything = null;
 		try(BufferedReader br = new BufferedReader(new FileReader(sqlScriptFile))) {
-	        StringBuilder sb = new StringBuilder();
-	        String line = br.readLine();
+			StringBuilder sb = new StringBuilder();
+			String line = br.readLine();
 
-	        while (line != null) {
-	            sb.append(line);
-	            sb.append(System.lineSeparator());
-	            line = br.readLine();
-	        }
-	        everything = sb.toString();
-	    } catch (IOException e) {
-	    	LOGGER.debug("The file " + sqlScriptFile + " can't be found!");
+			while (line != null) {
+				sb.append(line);
+				sb.append(System.lineSeparator());
+				line = br.readLine();
+			}
+			everything = sb.toString();
+		} catch (IOException e) {
+			LOGGER.debug("The file " + sqlScriptFile + " can't be found!");
 			e.printStackTrace();
 		}
 		return everything;
 	}
 
-	public boolean createTables(final Connection conn) throws SQLException {
+	public static boolean createTables(final Connection conn) throws SQLException {
 		boolean success = true;
 		LOGGER.info("Creating tables...");
 		String sqlBatchExample = readSqlScript();
@@ -88,13 +89,13 @@ public class RasdamanTestData {
 						"value varchar(40) ARRAY NOT NULL, " +
 						"FOREIGN KEY (ObservationId) REFERENCES observation (ObservationId))";
 
-//		success = success && executeQuery(conn, sqlBatchExample, 0);
+		success = success && executeQuery(conn, sqlBatchExample, 0);
 		success = success && executeQuery(conn, createString, 0);
 
 		return success;
 	}
 
-	public boolean insertValues(final Connection conn) throws SQLException {
+	public static boolean insertValues(final Connection conn) throws SQLException {
 		RasUtil.openDatabase(RasUtil.adminUsername, RasUtil.adminPassword, true);
 		RasUtil.executeRasqlQuery("create collection rastest GreySet",
 				false, false);
@@ -120,7 +121,7 @@ public class RasdamanTestData {
 		oidQuery = "select oid(c) from rastest3 as c";
 		String oid3 = RasUtil.executeRasqlQuery(oidQuery, true, false).toString();
 		oid3 = oid3.replaceAll("[\\[\\]]", "");
-		
+
 		String[] insertQueries = new String[]{
 				"INSERT INTO ARRAYVALUE VALUES(1, ARRAY['rastest:" + Double.valueOf(oid).intValue() + "'])",
 				"INSERT INTO ARRAYVALUE VALUES(2, ARRAY['rastest2:" + Double.valueOf(oid2).intValue() + "'])",
@@ -136,34 +137,26 @@ public class RasdamanTestData {
 		return true;
 	}
 
-	private boolean executeQuery(final Connection conn, final String query, final int line) throws SQLException{
-		LOGGER.info("Executing query on line {}: {}... ", line, query);
-		final boolean errorExpected = query.startsWith("/*e");
-		Statement stmt = null;
-		try {
-			stmt = conn.createStatement();
+	private static boolean executeQuery(final Connection conn, final String query, final int line) throws SQLException{
+		LOGGER.info("Executing query: {}... ", query);
+		
+		try (Statement stmt = conn.createStatement()) {
 			stmt.executeQuery(query);
 		} catch (SQLException e) {
-			if (!errorExpected) {
-				LOGGER.debug("\n>>>> Query failed! <<<<");
-				e.printStackTrace();
-				return false;
-			}
-			LOGGER.info("Success!");
-			return true;
-		} finally {
-			if (stmt != null) { stmt.close(); }
+			LOGGER.debug("\n>>>> Query failed! <<<<");
+			e.printStackTrace();
+			return false;
 		}
 		LOGGER.info("Success!");
 		return true;
 	}
 
-	public boolean dropTables(final Connection conn) throws SQLException {
+	public static boolean dropTables(final Connection conn) throws SQLException {
 		String dropString = "drop table if exists ARRAYVALUE";
 		return executeQuery(conn, dropString, 0);
 	}
 
-	public void dropRasCollections() {
+	public static void dropRasCollections() {
 		RasUtil.openDatabase(RasUtil.adminUsername, RasUtil.adminPassword, true);
 		RasUtil.executeRasqlQuery("drop collection rastest",
 				false, true);
@@ -173,17 +166,12 @@ public class RasdamanTestData {
 				true, true);
 	}
 
-	private boolean tearDown(final Connection conn) throws SQLException {
-		dropRasCollections();
-		return conn == null || dropTables(conn);
-	}
-
 	// make hsqldb connection
-	public Connection getConnection() throws SQLException {
+	public static Connection getConnection() throws SQLException {
 		Connection conn;
 		Properties connectionProps = new Properties();
-		connectionProps.put("user", "SA");
-		connectionProps.put("password", "");
+		connectionProps.put("user", DEFAULT_USER);
+		connectionProps.put("password", DEFAULT_PASSWORD);
 		try {
 			Class.forName("org.hsqldb.jdbc.JDBCDriver");
 		} catch (ClassNotFoundException e) {
@@ -197,8 +185,8 @@ public class RasdamanTestData {
 		return conn;
 	}
 
-	public void insertTestData() throws SQLException {
-		boolean success = true;
+	public static void insertTestData() throws SQLException {
+		boolean success = false;
 		Connection conn = null;
 		try {
 			conn = getConnection();
@@ -217,7 +205,6 @@ public class RasdamanTestData {
 	}
 
 	public static void main(String[] args) throws SQLException {
-		RasdamanTestData rasdamanTestData = new RasdamanTestData();
-		rasdamanTestData.insertTestData();
+		insertTestData();
 	}
 }

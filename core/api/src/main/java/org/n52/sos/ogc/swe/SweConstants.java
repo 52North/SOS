@@ -185,6 +185,8 @@ public interface SweConstants {
 
     QName QN_VALUE_SWE_200 = new QName(NS_SWE_20, EN_VALUE, NS_SWE_PREFIX);
 
+	QName QN_DATA_ARRAY_SWE_101 = new QName(NS_SWE_101, EN_DATA_ARRAY, NS_SWE_PREFIX);
+
     /**
      * Enum for SensorML types
      */

@@ -301,6 +301,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
 
                 elementType.addNewAbstractDataComponent().set(
                         createDataRecord((SweDataRecord) sosDataArray.getElementType()));
+                // TODO allow other dataComponents.
                 elementType.getAbstractDataComponent().substitute(
                         new QName(SweConstants.NS_SWE_20, SweConstants.EN_DATA_RECORD, SweConstants.NS_SWE_PREFIX),
                         DataRecordType.type);

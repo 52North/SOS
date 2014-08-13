@@ -40,6 +40,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -52,6 +53,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.sos.ds.datasource.AbstractHibernateDatasource;
 import org.n52.sos.ds.datasource.RasdamanDatasource;
+import org.n52.sos.ds.datasource.RasCsvToSweDataArrayConverter;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,7 +155,6 @@ public class RasCsvToSweDataArrayConverterIT {
 	
 	public ArrayList<SweDataArray> makeHsqldbCsvQuery() {
 		String query = "SELECT csv(VALUE) from TESTVALUE";
-		
 		try {
 			Statement stmt = null;
 			RasdamanDatasource ds = new RasdamanDatasource();
@@ -164,10 +165,14 @@ public class RasCsvToSweDataArrayConverterIT {
 			
 			ArrayList<SweDataArray> sweRes = new ArrayList<SweDataArray>();
 			while (result.next()) {
-				RasMArrayByte csv = (RasMArrayByte) result.getObject(1);
-				String csvString = new String(csv.getArray(), "UTF-8");
-				SweDataArray swe = csvToSweDataArray(csvString);
-			    sweRes.add(swe);
+				Object obj = result.getObject(1);
+				if (obj instanceof RasMArrayByte) {
+					RasMArrayByte byteResult = (RasMArrayByte) result.getObject(1);
+					SweDataArray swe = RasCsvToSweDataArrayConverter.rasByteArrayToSweDataArray(byteResult);
+				    sweRes.add(swe);
+				} else {
+					throw new ClassCastException();
+				}
 			}
 			
 			return sweRes;
@@ -176,32 +181,6 @@ public class RasCsvToSweDataArrayConverterIT {
 			e.printStackTrace();
 			return null;
 		}
-	}
-	
-	public List<List<String>> getLines(String csvRes) {
-		Pattern p = Pattern.compile("\\{(.*?)\\}", Pattern.DOTALL);
-		Matcher m = p.matcher(csvRes);
-		List<List<String>> result = new ArrayList<>();
-		
-		while(m.find()) {
-			List<String> auxList = new ArrayList<>();
-			String auxString = m.group(1);
-			String[] splitted = auxString.split(",");
-			for (int i = 0; i < splitted.length; i++) {
-				auxList.add(splitted[i]);
-			}
-			result.add(auxList);
-		}
-		
-		return result;
-		
-	}
-	
-	public SweDataArray csvToSweDataArray(String csvRes) {
-		List<List<String>> arr = this.getLines(csvRes);
-		SweDataArray sweArr = new SweDataArray();
-		sweArr.setValues(arr);
-		return sweArr;
 	}
 	
 	public static Connection getConnection() throws SQLException {
@@ -334,7 +313,7 @@ public class RasCsvToSweDataArrayConverterIT {
 		swedata.setValues(expected);
 		
 		RasCsvToSweDataArrayConverterIT a = new RasCsvToSweDataArrayConverterIT();
-		SweDataArray sweresult = csvToSweDataArray(csv);
+		SweDataArray sweresult = RasCsvToSweDataArrayConverter.csvToSweDataArray(csv);
 		
 		assertEquals(swedata, sweresult);
 	}

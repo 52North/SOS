@@ -103,6 +103,8 @@ import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -295,8 +297,15 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
     }
 
     private SweDataArray parseSweDataArrayType(final DataArrayType xbDataArray) throws OwsExceptionReport {
+    	 if (!xbDataArray.getElementType().isSetAbstractDataRecord()) {
+         	throw new InvalidParameterValueException().at(XmlHelper.getLocalName(xbDataArray.getElementType())).withMessage(
+                     "The swe:DataArray contains a not yet supported elementType element. Currently only 'swe:DataRecord' is supported as elementType element.");
+         }
+    	// TODO implement full support
         final SweDataArray dataArray = new SweDataArray();
-        // TODO
+        DataArrayDocument xbDataArrayDoc = DataArrayDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        xbDataArrayDoc.setDataArray1(xbDataArray);
+        dataArray.setXml(xbDataArrayDoc.xmlText());
         return dataArray;
     }
 

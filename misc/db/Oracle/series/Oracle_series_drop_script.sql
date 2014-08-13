@@ -27,6 +27,7 @@
 -- Public License for more details.
 --
 
+drop table "procedure" cascade constraints;
 drop table blobValue cascade constraints;
 drop table booleanValue cascade constraints;
 drop table categoryValue cascade constraints;
@@ -48,7 +49,6 @@ drop table offeringAllowedFeatureType cascade constraints;
 drop table offeringAllowedObservationType cascade constraints;
 drop table offeringHasRelatedFeature cascade constraints;
 drop table parameter cascade constraints;
-drop table procedure cascade constraints;
 drop table procedureDescriptionFormat cascade constraints;
 drop table relatedFeature cascade constraints;
 drop table relatedFeatureHasRole cascade constraints;
@@ -56,7 +56,6 @@ drop table relatedFeatureRole cascade constraints;
 drop table resultTemplate cascade constraints;
 drop table sensorSystem cascade constraints;
 drop table series cascade constraints;
-drop table spatialFilteringProfile cascade constraints;
 drop table sweDataArrayValue cascade constraints;
 drop table textValue cascade constraints;
 drop table unit cascade constraints;
@@ -75,7 +74,6 @@ drop sequence procedureId_seq;
 drop sequence relatedFeatureId_seq;
 drop sequence relatedFeatureRoleId_seq;
 drop sequence resultTemplateId_seq;
-drop sequence seriesid_seq;
-drop sequence spatialFilteringProfileId_seq;
+drop sequence seriesId_seq;
 drop sequence unitId_seq;
 drop sequence validProcedureTimeId_seq;

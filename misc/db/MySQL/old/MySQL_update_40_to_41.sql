@@ -27,9 +27,6 @@
 -- Public License for more details.
 --
 
-UPDATE observation o SET (samplingGeometry) = (SELECT spf.geom FROM spatialFilteringProfile spf WHERE o.observationid = spf.observation)
-WHERE EXISTS (SELECT * FROM spatialFilteringProfile spf WHERE o.observationid = spf.observation);
+ALTER TABLE `procedure` ADD COLUMN referenceFlag char(1) default 'F';
 
-DROP TABLE spatialFilteringProfile;
-
-DROP sequence spatialFilteringProfileId_seq;
+ALTER TABLE observation ADD COLUMN samplingGeometry GEOMETRY;

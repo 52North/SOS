@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.entities.observation;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasHiddenChildFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSamplingGeometry;
@@ -47,6 +48,7 @@ public interface BaseObservation
                 HasDeletedFlag,
                 HasObservationId,
                 HasSamplingGeometry,
-                HasOfferings {
+                HasOfferings,
+                HasHiddenChildFlag {
 
 }

@@ -29,14 +29,6 @@
 package org.n52.sos.ds.hibernate.entities.observation;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
-import org.n52.sos.ds.hibernate.entities.Offering;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract implementation of {@link TemporalReferencedObservation}.
@@ -46,29 +38,16 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  */
 public abstract class AbstractTemporalReferencedObservation
-        extends AbstractIdentifierNameDescriptionEntity
+        extends AbstractBaseObservation
         implements TemporalReferencedObservation {
 
     private static final long serialVersionUID = 8704397558609682891L;
-    private long observationId;
+
     private Date phenomenonTimeStart;
     private Date phenomenonTimeEnd;
     private Date resultTime;
     private Date validTimeStart;
     private Date validTimeEnd;
-    private Set<Offering> offerings = new HashSet<>(0);
-    private boolean deleted;
-    private Geometry samplingGeometry;
-
-    @Override
-    public long getObservationId() {
-        return observationId;
-    }
-
-    @Override
-    public void setObservationId(long observationId) {
-        this.observationId = observationId;
-    }
 
     @Override
     public Date getPhenomenonTimeStart() {
@@ -125,50 +104,5 @@ public abstract class AbstractTemporalReferencedObservation
         return getValidTimeStart() != null && getValidTimeEnd() != null;
     }
 
-    @Override
-    public HasDeletedFlag setDeleted(boolean deleted) {
-        this.deleted = deleted;
-        return this;
-    }
-
-    @Override
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    @Override
-    public boolean getDeleted() {
-        return deleted;
-    }
-
-    @Override
-    public Set<Offering> getOfferings() {
-        return offerings;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void setOfferings(Object offerings) {
-        if (offerings instanceof Set<?>) {
-            this.offerings = (Set<Offering>) offerings;
-        } else {
-            getOfferings().add((Offering) offerings);
-        }
-    }
-
-    @Override
-    public Geometry getSamplingGeometry() {
-        return samplingGeometry;
-    }
-
-    @Override
-    public void setSamplingGeometry(Geometry samplingGeometry) {
-        this.samplingGeometry = samplingGeometry;
-    }
-
-    @Override
-    public boolean hasSamplingGeometry() {
-        return getSamplingGeometry() != null && !getSamplingGeometry().isEmpty();
-    }
 
 }

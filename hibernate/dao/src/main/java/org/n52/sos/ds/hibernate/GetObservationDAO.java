@@ -208,8 +208,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
     public Set<String> getConformanceClasses() {
         try {
             Session session = sessionHolder.getSession();
-            if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()
-                    && DaoFactory.getInstance().getSpatialFilteringProfileDAO(session) != null) {
+            if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
                 return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
             }
             sessionHolder.returnSession(session);
@@ -285,7 +284,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                         request.getResultModel(), session);
         Set<OmObservationConstellation> timeSeries = Sets.newHashSet();
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowMetadataOfEmptyObservations()
-                || Integer.MAX_VALUE != ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries()) {
+                || ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries() > 0) {
             for (OmObservation omObservation : result) {
                 timeSeries.add(omObservation.getObservationConstellation());
             }

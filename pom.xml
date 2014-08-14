@@ -77,8 +77,8 @@
         <!-- managed dependencies with ${project.version} will be wrong in submodules
         with different versions -->
         <sos.version>4.1.0</sos.version>
-        <do.version>0.2.0</do.version>
-        <rest-binding.version>0.2.0</rest-binding.version>
+        <do.version>4.1.0</do.version>
+        <rest-binding.version>4.1.0</rest-binding.version>
         <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
         <org.springframework.version>3.2.6.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>

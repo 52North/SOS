@@ -15,7 +15,7 @@
         <module>postgres</module>
         <module>h2</module>
         <module>mysql</module>
-	<module>rasdaman</module>
+		<module>rasdaman</module>
         <module>common</module>
     </modules>
     <dependencies>

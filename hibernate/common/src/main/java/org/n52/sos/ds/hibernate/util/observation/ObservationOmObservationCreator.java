@@ -45,6 +45,8 @@ import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.AbstractSpatialFilteringProfile;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.interfaces.ArrayObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.ArrayValue;
 import org.n52.sos.ds.hibernate.entities.interfaces.BlobObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.BooleanObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.CategoryObservation;
@@ -80,6 +82,9 @@ import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rasj.RasGMArray;
+import rasj.RasMArrayByte;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -258,6 +263,13 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             final XmlObject xml = XmlHelper.parseXmlString(((SweDataArrayObservation) hObservation).getValue());
             sweDataArrayValue.setValue((SweDataArray) CodingHelper.decodeXmlElement(xml));
             return sweDataArrayValue;
+        } else if (hObservation instanceof ArrayObservation) {
+        	 SweDataArrayValue sweDataArrayValue = new SweDataArrayValue();
+        	 SweDataArray sweDataArray = null;
+        	 RasMArrayByte arrayObject = (RasMArrayByte) ((ArrayObservation) hObservation).getValue();
+//        	 sweDataArray = RasCsvToSweDataArrayConverter.rasByteArrayToSweDataArray(arrayObject);
+        	 sweDataArrayValue.setValue(sweDataArray);
+             return sweDataArrayValue;
         }
         return null;
     }

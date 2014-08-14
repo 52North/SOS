@@ -31,6 +31,8 @@ package org.n52.sos.ds.hibernate.entities.observation.series;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractContextualReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.HibernateSeriesRelations.HasSeries;
 
@@ -39,13 +41,17 @@ import org.n52.sos.ds.hibernate.entities.observation.series.HibernateSeriesRelat
  * {@link Series}.
  *
  * @author Christian Autermann
+ * @note This class can not inherit from
+ * {@link AbstractTemporalReferencedObservation} as hibernate will return
+ * doubled results because both classes are mapped but do not inherit from each
+ * other in the mapping files.
  */
 public class ContextualReferencedSeriesObservation
-        extends TemporalReferencedSeriesObservation
-        implements ContextualReferencedObservation,
-                   HasSeries {
+        extends AbstractContextualReferencedObservation
+        implements ContextualReferencedObservation, HasSeries {
 
     private static final long serialVersionUID = -1173799550126124321L;
+    private Series series;
 
     @Override
     public FeatureOfInterest getFeatureOfInterest() {
@@ -60,6 +66,21 @@ public class ContextualReferencedSeriesObservation
     @Override
     public Procedure getProcedure() {
         return isSetSeries() ? getSeries().getProcedure() : null;
+    }
+
+    @Override
+    public Series getSeries() {
+        return series;
+    }
+
+    @Override
+    public void setSeries(Series series) {
+        this.series = series;
+    }
+
+    @Override
+    public boolean isSetSeries() {
+        return getSeries() != null;
     }
 
 }

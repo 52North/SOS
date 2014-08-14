@@ -839,10 +839,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                         .add(Restrictions.eq(AbstractObservation.DELETED, false));
         LOGGER.debug("QUERY getMinResultTime(): {}", HibernateHelper.getSqlString(criteria));
         Object min = criteria.uniqueResult();
-        if (min != null) {
-            return new DateTime(min, DateTimeZone.UTC);
-        }
-        return null;
+        return (min == null) ? null : new DateTime(min, DateTimeZone.UTC);
     }
 
     /**
@@ -861,11 +858,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                         .add(Restrictions.eq(AbstractObservation.DELETED, false));
         LOGGER.debug("QUERY getMaxResultTime(): {}", HibernateHelper.getSqlString(criteria));
         Object max = criteria.uniqueResult();
-        if (max == null) {
-            return null;
-        } else {
-            return new DateTime(max, DateTimeZone.UTC);
-        }
+        return (max == null) ? null : new DateTime(max, DateTimeZone.UTC);
     }
 
     /**

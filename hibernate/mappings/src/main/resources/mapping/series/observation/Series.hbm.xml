@@ -48,6 +48,13 @@
                     default="'F'"
                     check="deleted in ('T','F')"/>
         </property>
+        <property name="hiddenChild"
+                  type="org.hibernate.type.TrueFalseType">
+            <column name="hiddenChild"
+                    not-null="true"
+                    default="'F'"
+                    check="hiddenChild in ('T','F')" />
+        </property>
         <!-- values for timeseries api -->
         <property name="firstTimeStamp"
                   type="timestamp">

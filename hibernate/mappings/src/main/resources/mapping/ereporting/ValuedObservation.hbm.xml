@@ -22,7 +22,7 @@
                     unique-key="observationIdentity"/>
         </many-to-one>
         <property name="phenomenonTimeStart"
-                   type="timestamp" >
+                  type="timestamp" >
             <column index="obsPhenTimeStartIdx"
                     name="phenomenonTimeStart"
                     length="29"
@@ -77,6 +77,13 @@
                     not-null="true"
                     default="'F'"
                     check="deleted in ('T','F')"/>
+        </property>
+        <property name="hiddenChild"
+                  type="org.hibernate.type.TrueFalseType">
+            <column name="hiddenChild"
+                    not-null="true"
+                    default="'F'"
+                    check="hiddenChild in ('T','F')" />
         </property>
         <many-to-one name="unit"
                      class="org.n52.sos.ds.hibernate.entities.Unit"

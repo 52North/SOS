@@ -33,6 +33,7 @@ import java.util.Date;
 
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasHiddenChildFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
@@ -48,6 +49,7 @@ import org.n52.sos.ds.hibernate.entities.Unit;
 public class Series
         implements HasWriteableObservationContext,
                    HasDeletedFlag,
+                   HasHiddenChildFlag,
                    HasUnit {
 
     private static final long serialVersionUID = 7838379468605356753L;
@@ -63,6 +65,7 @@ public class Series
     private BigDecimal firstNumericValue;
     private BigDecimal lastNumericValue;
     private Unit unit;
+    private boolean hiddenChild;
 
     /**
      * Get series id
@@ -230,5 +233,15 @@ public class Series
     @Override
     public boolean isSetUnit() {
         return getUnit() != null && getUnit().isSetUnit();
+    }
+
+    @Override
+    public void setHiddenChild(boolean hiddenChild) {
+        this.hiddenChild = hiddenChild;
+    }
+
+    @Override
+    public boolean isHiddenChild() {
+        return this.hiddenChild;
     }
 }

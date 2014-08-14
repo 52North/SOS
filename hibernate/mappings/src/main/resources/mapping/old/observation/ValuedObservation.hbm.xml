@@ -91,6 +91,13 @@
                     default="'F'"
                     check="deleted in ('T','F')"/>
         </property>
+        <property name="hiddenChild"
+                  type="org.hibernate.type.TrueFalseType">
+            <column name="hiddenChild"
+                    not-null="true"
+                    default="'F'"
+                    check="hiddenChild in ('T','F')" />
+        </property>
         <property name="validTimeStart"
                   type="timestamp">
             <column name="validTimeStart"

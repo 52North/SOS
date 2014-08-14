@@ -58,6 +58,13 @@
                     default="'F'"
                     check="deleted in ('T','F')"/>
         </property>
+        <property name="hiddenChild"
+                  type="org.hibernate.type.TrueFalseType">
+            <column name="hiddenChild"
+                    not-null="true"
+                    default="'F'"
+                    check="hiddenChild in ('T','F')" />
+        </property>
         <!-- values for timeseries api -->
         <property name="firstTimeStamp"
                   type="timestamp">
@@ -80,10 +87,10 @@
                     length="29" />
         </property>
         <many-to-one name="unit"
-                      class="org.n52.sos.ds.hibernate.entities.Unit"
-                      fetch="select"
-                      lazy="no-proxy"
-                      foreign-key="seriesUnitFk">
+                     class="org.n52.sos.ds.hibernate.entities.Unit"
+                     fetch="select"
+                     lazy="no-proxy"
+                     foreign-key="seriesUnitFk">
             <column name="unitId"
                     not-null="false" />
         </many-to-one>

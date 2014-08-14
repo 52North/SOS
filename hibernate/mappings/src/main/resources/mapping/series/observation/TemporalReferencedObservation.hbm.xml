@@ -12,7 +12,7 @@
             </generator>
         </id>
         <many-to-one name="series"
-                     class="org.n52.sos.ds.hibernate.entities.series.Series"
+                     class="org.n52.sos.ds.hibernate.entities.observation.series.Series"
                      fetch="select"
                      lazy="no-proxy"
                      foreign-key="observationSeriesFk">

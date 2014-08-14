@@ -12,7 +12,7 @@
             </generator>
         </id>
         <many-to-one name="series"
-                     class="org.n52.sos.ds.hibernate.entities.series.Series"
+                     class="org.n52.sos.ds.hibernate.entities.observation.series.Series"
                      fetch="select"
                      lazy="no-proxy"
                      foreign-key="observationSeriesFk">
@@ -89,14 +89,6 @@
             <column name="validTimeEnd"
                     length="29" />
         </property>
-        <many-to-one name="unit"
-                     class="org.n52.sos.ds.hibernate.entities.Unit"
-                     fetch="select"
-                     lazy="no-proxy"
-                     foreign-key="observationUnitFk">
-            <column name="unitId"
-                    not-null="false" />
-        </many-to-one>
         <set name="offerings"
              table="observationHasOffering"
              inverse="false"

@@ -13,7 +13,7 @@
             </generator>
         </id>
         <many-to-one name="series"
-                     class="org.n52.sos.ds.hibernate.entities.series.Series"
+                     class="org.n52.sos.ds.hibernate.entities.observation.series.Series"
                      fetch="select"
                      lazy="no-proxy"
                      foreign-key="observationSeriesFk">
@@ -185,7 +185,7 @@
             <property name="value"
                       type="org.hibernate.type.StringClobType" />
         </joined-subclass>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.ComplexValuedSeriesObservation"
+        <!--<joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.ComplexValuedSeriesObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
                          table="complexValue">
             <key column="observationId"
@@ -197,6 +197,6 @@
                          foreign-key="complexValueObsIdentifierFk">
                 <column name="value" />
             </many-to-one>
-        </joined-subclass>
+        </joined-subclass>-->
     </class>
 </hibernate-mapping>

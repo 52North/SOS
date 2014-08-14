@@ -115,14 +115,6 @@ Useful to avoid many joins for queries where we don't care about the observation
             <column name="validTimeEnd"
                     length="29" />
         </property>
-        <many-to-one name="unit"
-                     class="org.n52.sos.ds.hibernate.entities.Unit"
-                     fetch="select"
-                     lazy="no-proxy"
-                     foreign-key="observationUnitFk">
-            <column name="unitId"
-                    not-null="false" />
-        </many-to-one>
         <set name="offerings"
              table="observationHasOffering"
              inverse="false"

@@ -36,7 +36,7 @@ import com.google.common.collect.Sets;
 
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.0.0
  */
 public class TObservableProperty extends ObservableProperty implements
@@ -44,7 +44,6 @@ public class TObservableProperty extends ObservableProperty implements
     private static final long serialVersionUID = -2442057838780645108L;
 
     private Set<ObservableProperty> childs = Sets.newHashSet();
-
     private Set<ObservableProperty> parents = Sets.newHashSet();
 
     public TObservableProperty() {
@@ -57,9 +56,8 @@ public class TObservableProperty extends ObservableProperty implements
     }
 
     @Override
-    public TObservableProperty setParents(final Set<ObservableProperty> parents) {
+    public void setParents(final Set<ObservableProperty> parents) {
         this.parents = parents;
-        return this;
     }
 
     @Override
@@ -68,8 +66,7 @@ public class TObservableProperty extends ObservableProperty implements
     }
 
     @Override
-    public TObservableProperty setChilds(final Set<ObservableProperty> childs) {
+    public void setChilds(final Set<ObservableProperty> childs) {
         this.childs = childs;
-        return this;
     }
 }

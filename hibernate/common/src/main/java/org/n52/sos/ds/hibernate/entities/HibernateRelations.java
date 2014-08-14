@@ -69,7 +69,7 @@ public interface HibernateRelations {
 
         String getDescription();
 
-        HasDescription setDescription(String description);
+        void setDescription(String description);
 
         /**
          * Is description set
@@ -84,7 +84,7 @@ public interface HibernateRelations {
 
         Codespace getCodespace();
 
-        HasCodespace setCodespace(Codespace codespace);
+        void setCodespace(Codespace codespace);
 
         boolean isSetCodespace();
     }
@@ -94,7 +94,7 @@ public interface HibernateRelations {
 
         Codespace getCodespaceName();
 
-        HasCodespaceName setCodespaceName(Codespace codespaceName);
+        void setCodespaceName(Codespace codespaceName);
 
         boolean isSetCodespaceName();
     }
@@ -102,7 +102,7 @@ public interface HibernateRelations {
     interface HasDisabledFlag {
         String DIABLED = "disabled";
 
-        HasDisabledFlag setDisabled(boolean disabled);
+        void setDisabled(boolean disabled);
 
         boolean getDisabled();
 
@@ -112,7 +112,7 @@ public interface HibernateRelations {
     interface HasDeletedFlag {
         String DELETED = "deleted";
 
-        HasDeletedFlag setDeleted(boolean deleted);
+        void setDeleted(boolean deleted);
 
         boolean getDeleted();
 
@@ -176,7 +176,7 @@ public interface HibernateRelations {
 
         Geometry getGeom();
 
-        HasGeometry setGeom(Geometry geom);
+        void setGeom(Geometry geom);
 
         /**
          * Is geometry set
@@ -189,7 +189,7 @@ public interface HibernateRelations {
     interface HasHiddenChildFlag {
         String HIDDEN_CHILD = "hiddenChild";
 
-        HasHiddenChildFlag setHiddenChild(boolean hiddenChild);
+        void setHiddenChild(boolean hiddenChild);
 
         boolean isHiddenChild();
     }
@@ -199,7 +199,7 @@ public interface HibernateRelations {
 
         String getIdentifier();
 
-        HasIdentifier setIdentifier(String identifier);
+        void setIdentifier(String identifier);
 
         /**
          * Is identifier set
@@ -214,7 +214,7 @@ public interface HibernateRelations {
 
         String getName();
 
-        HasName setName(String name);
+        void setName(String name);
 
         boolean isSetName();
 
@@ -226,7 +226,7 @@ public interface HibernateRelations {
 
         Observation<?> getObservation();
 
-        HasObservation setObservation(Observation<?> observation);
+        void setObservation(Observation<?> observation);
     }
 
     interface HasObservablePropertyGetter {
@@ -320,7 +320,7 @@ public interface HibernateRelations {
 
         ProcedureDescriptionFormat getProcedureDescriptionFormat();
 
-        HasProcedureDescriptionFormat setProcedureDescriptionFormat(
+        void setProcedureDescriptionFormat(
                 ProcedureDescriptionFormat procedureDescriptionFormat);
     }
 
@@ -535,11 +535,11 @@ public interface HibernateRelations {
 
         Object getLongitude();
 
-        HasCoordinate setLongitude(Object longitude);
+        void setLongitude(Object longitude);
 
         Object getLatitude();
 
-        HasCoordinate setLatitude(Object latitude);
+        void setLatitude(Object latitude);
 
         /**
          * Are longitude and latitude set
@@ -550,7 +550,7 @@ public interface HibernateRelations {
 
         Object getAltitude();
 
-        HasCoordinate setAltitude(Object altitude);
+        void setAltitude(Object altitude);
 
         /**
          * Is altitude set
@@ -567,7 +567,7 @@ public interface HibernateRelations {
 
         Set<ValidProcedureTime> getValidProcedureTimes();
 
-        HasValidProcedureTimes setValidProcedureTimes(
+        void setValidProcedureTimes(
                 Set<ValidProcedureTime> validProcedureTimes);
     }
 
@@ -578,11 +578,11 @@ public interface HibernateRelations {
 
         Set<T> getParents();
 
-        HasParentChilds<T, S> setParents(Set<T> parents);
+        void setParents(Set<T> parents);
 
         Set<T> getChilds();
 
-        HasParentChilds<T, S> setChilds(Set<T> childs);
+        void setChilds(Set<T> childs);
     }
 
     interface HasObservationId {
@@ -609,7 +609,7 @@ public interface HibernateRelations {
 
         Locale getLocale();
 
-        HasLocale setLocale(Locale locale);
+        void setLocale(Locale locale);
 
         boolean isSetLocale();
     }

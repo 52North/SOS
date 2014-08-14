@@ -100,9 +100,8 @@ public abstract class AbstractBaseObservation
     }
 
     @Override
-    public HasDeletedFlag setDeleted(boolean deleted) {
+    public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-        return this;
     }
 
     @Override
@@ -111,9 +110,8 @@ public abstract class AbstractBaseObservation
     }
 
     @Override
-    public HasHiddenChildFlag setHiddenChild(boolean hiddenChild) {
+    public void setHiddenChild(boolean hiddenChild) {
         this.hiddenChild = hiddenChild;
-        return this;
     }
 
 }

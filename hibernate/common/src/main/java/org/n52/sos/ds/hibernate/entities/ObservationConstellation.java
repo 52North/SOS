@@ -68,7 +68,7 @@ public class ObservationConstellation
         return observationConstellationId;
     }
 
-    public void setObservationConstellationId(final long observationConstellationId) {
+    public void setObservationConstellationId(long observationConstellationId) {
         this.observationConstellationId = observationConstellationId;
     }
 
@@ -78,7 +78,7 @@ public class ObservationConstellation
     }
 
     @Override
-    public void setObservableProperty(final ObservableProperty observableProperty) {
+    public void setObservableProperty(ObservableProperty observableProperty) {
         this.observableProperty = observableProperty;
     }
 
@@ -88,7 +88,7 @@ public class ObservationConstellation
     }
 
     @Override
-    public void setProcedure(final Procedure procedure) {
+    public void setProcedure(Procedure procedure) {
         this.procedure = procedure;
     }
 
@@ -98,7 +98,7 @@ public class ObservationConstellation
     }
 
     @Override
-    public void setObservationType(final ObservationType observationType) {
+    public void setObservationType(ObservationType observationType) {
         this.observationType = observationType;
     }
 
@@ -108,7 +108,7 @@ public class ObservationConstellation
     }
 
     @Override
-    public void setOffering(final Offering offering) {
+    public void setOffering(Offering offering) {
         this.offering = offering;
     }
 
@@ -118,9 +118,8 @@ public class ObservationConstellation
     }
 
     @Override
-    public ObservationConstellation setDeleted(final boolean deleted) {
+    public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-        return this;
     }
 
     @Override
@@ -129,9 +128,8 @@ public class ObservationConstellation
     }
 
     @Override
-    public HasDisabledFlag setDisabled(final boolean  disabled) {
+    public void setDisabled(boolean disabled) {
         this.disabled = disabled;
-        return this;
     }
 
     @Override
@@ -145,9 +143,8 @@ public class ObservationConstellation
     }
 
     @Override
-    public ObservationConstellation setHiddenChild(final boolean hiddenChild) {
+    public void setHiddenChild(boolean hiddenChild) {
         this.hiddenChild = hiddenChild;
-        return this;
     }
 
     public boolean getHiddenChild() {
@@ -161,7 +158,8 @@ public class ObservationConstellation
 
     @Override
     public boolean isSetObservationType() {
-        return getObservationType() != null && getObservationType().isSetObservationType();
+        return getObservationType() != null &&
+               getObservationType().isSetObservationType();
     }
 
     @Override
@@ -171,6 +169,5 @@ public class ObservationConstellation
                         observationConstellationId, observableProperty, procedure, observationType, offering, deleted,
                         hiddenChild);
     }
-
 
 }

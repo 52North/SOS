@@ -40,11 +40,8 @@ public class Offering extends AbstractIdentifierNameDescriptionEntity
         implements Serializable, HasDisabledFlag {
 
     private static final long serialVersionUID = 6512574941388917166L;
-
     public static final String ID = "offeringId";
-
     private long offeringId;
-
     private Boolean disabled = false;
 
     public long getOfferingId() {
@@ -56,19 +53,18 @@ public class Offering extends AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public Offering setDisabled(final boolean disabled) {
+    public void setDisabled(final boolean disabled) {
         this.disabled = disabled;
-        return this;
-    }
-
-    @Override
-    public boolean getDisabled() {
-        return disabled;
     }
 
     @Override
     public boolean isDisabled() {
         return getDisabled();
+    }
+
+    @Override
+    public boolean getDisabled() {
+        return disabled;
     }
 
 }

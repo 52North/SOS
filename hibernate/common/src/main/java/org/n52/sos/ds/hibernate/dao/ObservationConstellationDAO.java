@@ -38,6 +38,9 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.ObservationType;
@@ -51,15 +54,13 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
  * Hibernate data access class for observation constellation
- * 
+ *
  * @author CarstenHollmann
  * @since 4.0.0
  */
@@ -70,7 +71,7 @@ public class ObservationConstellationDAO {
     /**
      * Get observation constellation objects for procedure and observable
      * property object and offering identifiers
-     * 
+     *
      * @param procedure
      *            Procedure object
      * @param observableProperty
@@ -100,7 +101,7 @@ public class ObservationConstellationDAO {
     /**
      * Get ObservationConstellations for procedure, observableProperty and
      * offerings
-     * 
+     *
      * @param procedure
      *            Procedure to get ObservaitonConstellation for
      * @param observableProperty
@@ -124,7 +125,7 @@ public class ObservationConstellationDAO {
     /**
      * Get first ObservationConstellation for procedure, observableProperty and
      * offerings
-     * 
+     *
      * @param p
      *            Procedure to get ObservaitonConstellation for
      * @param op
@@ -143,7 +144,7 @@ public class ObservationConstellationDAO {
 
     /**
      * Get ObservationConstellations for procedure and observableProperty
-     * 
+     *
      * @param procedure
      *            Procedure to get ObservaitonConstellation for
      * @param observableProperty
@@ -170,7 +171,7 @@ public class ObservationConstellationDAO {
 
     /**
      * Get all observation constellation objects
-     * 
+     *
      * @param session
      *            Hibernate session
      * @return Observation constellation objects
@@ -187,14 +188,14 @@ public class ObservationConstellationDAO {
 
     /**
      * Get info for all observation constellation objects
-     * 
+     *
      * @param session
      *            Hibernate session
      * @return Observation constellation info objects
      */
     public List<ObservationConstellationInfo> getObservationConstellationInfo(Session session) {
-        List<ObservationConstellationInfo> ocis = Lists.newArrayList();        
-        if (HibernateHelper.isEntitySupported(ObservationConstellation.class, session)) {
+        List<ObservationConstellationInfo> ocis = Lists.newArrayList();
+        if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
             Criteria criteria = session.createCriteria(ObservationConstellation.class, "oc")
                     .createAlias(ObservationConstellation.OFFERING, "o")
                     .createAlias(ObservationConstellation.PROCEDURE, "p")
@@ -208,7 +209,7 @@ public class ObservationConstellationDAO {
                         .add(Projections.property("ot." + ObservationType.OBSERVATION_TYPE))
                         .add(Projections.property("oc." + ObservationConstellation.HIDDEN_CHILD)));
             LOGGER.debug("QUERY getObservationConstellationInfo(): {}", HibernateHelper.getSqlString(criteria));
-            
+
             @SuppressWarnings("unchecked")
             List<Object[]> results = criteria.list();
             for (Object[] result : results) {
@@ -222,12 +223,12 @@ public class ObservationConstellationDAO {
             }
         }
         return ocis;
-    }    
-    
+    }
+
     /**
      * Insert or update and get observation constellation for procedure,
      * observable property and offering
-     * 
+     *
      * @param procedure
      *            Procedure object
      * @param observableProperty
@@ -274,7 +275,7 @@ public class ObservationConstellationDAO {
 
     /**
      * Check and Update and/or get observation constellation objects
-     * 
+     *
      * @param sosObservationConstellation
      *            SOS observation constellation
      * @param offering
@@ -343,7 +344,7 @@ public class ObservationConstellationDAO {
 
     /**
      * Update observation constellation with observation type
-     * 
+     *
      * @param observationConstellation
      *            Observation constellation object
      * @param observationType
@@ -363,7 +364,7 @@ public class ObservationConstellationDAO {
         // TODO should hidden child observation constellations be restricted to
         // the parent observation type?
         Set<String> offerings =
-                new HashSet<String>(Configurator.getInstance().getCache()
+                new HashSet<>(Configurator.getInstance().getCache()
                         .getOfferingsForProcedure(observationConstellation.getProcedure().getIdentifier()));
         offerings.remove(observationConstellation.getOffering().getIdentifier());
 
@@ -391,7 +392,7 @@ public class ObservationConstellationDAO {
 
     /**
      * Return the non-deleted observation constellations for an offering
-     * 
+     *
      * @param offering
      *            Offering to fetch observation constellations for
      * @param session
@@ -400,7 +401,7 @@ public class ObservationConstellationDAO {
      */
     @SuppressWarnings("unchecked")
     public List<ObservationConstellation> getObservationConstellationsForOffering(Offering offering, Session session) {
-        if (HibernateHelper.isEntitySupported(ObservationConstellation.class, session)) {
+        if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
             Criteria criteria =
                     session.createCriteria(ObservationConstellation.class)
                             .add(Restrictions.eq(ObservationConstellation.DELETED, false))
@@ -414,7 +415,7 @@ public class ObservationConstellationDAO {
 
     /**
      * Update ObservationConstellation for procedure and set deleted flag
-     * 
+     *
      * @param procedure
      *            Procedure for which the ObservationConstellations should be
      *            changed
@@ -440,7 +441,7 @@ public class ObservationConstellationDAO {
     /**
      * Get ObservationCollection entities for procedures, observableProperties
      * and offerings where observationType is not null;
-     * 
+     *
      * @param procedures
      *            Procedures to get ObservationCollection entities for
      * @param observedProperties
@@ -474,12 +475,12 @@ public class ObservationConstellationDAO {
         return c.list();
 
     }
-    
+
     @SuppressWarnings("unchecked")
     protected Set<ObservationConstellation> getObservationConstellations(Session session, Procedure procedure) {
         return Sets.newHashSet(session.createCriteria(ObservationConstellation.class)
                 .add(Restrictions.eq(ObservationConstellation.DELETED, false))
                 .add(Restrictions.eq(ObservationConstellation.PROCEDURE, procedure))
                 .list());
-    }    
+    }
 }

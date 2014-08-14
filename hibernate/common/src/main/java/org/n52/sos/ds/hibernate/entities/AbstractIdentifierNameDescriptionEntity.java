@@ -50,10 +50,8 @@ public abstract class AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public AbstractIdentifierNameDescriptionEntity setIdentifier(
-            final String identifier) {
+    public void setIdentifier(String identifier) {
         this.identifier = identifier;
-        return this;
     }
 
     @Override
@@ -67,10 +65,8 @@ public abstract class AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public AbstractIdentifierNameDescriptionEntity setCodespace(
-            Codespace codespace) {
+    public void setCodespace(Codespace codespace) {
         this.codespace = codespace;
-        return this;
     }
 
     @Override
@@ -84,9 +80,8 @@ public abstract class AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public AbstractIdentifierNameDescriptionEntity setName(String name) {
+    public void setName(String name) {
         this.name = name;
-        return this;
     }
 
     @Override
@@ -100,10 +95,8 @@ public abstract class AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public AbstractIdentifierNameDescriptionEntity setCodespaceName(
-            Codespace codespaceName) {
+    public void setCodespaceName(Codespace codespaceName) {
         this.codespaceName = codespaceName;
-        return this;
     }
 
     @Override
@@ -117,10 +110,8 @@ public abstract class AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public AbstractIdentifierNameDescriptionEntity setDescription(
-            String description) {
+    public void setDescription(String description) {
         this.decription = description;
-        return this;
     }
 
     @Override

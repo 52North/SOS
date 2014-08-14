@@ -34,16 +34,13 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class ObservableProperty extends AbstractIdentifierNameDescriptionEntity implements Serializable, HasDisabledFlag {
 
     private static final long serialVersionUID = -4804791207463850138L;
-
     public static final String ID = "observablePropertyId";
-
     private long observablePropertyId;
-    
     private Boolean disabled = false;
 
     public long getObservablePropertyId() {
@@ -55,19 +52,18 @@ public class ObservableProperty extends AbstractIdentifierNameDescriptionEntity 
     }
 
     @Override
-    public ObservableProperty setDisabled(final boolean disabled) {
+    public void setDisabled(final boolean disabled) {
         this.disabled = disabled;
-        return this;
-    }
-
-    @Override
-    public boolean getDisabled() {
-        return disabled;
     }
 
     @Override
     public boolean isDisabled() {
         return getDisabled();
+    }
+
+    @Override
+    public boolean getDisabled() {
+        return disabled;
     }
 
 }

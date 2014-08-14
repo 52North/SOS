@@ -44,11 +44,4 @@ public class SeriesSpatialFilteringProfile extends AbstractSpatialFilteringProfi
 
     private static final long serialVersionUID = 7200974625085342134L;
 
-    /**
-     * constructor
-     */
-    public SeriesSpatialFilteringProfile() {
-        super();
-    }
-
 }

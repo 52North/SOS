@@ -41,7 +41,7 @@ import org.n52.sos.util.StringHelper;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure, HasObservableProperty, HasOffering,
         HasFeatureOfInterest, HasResultStructure, HasResultEncoding {
@@ -102,6 +102,7 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
         return this.procedure;
     }
 
+    @Override
     public void setProcedure(Procedure procedure) {
         this.procedure = procedure;
     }
@@ -121,11 +122,11 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
         return this.identifier;
     }
 
-    public ResultTemplate setIdentifier(String identifier) {
+    @Override
+    public void setIdentifier(String identifier) {
         this.identifier = identifier;
-        return this;
     }
-    
+
     @Override
     public boolean isSetIdentifier() {
         return StringHelper.isNotEmpty(getIdentifier());
@@ -136,6 +137,7 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
         return resultStructure;
     }
 
+    @Override
     public boolean isSetResultStructure() {
         return StringHelper.isNotEmpty(resultStructure);
     }

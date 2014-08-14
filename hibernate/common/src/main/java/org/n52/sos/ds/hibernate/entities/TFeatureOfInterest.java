@@ -36,7 +36,7 @@ import com.google.common.collect.Sets;
 
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.0.0
  */
 public class TFeatureOfInterest extends FeatureOfInterest implements
@@ -44,12 +44,8 @@ public class TFeatureOfInterest extends FeatureOfInterest implements
     private static final long serialVersionUID = -880472749711995015L;
 
     private Set<FeatureOfInterest> childs = Sets.newHashSet();
-
     private Set<FeatureOfInterest> parents = Sets.newHashSet();
 
-    public TFeatureOfInterest() {
-        super();
-    }
 
     @Override
     public Set<FeatureOfInterest> getParents() {
@@ -57,9 +53,8 @@ public class TFeatureOfInterest extends FeatureOfInterest implements
     }
 
     @Override
-    public TFeatureOfInterest setParents(final Set<FeatureOfInterest> parents) {
+    public void setParents(final Set<FeatureOfInterest> parents) {
         this.parents = parents;
-        return this;
     }
 
     @Override
@@ -68,8 +63,7 @@ public class TFeatureOfInterest extends FeatureOfInterest implements
     }
 
     @Override
-    public TFeatureOfInterest setChilds(final Set<FeatureOfInterest> childs) {
+    public void setChilds(final Set<FeatureOfInterest> childs) {
         this.childs = childs;
-        return this;
     }
 }

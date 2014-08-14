@@ -115,9 +115,8 @@ public class Series
     }
 
     @Override
-    public Series setDeleted(final boolean deleted) {
+    public void setDeleted(final boolean deleted) {
         this.deleted = deleted;
-        return this;
     }
 
     @Override

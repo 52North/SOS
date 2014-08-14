@@ -48,6 +48,7 @@ import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
@@ -383,20 +384,20 @@ public class HibernateProcedureDescriptionGenerator {
                     if (StringHelper.isNotEmpty(unit)) {
                         quantity.setUom(unit);
                     }
-                    return new SmlIo<Double>(quantity);
+                    return new SmlIo<>(quantity);
                 } else if (OmConstants.OBS_TYPE_CATEGORY_OBSERVATION.equals(observationType)) {
                     final SweCategory category = new SweCategory();
                     category.setDefinition(observableProperty);
                     if (StringHelper.isNotEmpty(unit)) {
                         category.setUom(unit);
                     }
-                    return new SmlIo<String>(category);
+                    return new SmlIo<>(category);
                 } else if (OmConstants.OBS_TYPE_COUNT_OBSERVATION.equals(observationType)) {
-                    return new SmlIo<String>(new SweCategory().setDefinition(observableProperty));
+                    return new SmlIo<>(new SweCategory().setDefinition(observableProperty));
                 } else if (OmConstants.OBS_TYPE_TEXT_OBSERVATION.equals(observationType)) {
-                    return new SmlIo<String>(new SweText().setDefinition(observableProperty));
+                    return new SmlIo<>(new SweText().setDefinition(observableProperty));
                 } else if (OmConstants.OBS_TYPE_TRUTH_OBSERVATION.equals(observationType)) {
-                    return new SmlIo<Boolean>(new SweBoolean().setDefinition(observableProperty));
+                    return new SmlIo<>(new SweBoolean().setDefinition(observableProperty));
                 } else if (OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION.equals(observationType)) {
                     // TODO implement GeometryObservation
                     logTypeNotSupported(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION);
@@ -468,7 +469,7 @@ public class HibernateProcedureDescriptionGenerator {
 
     private SmlIo<?> createOutputFromExampleObservation(String procedure, String observableProperty, Session session)
             throws OwsExceptionReport {
-        final AbstractObservation exampleObservation = getExampleObservation(procedure, observableProperty, session);
+        final Observation<?> exampleObservation = getExampleObservation(procedure, observableProperty, session);
         if (exampleObservation == null) {
             return null;
         }
@@ -476,16 +477,16 @@ public class HibernateProcedureDescriptionGenerator {
             // TODO implement BlobObservations
             logTypeNotSupported(BlobObservation.class);
         } else if (exampleObservation instanceof BooleanObservation) {
-            return new SmlIo<Boolean>(new SweBoolean().setDefinition(observableProperty));
+            return new SmlIo<>(new SweBoolean().setDefinition(observableProperty));
         } else if (exampleObservation instanceof CategoryObservation) {
             final SweCategory category = new SweCategory();
             category.setDefinition(observableProperty);
             if (exampleObservation.isSetUnit()) {
                 category.setUom(exampleObservation.getUnit().getUnit());
             }
-            return new SmlIo<String>(category);
+            return new SmlIo<>(category);
         } else if (exampleObservation instanceof CountObservation) {
-            return new SmlIo<Integer>(new SweCount().setDefinition(observableProperty));
+            return new SmlIo<>(new SweCount().setDefinition(observableProperty));
         } else if (exampleObservation instanceof GeometryObservation) {
             // TODO implement GeometryObservations
             logTypeNotSupported(GeometryObservation.class);
@@ -495,9 +496,9 @@ public class HibernateProcedureDescriptionGenerator {
             if (exampleObservation.isSetUnit()) {
                 quantity.setUom(exampleObservation.getUnit().getUnit());
             }
-            return new SmlIo<Double>(quantity);
+            return new SmlIo<>(quantity);
         } else if (exampleObservation instanceof TextObservation) {
-            return new SmlIo<String>(new SweText().setDefinition(observableProperty));
+            return new SmlIo<>(new SweText().setDefinition(observableProperty));
         }
         return null;
     }
@@ -552,9 +553,10 @@ public class HibernateProcedureDescriptionGenerator {
         SweQuantity xq = createSweQuantity(longitude, SweConstants.X_AXIS, procedureSettings().getLatLongUom());
         SweQuantity zq = createSweQuantity(altitude, SweConstants.Z_AXIS, procedureSettings().getAltitudeUom());
         // TODO add Integer: Which SweSimpleType to use?
-        return Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(SweCoordinateName.northing.name(), yq),
-                new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq), new SweCoordinate<Double>(
-                        SweCoordinateName.altitude.name(), zq));
+        return Lists.<SweCoordinate<?>> newArrayList(
+                new SweCoordinate<>(SweCoordinateName.northing.name(), yq),
+                new SweCoordinate<>(SweCoordinateName.easting.name(), xq),
+                new SweCoordinate<>(SweCoordinateName.altitude.name(), zq));
     }
 
     /**
@@ -616,14 +618,14 @@ public class HibernateProcedureDescriptionGenerator {
      *             If an error occurs.
      */
     @VisibleForTesting
-    AbstractObservation getExampleObservation(String identifier, String observableProperty, Session session)
+    Observation<?> getExampleObservation(String identifier, String observableProperty, Session session)
             throws OwsExceptionReport {
         AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
         final Criteria c = observationDAO.getObservationCriteriaFor(identifier, observableProperty, session);
         c.setMaxResults(1);
         LOGGER.debug("QUERY getExampleObservation(identifier, observableProperty): {}",
                 HibernateHelper.getSqlString(c));
-        final AbstractObservation example = (AbstractObservation) c.uniqueResult();
+        final Observation<?> example = (Observation<?>) c.uniqueResult();
         if (example == null) {
             LOGGER.debug(
                     "Could not receive example observation from database for procedure '{}' observing property '{}'.",

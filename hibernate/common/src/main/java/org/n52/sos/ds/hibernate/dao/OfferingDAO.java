@@ -123,7 +123,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     @SuppressWarnings("unchecked")
     public List<Offering> getOfferingObjectsForCacheUpdate(final Collection<String> identifiers, final Session session) {
     	 Class<?> clazz = Offering.class;
-    	 if (HibernateHelper.isEntitySupported(TOffering.class, session)) {
+    	 if (HibernateHelper.isEntitySupported(TOffering.class)) {
     		 clazz = TOffering.class;
     	 }
     	 Criteria criteria = session.createCriteria(clazz);
@@ -179,8 +179,8 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      */
     @SuppressWarnings("unchecked")
     public List<String> getOfferingIdentifiersForProcedure(final String procedureIdentifier, final Session session) throws OwsExceptionReport {
-        final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class, session);
-        Criteria c = null;
+        final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class);
+        Criteria c;
         if (flag) {
             c = session.createCriteria(Offering.class);
             c.add(Subqueries.propertyIn(Offering.ID, getDetachedCriteriaOfferingForProcedureFromObservationConstellation(procedureIdentifier, session)));
@@ -218,7 +218,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     public Collection<String> getOfferingIdentifiersForObservableProperty(final String observablePropertyIdentifier,
             final Session session) throws OwsExceptionReport {
         final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class);
-        Criteria c = null;
+        Criteria c;
         if (flag) {
             c = session.createCriteria(Offering.class);
             c.add(Subqueries.propertyIn(Offering.ID,
@@ -243,45 +243,6 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
         return c.list();
     }
 
-    public class OfferingTimeExtrema {
-        private DateTime minPhenomenonTime;
-        private DateTime maxPhenomenonTime;
-        private DateTime minResultTime;
-        private DateTime maxResultTime;
-
-        public DateTime getMinPhenomenonTime() {
-            return minPhenomenonTime;
-        }
-
-        public void setMinPhenomenonTime(DateTime minPhenomenonTime) {
-            this.minPhenomenonTime = minPhenomenonTime;
-        }
-
-        public DateTime getMaxPhenomenonTime() {
-            return maxPhenomenonTime;
-        }
-
-        public void setMaxPhenomenonTime(DateTime maxPhenomenonTime) {
-            this.maxPhenomenonTime = maxPhenomenonTime;
-        }
-
-        public DateTime getMinResultTime() {
-            return minResultTime;
-        }
-
-        public void setMinResultTime(DateTime minResultTime) {
-            this.minResultTime = minResultTime;
-        }
-
-        public DateTime getMaxResultTime() {
-            return maxResultTime;
-        }
-
-        public void setMaxResultTime(DateTime maxResultTime) {
-            this.maxResultTime = maxResultTime;
-        }
-    }
-
     /**
      * Get offering time extrema
      *
@@ -295,7 +256,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     @SuppressWarnings("unchecked")
     public Map<String,OfferingTimeExtrema> getOfferingTimeExtrema(final Collection<String> identifiers,
             final Session session) throws OwsExceptionReport {
-        List<Object[]> results = null;
+        List<Object[]> results;
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_OFFERING_TIME_EXTREMA, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_OFFERING_TIME_EXTREMA);
             if (CollectionHelper.isNotEmpty(identifiers)) {
@@ -348,7 +309,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @throws CodedException
      */
     public DateTime getMinDate4Offering(final String offering, final Session session) throws OwsExceptionReport {
-        Object min = null;
+        Object min;
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_MIN_DATE_FOR_OFFERING, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_MIN_DATE_FOR_OFFERING);
             namedQuery.setParameter(OFFERING, offering);
@@ -380,8 +341,8 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @throws CodedException
      */
     public DateTime getMaxDate4Offering(final String offering, final Session session) throws OwsExceptionReport {
-        Object maxStart = null;
-        Object maxEnd = null;
+        Object maxStart;
+        Object maxEnd;
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_MAX_DATE_FOR_OFFERING, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_MAX_DATE_FOR_OFFERING);
             namedQuery.setParameter(OFFERING, offering);
@@ -434,7 +395,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @throws CodedException
      */
     public DateTime getMinResultTime4Offering(final String offering, final Session session) throws OwsExceptionReport {
-        Object min = null;
+        Object min;
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_MIN_RESULT_TIME_FOR_OFFERING, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_MIN_RESULT_TIME_FOR_OFFERING);
             namedQuery.setParameter(OFFERING, offering);
@@ -467,7 +428,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @throws CodedException
      */
     public DateTime getMaxResultTime4Offering(final String offering, final Session session) throws OwsExceptionReport {
-        Object maxStart = null;
+        Object maxStart;
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_MAX_RESULT_TIME_FOR_OFFERING, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_MAX_RESULT_TIME_FOR_OFFERING);
             namedQuery.setParameter(OFFERING, offering);
@@ -512,7 +473,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
             final List<?> temporalBoundingBoxes = criteria.list();
             if (!temporalBoundingBoxes.isEmpty()) {
                 final HashMap<String, TimePeriod> temporalBBoxMap =
-                        new HashMap<String, TimePeriod>(temporalBoundingBoxes.size());
+                        new HashMap<>(temporalBoundingBoxes.size());
                 for (final Object recordObj : temporalBoundingBoxes) {
                     if (recordObj instanceof Object[]) {
                         final Object[] record = (Object[]) recordObj;
@@ -525,7 +486,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
                 return temporalBBoxMap;
             }
         }
-        return new HashMap<String, TimePeriod>(0);
+        return new HashMap<>(0);
     }
 
     /**
@@ -560,17 +521,17 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
             }
         }
         if (!relatedFeatures.isEmpty()) {
-            offering.setRelatedFeatures(new HashSet<RelatedFeature>(relatedFeatures));
+            offering.setRelatedFeatures(new HashSet<>(relatedFeatures));
         } else {
             offering.setRelatedFeatures(new HashSet<RelatedFeature>(0));
         }
         if (!observationTypes.isEmpty()) {
-            offering.setObservationTypes(new HashSet<ObservationType>(observationTypes));
+            offering.setObservationTypes(new HashSet<>(observationTypes));
         } else {
             offering.setObservationTypes(new HashSet<ObservationType>(0));
         }
         if (!featureOfInterestTypes.isEmpty()) {
-            offering.setFeatureOfInterestTypes(new HashSet<FeatureOfInterestType>(featureOfInterestTypes));
+            offering.setFeatureOfInterestTypes(new HashSet<>(featureOfInterestTypes));
         } else {
             offering.setFeatureOfInterestTypes(new HashSet<FeatureOfInterestType>(0));
         }
@@ -626,7 +587,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @return Allowed FeatureOfInterestTypes
      */
     public List<String> getAllowedFeatureOfInterestTypes(String offeringIdentifier, Session session) {
-        if (HibernateHelper.isEntitySupported(TOffering.class, session)) {
+        if (HibernateHelper.isEntitySupported(TOffering.class)) {
             Criteria criteria =
                     session.createCriteria(TOffering.class).add(Restrictions.eq(Offering.IDENTIFIER, offeringIdentifier));
             LOGGER.debug("QUERY getAllowedFeatureOfInterestTypes(offering): {}",
@@ -650,5 +611,44 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      */
     public void addOfferingRestricionForObservation(Criteria criteria, String offering) {
         criteria.createCriteria(AbstractObservation.OFFERINGS).add(Restrictions.eq(Offering.IDENTIFIER, offering));
+    }
+
+    public class OfferingTimeExtrema {
+        private DateTime minPhenomenonTime;
+        private DateTime maxPhenomenonTime;
+        private DateTime minResultTime;
+        private DateTime maxResultTime;
+
+        public DateTime getMinPhenomenonTime() {
+            return minPhenomenonTime;
+        }
+
+        public void setMinPhenomenonTime(DateTime minPhenomenonTime) {
+            this.minPhenomenonTime = minPhenomenonTime;
+        }
+
+        public DateTime getMaxPhenomenonTime() {
+            return maxPhenomenonTime;
+        }
+
+        public void setMaxPhenomenonTime(DateTime maxPhenomenonTime) {
+            this.maxPhenomenonTime = maxPhenomenonTime;
+        }
+
+        public DateTime getMinResultTime() {
+            return minResultTime;
+        }
+
+        public void setMinResultTime(DateTime minResultTime) {
+            this.minResultTime = minResultTime;
+        }
+
+        public DateTime getMaxResultTime() {
+            return maxResultTime;
+        }
+
+        public void setMaxResultTime(DateTime maxResultTime) {
+            this.maxResultTime = maxResultTime;
+        }
     }
 }

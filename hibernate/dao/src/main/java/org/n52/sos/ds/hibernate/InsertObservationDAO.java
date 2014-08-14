@@ -48,9 +48,7 @@ import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.SpatialFilteringProfile;
 import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
@@ -137,9 +135,8 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
             int obsCount = 0;
 
             for (final OmObservation sosObservation : request.getObservations()) {
-                // check
+                // check strict spatial filtering profile
                 if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()
-                        && HibernateHelper.isEntitySupported(SpatialFilteringProfile.class, session)
                         && !sosObservation.isSetSpatialFilteringProfileParameter()) {
                     throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
                             .withMessage("The sampling geometry definition is missing in the observation because"

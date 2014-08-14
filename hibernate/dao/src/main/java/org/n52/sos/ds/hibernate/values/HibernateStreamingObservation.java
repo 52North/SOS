@@ -31,8 +31,9 @@ package org.n52.sos.ds.hibernate.values;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
-import org.n52.sos.ds.hibernate.dao.ObservationDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+
+import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
@@ -51,7 +52,7 @@ public class HibernateStreamingObservation extends AbstractHibernateStreamingObs
 
     private static final long serialVersionUID = 3162933935914818428L;
 
-    private final ObservationDAO observationDAO = new ObservationDAO();
+    private final LegacyObservationDAO observationDAO = new LegacyObservationDAO();
 
     private Set<Long> procedureIds = Sets.newHashSet();
 

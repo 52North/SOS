@@ -28,18 +28,19 @@
  */
 package org.n52.sos.ds.hibernate.values.series;
 
-import org.n52.sos.ds.hibernate.dao.series.SeriesValueDAO;
-import org.n52.sos.ds.hibernate.dao.series.SeriesValueTimeDAO;
-import org.n52.sos.ds.hibernate.entities.series.values.SeriesValueTime;
-import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.GetObservationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueTimeDAO;
+import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
+import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.GetObservationRequest;
+
 /**
  * Abstract Hibernate series streaming value class for the series concept
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.2
  *
@@ -47,18 +48,14 @@ import org.slf4j.LoggerFactory;
 public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStreamingValue {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateSeriesStreamingValue.class);
-
     private static final long serialVersionUID = 201732114914686926L;
-
     protected final SeriesValueDAO seriesValueDAO = new SeriesValueDAO();
-
     protected final SeriesValueTimeDAO seriesValueTimeDAO = new SeriesValueTimeDAO();
-
     protected long series;
 
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -72,8 +69,8 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
     @Override
     protected void queryTimes() {
         try {
-            SeriesValueTime minTime;
-            SeriesValueTime maxTime;
+            TemporalReferencedSeriesObservation minTime;
+            TemporalReferencedSeriesObservation maxTime;
             // query with temporal filter
             if (temporalFilterCriterion != null) {
                 minTime = seriesValueTimeDAO.getMinSeriesValueFor(request, series, temporalFilterCriterion, session);

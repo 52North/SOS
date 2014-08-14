@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.dao.ereporting;
 
-import org.n52.sos.ds.hibernate.dao.series.SeriesValueDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueDAO;
 
 public class EReportingValueDAO extends SeriesValueDAO {
 

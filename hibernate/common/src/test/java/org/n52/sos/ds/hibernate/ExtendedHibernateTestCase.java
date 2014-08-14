@@ -29,10 +29,11 @@
 package org.n52.sos.ds.hibernate;
 
 import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.entities.Observation;
-import org.n52.sos.ds.hibernate.entities.ObservationInfo;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
+
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 /**
@@ -46,16 +47,16 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 public abstract class ExtendedHibernateTestCase extends HibernateTestCase {
 
     protected static Class<?> getObservationClass(Session session) {
-        if (HibernateHelper.isEntitySupported(SeriesObservation.class, session)) {
-            return SeriesObservation.class;
+        if (HibernateHelper.isEntitySupported(AbstractSeriesObservation.class, session)) {
+            return AbstractSeriesObservation.class;
         }
-        return Observation.class;
+        return AbstractLegacyObservation.class;
     }
 
     protected static Class<?> getObservationInfoClass(Session session) {
-        if (HibernateHelper.isEntitySupported(SeriesObservationInfo.class, session)) {
-            return SeriesObservationInfo.class;
+        if (HibernateHelper.isEntitySupported(ContextualReferencedSeriesObservation.class, session)) {
+            return ContextualReferencedSeriesObservation.class;
         }
-        return ObservationInfo.class;
+        return ContextualReferencedLegacyObservation.class;
     }
 }

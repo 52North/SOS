@@ -28,13 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
-import java.io.Serializable;
-
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCodespace;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCodespaceName;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescription;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
 import org.n52.sos.util.StringHelper;
 
 /**
@@ -42,12 +35,7 @@ import org.n52.sos.util.StringHelper;
  *
  */
 public abstract class AbstractIdentifierNameDescriptionEntity
-        implements Serializable,
-                   HasIdentifier,
-                   HasCodespace,
-                   HasName,
-                   HasCodespaceName,
-                   HasDescription {
+        implements IdentifierNameDescriptionEntity {
 
     private static final long serialVersionUID = -5784528065957127968L;
     private String identifier;

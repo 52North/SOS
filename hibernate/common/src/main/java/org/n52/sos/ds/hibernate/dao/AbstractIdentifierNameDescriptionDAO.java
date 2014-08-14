@@ -33,9 +33,9 @@ import java.util.List;
 import org.hibernate.Session;
 
 import org.n52.sos.ds.I18NDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.IdentifierNameDescriptionEntity;
 import org.n52.sos.i18n.I18NDAORepository;
 import org.n52.sos.i18n.metadata.I18NFeatureMetadata;
 import org.n52.sos.ogc.OGCConstants;
@@ -47,13 +47,13 @@ import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
 
     public void addIdentifierNameDescription(AbstractGML abstractFeature,
-            AbstractIdentifierNameDescriptionEntity entity, Session session) {
+            IdentifierNameDescriptionEntity entity, Session session) {
         addIdentifier(abstractFeature, entity, session);
         addName(abstractFeature, entity, session);
         addDescription(abstractFeature, entity);
     }
 
-    public void addIdentifier(AbstractGML abstractFeature, AbstractIdentifierNameDescriptionEntity entity,
+    public void addIdentifier(AbstractGML abstractFeature, IdentifierNameDescriptionEntity entity,
             Session session) {
         if (abstractFeature.isSetIdentifier()) {
             entity.setIdentifier(abstractFeature.getIdentifierCodeWithAuthority().getValue());
@@ -67,7 +67,7 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         }
     }
 
-    protected void addName(AbstractGML abstractFeature, AbstractIdentifierNameDescriptionEntity entity,
+    protected void addName(AbstractGML abstractFeature, IdentifierNameDescriptionEntity entity,
             Session session) {
         if (abstractFeature.isSetName()) {
             entity.setName(abstractFeature.getFirstName().getValue());
@@ -81,20 +81,20 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         }
     }
 
-    protected void addDescription(AbstractGML abstractFeature, AbstractIdentifierNameDescriptionEntity entity) {
+    protected void addDescription(AbstractGML abstractFeature, IdentifierNameDescriptionEntity entity) {
         if (abstractFeature.isSetDescription()) {
             entity.setDescription(abstractFeature.getDescription());
         }
     }
 
     public void getAndAddIdentifierNameDescription(AbstractGML abstractFeature,
-            AbstractIdentifierNameDescriptionEntity entity) {
+            IdentifierNameDescriptionEntity entity) {
         abstractFeature.setIdentifier(getIdentifier(entity));
         abstractFeature.addName(getName(entity));
         abstractFeature.setDescription(getDescription(entity));
     }
 
-    public CodeWithAuthority getIdentifier(AbstractIdentifierNameDescriptionEntity entity) {
+    public CodeWithAuthority getIdentifier(IdentifierNameDescriptionEntity entity) {
         CodeWithAuthority identifier = new CodeWithAuthority(entity.getIdentifier());
         if (entity.isSetCodespace()) {
             identifier.setCodeSpace(entity.getCodespace().getCodespace());
@@ -102,7 +102,7 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         return identifier;
     }
 
-    public CodeType getName(AbstractIdentifierNameDescriptionEntity entity) {
+    public CodeType getName(IdentifierNameDescriptionEntity entity) {
         if (entity.isSetName()) {
             CodeType name = new CodeType(entity.getName());
             if (entity.isSetCodespaceName()) {
@@ -113,7 +113,7 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         return null;
     }
 
-    public String getDescription(AbstractIdentifierNameDescriptionEntity entity) {
+    public String getDescription(IdentifierNameDescriptionEntity entity) {
         if (entity.isSetDescription()) {
             return entity.getDescription();
         }
@@ -130,7 +130,7 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         }
     }
 
-    public void insertNameAndDescription(AbstractIdentifierNameDescriptionEntity entity, SamplingFeature samplingFeature, Session session) {
+    public void insertNameAndDescription(IdentifierNameDescriptionEntity entity, SamplingFeature samplingFeature, Session session) {
         if (samplingFeature.isSetName()) {
 
 

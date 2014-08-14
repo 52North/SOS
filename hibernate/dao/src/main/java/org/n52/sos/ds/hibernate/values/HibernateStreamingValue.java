@@ -28,17 +28,18 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
-import org.n52.sos.ds.hibernate.dao.ValueDAO;
-import org.n52.sos.ds.hibernate.dao.ValueTimeDAO;
-import org.n52.sos.ds.hibernate.entities.values.ObservationValueTime;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.GetObservationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.sos.ds.hibernate.dao.ValueDAO;
+import org.n52.sos.ds.hibernate.dao.ValueTimeDAO;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.GetObservationRequest;
+
 /**
  * Abstract Hibernate streaming value class for old observation concept
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
@@ -46,22 +47,16 @@ import org.slf4j.LoggerFactory;
 public abstract class HibernateStreamingValue extends AbstractHibernateStreamingValue {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateStreamingValue.class);
-
     private static final long serialVersionUID = -7451818170087729427L;
-
     protected final ValueDAO valueDAO = new ValueDAO();
-
     protected final ValueTimeDAO valueTimeDAO = new ValueTimeDAO();
-
     protected long procedure;
-
     protected long featureOfInterest;
-
     protected long observableProperty;
 
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param procedure
@@ -82,8 +77,8 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
     @Override
     protected void queryTimes() {
         try {
-            ObservationValueTime minTime;
-            ObservationValueTime maxTime;
+            TemporalReferencedLegacyObservation minTime;
+            TemporalReferencedLegacyObservation maxTime;
             // query with temporal filter
             if (temporalFilterCriterion != null) {
                 minTime =

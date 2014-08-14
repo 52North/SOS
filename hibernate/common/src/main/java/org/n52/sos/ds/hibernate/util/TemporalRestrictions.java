@@ -36,7 +36,8 @@ import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.entities.Observation;
+
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.AfterRestriction;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.BeforeRestriction;
@@ -116,7 +117,7 @@ public class TemporalRestrictions {
      * @see Observation#PHENOMENON_TIME_END
      */
     public static final TimePrimitiveFieldDescriptor PHENOMENON_TIME_FIELDS = new TimePrimitiveFieldDescriptor(
-            Observation.PHENOMENON_TIME_START, Observation.PHENOMENON_TIME_END);
+            AbstractLegacyObservation.PHENOMENON_TIME_START, AbstractLegacyObservation.PHENOMENON_TIME_END);
 
     /**
      * Fields describing the result time of a <tt>Observation</tt>.
@@ -124,7 +125,7 @@ public class TemporalRestrictions {
      * @see Observation#RESULT_TIME
      */
     public static final TimePrimitiveFieldDescriptor RESULT_TIME_FIELDS = new TimePrimitiveFieldDescriptor(
-            Observation.RESULT_TIME);
+            AbstractLegacyObservation.RESULT_TIME);
 
     /**
      * Fields describing the valid time of a <tt>Observation</tt>.
@@ -133,7 +134,7 @@ public class TemporalRestrictions {
      * @see Observation#VALID_TIME_END
      */
     public static final TimePrimitiveFieldDescriptor VALID_TIME_FIELDS = new TimePrimitiveFieldDescriptor(
-            Observation.VALID_TIME_START, Observation.VALID_TIME_END);
+            AbstractLegacyObservation.VALID_TIME_START, AbstractLegacyObservation.VALID_TIME_END);
 
     /**
      * Fields describing the valid time of a <tt>ValidProcedureTime</tt>.

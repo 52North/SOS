@@ -30,7 +30,8 @@ package org.n52.sos.ds.hibernate.values;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
-import org.n52.sos.ds.hibernate.entities.values.ObservationValue;
+
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -87,7 +88,7 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-            ObservationValue resultObject = (ObservationValue) scrollableResult.get()[0];
+            AbstractValuedLegacyObservation resultObject = (AbstractValuedLegacyObservation) scrollableResult.get()[0];
             TimeValuePair value = createTimeValuePairFrom(resultObject);
             session.evict(resultObject);
             return value;
@@ -102,7 +103,7 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     public OmObservation nextSingleObservation() throws OwsExceptionReport {
         try {
             OmObservation observation = observationTemplate.cloneTemplate();
-            ObservationValue resultObject = (ObservationValue) scrollableResult.get()[0];
+            AbstractValuedLegacyObservation resultObject = (AbstractValuedLegacyObservation) scrollableResult.get()[0];
             addValuesToObservation(observation, resultObject);
             if (resultObject.hasSamplingGeometry()) {
                 observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));

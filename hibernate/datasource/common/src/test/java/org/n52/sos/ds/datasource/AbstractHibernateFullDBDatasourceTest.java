@@ -38,17 +38,18 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.hibernate.dialect.Dialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
+import junit.framework.TestCase;
+
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     private AbstractHibernateFullDBDatasource ds;
@@ -94,7 +95,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     }
 
     private void checkSettingDefinitions(final Set<SettingDefinition<?, ?>> settings, final boolean changeable) {
-        final List<String> keys = new ArrayList<String>();
+        final List<String> keys = new ArrayList<>();
         final Iterator<SettingDefinition<?, ?>> iterator = settings.iterator();
         while (iterator.hasNext()) {
             keys.add(iterator.next().getKey());

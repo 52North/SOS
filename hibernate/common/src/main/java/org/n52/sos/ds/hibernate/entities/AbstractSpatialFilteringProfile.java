@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+
 import java.io.Serializable;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;

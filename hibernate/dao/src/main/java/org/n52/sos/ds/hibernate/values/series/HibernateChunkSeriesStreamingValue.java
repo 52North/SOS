@@ -32,7 +32,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
-import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
+
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
@@ -53,7 +54,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
 
     private static final long serialVersionUID = -1990901204421577265L;
 
-    private Iterator<AbstractValue> seriesValuesResult;
+    private Iterator<AbstractValuedLegacyObservation> seriesValuesResult;
 
     private int chunkSize;
 
@@ -99,7 +100,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
             if (hasNextValue()) {
-                AbstractValue resultObject = seriesValuesResult.next();
+                AbstractValuedLegacyObservation resultObject = seriesValuesResult.next();
                 TimeValuePair value = createTimeValuePairFrom(resultObject);
                 session.evict(resultObject);
                 return value;
@@ -117,7 +118,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         try {
             if (hasNextValue()) {
                 OmObservation observation = observationTemplate.cloneTemplate();
-                AbstractValue resultObject = seriesValuesResult.next();
+                AbstractValuedLegacyObservation resultObject = seriesValuesResult.next();
                 addValuesToObservation(observation, resultObject);
                 if (resultObject.hasSamplingGeometry()) {
                     observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
@@ -146,7 +147,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         }
         try {
             // query with temporal filter
-            Collection<AbstractValue> seriesValuesResult = null;
+            Collection<AbstractValuedLegacyObservation> seriesValuesResult = null;
             if (temporalFilterCriterion != null) {
                 seriesValuesResult =
                         seriesValueDAO.getStreamingSeriesValuesFor(request, series, temporalFilterCriterion,
@@ -167,13 +168,13 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     }
 
     /**
-     * Check the queried {@link AbstractValue}s for null and set them as
+     * Check the queried {@link AbstractValuedLegacyObservation}s for null and set them as
      * iterator to local variable.
      * 
      * @param seriesValuesResult
-     *            Queried {@link AbstractValue}s
+     *            Queried {@link AbstractValuedLegacyObservation}s
      */
-    private void setSeriesValuesResult(Collection<AbstractValue> seriesValuesResult) {
+    private void setSeriesValuesResult(Collection<AbstractValuedLegacyObservation> seriesValuesResult) {
         if (CollectionHelper.isNotEmpty(seriesValuesResult)) {
             this.seriesValuesResult = seriesValuesResult.iterator();
         }

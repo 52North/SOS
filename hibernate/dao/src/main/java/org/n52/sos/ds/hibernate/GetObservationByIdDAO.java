@@ -41,7 +41,8 @@ import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.AbstractGetObservationByIdDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.CodedException;
@@ -63,7 +64,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationByIdDAO.class);
 
-    private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
 
     /**
      * constructor
@@ -71,7 +72,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
     public GetObservationByIdDAO() {
         super(SosConstants.SOS);
     }
-    
+
     @Override
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
@@ -82,7 +83,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
         Session session = null;
         try {
             session = sessionHolder.getSession();
-            List<AbstractObservation> observations = queryObservation(request, session);
+            List<Observation<?>> observations = queryObservation(request, session);
             GetObservationByIdResponse response = new GetObservationByIdResponse();
             response.setService(request.getService());
             response.setVersion(request.getVersion());
@@ -112,7 +113,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
      *             If an error occurs during querying the database
      */
     @SuppressWarnings("unchecked")
-    private List<AbstractObservation> queryObservation(GetObservationByIdRequest request, Session session)
+    private List<Observation<?>> queryObservation(GetObservationByIdRequest request, Session session)
             throws OwsExceptionReport {
         Criteria c =
                 DaoFactory.getInstance().getObservationDAO()

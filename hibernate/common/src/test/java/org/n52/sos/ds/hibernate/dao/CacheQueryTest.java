@@ -53,9 +53,10 @@ import org.slf4j.LoggerFactory;
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.Offering;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.HibernateObservationBuilder;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
@@ -200,9 +201,9 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         Session session = getSession();
         long start = System.currentTimeMillis();
         Criteria c = session.createCriteria(getObservationInfoClass(session)).add(Restrictions.eq(AbstractObservation.DELETED, false));
-        c.createCriteria(AbstractObservation.FEATURE_OF_INTEREST).setProjection(
+        c.createCriteria(Observation.FEATURE_OF_INTEREST).setProjection(
                 Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
-        c.createCriteria(AbstractObservation.OFFERINGS).add(
+        c.createCriteria(Observation.OFFERINGS).add(
                 Restrictions.eq(Offering.IDENTIFIER, HibernateObservationBuilder.OFFERING_1));
         c.list();
         long time = System.currentTimeMillis() - start;

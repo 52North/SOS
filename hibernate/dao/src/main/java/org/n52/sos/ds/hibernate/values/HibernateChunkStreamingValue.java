@@ -32,7 +32,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
-import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
+
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -52,7 +53,7 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
 
     private static final long serialVersionUID = -4898252375907510691L;
 
-    private Iterator<AbstractValue> valuesResult;
+    private Iterator<AbstractValuedLegacyObservation> valuesResult;
 
     private int chunkSize;
 
@@ -103,7 +104,7 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
             if (hasNextValue()) {
-                AbstractValue resultObject = valuesResult.next();
+                AbstractValuedLegacyObservation resultObject = valuesResult.next();
                 TimeValuePair value = createTimeValuePairFrom(resultObject);
                 session.evict(resultObject);
                 return value;
@@ -121,7 +122,7 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
         try {
             if (hasNextValue()) {
                 OmObservation observation = observationTemplate.cloneTemplate();
-                AbstractValue resultObject = valuesResult.next();
+                AbstractValuedLegacyObservation resultObject = valuesResult.next();
                 addValuesToObservation(observation, resultObject);
                 checkForModifications(observation);
                 session.evict(resultObject);
@@ -147,7 +148,7 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
         }
         try {
             // query with temporal filter
-            Collection<AbstractValue> valuesResult = null;
+            Collection<AbstractValuedLegacyObservation> valuesResult = null;
             if (temporalFilterCriterion != null) {
                 valuesResult =
                         valueDAO.getStreamingValuesFor(request, procedure, observableProperty, featureOfInterest,
@@ -169,13 +170,13 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     }
 
     /**
-     * Check the queried {@link AbstractValue}s for null and set them as
+     * Check the queried {@link AbstractValuedLegacyObservation}s for null and set them as
      * iterator to local variable.
      * 
      * @param valuesResult
-     *            Queried {@link AbstractValue}s
+     *            Queried {@link AbstractValuedLegacyObservation}s
      */
-    private void setObservationValuesResult(Collection<AbstractValue> valuesResult) {
+    private void setObservationValuesResult(Collection<AbstractValuedLegacyObservation> valuesResult) {
         if (CollectionHelper.isNotEmpty(valuesResult)) {
             this.valuesResult = valuesResult.iterator();
         }

@@ -34,11 +34,12 @@ import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -117,10 +118,10 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
         try {
             OmObservation observation;
             Object resultObject = result.get()[0];
-            if (resultObject instanceof SeriesObservation) {
+            if (resultObject instanceof AbstractSeriesObservation) {
                 observation =
                         HibernateGetObservationHelper.toSosObservation(
-                                checkShowMetadtaOfEmptyObservations((SeriesObservation) result.get()[0]),
+                                checkShowMetadtaOfEmptyObservations((AbstractSeriesObservation) result.get()[0]),
                                 request, LocaleHelper.fromRequest(request), session);
             } else if (resultObject instanceof Series) {
                 observation =

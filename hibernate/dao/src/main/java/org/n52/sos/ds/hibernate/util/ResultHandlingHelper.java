@@ -38,14 +38,15 @@ import java.util.TreeMap;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.BlobObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.BooleanObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.CategoryObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.CountObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
+
+import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
@@ -64,7 +65,7 @@ import com.vividsolutions.jts.io.WKTWriter;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class ResultHandlingHelper {
 
@@ -74,7 +75,7 @@ public class ResultHandlingHelper {
 
     /**
      * Create internal ResultEncoding from String representation
-     * 
+     *
      * @param resultEncoding
      *            String representation of ResultEncoding
      * @return Internal ResultEncoding
@@ -87,7 +88,7 @@ public class ResultHandlingHelper {
 
     /**
      * Create internal ResultStructure from String representation
-     * 
+     *
      * @param resultStructure
      *            String representation of ResultStructure
      * @return Internal ResultStructure
@@ -101,7 +102,7 @@ public class ResultHandlingHelper {
     /**
      * Create result values from observation according to ResultEncoding and
      * ResultStructure
-     * 
+     *
      * @param observations
      *            Observation to create result values from
      * @param sosResultEncoding
@@ -113,7 +114,7 @@ public class ResultHandlingHelper {
      * @throws OwsExceptionReport
      *             If creation fails
      */
-    public static String createResultValuesFromObservations(final List<AbstractObservation> observations,
+    public static String createResultValuesFromObservations(final List<Observation<?>> observations,
             final SosResultEncoding sosResultEncoding, final SosResultStructure sosResultStructure)
             throws OwsExceptionReport {
         final StringBuilder builder = new StringBuilder();
@@ -122,16 +123,20 @@ public class ResultHandlingHelper {
             final String blockSeparator = getBlockSeparator(sosResultEncoding.getEncoding());
             final Map<Integer, String> valueOrder = getValueOrderMap(sosResultStructure.getResultStructure());
             addElementCount(builder, observations.size(), blockSeparator);
-            for (final AbstractObservation observation : observations) {
+            for (final Observation<?> observation : observations) {
                 for (final Integer intger : valueOrder.keySet()) {
                     final String definition = valueOrder.get(intger);
-                    if (definition.equals(PHENOMENON_TIME)) {
-                        builder.append(getTimeStringForPhenomenonTime(observation.getPhenomenonTimeStart(),
-                                observation.getPhenomenonTimeEnd()));
-                    } else if (definition.equals(RESULT_TIME)) {
-                        builder.append(getTimeStringForResultTime(observation.getResultTime()));
-                    } else {
-                        builder.append(getValueAsStringForObservedProperty(observation, definition));
+                    switch (definition) {
+                        case PHENOMENON_TIME:
+                            builder.append(getTimeStringForPhenomenonTime(observation.getPhenomenonTimeStart(),
+                                                                          observation.getPhenomenonTimeEnd()));
+                            break;
+                        case RESULT_TIME:
+                            builder.append(getTimeStringForResultTime(observation.getResultTime()));
+                            break;
+                        default:
+                            builder.append(getValueAsStringForObservedProperty(observation, definition));
+                            break;
                     }
                     builder.append(tokenSeparator);
                 }
@@ -147,7 +152,7 @@ public class ResultHandlingHelper {
 
     /**
      * Get token separator from encoding
-     * 
+     *
      * @param encoding
      *            Abstract encoding
      * @return Token separator
@@ -161,7 +166,7 @@ public class ResultHandlingHelper {
 
     /**
      * Get block separator from encoding
-     * 
+     *
      * @param encoding
      *            Abstract encoding
      * @return Block separator
@@ -175,7 +180,7 @@ public class ResultHandlingHelper {
 
     /**
      * Check if data component has a result time element and return the position
-     * 
+     *
      * @param sweDataElement
      *            Data component
      * @return Position of the result time element or -1 if it is not contained
@@ -195,7 +200,7 @@ public class ResultHandlingHelper {
     /**
      * Check if data component has a phenomenon time element and return the
      * position
-     * 
+     *
      * @param sweDataElement
      *            Data component
      * @return Position of the phenomenon time element or -1 if it is not
@@ -215,7 +220,7 @@ public class ResultHandlingHelper {
 
     /**
      * Check fields for definition and return the position
-     * 
+     *
      * @param fields
      *            Fields list to check
      * @param definition
@@ -251,12 +256,12 @@ public class ResultHandlingHelper {
     }
 
     private static Object getTimeStringForPhenomenonTime(final Date phenomenonTimeStart, final Date phenomenonTimeEnd) {
-        if (phenomenonTimeStart == null && phenomenonTimeEnd == null) {
+        if (phenomenonTimeStart == null) {
             return Configurator.getInstance().getProfileHandler().getActiveProfile().getResponseNoDataPlaceholder();
         }
 
         final StringBuilder builder = new StringBuilder();
-        if (phenomenonTimeStart.equals(phenomenonTimeEnd)) {
+        if (phenomenonTimeEnd == null || phenomenonTimeStart.equals(phenomenonTimeEnd)) {
             builder.append(formatDateTime2IsoString(new DateTime(phenomenonTimeStart, DateTimeZone.UTC)));
         } else {
             builder.append(formatDateTime2IsoString(new DateTime(phenomenonTimeStart, DateTimeZone.UTC)));
@@ -267,7 +272,7 @@ public class ResultHandlingHelper {
     }
 
     private static Map<Integer, String> getValueOrderMap(final SweAbstractDataComponent sweDataElement) {
-        final Map<Integer, String> valueOrder = new HashMap<Integer, String>(0);
+        final Map<Integer, String> valueOrder = new HashMap<>(0);
         if (sweDataElement instanceof SweDataArray
                 && ((SweDataArray) sweDataElement).getElementType() instanceof SweDataRecord) {
             final SweDataArray dataArray = (SweDataArray) sweDataElement;
@@ -276,7 +281,7 @@ public class ResultHandlingHelper {
             final SweDataRecord dataRecord = (SweDataRecord) sweDataElement;
             addOrderAndDefinitionToMap(dataRecord.getFields(), valueOrder);
         }
-        return new TreeMap<Integer, String>(valueOrder);
+        return new TreeMap<>(valueOrder);
     }
 
     private static void addOrderAndDefinitionToMap(final List<SweField> fields, final Map<Integer, String> valueOrder) {
@@ -298,7 +303,7 @@ public class ResultHandlingHelper {
         }
     }
 
-    private static String getValueAsStringForObservedProperty(final AbstractObservation observation,
+    private static String getValueAsStringForObservedProperty(final Observation<?> observation,
             final String definition) {
         final String observedProperty = observation.getObservableProperty().getIdentifier();
 

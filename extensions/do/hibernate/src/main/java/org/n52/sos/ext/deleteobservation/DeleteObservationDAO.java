@@ -33,11 +33,12 @@ import java.util.Collections;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -49,7 +50,7 @@ import org.n52.sos.request.GetObservationRequest;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 1.0.0
  */
 public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
@@ -68,7 +69,7 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
             session = hibernateSessionHolder.getSession();
             transaction = session.beginTransaction();
             String id = request.getObservationIdentifier();
-            AbstractObservation observation = null;
+            Observation<?> observation = null;
             try {
                 observation =
                         DaoFactory.getInstance().getObservationDAO().getObservationByIdentifier(id, session);
@@ -82,7 +83,7 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
             if (observation != null) {
                 so =
                         HibernateObservationUtilities
-                                .createSosObservationsFromObservations(Collections.singleton(observation), getRequest(request), null, session).iterator().next();
+                                .createSosObservationsFromObservations(Collections.<Observation<?>>singleton(observation), getRequest(request), null, session).iterator().next();
                 observation.setDeleted(true);
                 session.saveOrUpdate(observation);
                 session.flush();

@@ -1,14 +1,16 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated 10.07.2012 15:18:27 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType" table="assessmenttype">
-        <id name="assessmentType" type="string">
+    <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType"
+           table="assessmenttype">
+        <id name="assessmentType"
+            type="string">
             <column name="assessmentType" />
             <generator class="assigned" />
         </id>
-        <property name="uri" type="string">
+        <property name="uri"
+                  type="string">
             <column name="uri" />
         </property>
     </class>

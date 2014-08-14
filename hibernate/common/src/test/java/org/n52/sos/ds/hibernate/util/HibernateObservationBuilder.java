@@ -36,11 +36,9 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.BooleanObservation;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
@@ -54,8 +52,10 @@ import org.n52.sos.ds.hibernate.entities.TOffering;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
-import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ds.hibernate.entities.series.SeriesBooleanObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.full.LegacyBooleanObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesBooleanObservation;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
@@ -91,16 +91,16 @@ public class HibernateObservationBuilder {
         this.session = session;
     }
 
-    public AbstractObservation createObservation(String id, Date phenomenonTimeStart, Date phenomenonTimeEnd, Date resultTime,
+    public Observation<?> createObservation(String id, Date phenomenonTimeStart, Date phenomenonTimeEnd, Date resultTime,
             Date validTimeStart, Date validTimeEnd) throws OwsExceptionReport {
         AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-        AbstractObservation observation = observationDAO.createObservationFromValue(new BooleanValue(true), session);
+        Observation<?> observation = observationDAO.createObservationFromValue(new BooleanValue(true), session);
         if (observationDAO instanceof SeriesObservationDAO) {
             SeriesBooleanObservation seriesBooleanObservation = (SeriesBooleanObservation)observation;
             seriesBooleanObservation.setSeries(getSeries());
             seriesBooleanObservation.setValue(true);
         } else {
-            BooleanObservation booleanObservation = (BooleanObservation)observation;
+            LegacyBooleanObservation booleanObservation = (LegacyBooleanObservation)observation;
             booleanObservation.setFeatureOfInterest(getFeatureOfInterest());
             booleanObservation.setProcedure(getProcedure());
             booleanObservation.setObservableProperty(getObservableProperty());
@@ -121,7 +121,7 @@ public class HibernateObservationBuilder {
         return observation;
     }
 
-    public AbstractObservation createObservation(String id, DateTime phenomenonTimeStart, DateTime phenomenonTimeEnd,
+    public Observation<?> createObservation(String id, DateTime phenomenonTimeStart, DateTime phenomenonTimeEnd,
             DateTime resultTime, DateTime validTimeStart, DateTime validTimeEnd) throws OwsExceptionReport {
         return createObservation(id, phenomenonTimeStart != null ? phenomenonTimeStart.toDate() : null,
                 phenomenonTimeEnd != null ? phenomenonTimeEnd.toDate() : null,
@@ -129,34 +129,34 @@ public class HibernateObservationBuilder {
                         : null, validTimeEnd != null ? validTimeEnd.toDate() : null);
     }
 
-    public AbstractObservation createObservation(String id, DateTime begin, DateTime end) throws OwsExceptionReport {
+    public Observation<?> createObservation(String id, DateTime begin, DateTime end) throws OwsExceptionReport {
         Date s = begin != null ? begin.toDate() : null;
         Date e = end != null ? end.toDate() : null;
         return createObservation(id, s, e, s, s, e);
     }
 
-    public AbstractObservation createObservation(String id, DateTime position) throws OwsExceptionReport {
+    public Observation<?> createObservation(String id, DateTime position) throws OwsExceptionReport {
         Date s = position != null ? position.toDate() : null;
         return createObservation(id, s, s, s, s, s);
     }
 
-    public AbstractObservation createObservation(Enum<?> id, Date phenomenonTimeStart, Date phenomenonTimeEnd,
+    public Observation<?> createObservation(Enum<?> id, Date phenomenonTimeStart, Date phenomenonTimeEnd,
             Date resultTime, Date validTimeStart, Date validTimeEnd) throws OwsExceptionReport {
         return createObservation(id.name(), phenomenonTimeStart, phenomenonTimeEnd, resultTime, validTimeStart,
                 validTimeEnd);
     }
 
-    public AbstractObservation createObservation(Enum<?> id, DateTime phenomenonTimeStart, DateTime phenomenonTimeEnd,
+    public Observation<?> createObservation(Enum<?> id, DateTime phenomenonTimeStart, DateTime phenomenonTimeEnd,
             DateTime resultTime, DateTime validTimeStart, DateTime validTimeEnd) throws OwsExceptionReport {
         return createObservation(id.name(), phenomenonTimeStart, phenomenonTimeEnd, resultTime, validTimeStart,
                 validTimeEnd);
     }
 
-    public AbstractObservation createObservation(Enum<?> id, DateTime begin, DateTime end) throws OwsExceptionReport {
+    public Observation<?> createObservation(Enum<?> id, DateTime begin, DateTime end) throws OwsExceptionReport {
         return createObservation(id.name(), begin, end);
     }
 
-    public AbstractObservation createObservation(Enum<?> id, DateTime time) throws OwsExceptionReport {
+    public Observation<?> createObservation(Enum<?> id, DateTime time) throws OwsExceptionReport {
         return createObservation(id.name(), time);
     }
 

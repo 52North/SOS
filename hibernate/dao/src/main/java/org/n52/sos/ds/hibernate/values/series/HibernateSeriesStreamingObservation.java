@@ -31,11 +31,12 @@ package org.n52.sos.ds.hibernate.values.series;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
+
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingObservation;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -78,8 +79,8 @@ public class HibernateSeriesStreamingObservation extends AbstractHibernateStream
     @Override
     protected AbstractObservation checkShowMetadtaOfEmptyObservations(AbstractObservation abstractObservation) {
         if (showMetadataOfEmptyObservation) {
-            if (abstractObservation instanceof SeriesObservation) {
-                seriesIDs.add(((SeriesObservation) abstractObservation).getSeries().getSeriesId());
+            if (abstractObservation instanceof AbstractSeriesObservation) {
+                seriesIDs.add(((AbstractSeriesObservation) abstractObservation).getSeries().getSeriesId());
             }
         }
         return abstractObservation;

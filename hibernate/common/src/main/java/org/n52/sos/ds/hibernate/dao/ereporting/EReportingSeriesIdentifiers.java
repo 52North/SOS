@@ -30,10 +30,11 @@ package org.n52.sos.ds.hibernate.dao.ereporting;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.dao.series.SeriesIdentifiers;
+
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesIdentifiers;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
-import org.n52.sos.ds.hibernate.entities.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 
 public class EReportingSeriesIdentifiers extends SeriesIdentifiers {
     private EReportingSamplingPoint samplingPoint;

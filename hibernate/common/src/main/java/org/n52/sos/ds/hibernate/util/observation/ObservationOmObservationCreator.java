@@ -39,18 +39,22 @@ import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.interfaces.BlobObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.BooleanObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.CategoryObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.CountObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
@@ -62,6 +66,7 @@ import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
@@ -76,8 +81,6 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.XmlHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -92,7 +95,7 @@ import com.google.common.collect.Sets;
 public class ObservationOmObservationCreator extends AbstractOmObservationCreator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationOmObservationCreator.class);
 
-    private final Collection<AbstractObservation> observations;
+    private final Collection<? extends Observation<?>> observations;
 
     private final AbstractObservationRequest request;
 
@@ -106,8 +109,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     private List<OmObservation> observationCollection;
 
-    
-    public ObservationOmObservationCreator(Collection<AbstractObservation> observations,
+
+    public ObservationOmObservationCreator(Collection<? extends Observation<?>> observations,
             AbstractObservationRequest request, Locale language, Session session) {
     	super(checkVersion(request), session);
         this.request = request;
@@ -117,8 +120,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             this.observations = observations;
         }
     }
-    
-    public ObservationOmObservationCreator(Collection<AbstractObservation> observations, AbstractObservationRequest request,
+
+    public ObservationOmObservationCreator(Collection<? extends Observation<?>> observations, AbstractObservationRequest request,
             Session session) {
     	super(checkVersion(request), session);
         this.request = request;
@@ -128,15 +131,15 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             this.observations = observations;
         }
     }
-    
-	private Collection<AbstractObservation> getObservations() {
+
+	private Collection<? extends Observation<?>> getObservations() {
         return observations;
     }
 
     private String getResultModel() {
         return request.getResultModel();
     }
-    
+
     private String getResponseFormat() {
         if (request.isSetResponseFormat()) {
             return request.getResponseFormat();
@@ -163,7 +166,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         } else if (this.observationCollection == null) {
             this.observationCollection = Lists.newLinkedList();
             // now iterate over resultset and create Measurement for each row
-            for (AbstractObservation hObservation : getObservations()) {
+            for (Observation<?> hObservation : getObservations()) {
 //                // check remaining heap size and throw exception if minimum is
 //                // reached
 //                SosHelper.checkFreeMemory();
@@ -181,8 +184,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         }
         return this.observationCollection;
     }
-    
-    protected OmObservation createObservation(AbstractObservation hObservation) throws OwsExceptionReport, ConverterException {
+
+    protected OmObservation createObservation(Observation<?> hObservation) throws OwsExceptionReport, ConverterException {
         LOGGER.trace("Creating Observation...");
         SosHelper.checkFreeMemory();
         String procedureId = createProcedure(hObservation);
@@ -212,7 +215,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return sosObservation;
     }
 
-    private void checkFoAdditionalObservationCreator(AbstractObservation hObservation, OmObservation sosObservation) {
+    private void checkFoAdditionalObservationCreator(Observation<?> hObservation, OmObservation sosObservation) {
         AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass());
         if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
             AdditionalObservationCreator creator = AdditionalObservationCreatorRepository.getInstance().get(key);
@@ -240,20 +243,20 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
      * @throws OwsExceptionReport
      * @throws CodedException
      */
-    private Value<?> getValueFromObservation(final AbstractObservation hObservation) throws CodedException,
+    private Value<?> getValueFromObservation(final Observation<?> hObservation) throws CodedException,
             OwsExceptionReport {
         if (hObservation instanceof NumericObservation) {
             return new QuantityValue(((NumericObservation) hObservation).getValue());
         } else if (hObservation instanceof BooleanObservation) {
-            return new org.n52.sos.ogc.om.values.BooleanValue(Boolean.valueOf(((BooleanObservation) hObservation)
-                    .getValue()));
+            return new org.n52.sos.ogc.om.values.BooleanValue(((BooleanObservation) hObservation)
+                    .getValue());
         } else if (hObservation instanceof CategoryObservation) {
             return new org.n52.sos.ogc.om.values.CategoryValue(((CategoryObservation) hObservation).getValue());
         } else if (hObservation instanceof CountObservation) {
-            return new org.n52.sos.ogc.om.values.CountValue(Integer.valueOf(((CountObservation) hObservation)
-                    .getValue()));
+            return new org.n52.sos.ogc.om.values.CountValue(((CountObservation) hObservation)
+                    .getValue());
         } else if (hObservation instanceof TextObservation) {
-            return new org.n52.sos.ogc.om.values.TextValue(((TextObservation) hObservation).getValue().toString());
+            return new org.n52.sos.ogc.om.values.TextValue(((TextObservation) hObservation).getValue());
         } else if (hObservation instanceof GeometryObservation) {
             return new org.n52.sos.ogc.om.values.GeometryValue(((GeometryObservation) hObservation).getValue());
         } else if (hObservation instanceof BlobObservation) {
@@ -263,12 +266,16 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             final XmlObject xml = XmlHelper.parseXmlString(((SweDataArrayObservation) hObservation).getValue());
             sweDataArrayValue.setValue((SweDataArray) CodingHelper.decodeXmlElement(xml));
             return sweDataArrayValue;
+        } else if (hObservation instanceof ComplexObservation) {
+            ComplexValue value = new ComplexValue();
+            //TODO
+            return value;
         }
         return null;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private OmObservation createNewObservation(OmObservationConstellation oc, AbstractObservation ho, Value<?> value) {
+    private OmObservation createNewObservation(OmObservationConstellation oc, Observation<?> ho, Value<?> value) {
         final OmObservation o = new OmObservation();
         o.setObservationID(Long.toString(ho.getObservationId()));
         if (ho.isSetIdentifier() && !ho.getIdentifier().startsWith(SosConstants.GENERATED_IDENTIFIER_PREFIX)) {
@@ -290,7 +297,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return o;
     }
 
-    private Time getPhenomenonTime(final AbstractObservation hObservation) {
+    private Time getPhenomenonTime(final Observation<?> hObservation) {
         // create time element
         final DateTime phenStartTime = new DateTime(hObservation.getPhenomenonTimeStart(), DateTimeZone.UTC);
         DateTime phenEndTime;
@@ -308,7 +315,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return phenomenonTime;
     }
 
-    private String createPhenomenon(final AbstractObservation hObservation) {
+    private String createPhenomenon(final Observation<?> hObservation) {
         LOGGER.trace("Creating Phenomenon...");
         final String phenID = hObservation.getObservableProperty().getIdentifier();
         if (!observedProperties.containsKey(phenID)) {
@@ -325,7 +332,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return phenID;
     }
 
-    private String createProcedure(final AbstractObservation hObservation) throws OwsExceptionReport,
+    private String createProcedure(final Observation<?> hObservation) throws OwsExceptionReport,
             ConverterException {
         // TODO sfp full description
         LOGGER.trace("Creating Procedure...");
@@ -338,7 +345,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return procedureId;
     }
 
-    private String createFeatureOfInterest(final AbstractObservation hObservation) throws OwsExceptionReport {
+    private String createFeatureOfInterest(final Observation<?> hObservation) throws OwsExceptionReport {
         LOGGER.trace("Creating Feature...");
         final String foiID = hObservation.getFeatureOfInterest().getIdentifier();
         if (!features.containsKey(foiID)) {
@@ -349,7 +356,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return foiID;
     }
 
-    private OmObservationConstellation createObservationConstellation(AbstractObservation hObservation,
+    private OmObservationConstellation createObservationConstellation(Observation<?> hObservation,
             String procedureId, String phenomenonId, String featureId) {
         OmObservationConstellation obsConst =
                 new OmObservationConstellation(getProcedure(procedureId), getObservedProperty(phenomenonId),

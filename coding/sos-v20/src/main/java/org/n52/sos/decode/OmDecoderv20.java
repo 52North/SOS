@@ -35,6 +35,7 @@ import java.util.Set;
 
 import net.opengis.om.x20.NamedValuePropertyType;
 import net.opengis.om.x20.NamedValueType;
+import net.opengis.om.x20.OMObservationDocument;
 import net.opengis.om.x20.OMObservationType;
 import net.opengis.om.x20.TimeObjectPropertyType;
 
@@ -44,6 +45,7 @@ import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
+
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
@@ -87,8 +89,13 @@ import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.Constants;
 import org.n52.sos.w3c.xlink.W3CHrefAttribute;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.sos.ogc.om.values.ComplexValue;
+import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.swe.SweDataRecord;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
@@ -99,14 +106,18 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class OmDecoderv20 implements Decoder<Object, Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OmDecoderv20.class);
 
-    private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.decoderKeysForElements(OmConstants.NS_OM_2,
-            OMObservationType.class, NamedValuePropertyType.class, NamedValuePropertyType[].class);
+    private static final Set<DecoderKey> DECODER_KEYS = CodingHelper
+            .decoderKeysForElements(OmConstants.NS_OM_2,
+                                    OMObservationType.class,
+                                    OMObservationDocument.class,
+                                    NamedValuePropertyType.class,
+                                    NamedValuePropertyType[].class);
 
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = ImmutableMap.of(
             SupportedTypeKey.ObservationType, (Set<String>) ImmutableSet.of(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION,
@@ -144,7 +155,11 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
     public Object decode(Object object) throws OwsExceptionReport {
         // validate document
         // XmlHelper.validateDocument((XmlObject) object);
-        if (object instanceof OMObservationType) {
+        if (object instanceof OMObservationDocument) {
+            OMObservationDocument omObservationDocument
+                    = (OMObservationDocument) object;
+            return parseOmObservation(omObservationDocument.getOMObservation());
+        } else if (object instanceof OMObservationType) {
             return parseOmObservation((OMObservationType) object);
         } else if (object instanceof NamedValuePropertyType) {
             return parseNamedValueType((NamedValuePropertyType) object);
@@ -225,6 +240,7 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
         }
     }
 
+    @SuppressWarnings( { "rawtypes", "unchecked" })
     private NamedValue<?> parseNamedValueValue(XmlObject xmlObject) throws OwsExceptionReport {
         if (xmlObject.schemaType() == XmlAnyTypeImpl.type) {
             try {
@@ -234,42 +250,14 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
             }
         }
         Object value = CodingHelper.decodeXmlObject(xmlObject);
-        if (value instanceof BooleanValue) {
-            NamedValue<Boolean> namedValue = new NamedValue<Boolean>();
-            namedValue.setValue((BooleanValue) value);
-            return namedValue;
-        } else if (value instanceof CategoryValue) {
-            NamedValue<String> namedValue = new NamedValue<String>();
-            namedValue.setValue((CategoryValue) value);
-            return namedValue;
-        } else if (value instanceof CountValue) {
-            NamedValue<Integer> namedValue = new NamedValue<Integer>();
-            namedValue.setValue((CountValue) value);
-            return namedValue;
-        } else if (value instanceof GeometryValue) {
-            NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
-            namedValue.setValue((GeometryValue) value);
-            return namedValue;
-        } else if (value instanceof QuantityValue) {
-            NamedValue<BigDecimal> namedValue = new NamedValue<BigDecimal>();
-            namedValue.setValue((QuantityValue) value);
-            return namedValue;
-        } else if (value instanceof TextValue) {
-            NamedValue<String> namedValue = new NamedValue<String>();
-            namedValue.setValue((TextValue) value);
-            return namedValue;
+        if (value instanceof Value) {
+            return new NamedValue((Value) value);
         } else if (value instanceof AbstractGeometry) {
-            NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
-            namedValue.setValue(new GeometryValue((AbstractGeometry)value));
-            return namedValue;
+            return new NamedValue<>(new GeometryValue((AbstractGeometry) value));
         } else if (value instanceof ReferenceType) {
-            NamedValue<ReferenceType> namedValue = new NamedValue<ReferenceType>();
-            namedValue.setValue(new ReferenceValue((ReferenceType)value));
-            return namedValue;
+            return new NamedValue<>(new ReferenceValue((ReferenceType)value));
         } else if (value instanceof W3CHrefAttribute) {
-            NamedValue<W3CHrefAttribute> namedValue = new NamedValue<W3CHrefAttribute>();
-            namedValue.setValue(new HrefAttributeValue((W3CHrefAttribute)value));
-            return namedValue;
+            return new NamedValue<>(new HrefAttributeValue((W3CHrefAttribute)value));
         } else {
             throw new UnsupportedDecoderInputException(this, xmlObject);
         }
@@ -388,7 +376,7 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
         ObservationValue<?> observationValue;
         if (!omObservation.getResult().getDomNode().hasChildNodes() && phenomenonTime.isSetNilReason()
                 && phenomenonTime.getNilReason().equals(NilReason.template)) {
-            observationValue = new SingleObservationValue<String>(new NilTemplateValue());
+            observationValue = new SingleObservationValue<>(new NilTemplateValue());
         } else {
             observationValue = getResult(omObservation);
         }
@@ -402,7 +390,7 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
         if (xbResult.schemaType() == XmlAnyTypeImpl.type) {
             // Template observation for InsertResultTemplate operation
             if (!xbResult.getDomNode().hasChildNodes()) {
-                return new SingleObservationValue<String>(new NilTemplateValue());
+                return new SingleObservationValue<>(new NilTemplateValue());
             } else {
                 try {
                     xbResult = XmlObject.Factory.parse(xbResult.xmlText().trim());
@@ -420,19 +408,19 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
         if (xbResult.schemaType() == XmlBoolean.type) {
             XmlBoolean xbBoolean = (XmlBoolean) xbResult;
             BooleanValue booleanValue = new BooleanValue(xbBoolean.getBooleanValue());
-            return new SingleObservationValue<Boolean>(booleanValue);
+            return new SingleObservationValue<>(booleanValue);
         }
         // CountObservation
         else if (xbResult.schemaType() == XmlInteger.type) {
             XmlInteger xbInteger = (XmlInteger) xbResult;
             CountValue countValue = new CountValue(Integer.parseInt(xbInteger.getBigIntegerValue().toString()));
-            return new SingleObservationValue<Integer>(countValue);
+            return new SingleObservationValue<>(countValue);
         }
         // TextObservation
         else if (xbResult.schemaType() == XmlString.type) {
             XmlString xbString = (XmlString) xbResult;
             TextValue stringValue = new TextValue(xbString.getStringValue());
-            return new SingleObservationValue<String>(stringValue);
+            return new SingleObservationValue<>(stringValue);
         }
         // result elements with other encoding like SWE_ARRAY_OBSERVATION
         else {
@@ -440,25 +428,17 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
             if (decodedObject instanceof ObservationValue) {
                 return (ObservationValue) decodedObject;
             } else if (decodedObject instanceof GmlMeasureType) {
-                SingleObservationValue<BigDecimal> result = new SingleObservationValue<BigDecimal>();
                 GmlMeasureType measureType = (GmlMeasureType) decodedObject;
                 QuantityValue quantitiyValue = new QuantityValue(measureType.getValue(), measureType.getUnit());
-                result.setValue(quantitiyValue);
-                return result;
+                return new SingleObservationValue<>(quantitiyValue);
             } else if (decodedObject instanceof ReferenceType) {
-                SingleObservationValue<String> result = new SingleObservationValue<String>();
-                result.setValue(new CategoryValue(((ReferenceType) decodedObject).getHref()));
-                return result;
+                return new SingleObservationValue<>(new CategoryValue(((ReferenceType) decodedObject).getHref()));
             } else if (decodedObject instanceof Geometry) {
-                SingleObservationValue<Geometry> result = new SingleObservationValue<Geometry>();
-                result.setValue(new GeometryValue((Geometry) decodedObject));
-                return result;
+                return new SingleObservationValue<>(new GeometryValue((Geometry) decodedObject));
             } else if (decodedObject instanceof SweDataArray) {
-                SweDataArrayValue value = new SweDataArrayValue();
-                value.setValue((SweDataArray) decodedObject);
-                SingleObservationValue<SweDataArray> result = new SingleObservationValue<SweDataArray>();
-                result.setValue(value);
-                return result;
+                return new SingleObservationValue<>(new SweDataArrayValue((SweDataArray) decodedObject));
+            } else if (decodedObject instanceof SweDataRecord) {
+                return new SingleObservationValue<>(new ComplexValue((SweDataRecord) decodedObject));
             }
             throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation)
                     .withMessage("The requested result type is not supported by this service!");

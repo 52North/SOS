@@ -160,6 +160,8 @@ public class ServiceConfiguration {
 
     private boolean streamingEncoding = true;
 
+    private boolean includeChildObservableProperties = false;
+
     /**
      * Returns the default token seperator for results.
      * <p/>
@@ -439,12 +441,19 @@ public class ServiceConfiguration {
         this.streamingEncoding  = streamingEncoding;
     }
 
-    /**
-     * @return
-     */
     public boolean isForceStreamingEncoding() {
         return streamingEncoding;
     }
+
+    public boolean isIncludeChildObservableProperties() {
+        return includeChildObservableProperties;
+    }
+
+    @Setting(ServiceSettings.INCLUDE_CHILD_OBSERVABLE_PROPERTIES)
+    public void setIncludeChildObservableProperties(boolean include) {
+        this.includeChildObservableProperties = include;
+    }
+
 
     /*
      * Now, we return the list of returned features and not a complex encoded

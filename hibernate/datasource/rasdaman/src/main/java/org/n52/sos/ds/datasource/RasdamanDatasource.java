@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -49,6 +50,7 @@ import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.hibernate.usertype.HibernateGeometryType;
+import org.n52.sos.hibernate.usertype.HibernateMArrayType;
 
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Geometry;
@@ -110,6 +112,7 @@ public class RasdamanDatasource extends AbstractHibernateFullDBDatasource {
     public CustomConfiguration getConfig(java.util.Map<String,Object> settings) {
     	CustomConfiguration cfg = super.getConfig(settings);
     	cfg.registerTypeOverride(new HibernateGeometryType(), new String[] { "org.hibernate.spatial.GeometryType", Geometry.class.getName() });
+    	cfg.registerTypeOverride(new HibernateMArrayType(), new String[] { "array", Array.class.getName() });
     	return cfg;
     };
     

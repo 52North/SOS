@@ -67,6 +67,12 @@
         	<key column="observationId" foreign-key="observationBooleanValueFk" />
         	<property name="value" type="org.hibernate.type.TrueFalseType"/>
         </joined-subclass>
+
+	<joined-subclass name="org.n52.sos.ds.hibernate.entities.ArrayObservation" extends="org.n52.sos.ds.hibernate.entities.Observation" table="arrayValue">
+        	<key column="observationId" foreign-key="observationArrayValueFk" />
+        	<property name="value" type="array"/>
+        </joined-subclass>
+
 		<joined-subclass name="org.n52.sos.ds.hibernate.entities.CategoryObservation" extends="org.n52.sos.ds.hibernate.entities.Observation" table="categoryValue">
         	<key column="observationId" foreign-key="observationCategoryValueFk" />
          	<property name="value" type="string" />

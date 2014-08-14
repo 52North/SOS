@@ -28,17 +28,7 @@
  */
 package org.n52.sos.ds.datasource;
 
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,14 +41,12 @@ import junit.framework.TestCase;
  *
  */
 public class RasdamanDatasourceIT extends TestCase {
-	private static final String SOS_TEST_CONF = "SOS_TEST_CONF";
 	private static final String RASDAMAN_SCHEMA = "public";
 	private static final String RASDAMAN_USER = "SA";
 	private static final String RASDAMAN_PASS = "";
 	private static final String DATABASE_DEFAULT_VALUE = "jdbc:hsqldb:file:/var/hsqldb/db";
 
-	private static String host, user, pass, schema, database;
-	private static int port;
+	private static String user, pass, schema, database;
 
 	static {
 		initialize();
@@ -101,43 +89,6 @@ public class RasdamanDatasourceIT extends TestCase {
 			connNoRights.close();
 		}
 	}
-
-//	public void testSchemaCreationSuccess() throws Exception {
-//		ds.doCheckSchemaCreation("rasdaman", stmt);
-//	}
-//
-//	public void testSchemaCreationFailure() throws Exception {
-//		try {
-//			ds.doCheckSchemaCreation("", stmtNoRights);
-//			fail();
-//		} catch (SQLException e) {
-//			// ignore
-//		}
-//	}
-
-//	@SuppressWarnings("unchecked")
-//	public void testCheckSchemaCreationSuccess() throws Exception {
-//		ds = spy(ds);
-//		Statement stmt = mock(Statement.class);
-//		Connection conn = mock(Connection.class);
-//		when(conn.createStatement()).thenReturn(stmt);
-//		doReturn(conn).when(ds).openConnection(anyMap());
-//		assertTrue(ds.checkSchemaCreation(new HashMap<String, Object>()));
-//	}
-//
-//	@SuppressWarnings("unchecked")
-//	public void testCheckSchemaCreationFailure() throws Exception {
-//		ds = spy(ds);
-//		Statement stmt = mock(Statement.class);
-//		when(stmt.execute(anyString())).thenThrow(new SQLException());
-//
-//		Connection conn = mock(Connection.class);
-//		when(conn.createStatement()).thenReturn(stmt);
-//		doReturn(conn).when(ds).openConnection(anyMap());
-//
-//		assertFalse(ds.checkSchemaCreation(new HashMap<String, Object>()));
-//		
-//	}
 
 	public void testToURL() throws Exception {
 		Map<String, Object> settings = new HashMap<String, Object>();

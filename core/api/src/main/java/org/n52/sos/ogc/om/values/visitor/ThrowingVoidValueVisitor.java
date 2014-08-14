@@ -1,0 +1,181 @@
+/**
+ * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ *
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+ *
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+ *
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ */
+package org.n52.sos.ogc.om.values.visitor;
+
+import org.n52.sos.ogc.om.values.BooleanValue;
+import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.ComplexValue;
+import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.GeometryValue;
+import org.n52.sos.ogc.om.values.HrefAttributeValue;
+import org.n52.sos.ogc.om.values.NilTemplateValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.ReferenceValue;
+import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TVPValue;
+import org.n52.sos.ogc.om.values.TextValue;
+import org.n52.sos.ogc.om.values.UnknownValue;
+
+/**
+ * TODO JavaDoc
+ *
+ * @author Christian Autermann
+ */
+public abstract class ThrowingVoidValueVisitor<T extends Exception> implements
+        ThrowingValueVisitor<Void, T> {
+    @Override
+    public Void visit(BooleanValue value)
+            throws T {
+        _visit(value);
+        return null;
+    }
+
+    @Override
+    public Void visit(CategoryValue value)
+            throws T {
+        _visit(value);
+        return null;
+    }
+
+    @Override
+    public Void visit(ComplexValue value)
+            throws T {
+        _visit(value);
+        return null;
+    }
+
+    @Override
+    public Void visit(CountValue value)
+            throws T {
+        _visit(value);
+        return null;
+    }
+
+    @Override
+    public Void visit(GeometryValue value)
+            throws T {
+        _visit(value);
+        return null;
+    }
+
+    @Override
+    public Void visit(HrefAttributeValue value)
+            throws T {
+        _visit(value);
+        return null;
+    }
+
+    @Override
+    public Void visit(NilTemplateValue value)
+            throws T {
+        _visit(value);
+        return null;
+    }
+
+    @Override
+    public Void visit(QuantityValue value)
+            throws T {
+        _visit(value);
+        return null;
+    }
+
+    @Override
+    public Void visit(ReferenceValue value)
+            throws T {
+        _visit(value);
+        return null;
+    }
+
+    @Override
+    public Void visit(SweDataArrayValue value)
+            throws T {
+        _visit(value);
+        return null;
+    }
+
+    @Override
+    public Void visit(TVPValue value)
+            throws T {
+        _visit(value);
+        return null;
+    }
+
+    @Override
+    public Void visit(TextValue value)
+            throws T {
+        _visit(value);
+        return null;
+    }
+
+    @Override
+    public Void visit(UnknownValue value)
+            throws T {
+        _visit(value);
+        return null;
+    }
+
+    protected abstract void _visit(BooleanValue value)
+            throws T;
+
+    protected abstract void _visit(CategoryValue value)
+            throws T;
+
+    protected abstract void _visit(ComplexValue value)
+            throws T;
+
+    protected abstract void _visit(CountValue value)
+            throws T;
+
+    protected abstract void _visit(GeometryValue value)
+            throws T;
+
+    protected abstract void _visit(HrefAttributeValue value)
+            throws T;
+
+    protected abstract void _visit(NilTemplateValue value)
+            throws T;
+
+    protected abstract void _visit(QuantityValue value)
+            throws T;
+
+    protected abstract void _visit(ReferenceValue value)
+            throws T;
+
+    protected abstract void _visit(SweDataArrayValue value)
+            throws T;
+
+    protected abstract void _visit(TVPValue value)
+            throws T;
+
+    protected abstract void _visit(TextValue value)
+            throws T;
+
+    protected abstract void _visit(UnknownValue value)
+            throws T;
+}

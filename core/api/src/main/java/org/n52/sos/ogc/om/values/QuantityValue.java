@@ -30,13 +30,17 @@ package org.n52.sos.ogc.om.values;
 
 import java.math.BigDecimal;
 
+import org.n52.sos.ogc.om.values.visitor.ThrowingValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.ThrowingVoidValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.util.StringHelper;
 
 /**
  * Quantity measurement representation for observation
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class QuantityValue implements Value<BigDecimal> {
     /**
@@ -56,7 +60,7 @@ public class QuantityValue implements Value<BigDecimal> {
 
     /**
      * constructor
-     * 
+     *
      * @param value
      *            Measurement value
      */
@@ -66,7 +70,7 @@ public class QuantityValue implements Value<BigDecimal> {
 
     /**
      * constructor
-     * 
+     *
      * @param value
      *            Measurement value
      * @param unit
@@ -110,5 +114,25 @@ public class QuantityValue implements Value<BigDecimal> {
     @Override
     public boolean isSetUnit() {
         return StringHelper.isNotEmpty(getUnit());
+    }
+
+    @Override
+    public <X> X accept(ValueVisitor<X> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidValueVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public <X, T extends Exception> X accept(ThrowingValueVisitor<X, T> visitor) throws T {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public <T extends Exception> void accept(ThrowingVoidValueVisitor<T> visitor) throws T {
+        visitor.visit(this);
     }
 }

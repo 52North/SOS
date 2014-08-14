@@ -28,13 +28,10 @@
  */
 package org.n52.sos.ogc.om;
 
+import java.util.LinkedList;
 import java.util.List;
 
-/**
- * class represents a composite phenomenon
- * 
- * @since 4.0.0
- */
+
 public class OmCompositePhenomenon extends AbstractPhenomenon {
     /**
      * serial number
@@ -46,7 +43,7 @@ public class OmCompositePhenomenon extends AbstractPhenomenon {
 
     /**
      * standard constructor
-     * 
+     *
      * @param compPhenId
      *            id of the composite phenomenon
      * @param compPhenDesc
@@ -60,9 +57,19 @@ public class OmCompositePhenomenon extends AbstractPhenomenon {
         this.phenomenonComponents = phenomenonComponents;
     }
 
+    public OmCompositePhenomenon(String identifier) {
+        super(identifier);
+        this.phenomenonComponents = new LinkedList<>();
+    }
+
+    public OmCompositePhenomenon(String identifier, String description) {
+        super(identifier, description);
+        this.phenomenonComponents = new LinkedList<>();
+    }
+
     /**
      * Get observableProperties
-     * 
+     *
      * @return Returns the phenomenonComponents.
      */
     public List<OmObservableProperty> getPhenomenonComponents() {
@@ -71,11 +78,18 @@ public class OmCompositePhenomenon extends AbstractPhenomenon {
 
     /**
      * Set observableProperties
-     * 
+     *
      * @param phenomenonComponents
      *            The phenomenonComponents to set.
      */
     public void setPhenomenonComponents(List<OmObservableProperty> phenomenonComponents) {
         this.phenomenonComponents = phenomenonComponents;
+    }
+
+    public void addPhenomenonComponent(OmObservableProperty observableProperty) {
+        if (this.phenomenonComponents == null) {
+            this.phenomenonComponents = new LinkedList<>();
+        }
+        this.phenomenonComponents.add(observableProperty);
     }
 }

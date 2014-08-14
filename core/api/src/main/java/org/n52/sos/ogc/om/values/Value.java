@@ -28,13 +28,19 @@
  */
 package org.n52.sos.ogc.om.values;
 
+
 import java.io.Serializable;
+
+import org.n52.sos.ogc.om.values.visitor.ThrowingValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.ThrowingVoidValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 
 /**
  * Interface for measurement value representation for observation
- * 
+ *
  * @since 4.0.0
- * 
+ *
  * @param <T>
  *            specific value type
  */
@@ -42,7 +48,7 @@ public interface Value<T> extends Serializable {
 
     /**
      * Set the measurment value
-     * 
+     *
      * @param value
      *            Value to set
      */
@@ -50,14 +56,14 @@ public interface Value<T> extends Serializable {
 
     /**
      * Get the measurement value
-     * 
+     *
      * @return Measurement value
      */
     T getValue();
 
     /**
      * Set the unit of measure
-     * 
+     *
      * @param unit
      *            Unit of measure
      */
@@ -65,23 +71,33 @@ public interface Value<T> extends Serializable {
 
     /**
      * Get the unit of measure
-     * 
+     *
      * @return Unit of measure
      */
     String getUnit();
 
     /**
      * Check whether the value is set
-     * 
+     *
      * @return <code>true</code>, if value is set
      */
     boolean isSetValue();
 
     /**
      * Check whether the unit of measure is set
-     * 
+     *
      * @return <code>true</code>, if unit of measure is set
      */
     boolean isSetUnit();
 
+
+    <X> X accept(ValueVisitor<X> visitor);
+
+    void accept(VoidValueVisitor visitor);
+
+    <X, T extends Exception> X accept(ThrowingValueVisitor<X, T> visitor)
+            throws T;
+
+    <T extends Exception> void accept(ThrowingVoidValueVisitor<T> visitor)
+            throws T;
 }

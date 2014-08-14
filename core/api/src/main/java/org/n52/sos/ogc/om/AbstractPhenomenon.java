@@ -37,10 +37,11 @@ import com.google.common.base.Objects;
 
 /**
  * Abstract class for phenomena
- * 
+ *
  * @since 4.0.0
  */
-public class AbstractPhenomenon extends AbstractFeature implements Comparable<AbstractPhenomenon>, Serializable {
+public class AbstractPhenomenon extends AbstractFeature
+    implements Comparable<AbstractPhenomenon>, Serializable {
     /**
      * serial number
      */
@@ -48,7 +49,7 @@ public class AbstractPhenomenon extends AbstractFeature implements Comparable<Ab
 
     /**
      * constructor
-     * 
+     *
      * @param identifier
      *            Phenomenon identifier
      */
@@ -58,7 +59,7 @@ public class AbstractPhenomenon extends AbstractFeature implements Comparable<Ab
 
     /**
      * constructor
-     * 
+     *
      * @param identifier
      *            Phenomenon identifier
      * @param description
@@ -87,10 +88,10 @@ public class AbstractPhenomenon extends AbstractFeature implements Comparable<Ab
     public int compareTo(final AbstractPhenomenon o) {
         return getIdentifierCodeWithAuthority().compareTo(o.getIdentifierCodeWithAuthority());
     }
-    
+
 	@Override
-	public String toString()
-	{
-		return String.format("AbstractPhenomenon [identifier=%s, description=%s]", getIdentifierCodeWithAuthority().getValue(), getDescription());
-	}    
+	public String toString() {
+		return String.format("AbstractPhenomenon [identifier=%s, description=%s]",
+                             getIdentifierCodeWithAuthority().getValue(), getDescription());
+	}
 }

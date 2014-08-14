@@ -44,7 +44,7 @@ import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SweEnvelope extends SweAbstractDataComponent {
     private String referenceFrame;
@@ -64,7 +64,7 @@ public class SweEnvelope extends SweAbstractDataComponent {
     }
 
     public SweEnvelope(SosEnvelope sosEnvelope, String uom) {
-        this(String.valueOf(sosEnvelope.getSrid()), 
+        this(String.valueOf(sosEnvelope.getSrid()),
              createUpperCorner(sosEnvelope, uom),
              createLowerCorner(sosEnvelope, uom));
     }
@@ -208,7 +208,7 @@ public class SweEnvelope extends SweAbstractDataComponent {
     }
 
     private Double extractDouble(SweCoordinate<?> coord) {
-        if (coord != null && 
+        if (coord != null &&
             coord.getValue() != null &&
             coord.getValue().getValue() instanceof Number) {
             return ((Number) coord.getValue().getValue()).doubleValue();
@@ -235,7 +235,7 @@ public class SweEnvelope extends SweAbstractDataComponent {
     private static SweVector createSweVector(double x, double y, String uom) {
         SweQuantity xCoord = SweHelper.createSweQuantity(x, SweConstants.X_AXIS, uom);
         SweQuantity yCoord = SweHelper.createSweQuantity(y, SweConstants.Y_AXIS, uom);
-        return new SweVector(new SweCoordinate<Double>(SweCoordinateName.easting.name(), xCoord),
-                new SweCoordinate<Double>(SweCoordinateName.northing.name(), yCoord));
+        return new SweVector(new SweCoordinate<>(SweCoordinateName.easting.name(), xCoord),
+                             new SweCoordinate<>(SweCoordinateName.northing.name(), yCoord));
     }
 }

@@ -26,40 +26,51 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ogc.swe;
+package org.n52.sos.ogc.om.values.visitor;
 
-import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.ogc.om.values.BooleanValue;
+import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.ComplexValue;
+import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.GeometryValue;
+import org.n52.sos.ogc.om.values.HrefAttributeValue;
+import org.n52.sos.ogc.om.values.NilTemplateValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.ReferenceValue;
+import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TVPValue;
+import org.n52.sos.ogc.om.values.TextValue;
+import org.n52.sos.ogc.om.values.UnknownValue;
 
 /**
- * SOS internal representation of SWE dataRecord
+ * TODO JavaDoc
  *
- * @since 4.0.0
+ * @author Christian Autermann
  */
-public class SweDataRecord extends SweAbstractDataRecord {
+public interface ValueVisitor<T> {
+    T visit(BooleanValue value);
 
-    @Override
-    public SweDataComponentType getDataComponentType() {
-        return SweDataComponentType.DataRecord;
-    }
+    T visit(CategoryValue value);
 
-    @Override
-    public SweDataRecord addField(final SweField field) {
-        return (SweDataRecord) super.addField(field);
-    }
+    T visit(ComplexValue value);
 
-    @Override
-    public int hashCode() {
-        final int prime = 42;
-        int hash = 7;
-        hash = prime * hash + super.hashCode();
-        hash = prime * hash + (getDataComponentType() != null ? getDataComponentType().hashCode() : 0);
-        return hash;
-    }
+    T visit(CountValue value);
 
-    @Override
-    public String toString() {
-        return String.format("SweDataRecord [fields=%s, definition=%s, label=%s, identifier=%s, xml=%s]",
-                             getFields(), getDefinition(), getLabel(), getIdentifier(), getXml());
-    }
+    T visit(GeometryValue value);
 
+    T visit(HrefAttributeValue value);
+
+    T visit(NilTemplateValue value);
+
+    T visit(QuantityValue value);
+
+    T visit(ReferenceValue value);
+
+    T visit(SweDataArrayValue value);
+
+    T visit(TVPValue value);
+
+    T visit(TextValue value);
+
+    T visit(UnknownValue value);
 }

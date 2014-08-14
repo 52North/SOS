@@ -31,22 +31,27 @@ package org.n52.sos.ogc.om.values;
 import java.util.Collection;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.values.visitor.ThrowingValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.ThrowingVoidValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweTime;
 import org.n52.sos.util.DateTimeHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Multi value representing a SweDataArray for observations
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class SweDataArrayValue implements MultiValue<SweDataArray> {
 
@@ -64,6 +69,14 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
      * Measurement values
      */
     private SweDataArray value;
+
+    public SweDataArrayValue() {
+        this(null);
+    }
+
+    public SweDataArrayValue(SweDataArray value) {
+        this.value = value;
+    }
 
     @Override
     public void setValue(final SweDataArray value) {
@@ -88,7 +101,7 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
     /**
      * Adds the given block - a {@link List}<{@link String}> - add the end of
      * the current list of blocks
-     * 
+     *
      * @param blockOfTokensToAddAtTheEnd
      * @return <tt>true</tt> (as specified by {@link Collection#add}) <br />
      *         <tt>false</tt> if block could not be added
@@ -158,5 +171,25 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
     @Override
     public boolean isSetUnit() {
         return false;
+    }
+
+    @Override
+    public <X> X accept(ValueVisitor<X> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidValueVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public <X, T extends Exception> X accept(ThrowingValueVisitor<X, T> visitor) throws T {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public <T extends Exception> void accept(ThrowingVoidValueVisitor<T> visitor) throws T {
+        visitor.visit(this);
     }
 }

@@ -30,15 +30,14 @@ package org.n52.sos.cache;
 
 import java.io.Serializable;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+
 import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.sos.SosEnvelope;
 
-import com.vividsolutions.jts.geom.MultiLineString;
 
 /**
  * This encapsulates relationships between the different metadata components of
@@ -734,7 +733,7 @@ public interface ContentCache extends Serializable {
      * @param includeSelf
      *            whether or not to include the passed feature id in the result
      *
-     * @return Collection<String> containing the passed feature id's children
+     * @return Collection containing the passed feature id's children
      *         (and optionally itself)
      */
     Set<String> getChildFeatures(String featureOfInterest, boolean fullHierarchy, boolean includeSelf);
@@ -788,7 +787,7 @@ public interface ContentCache extends Serializable {
      *            whether or not to include the passed procedure id in the
      *            result
      *
-     * @return Collection<String> containing the passed procedure id's children
+     * @return Collection containing the passed procedure id's children
      *         (and optionally itself)
      */
     Set<String> getChildProcedures(String procedure, boolean fullHierarchy, boolean includeSelf);
@@ -805,7 +804,7 @@ public interface ContentCache extends Serializable {
      *            whether or not to include the passed procedure ids in the
      *            result
      *
-     * @return Collection<String> containing the passed procedure ids' children
+     * @return Collection containing the passed procedure ids' children
      *         (and optionally themselves)
      */
     Set<String> getChildProcedures(Set<String> procedure, boolean fullHierarchy, boolean includeSelves);
@@ -858,21 +857,21 @@ public interface ContentCache extends Serializable {
      * @return <code>true</code>, if the specific lanugage is supported
      */
     boolean isLanguageSupported(Locale language);
-    
+
     String getFeatureOfInterestIdentifierForHumanReadableName(String humanReadableName);
-    
+
     String getFeatureOfInterestHumanReadableNameForIdentifier(String identifier);
-    
+
     String getObservablePropertyIdentifierForHumanReadableName(String humanReadableName);
-    
+
     String getObservablePropertyHumanReadableNameForIdentifier(String identifier);
-    
+
     String getProcedureIdentifierForHumanReadableName(String humanReadableName);
-    
+
     String getProcedureHumanReadableNameForIdentifier(String identifier);
-    
+
 	String getOfferingIdentifierForHumanReadableName(String humanReadableName);
-    
+
     String getOfferingHumanReadableNameForIdentifier(String identifier);
 
 }

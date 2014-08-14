@@ -28,13 +28,17 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.sos.ogc.om.values.visitor.ThrowingValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.ThrowingVoidValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.util.StringHelper;
 
 /**
  * Unknown value for observation if type is unknown
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class UnknownValue implements Value<Object> {
     /**
@@ -54,7 +58,7 @@ public class UnknownValue implements Value<Object> {
 
     /**
      * Constructor
-     * 
+     *
      * @param value
      *            Measurement value
      */
@@ -96,4 +100,25 @@ public class UnknownValue implements Value<Object> {
     public boolean isSetUnit() {
         return StringHelper.isNotEmpty(getUnit());
     }
+
+    @Override
+    public <X> X accept(ValueVisitor<X> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidValueVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public <X, T extends Exception> X accept(ThrowingValueVisitor<X, T> visitor) throws T {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public <T extends Exception> void accept(ThrowingVoidValueVisitor<T> visitor) throws T {
+        visitor.visit(this);
+    }
+
 }

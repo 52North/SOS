@@ -32,61 +32,31 @@ import org.n52.sos.ogc.om.values.visitor.ThrowingValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.ThrowingVoidValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
-import org.n52.sos.util.StringHelper;
+import org.n52.sos.ogc.swe.SweDataRecord;
 
-/**
- * Category measurement representation for observation
- *
- * @since 4.0.0
- *
- */
-public class CategoryValue implements Value<String> {
-    /**
-     * serial number
-     */
-    private static final long serialVersionUID = 8364802854103009470L;
+import com.google.common.base.Objects;
 
-    /**
-     * Measurement value
-     */
-    private String value;
-
-    /**
-     * Unit of measure
-     */
+public class ComplexValue implements Value<SweDataRecord> {
+    private static final long serialVersionUID = 7864029515468084800L;
+    private SweDataRecord value;
     private String unit;
 
-    /**
-     * constructor
-     *
-     * @param value
-     *            Measurement value
-     */
-    public CategoryValue(String value) {
-        this(value, null);
+    public ComplexValue() {
+        this(null);
     }
 
-    /**
-     * * constructor
-     *
-     * @param value
-     *            Measurement value
-     * @param unit
-     *            Unit of measure
-     */
-    public CategoryValue(String value, String unit) {
-        this.value = value;
-        this.unit = unit;
-    }
-
-    @Override
-    public void setValue(String value) {
+    public ComplexValue(SweDataRecord value) {
         this.value = value;
     }
 
     @Override
-    public String getValue() {
-        return value;
+    public void setValue(SweDataRecord value) {
+        this.value = value;
+    }
+
+    @Override
+    public SweDataRecord getValue() {
+        return this.value;
     }
 
     @Override
@@ -96,22 +66,40 @@ public class CategoryValue implements Value<String> {
 
     @Override
     public String getUnit() {
-        return unit;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("CategoryValue [value=%s, unit=%s]", getValue(), getUnit());
+        return this.unit;
     }
 
     @Override
     public boolean isSetValue() {
-        return StringHelper.isNotEmpty(getValue());
+        return this.value != null;
     }
 
     @Override
     public boolean isSetUnit() {
-        return StringHelper.isNotEmpty(getUnit());
+        return this.unit != null && !this.unit.isEmpty();
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("value", this.value)
+                .add("unit", this.unit)
+                .toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.value, this.unit);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ComplexValue) {
+            ComplexValue that = (ComplexValue) obj;
+            return Objects.equal(this.getValue(), that.getValue()) &&
+                   Objects.equal(this.getUnit(), that.getUnit());
+        }
+        return false;
     }
 
     @Override

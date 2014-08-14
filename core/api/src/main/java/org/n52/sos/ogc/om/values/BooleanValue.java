@@ -28,17 +28,21 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.sos.ogc.om.values.visitor.ThrowingValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.ThrowingVoidValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.util.StringHelper;
 
 /**
  * Boolean measurement representation for observation
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class BooleanValue implements Value<Boolean> {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3752649909580561689L;
 
@@ -54,7 +58,7 @@ public class BooleanValue implements Value<Boolean> {
 
     /**
      * constructor
-     * 
+     *
      * @param value
      *            Measurement value
      */
@@ -95,5 +99,25 @@ public class BooleanValue implements Value<Boolean> {
     @Override
     public boolean isSetUnit() {
         return StringHelper.isNotEmpty(getUnit());
+    }
+
+    @Override
+    public <X> X accept(ValueVisitor<X> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidValueVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public <X, T extends Exception> X accept(ThrowingValueVisitor<X, T> visitor) throws T {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public <T extends Exception> void accept(ThrowingVoidValueVisitor<T> visitor) throws T {
+        visitor.visit(this);
     }
 }

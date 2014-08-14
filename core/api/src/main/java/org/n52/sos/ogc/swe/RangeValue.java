@@ -75,14 +75,14 @@ public class RangeValue<T> {
     }
 
     public List<T> getRangeAsList() {
-        final List<T> list = new ArrayList<T>();
+        final List<T> list = new ArrayList<>(2);
         list.add(rangeStart);
         list.add(rangeEnd);
         return list;
     }
 
     public List<String> getRangeAsStringList() {
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>(2);
         list.add(rangeStart.toString());
         list.add(rangeEnd.toString());
         return list;

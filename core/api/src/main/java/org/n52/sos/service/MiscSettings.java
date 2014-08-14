@@ -168,11 +168,9 @@ public class MiscSettings implements SettingDefinitionProvider {
             new IntegerSettingDefinition()
                     .setGroup(GROUP)
                     .setKey(HYDRO_MAX_NUMBER_OF_RETURNED_VALUES)
-                    .setDefaultValue(Integer.MAX_VALUE)
-                    .setTitle(
-                            String.format("Maximum number of returned observation values Integer.max = %s",
-                                    Integer.MAX_VALUE))
-                    .setDescription("Set the maximum number of returned observation values for the Hydrology-Profile.")
+                    .setDefaultValue(0)
+                    .setTitle("Maximum number of returned observation values")
+                    .setDescription("Set the maximum number of returned observation values for the Hydrology-Profile. Set to <code>0</code> (zero) for unlimited number of observations.")
                     .setOrder(ORDER_14);
 
     // TODO move to Profile settings if implemented
@@ -180,10 +178,9 @@ public class MiscSettings implements SettingDefinitionProvider {
             new IntegerSettingDefinition()
                     .setGroup(GROUP)
                     .setKey(HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES)
-                    .setDefaultValue(Integer.MAX_VALUE)
-                    .setTitle(
-                            String.format("Maximum number of returned time series Integer.max = %s", Integer.MAX_VALUE))
-                    .setDescription("Set the maximum number of returned time series for the Hydrology-Profile.")
+                    .setDefaultValue(0)
+                    .setTitle("Maximum number of returned time series")
+                    .setDescription("Set the maximum number of returned time series for the Hydrology-Profile. Set to <code>0</code> (zero) for unlimited number of observations.")
                     .setOrder(ORDER_15);
 
     // TODO move to Profile settings if implemented

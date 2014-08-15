@@ -191,5 +191,18 @@
             <property name="value"
                       type="org.hibernate.type.StringClobType" />
         </joined-subclass>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesComplexObservation"
+                         extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
+                         table="complexValue">
+            <key column="observationId"
+                 foreign-key="observationComplexValueFk" />
+            <many-to-one name="value"
+                         class="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
+                         fetch="select"
+                         lazy="no-proxy"
+                         foreign-key="complexValueObsIdentifierFk">
+                <column name="value" />
+            </many-to-one>
+        </joined-subclass>
     </class>
 </hibernate-mapping>

@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -46,6 +47,7 @@ import org.n52.sos.encode.ResponseWriter;
 import org.n52.sos.encode.ResponseWriterRepository;
 import org.n52.sos.exception.HTTPException;
 import org.n52.sos.response.ServiceResponse;
+import org.n52.sos.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +122,20 @@ public class HTTPUtils {
 
     public static void writeObject(HttpServletRequest request, HttpServletResponse response, MediaType contentType,
             Object object) throws IOException {
-        writeObject(request, response, contentType, new GenericWritable(object, contentType));
+        GenericWritable genericWritable = new GenericWritable(object, contentType);
+        
+        // add extra headers from ResponseWriter (via GenericWritable)
+        if (!CollectionHelper.isEmpty(genericWritable.getResponseHeaders())) {
+            for (Entry<String,String> responseHeader : genericWritable.getResponseHeaders().entrySet()) {
+                response.addHeader(responseHeader.getKey(), responseHeader.getValue());
+            }
+        }
+
+        if (genericWritable.getContentLength() > -1) {
+            response.setContentLength(genericWritable.getContentLength());
+        }
+
+        writeObject(request, response, contentType, genericWritable);
     }
 
     public static void writeObject(HttpServletRequest request, HttpServletResponse response, ServiceResponse sr)
@@ -145,6 +160,7 @@ public class HTTPUtils {
             Writable writable) throws IOException {
         OutputStream out = null;
         response.setContentType(contentType.toString());
+
         try {
             out = response.getOutputStream();
             if (supportsGzipEncoding(request) && writable.supportsGZip()) {
@@ -194,6 +210,14 @@ public class HTTPUtils {
         public void write(OutputStream out) throws IOException {
             writer.write(o, out);
         }
+
+        public Map<String, String> getResponseHeaders() {
+            return writer.getResponseHeaders(o);
+        }
+
+        public int getContentLength() {
+            return writer.getContentLength(o);
+        }
     }
 
     private static class ServiceResponseWritable implements Writable {
@@ -217,7 +241,7 @@ public class HTTPUtils {
     public interface Writable {
         void write(OutputStream out) throws IOException;
 
-        boolean supportsGZip();
+        boolean supportsGZip();        
     }
 
 }

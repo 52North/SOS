@@ -48,22 +48,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * TODO add generic field for headers<br />
- * v0.1 with enumeration and set of default headers<br />
- * private Map<HeaderCode, String> httpHeaders;<br />
- * could be extended in future versions
- * 
  * @since 4.0.0
  */
 public class ServiceResponse implements CommunicationObjectWithSoapHeader {
-    public class HeaderCode {
-        public static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
-        public static final String CONTENT_TRANSFER_ENCODING_BINARY = "binary";
-
-        public static final String CONTENT_DISPOSITION = "Content-Disposition";
-        public static final String CONTENT_ATTACHMENT_FILENAME_FORMAT = "attachment; filename=\"%s\"";
-    }
-    
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceResponse.class);
 
     /**
@@ -157,11 +144,6 @@ public class ServiceResponse implements CommunicationObjectWithSoapHeader {
     public Map<String, String> getHeaderMap() {
         return Collections.unmodifiableMap(headerMap);
     }
-
-    public void setAttachmentFilename(String filename) {
-        headerMap.put(HeaderCode.CONTENT_DISPOSITION,
-                String.format(HeaderCode.CONTENT_ATTACHMENT_FILENAME_FORMAT, filename));
-    }
     
     /**
      * @param outputStream
@@ -191,19 +173,6 @@ public class ServiceResponse implements CommunicationObjectWithSoapHeader {
                 LOGGER.error("doSoapResponse, close streams", ioe);
             }
         }
-    }
-
-    /**
-     * @return the content of this response as <code>byte[]</code>, or<br />
-     *         <code>null</code>, if this response is content less.
-     * 
-     * @see #isContentLess()
-     */
-    public byte[] getByteArray() {
-        if (byteArrayOutputStream != null) {
-            return byteArrayOutputStream.toByteArray();
-        }
-        return null;
     }
 
     /**

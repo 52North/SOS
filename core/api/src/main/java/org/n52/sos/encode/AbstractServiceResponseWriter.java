@@ -70,7 +70,7 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
                         ResponseWriter<Object> writer =
                                 ResponseWriterRepository.getInstance().getWriter(encode.getClass());
                         if (writer == null) {
-                            throw new RuntimeException("no writer for " + asr.getClass() + " found!");
+                            throw new RuntimeException("no writer for " + encode.getClass() + " found!");
                         }
                         writer.write(encode, out);
                     }
@@ -121,5 +121,4 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
     private boolean isStreaming(AbstractServiceResponse asr) {
         return ServiceConfiguration.getInstance().isForceStreamingEncoding() && getEncoder(asr) instanceof StreamingEncoder;
     }
-
 }

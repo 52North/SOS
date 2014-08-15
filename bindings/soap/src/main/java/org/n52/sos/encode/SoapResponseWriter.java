@@ -50,7 +50,7 @@ public class SoapResponseWriter extends AbstractResponseWriter<SOAPMessage> {
     }
 
     @Override
-    public void write(SOAPMessage t, OutputStream out) throws IOException {
+    public void write(SOAPMessage t, OutputStream out, ResponseProxy responseProxy) throws IOException {
         try {
             t.writeTo(out);
         } catch (SOAPException ex) {

@@ -39,8 +39,6 @@ import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.http.MediaType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * {@link ResponseWriter} for {@link AbstractServiceResponse}
@@ -58,7 +56,7 @@ public class AbstractServiceResponseWriter extends
 	}
 
 	@Override
-	public void write(AbstractServiceResponse asr, OutputStream out)
+	public void write(AbstractServiceResponse asr, OutputStream out, ResponseProxy responseProxy)
 			throws IOException {
 		try {
 			Encoder<Object, AbstractServiceResponse> encoder = getEncoder(asr);
@@ -81,7 +79,7 @@ public class AbstractServiceResponseWriter extends
 							throw new RuntimeException("no writer for "
 									+ encode.getClass() + " found!");
 						}
-						writer.write(encode, out);
+						writer.write(encode, out, responseProxy);
 					}
 				}
 			}

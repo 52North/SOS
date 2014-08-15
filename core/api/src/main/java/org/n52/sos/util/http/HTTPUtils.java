@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -43,12 +42,12 @@ import java.util.zip.GZIPOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.n52.sos.encode.ResponseProxy;
 import org.n52.sos.encode.ResponseWriter;
 import org.n52.sos.encode.ResponseWriterRepository;
 import org.n52.sos.exception.HTTPException;
 import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.response.ServiceResponse;
-import org.n52.sos.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,20 +122,7 @@ public class HTTPUtils {
 
     public static void writeObject(HttpServletRequest request, HttpServletResponse response, MediaType contentType,
             Object object) throws IOException {
-        GenericWritable genericWritable = new GenericWritable(object, contentType);
-        
-        // add extra headers from ResponseWriter (via GenericWritable)
-        if (!CollectionHelper.isEmpty(genericWritable.getResponseHeaders())) {
-            for (Entry<String,String> responseHeader : genericWritable.getResponseHeaders().entrySet()) {
-                response.addHeader(responseHeader.getKey(), responseHeader.getValue());
-            }
-        }
-
-        if (genericWritable.getContentLength() > -1) {
-            response.setContentLength(genericWritable.getContentLength());
-        }
-
-        writeObject(request, response, contentType, genericWritable);
+        writeObject(request, response, contentType, new GenericWritable(object, contentType));
     }
 
     public static void writeObject(HttpServletRequest request, HttpServletResponse response, ServiceResponse sr)
@@ -145,11 +131,6 @@ public class HTTPUtils {
 
         for (Entry<String, String> header : sr.getHeaderMap().entrySet()) {
             response.addHeader(header.getKey(), header.getValue());
-        }
-
-        int contentLength = sr.getContentLength();
-        if (contentLength > -1) {
-            response.setContentLength(contentLength);
         }
 
         if (!sr.isContentLess()) {
@@ -167,11 +148,9 @@ public class HTTPUtils {
             if (supportsGzipEncoding(request) && writable.supportsGZip()) {
                 out = new GZIPOutputStream(out);
                 response.setHeader(HTTPHeaders.CONTENT_ENCODING, HTTPConstants.GZIP_ENCODING);
-                // FIXME content length is unknown when using GZIPOutputStream
-                response.setContentLength(-1);
             }
 
-            writable.write(out);
+            writable.write(out, new ResponseProxy(response));
             out.flush();
         } finally {
             if (out != null) {
@@ -208,18 +187,10 @@ public class HTTPUtils {
         }
 
         @Override
-        public void write(OutputStream out) throws IOException {
-            writer.write(o, out);
+        public void write(OutputStream out, ResponseProxy responseProxy) throws IOException {
+            writer.write(o, out, responseProxy);
         }
 
-        public Map<String, String> getResponseHeaders() {
-            return writer.getResponseHeaders(o);
-        }
-
-        public int getContentLength() {
-            return writer.getContentLength(o);
-        }
-        
         public MediaType getEncodedContentType() {
         	if (o instanceof ResponseFormat) {
         		return writer.getEncodedContentType((ResponseFormat)o);
@@ -236,7 +207,11 @@ public class HTTPUtils {
         }
 
         @Override
-        public void write(OutputStream out) throws IOException {
+        public void write(OutputStream out, ResponseProxy responseProxy) throws IOException {
+            //set content length if not gzipped
+            if (!(out instanceof GZIPOutputStream) && response.getContentLength() > -1) {
+                responseProxy.setContentLength(response.getContentLength());
+            }
             response.writeToOutputStream(out);
         }
 
@@ -252,7 +227,7 @@ public class HTTPUtils {
     }
 
     public interface Writable {
-        void write(OutputStream out) throws IOException;
+        void write(OutputStream out, ResponseProxy responseProxy) throws IOException;
 
         boolean supportsGZip();        
         

@@ -35,7 +35,7 @@ import org.n52.sos.util.StringHelper;
  * 
  * @since 4.0.0
  */
-public abstract class AbstractObservationRequest extends AbstractServiceRequest {
+public abstract class AbstractObservationRequest extends AbstractServiceRequest implements ResponseFormat {
     /**
      * Response format
      */
@@ -56,6 +56,7 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest 
      * 
      * @return response format
      */
+    @Override
     public String getResponseFormat() {
         return responseFormat;
     }
@@ -66,6 +67,7 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest 
      * @param responseFormat
      *            response format
      */
+    @Override
     public void setResponseFormat(String responseFormat) {
         this.responseFormat = responseFormat;
     }
@@ -75,6 +77,7 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest 
      * 
      * @return True if response format is set 
      */
+    @Override
     public boolean isSetResponseFormat() {
         return StringHelper.isNotEmpty(getResponseFormat());
     }

@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
+import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.util.http.MediaType;
 
 /**
@@ -64,6 +65,8 @@ public interface ResponseWriter<T> {
      *            to set
      */
     void setContentType(MediaType contentType);
+    
+    MediaType getEncodedContentType(ResponseFormat responseFormat);
 
     /**
      * Write object t to {@link OutputStream} out

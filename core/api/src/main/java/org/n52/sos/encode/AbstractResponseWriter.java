@@ -32,7 +32,11 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.n52.sos.coding.CodingRepository;
+import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.util.http.MediaType;
+import org.n52.sos.util.http.MediaTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
@@ -46,6 +50,8 @@ import com.google.common.collect.Maps;
  *            generic for the element to write
  */
 public abstract class AbstractResponseWriter<T> implements ResponseWriter<T> {   
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(AbstractResponseWriter.class);
     private MediaType contentType;
 
     @Override
@@ -98,4 +104,26 @@ public abstract class AbstractResponseWriter<T> implements ResponseWriter<T> {
         //return unknown content length by default
         return -1;
     }
+    
+	@Override
+	public MediaType getEncodedContentType(ResponseFormat responseFormat) {
+		if (responseFormat.isSetResponseFormat()) {
+			MediaType contentTypeFromResponseFormat = null;
+			try {
+				contentTypeFromResponseFormat = MediaType.parse(
+						responseFormat.getResponseFormat())
+						.withoutParameters();
+			} catch (IllegalArgumentException iae) {
+				LOGGER.debug("Requested responseFormat {} is not a MediaType",
+						responseFormat.getResponseFormat());
+			}
+			if (contentTypeFromResponseFormat != null) {
+				if (MediaTypes.COMPATIBLE_TYPES.containsEntry(contentTypeFromResponseFormat, getContentType())) {
+					return getContentType();
+				}
+				return contentTypeFromResponseFormat;
+			}
+		}
+		return getContentType();
+	}
 }

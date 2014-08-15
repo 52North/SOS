@@ -46,6 +46,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.n52.sos.encode.ResponseWriter;
 import org.n52.sos.encode.ResponseWriterRepository;
 import org.n52.sos.exception.HTTPException;
+import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.response.ServiceResponse;
 import org.n52.sos.util.CollectionHelper;
 import org.slf4j.Logger;
@@ -159,7 +160,7 @@ public class HTTPUtils {
     public static void writeObject(HttpServletRequest request, HttpServletResponse response, MediaType contentType,
             Writable writable) throws IOException {
         OutputStream out = null;
-        response.setContentType(contentType.toString());
+        response.setContentType(writable.getEncodedContentType().toString());
 
         try {
             out = response.getOutputStream();
@@ -218,6 +219,13 @@ public class HTTPUtils {
         public int getContentLength() {
             return writer.getContentLength(o);
         }
+        
+        public MediaType getEncodedContentType() {
+        	if (o instanceof ResponseFormat) {
+        		return writer.getEncodedContentType((ResponseFormat)o);
+        	}
+        	return writer.getContentType();
+        }
     }
 
     private static class ServiceResponseWritable implements Writable {
@@ -236,12 +244,19 @@ public class HTTPUtils {
         public boolean supportsGZip() {
             return response.supportsGZip();
         }
+
+		@Override
+		public MediaType getEncodedContentType() {
+			return response.getContentType();
+		}
     }
 
     public interface Writable {
         void write(OutputStream out) throws IOException;
 
         boolean supportsGZip();        
+        
+        MediaType getEncodedContentType();
     }
 
 }

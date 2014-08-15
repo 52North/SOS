@@ -28,8 +28,13 @@
  */
 package org.n52.sos.encode;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.util.http.MediaType;
+
+import com.google.common.collect.Maps;
 
 /**
  * Abstract {@link ResponseWriter} class for response streaming
@@ -40,10 +45,9 @@ import org.n52.sos.util.http.MediaType;
  * @param <T>
  *            generic for the element to write
  */
-public abstract class AbstractResponseWriter<T> implements ResponseWriter<T> {
-   
+public abstract class AbstractResponseWriter<T> implements ResponseWriter<T> {   
     private MediaType contentType;
-    
+
     @Override
     public MediaType getContentType() {
         return contentType;
@@ -71,5 +75,27 @@ public abstract class AbstractResponseWriter<T> implements ResponseWriter<T> {
      */
     protected <D, S> Encoder<D, S> getEncoder(EncoderKey key) {
         return CodingRepository.getInstance().getEncoder(key);
+    }
+
+    /**
+     * Return type specific response headers (e.g. filename for downloadable binary attachments)
+     * 
+     * @return Map of response headers to add to response
+     */    
+    @Override
+    public Map<String,String> getResponseHeaders(T t) {
+        //return empty map by default
+        return Collections.unmodifiableMap(Maps.<String,String>newHashMap());
+    }
+
+    /**
+     * Return content length of written response, or -1 for unknown
+     * 
+     * @return Content length of written response, or -1 for unknown
+     */
+    @Override
+    public int getContentLength(T t) {
+        //return unknown content length by default
+        return -1;
     }
 }

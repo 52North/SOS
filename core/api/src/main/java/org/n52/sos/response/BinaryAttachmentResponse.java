@@ -26,48 +26,61 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode.json;
+package org.n52.sos.response;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
-import org.n52.sos.coding.json.JSONUtils;
-import org.n52.sos.encode.AbstractResponseWriter;
 import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
 
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- * TODO JavaDoc
+ * Simple response class for binary data to be included as a response attachment (for download)
  * 
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author Shane StClair <shane@axiomalaska.com>
  * 
- * @since 4.0.0
+ * @since 4.1.0
  */
-public class JSONResponseWriter extends AbstractResponseWriter<JsonNode> {
-    @Override
-    public Class<JsonNode> getType() {
-        return JsonNode.class;
+public class BinaryAttachmentResponse {
+    private byte[] bytes;
+    private MediaType contentType;
+    private String filename;
+
+    public BinaryAttachmentResponse(byte[] bytes, MediaType contentType, String filename) {
+        this.bytes = bytes;
+        this.contentType = contentType;
+        this.filename = filename;
     }
 
-    @Override
-    public void write(JsonNode t, OutputStream out) throws IOException {
-        JSONUtils.print(out, t);
+    public byte[] getBytes() {
+        return bytes;
     }
 
-    @Override
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
+    }
+
     public MediaType getContentType() {
-        return MediaTypes.APPLICATION_JSON;
+        return contentType;
     }
 
-    @Override
     public void setContentType(MediaType contentType) {
-        
+        this.contentType = contentType;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public int getSize() {
+        return bytes == null ? -1 : bytes.length;
     }
 
     @Override
-    public boolean supportsGZip(JsonNode t) {
-        return true;
+    public String toString() {
+        return "BinaryAttachmentResponse [size = " + getSize()
+                + ", contentType=" + contentType
+                + ", filename=" + filename + "]";
     }
 }

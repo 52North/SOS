@@ -42,7 +42,7 @@ import org.n52.sos.util.http.MediaType;
  * 
  * @since 4.0.0
  */
-public class XmlResponseWriter implements ResponseWriter<XmlObject> {
+public class XmlResponseWriter extends AbstractResponseWriter<XmlObject> {
     
     private MediaType contentType;
 

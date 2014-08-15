@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -68,7 +69,7 @@ public class HibernateObservationUtilities {
 
     public static OmObservation createSosObservationFromObservation(Observation<?> o, AbstractObservationRequest r,
             Session s) throws OwsExceptionReport, ConverterException {
-        List<OmObservation> c = new ObservationOmObservationCreator(Sets.newHashSet(o), r, s).create();
+        List<OmObservation> c = new ObservationOmObservationCreator(Arrays.asList(o), r, s).create();
         if (CollectionHelper.isNotEmpty(c)) {
             return c.iterator().next();
         }
@@ -77,7 +78,7 @@ public class HibernateObservationUtilities {
 
     public static OmObservation createSosObservationFromObservation(Observation<?> o, AbstractObservationRequest r,
             Locale l, Session s) throws OwsExceptionReport, ConverterException {
-        List<OmObservation> c = new ObservationOmObservationCreator(Sets.newHashSet(o), r, s).create();
+        List<OmObservation> c = new ObservationOmObservationCreator(Arrays.asList(o), r, s).create();
         if (CollectionHelper.isNotEmpty(c)) {
             return c.iterator().next();
         }

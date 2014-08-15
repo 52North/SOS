@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.util;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -42,11 +43,16 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
-import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
@@ -72,7 +78,8 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
         try {
             observationDAO = DaoFactory.getInstance().getObservationDAO();
             transaction = session.beginTransaction();
-            HibernateObservationBuilder b = new HibernateObservationBuilder(session);
+            HibernateObservationBuilder b;
+            b = new HibernateObservationBuilder(session);
             DateTime begin = new DateTime();
             for (int i = 0; i < 50; ++i) {
                 b.createObservation(String.valueOf(i), begin.plusHours(i));
@@ -96,12 +103,11 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
         try {
             session = getSession();
             transaction = session.beginTransaction();
-            ScrollableIterable<AbstractObservation> i =
-                    ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass(session)));
-            for (AbstractObservation o : i) {
-                session.delete(o);
+            try (ScrollableIterable<Observation<?>> i = ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass(session)))) {
+                for (Observation<?> o : i) {
+                    session.delete(o);
+                }
             }
-            i.close();
             session.flush();
             transaction.commit();
         } catch (HibernateException he) {
@@ -186,4 +192,34 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
             returnSession(session);
         }
     }
+
+    public void testComplexObservation()
+            throws OwsExceptionReport {
+        Set<ObservationConstellation> observationConstellations = null;
+        FeatureOfInterest featureOfInterest = null;
+        OmObservation observation = null;
+        Session session = getSession();
+
+        HibernateObservationBuilder b = new HibernateObservationBuilder(session);
+
+        ObservablePropertyDAO opdao = new ObservablePropertyDAO();
+        ComplexObservationBuilder complexObservationBuilder = new ComplexObservationBuilder();
+        DateTime time = DateTime.now();
+        OmObservation ob = complexObservationBuilder.createComplexObservation(time);
+
+        OmObservationConstellation observationConstellation = ob.getObservationConstellation();
+
+
+        observationDAO.insertObservationSingleValue(
+                observationConstellations,
+                featureOfInterest,
+                observation,
+                session
+        );
+    }
+
+
+
+
+
 }

@@ -50,9 +50,9 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
     private static final long serialVersionUID = -7451818170087729427L;
     protected final ValueDAO valueDAO = new ValueDAO();
     protected final ValueTimeDAO valueTimeDAO = new ValueTimeDAO();
-    protected long procedure;
-    protected long featureOfInterest;
-    protected long observableProperty;
+    protected final long procedure;
+    protected final long featureOfInterest;
+    protected final long observableProperty;
 
     /**
      * constructor
@@ -66,8 +66,10 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
      * @param featureOfInterest
      *            featureOfInterest procedure id
      */
-    public HibernateStreamingValue(GetObservationRequest request, long procedure, long observableProperty,
-            long featureOfInterest) {
+    public HibernateStreamingValue(GetObservationRequest request,
+                                   long procedure,
+                                   long observableProperty,
+                                   long featureOfInterest) {
         super(request);
         this.procedure = procedure;
         this.observableProperty = observableProperty;
@@ -81,21 +83,13 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
             TemporalReferencedLegacyObservation maxTime;
             // query with temporal filter
             if (temporalFilterCriterion != null) {
-                minTime =
-                        valueTimeDAO.getMinValueFor(request, procedure, observableProperty, featureOfInterest,
-                                temporalFilterCriterion, session);
-                maxTime =
-                        valueTimeDAO.getMaxValueFor(request, procedure, observableProperty, featureOfInterest,
-                                temporalFilterCriterion, session);
+                minTime = valueTimeDAO.getMinValueFor(request, procedure, observableProperty, featureOfInterest, temporalFilterCriterion, session);
+                maxTime = valueTimeDAO.getMaxValueFor(request, procedure, observableProperty, featureOfInterest, temporalFilterCriterion, session);
             }
             // query without temporal or indeterminate filters
             else {
-                minTime =
-                        valueTimeDAO
-                                .getMinValueFor(request, procedure, observableProperty, featureOfInterest, session);
-                maxTime =
-                        valueTimeDAO
-                                .getMaxValueFor(request, procedure, observableProperty, featureOfInterest, session);
+                minTime = valueTimeDAO.getMinValueFor(request, procedure, observableProperty, featureOfInterest, session);
+                maxTime = valueTimeDAO.getMaxValueFor(request, procedure, observableProperty, featureOfInterest, session);
             }
             setPhenomenonTime(createPhenomenonTime(minTime, maxTime));
             setResultTime(createResutlTime(maxTime));

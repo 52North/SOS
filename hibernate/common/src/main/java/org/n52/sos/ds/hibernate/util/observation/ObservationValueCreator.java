@@ -2,16 +2,16 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
-import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
+import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.ComplexValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
@@ -34,30 +34,30 @@ import org.n52.sos.util.XmlHelper;
  * @author Christian Autermann
  */
 public class ObservationValueCreator
-        implements ObservationVisitor<Value<?>> {
+        implements ValuedObservationVisitor<Value<?>> {
 
     @Override
-    public QuantityValue visit(NumericObservation o) {
+    public QuantityValue visit(NumericValuedObservation o) {
         return new QuantityValue(o.getValue());
     }
 
     @Override
-    public UnknownValue visit(BlobObservation o) {
+    public UnknownValue visit(BlobValuedObservation o) {
         return new UnknownValue(o.getValue());
     }
 
     @Override
-    public BooleanValue visit(BooleanObservation o) {
+    public BooleanValue visit(BooleanValuedObservation o) {
         return new BooleanValue(o.getValue());
     }
 
     @Override
-    public CategoryValue visit(CategoryObservation o) {
+    public CategoryValue visit(CategoryValuedObservation o) {
         return new CategoryValue(o.getValue());
     }
 
     @Override
-    public ComplexValue visit(ComplexObservation o)
+    public ComplexValue visit(ComplexValuedObservation o)
             throws OwsExceptionReport {
         SweAbstractDataComponentCreator visitor
                 = new SweAbstractDataComponentCreator();
@@ -66,22 +66,22 @@ public class ObservationValueCreator
     }
 
     @Override
-    public CountValue visit(CountObservation o) {
+    public CountValue visit(CountValuedObservation o) {
         return new CountValue(o.getValue());
     }
 
     @Override
-    public GeometryValue visit(GeometryObservation o) {
+    public GeometryValue visit(GeometryValuedObservation o) {
         return new GeometryValue(o.getValue());
     }
 
     @Override
-    public TextValue visit(TextObservation o) {
+    public TextValue visit(TextValuedObservation o) {
         return new TextValue(o.getValue());
     }
 
     @Override
-    public SweDataArrayValue visit(SweDataArrayObservation o)
+    public SweDataArrayValue visit(SweDataArrayValuedObservation o)
             throws OwsExceptionReport {
         XmlObject xml = XmlHelper.parseXmlString(o.getValue());
         SweDataArray array = (SweDataArray) CodingHelper.decodeXmlElement(xml);

@@ -75,12 +75,18 @@ import com.google.common.collect.Lists;
 
 public class EReportingObservationCreator implements AdditionalObservationCreator {
 
-    private static final Set<AdditionalObservationCreatorKey> KEYS = AdditionalObservationCreatorRepository
-            .encoderKeysForElements(AqdConstants.NS_AQD, AbstractEReportingObservation.class, EReportingBlobObservation.class,
-                    EReportingBooleanObservation.class, EReportingCategoryObservation.class,
-                    EReportingCountObservation.class, EReportingGeometryObservation.class,
-                    EReportingNumericObservation.class, EReportingSweDataArrayObservation.class,
-                    EReportingTextObservation.class);
+    private static final Set<AdditionalObservationCreatorKey> KEYS
+            = AdditionalObservationCreatorRepository
+            .encoderKeysForElements(AqdConstants.NS_AQD,
+                                    AbstractEReportingObservation.class,
+                                    EReportingBlobObservation.class,
+                                    EReportingBooleanObservation.class,
+                                    EReportingCategoryObservation.class,
+                                    EReportingCountObservation.class,
+                                    EReportingGeometryObservation.class,
+                                    EReportingNumericObservation.class,
+                                    EReportingSweDataArrayObservation.class,
+                                    EReportingTextObservation.class);
 
     private final EReportingObservationHelper helper
             = new EReportingObservationHelper();

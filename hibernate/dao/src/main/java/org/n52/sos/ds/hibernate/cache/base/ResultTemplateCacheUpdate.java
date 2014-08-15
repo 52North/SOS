@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * <li>'Result template identifier' &rarr; 'observable property' relation</li>
  * <li>'Result template identifier' &rarr; 'feature of interest' relation</li>
  * </ul>
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
@@ -60,7 +60,7 @@ public class ResultTemplateCacheUpdate extends AbstractThreadableDatasourceCache
     public void execute() {
         LOGGER.debug("Executing ResultTemplateCacheUpdate");
         startStopwatch();
-        if (HibernateHelper.isEntitySupported(ResultTemplate.class, getSession())) {
+        if (HibernateHelper.isEntitySupported(ResultTemplate.class)) {
             List<ResultTemplate> resultTemplates = new ResultTemplateDAO().getResultTemplateObjects(getSession());
             for (ResultTemplate resultTemplate : resultTemplates) {
                 String id = resultTemplate.getIdentifier();

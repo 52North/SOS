@@ -38,23 +38,23 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 /**
  * Abstract test class that contains implemented methods
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.0
- * 
- * 
+ *
+ *
  */
 public abstract class ExtendedHibernateTestCase extends HibernateTestCase {
 
     protected static Class<?> getObservationClass(Session session) {
-        if (HibernateHelper.isEntitySupported(AbstractSeriesObservation.class, session)) {
+        if (HibernateHelper.isEntitySupported(AbstractSeriesObservation.class)) {
             return AbstractSeriesObservation.class;
         }
         return AbstractLegacyObservation.class;
     }
 
     protected static Class<?> getObservationInfoClass(Session session) {
-        if (HibernateHelper.isEntitySupported(ContextualReferencedSeriesObservation.class, session)) {
+        if (HibernateHelper.isEntitySupported(ContextualReferencedSeriesObservation.class)) {
             return ContextualReferencedSeriesObservation.class;
         }
         return ContextualReferencedLegacyObservation.class;

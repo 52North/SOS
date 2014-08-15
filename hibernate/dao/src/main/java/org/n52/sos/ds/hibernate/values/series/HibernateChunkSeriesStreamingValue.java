@@ -33,7 +33,9 @@ import java.util.Iterator;
 
 import org.hibernate.HibernateException;
 
+import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.ValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
@@ -45,7 +47,7 @@ import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * Hibernate series streaming value implementation for chunk results
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.2
  *
@@ -54,17 +56,17 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
 
     private static final long serialVersionUID = -1990901204421577265L;
 
-    private Iterator<AbstractValuedLegacyObservation> seriesValuesResult;
+    private Iterator<ValuedSeriesObservation<?>> seriesValuesResult;
 
     private int chunkSize;
 
     private int currentRow;
-    
+
     private boolean noChunk = false;
 
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -100,7 +102,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
             if (hasNextValue()) {
-                AbstractValuedLegacyObservation resultObject = seriesValuesResult.next();
+                ValuedSeriesObservation<?> resultObject = seriesValuesResult.next();
                 TimeValuePair value = createTimeValuePairFrom(resultObject);
                 session.evict(resultObject);
                 return value;
@@ -118,7 +120,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         try {
             if (hasNextValue()) {
                 OmObservation observation = observationTemplate.cloneTemplate();
-                AbstractValuedLegacyObservation resultObject = seriesValuesResult.next();
+                ValuedObservation<?> resultObject = seriesValuesResult.next();
                 addValuesToObservation(observation, resultObject);
                 if (resultObject.hasSamplingGeometry()) {
                     observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
@@ -137,7 +139,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
 
     /**
      * Get the next results from database
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs when querying the next results
      */
@@ -147,7 +149,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         }
         try {
             // query with temporal filter
-            Collection<AbstractValuedLegacyObservation> seriesValuesResult = null;
+            Collection<ValuedSeriesObservation<?>> seriesValuesResult;
             if (temporalFilterCriterion != null) {
                 seriesValuesResult =
                         seriesValueDAO.getStreamingSeriesValuesFor(request, series, temporalFilterCriterion,
@@ -170,11 +172,11 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     /**
      * Check the queried {@link AbstractValuedLegacyObservation}s for null and set them as
      * iterator to local variable.
-     * 
+     *
      * @param seriesValuesResult
      *            Queried {@link AbstractValuedLegacyObservation}s
      */
-    private void setSeriesValuesResult(Collection<AbstractValuedLegacyObservation> seriesValuesResult) {
+    private void setSeriesValuesResult(Collection<ValuedSeriesObservation<?>> seriesValuesResult) {
         if (CollectionHelper.isNotEmpty(seriesValuesResult)) {
             this.seriesValuesResult = seriesValuesResult.iterator();
         }

@@ -31,7 +31,8 @@ package org.n52.sos.ds.hibernate.values;
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
 
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -41,7 +42,7 @@ import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * Hibernate streaming value implementation for {@link ScrollableResults}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  */
@@ -53,7 +54,7 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
 
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param procedure
@@ -88,7 +89,7 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-            AbstractValuedLegacyObservation resultObject = (AbstractValuedLegacyObservation) scrollableResult.get()[0];
+            Observation<?> resultObject = (Observation<?>) scrollableResult.get()[0];
             TimeValuePair value = createTimeValuePairFrom(resultObject);
             session.evict(resultObject);
             return value;
@@ -103,7 +104,7 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     public OmObservation nextSingleObservation() throws OwsExceptionReport {
         try {
             OmObservation observation = observationTemplate.cloneTemplate();
-            AbstractValuedLegacyObservation resultObject = (AbstractValuedLegacyObservation) scrollableResult.get()[0];
+            ValuedObservation<?> resultObject = (ValuedObservation<?>) scrollableResult.get()[0];
             addValuesToObservation(observation, resultObject);
             if (resultObject.hasSamplingGeometry()) {
                 observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
@@ -120,7 +121,7 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
 
     /**
      * Get the next results from database
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs when querying the next results
      */
@@ -148,7 +149,7 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
 
     /**
      * Set the queried {@link ScrollableResults} to local variable
-     * 
+     *
      * @param scrollableResult
      *            Queried {@link ScrollableResults}
      */

@@ -64,6 +64,7 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.n52.sos.cache.ctrl.ContentCacheControllerImpl;
 import org.n52.sos.cache.ctrl.action.ObservationInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultInsertionUpdate;
@@ -97,7 +98,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a> Test after DeleteObservation => not possible with
  *         InMemory because of bounding box issues, for example.
- * 
+ *
  * @since 4.0.0
  */
 public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
@@ -111,7 +112,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     private static final String OBSERVATION_TYPE_2 = "test-observation-type-2";
 
     private static final String OBSERVATION_TYPE = "test-observation-type";
-    
+
     private static final String FEATURE_OF_INTEREST_TYPE = "test-featureOfInterest-type";
 
     private static final String OFFERING_NAME_EXTENSION = "-offering-name";
@@ -134,7 +135,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
     private static final String OFFERING = PROCEDURE + OFFERING_IDENTIFIER_EXTENSION;
 
-    private AbstractServiceRequest request;
+    private AbstractServiceRequest<?> request;
 
     private ContentCacheControllerImpl controller;
 

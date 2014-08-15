@@ -59,7 +59,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Implementatio of {@link XmlStreamWriter} for {@link GetObservationResponse}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
@@ -76,7 +76,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
 
     /**
      * constructor
-     * 
+     *
      * @param response
      *            {@link GetObservationResponse} to write to stream
      */
@@ -115,7 +115,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
 
     /**
      * Set the {@link GetObservationResponse} to be written to stream
-     * 
+     *
      * @param response
      *            {@link GetObservationResponse} to write to stream
      */
@@ -125,7 +125,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
 
     /**
      * Get the {@link GetObservationResponse} to write to stream
-     * 
+     *
      * @return {@link GetObservationResponse} to write
      */
     protected GetObservationResponse getResponse() {
@@ -226,7 +226,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
             ((StreamingEncoder<XmlObject, OmObservation>) encoder).encode(observation, getOutputStream(),
                     encodingValues.setAsDocument(true).setEmbedded(true).setIndent(indent));
         } else {
-            rawText(((XmlObject) encoder.encode(observation, encodingValues.getAdditionalValues()))
+            rawText(encoder.encode(observation, encodingValues.getAdditionalValues())
                     .xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
         }
         indent--;
@@ -237,12 +237,12 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
 
     /**
      * Finds a O&Mv2 compatible {@link ObservationEncoder}
-     * 
+     *
      * @param responseFormat
      *            the response format
-     * 
+     *
      * @return the encoder or {@code null} if none is found
-     * 
+     *
      * @throws OwsExceptionReport
      *             if the found encoder is not a {@linkplain ObservationEncoder}
      */

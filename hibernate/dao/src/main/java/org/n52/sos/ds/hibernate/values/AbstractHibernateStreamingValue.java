@@ -33,7 +33,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
@@ -41,15 +40,12 @@ import org.joda.time.DateTimeZone;
 
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
+import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
@@ -61,22 +57,17 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.TimeValuePair;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.OMHelper;
-import org.n52.sos.util.XmlHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract class for streaming values
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
@@ -91,13 +82,13 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
 
     protected OmObservation observationTemplate;
 
-    protected GetObservationRequest request;
+    protected final GetObservationRequest request;
 
     protected Criterion temporalFilterCriterion;
 
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      */
@@ -107,7 +98,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
 
     /**
      * Set the observation template which contains all metadata
-     * 
+     *
      * @param observationTemplate
      *            Observation template to set
      */
@@ -117,7 +108,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
 
     /**
      * Set the temporal filter {@link Criterion}
-     * 
+     *
      * @param temporalFilterCriterion
      *            Temporal filter {@link Criterion}
      */
@@ -128,20 +119,20 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
 
     /**
      * Create a {@link TimeValuePair} from {@link AbstractValuedLegacyObservation}
-     * 
+     *
      * @param abstractValue
      *            {@link AbstractValuedLegacyObservation} to create {@link TimeValuePair} from
      * @return resulting {@link TimeValuePair}
      * @throws OwsExceptionReport
      *             If an error occurs when getting the value
      */
-    protected TimeValuePair createTimeValuePairFrom(AbstractValuedLegacyObservation abstractValue) throws OwsExceptionReport {
+    protected TimeValuePair createTimeValuePairFrom(ValuedObservation<?> abstractValue) throws OwsExceptionReport {
         return new TimeValuePair(createPhenomenonTime(abstractValue), getValueFrom(abstractValue));
     }
 
     /**
      * Add {@link AbstractValuedLegacyObservation} data to {@link OmObservation}
-     * 
+     *
      * @param observation
      *            {@link OmObservation} to add data
      * @param abstractValue
@@ -150,7 +141,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
      *             If an error occurs when getting the value
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected void addValuesToObservation(OmObservation observation, AbstractValuedLegacyObservation abstractValue)
+    protected void addValuesToObservation(OmObservation observation, ValuedObservation<?> abstractValue)
             throws OwsExceptionReport {
         observation.setObservationID(Long.toString(abstractValue.getObservationId()));
         if (abstractValue.isSetIdentifier()) {
@@ -169,20 +160,19 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
         }
         observation.setResultTime(createResutlTime(abstractValue.getResultTime()));
         observation.setValidTime(createValidTime(abstractValue.getValidTimeStart(), abstractValue.getValidTimeEnd()));
-        observation.setValue(new SingleObservationValue(createPhenomenonTime(abstractValue),
-                value));
+        observation.setValue(new SingleObservationValue(createPhenomenonTime(abstractValue), value));
     }
 
     /**
      * Get the observation ids from {@link AbstractValuedLegacyObservation}s
-     * 
+     *
      * @param abstractValuesResult
      *            {@link AbstractValuedLegacyObservation}s to get ids from
      * @return Set with ids
      */
-    protected Set<Long> getObservationIds(Collection<AbstractValuedLegacyObservation> abstractValuesResult) {
-        Set<Long> ids = new HashSet<Long>();
-        for (AbstractValuedLegacyObservation abstractValue : abstractValuesResult) {
+    protected Set<Long> getObservationIds(Collection<? extends BaseObservation> abstractValuesResult) {
+        Set<Long> ids = new HashSet<>(abstractValuesResult.size());
+        for (BaseObservation abstractValue : abstractValuesResult) {
             ids.add(abstractValue.getObservationId());
         }
         return ids;
@@ -190,12 +180,12 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
 
     /**
      * Create the phenomenon time from {@link AbstractValuedLegacyObservation}
-     * 
+     *
      * @param abstractValue
      *            {@link AbstractValuedLegacyObservation} for get time from
      * @return phenomenon time
      */
-    protected Time createPhenomenonTime(AbstractValuedLegacyObservation abstractValue) {
+    protected Time createPhenomenonTime(TemporalReferencedObservation abstractValue) {
         // create time element
         final DateTime phenStartTime = new DateTime(abstractValue.getPhenomenonTimeStart(), DateTimeZone.UTC);
         DateTime phenEndTime;
@@ -209,14 +199,14 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
 
     /**
      * Create phenomenon time from min and max {@link AbstractTemporalReferencedObservation}s
-     * 
+     *
      * @param minTime
      *            minimum {@link AbstractTemporalReferencedObservation}
      * @param maxTime
      *            maximum {@link AbstractTemporalReferencedObservation}
      * @return phenomenon time
      */
-    protected Time createPhenomenonTime(AbstractTemporalReferencedObservation minTime, AbstractTemporalReferencedObservation maxTime) {
+    protected Time createPhenomenonTime(TemporalReferencedObservation minTime, TemporalReferencedObservation maxTime) {
         // create time element
         final DateTime phenStartTime = new DateTime(minTime.getPhenomenonTimeStart(), DateTimeZone.UTC);
         DateTime phenEndTime;
@@ -230,19 +220,19 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
 
     /**
      * Create result time from {@link AbstractTemporalReferencedObservation}
-     * 
+     *
      * @param maxTime
      *            {@link AbstractTemporalReferencedObservation} to create result time from
      * @return result time
      */
-    protected TimeInstant createResutlTime(AbstractTemporalReferencedObservation maxTime) {
+    protected TimeInstant createResutlTime(TemporalReferencedObservation maxTime) {
         DateTime dateTime = new DateTime(maxTime.getResultTime(), DateTimeZone.UTC);
         return new TimeInstant(dateTime);
     }
 
     /**
      * Create result time from {@link Date}
-     * 
+     *
      * @param date
      *            {@link Date} to create result time from
      * @return result time
@@ -254,14 +244,14 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
 
     /**
      * Create valid time from min and max {@link AbstractTemporalReferencedObservation}s
-     * 
+     *
      * @param minTime
      *            minimum {@link AbstractTemporalReferencedObservation}
      * @param maxTime
      *            maximum {@link AbstractTemporalReferencedObservation}
      * @return valid time or null if valid time is not set in datasource
      */
-    protected Time createValidTime(AbstractTemporalReferencedObservation minTime, AbstractTemporalReferencedObservation maxTime) {
+    protected Time createValidTime(TemporalReferencedObservation minTime, TemporalReferencedObservation maxTime) {
         // create time element
         if (minTime.getValidTimeStart() != null && maxTime.getValidTimeEnd() != null) {
             final DateTime startTime = new DateTime(minTime.getValidTimeStart(), DateTimeZone.UTC);
@@ -273,7 +263,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
 
     /**
      * Create {@link TimePeriod} from {@link Date}s
-     * 
+     *
      * @param start
      *            Start {@link Date}
      * @param end
@@ -292,7 +282,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
 
     /**
      * Create {@link Time} from {@link DateTime}s
-     * 
+     *
      * @param start
      *            Start {@link DateTime}
      * @param end
@@ -309,7 +299,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
 
     /**
      * Get internal {@link Value} from {@link AbstractValuedLegacyObservation}
-     * 
+     *
      * @param abstractValue
      *            {@link AbstractValuedLegacyObservation} to get {@link Value} from
      * @return {@link Value} or null if the concrete {@link AbstractValuedLegacyObservation} is
@@ -318,40 +308,17 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
      *             If an error occurs when creating
      *             {@link org.n52.sos.ogc.om.values.SweDataArrayValue}
      */
-    protected Value<?> getValueFrom(AbstractValuedLegacyObservation abstractValue) throws OwsExceptionReport {
-        Value<?> value = null;
-        if (abstractValue instanceof NumericValuedObservation) {
-            value = new QuantityValue(((NumericValuedObservation) abstractValue).getValue());
-        } else if (abstractValue instanceof BooleanValuedObservation) {
-            value =
-                    new org.n52.sos.ogc.om.values.BooleanValue(Boolean.valueOf(((BooleanValuedObservation) abstractValue)
-                            .getValue()));
-        } else if (abstractValue instanceof CategoryValuedObservation) {
-            value = new org.n52.sos.ogc.om.values.CategoryValue(((CategoryValuedObservation) abstractValue).getValue());
-        } else if (abstractValue instanceof CountValuedObservation) {
-            value = new org.n52.sos.ogc.om.values.CountValue(Integer.valueOf(((CountValuedObservation) abstractValue).getValue()));
-        } else if (abstractValue instanceof TextValuedObservation) {
-            value = new org.n52.sos.ogc.om.values.TextValue(((TextValuedObservation) abstractValue).getValue().toString());
-        } else if (abstractValue instanceof GeometryValuedObservation) {
-            value = new org.n52.sos.ogc.om.values.GeometryValue(((GeometryValuedObservation) abstractValue).getValue());
-        } else if (abstractValue instanceof BlobValuedObservation) {
-            value = new UnknownValue(((BlobValuedObservation) abstractValue).getValue());
-        } else if (abstractValue instanceof SweDataArrayValuedObservation) {
-            org.n52.sos.ogc.om.values.SweDataArrayValue sweDataArrayValue =
-                    new org.n52.sos.ogc.om.values.SweDataArrayValue();
-            final XmlObject xml = XmlHelper.parseXmlString(((SweDataArrayValuedObservation) abstractValue).getValue());
-            sweDataArrayValue.setValue((SweDataArray) CodingHelper.decodeXmlElement(xml));
-            value = sweDataArrayValue;
-        }
+    protected Value<?> getValueFrom(ValuedObservation<?> abstractValue) throws OwsExceptionReport {
+        Value<?> value = abstractValue.accept(new ObservationValueCreator());
         if (value != null && abstractValue.isSetUnit()) {
             value.setUnit(abstractValue.getUnit().getUnit());
         }
         return value;
     }
-    
+
     protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
             throws OwsExceptionReport {
-        final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
+        final NamedValue<Geometry> namedValue = new NamedValue<>();
         final ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
         namedValue.setName(referenceType);
         // TODO add lat/long version

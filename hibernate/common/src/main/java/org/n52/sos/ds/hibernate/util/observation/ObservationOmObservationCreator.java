@@ -260,7 +260,11 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
      */
     private Value<?> getValueFromObservation(Observation<?> hObservation)
             throws OwsExceptionReport {
-        return hObservation.accept(new ObservationValueCreator());
+        Value<?> value = hObservation.accept(new ObservationValueCreator());
+        if (value != null && hObservation.isSetUnit()) {
+            value.setUnit(hObservation.getUnit().getUnit());
+        }
+        return value;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

@@ -33,7 +33,7 @@ import java.io.Serializable;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSrid;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.util.StringHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -44,7 +44,7 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
 
     private static final long serialVersionUID = 8483088637171898375L;
 
-    private AbstractObservation observation;
+    private Observation<?> observation;
 
     private long spatialFilteringProfileId;
 
@@ -86,7 +86,7 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
      *
      * @return Related observation
      */
-    public AbstractObservation getObservation() {
+    public Observation<?> getObservation() {
         return observation;
     }
 
@@ -96,7 +96,7 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
      * @param observation
      *            Related observation
      */
-    public void setObservation(AbstractObservation observation) {
+    public void setObservation(Observation<?> observation) {
         this.observation = observation;
     }
 

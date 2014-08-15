@@ -47,7 +47,6 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
@@ -56,20 +55,22 @@ import org.n52.sos.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
+
 /**
  * Implementation of {@link AbstractValueDAO} for old concept
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
  */
 public class ValueDAO extends AbstractValueDAO {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ValueDAO.class);
 
     /**
      * Query streaming value for parameter as {@link ScrollableResults}
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param procedure
@@ -97,7 +98,7 @@ public class ValueDAO extends AbstractValueDAO {
 
     /**
      * Query streaming value for parameter as {@link ScrollableResults}
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param procedure
@@ -120,7 +121,7 @@ public class ValueDAO extends AbstractValueDAO {
 
     /**
      * Query streaming value for parameter as chunk {@link List}
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param procedure
@@ -142,7 +143,7 @@ public class ValueDAO extends AbstractValueDAO {
      *             If an error occurs when querying the {@link AbstractValuedLegacyObservation}s
      */
     @SuppressWarnings("unchecked")
-    public List<AbstractValuedLegacyObservation> getStreamingValuesFor(GetObservationRequest request, long procedure,
+    public List<ValuedObservation<?>> getStreamingValuesFor(GetObservationRequest request, long procedure,
             long observableProperty, long featureOfInterest, Criterion temporalFilterCriterion, int chunkSize,
             int currentRow, Session session) throws OwsExceptionReport {
         Criteria c =
@@ -150,12 +151,12 @@ public class ValueDAO extends AbstractValueDAO {
                         temporalFilterCriterion, session);
         addChunkValuesToCriteria(c, chunkSize, currentRow);
         LOGGER.debug("QUERY getStreamingValuesFor(): {}", HibernateHelper.getSqlString(c));
-        return (List<AbstractValuedLegacyObservation>) c.list();
+        return (List<ValuedObservation<?>>) c.list();
     }
 
     /**
      * Query streaming value for parameter as chunk {@link List}
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param procedure
@@ -175,18 +176,18 @@ public class ValueDAO extends AbstractValueDAO {
      *             If an error occurs when querying the {@link AbstractValuedLegacyObservation}s
      */
     @SuppressWarnings("unchecked")
-    public List<AbstractValuedLegacyObservation> getStreamingValuesFor(GetObservationRequest request, long procedure,
+    public List<ValuedObservation<?>> getStreamingValuesFor(GetObservationRequest request, long procedure,
             long observableProperty, long featureOfInterest, int chunkSize, int currentRow, Session session)
             throws OwsExceptionReport {
         Criteria c = getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest, null, session);
         addChunkValuesToCriteria(c, chunkSize, currentRow);
         LOGGER.debug("QUERY getStreamingValuesFor(): {}", HibernateHelper.getSqlString(c));
-        return (List<AbstractValuedLegacyObservation>) c.list();
+        return (List<ValuedObservation<?>>) c.list();
     }
 
     /**
      * Get {@link Criteria} for parameter
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param procedure
@@ -234,7 +235,7 @@ public class ValueDAO extends AbstractValueDAO {
 
     /**
      * Get default {@link Criteria} for {@link Class}
-     * 
+     *
      * @param clazz
      *            {@link Class} to get default {@link Criteria} for
      * @param session
@@ -248,7 +249,7 @@ public class ValueDAO extends AbstractValueDAO {
 
     /**
      * Query unit for parameter
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param procedure

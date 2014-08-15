@@ -53,9 +53,11 @@ import org.n52.sos.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.sos.ds.hibernate.entities.observation.series.ValuedSeriesObservation;
+
 /**
  * Implementation of {@link AbstractValueDAO} for series concept
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
@@ -66,7 +68,7 @@ public class SeriesValueDAO extends AbstractValueDAO {
 
     /**
      * Query streaming value for parameter as {@link ScrollableResults}
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -89,7 +91,7 @@ public class SeriesValueDAO extends AbstractValueDAO {
 
     /**
      * Query streaming value for parameter as {@link ScrollableResults}
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -107,7 +109,7 @@ public class SeriesValueDAO extends AbstractValueDAO {
 
     /**
      * Query streaming value for parameter as chunk {@link List}
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -125,18 +127,18 @@ public class SeriesValueDAO extends AbstractValueDAO {
      *             If an error occurs when querying the {@link AbstractValuedLegacyObservation}s
      */
     @SuppressWarnings("unchecked")
-    public List<AbstractValuedLegacyObservation> getStreamingSeriesValuesFor(GetObservationRequest request, long series,
+    public List<ValuedSeriesObservation<?>> getStreamingSeriesValuesFor(GetObservationRequest request, long series,
             Criterion temporalFilterCriterion, int chunkSize, int currentRow, Session session)
             throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session);
         addChunkValuesToCriteria(c, chunkSize, currentRow);
         LOGGER.debug("QUERY getStreamingSeriesValuesFor(): {}", HibernateHelper.getSqlString(c));
-        return (List<AbstractValuedLegacyObservation>) c.list();
+        return (List<ValuedSeriesObservation<?>>) c.list();
     }
 
     /**
      * Query streaming value for parameter as chunk {@link List}
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -152,17 +154,17 @@ public class SeriesValueDAO extends AbstractValueDAO {
      *             If an error occurs when querying the {@link AbstractValuedLegacyObservation}s
      */
     @SuppressWarnings("unchecked")
-    public List<AbstractValuedLegacyObservation> getStreamingSeriesValuesFor(GetObservationRequest request, long series, int chunkSize,
+    public List<ValuedSeriesObservation<?>> getStreamingSeriesValuesFor(GetObservationRequest request, long series, int chunkSize,
             int currentRow, Session session) throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(request, series, null, session);
         addChunkValuesToCriteria(c, chunkSize, currentRow);
         LOGGER.debug("QUERY getStreamingSeriesValuesFor(): {}", HibernateHelper.getSqlString(c));
-        return (List<AbstractValuedLegacyObservation>) c.list();
+        return (List<ValuedSeriesObservation<?>>) c.list();
     }
 
     /**
      * Get {@link Criteria} for parameter
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -200,7 +202,7 @@ public class SeriesValueDAO extends AbstractValueDAO {
 
     /**
      * Get default {@link Criteria} for {@link Class}
-     * 
+     *
      * @param clazz
      *            {@link Class} to get default {@link Criteria} for
      * @param session
@@ -214,7 +216,7 @@ public class SeriesValueDAO extends AbstractValueDAO {
 
     /**
      * Query unit for parameter
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series

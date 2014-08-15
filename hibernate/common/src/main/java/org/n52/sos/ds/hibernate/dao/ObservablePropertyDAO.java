@@ -28,13 +28,16 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
-
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
@@ -43,17 +46,21 @@ import org.hibernate.criterion.Subqueries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.TObservableProperty;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.CodedException;
+import org.n52.sos.ogc.om.AbstractPhenomenon;
+import org.n52.sos.ogc.om.OmCompositePhenomenon;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
@@ -100,7 +107,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     public List<String> getObservablePropertyIdentifiersForOffering(final String offeringIdentifier,
             final Session session) throws OwsExceptionReport {
         final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class);
-        Criteria c = null;
+        Criteria c;
 
         if (flag) {
             c = getDefaultCriteria(session);
@@ -142,7 +149,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     public List<String> getObservablePropertyIdentifiersForProcedure(final String procedureIdentifier,
             final Session session) {
         final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class);
-        Criteria c = null;
+        Criteria c;
         if (flag) {
             c = getDefaultCriteria(session);
             c.setProjection(Projections.distinct(Projections.property(ObservableProperty.IDENTIFIER)));
@@ -237,31 +244,107 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
      *            Hibernate session
      * @return Observable property objects
      */
-    public List<ObservableProperty> getOrInsertObservableProperty(final List<OmObservableProperty> observableProperty,
-            final Session session) {
-        final List<String> identifiers = new ArrayList<String>(observableProperty.size());
-        for (final OmObservableProperty sosObservableProperty : observableProperty) {
-            identifiers.add(sosObservableProperty.getIdentifierCodeWithAuthority().getValue());
-        }
-        final List<ObservableProperty> obsProps = getObservableProperties(identifiers, session);
-        for (final OmObservableProperty sosObsProp : observableProperty) {
-            boolean exists = false;
-            for (final ObservableProperty obsProp : obsProps) {
-                if (obsProp.getIdentifier().equals(sosObsProp.getIdentifierCodeWithAuthority().getValue())) {
-                    exists = true;
-                    break;
-                }
-            }
-            if (!exists) {
-                final ObservableProperty obsProp = new ObservableProperty();
+    public List<ObservableProperty> getOrInsertObservableProperty(
+            List<? extends AbstractPhenomenon> observableProperty, Session session) {
+        Map<String, ObservableProperty> existing = getExistingObservableProperties(observableProperty, session);
+        insertNonExisting(observableProperty, existing, session);
+        insertHierachy(observableProperty, existing, session);
+        return new ArrayList<>(existing.values());
+    }
+
+    protected void insertNonExisting(
+            List<? extends AbstractPhenomenon> observableProperty,
+            Map<String, ObservableProperty> existing,
+            Session session)
+            throws HibernateException {
+        for (AbstractPhenomenon sosObsProp : observableProperty) {
+            if (!existing.containsKey(sosObsProp.getIdentifier())) {
+                TObservableProperty obsProp = new TObservableProperty();
                 addIdentifierNameDescription(sosObsProp, obsProp, session);
                 session.save(obsProp);
                 session.flush();
                 session.refresh(obsProp);
-                obsProps.add(obsProp);
+                existing.put(obsProp.getIdentifier(), obsProp);
+            }
+            if (sosObsProp instanceof OmCompositePhenomenon) {
+                insertNonExisting(((OmCompositePhenomenon) sosObsProp)
+                        .getPhenomenonComponents(), existing, session);
             }
         }
-        return obsProps;
+    }
+
+    protected Map<String, ObservableProperty> getExistingObservableProperties(
+            List<? extends AbstractPhenomenon> observableProperty,
+            Session session) {
+        List<String> identifiers = getIdentifiers(observableProperty);
+        return getObservablePropertiesAsMap(identifiers, session);
+    }
+
+    protected List<String> getIdentifiers(List<? extends AbstractPhenomenon> observableProperty) {
+        List<String> identifiers = new ArrayList<>(observableProperty.size());
+        for (AbstractPhenomenon sosObservableProperty : observableProperty) {
+            identifiers.add(sosObservableProperty.getIdentifier());
+            if (sosObservableProperty instanceof OmCompositePhenomenon) {
+                OmCompositePhenomenon parent
+                        = (OmCompositePhenomenon) sosObservableProperty;
+                for (OmObservableProperty child : parent.getPhenomenonComponents()) {
+                    identifiers.add(child.getIdentifier());
+                }
+            }
+        }
+        return identifiers;
+    }
+
+    protected void insertHierachy(List<? extends AbstractPhenomenon> observableProperty,
+                                  Map<String, ObservableProperty> existing,
+                                  Session session) {
+        Set<ObservableProperty> toSave = new HashSet<>(existing.size());
+        for (AbstractPhenomenon sosObsProp : observableProperty) {
+            if (sosObsProp instanceof OmCompositePhenomenon) {
+                OmCompositePhenomenon parent = (OmCompositePhenomenon) sosObsProp;
+                TObservableProperty parentObsProp = getTObservableProperty(parent.getIdentifier(), existing, session);
+                for (OmObservableProperty child : parent.getPhenomenonComponents()) {
+                    TObservableProperty childObsProp = getTObservableProperty(child.getIdentifier(), existing, session);
+                    childObsProp.addParent(parentObsProp);
+                    parentObsProp.addChild(childObsProp);
+                    toSave.add(childObsProp);
+                }
+                toSave.add(parentObsProp);
+            }
+        }
+        for (ObservableProperty obsProp: toSave) {
+            session.save(obsProp);
+        }
+    }
+
+    private TObservableProperty getTObservableProperty(String identifier, Map<String, ObservableProperty> observableProperties, Session session) {
+        if (identifier == null) {
+            return null;
+        }
+        ObservableProperty observableProperty = observableProperties.get(identifier);
+        if (observableProperty instanceof TObservableProperty) {
+            return (TObservableProperty) observableProperty;
+        }
+        TObservableProperty tObservableProperty = getTObservableProperty(observableProperty, session);
+        observableProperties.put(identifier, tObservableProperty);
+        return tObservableProperty;
+    }
+
+    protected TObservableProperty getTObservableProperty(
+            ObservableProperty observableProperty, Session session)
+            throws HibernateException {
+        long id = observableProperty.getObservablePropertyId();
+        return (TObservableProperty) session.get(TObservableProperty.class, id);
+    }
+
+    protected Map<String, ObservableProperty> getObservablePropertiesAsMap(
+            List<String> identifiers, Session session) {
+        List<ObservableProperty> obsProps = getObservableProperties(identifiers, session);
+        Map<String, ObservableProperty> existing = new HashMap<>(identifiers.size());
+        for (ObservableProperty obsProp  : obsProps) {
+            existing.put(obsProp.getIdentifier(), obsProp);
+        }
+        return existing;
     }
 
     /**

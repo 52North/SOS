@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
@@ -40,12 +41,11 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public class TFeatureOfInterest extends FeatureOfInterest implements
-        HasParentChilds<FeatureOfInterest, TFeatureOfInterest> {
+        HasParentChilds<FeatureOfInterest> {
     private static final long serialVersionUID = -880472749711995015L;
 
     private Set<FeatureOfInterest> childs = Sets.newHashSet();
     private Set<FeatureOfInterest> parents = Sets.newHashSet();
-
 
     @Override
     public Set<FeatureOfInterest> getParents() {
@@ -65,5 +65,27 @@ public class TFeatureOfInterest extends FeatureOfInterest implements
     @Override
     public void setChilds(final Set<FeatureOfInterest> childs) {
         this.childs = childs;
+    }
+
+    @Override
+    public void addParent(FeatureOfInterest parent) {
+        if (parent == null) {
+            return;
+        }
+        if (this.parents == null) {
+            this.parents = new HashSet<>();
+        }
+        this.parents.add(parent);
+    }
+
+    @Override
+    public void addChild(FeatureOfInterest child) {
+        if (child == null) {
+            return;
+        }
+        if (this.childs == null) {
+            this.childs = new HashSet<>();
+        }
+        this.childs.add(child);
     }
 }

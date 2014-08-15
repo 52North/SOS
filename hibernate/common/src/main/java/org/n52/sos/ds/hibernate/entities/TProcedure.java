@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
@@ -41,7 +42,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public class TProcedure extends Procedure implements HasValidProcedureTimes,
-                                                     HasParentChilds<Procedure, TProcedure> {
+                                                     HasParentChilds<Procedure> {
 
     private static final long serialVersionUID = 3307492687846686350L;
 
@@ -86,6 +87,28 @@ public class TProcedure extends Procedure implements HasValidProcedureTimes,
     @Override
     public void setChilds(Set<Procedure> childs) {
         this.childs = childs;
+    }
+
+    @Override
+    public void addParent(Procedure parent) {
+        if (parent == null) {
+            return;
+        }
+        if (this.parents == null) {
+            this.parents = new HashSet<>();
+        }
+        this.parents.add(parent);
+    }
+
+    @Override
+    public void addChild(Procedure child) {
+        if (child == null) {
+            return;
+        }
+        if (this.childs == null) {
+            this.childs = new HashSet<>();
+        }
+        this.childs.add(child);
     }
 
 }

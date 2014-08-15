@@ -571,7 +571,7 @@ public interface HibernateRelations {
                 Set<ValidProcedureTime> validProcedureTimes);
     }
 
-    interface HasParentChilds<T, S> {
+    interface HasParentChilds<T> {
         String PARENTS = "parents";
 
         String CHILDS = "childs";
@@ -580,9 +580,13 @@ public interface HibernateRelations {
 
         void setParents(Set<T> parents);
 
+        void addParent(T parent);
+
         Set<T> getChilds();
 
         void setChilds(Set<T> childs);
+
+        void addChild(T child);
     }
 
     interface HasObservationId {

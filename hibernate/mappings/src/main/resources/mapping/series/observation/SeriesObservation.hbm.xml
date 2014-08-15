@@ -62,10 +62,10 @@
         	<property name="value" type="org.hibernate.type.TrueFalseType"/>
         </joined-subclass>
 
-	<!--<joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesArrayObservation" extends="org.n52.sos.ds.hibernate.entities.series.SeriesObservation" table="arrayValue">
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesArrayObservation" extends="org.n52.sos.ds.hibernate.entities.series.SeriesObservation" table="arrayValue">
         	<key column="observationId" foreign-key="observationArrayValueFk" />
-        	<property name="value" type="array"/>
-        </joined-subclass>-->
+        	<property name="value" type="org.n52.sos.hibernate.usertype.HibernateMArrayType"/>
+        </joined-subclass>
 
 		<joined-subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesCategoryObservation" extends="org.n52.sos.ds.hibernate.entities.series.SeriesObservation" table="categoryValue">
         	<key column="observationId" foreign-key="observationCategoryValueFk" />

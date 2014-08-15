@@ -70,7 +70,7 @@
 
 	<joined-subclass name="org.n52.sos.ds.hibernate.entities.values.ObservationArrayValue" extends="org.n52.sos.ds.hibernate.entities.values.ObservationValue" table="arrayValue">
         	<key column="observationId" foreign-key="observationArrayValueFk" />
-        	<property name="value" type="array"/>
+        	<property name="value" type="org.n52.sos.hibernate.usertype.HibernateMArrayType"/>
         </joined-subclass>
 
 		<joined-subclass name="org.n52.sos.ds.hibernate.entities.values.ObservationCategoryValue" extends="org.n52.sos.ds.hibernate.entities.values.ObservationValue" table="categoryValue">

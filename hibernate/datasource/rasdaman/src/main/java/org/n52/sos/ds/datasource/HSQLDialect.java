@@ -75,14 +75,11 @@ import org.hibernate.exception.spi.ViolatedConstraintNameExtracter;
 //import org.hibernate.exception.ViolatedConstraintNameExtracter;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.internal.util.ReflectHelper;
-import org.hsqldb.jdbc.JDBCMArray;
 
 import java.sql.Types;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import rasj.RasGMArray;
 
 /**
  * An SQL dialect compatible with HSQLDB (HyperSQL).
@@ -138,6 +135,7 @@ public class HSQLDialect extends Dialect {
 		registerColumnType( Types.TIMESTAMP, "timestamp" );
 		registerColumnType( Types.VARCHAR, "varchar($l)" );
 		registerColumnType( Types.VARBINARY, "varbinary($l)" );
+		registerColumnType(Types.ARRAY, "varchar(40) array");
 
 
 

@@ -29,10 +29,11 @@
 package org.n52.sos.ds.hibernate.entities.observation.full;
 
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
 
 /**
  * A full {@link Observation} that holds a string value.
  *
  * @author Christian Autermann
  */
-public interface TextObservation extends Observation<String> {}
+public interface TextObservation extends TextValuedObservation, Observation<String> {}

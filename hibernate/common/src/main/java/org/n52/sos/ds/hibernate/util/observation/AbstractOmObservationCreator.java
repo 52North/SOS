@@ -71,16 +71,13 @@ public abstract class AbstractOmObservationCreator {
     private final Locale i18n;
 
     public AbstractOmObservationCreator(String version, Session session) {
-        super();
-        this.version = version;
-        this.session = session;
-        this.i18n = ServiceConfiguration.getInstance().getDefaultLanguage();
+        this(version, null, session);
     }
 
     public AbstractOmObservationCreator(String version, Locale i18n, Session session) {
         this.version = version;
         this.session = session;
-        this.i18n = i18n;
+        this.i18n = i18n == null ?  ServiceConfiguration.getInstance().getDefaultLanguage() : i18n;
     }
 
     protected ContentCache getCache() {
@@ -122,10 +119,9 @@ public abstract class AbstractOmObservationCreator {
         return i18n;
     }
 
-    
-    protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
-            throws OwsExceptionReport {
-        final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
+
+    protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry) throws OwsExceptionReport {
+        final NamedValue<Geometry> namedValue = new NamedValue<>();
         final ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
         namedValue.setName(referenceType);
         // TODO add lat/long version
@@ -134,8 +130,8 @@ public abstract class AbstractOmObservationCreator {
                 .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
         return namedValue;
     }
-    
-    
+
+
     protected OmObservableProperty createObservableProperty(ObservableProperty observableProperty) {
         String phenID = observableProperty.getIdentifier();
         String description = observableProperty.getDescription();
@@ -146,10 +142,10 @@ public abstract class AbstractOmObservationCreator {
         }
         return omObservableProperty;
     }
-    
+
     /**
      * Get procedure object from series
-     * @param encodeProcedureInObservation 
+     * @param identifier
      *
      * @return Procedure object
      * @throws ConverterException
@@ -171,10 +167,11 @@ public abstract class AbstractOmObservationCreator {
             return sosProcedure;
         }
     }
-    
+
     /**
      * Get featureOfInterest object from series
      *
+     * @param identifier
      * @return FeatureOfInerest object
      * @throws OwsExceptionReport
      *             If an error occurs
@@ -186,7 +183,7 @@ public abstract class AbstractOmObservationCreator {
                 getFeatureQueryHandler().getFeatureByID(queryObject);
         return feature;
     }
-    
+
     public static String checkVersion(AbstractObservationRequest request) {
 		if (request != null) {
 			return request.getVersion();

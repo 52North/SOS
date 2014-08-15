@@ -29,6 +29,15 @@
 package org.n52.sos.ds.hibernate.entities.observation;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnitValue;
+import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
@@ -60,5 +69,9 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservatio
  */
 public interface ValuedObservation<T>
         extends TemporalReferencedObservation, HasUnitValue<T> {
+
+    void accept(VoidValuedObservationVisitor visitor);
+
+    <T> T accept(ValuedObservationVisitor<T> visitor);
 
 }

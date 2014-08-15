@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.ereporting.valued;
 
+import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
+import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
 
@@ -53,4 +55,13 @@ public class BlobValuedEReportingObservation
         return value != null;
     }
 
+    @Override
+    public void accept(VoidValuedObservationVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public <T> T accept(ValuedObservationVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

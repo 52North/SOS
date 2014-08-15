@@ -66,15 +66,21 @@ import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.values.BooleanValue;
+import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
+import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CodingHelper;
@@ -243,22 +249,20 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
      * @throws OwsExceptionReport
      * @throws CodedException
      */
-    private Value<?> getValueFromObservation(final Observation<?> hObservation) throws CodedException,
+    private Value<?> getValueFromObservation(Observation<?> hObservation) throws CodedException,
             OwsExceptionReport {
         if (hObservation instanceof NumericObservation) {
             return new QuantityValue(((NumericObservation) hObservation).getValue());
         } else if (hObservation instanceof BooleanObservation) {
-            return new org.n52.sos.ogc.om.values.BooleanValue(((BooleanObservation) hObservation)
-                    .getValue());
+            return new BooleanValue(((BooleanObservation) hObservation).getValue());
         } else if (hObservation instanceof CategoryObservation) {
-            return new org.n52.sos.ogc.om.values.CategoryValue(((CategoryObservation) hObservation).getValue());
+            return new CategoryValue(((CategoryObservation) hObservation).getValue());
         } else if (hObservation instanceof CountObservation) {
-            return new org.n52.sos.ogc.om.values.CountValue(((CountObservation) hObservation)
-                    .getValue());
+            return new CountValue(((CountObservation) hObservation).getValue());
         } else if (hObservation instanceof TextObservation) {
-            return new org.n52.sos.ogc.om.values.TextValue(((TextObservation) hObservation).getValue());
+            return new TextValue(((TextObservation) hObservation).getValue());
         } else if (hObservation instanceof GeometryObservation) {
-            return new org.n52.sos.ogc.om.values.GeometryValue(((GeometryObservation) hObservation).getValue());
+            return new GeometryValue(((GeometryObservation) hObservation).getValue());
         } else if (hObservation instanceof BlobObservation) {
             return new UnknownValue(((BlobObservation) hObservation).getValue());
         } else if (hObservation instanceof SweDataArrayObservation) {
@@ -267,8 +271,19 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             sweDataArrayValue.setValue((SweDataArray) CodingHelper.decodeXmlElement(xml));
             return sweDataArrayValue;
         } else if (hObservation instanceof ComplexObservation) {
-            ComplexValue value = new ComplexValue();
+
+
+            ComplexObservation complexObservation = (ComplexObservation) hObservation;
+
+            SweDataRecord record = new SweDataRecord();
+
+            for (Observation<?> sub : complexObservation.getValue()) {
+                getValueFromObservation(sub);
+            }
+
             //TODO
+            ComplexValue value = new ComplexValue();
+            value.setValue(record);
             return value;
         }
         return null;

@@ -44,7 +44,7 @@ import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingC
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingCountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingGeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingNumericObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSweDataArrayObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingSweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingTextObservation;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.time.Time;

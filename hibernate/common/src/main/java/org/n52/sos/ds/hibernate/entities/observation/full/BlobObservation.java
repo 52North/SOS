@@ -29,10 +29,11 @@
 package org.n52.sos.ds.hibernate.entities.observation.full;
 
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
 
 /**
  * A full {@link Observation} that holds a blob value.
  *
  * @author Christian Autermann
  */
-public interface BlobObservation extends Observation<Object> {}
+public interface BlobObservation extends BlobValuedObservation, Observation<Object> {}

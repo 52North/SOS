@@ -29,10 +29,11 @@
 package org.n52.sos.ds.hibernate.entities.observation.full;
 
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
 
 /**
  * A full {@link Observation} that holds a category value.
  *
  * @author Christian Autermann
  */
-public interface CategoryObservation extends Observation<String> {}
+public interface CategoryObservation extends CategoryValuedObservation, Observation<String> {}

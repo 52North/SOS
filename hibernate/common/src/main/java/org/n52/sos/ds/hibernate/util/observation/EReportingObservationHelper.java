@@ -44,7 +44,7 @@ import org.n52.sos.w3c.xlink.W3CHrefAttribute;
 import com.google.common.collect.Lists;
 
 public class EReportingObservationHelper {
-    
+
     public Collection<NamedValue<?>> createSamplingPointParameter(EReportingSeries series) {
         Collection<NamedValue<?>> namedValues = Lists.newArrayListWithCapacity(2);
         namedValues.add(getAssessmentType(series.getSamplingPoint()));
@@ -53,7 +53,7 @@ public class EReportingObservationHelper {
     }
 
     private NamedValue<?> getAssessmentType(EReportingSamplingPoint samplingPoint) {
-        NamedValue<W3CHrefAttribute> namedValue = new NamedValue<W3CHrefAttribute>();
+        NamedValue<W3CHrefAttribute> namedValue = new NamedValue<>();
         namedValue.setName(new ReferenceType(ProcessParameter.AssessmentType.getConceptURI()));
         namedValue.setValue(createHrefAttributeValueFromAssessmentType(samplingPoint.getAssessmentType()));
         return namedValue;
@@ -61,19 +61,19 @@ public class EReportingObservationHelper {
 
     private NamedValue<?> getAssesmentMethod(EReportingSamplingPoint samplingPoint) {
         if (samplingPoint.isSetName()) {
-            NamedValue<ReferenceType> namedValue = new NamedValue<ReferenceType>();
+            NamedValue<ReferenceType> namedValue = new NamedValue<>();
             namedValue.setName(new ReferenceType(ProcessParameter.SamplingPoint.getConceptURI()));
             ReferenceValue value = createReferenceValue(samplingPoint.getIdentifier());
             value.getValue().setTitle(samplingPoint.getName());
             namedValue.setValue(createReferenceValue(samplingPoint.getIdentifier()));
             return namedValue;
         }
-        NamedValue<W3CHrefAttribute> namedValue = new NamedValue<W3CHrefAttribute>();
+        NamedValue<W3CHrefAttribute> namedValue = new NamedValue<>();
         namedValue.setName(new ReferenceType(ProcessParameter.SamplingPoint.getConceptURI()));
         namedValue.setValue(createHrefAttributeValue(samplingPoint.getIdentifier()));
         return namedValue;
     }
-    
+
     private ReferenceValue createReferenceValue(String value) {
         ReferenceValue referenceValue = new ReferenceValue();
         referenceValue.setValue(new ReferenceType(value));

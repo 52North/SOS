@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.entities.observation.full;
 
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -37,4 +38,4 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  * @author Christian Autermann
  */
-public interface GeometryObservation extends Observation<Geometry> {}
+public interface GeometryObservation extends GeometryValuedObservation, Observation<Geometry> {}

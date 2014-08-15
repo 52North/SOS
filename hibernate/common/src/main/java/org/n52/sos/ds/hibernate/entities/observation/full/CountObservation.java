@@ -29,10 +29,11 @@
 package org.n52.sos.ds.hibernate.entities.observation.full;
 
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
 
 /**
  * A full {@link Observation} that holds a count value.
  *
  * @author Christian Autermann
  */
-public interface CountObservation extends Observation<Integer> {}
+public interface CountObservation extends CountValuedObservation, Observation<Integer> {}

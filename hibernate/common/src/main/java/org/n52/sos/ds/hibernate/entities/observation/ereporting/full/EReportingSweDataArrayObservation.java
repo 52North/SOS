@@ -26,8 +26,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.observation.ereporting;
+package org.n52.sos.ds.hibernate.entities.observation.ereporting.full;
 
+import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
+import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
+import org.n52.sos.ds.hibernate.entities.observation.VoidObservationVisitor;
+import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
 import org.n52.sos.util.StringHelper;
 
@@ -51,6 +56,26 @@ public class EReportingSweDataArrayObservation
     @Override
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(value);
+    }
+
+    @Override
+    public void accept(VoidObservationVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public <T> T accept(ObservationVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidValuedObservationVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public <T> T accept(ValuedObservationVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 
 }

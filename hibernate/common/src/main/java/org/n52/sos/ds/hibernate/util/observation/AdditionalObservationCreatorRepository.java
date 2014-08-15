@@ -33,32 +33,23 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.util.AbstractConfiguringServiceLoaderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AdditionalObservationCreatorRepository extends AbstractConfiguringServiceLoaderRepository<AdditionalObservationCreator> {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(AdditionalObservationCreatorRepository.class);
-    
-    private static class LazyHolder {
-        private static final AdditionalObservationCreatorRepository INSTANCE = new AdditionalObservationCreatorRepository();
-        
-        private LazyHolder() {};
-    }
-    
+import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.util.AbstractConfiguringServiceLoaderRepository;
 
-    public static AdditionalObservationCreatorRepository getInstance() {
-        return LazyHolder.INSTANCE;
-    }
-    
+public class AdditionalObservationCreatorRepository extends AbstractConfiguringServiceLoaderRepository<AdditionalObservationCreator> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdditionalObservationCreatorRepository.class);
+
+
     private final Map<AdditionalObservationCreatorKey, AdditionalObservationCreator> additionalObservationCreator =
-            new HashMap<AdditionalObservationCreatorKey, AdditionalObservationCreator>(0);
+            new HashMap<>(0);
 
     /**
      * private constructor for singleton
-     * 
+     *
      * @throws ConfigurationException
      */
     private AdditionalObservationCreatorRepository() throws ConfigurationException {
@@ -79,7 +70,7 @@ public class AdditionalObservationCreatorRepository extends AbstractConfiguringS
         }
     }
 
-    
+
     public AdditionalObservationCreator get(AdditionalObservationCreatorKey key) {
         return additionalObservationCreator.get(key);
 }
@@ -91,17 +82,30 @@ public class AdditionalObservationCreatorRepository extends AbstractConfiguringS
     public boolean hasAdditionalObservationCreatorFor(String namespace, Class<?> type) {
         return hasAdditionalObservationCreatorFor(new AdditionalObservationCreatorKey(namespace, type));
     }
-    
+
     public boolean hasAdditionalObservationCreatorFor(AdditionalObservationCreatorKey key) {
             return additionalObservationCreator.containsKey(key);
     }
-    
-    public static Set<AdditionalObservationCreatorKey> encoderKeysForElements(final String namespace, final Class<?>... elements) {
-        final HashSet<AdditionalObservationCreatorKey> keys = new HashSet<AdditionalObservationCreatorKey>(elements.length);
+
+    public static AdditionalObservationCreatorRepository getInstance() {
+        return LazyHolder.INSTANCE;
+    }
+
+    public static Set<AdditionalObservationCreatorKey> encoderKeysForElements(
+            final String namespace,
+                                                                              final Class<?>... elements) {
+        final HashSet<AdditionalObservationCreatorKey> keys = new HashSet<>(elements.length);
         for (final Class<?> x : elements) {
             keys.add(new AdditionalObservationCreatorKey(namespace, x));
         }
         return keys;
+    }
+
+    private static class LazyHolder {
+        private static final AdditionalObservationCreatorRepository INSTANCE = new AdditionalObservationCreatorRepository();
+
+        private LazyHolder() {
+        }
     }
 
 }

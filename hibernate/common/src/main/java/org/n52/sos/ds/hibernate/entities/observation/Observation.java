@@ -42,6 +42,7 @@ import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
  * meta data, temporal and contextual reference and a value.
  *
  * @author Christian Autermann
+ * @param <T> the value type
  * @see BlobObservation
  * @see BooleanObservation
  * @see CategoryObservation
@@ -54,4 +55,9 @@ import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 public interface Observation<T>
         extends ContextualReferencedObservation,
                 ValuedObservation<T> {
+
+    void accept(VoidObservationVisitor visitor);
+
+    <T> T accept(ObservationVisitor<T> visitor);
+
 }

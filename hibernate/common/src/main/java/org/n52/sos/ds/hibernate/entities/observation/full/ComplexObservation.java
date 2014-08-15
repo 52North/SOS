@@ -31,10 +31,11 @@ package org.n52.sos.ds.hibernate.entities.observation.full;
 import java.util.List;
 
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.ComplexValuedObservation;
 
 /**
  * A full {@link Observation} that holds a complex value.
  *
  * @author Christian Autermann
  */
-public interface ComplexObservation extends Observation<List<Observation<?>>> {}
+public interface ComplexObservation extends ComplexValuedObservation, Observation<List<Observation<?>>> {}

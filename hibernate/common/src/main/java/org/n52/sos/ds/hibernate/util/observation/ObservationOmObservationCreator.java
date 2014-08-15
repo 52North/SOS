@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -44,6 +45,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
+import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
@@ -53,10 +55,13 @@ import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -79,8 +84,16 @@ import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.sos.ogc.swe.simpleType.SweCategory;
+import org.n52.sos.ogc.swe.simpleType.SweCount;
+import org.n52.sos.ogc.swe.simpleType.SweQuantity;
+import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CodingHelper;
@@ -91,13 +104,9 @@ import org.n52.sos.util.XmlHelper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.vividsolutions.jts.geom.Geometry;
 
-/**
- * TODO JavaDoc
- *
- * @author Christian Autermann <c.autermann@52north.org>
- * @since 4.0.0
- */
+
 public class ObservationOmObservationCreator extends AbstractOmObservationCreator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationOmObservationCreator.class);
 
@@ -249,44 +258,9 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
      * @throws OwsExceptionReport
      * @throws CodedException
      */
-    private Value<?> getValueFromObservation(Observation<?> hObservation) throws CodedException,
-            OwsExceptionReport {
-        if (hObservation instanceof NumericObservation) {
-            return new QuantityValue(((NumericObservation) hObservation).getValue());
-        } else if (hObservation instanceof BooleanObservation) {
-            return new BooleanValue(((BooleanObservation) hObservation).getValue());
-        } else if (hObservation instanceof CategoryObservation) {
-            return new CategoryValue(((CategoryObservation) hObservation).getValue());
-        } else if (hObservation instanceof CountObservation) {
-            return new CountValue(((CountObservation) hObservation).getValue());
-        } else if (hObservation instanceof TextObservation) {
-            return new TextValue(((TextObservation) hObservation).getValue());
-        } else if (hObservation instanceof GeometryObservation) {
-            return new GeometryValue(((GeometryObservation) hObservation).getValue());
-        } else if (hObservation instanceof BlobObservation) {
-            return new UnknownValue(((BlobObservation) hObservation).getValue());
-        } else if (hObservation instanceof SweDataArrayObservation) {
-            SweDataArrayValue sweDataArrayValue = new SweDataArrayValue();
-            final XmlObject xml = XmlHelper.parseXmlString(((SweDataArrayObservation) hObservation).getValue());
-            sweDataArrayValue.setValue((SweDataArray) CodingHelper.decodeXmlElement(xml));
-            return sweDataArrayValue;
-        } else if (hObservation instanceof ComplexObservation) {
-
-
-            ComplexObservation complexObservation = (ComplexObservation) hObservation;
-
-            SweDataRecord record = new SweDataRecord();
-
-            for (Observation<?> sub : complexObservation.getValue()) {
-                getValueFromObservation(sub);
-            }
-
-            //TODO
-            ComplexValue value = new ComplexValue();
-            value.setValue(record);
-            return value;
-        }
-        return null;
+    private Value<?> getValueFromObservation(Observation<?> hObservation)
+            throws OwsExceptionReport {
+        return hObservation.accept(new ObservationValueCreator());
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -402,5 +376,6 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         }
         return obsConst;
     }
+
 
 }

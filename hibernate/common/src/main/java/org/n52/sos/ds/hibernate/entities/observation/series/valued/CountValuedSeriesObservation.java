@@ -33,6 +33,7 @@ import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * Implementation of a {@link ValuedObservation} for the series observation
@@ -63,12 +64,14 @@ public class CountValuedSeriesObservation
     }
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor) {
+    public void accept(VoidValuedObservationVisitor visitor)
+            throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor) {
+    public <T> T accept(ValuedObservationVisitor<T> visitor)
+            throws OwsExceptionReport {
         return visitor.visit(this);
     }
 

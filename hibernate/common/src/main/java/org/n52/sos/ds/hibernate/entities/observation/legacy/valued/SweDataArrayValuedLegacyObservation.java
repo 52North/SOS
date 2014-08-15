@@ -33,6 +33,7 @@ import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.util.StringHelper;
 
@@ -67,12 +68,14 @@ public class SweDataArrayValuedLegacyObservation
     }
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor) {
+    public void accept(VoidValuedObservationVisitor visitor)
+            throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor) {
+    public <T> T accept(ValuedObservationVisitor<T> visitor)
+            throws OwsExceptionReport {
         return visitor.visit(this);
     }
 }

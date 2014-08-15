@@ -36,6 +36,7 @@ import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * A {@code Observation} represents a full observation described by all possible
@@ -56,8 +57,8 @@ public interface Observation<T>
         extends ContextualReferencedObservation,
                 ValuedObservation<T> {
 
-    void accept(VoidObservationVisitor visitor);
+    void accept(VoidObservationVisitor visitor) throws OwsExceptionReport;
 
-    <T> T accept(ObservationVisitor<T> visitor);
+    <T> T accept(ObservationVisitor<T> visitor) throws OwsExceptionReport;
 
 }

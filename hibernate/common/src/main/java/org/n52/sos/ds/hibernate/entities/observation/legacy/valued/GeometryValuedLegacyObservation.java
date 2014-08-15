@@ -33,6 +33,7 @@ import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -65,12 +66,14 @@ public class GeometryValuedLegacyObservation
     }
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor) {
+    public void accept(VoidValuedObservationVisitor visitor)
+            throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor) {
+    public <T> T accept(ValuedObservationVisitor<T> visitor)
+            throws OwsExceptionReport {
         return visitor.visit(this);
     }
 }

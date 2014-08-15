@@ -9,6 +9,7 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObserv
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * TODO JavaDoc
@@ -18,74 +19,92 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservatio
 public abstract class VoidValuedObservationVisitor
         implements ValuedObservationVisitor<Void> {
 
-    protected abstract void _visit(NumericValuedObservation o);
+    protected abstract void _visit(NumericValuedObservation o)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(BlobValuedObservation o);
+    protected abstract void _visit(BlobValuedObservation o)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(BooleanValuedObservation o);
+    protected abstract void _visit(BooleanValuedObservation o)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(CategoryValuedObservation o);
+    protected abstract void _visit(CategoryValuedObservation o)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(ComplexValuedObservation o);
+    protected abstract void _visit(ComplexValuedObservation o)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(CountValuedObservation o);
+    protected abstract void _visit(CountValuedObservation o)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(GeometryValuedObservation o);
+    protected abstract void _visit(GeometryValuedObservation o)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(TextValuedObservation o);
+    protected abstract void _visit(TextValuedObservation o)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(SweDataArrayValuedObservation o);
+    protected abstract void _visit(SweDataArrayValuedObservation o)
+            throws OwsExceptionReport;
 
     @Override
-    public Void visit(NumericValuedObservation o) {
+    public Void visit(NumericValuedObservation o)
+            throws OwsExceptionReport {
         _visit(o);
         return null;
     }
 
     @Override
-    public Void visit(BlobValuedObservation o) {
+    public Void visit(BlobValuedObservation o)
+            throws OwsExceptionReport {
         _visit(o);
         return null;
     }
 
     @Override
-    public Void visit(BooleanValuedObservation o) {
+    public Void visit(BooleanValuedObservation o)
+            throws OwsExceptionReport {
         _visit(o);
         return null;
     }
 
     @Override
-    public Void visit(CategoryValuedObservation o) {
+    public Void visit(CategoryValuedObservation o)
+            throws OwsExceptionReport {
         _visit(o);
         return null;
     }
 
     @Override
-    public Void visit(ComplexValuedObservation o) {
+    public Void visit(ComplexValuedObservation o)
+            throws OwsExceptionReport {
         _visit(o);
         return null;
     }
 
     @Override
-    public Void visit(CountValuedObservation o) {
+    public Void visit(CountValuedObservation o)
+            throws OwsExceptionReport {
         _visit(o);
         return null;
     }
 
     @Override
-    public Void visit(GeometryValuedObservation o) {
+    public Void visit(GeometryValuedObservation o)
+            throws OwsExceptionReport {
         _visit(o);
         return null;
     }
 
     @Override
-    public Void visit(TextValuedObservation o) {
+    public Void visit(TextValuedObservation o)
+            throws OwsExceptionReport {
         _visit(o);
         return null;
     }
 
     @Override
-    public Void visit(SweDataArrayValuedObservation o) {
+    public Void visit(SweDataArrayValuedObservation o)
+            throws OwsExceptionReport {
         _visit(o);
         return null;
     }

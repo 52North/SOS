@@ -36,6 +36,7 @@ import org.n52.sos.ds.hibernate.entities.observation.VoidObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class EReportingNumericObservation
         extends AbstractEReportingObservation<BigDecimal>
@@ -61,22 +62,26 @@ public class EReportingNumericObservation
     }
 
     @Override
-    public void accept(VoidObservationVisitor visitor) {
+    public void accept(VoidObservationVisitor visitor)
+            throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ObservationVisitor<T> visitor) {
+    public <T> T accept(ObservationVisitor<T> visitor)
+            throws OwsExceptionReport {
         return visitor.visit(this);
     }
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor) {
+    public void accept(VoidValuedObservationVisitor visitor)
+            throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor) {
+    public <T> T accept(ValuedObservationVisitor<T> visitor)
+            throws OwsExceptionReport {
         return visitor.visit(this);
     }
 

@@ -10,11 +10,11 @@
  * the following licenses, the combination of the program with the linked
  * library is not considered a "derivative work" of the program:
  *
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
+ * - Apache License, version 2.0
+ * - Apache Software License, version 1.0
+ * - GNU Lesser General Public License, version 3
+ * - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ * - Common Development and Distribution License (CDDL), version 1.0
  *
  * Therefore the distribution of the program linked with libraries licensed
  * under the aforementioned licenses, is permitted by the copyright holders
@@ -32,6 +32,7 @@ import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class BlobValuedEReportingObservation
         extends AbstractValuedEReportingObservation<Object>
@@ -56,12 +57,14 @@ public class BlobValuedEReportingObservation
     }
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor) {
+    public void accept(VoidValuedObservationVisitor visitor)
+            throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor) {
+    public <T> T accept(ValuedObservationVisitor<T> visitor)
+            throws OwsExceptionReport {
         return visitor.visit(this);
     }
 }

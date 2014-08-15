@@ -9,6 +9,7 @@ import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * TODO JavaDoc
@@ -17,22 +18,31 @@ import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
  */
 public interface ObservationVisitor<T> {
 
-    T visit(NumericObservation o);
+    T visit(NumericObservation o)
+            throws OwsExceptionReport;
 
-    T visit(BlobObservation o);
+    T visit(BlobObservation o)
+            throws OwsExceptionReport;
 
-    T visit(BooleanObservation o);
+    T visit(BooleanObservation o)
+            throws OwsExceptionReport;
 
-    T visit(CategoryObservation o);
+    T visit(CategoryObservation o)
+            throws OwsExceptionReport;
 
-    T visit(ComplexObservation o);
+    T visit(ComplexObservation o)
+            throws OwsExceptionReport;
 
-    T visit(CountObservation o);
+    T visit(CountObservation o)
+            throws OwsExceptionReport;
 
-    T visit(GeometryObservation o);
+    T visit(GeometryObservation o)
+            throws OwsExceptionReport;
 
-    T visit(TextObservation o);
+    T visit(TextObservation o)
+            throws OwsExceptionReport;
 
-    T visit(SweDataArrayObservation o);
+    T visit(SweDataArrayObservation o)
+            throws OwsExceptionReport;
 
 }

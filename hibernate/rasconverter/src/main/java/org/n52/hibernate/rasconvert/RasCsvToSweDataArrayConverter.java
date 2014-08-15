@@ -72,10 +72,7 @@ public class RasCsvToSweDataArrayConverter {
 		String csvString;
 		try {
 			csvString = new String(byteRes.getArray(), "UTF-8");
-			List<List<String>> arr = getLines(csvString);
-			SweDataArray sweArr = new SweDataArray();
-			sweArr.setValues(arr);
-			return sweArr;
+			return csvToSweDataArray(csvString);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}

@@ -18,5 +18,6 @@
         <module>feature</module>
 		<module>h2</module>
 		<module>datasource</module>
+		<module>rasconverter</module>
   </modules>
 </project>

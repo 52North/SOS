@@ -21,7 +21,6 @@
 			<artifactId>hibernate-h2</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>api</artifactId>
@@ -41,6 +40,10 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>hibernate-session-factory</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>hibernate-rasconverter</artifactId>
 		</dependency>
 		<!-- Hibernate Core Dependencies -->
 		<dependency>

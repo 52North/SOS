@@ -38,6 +38,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.n52.hibernate.rasconvert.RasCsvToSweDataArrayConverter;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
@@ -267,7 +268,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         	 SweDataArrayValue sweDataArrayValue = new SweDataArrayValue();
         	 SweDataArray sweDataArray = null;
         	 RasMArrayByte arrayObject = (RasMArrayByte) ((ArrayObservation) hObservation).getValue();
-//        	 sweDataArray = RasCsvToSweDataArrayConverter.rasByteArrayToSweDataArray(arrayObject);
+        	 sweDataArray = RasCsvToSweDataArrayConverter.rasByteArrayToSweDataArray(arrayObject);
         	 sweDataArrayValue.setValue(sweDataArray);
              return sweDataArrayValue;
         }

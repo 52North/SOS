@@ -40,10 +40,15 @@
 			<artifactId>hibernate-spatial</artifactId>
 		</dependency>
 		<!-- Rasdaman dependencies -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.asqldb</groupId>
 			<artifactId>asqldb</artifactId>
 			<version>1.0</version>
+		</dependency> -->
+		<dependency>
+			<groupId>com.github.misev</groupId>
+			<artifactId>asqldb</artifactId>
+			<version>0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.rasdaman</groupId>

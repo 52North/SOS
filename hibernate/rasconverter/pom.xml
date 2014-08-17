@@ -13,13 +13,16 @@
 
 	<dependencies>
 		<!-- Rasdaman dependencies -->
-		<!-- <dependency> <groupId>org.asqldb</groupId> <artifactId>asqldb</artifactId> 
-			<version>1.0</version> </dependency>  -->
-		<dependency>
+		<dependency> 
+			<groupId>org.asqldb</groupId> 
+			<artifactId>asqldb</artifactId> 
+			<version>1.0</version> 
+		</dependency> 
+		<!-- <dependency>
 			<groupId>com.github.misev</groupId>
 			<artifactId>asqldb</artifactId>
 			<version>0.1</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.rasdaman</groupId>
 			<artifactId>rasj</artifactId>

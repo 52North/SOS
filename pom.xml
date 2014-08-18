@@ -82,7 +82,7 @@
         <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
         <org.springframework.version>3.2.6.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
-        <sos.test.suite.version>1.0.0-M4</sos.test.suite.version>
+        <sos.test.suite.version>1.0.0-M5</sos.test.suite.version>
     </properties>
     <dependencyManagement>
         <dependencies>

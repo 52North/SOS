@@ -28,60 +28,59 @@
  */
 package org.n52.sos.response;
 
-import java.util.Collections;
-import java.util.List;
+import org.n52.sos.util.http.MediaType;
 
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.request.ResponseFormat;
-import org.n52.sos.util.StringHelper;
 
 /**
- * TODO JavaDoc
+ * Simple response class for binary data to be included as a response attachment (for download)
  * 
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author Shane StClair <shane@axiomalaska.com>
  * 
- * @since 4.0.0
+ * @since 4.1.0
  */
-public abstract class AbstractObservationResponse extends AbstractServiceResponse implements ResponseFormat {
-    private List<OmObservation> observationCollection;
+public class BinaryAttachmentResponse {
+    private byte[] bytes;
+    private MediaType contentType;
+    private String filename;
 
-    private String responseFormat;
-
-    private String resultModel;
-   
-    public List<OmObservation> getObservationCollection() {
-        return Collections.unmodifiableList(observationCollection);
+    public BinaryAttachmentResponse(byte[] bytes, MediaType contentType, String filename) {
+        this.bytes = bytes;
+        this.contentType = contentType;
+        this.filename = filename;
     }
 
-    public void setObservationCollection(final List<OmObservation> observationCollection) {
-        this.observationCollection = observationCollection;
+    public byte[] getBytes() {
+        return bytes;
+    }
+
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
+    }
+
+    public MediaType getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(MediaType contentType) {
+        this.contentType = contentType;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public int getSize() {
+        return bytes == null ? -1 : bytes.length;
     }
 
     @Override
-    public String getResponseFormat() {
-        return responseFormat;
+    public String toString() {
+        return "BinaryAttachmentResponse [size = " + getSize()
+                + ", contentType=" + contentType
+                + ", filename=" + filename + "]";
     }
-
-    @Override
-    public void setResponseFormat(final String responseFormat) {
-        this.responseFormat = responseFormat;
-    }
-    
-    @Override
-    public boolean isSetResponseFormat() {
-    	return StringHelper.isNotEmpty(getResponseFormat());
-    }
-
-    public void setResultModel(final String resultModel) {
-        this.resultModel = resultModel;
-    }
-
-    public String getResultModel() {
-        return resultModel;
-    }
-
-    public boolean isSetResultModel() {
-        return resultModel != null;
-    }
-  
 }

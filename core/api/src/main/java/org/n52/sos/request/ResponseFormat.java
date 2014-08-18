@@ -26,49 +26,37 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode.json;
-
-import java.io.IOException;
-import java.io.OutputStream;
-
-import org.n52.sos.coding.json.JSONUtils;
-import org.n52.sos.encode.AbstractResponseWriter;
-import org.n52.sos.encode.ResponseProxy;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
-
-import com.fasterxml.jackson.databind.JsonNode;
+package org.n52.sos.request;
 
 /**
- * TODO JavaDoc
+ * Marker interface to responseFormat
  * 
- * @author Christian Autermann <c.autermann@52north.org>
- * 
- * @since 4.0.0
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
  */
-public class JSONResponseWriter extends AbstractResponseWriter<JsonNode> {
-    @Override
-    public Class<JsonNode> getType() {
-        return JsonNode.class;
-    }
+public interface ResponseFormat {
 
-    @Override
-    public void write(JsonNode t, OutputStream out, ResponseProxy responseProxy) throws IOException {
-        JSONUtils.print(out, t);
-    }
+	/**
+     * Get response format
+     * 
+     * @return response format
+     */
+    public String getResponseFormat();
 
-    @Override
-    public MediaType getContentType() {
-        return MediaTypes.APPLICATION_JSON;
-    }
+    /**
+     * Set response format
+     * 
+     * @param responseFormat
+     *            response format
+     */
+    public void setResponseFormat(String responseFormat);
 
-    @Override
-    public void setContentType(MediaType contentType) {
-        
-    }
-
-    @Override
-    public boolean supportsGZip(JsonNode t) {
-        return true;
-    }
+    /**
+     * Is response format set?
+     * 
+     * @return True if response format is set 
+     */
+    public boolean isSetResponseFormat();
+	
 }

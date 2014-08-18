@@ -31,6 +31,7 @@ package org.n52.sos.encode;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.util.http.MediaType;
 
 /**
@@ -63,6 +64,8 @@ public interface ResponseWriter<T> {
      *            to set
      */
     void setContentType(MediaType contentType);
+    
+    MediaType getEncodedContentType(ResponseFormat responseFormat);
 
     /**
      * Write object t to {@link OutputStream} out
@@ -71,10 +74,12 @@ public interface ResponseWriter<T> {
      *            Object to write
      * @param out
      *            {@link OutputStream} to be written to
+     * @param responseProxy
+     *            {@link ResponseProxy} giving access to header and content length setters            
      * @throws IOException
      *             If an error occurs during writing
      */
-    void write(T t, OutputStream out) throws IOException;
+    void write(T t, OutputStream out, ResponseProxy responseProxy) throws IOException;
 
     /**
      * Check if GZip is supported by this writer
@@ -83,6 +88,5 @@ public interface ResponseWriter<T> {
      *            Object to write
      * @return <code>true</code>, if GZip is supported
      */
-    boolean supportsGZip(T t);
-
+    boolean supportsGZip(T t);  
 }

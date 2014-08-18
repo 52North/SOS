@@ -83,7 +83,7 @@ import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.om.values.visitor.ThrowingValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
@@ -588,8 +588,7 @@ public abstract class AbstractOmEncoderv20
         return "o_" + JavaHelper.generateID(Double.toString(System.currentTimeMillis() * Math.random()));
     }
 
-    private static class NamedValueValueEncoder implements
-            ThrowingValueVisitor<XmlObject, OwsExceptionReport> {
+    private static class NamedValueValueEncoder implements ValueVisitor<XmlObject> {
         private static final Logger LOG =  LoggerFactory.getLogger(NamedValueValueEncoder.class);
 
         @Override

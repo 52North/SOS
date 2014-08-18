@@ -106,7 +106,8 @@ public final class OMHelper {
                 .setStatus(HTTPStatus.BAD_REQUEST);
     }
 
-    public static String getObservationTypeFor(Value<?> value) {
+    public static String getObservationTypeFor(Value<?> value)
+            throws OwsExceptionReport {
         return value.accept(OBSERVATION_TYPE_VISITOR);
     }
 

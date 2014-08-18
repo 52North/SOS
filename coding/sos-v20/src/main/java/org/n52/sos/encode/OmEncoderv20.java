@@ -71,7 +71,7 @@ import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
-import org.n52.sos.ogc.om.values.visitor.ThrowingValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sos.ConformanceClasses;
@@ -293,8 +293,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         return XmlBoolean.Factory.newInstance(getXmlOptions());
     }
 
-    private static class ResultValueVisitor
-            implements ThrowingValueVisitor<XmlObject, OwsExceptionReport> {
+    private static class ResultValueVisitor implements ValueVisitor<XmlObject> {
         private final String observationType;
         private final String observationId;
 

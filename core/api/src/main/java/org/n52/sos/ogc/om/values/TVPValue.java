@@ -10,11 +10,11 @@
  * the following licenses, the combination of the program with the linked
  * library is not considered a "derivative work" of the program:
  *
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
+ * - Apache License, version 2.0
+ * - Apache Software License, version 1.0
+ * - GNU Lesser General Public License, version 3
+ * - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ * - Common Development and Distribution License (CDDL), version 1.0
  *
  * Therefore the distribution of the program linked with libraries licensed
  * under the aforementioned licenses, is permitted by the copyright holders
@@ -35,10 +35,9 @@ import java.util.List;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.TimeValuePair;
-import org.n52.sos.ogc.om.values.visitor.ThrowingValueVisitor;
-import org.n52.sos.ogc.om.values.visitor.ThrowingVoidValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
@@ -80,7 +79,7 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
      * Add time value pair value
      *
      * @param value
-     *            Time value pair value to add
+     *              Time value pair value to add
      */
     public void addValue(TimeValuePair value) {
         this.value.add(value);
@@ -90,7 +89,7 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
      * Add time value pair values
      *
      * @param values
-     *            Time value pair values to add
+     *               Time value pair values to add
      */
     public void addValues(List<TimeValuePair> values) {
         this.value.addAll(values);
@@ -128,22 +127,14 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
     }
 
     @Override
-    public <X> X accept(ValueVisitor<X> visitor) {
+    public <X> X accept(ValueVisitor<X> visitor)
+            throws OwsExceptionReport {
         return visitor.visit(this);
     }
 
     @Override
-    public void accept(VoidValueVisitor visitor) {
-        visitor.visit(this);
-    }
-
-    @Override
-    public <X, T extends Exception> X accept(ThrowingValueVisitor<X, T> visitor) throws T {
-        return visitor.visit(this);
-    }
-
-    @Override
-    public <T extends Exception> void accept(ThrowingVoidValueVisitor<T> visitor) throws T {
+    public void accept(VoidValueVisitor visitor)
+            throws OwsExceptionReport {
         visitor.visit(this);
     }
 }

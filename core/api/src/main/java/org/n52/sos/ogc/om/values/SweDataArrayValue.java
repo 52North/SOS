@@ -10,11 +10,11 @@
  * the following licenses, the combination of the program with the linked
  * library is not considered a "derivative work" of the program:
  *
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
+ * - Apache License, version 2.0
+ * - Apache Software License, version 1.0
+ * - GNU Lesser General Public License, version 3
+ * - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ * - Common Development and Distribution License (CDDL), version 1.0
  *
  * Therefore the distribution of the program linked with libraries licensed
  * under the aforementioned licenses, is permitted by the copyright holders
@@ -37,10 +37,9 @@ import org.slf4j.LoggerFactory;
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.values.visitor.ThrowingValueVisitor;
-import org.n52.sos.ogc.om.values.visitor.ThrowingVoidValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
@@ -58,7 +57,8 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
     /**
      * logger
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(SweDataArrayValue.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(SweDataArrayValue.class);
 
     /**
      * serial number
@@ -103,8 +103,9 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
      * the current list of blocks
      *
      * @param blockOfTokensToAddAtTheEnd
+     *
      * @return <tt>true</tt> (as specified by {@link Collection#add}) <br />
-     *         <tt>false</tt> if block could not be added
+     * <tt>false</tt> if block could not be added
      */
     public boolean addBlock(final List<String> blockOfTokensToAddAtTheEnd) {
         if (value != null) {
@@ -115,17 +116,20 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
 
     @Override
     public String toString() {
-        return String.format("SweDataArrayValue [value=%s, unit=null]", getValue());
+        return String
+                .format("SweDataArrayValue [value=%s, unit=null]", getValue());
     }
 
     @Override
     public Time getPhenomenonTime() {
         final TimePeriod timePeriod = new TimePeriod();
         int dateTokenIndex = -1;
-        if (getValue() != null && getValue().getElementType() != null && getValue().getEncoding() != null) {
+        if (getValue() != null && getValue().getElementType() != null &&
+            getValue().getEncoding() != null) {
             // get index of time token from elementtype
             if (getValue().getElementType() instanceof SweDataRecord) {
-                final SweDataRecord elementType = (SweDataRecord) getValue().getElementType();
+                final SweDataRecord elementType = (SweDataRecord) getValue()
+                        .getElementType();
                 final List<SweField> fields = elementType.getFields();
                 for (int i = 0; i < fields.size(); i++) {
                     final SweField sweField = fields.get(i);
@@ -143,21 +147,25 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
                     // datetimehelper to DateTime from joda time
                     final String token = block.get(dateTokenIndex);
                     try {
-                        final Time time = DateTimeHelper.parseIsoString2DateTime2Time(token);
+                        final Time time = DateTimeHelper
+                                .parseIsoString2DateTime2Time(token);
                         timePeriod.extendToContain(time);
                     } catch (final DateTimeParseException dte) {
-                        LOGGER.error(String.format("Could not parse ISO8601 string \"%s\"", token), dte);
+                        LOGGER.error(String
+                                .format("Could not parse ISO8601 string \"%s\"", token), dte);
                         // FIXME throw exception here?
                         continue; // try next block;
                     }
                 }
             } else {
-                final String errorMsg = "PhenomenonTime field could not be found in ElementType";
+                final String errorMsg
+                        = "PhenomenonTime field could not be found in ElementType";
                 LOGGER.error(errorMsg);
             }
         } else {
-            final String errorMsg =
-                    String.format("Value of type \"%s\" not set correct.", SweDataArrayValue.class.getName());
+            final String errorMsg = String
+                    .format("Value of type \"%s\" not set correct.", SweDataArrayValue.class
+                            .getName());
             LOGGER.error(errorMsg);
         }
         return timePeriod;
@@ -174,22 +182,14 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
     }
 
     @Override
-    public <X> X accept(ValueVisitor<X> visitor) {
+    public <X> X accept(ValueVisitor<X> visitor)
+            throws OwsExceptionReport {
         return visitor.visit(this);
     }
 
     @Override
-    public void accept(VoidValueVisitor visitor) {
-        visitor.visit(this);
-    }
-
-    @Override
-    public <X, T extends Exception> X accept(ThrowingValueVisitor<X, T> visitor) throws T {
-        return visitor.visit(this);
-    }
-
-    @Override
-    public <T extends Exception> void accept(ThrowingVoidValueVisitor<T> visitor) throws T {
+    public void accept(VoidValueVisitor visitor)
+            throws OwsExceptionReport {
         visitor.visit(this);
     }
 }

@@ -10,11 +10,11 @@
  * the following licenses, the combination of the program with the linked
  * library is not considered a "derivative work" of the program:
  *
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
+ * - Apache License, version 2.0
+ * - Apache Software License, version 1.0
+ * - GNU Lesser General Public License, version 3
+ * - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ * - Common Development and Distribution License (CDDL), version 1.0
  *
  * Therefore the distribution of the program linked with libraries licensed
  * under the aforementioned licenses, is permitted by the copyright holders
@@ -41,6 +41,7 @@ import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * TODO JavaDoc
@@ -48,29 +49,42 @@ import org.n52.sos.ogc.om.values.UnknownValue;
  * @author Christian Autermann
  */
 public interface ValueVisitor<T> {
-    T visit(BooleanValue value);
+    T visit(BooleanValue value)
+            throws OwsExceptionReport;
 
-    T visit(CategoryValue value);
+    T visit(CategoryValue value)
+            throws OwsExceptionReport;
 
-    T visit(ComplexValue value);
+    T visit(ComplexValue value)
+            throws OwsExceptionReport;
 
-    T visit(CountValue value);
+    T visit(CountValue value)
+            throws OwsExceptionReport;
 
-    T visit(GeometryValue value);
+    T visit(GeometryValue value)
+            throws OwsExceptionReport;
 
-    T visit(HrefAttributeValue value);
+    T visit(HrefAttributeValue value)
+            throws OwsExceptionReport;
 
-    T visit(NilTemplateValue value);
+    T visit(NilTemplateValue value)
+            throws OwsExceptionReport;
 
-    T visit(QuantityValue value);
+    T visit(QuantityValue value)
+            throws OwsExceptionReport;
 
-    T visit(ReferenceValue value);
+    T visit(ReferenceValue value)
+            throws OwsExceptionReport;
 
-    T visit(SweDataArrayValue value);
+    T visit(SweDataArrayValue value)
+            throws OwsExceptionReport;
 
-    T visit(TVPValue value);
+    T visit(TVPValue value)
+            throws OwsExceptionReport;
 
-    T visit(TextValue value);
+    T visit(TextValue value)
+            throws OwsExceptionReport;
 
-    T visit(UnknownValue value);
+    T visit(UnknownValue value)
+            throws OwsExceptionReport;
 }

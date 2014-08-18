@@ -28,10 +28,9 @@
  */
 package org.n52.sos.ogc.om.values;
 
-import org.n52.sos.ogc.om.values.visitor.ThrowingValueVisitor;
-import org.n52.sos.ogc.om.values.visitor.ThrowingVoidValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweDataRecord;
 
 import com.google.common.base.Objects;
@@ -103,22 +102,14 @@ public class ComplexValue implements Value<SweDataRecord> {
     }
 
     @Override
-    public <X> X accept(ValueVisitor<X> visitor) {
+    public <X> X accept(ValueVisitor<X> visitor)
+            throws OwsExceptionReport {
         return visitor.visit(this);
     }
 
     @Override
-    public void accept(VoidValueVisitor visitor) {
-        visitor.visit(this);
-    }
-
-    @Override
-    public <X, T extends Exception> X accept(ThrowingValueVisitor<X, T> visitor) throws T {
-        return visitor.visit(this);
-    }
-
-    @Override
-    public <T extends Exception> void accept(ThrowingVoidValueVisitor<T> visitor) throws T {
+    public void accept(VoidValueVisitor visitor)
+            throws OwsExceptionReport {
         visitor.visit(this);
     }
 }

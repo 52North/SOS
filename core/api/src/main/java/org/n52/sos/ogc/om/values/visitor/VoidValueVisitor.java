@@ -10,11 +10,11 @@
  * the following licenses, the combination of the program with the linked
  * library is not considered a "derivative work" of the program:
  *
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
+ * - Apache License, version 2.0
+ * - Apache Software License, version 1.0
+ * - GNU Lesser General Public License, version 3
+ * - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ * - Common Development and Distribution License (CDDL), version 1.0
  *
  * Therefore the distribution of the program linked with libraries licensed
  * under the aforementioned licenses, is permitted by the copyright holders
@@ -41,6 +41,7 @@ import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * TODO JavaDoc
@@ -49,106 +50,132 @@ import org.n52.sos.ogc.om.values.UnknownValue;
  */
 public abstract class VoidValueVisitor implements ValueVisitor<Void> {
     @Override
-    public Void visit(BooleanValue value) {
+    public Void visit(BooleanValue value)
+            throws OwsExceptionReport {
         _visit(value);
         return null;
     }
 
     @Override
-    public Void visit(CategoryValue value) {
+    public Void visit(CategoryValue value)
+            throws OwsExceptionReport {
         _visit(value);
         return null;
     }
 
     @Override
-    public Void visit(ComplexValue value) {
+    public Void visit(ComplexValue value)
+            throws OwsExceptionReport {
         _visit(value);
         return null;
     }
 
     @Override
-    public Void visit(CountValue value) {
+    public Void visit(CountValue value)
+            throws OwsExceptionReport {
         _visit(value);
         return null;
     }
 
     @Override
-    public Void visit(GeometryValue value) {
+    public Void visit(GeometryValue value)
+            throws OwsExceptionReport {
         _visit(value);
         return null;
     }
 
     @Override
-    public Void visit(HrefAttributeValue value) {
+    public Void visit(HrefAttributeValue value)
+            throws OwsExceptionReport {
         _visit(value);
         return null;
     }
 
     @Override
-    public Void visit(NilTemplateValue value) {
+    public Void visit(NilTemplateValue value)
+            throws OwsExceptionReport {
         _visit(value);
         return null;
     }
 
     @Override
-    public Void visit(QuantityValue value) {
+    public Void visit(QuantityValue value)
+            throws OwsExceptionReport {
         _visit(value);
         return null;
     }
 
     @Override
-    public Void visit(ReferenceValue value) {
+    public Void visit(ReferenceValue value)
+            throws OwsExceptionReport {
         _visit(value);
         return null;
     }
 
     @Override
-    public Void visit(SweDataArrayValue value) {
+    public Void visit(SweDataArrayValue value)
+            throws OwsExceptionReport {
         _visit(value);
         return null;
     }
 
     @Override
-    public Void visit(TVPValue value) {
+    public Void visit(TVPValue value)
+            throws OwsExceptionReport {
         _visit(value);
         return null;
     }
 
     @Override
-    public Void visit(TextValue value) {
+    public Void visit(TextValue value)
+            throws OwsExceptionReport {
         _visit(value);
         return null;
     }
 
     @Override
-    public Void visit(UnknownValue value) {
+    public Void visit(UnknownValue value)
+            throws OwsExceptionReport {
         _visit(value);
         return null;
     }
 
-    protected abstract void _visit(BooleanValue value);
+    protected abstract void _visit(BooleanValue value)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(CategoryValue value);
+    protected abstract void _visit(CategoryValue value)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(ComplexValue value);
+    protected abstract void _visit(ComplexValue value)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(CountValue value);
+    protected abstract void _visit(CountValue value)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(GeometryValue value);
+    protected abstract void _visit(GeometryValue value)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(HrefAttributeValue value);
+    protected abstract void _visit(HrefAttributeValue value)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(NilTemplateValue value);
+    protected abstract void _visit(NilTemplateValue value)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(QuantityValue value);
+    protected abstract void _visit(QuantityValue value)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(ReferenceValue value);
+    protected abstract void _visit(ReferenceValue value)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(SweDataArrayValue value);
+    protected abstract void _visit(SweDataArrayValue value)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(TVPValue value);
+    protected abstract void _visit(TVPValue value)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(TextValue value);
+    protected abstract void _visit(TextValue value)
+            throws OwsExceptionReport;
 
-    protected abstract void _visit(UnknownValue value);
+    protected abstract void _visit(UnknownValue value)
+            throws OwsExceptionReport;
 }

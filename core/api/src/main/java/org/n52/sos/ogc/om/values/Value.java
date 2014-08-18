@@ -31,10 +31,9 @@ package org.n52.sos.ogc.om.values;
 
 import java.io.Serializable;
 
-import org.n52.sos.ogc.om.values.visitor.ThrowingValueVisitor;
-import org.n52.sos.ogc.om.values.visitor.ThrowingVoidValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * Interface for measurement value representation for observation
@@ -91,13 +90,7 @@ public interface Value<T> extends Serializable {
     boolean isSetUnit();
 
 
-    <X> X accept(ValueVisitor<X> visitor);
+    <X> X accept(ValueVisitor<X> visitor) throws OwsExceptionReport;
 
-    void accept(VoidValueVisitor visitor);
-
-    <X, T extends Exception> X accept(ThrowingValueVisitor<X, T> visitor)
-            throws T;
-
-    <T extends Exception> void accept(ThrowingVoidValueVisitor<T> visitor)
-            throws T;
+    void accept(VoidValueVisitor visitor) throws OwsExceptionReport;
 }

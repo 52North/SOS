@@ -38,17 +38,11 @@ import org.n52.sos.util.http.MediaType;
  * TODO JavaDoc
  * 
  * @author Christian Autermann <c.autermann@52north.org>
+ * @author CarstenHollmann <c.hollmann@52north.org>
  * 
  * @since 4.0.0
  */
 public interface ResponseWriter<T> {
-
-    /**
-     * Get the type this {@link ResponseWriter} supports
-     * 
-     * @return the supported type
-     */
-    Class<T> getType();
 
     /**
      * Get the current contentType

@@ -52,10 +52,10 @@ public class BinaryAttachmentResponseWriter extends AbstractResponseWriter<Binar
         public static final String CONTENT_ATTACHMENT_FILENAME_FORMAT = "attachment; filename=\"%s\"";
     }
 
-    @Override
-    public Class<BinaryAttachmentResponse> getType() {
-        return BinaryAttachmentResponse.class;
-    }
+//    @Override
+//    public Class<BinaryAttachmentResponse> getType() {
+//        return BinaryAttachmentResponse.class;
+//    }
 
     @Override
     public void write(BinaryAttachmentResponse binaryAttachmentResponse, OutputStream out, ResponseProxy responseProxy) throws IOException {

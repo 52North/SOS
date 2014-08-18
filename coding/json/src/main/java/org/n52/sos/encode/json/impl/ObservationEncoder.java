@@ -70,9 +70,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class ObservationEncoder extends JSONEncoder<OmObservation> {
@@ -112,7 +112,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
                 .getIdentifier());
     }
 
-    private void encodeObservationType(OmObservation o, ObjectNode json) {
+    private void encodeObservationType(OmObservation o, ObjectNode json) throws OwsExceptionReport {
         json.put(JSONConstants.TYPE, getObservationType(o));
     }
 
@@ -256,7 +256,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         return result;
     }
 
-    private String getObservationType(OmObservation o) {
+    private String getObservationType(OmObservation o) throws OwsExceptionReport {
         if (o.getObservationConstellation().isSetObservationType()) {
             return o.getObservationConstellation().getObservationType();
         } else {

@@ -90,9 +90,6 @@ public interface SweDataComponentVisitor<T> {
     T visit(SweEnvelope component)
             throws OwsExceptionReport;
 
-    T visit(SweCoordinate<?> component)
-            throws OwsExceptionReport;
-
     T visit(SweVector component)
             throws OwsExceptionReport;
 

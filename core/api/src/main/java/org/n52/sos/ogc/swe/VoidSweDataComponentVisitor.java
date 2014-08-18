@@ -149,14 +149,6 @@ public abstract class VoidSweDataComponentVisitor implements
     }
 
     @Override
-    public Void visit(
-            SweCoordinate<?> component)
-            throws OwsExceptionReport {
-        _visit(component);
-        return null;
-    }
-
-    @Override
     public Void visit(SweVector component)
             throws OwsExceptionReport {
         _visit(component);
@@ -224,9 +216,6 @@ public abstract class VoidSweDataComponentVisitor implements
             throws OwsExceptionReport;
 
     protected abstract void _visit(SweEnvelope component)
-            throws OwsExceptionReport;
-
-    protected abstract void _visit(SweCoordinate<?> component)
             throws OwsExceptionReport;
 
     protected abstract void _visit(SweVector component)

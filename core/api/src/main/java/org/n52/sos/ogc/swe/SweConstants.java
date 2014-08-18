@@ -224,6 +224,22 @@ public interface SweConstants {
      * Enum for SWE DataComponent types
      */
     enum SweDataComponentType {
-        DataArray, DataRecord, SimpleDataRecord, Envelope, Field, Vector, Position, Boolean, Category, Count, CountRange, Quantity, QuantityRange, Text, Time, TimeRange, ObservableProperty
+        DataArray,
+        DataRecord,
+        SimpleDataRecord,
+        Envelope,
+        Field,
+        Vector,
+        Position,
+        Boolean,
+        Category,
+        Count,
+        CountRange,
+        Quantity,
+        QuantityRange,
+        Text,
+        Time,
+        TimeRange,
+        ObservableProperty
     }
 }

@@ -31,13 +31,16 @@ package org.n52.sos.ogc.sensorML.elements;
 import java.util.List;
 
 import org.n52.sos.ogc.gml.CodeType;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.ogc.swe.SweCoordinate;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
 /**
  * SOS internal representation of SensorML position
- * 
+ *
  * @since 4.0.0
  */
 public class SmlPosition extends SweAbstractDataComponent {
@@ -59,39 +62,41 @@ public class SmlPosition extends SweAbstractDataComponent {
 
     /**
      * constructor
-     * 
+     *
      * @param name
-     *            Position name
+     *                       Position name
      * @param fixed
-     *            is fixed
+     *                       is fixed
      * @param referenceFrame
-     *            Position reference frame
+     *                       Position reference frame
      * @param position
-     *            Position coordinates
+     *                       Position coordinates
      */
-    public SmlPosition(final String name, final boolean fixed, final String referenceFrame,
-            final List<SweCoordinate<?>> position) {
+    public SmlPosition(final String name, final boolean fixed,
+                       final String referenceFrame,
+                       final List<SweCoordinate<?>> position) {
         super();
         setName(name);
         this.fixed = fixed;
         this.referenceFrame = referenceFrame;
         this.position = position;
     }
-    
+
     /**
      * constructor
-     * 
+     *
      * @param name
-     *            Position name
+     *                       Position name
      * @param fixed
-     *            is fixed
+     *                       is fixed
      * @param referenceFrame
-     *            Position reference frame
+     *                       Position reference frame
      * @param position
-     *            Position coordinates
+     *                       Position coordinates
      */
-    public SmlPosition(final CodeType name, final boolean fixed, final String referenceFrame,
-            final List<SweCoordinate<?>> position) {
+    public SmlPosition(final CodeType name, final boolean fixed,
+                       final String referenceFrame,
+                       final List<SweCoordinate<?>> position) {
         super();
         setName(name);
         this.fixed = fixed;
@@ -108,7 +113,8 @@ public class SmlPosition extends SweAbstractDataComponent {
 
     /**
      * @param fixed
-     *            the fixed to set
+     *              the fixed to set
+     *
      * @return This object
      */
     public SmlPosition setFixed(final boolean fixed) {
@@ -125,7 +131,8 @@ public class SmlPosition extends SweAbstractDataComponent {
 
     /**
      * @param referenceFrame
-     *            the referenceFrame to set
+     *                       the referenceFrame to set
+     *
      * @return This object
      */
     public SmlPosition setReferenceFrame(final String referenceFrame) {
@@ -142,7 +149,8 @@ public class SmlPosition extends SweAbstractDataComponent {
 
     /**
      * @param position
-     *            the position to set
+     *                 the position to set
+     *
      * @return This object
      */
     public SmlPosition setPosition(final List<SweCoordinate<?>> position) {
@@ -155,4 +163,15 @@ public class SmlPosition extends SweAbstractDataComponent {
         return SweDataComponentType.Position;
     }
 
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
 }

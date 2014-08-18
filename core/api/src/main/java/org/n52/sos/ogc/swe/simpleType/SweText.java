@@ -30,11 +30,14 @@ package org.n52.sos.ogc.swe.simpleType;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
 /**
  * SOS internal representation of SWE simpleType text
- * 
+ *
  * @author Carsten Hollmann
  * @since 4.0.0
  */
@@ -85,4 +88,17 @@ public class SweText extends SweAbstractSimpleType<String> implements Comparable
                        : o.getValue() == null ? 1
                           : getValue().compareTo(o.getValue());
     }
+
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+
 }

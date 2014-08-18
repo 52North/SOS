@@ -28,7 +28,10 @@
  */
 package org.n52.sos.ogc.swe.simpleType;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -83,4 +86,17 @@ public class SweCategory extends SweAbstractUomType<String> implements SweQualit
     public SweDataComponentType getDataComponentType() {
         return SweDataComponentType.Category;
     }
+
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+
 }

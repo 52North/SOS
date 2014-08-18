@@ -51,6 +51,7 @@ import org.joda.time.DateTimeZone;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
 import org.n52.sos.AbstractBeforeAfterClassTest;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -58,10 +59,12 @@ import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.swe.RangeValue;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweEnvelope;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.SweSimpleDataRecord;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
@@ -306,6 +309,15 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassTest {
                     public SweDataComponentType getDataComponentType() {
                         return null;
                     }
+
+                    @Override
+                    public <T> T accept(SweDataComponentVisitor<T> visitor) {
+                        return null;
+                    }
+
+                    @Override
+                    public void accept(VoidSweDataComponentVisitor visitor) {
+                    }
                 })));
     }
 
@@ -469,7 +481,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassTest {
 		assertThat(xbCount.getQualityArray(0).isSetText(), is(true));
 		assertThat(xbCount.getQualityArray(0).getText().getValue(),is(qualityTextValue));
     }
-    
+
     @Test public void
     should_encode_count_with_quality_Category()
     		throws OwsExceptionReport {
@@ -487,7 +499,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassTest {
 		assertThat(xbCount.getQualityArray(0).isSetCategory(), is(true));
 		assertThat(xbCount.getQualityArray(0).getCategory().getValue(),is(qualityCategoryValue));
     }
-    
+
     @Test public void
     should_encode_count_with_quality_Quantity()
     		throws OwsExceptionReport {
@@ -505,7 +517,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassTest {
 		assertThat(xbCount.getQualityArray(0).isSetQuantity(), is(true));
 		assertThat(xbCount.getQualityArray(0).getQuantity().getValue(),is(qualityQuantityValue));
     }
-    
+
     @Test public void
     should_encode_count_with_quality_QuantityRange()
     		throws OwsExceptionReport {
@@ -572,7 +584,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassTest {
         assertThat(ucY.getQuantity().getAxisID(), is(yAxisId));
         assertThat(ucY.getQuantity().getUom().getCode(), is(uom));
         assertThat(ucY.getQuantity().getValue(), is(x2));
-		
+
 		assertThat(xbEnvelope.isSetReferenceFrame(), is(true));
 		assertThat(xbEnvelope.getReferenceFrame(), is(""+srid));
     }

@@ -30,13 +30,11 @@ package org.n52.sos.encode;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collections;
-import java.util.Map;
+import java.util.zip.GZIPOutputStream;
 
 import org.n52.sos.response.BinaryAttachmentResponse;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 
 /**
  * Writer for ServiceResponse (containing ByteArrayOutputStream)
@@ -60,36 +58,28 @@ public class BinaryAttachmentResponseWriter extends AbstractResponseWriter<Binar
     }
 
     @Override
-    public void write(BinaryAttachmentResponse binaryAttachmentResponse, OutputStream out) throws IOException {
+    public void write(BinaryAttachmentResponse binaryAttachmentResponse, OutputStream out, ResponseProxy responseProxy) throws IOException {
+        if (!(out instanceof GZIPOutputStream)) {
+            responseProxy.setContentLength(binaryAttachmentResponse.getBytes().length);
+        }
+
+        //binary
+        responseProxy.addHeader(HeaderCode.CONTENT_TRANSFER_ENCODING, HeaderCode.CONTENT_TRANSFER_ENCODING_BINARY);
+
+        if (binaryAttachmentResponse != null) {
+            //filename
+            if (!Strings.isNullOrEmpty(binaryAttachmentResponse.getFilename())) {
+                responseProxy.addHeader(HeaderCode.CONTENT_DISPOSITION, String.format(
+                        HeaderCode.CONTENT_ATTACHMENT_FILENAME_FORMAT, binaryAttachmentResponse.getFilename()));
+            }
+        }
+
+        //write output now that headers and content length are in place
         out.write(binaryAttachmentResponse.getBytes());
     }
 
     @Override
     public boolean supportsGZip(BinaryAttachmentResponse t) {
         return false;
-    }
-    
-    @Override
-    public Map<String,String> getResponseHeaders(BinaryAttachmentResponse binaryAttachmentResponse) {
-        Map<String,String> responseHeaders = Maps.newHashMap();
-
-        //binary
-        responseHeaders.put(HeaderCode.CONTENT_DISPOSITION, String.format(
-                HeaderCode.CONTENT_ATTACHMENT_FILENAME_FORMAT, binaryAttachmentResponse.getFilename()));
-
-        if (binaryAttachmentResponse != null) {
-            //filename
-            if (!Strings.isNullOrEmpty(binaryAttachmentResponse.getFilename())) {
-                responseHeaders.put(HeaderCode.CONTENT_DISPOSITION, String.format(
-                        HeaderCode.CONTENT_ATTACHMENT_FILENAME_FORMAT, binaryAttachmentResponse.getFilename()));
-            }
-        }
-
-        return Collections.unmodifiableMap(responseHeaders);
-    }
-
-    @Override
-    public int getContentLength(BinaryAttachmentResponse t) {
-        return t.getSize();
     }
 }

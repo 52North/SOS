@@ -52,7 +52,7 @@ public class XmlResponseWriter extends AbstractResponseWriter<XmlObject> {
     }
 
     @Override
-    public void write(XmlObject xml, OutputStream out) throws IOException {
+    public void write(XmlObject xml, OutputStream out, ResponseProxy responseProxy) throws IOException {
         xml.save(out, XmlOptionsHelper.getInstance().getXmlOptions());
     }
 

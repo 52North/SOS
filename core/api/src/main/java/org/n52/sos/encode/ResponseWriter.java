@@ -30,7 +30,6 @@ package org.n52.sos.encode;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Map;
 
 import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.util.http.MediaType;
@@ -75,10 +74,12 @@ public interface ResponseWriter<T> {
      *            Object to write
      * @param out
      *            {@link OutputStream} to be written to
+     * @param responseProxy
+     *            {@link ResponseProxy} giving access to header and content length setters            
      * @throws IOException
      *             If an error occurs during writing
      */
-    void write(T t, OutputStream out) throws IOException;
+    void write(T t, OutputStream out, ResponseProxy responseProxy) throws IOException;
 
     /**
      * Check if GZip is supported by this writer
@@ -87,20 +88,5 @@ public interface ResponseWriter<T> {
      *            Object to write
      * @return <code>true</code>, if GZip is supported
      */
-    boolean supportsGZip(T t);
-
-    /**
-     * Return type specific response headers (e.g. filename for downloadable binary attachments)
-     * 
-     * @return Map of response headers to add to response
-     */
-    Map<String,String> getResponseHeaders(T t);
-    
-    /**
-     * Return content length of written response, or -1 for unknown
-     * 
-     * @return Content length of written response, or -1 for unknown
-     */
-    //TODO return content length in write(T t, OutputStream out) instead?
-    int getContentLength(T t);    
+    boolean supportsGZip(T t);  
 }

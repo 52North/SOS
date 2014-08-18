@@ -26,49 +26,35 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode.json;
+package org.n52.sos.encode;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
-import org.n52.sos.coding.json.JSONUtils;
-import org.n52.sos.encode.AbstractResponseWriter;
-import org.n52.sos.encode.ResponseProxy;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
-
-import com.fasterxml.jackson.databind.JsonNode;
+import javax.servlet.http.HttpServletResponse;
 
 /**
- * TODO JavaDoc
+ * Proxy class for HttpServletResponse to give ResponseWriters access to selected methods,
+ * including addHeader and setContentLength.
  * 
- * @author Christian Autermann <c.autermann@52north.org>
- * 
- * @since 4.0.0
+ * @author Shane StClair <shane@axiomalaska.com>
+ *
+ * @since 4.1.0
  */
-public class JSONResponseWriter extends AbstractResponseWriter<JsonNode> {
-    @Override
-    public Class<JsonNode> getType() {
-        return JsonNode.class;
+public class ResponseProxy {
+    private final HttpServletResponse response;
+
+    public ResponseProxy(HttpServletResponse response) throws IOException {
+        if (response == null) {
+            throw new NullPointerException("Response cannot be null");
+        }
+        this.response = response;
     }
 
-    @Override
-    public void write(JsonNode t, OutputStream out, ResponseProxy responseProxy) throws IOException {
-        JSONUtils.print(out, t);
+    public void addHeader(String headerIdentifier, String headerValue) {
+        response.addHeader(headerIdentifier, headerValue);
     }
 
-    @Override
-    public MediaType getContentType() {
-        return MediaTypes.APPLICATION_JSON;
-    }
-
-    @Override
-    public void setContentType(MediaType contentType) {
-        
-    }
-
-    @Override
-    public boolean supportsGZip(JsonNode t) {
-        return true;
+    public void setContentLength(int contentLength) {
+        response.setContentLength(contentLength);
     }
 }

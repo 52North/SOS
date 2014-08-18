@@ -28,7 +28,6 @@
  */
 package org.n52.sos.decode;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +44,8 @@ import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
@@ -71,6 +72,7 @@ import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
@@ -79,23 +81,18 @@ import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TextValue;
+import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.Constants;
 import org.n52.sos.w3c.xlink.W3CHrefAttribute;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.swe.SweDataRecord;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
@@ -119,17 +116,25 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
                                     NamedValuePropertyType.class,
                                     NamedValuePropertyType[].class);
 
-    private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = ImmutableMap.of(
-            SupportedTypeKey.ObservationType, (Set<String>) ImmutableSet.of(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION,
-                    OmConstants.OBS_TYPE_CATEGORY_OBSERVATION, OmConstants.OBS_TYPE_COUNT_OBSERVATION,
-                    OmConstants.OBS_TYPE_MEASUREMENT, OmConstants.OBS_TYPE_TEXT_OBSERVATION,
-                    OmConstants.OBS_TYPE_TRUTH_OBSERVATION, OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION));
+    private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES
+            = ImmutableMap.of(SupportedTypeKey.ObservationType, (Set<String>) ImmutableSet
+                    .of(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION,
+                        OmConstants.OBS_TYPE_CATEGORY_OBSERVATION,
+                        OmConstants.OBS_TYPE_COUNT_OBSERVATION,
+                        OmConstants.OBS_TYPE_MEASUREMENT,
+                        OmConstants.OBS_TYPE_COMPLEX_OBSERVATION,
+                        OmConstants.OBS_TYPE_TEXT_OBSERVATION,
+                        OmConstants.OBS_TYPE_TRUTH_OBSERVATION,
+                        OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION));
 
-    private static final Set<String> CONFORMANCE_CLASSES = ImmutableSet.of(ConformanceClasses.OM_V2_MEASUREMENT,
-            ConformanceClasses.OM_V2_CATEGORY_OBSERVATION, ConformanceClasses.OM_V2_COUNT_OBSERVATION,
-            ConformanceClasses.OM_V2_TRUTH_OBSERVATION,
-            // ConformanceClasses.OM_V2_GEOMETRY_OBSERVATION,
-            ConformanceClasses.OM_V2_TEXT_OBSERVATION);
+    private static final Set<String> CONFORMANCE_CLASSES = ImmutableSet
+            .of(ConformanceClasses.OM_V2_MEASUREMENT,
+                ConformanceClasses.OM_V2_CATEGORY_OBSERVATION,
+                ConformanceClasses.OM_V2_COUNT_OBSERVATION,
+                ConformanceClasses.OM_V2_TRUTH_OBSERVATION,
+                ConformanceClasses.OM_V2_COMPLEX_OBSERVATION,
+                // ConformanceClasses.OM_V2_GEOMETRY_OBSERVATION,
+                ConformanceClasses.OM_V2_TEXT_OBSERVATION);
 
     public OmDecoderv20() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -228,7 +233,7 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
             sosNamedValue.setName(referenceType);
             return sosNamedValue;
         } else if (namedValueProperty.isSetHref()) {
-            NamedValue<?> sosNamedValue = new NamedValue<ReferenceType>();
+            NamedValue<?> sosNamedValue = new NamedValue<>();
             ReferenceType referenceType = new ReferenceType(namedValueProperty.getHref());
             if (namedValueProperty.isSetTitle()) {
                 referenceType.setTitle(namedValueProperty.getTitle());

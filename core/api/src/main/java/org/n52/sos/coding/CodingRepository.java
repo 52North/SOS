@@ -70,7 +70,7 @@ import com.google.common.collect.Sets;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class CodingRepository {
@@ -78,7 +78,7 @@ public class CodingRepository {
 
     private static class LazyHolder {
 		private static final CodingRepository INSTANCE = new CodingRepository();
-		
+
 		private LazyHolder() {};
 	}
 
@@ -344,7 +344,7 @@ public class CodingRepository {
     }
 
     private void generateTypeMap() {
-        final List<Map<SupportedTypeKey, Set<String>>> list = new LinkedList<Map<SupportedTypeKey, Set<String>>>();
+        final List<Map<SupportedTypeKey, Set<String>>> list = new LinkedList<>();
         for (final Decoder<?, ?> decoder : getDecoders()) {
             list.add(decoder.getSupportedTypes());
         }
@@ -619,22 +619,22 @@ public class CodingRepository {
             procedureDescriptionFormatsStatus.put(pdfk, active);
         }
     }
-    
+
     public String getNamespaceFor(String prefix) {
         Map<String, String> prefixNamspaceMap = getPrefixNamspaceMap();
         for (String namespace : prefixNamspaceMap.keySet()) {
             if (prefix.equals(prefixNamspaceMap.get(prefix))) {
-                return namespace; 
+                return namespace;
             }
         }
         return null;
     }
-    
+
     public String getPrefixFor(String namespace) {
         return getPrefixNamspaceMap().get(namespace);
-        
+
     }
-    
+
     private Map<String, String> getPrefixNamspaceMap() {
         Map<String, String> prefixMap = Maps.newHashMap();
         for (final Encoder<?, ?> encoder : CodingRepository.getInstance().getEncoders()) {

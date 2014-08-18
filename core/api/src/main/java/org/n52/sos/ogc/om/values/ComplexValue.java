@@ -31,30 +31,30 @@ package org.n52.sos.ogc.om.values;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweAbstractDataRecord;
 
 import com.google.common.base.Objects;
 
-public class ComplexValue implements Value<SweDataRecord> {
+public class ComplexValue implements Value<SweAbstractDataRecord> {
     private static final long serialVersionUID = 7864029515468084800L;
-    private SweDataRecord value;
+    private SweAbstractDataRecord value;
     private String unit;
 
     public ComplexValue() {
         this(null);
     }
 
-    public ComplexValue(SweDataRecord value) {
+    public ComplexValue(SweAbstractDataRecord value) {
         this.value = value;
     }
 
     @Override
-    public void setValue(SweDataRecord value) {
+    public void setValue(SweAbstractDataRecord value) {
         this.value = value;
     }
 
     @Override
-    public SweDataRecord getValue() {
+    public SweAbstractDataRecord getValue() {
         return this.value;
     }
 

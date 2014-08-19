@@ -99,7 +99,13 @@ Changes since last release
     * Fix problem with duplicated entries in generated SQL scripts.
       * https://github.com/52North/SOS/commit/6e70d910e6f8f7140d79f65c83250cf5370b73fc
     * Fix #74: Exception when executing SOS 1.0.0 DescribeSensor requests
-      * https://github.com/52North/SOS/commit/
+      * https://github.com/CarstenHollmann/SOS/commit/7e0e6a2ca8670e8f7ec632d899d9781391a04bbd
+    * Fix #101: SOS 1.0.0 GetObservation SOAP request fails
+      * https://github.com/52North/SOS/commit/4972a4e0a13bc0e3e5cb951f4d322c064a22e8de
+    * Fix #106: Possible thread safety issue in HTTPUtils' GenericWritable
+      * https://github.com/CarstenHollmann/SOS/commit/835ce396cc9dda645a15bb2c538580943af7cfd5
+    * Fix #109: First position is missing in the featuerOfInterest geometry if generated from samplingGeometries
+      * https://github.com/CarstenHollmann/SOS/commit/6ccf283def95198c3ba8dd452ee10232a7a6251f
  
  
 Release 52n-sos-4.0.1

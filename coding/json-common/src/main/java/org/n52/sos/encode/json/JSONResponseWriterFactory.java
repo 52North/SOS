@@ -28,43 +28,29 @@
  */
 package org.n52.sos.encode.json;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
-import org.n52.sos.coding.json.JSONUtils;
-import org.n52.sos.encode.AbstractResponseWriter;
-import org.n52.sos.encode.ResponseProxy;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
+import org.n52.sos.encode.ResponseWriterFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- * TODO JavaDoc
+ * {@link ResponseWriterFactory} implementation for {@link JsonNode} and
+ * {@link JSONResponseWriter}
  * 
- * @author Christian Autermann <c.autermann@52north.org>
- * 
- * @since 4.0.0
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
  */
-public class JSONResponseWriter extends AbstractResponseWriter<JsonNode> {
+public class JSONResponseWriterFactory implements
+		ResponseWriterFactory<JsonNode, JSONResponseWriter> {
 
-    @Override
-    public void write(JsonNode t, OutputStream out, ResponseProxy responseProxy) throws IOException {
-        JSONUtils.print(out, t);
-    }
+	@Override
+	public Class<JsonNode> getType() {
+		return JsonNode.class;
+	}
 
-    @Override
-    public MediaType getContentType() {
-        return MediaTypes.APPLICATION_JSON;
-    }
+	@Override
+	public JSONResponseWriter getResponseWriter() {
+		return new JSONResponseWriter();
+	}
 
-    @Override
-    public void setContentType(MediaType contentType) {
-        
-    }
-
-    @Override
-    public boolean supportsGZip(JsonNode t) {
-        return true;
-    }
 }

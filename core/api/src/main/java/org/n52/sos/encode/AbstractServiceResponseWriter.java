@@ -50,10 +50,10 @@ import org.n52.sos.util.http.MediaType;
 public class AbstractServiceResponseWriter extends
 		AbstractResponseWriter<AbstractServiceResponse> {
 
-	@Override
-	public Class<AbstractServiceResponse> getType() {
-		return AbstractServiceResponse.class;
-	}
+//	@Override
+//	public Class<AbstractServiceResponse> getType() {
+//		return AbstractServiceResponse.class;
+//	}
 
 	@Override
 	public void write(AbstractServiceResponse asr, OutputStream out, ResponseProxy responseProxy)

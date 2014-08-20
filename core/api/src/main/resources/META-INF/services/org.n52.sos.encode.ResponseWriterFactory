@@ -1,0 +1,3 @@
+org.n52.sos.encode.XmlResponseWriterFactory
+org.n52.sos.encode.AbstractServiceResponseWriterFactory
+org.n52.sos.encode.BinaryAttachmentResponseWriterFactory

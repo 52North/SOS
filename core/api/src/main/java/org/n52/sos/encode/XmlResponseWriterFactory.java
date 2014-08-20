@@ -26,45 +26,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode.json;
+package org.n52.sos.encode;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
-import org.n52.sos.coding.json.JSONUtils;
-import org.n52.sos.encode.AbstractResponseWriter;
-import org.n52.sos.encode.ResponseProxy;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
-
-import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.xmlbeans.XmlObject;
 
 /**
- * TODO JavaDoc
+ * {@link ResponseWriterFactory} implementation for {@link XmlObject} and
+ * {@link XmlResponseWriter}
  * 
- * @author Christian Autermann <c.autermann@52north.org>
- * 
- * @since 4.0.0
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
  */
-public class JSONResponseWriter extends AbstractResponseWriter<JsonNode> {
+public class XmlResponseWriterFactory implements
+		ResponseWriterFactory<XmlObject, XmlResponseWriter> {
 
-    @Override
-    public void write(JsonNode t, OutputStream out, ResponseProxy responseProxy) throws IOException {
-        JSONUtils.print(out, t);
-    }
+	@Override
+	public Class<XmlObject> getType() {
+		return XmlObject.class;
+	}
 
-    @Override
-    public MediaType getContentType() {
-        return MediaTypes.APPLICATION_JSON;
-    }
+	@Override
+	public XmlResponseWriter getResponseWriter() {
+		return new XmlResponseWriter();
+	}
 
-    @Override
-    public void setContentType(MediaType contentType) {
-        
-    }
-
-    @Override
-    public boolean supportsGZip(JsonNode t) {
-        return true;
-    }
 }

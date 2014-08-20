@@ -103,11 +103,13 @@ Release 52n-sos-4.1
     * Fix problem with duplicated entries in generated SQL scripts.
       * https://github.com/52North/SOS/commit/6e70d910e6f8f7140d79f65c83250cf5370b73fc
     * Fix #74: Exception when executing SOS 1.0.0 DescribeSensor requests
-      * https://github.com/CarstenHollmann/SOS/commit/7e0e6a2ca8670e8f7ec632d899d9781391a04bbd
+      * https://github.com/52North/SOS/commit/7e0e6a2ca8670e8f7ec632d899d9781391a04bbd
     * Throw exception if the inserted sensor description has swe:DataArray sml:output element without a swe:DataRecord elementType element.
       * https://github.com/52North/SOS/commit/5c55aeeb92a8ed60a12449c1171b757a38fc57bc
     * Fix GetObservation invalid srs exception code.
       * https://github.com/52North/SOS/commit/0b20dd424be7556a767170ba8392897b36cdd8c8
+    * Fix #79: File-based H2/GeoDB fails on sampling geometry index
+      * https://github.com/52North/SOS/commit/a5814ee539f25ada7eeedd75e63a37e68c6682cf
     * Fix #81: GetDataAvailability returns invalid times and value counts
       * https://github.com/52North/SOS/commit/49c004ff8a7255aed677bef05c913254070387e1
     * Fix #83: Update GetInvolved link on client landing page
@@ -116,13 +118,16 @@ Release 52n-sos-4.1
       * https://github.com/52North/SOS/commit/c710a08dcdc05545d5515a24e643bc191bf71a94
     * Fix used Hibernate mapping path constants
       * https://github.com/52North/SOS/commit/8be9ad0d4bb6e388e9b8a5f9ed05ed6423b994d4
-    * Fix #79: File-based H2/GeoDB fails on sampling geometry index
-      * https://github.com/52North/SOS/commit/a5814ee539f25ada7eeedd75e63a37e68c6682cf
     * Fix #87: Inform user about javascript requirement for the webapp
       * https://github.com/52North/SOS/commit/5014f1fa00199e573b80ca931928fa53542602f7
     * Fix #80: Resetting the SOS does not delete the cache file
       * https://github.com/52North/SOS/commit/a43b945940963ec4152da7769de242213e219a70
-
+    * Fix #101: SOS 1.0.0 GetObservation SOAP request fails
+      * https://github.com/52North/SOS/commit/4972a4e0a13bc0e3e5cb951f4d322c064a22e8de
+    * Fix #106: Possible thread safety issue in HTTPUtils' GenericWritable
+      * https://github.com/52North/SOS/commit/835ce396cc9dda645a15bb2c538580943af7cfd5
+    * Fix #109: First position is missing in the featuerOfInterest geometry if generated from samplingGeometries
+      * https://github.com/52North/SOS/commit/6ccf283def95198c3ba8dd452ee10232a7a6251f
  
  
 Release 52n-sos-4.0.1

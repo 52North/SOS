@@ -505,16 +505,6 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         if (obsRequest.isSetResponseFormat()) {
             // don't normalize response format with MediaType parsing here, that's the job of the v1 decoders
             obsResponse.setResponseFormat(obsRequest.getResponseFormat());
-
-//            MediaType contentTypeFromResponseFormat = null;
-//            try {
-//                contentTypeFromResponseFormat = MediaType.parse(obsRequest.getResponseFormat()).withoutParameters();
-//            } catch (IllegalArgumentException iae) {
-//                LOGGER.debug("Requested responseFormat {} is not a MediaType", obsRequest.getResponseFormat());
-//            }
-//            if (contentTypeFromResponseFormat != null) {
-//                obsResponse.setContentType(contentTypeFromResponseFormat);
-//            }
         }
     }
 

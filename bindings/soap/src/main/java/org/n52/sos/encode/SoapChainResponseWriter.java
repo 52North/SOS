@@ -53,11 +53,6 @@ import org.n52.sos.util.XmlOptionsHelper;
 public class SoapChainResponseWriter extends AbstractResponseWriter<SoapChain> {
 
     @Override
-    public Class<SoapChain> getType() {
-        return SoapChain.class;
-    }
-
-    @Override
     public void write(SoapChain chain, OutputStream out, ResponseProxy responseProxy) throws IOException {
         try {
             Object o = encodeSoapResponse(chain, out);

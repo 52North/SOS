@@ -86,7 +86,7 @@ public class ScrollableIterable<T> implements Iterable<T>, Closeable {
         @Override
         @SuppressWarnings("unchecked")
         public T next() {
-            if (hasNext) {
+            if (hasNext != null && hasNext) {
                 hasNext = null;
                 return (T) results.get(0);
             } else {

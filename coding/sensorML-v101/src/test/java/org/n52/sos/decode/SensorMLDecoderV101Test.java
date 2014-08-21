@@ -435,7 +435,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassTest {
         dataArray.addNewElementCount().addNewCount().setValue(new BigInteger("1"));
         DataComponentPropertyType addNewElementType = dataArray.addNewElementType();
         addNewElementType.setName("elementType");
-        addNewElementType.addNewBoolean();
+        addNewElementType.addNewAbstractDataRecord();
         return dataArray;
     }
 

@@ -64,7 +64,6 @@ import org.n52.sos.service.Configurator;
 import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.http.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -506,16 +505,6 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         if (obsRequest.isSetResponseFormat()) {
             // don't normalize response format with MediaType parsing here, that's the job of the v1 decoders
             obsResponse.setResponseFormat(obsRequest.getResponseFormat());
-
-            MediaType contentTypeFromResponseFormat = null;
-            try {
-                contentTypeFromResponseFormat = MediaType.parse(obsRequest.getResponseFormat()).withoutParameters();
-            } catch (IllegalArgumentException iae) {
-                LOGGER.debug("Requested responseFormat {} is not a MediaType", obsRequest.getResponseFormat());
-            }
-            if (contentTypeFromResponseFormat != null) {
-                obsResponse.setContentType(contentTypeFromResponseFormat);
-            }
         }
     }
 

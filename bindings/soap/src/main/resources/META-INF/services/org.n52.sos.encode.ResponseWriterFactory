@@ -1,0 +1,2 @@
+org.n52.sos.encode.SoapResponseWriterFactory
+org.n52.sos.encode.SoapChainResponseWriterFactory

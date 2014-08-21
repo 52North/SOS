@@ -26,45 +26,36 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode.json;
-
-import java.io.IOException;
-import java.io.OutputStream;
-
-import org.n52.sos.coding.json.JSONUtils;
-import org.n52.sos.encode.AbstractResponseWriter;
-import org.n52.sos.encode.ResponseProxy;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
-
-import com.fasterxml.jackson.databind.JsonNode;
+package org.n52.sos.encode;
 
 /**
- * TODO JavaDoc
+ * Response writer factory which is loaded by the
+ * {@link ResponseWriterRepository} and creates for each request an new
+ * {@link ResponseWriter} implementation.
  * 
- * @author Christian Autermann <c.autermann@52north.org>
- * 
- * @since 4.0.0
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.1.0
+ *
+ * @param <T>
+ *            The type this factory supports
+ * @param <S>
+ *            The {@link ResponseWriter} this factory supports
  */
-public class JSONResponseWriter extends AbstractResponseWriter<JsonNode> {
+public interface ResponseWriterFactory<T, S extends ResponseWriter<T>> {
 
-    @Override
-    public void write(JsonNode t, OutputStream out, ResponseProxy responseProxy) throws IOException {
-        JSONUtils.print(out, t);
-    }
+	/**
+	 * Get the type this {@link ResponseWriterFactory} supports
+	 * 
+	 * @return the supported type
+	 */
+	Class<T> getType();
 
-    @Override
-    public MediaType getContentType() {
-        return MediaTypes.APPLICATION_JSON;
-    }
+	/**
+	 * Get the {@link ResponseWriter} this {@link ResponseWriterFactory}
+	 * supports
+	 * 
+	 * @return the response writer
+	 */
+	S getResponseWriter();
 
-    @Override
-    public void setContentType(MediaType contentType) {
-        
-    }
-
-    @Override
-    public boolean supportsGZip(JsonNode t) {
-        return true;
-    }
 }

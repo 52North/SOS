@@ -65,6 +65,7 @@ import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
@@ -74,6 +75,7 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
 import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.StringHelper;
@@ -364,6 +366,12 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
                 sosObservation.addParameter(createSpatialFilteringProfileParameter(hObservation.getSamplingGeometry()));
             } else if (isSetSpatialFilteringProfileAdder()) {
                 getSpatialFilteringProfileAdder().add(hObservation.getObservationId(), sosObservation);
+            } else {
+            	if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
+            		AbstractFeature feature = getFeature(featureId);
+            		if (feature != null && feature instanceof SamplingFeature && ((SamplingFeature)feature).isSetGeometry())
+            		sosObservation.addParameter(createSpatialFilteringProfileParameter(((SamplingFeature)feature).getGeometry()));
+                }
             }
             observationCollection.add(sosObservation);
             getSession().evict(hObservation);

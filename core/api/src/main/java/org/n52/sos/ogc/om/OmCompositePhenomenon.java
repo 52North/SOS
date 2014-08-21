@@ -28,11 +28,14 @@
  */
 package org.n52.sos.ogc.om;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.collect.Iterators;
 
-public class OmCompositePhenomenon extends AbstractPhenomenon {
+
+public class OmCompositePhenomenon extends AbstractPhenomenon implements Iterable<OmObservableProperty>{
     /**
      * serial number
      */
@@ -91,5 +94,14 @@ public class OmCompositePhenomenon extends AbstractPhenomenon {
             this.phenomenonComponents = new LinkedList<>();
         }
         this.phenomenonComponents.add(observableProperty);
+    }
+
+    @Override
+    public Iterator<OmObservableProperty> iterator() {
+        if (getPhenomenonComponents() == null) {
+            return Iterators.emptyIterator();
+        } else {
+            return getPhenomenonComponents().iterator();
+        }
     }
 }

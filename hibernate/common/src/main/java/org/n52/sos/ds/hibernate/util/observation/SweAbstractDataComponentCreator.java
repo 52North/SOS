@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import org.apache.xmlbeans.XmlObject;
 
+import org.n52.oxf.xml.NcNameResolver;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
@@ -61,8 +62,8 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 
 /**
- * {@code ObservationVisitor} to create {@link SweAbstractDataComponent} from
- * observations.
+ * {@code ValuedObservationVisitor} to create {@link SweAbstractDataComponent}
+ * from observations.
  *
  * @author Christian Autermann
  */
@@ -108,10 +109,16 @@ public class SweAbstractDataComponentCreator
             throws OwsExceptionReport {
         SweDataRecord record = new SweDataRecord();
         for (Observation<?> sub : o.getValue()) {
-            String fieldName = sub.getObservableProperty().getName();
+            String fieldName = getFieldName(sub);
             record.addField(new SweField(fieldName, sub.accept(this)));
         }
         return setCommonValues(record, o);
+    }
+
+    protected String getFieldName(Observation<?> sub) {
+        String name = sub.getObservableProperty().getName();
+        if (name != null && !name.isEmpty()) { return name; }
+        return NcNameResolver.fixNcName(sub.getObservableProperty().getIdentifier());
     }
 
     @Override

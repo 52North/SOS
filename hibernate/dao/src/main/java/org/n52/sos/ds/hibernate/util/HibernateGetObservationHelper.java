@@ -193,10 +193,11 @@ public class HibernateGetObservationHelper {
             final AbstractObservationRequest request, final Locale language, final Session session) throws OwsExceptionReport,
             ConverterException {
         if (!observations.isEmpty()) {
+            final long startProcess = System.currentTimeMillis();
             List<OmObservation> sosObservations =
                         HibernateObservationUtilities.createSosObservationsFromObservations(
                                 new HashSet<>(observations), request, language, session);
-            final long startProcess = System.currentTimeMillis();
+
 
             LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),
                     (System.currentTimeMillis() - startProcess));

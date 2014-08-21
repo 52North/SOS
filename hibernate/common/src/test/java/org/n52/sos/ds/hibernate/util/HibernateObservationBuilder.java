@@ -94,17 +94,19 @@ public class HibernateObservationBuilder {
     public Observation<?> createObservation(String id, Date phenomenonTimeStart, Date phenomenonTimeEnd, Date resultTime,
             Date validTimeStart, Date validTimeEnd) throws OwsExceptionReport {
         AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-        Observation<?> observation = observationDAO.createObservationFromValue(new BooleanValue(true), session);
+        Observation<?> observation;
         if (observationDAO instanceof SeriesObservationDAO) {
-            SeriesBooleanObservation seriesBooleanObservation = (SeriesBooleanObservation)observation;
+            SeriesBooleanObservation seriesBooleanObservation  = new SeriesBooleanObservation();
             seriesBooleanObservation.setSeries(getSeries());
             seriesBooleanObservation.setValue(true);
+            observation = seriesBooleanObservation;
         } else {
-            LegacyBooleanObservation booleanObservation = (LegacyBooleanObservation)observation;
+            LegacyBooleanObservation booleanObservation = new LegacyBooleanObservation();
             booleanObservation.setFeatureOfInterest(getFeatureOfInterest());
             booleanObservation.setProcedure(getProcedure());
             booleanObservation.setObservableProperty(getObservableProperty());
             booleanObservation.setValue(true);
+            observation = booleanObservation;
         }
         observation.setDeleted(false);
         observation.setIdentifier(id);

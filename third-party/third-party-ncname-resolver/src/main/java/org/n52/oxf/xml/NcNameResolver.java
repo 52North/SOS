@@ -447,6 +447,8 @@ public class NcNameResolver {
         char c = nonNcName.charAt(0);
         if ( ! (c == '_' || NcNameResolver.isLetter(c))) {
             sb.append('_');
+        } else {
+            sb.append(c);
         }
         // Check the rest of the characters
         for (int i = 1; i < nonNcName.length(); i++) {

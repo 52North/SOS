@@ -31,13 +31,17 @@
             <artifactId>test</artifactId>
             <scope>test</scope>
         </dependency>
-             <dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-spatial</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+		</dependency>
     </dependencies>
-<build>
+    <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

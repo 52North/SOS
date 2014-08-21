@@ -208,13 +208,18 @@
                          table="complexValue">
             <key column="observationId"
                  foreign-key="observationComplexValueFk" />
-            <many-to-one name="value"
-                         class="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation"
-                         fetch="select"
-                         lazy="no-proxy"
-                         foreign-key="complexValueObsIdentifierFk">
-                <column name="value" />
-            </many-to-one>
+            <set name="value"
+                 table="compositeObservation"
+                 inverse="false"
+                 fetch="join">
+                <key column="parentObservationId"
+                     not-null="true"
+                     foreign-key="observationParentFK" />
+                <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation"
+                              foreign-key="observationChildFk">
+                    <column name="childObservationId" not-null="true" />
+                </many-to-many>
+            </set>
         </joined-subclass>
     </class>
 </hibernate-mapping>

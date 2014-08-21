@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.legacy.full;
 
-import java.util.List;
+import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
@@ -46,19 +46,19 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
  * @author Christian Autermann
  */
 public class LegacyComplexObservation
-        extends AbstractLegacyObservation<List<Observation<?>>>
+        extends AbstractLegacyObservation<Set<Observation<?>>>
         implements ComplexObservation {
 
     private static final long serialVersionUID = -4591033257913357014L;
-    private List<Observation<?>> value;
+    private Set<Observation<?>> value;
 
     @Override
-    public List<Observation<?>> getValue() {
+    public Set<Observation<?>> getValue() {
         return this.value;
     }
 
     @Override
-    public void setValue(List<Observation<?>> value) {
+    public void setValue(Set<Observation<?>> value) {
         this.value = value;
     }
 

@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.full;
 
-import java.util.List;
+import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.ComplexValuedObservation;
@@ -38,4 +38,4 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.ComplexValuedObserva
  *
  * @author Christian Autermann
  */
-public interface ComplexObservation extends ComplexValuedObservation, Observation<List<Observation<?>>> {}
+public interface ComplexObservation extends ComplexValuedObservation, Observation<Set<Observation<?>>> {}

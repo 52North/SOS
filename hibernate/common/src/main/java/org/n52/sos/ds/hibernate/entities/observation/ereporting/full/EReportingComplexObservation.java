@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.ereporting.full;
 
-import java.util.List;
+import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
@@ -40,19 +40,19 @@ import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReporti
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class EReportingComplexObservation
-        extends AbstractEReportingObservation<List<Observation<?>>>
+        extends AbstractEReportingObservation<Set<Observation<?>>>
         implements ComplexObservation {
 
     private static final long serialVersionUID = 1626814141847363925L;
-    private List<Observation<?>> value;
+    private Set<Observation<?>> value;
 
     @Override
-    public List<Observation<?>> getValue() {
+    public Set<Observation<?>> getValue() {
         return this.value;
     }
 
     @Override
-    public void setValue(List<Observation<?>> value) {
+    public void setValue(Set<Observation<?>> value) {
         this.value = value;
     }
 

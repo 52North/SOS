@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.valued;
 
-import java.util.List;
+import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
@@ -38,4 +38,4 @@ import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
  *
  * @author Christian Autermann
  */
-public interface ComplexValuedObservation extends ValuedObservation<List<Observation<?>>> {}
+public interface ComplexValuedObservation extends ValuedObservation<Set<Observation<?>>> {}

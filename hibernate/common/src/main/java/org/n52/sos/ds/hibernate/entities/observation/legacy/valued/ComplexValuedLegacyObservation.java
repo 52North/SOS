@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.legacy.valued;
 
-import java.util.List;
+import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
@@ -45,19 +45,19 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
  * @author Christian Autermann
  */
 public class ComplexValuedLegacyObservation
-        extends AbstractValuedLegacyObservation<List<Observation<?>>>
+        extends AbstractValuedLegacyObservation<Set<Observation<?>>>
         implements ComplexValuedObservation {
 
     private static final long serialVersionUID = 7382182727547541987L;
-    private List<Observation<?>> value;
+    private Set<Observation<?>> value;
 
     @Override
-    public List<Observation<?>> getValue() {
+    public Set<Observation<?>> getValue() {
         return this.value;
     }
 
     @Override
-    public void setValue(List<Observation<?>> value) {
+    public void setValue(Set<Observation<?>> value) {
         this.value = value;
     }
 

@@ -455,6 +455,9 @@ public abstract class AbstractOmEncoderv20
 
     private void setValidTime(OmObservation observation, OMObservationType xb) throws OwsExceptionReport {
         Time validTime = observation.getValidTime();
+        if (validTime == null) {
+            return;
+        }
         if (validTime.getGmlId() == null) {
             validTime.setGmlId(OmConstants.VALID_TIME_NAME + "_" + observation.getObservationID());
         }

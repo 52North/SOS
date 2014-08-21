@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +35,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -45,23 +43,10 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
-import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -71,40 +56,18 @@ import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.service.Configurator;
-import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.StringHelper;
-import org.n52.sos.util.XmlHelper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Geometry;
 
 
 public class ObservationOmObservationCreator extends AbstractOmObservationCreator {
@@ -286,6 +249,12 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         o.setTupleSeparator(getTupleSeparator());
         o.setObservationConstellation(oc);
         o.setResultTime(new TimeInstant(new DateTime(ho.getResultTime(), DateTimeZone.UTC)));
+
+        if (ho.getValidTimeStart() != null || ho.getValidTimeEnd() != null) {
+            o.setValidTime(new TimePeriod(new DateTime(ho.getValidTimeStart(), DateTimeZone.UTC),
+                                          new DateTime(ho.getValidTimeEnd(), DateTimeZone.UTC)));
+        }
+
         o.setValue(new SingleObservationValue(getPhenomenonTime(ho), value));
         return o;
     }

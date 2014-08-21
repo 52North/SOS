@@ -51,6 +51,9 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
 import org.hibernate.spatial.dialect.postgis.PostgisDialect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.HibernateDatasourceConstants;
@@ -80,8 +83,6 @@ import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -90,10 +91,11 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.PrecisionModel;
 
 /**
  * Feature handler class for features stored in the database
- * 
+ *
  * @since 4.0.0
  */
 @Configurable
@@ -229,11 +231,11 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.n52.sos.ds.FeatureQueryHandler#insertFeature(org.n52.sos.ogc.om.features
      * .samplingFeatures.SamplingFeature, java.lang.Object)
-     * 
+     *
      * FIXME check semantics of this method in respect to its name and the
      * documentation in the super class
      */
@@ -261,7 +263,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
     /**
      * Creates a map with FOI identifier and SOS feature
      * <p/>
-     * 
+     *
      * @param features
      *            FeatureOfInterest objects
      * @param version
@@ -298,7 +300,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
 
     /**
      * Creates a SOS feature from the FeatureOfInterest object
-     * 
+     *
      * @param feature
      *            FeatureOfInterest object
      * @param version
@@ -455,7 +457,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
 
     /**
      * Get the geometry from featureOfInterest object.
-     * 
+     *
      * @param feature
      * @return geometry
      * @throws OwsExceptionReport
@@ -486,22 +488,29 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                     List<Coordinate> coordinates = Lists.newLinkedList();
                     Geometry lastGeoemtry = null;
                     for (Geometry geometry : geometries) {
-                        if (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry)) {
-                        	coordinates.add(GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(geometry).getCoordinate());
+                        if (geometry == null) {
+                            continue;
+                        }
+                        if (lastGeoemtry == null) {
+                            lastGeoemtry = geometry;
+                        }
+                        if (geometry.getSRID() != srid) {
+                           srid = geometry.getSRID();
+                        }
+                        if (!geometry.equalsTopo(lastGeoemtry)) {
+                            coordinates.add(GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(geometry).getCoordinate());
                             lastGeoemtry = geometry;
                             if (geometry.getSRID() != srid) {
                                 srid = geometry.getSRID();
                              }
                         }
                     }
-                    Geometry geom = null;
+                    GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), srid);
                     if (coordinates.size() == 1) {
-                        geom = new GeometryFactory().createPoint(coordinates.iterator().next());
+                        return geometryFactory.createPoint(coordinates.iterator().next());
                     } else {
-                        geom = new GeometryFactory().createLineString(coordinates.toArray(new Coordinate[coordinates.size()]));
+                        return geometryFactory.createLineString(coordinates.toArray(new Coordinate[coordinates.size()]));
                     }
-                    geom.setSRID(srid);
-                    return geom;
                 }
             }
         }

@@ -77,9 +77,9 @@ import org.n52.sos.response.InsertSensorResponse;
 
 /**
  * Implementation of the abstract class AbstractInsertSensorDAO
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class InsertSensorDAO extends AbstractInsertSensorDAO implements CapabilitiesExtensionProvider {
 
@@ -91,7 +91,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
     public InsertSensorDAO() {
         super(SosConstants.SOS);
     }
-    
+
     @Override
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
@@ -183,7 +183,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
     /**
      * Create OmObservableProperty objects from observableProperty identifiers
      * and get or insert them into the database
-     * 
+     *
      * @param obsProps
      *            observableProperty identifiers
      * @param session
@@ -192,7 +192,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
      */
     private List<ObservableProperty> getOrInsertNewObservableProperties(final List<String> obsProps,
             final Session session) {
-        final List<OmObservableProperty> observableProperties = new ArrayList<OmObservableProperty>(obsProps.size());
+        final List<OmObservableProperty> observableProperties = new ArrayList<>(obsProps.size());
         for (final String observableProperty : obsProps) {
             observableProperties.add(new OmObservableProperty(observableProperty));
         }
@@ -201,7 +201,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
 
     /**
      * Get SensorDescription String from procedure description
-     * 
+     *
      * @param procedureDescription
      *            Procedure description
      * @param procedureIdentifier

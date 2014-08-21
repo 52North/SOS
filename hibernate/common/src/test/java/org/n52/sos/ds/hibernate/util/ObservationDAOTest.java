@@ -211,10 +211,10 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
 
 
         observationDAO.insertObservationSingleValue(
-                observationConstellations,
-                featureOfInterest,
-                observation,
-                session
+            observationConstellations,
+            featureOfInterest,
+            observation,
+            session
         );
     }
 

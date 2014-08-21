@@ -43,10 +43,10 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import org.n52.sos.ds.AbstractInsertObservationDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -113,7 +113,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
             transaction = session.beginTransaction();
 
             CompositeOwsException exceptions = new CompositeOwsException();
-            Cache cache = new Cache();
+            InsertObservationCache cache = new InsertObservationCache();
 
             cache.addOfferings(request.getOfferings());
 
@@ -157,7 +157,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
     }
 
     private void insertObservation(OmObservation sosObservation,
-                                     Cache cache,
+                                     InsertObservationCache cache,
                                      CompositeOwsException exceptions,
                                      Session session)
             throws OwsExceptionReport, CodedException {
@@ -169,7 +169,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
         sosObsConst.setOfferings(offerings);
         cache.addOfferings(offerings);
 
-        Set<ObservationConstellation> hObservationConstellations = new HashSet<>(0);
+        Set<ObservationConstellation> hObservationConstellations = new HashSet<>();
         FeatureOfInterest hFeature = null;
 
         for (String offeringID : sosObsConst.getOfferings()) {
@@ -206,7 +206,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
         }
 
         if (!hObservationConstellations.isEmpty()) {
-            final AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
             if (sosObservation.getValue() instanceof SingleObservationValue) {
                 observationDAO.insertObservationSingleValue(
                         hObservationConstellations, hFeature, sosObservation,
@@ -299,7 +299,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
      * @throws OwsExceptionReport
      */
     private FeatureOfInterest getFeature(AbstractFeature abstractFeature,
-            Cache cache, Session session) throws OwsExceptionReport {
+            InsertObservationCache cache, Session session) throws OwsExceptionReport {
         FeatureOfInterest hFeature = cache.getFeature(abstractFeature);
         if (hFeature == null) {
             hFeature = featureOfInterestDAO.checkOrInsertFeatureOfInterest(abstractFeature, session);
@@ -347,7 +347,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
         return offerings;
     }
 
-    private class Cache {
+    private static class InsertObservationCache {
         private final Set<String> allOfferings = Sets.newHashSet();
         private final Map<AbstractFeature, FeatureOfInterest> featureCache = Maps.newHashMap();
         private final Table<OmObservationConstellation, String, ObservationConstellation> obsConstOfferingHibernateObsConstTable = HashBasedTable.create();

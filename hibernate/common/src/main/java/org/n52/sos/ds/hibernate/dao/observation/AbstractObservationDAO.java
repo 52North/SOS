@@ -1279,7 +1279,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
             if (!childObservation) {
                 daos.observation().addIdentifier(sosObservation, observation, session);
+            } else {
+                observation.setHiddenChild(true);
             }
+
             daos.observation().addName(sosObservation, observation, session);
             daos.observation().addDescription(sosObservation, observation);
             daos.observation().addTime(sosObservation, observation);

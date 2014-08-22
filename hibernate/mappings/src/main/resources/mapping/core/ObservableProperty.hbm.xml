@@ -28,5 +28,8 @@
 		<property name="disabled" type="org.hibernate.type.TrueFalseType">
             <column name="disabled" not-null="true" default="'F'" check="disabled in ('T','F')"/>
         </property>
+        <property name="hiddenChild" type="org.hibernate.type.TrueFalseType">
+            <column name="hiddenChild" not-null="true" default="'F'" check="hiddenChild in ('T','F')"/>
+        </property>
     </class>
 </hibernate-mapping>

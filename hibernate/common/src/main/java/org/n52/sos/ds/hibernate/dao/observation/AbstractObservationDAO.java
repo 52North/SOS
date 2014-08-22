@@ -1244,7 +1244,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                                 constellation.getProcedure(),
                                 observableProperty,
                                 constellation.getOffering(),
-                                constellation.isHiddenChild(),
+                                true,
                                 session));
             }
             return newObservationConstellations;

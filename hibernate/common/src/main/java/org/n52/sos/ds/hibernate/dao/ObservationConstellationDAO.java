@@ -331,10 +331,9 @@ public class ObservationConstellationDAO {
 
         // add parent/childs
         if (observableProperty instanceof OmCompositePhenomenon) {
-            OmCompositePhenomenon omCompositePhenomenon
-                    = (OmCompositePhenomenon) observableProperty;
+            OmCompositePhenomenon omCompositePhenomenon = (OmCompositePhenomenon) observableProperty;
             ObservablePropertyDAO dao = new ObservablePropertyDAO();
-            Map<String, ObservableProperty> obsprop = dao.getOrInsertObservablePropertyAsMap(Arrays.asList(observableProperty), session);
+            Map<String, ObservableProperty> obsprop = dao.getOrInsertObservablePropertyAsMap(Arrays.asList(observableProperty), false, session);
             for (OmObservableProperty child : omCompositePhenomenon) {
                 checkOrInsertObservationConstellation(
                         hoc.getProcedure(),

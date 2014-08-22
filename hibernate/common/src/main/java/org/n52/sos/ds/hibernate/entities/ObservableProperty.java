@@ -31,17 +31,19 @@ package org.n52.sos.ds.hibernate.entities;
 import java.io.Serializable;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasHiddenChildFlag;
 
 /**
  * @since 4.0.0
  *
  */
-public class ObservableProperty extends AbstractIdentifierNameDescriptionEntity implements Serializable, HasDisabledFlag {
+public class ObservableProperty extends AbstractIdentifierNameDescriptionEntity implements Serializable, HasDisabledFlag, HasHiddenChildFlag {
 
     private static final long serialVersionUID = -4804791207463850138L;
     public static final String ID = "observablePropertyId";
     private long observablePropertyId;
     private Boolean disabled = false;
+    private Boolean hiddenChild = false;
 
     public long getObservablePropertyId() {
         return this.observablePropertyId;
@@ -64,6 +66,16 @@ public class ObservableProperty extends AbstractIdentifierNameDescriptionEntity 
     @Override
     public boolean getDisabled() {
         return disabled;
+    }
+
+    @Override
+    public void setHiddenChild(boolean hiddenChild) {
+        this.hiddenChild = hiddenChild;
+    }
+
+    @Override
+    public boolean isHiddenChild() {
+        return this.hiddenChild;
     }
 
 }

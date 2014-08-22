@@ -4,7 +4,7 @@
 	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
-	<display-name>${project.parent.name}, SVN: ${buildNumber} @ ${timestamp}</display-name>
+	<display-name>${project.parent.name}, Git-Branch '${git.branch}' with state '${git.commit.id}' @ ${git.commit.time}</display-name>
 	<description>This is an OGC SOS.</description>
 
 	<context-param>
@@ -126,6 +126,10 @@
 	<servlet-mapping>
 		<servlet-name>SOS</servlet-name>
 		<url-pattern>/sos/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SOS</servlet-name>
+		<url-pattern>/service/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

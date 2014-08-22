@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.util.Collection;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -37,8 +37,10 @@ import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.annotations.common.util.StringHelper;
 import org.hibernate.exception.ConstraintViolationException;
 import org.n52.sos.ds.AbstractInsertObservationDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
@@ -46,9 +48,7 @@ import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.SpatialFilteringProfile;
 import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
@@ -67,6 +67,7 @@ import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.HTTPStatus;
 
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -74,21 +75,33 @@ import com.google.common.collect.Table;
 
 /**
  * Implementation of the abstract class AbstractInsertObservationDAO
- * @since 4.0.0
  * 
+ * @since 4.0.0
+ *
  */
 public class InsertObservationDAO extends AbstractInsertObservationDAO {
     private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+
     private final ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
+
     private final FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
 
     private static final int FLUSH_THRESHOLD = 50;
-    
+
+    private static final String CONSTRAINT_OBSERVATION_IDENTITY = "observationIdentity";
+
+    private static final String CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY = "obsIdentifierUK";
+
     /**
      * constructor
      */
     public InsertObservationDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 
     @Override
@@ -98,8 +111,8 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
         response.setService(request.getService());
         response.setVersion(request.getVersion());
         Session session = null;
-        Transaction transaction = null;        
-        
+        Transaction transaction = null;
+
         // TODO: check unit and set if available and not defined in DB
         try {
             session = sessionHolder.getSession();
@@ -108,23 +121,22 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
             final Set<String> allOfferings = Sets.newHashSet();
             allOfferings.addAll(request.getOfferings());
 
-            //cache/tracking objects to avoid redundant queries
-            Map<AbstractFeature,FeatureOfInterest> featureCache = Maps.newHashMap();
-            Table<OmObservationConstellation,String,ObservationConstellation> obsConstOfferingHibernateObsConstTable = 
-                    HashBasedTable.create();            
-            Map<OmObservationConstellation,Collection<String>> obsConstOfferingCheckedMap = Maps.newHashMap();
-            Map<AbstractFeature,Collection<String>> relatedFeatureCheckedMap = Maps.newHashMap();
-            Map<String,Codespace> codespaceCache = Maps.newHashMap();
-            Map<String,Unit> unitCache = Maps.newHashMap();
-            
+            // cache/tracking objects to avoid redundant queries
+            Map<AbstractFeature, FeatureOfInterest> featureCache = Maps.newHashMap();
+            Table<OmObservationConstellation, String, ObservationConstellation> obsConstOfferingHibernateObsConstTable =
+                    HashBasedTable.create();
+            Map<String, Codespace> codespaceCache = Maps.newHashMap();
+            Map<String, Unit> unitCache = Maps.newHashMap();
 
-            //counter for batch flushing
+            HashMultimap<OmObservationConstellation, String> obsConstOfferingCheckedMap = HashMultimap.create();
+            HashMultimap<AbstractFeature, String> relatedFeatureCheckedMap = HashMultimap.create();
+
+            // counter for batch flushing
             int obsCount = 0;
 
             for (final OmObservation sosObservation : request.getObservations()) {
-                //check 
+                // check strict spatial filtering profile
                 if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()
-                        && HibernateHelper.isEntitySupported(SpatialFilteringProfile.class, session)
                         && !sosObservation.isSetSpatialFilteringProfileParameter()) {
                     throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
                             .withMessage("The sampling geometry definition is missing in the observation because"
@@ -141,34 +153,39 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
                         new HashSet<ObservationConstellation>(0);
                 FeatureOfInterest hFeature = null;
 
-                //TODO cache obsConst and feature (multi obs often have the same)
+                // TODO cache obsConst and feature (multi obs often have the
+                // same)
 
                 for (final String offeringID : sosObsConst.getOfferings()) {
-                    ObservationConstellation hObservationConstellation = obsConstOfferingHibernateObsConstTable.get(sosObsConst, offeringID);
+                    ObservationConstellation hObservationConstellation =
+                            obsConstOfferingHibernateObsConstTable.get(sosObsConst, offeringID);
                     if (hObservationConstellation == null) {
-                        if (!hasKeyOfferingBeenChecked(sosObsConst, offeringID, obsConstOfferingCheckedMap)) {
-                            try { 
+                        if (!obsConstOfferingCheckedMap.containsEntry(sosObsConst, offeringID)) {
+                            try {
                                 hObservationConstellation =
-                                        observationConstellationDAO.checkObservationConstellation(sosObsConst, offeringID,
-                                                session, Sos2Constants.InsertObservationParams.observationType.name());
-                                //add to cache table
-                                obsConstOfferingHibernateObsConstTable.put(sosObsConst, offeringID, hObservationConstellation);
+                                        observationConstellationDAO.checkObservationConstellation(sosObsConst,
+                                                offeringID, session,
+                                                Sos2Constants.InsertObservationParams.observationType.name());
+                                // add to cache table
+                                obsConstOfferingHibernateObsConstTable.put(sosObsConst, offeringID,
+                                        hObservationConstellation);
                             } catch (final OwsExceptionReport owse) {
                                 exceptions.add(owse);
                             }
-                            //mark as checked
-                            markKeyOfferingAsChecked(sosObsConst, offeringID, obsConstOfferingCheckedMap);
+                            // mark as checked
+                            obsConstOfferingCheckedMap.put(sosObsConst, offeringID);
                         }
                     }
                     if (hObservationConstellation != null) {
-                        //get feature from local cache or create if necessary
+                        // get feature from local cache or create if necessary
                         hFeature = getFeature(sosObsConst.getFeatureOfInterest(), featureCache, session);
-                        
-                        //only do feature checking once for each AbstractFeature/offering combo
-                        if (!hasKeyOfferingBeenChecked(sosObsConst.getFeatureOfInterest(), offeringID, relatedFeatureCheckedMap)) {
+
+                        // only do feature checking once for each
+                        // AbstractFeature/offering combo
+                        if (!relatedFeatureCheckedMap.containsEntry(sosObsConst.getFeatureOfInterest(), offeringID)) {
                             featureOfInterestDAO.checkOrInsertFeatureOfInterestRelatedFeatureRelation(hFeature,
                                     hObservationConstellation.getOffering(), session);
-                            markKeyOfferingAsChecked(sosObsConst.getFeatureOfInterest(), offeringID, relatedFeatureCheckedMap);
+                            relatedFeatureCheckedMap.put(sosObsConst.getFeatureOfInterest(), offeringID);
                         }
 
                         hObservationConstellations.add(hObservationConstellation);
@@ -178,15 +195,15 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
                 if (!hObservationConstellations.isEmpty()) {
                     final AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
                     if (sosObservation.getValue() instanceof SingleObservationValue) {
-                        observationDAO.insertObservationSingleValue(hObservationConstellations, hFeature, sosObservation,
-                                codespaceCache, unitCache, session);
+                        observationDAO.insertObservationSingleValue(hObservationConstellations, hFeature,
+                                sosObservation, codespaceCache, unitCache, session);
                     } else if (sosObservation.getValue() instanceof MultiObservationValues) {
-                        observationDAO.insertObservationMultiValue(hObservationConstellations, hFeature, sosObservation, 
-                                codespaceCache, unitCache, session);
+                        observationDAO.insertObservationMultiValue(hObservationConstellations, hFeature,
+                                sosObservation, codespaceCache, unitCache, session);
                     }
                 }
 
-                //flush every FLUSH_INTERVAL
+                // flush every FLUSH_INTERVAL
                 if (++obsCount % FLUSH_THRESHOLD == 0) {
                     session.flush();
                     session.clear();
@@ -204,41 +221,28 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
                 transaction.rollback();
             }
             HTTPStatus status = HTTPStatus.INTERNAL_SERVER_ERROR;
-            final String exceptionMsg = "Error while inserting new observation!";
-            if (he instanceof ConstraintViolationException) {
-                final ConstraintViolationException cve = (ConstraintViolationException) he;
-                /*
-                 * if (cve.getConstraintName() != null) { if
-                 * (cve.getConstraintName
-                 * ().equalsIgnoreCase(CONSTRAINT_OBSERVATION_IDENTITY)) {
-                 * exceptionMsg =
-                 * "Observation with same values already contained in database";
-                 * } else if (cve.getConstraintName().equalsIgnoreCase(
-                 * CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY)) { exceptionMsg =
-                 * "Observation identifier already contained in database"; } }
-                 * else if (cve.getMessage() != null) { if
-                 * (cve.getMessage().contains(CONSTRAINT_OBSERVATION_IDENTITY))
-                 * { exceptionMsg =
-                 * "Observation with same values already contained in database";
-                 * exceptionMsg =
-                 * "Observation identifier already contained in database"; }
-                 * 
-                 * }
-                 */
+            String exceptionMsg = "Error while inserting new observation!";
 
-                status = HTTPStatus.BAD_REQUEST;
-            }
-
-            // if this is a JDBCException, pass the underlying SQLException as the causedBy exception
-            // so that we can show the actual error in the OwsExceptionReport when batching
-            Exception causedBy;
             if (he instanceof JDBCException) {
-                causedBy = ((JDBCException) he).getSQLException();
+                if (he instanceof ConstraintViolationException) {
+                    final ConstraintViolationException cve = (ConstraintViolationException) he;
+                    checkEqualsAndThrow(cve.getConstraintName(), he);
+                    checkContainsAndThrow(cve.getMessage(), he);
+                }
+                SQLException sqle =((JDBCException) he).getSQLException();
+                checkContainsAndThrow(sqle.getMessage(), he);
+                // if this is a JDBCException, pass the underlying SQLException
+                // as the causedBy exception so that we can show the actual error in the
+                // OwsExceptionReport when batching
+                CompositeOwsException e = new CompositeOwsException();
+                for (Throwable next : sqle) {
+                    checkContainsAndThrow(next.getMessage(), he);
+                    e.add(new NoApplicableCodeException().causedBy(next));
+                }
+                throw e.setStatus(status);
             } else {
-                causedBy = he;
+                throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg).setStatus(status);
             }
-            
-            throw new NoApplicableCodeException().causedBy(causedBy).withMessage(exceptionMsg).setStatus(status);
         } finally {
             sessionHolder.returnSession(session);
         }
@@ -250,8 +254,40 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
         return response;
     }
 
+    private void checkEqualsAndThrow(String constraintName, HibernateException he) throws OwsExceptionReport {
+        if (StringHelper.isNotEmpty(constraintName)) { 
+            String exceptionMsg = null;
+            if (constraintName.equalsIgnoreCase(CONSTRAINT_OBSERVATION_IDENTITY)) {
+                exceptionMsg = "Observation with same values already contained in database";
+            } else if (constraintName.equalsIgnoreCase(CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY)) {
+                exceptionMsg = "Observation identifier already contained in database";
+            }
+            if(StringHelper.isNotEmpty(exceptionMsg)) {
+                throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg)
+                .setStatus(HTTPStatus.BAD_REQUEST);
+            }
+        }
+    }
+
+    private void checkContainsAndThrow(String message, HibernateException he) throws OwsExceptionReport {
+        if (StringHelper.isNotEmpty(message)) { 
+            String exceptionMsg = null;
+            if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTITY.toLowerCase())) {
+                exceptionMsg = "Observation with same values already contained in database";
+            } else if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY.toLowerCase())) {
+                exceptionMsg = "Observation identifier already contained in database";
+            }
+            if (StringHelper.isNotEmpty(exceptionMsg)) {
+                throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg)
+                .setStatus(HTTPStatus.BAD_REQUEST);
+            }
+        }
+    }
+
     /**
-     * Get the hibernate FeatureOfInterest object for an AbstractFeature, returning it from the local cache if already requested
+     * Get the hibernate FeatureOfInterest object for an AbstractFeature,
+     * returning it from the local cache if already requested
+     * 
      * @param sosObsConst
      * @param featureCache
      * @param session
@@ -259,7 +295,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
      * @throws OwsExceptionReport
      */
     private FeatureOfInterest getFeature(AbstractFeature abstractFeature,
-            Map<AbstractFeature,FeatureOfInterest> featureCache, Session session) throws OwsExceptionReport {
+            Map<AbstractFeature, FeatureOfInterest> featureCache, Session session) throws OwsExceptionReport {
         FeatureOfInterest hFeature = featureCache.get(abstractFeature);
         if (hFeature == null) {
             hFeature = featureOfInterestDAO.checkOrInsertFeatureOfInterest(abstractFeature, session);
@@ -268,29 +304,9 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
         return hFeature;
     }
 
-    private <T> boolean hasKeyOfferingBeenChecked(T key, String offeringId,
-            Map<T,Collection<String>> map) {
-        return getKeyCheckedOfferingIds(key, map).contains(offeringId); 
-    }
-
-    private <T> void markKeyOfferingAsChecked(T key, String offeringId,
-            Map<T,Collection<String>> map) {
-        getKeyCheckedOfferingIds(key, map).add(offeringId); 
-    }
-    
-    private <T> Collection<String> getKeyCheckedOfferingIds(T key,
-            Map<T,Collection<String>> map) {
-        Collection<String> offeringIds = map.get(key);
-        if (offeringIds == null) {
-            offeringIds = Sets.newHashSet();
-            map.put(key, offeringIds);
-        }
-        return offeringIds;
-    }
-    
     /**
      * Get parent offerings for requested procedure and observable property
-     * 
+     *
      * @param sosObsConst
      *            Requested observation constellation
      * @return Requested offering and valid parent procedure offerings.

@@ -34,6 +34,14 @@ package org.n52.sos.ds;
  */
 public interface HibernateDatasourceConstants {
     
+    String ORM_CONNECTION_PROVIDER_IDENTIFIER = "hibernate.orm";
+    
+    String ORM_DATASOURCE_DAO_IDENTIFIER = "hibernate.orm";
+    
+    String OGM_CONNECTION_PROVIDER_IDENTIFIER = "hibernate.ogm";
+    
+    String OGM_DATASOURCE_DAO_IDENTIFIER = "hibernate.ogm";
+    
     String HIBERNATE_MAPPING_PATH = "/mapping";
 
     String HIBERNATE_MAPPING_CORE_PATH = HIBERNATE_MAPPING_PATH + "/core";
@@ -52,13 +60,21 @@ public interface HibernateDatasourceConstants {
     
     String HIBERNATE_MAPPING_SERIES_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH = HIBERNATE_MAPPING_SERIES_CONCEPT_PATH + "/spatialFilteringProfile";
     
+    String HIBERNATE_MAPPING_EXTENSION = HIBERNATE_MAPPING_PATH + "/extension";
+
+    String HIBERNATE_MAPPING_EXTENSION_READONLY =  HIBERNATE_MAPPING_EXTENSION + "/readonly";
+    
     String HIBERNATE_RESOURCES = "HIBERNATE_RESOURCES";
 
     String HIBERNATE_DIRECTORY = "HIBERNATE_DIRECTORY";
+    
+    String HIBERNATE_ANNOTADED_CLASSES = "HIBERNATE_ANNOTADED_CLASSES";
 
     String PATH_SEPERATOR = ";";
 
     String PROVIDED_JDBC = "PROVIDED_JDBC";
 
     String HIBERNATE_DRIVER_CLASS = "hibernate.connection.driver_class";
+    
+    String HIBERNATE_DEFAULT_OGM_PACKAGE = "org.n52.sos.ds.hibernate.ogm.entities";
 }

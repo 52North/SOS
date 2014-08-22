@@ -41,6 +41,7 @@ import org.n52.sos.convert.Converter;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.convert.ConverterRepository;
 import org.n52.sos.ds.AbstractDescribeSensorDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -84,6 +85,11 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
      */
     public DescribeSensorDAO() {
         super(SosConstants.SOS);
+    }
+    
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 
     @Override
@@ -193,13 +199,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
      * @return All possible procedure description formats
      */
     private Set<String> getPossibleProcedureDescriptionFormats(String procedureDescriptionFormat) {
-        Set<String> possibleFormats = Sets.newHashSet();
-        possibleFormats.add(procedureDescriptionFormat);
-        if (SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE.equalsIgnoreCase(procedureDescriptionFormat)) {
-            possibleFormats.add(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL);
-        } else if (SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL.equalsIgnoreCase(procedureDescriptionFormat)) {
-            possibleFormats.add(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE);
-        }
+        Set<String> possibleFormats = checkForUrlVsMimeType(procedureDescriptionFormat);
         String procedureDescriptionFormatMatchingString =
                 getProcedureDescriptionFormatMatchingString(procedureDescriptionFormat);
         for (Entry<ServiceOperatorKey, Set<String>> pdfByServiceOperatorKey : CodingRepository.getInstance()
@@ -228,10 +228,22 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
         // match against lowercase string, ignoring whitespace
         return procedureDescriptionFormat.toLowerCase().replaceAll("\\s", "");
     }
+    
+    private Set<String> checkForUrlVsMimeType(String procedureDescriptionFormat) {
+    	 Set<String> possibleFormats = Sets.newHashSet();
+    	 possibleFormats.add(procedureDescriptionFormat);
+         if (SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE.equalsIgnoreCase(procedureDescriptionFormat)) {
+             possibleFormats.add(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL);
+         } else if (SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL.equalsIgnoreCase(procedureDescriptionFormat)) {
+             possibleFormats.add(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE);
+         }
+         return possibleFormats;
+    }
+    
 
     private SosProcedureDescription convertProcedureDescription(SosProcedureDescription procedureDescription,
             DescribeSensorRequest request) throws CodedException {
-        if (!procedureDescription.getDescriptionFormat().equals(request.getProcedureDescriptionFormat())) {
+        if (!checkForUrlVsMimeType(procedureDescription.getDescriptionFormat()).contains(request.getProcedureDescriptionFormat())) {
             Converter<SosProcedureDescription, SosProcedureDescription> converter =
                     ConverterRepository.getInstance().getConverter(procedureDescription.getDescriptionFormat(),
                             request.getProcedureDescriptionFormat());

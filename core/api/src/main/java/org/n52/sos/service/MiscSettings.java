@@ -75,11 +75,11 @@ public class MiscSettings implements SettingDefinitionProvider {
 
     public static final String RELATED_SAMPLING_FEATURE_ROLE_FOR_CHILD_FEATURES =
             "misc.relatedSamplingFeatureRoleForChildFeatures";
-    
+
     public static final String HYDRO_MAX_NUMBER_OF_RETURNED_VALUES = "profile.hydrology.maxReturnedValue";
-    
+
     public static final String HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES = "profile.hydrology.maxReturnedTimeSeries";
-    
+
     public static final String RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST = "profile.hydrology.overallExtrema";
 
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Miscellaneous")
@@ -162,28 +162,29 @@ public class MiscSettings implements SettingDefinitionProvider {
                     .setDescription(
                             "The value for the role of an child feature. It is used when a related feature is already sampled at the child feature.")
                     .setOrder(ORDER_13);
-    
+
     // TODO move to Profile settings if implemented
-    public static final IntegerSettingDefinition HYDRO_MAX_NUMBER_OF_RETURNED_VALUES_DEFINITION = new IntegerSettingDefinition()
+    public static final IntegerSettingDefinition HYDRO_MAX_NUMBER_OF_RETURNED_VALUES_DEFINITION =
+            new IntegerSettingDefinition()
                     .setGroup(GROUP)
                     .setKey(HYDRO_MAX_NUMBER_OF_RETURNED_VALUES)
-                    .setDefaultValue(Integer.MAX_VALUE)
-                    .setTitle(String.format("Maximum number of returned observation values Integer.max = %s", Integer.MAX_VALUE))
-                    .setDescription(
-                            "Set the maximum number of returned observation values for the Hydrology-Profile.")
+                    .setDefaultValue(0)
+                    .setTitle("Maximum number of returned observation values")
+                    .setDescription("Set the maximum number of returned observation values for the Hydrology-Profile. Set to <code>0</code> (zero) for unlimited number of observations.")
                     .setOrder(ORDER_14);
- 
+
     // TODO move to Profile settings if implemented
-    public static final IntegerSettingDefinition HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES_DEFINITION = new IntegerSettingDefinition()
+    public static final IntegerSettingDefinition HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES_DEFINITION =
+            new IntegerSettingDefinition()
                     .setGroup(GROUP)
                     .setKey(HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES)
-                    .setDefaultValue(Integer.MAX_VALUE)
-                    .setTitle(String.format("Maximum number of returned time series Integer.max = %s", Integer.MAX_VALUE))
-                    .setDescription("Set the maximum number of returned time series for the Hydrology-Profile.")
+                    .setDefaultValue(0)
+                    .setTitle("Maximum number of returned time series")
+                    .setDescription("Set the maximum number of returned time series for the Hydrology-Profile. Set to <code>0</code> (zero) for unlimited number of observations.")
                     .setOrder(ORDER_15);
-    
+
     // TODO move to Profile settings if implemented
-    public static final BooleanSettingDefinition RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST_DEFINITION  =
+    public static final BooleanSettingDefinition RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST_DEFINITION =
             new BooleanSettingDefinition()
                     .setGroup(GROUP)
                     .setOrder(ORDER_16)
@@ -193,18 +194,16 @@ public class MiscSettings implements SettingDefinitionProvider {
                     .setDescription(
                             "Should the SOS return overall extrema for first/latest observation queries or for each time series");
 
-
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet.<SettingDefinition<?, ?>> of(
             TOKEN_SEPERATOR_DEFINITION, TUPLE_SEPERATOR_DEFINITION, GML_DATE_FORMAT_DEFINITION,
             SRS_NAME_PREFIX_SOS_V1_DEFINITION, SRS_NAME_PREFIX_SOS_V2_DEFINITION, DEFAULT_OFFERING_PREFIX_DEFINITION,
             DEFAULT_PROCEDURE_PREFIX_DEFINITION, DEFAULT_OBSERVABLEPROPERTY_PREFIX_DEFINITION,
             DEFAULT_FEATURE_PREFIX_DEFINITION, CHARACTER_ENCODING_DEFINITION,
-            HTTP_STATUS_CODE_USE_IN_KVP_POX_BINDING_DEFINITION, HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES_DEFINITION, 
+            HTTP_STATUS_CODE_USE_IN_KVP_POX_BINDING_DEFINITION, HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES_DEFINITION,
             HYDRO_MAX_NUMBER_OF_RETURNED_VALUES_DEFINITION, RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST_DEFINITION
-           /*
-           * ,
-           * RELATED_SAMPLING_FEATURE_ROLE_FOR_CHILD_FEATURES_DEFINITION
-           */);
+    /*
+     * , RELATED_SAMPLING_FEATURE_ROLE_FOR_CHILD_FEATURES_DEFINITION
+     */);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

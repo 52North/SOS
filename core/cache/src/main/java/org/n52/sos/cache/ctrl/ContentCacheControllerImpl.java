@@ -28,45 +28,31 @@
  */
 package org.n52.sos.cache.ctrl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.commons.io.IOUtils;
-import org.n52.sos.cache.ContentCacheUpdate;
-import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.cache.ctrl.action.CompleteCacheUpdate;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Classes that saves the cache state after each apply. Actual functionality is
- * delegated to subclasses.
- * 
- * @author Christian Autermann <c.autermann@52north.org>
- * 
- * @since 4.0.0
- */
+import org.n52.sos.cache.ContentCacheUpdate;
+import org.n52.sos.cache.WritableContentCache;
+import org.n52.sos.cache.ctrl.action.CompleteCacheUpdate;
+import org.n52.sos.cache.ContentCachePersistenceStrategy;
+import org.n52.sos.cache.ctrl.persistence.CachePersistenceStrategyFactory;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+
+import com.google.common.base.Optional;
+
+
 public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContentCacheControllerImpl.class);
-
-    private static final String CACHE_FILE = "cache.tmp";
 
     private static final AtomicInteger COMPLETE_UPDATE_COUNT = new AtomicInteger(0);
 
     private static final AtomicInteger PARTIAL_UPDATE_COUNT = new AtomicInteger(0);
-
-    private String cacheFile;
 
     private CompleteUpdate current = null;
 
@@ -74,85 +60,53 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
 
     private volatile WritableContentCache cache;
 
-    private ReentrantLock lock = new ReentrantLock();
+    private final ReentrantLock lock = new ReentrantLock();
 
-    public ContentCacheControllerImpl() {
+    private final ContentCachePersistenceStrategy persistenceStrategy;
+
+    public ContentCacheControllerImpl(
+            ContentCachePersistenceStrategy persistenceStrategy) {
+        this.persistenceStrategy = persistenceStrategy;
         loadOrCreateCache();
     }
+
+    public ContentCacheControllerImpl() {
+        this(CachePersistenceStrategyFactory.getInstance().create());
+    }
+
+    private void loadOrCreateCache() {
+        Optional<WritableContentCache> cache = persistenceStrategy.load();
+        if (cache.isPresent()) {
+            setCache(cache.get());
+        } else {
+            // cache file doesn't exist, try to load cache from datasource
+            setCache(CacheFactory.getInstance().create());
+            try {
+                update();
+            } catch (OwsExceptionReport e) {
+                LOGGER.warn("Couldn't load cache from datasource, maybe the datasource isn't configured yet?", e);
+            }
+        }
+        setInitialized(true);
+    }
+
 
     @Override
     public WritableContentCache getCache() {
         return this.cache;
     }
 
-    protected File getCacheFile() {
-        if (this.cacheFile == null) {
-            this.cacheFile = new File(Configurator.getInstance().getBasePath(), CACHE_FILE).getAbsolutePath();
-        }
-        return new File(this.cacheFile);
-    }
-
     @Override
     public void cleanup() {
         super.cleanup();
-        persistCache();
-    }
-
-    private void loadOrCreateCache() {
-        File f = getCacheFile();
-        if (f.exists() && f.canRead()) {
-            LOGGER.debug("Reading cache from temp file '{}'", f.getAbsolutePath());
-            ObjectInputStream in = null;
-            try {
-                in = new ObjectInputStream(new FileInputStream(f));
-                setCache((WritableContentCache) in.readObject());
-            } catch (IOException t) {
-                LOGGER.error(String.format("Error reading cache file '%s'", f.getAbsolutePath()), t);
-            } catch (ClassNotFoundException t) {
-                LOGGER.error(String.format("Error reading cache file '%s'", f.getAbsolutePath()), t);
-            } finally {
-                IOUtils.closeQuietly(in);
-            }
-            f.delete();
-        } else {
-            LOGGER.debug("No cache temp file found at '{}'", f.getAbsolutePath());
-            
-            // cache file doesn't exist, try to load cache from datasource
-            try {
-                update();
-            } catch (OwsExceptionReport e) {
-                LOGGER.warn("Couldn't load cache from datasource, maybe the datasource isn't configured yet?");
-            }
-        }
-
-        if (getCache() == null) {
-            setCache(CacheFactory.getInstance().create());
-        } else {
-            setInitialized(true);
+        lock();
+        try {
+            persistenceStrategy.persistOnShutdown(getCache());
+        } finally {
+            unlock();
         }
     }
 
-    private void persistCache() {
-        File f = getCacheFile();
-        if (!f.exists() || f.delete()) {
-            ObjectOutputStream out = null;
-            if (getCache() != null) {
-                LOGGER.debug("Serializing cache to {}", f.getAbsolutePath());
-                try {
-                    if (f.createNewFile() && f.canWrite()) {
-                        out = new ObjectOutputStream(new FileOutputStream(f));
-                        out.writeObject(getCache());
-                    } else {
-                        LOGGER.error("Can not create writable file {}", f.getAbsolutePath());
-                    }
-                } catch (IOException t) {
-                    LOGGER.error(String.format("Error serializing cache to '%s'", f.getAbsolutePath()), t);
-                } finally {
-                    IOUtils.closeQuietly(out);
-                }
-            }
-        }
-    }
 
     protected void setCache(WritableContentCache wcc) {
         this.cache = wcc;
@@ -177,7 +131,7 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
         LOGGER.trace("Finished update {}", this.current);
         lock();
         try {
-            persistCache();
+            persistenceStrategy.persistOnCompleteUpdate(getCache());
             CompleteUpdate u = this.current;
             this.current = null;
             u.signalWaiting();
@@ -190,9 +144,10 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
         update.execute(getCache());
         lock();
         try {
-            persistCache();
             if (this.current != null) {
                 this.current.addUpdate(update);
+            } else {
+                persistenceStrategy.persistOnPartialUpdate(getCache());
             }
         } finally {
             unlock();
@@ -255,11 +210,16 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
     @Override
     public boolean isUpdateInProgress() {
         return current != null;
-    }    
-    
+    }
+
     @Override
     public void update() throws OwsExceptionReport {
         update(new CompleteCacheUpdate());
+    }
+
+    @Override
+    public ContentCachePersistenceStrategy getContentCachePersistenceStrategy() {
+        return this.persistenceStrategy;
     }
 
     private enum State {
@@ -304,7 +264,8 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
     }
 
     private class CompleteUpdate extends Update {
-        private ConcurrentLinkedQueue<PartialUpdate> updates = new ConcurrentLinkedQueue<PartialUpdate>();
+        private final ConcurrentLinkedQueue<PartialUpdate> updates
+                = new ConcurrentLinkedQueue<PartialUpdate>();
 
         private final Lock lock = new ReentrantLock();
 
@@ -331,6 +292,21 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
             }
         }
 
+        void setState(State state) {
+            ContentCacheControllerImpl.this.lock();
+            try {
+                lock();
+                try {
+                    LOGGER.debug("State change: {} -> {}", this.state, state);
+                    this.state = state;
+                } finally {
+                    unlock();
+                }
+            } finally {
+                ContentCacheControllerImpl.this.unlock();
+            }
+        }
+
         boolean isFinished() {
             lock();
             try {
@@ -346,21 +322,6 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
                 return getState() == State.WAITING;
             } finally {
                 unlock();
-            }
-        }
-
-        void setState(State state) {
-            ContentCacheControllerImpl.this.lock();
-            try {
-                lock();
-                try {
-                    LOGGER.debug("State change: {} -> {}", this.state, state);
-                    this.state = state;
-                } finally {
-                    unlock();
-                }
-            } finally {
-                ContentCacheControllerImpl.this.unlock();
             }
         }
 

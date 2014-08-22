@@ -28,7 +28,7 @@
  */
 package org.n52.sos.soap;
 
-import java.util.Map;
+import java.util.List;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.service.SoapHeader;
@@ -49,7 +49,7 @@ public class SoapRequest {
 
     private String soapAction;
 
-    private Map<String, SoapHeader> soapHeader;
+    private List<SoapHeader> soapHeader;
 
     public SoapRequest(String soapNamespace, String soapVersion) {
         this.soapNamespace = soapNamespace;
@@ -113,7 +113,7 @@ public class SoapRequest {
 
     }
 
-    public void setSoapHeader(Map<String, SoapHeader> soapHeader) {
+    public void setSoapHeader(List<SoapHeader> soapHeader) {
         this.soapHeader = soapHeader;
     }
 
@@ -127,7 +127,7 @@ public class SoapRequest {
     /**
      * @return the soapHeader
      */
-    public Map<String, SoapHeader> getSoapHeader() {
+    public List<SoapHeader> getSoapHeader() {
         return soapHeader;
     }
 

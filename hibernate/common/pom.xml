@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>hibernate</artifactId>
-        <version>4.0.1</version>
+        <version>4.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hibernate-common</artifactId>
@@ -25,6 +25,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
             <classifier>tests</classifier>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -71,28 +72,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.15</version>
                 <configuration>
                     <excludes>
                         <exclude>**/CacheQueryTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
-        </plugins>    
-    </build>    
-    <profiles>
-        <profile>
-            <id>postgresql</id>
-            <dependencies>
-                <dependency>
-                    <groupId>postgresql</groupId>
-                    <artifactId>postgresql</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.postgis</groupId>
-                    <artifactId>postgis-jdbc</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
+        </plugins>
+    </build>
 </project>

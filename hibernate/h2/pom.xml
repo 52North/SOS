@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>hibernate</artifactId>
-        <version>4.0.1</version>
+        <version>4.1.0</version>
     </parent>
     <artifactId>hibernate-h2</artifactId>
     <name>52°North SOS - Hibernate H2</name>
@@ -38,6 +38,11 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-mappings</artifactId>
         </dependency>
+        <!-- <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-mappings</artifactId>
+            <scope>test</scope>
+        </dependency> -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>test</artifactId>

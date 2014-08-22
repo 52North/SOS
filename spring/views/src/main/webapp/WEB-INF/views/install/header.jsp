@@ -45,8 +45,8 @@
 		<link rel="stylesheet" href="<c:url value="/static/lib/bootstrap-2.3.1.min.css" />" type="text/css" />
 		<link rel="stylesheet" href="<c:url value="/static/css/application.css" />" type="text/css" />
 		<style type="text/css">
-			#ja-cssmenu li { 
-				cursor: default !important; 
+			#ja-cssmenu li {
+				cursor: default !important;
 			}
 		</style>
 		<script type="text/javascript" src="<c:url value="/static/lib/jquery-1.8.2.min.js" />"></script>
@@ -66,7 +66,7 @@
                                 <li><a><span class="menu-title">Datasource Configuration</span></a></li>
                                 <li><a><span class="menu-title">Optional Settings</span></a></li>
 								<li><a><span class="menu-title">Finish</span></a></li>
-							</ul>                                	
+							</ul>
 						</div>
 					</div>
 				</div>
@@ -80,7 +80,7 @@
 				$(function(){
 					/* put warnings on empty fields */
 					$("input[type=text], input[type=password], textarea").bind("keyup input", function() {
-						var $this = $(this); 
+						var $this = $(this);
 						if ($this.val() === "") {
 							$this.parents(".control-group").addClass("warning");
 						} else {
@@ -89,7 +89,7 @@
 					}).trigger("input");
 				});
             </script>
-			<div class="container">  
+			<div class="container">
 				<div id="content" class="span12">
 					<c:if test="${not empty error}">
 						<div class="alert alert-error">
@@ -97,3 +97,7 @@
 						</div>
 						<c:remove var="error" scope="session" />
 					</c:if>
+                    <div id="noscript" class="alert alert-danger">
+                        <strong>Warning!</strong> This page makes heavy use of JavaScript and is virtually unusable if JavaScript is disabled.
+                    </div>
+                    <script type="text/javascript">$("#noscript").hide();</script>

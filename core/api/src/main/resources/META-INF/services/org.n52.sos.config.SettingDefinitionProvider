@@ -2,6 +2,7 @@ org.n52.sos.ogc.ows.SosServiceProviderFactorySettings
 org.n52.sos.ogc.ows.SosServiceIdentificationFactorySettings
 org.n52.sos.service.MiscSettings
 org.n52.sos.service.ServiceSettings
+org.n52.sos.service.StreamingSettings
 org.n52.sos.service.ProcedureDescriptionSettings
 org.n52.sos.service.TransactionalSecuritySettings
 org.n52.sos.ds.FeatureQuerySettingsProvider

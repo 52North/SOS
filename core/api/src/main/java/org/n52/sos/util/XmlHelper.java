@@ -779,4 +779,13 @@ public final class XmlHelper {
       return nsMap;
     }
 
+    /**
+     * @param prefix
+     * @param namespace
+     * @return
+     */
+    public static String getXPathPrefix(String prefix, String namespace) {
+        return String.format("declare namespace %s='%s';", prefix, namespace);
+    }
+
 }

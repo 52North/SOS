@@ -28,15 +28,13 @@
  */
 package org.n52.sos.service;
 
-import org.n52.sos.exception.ConfigurationException;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
-import java.io.FileInputStream;
 import java.util.Properties;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.n52.sos.exception.ConfigurationException;
 
 /**
  * @since 4.0.0

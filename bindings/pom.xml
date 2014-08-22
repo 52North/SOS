@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>52n-sos</artifactId>
-        <version>4.0.1</version>
+        <version>4.1.0</version>
     </parent>
     <artifactId>bindings</artifactId>
     <packaging>pom</packaging>
@@ -14,26 +14,7 @@
         <module>kvp</module>
         <module>pox</module>
         <module>soap</module>
+        <module>rest</module>
+        <module>json</module>
     </modules>
-    <profiles>
-        <profile>
-            <id>restful</id>
-            <modules>
-                <module>rest</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>json</id>
-            <modules>
-                <module>json</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>develop</id>
-            <modules>
-                <module>rest</module>
-                <module>json</module>
-            </modules>
-        </profile>
-    </profiles>
 </project>

@@ -28,7 +28,7 @@
  */
 package org.n52.sos.decode.json.impl;
 
-import static com.github.fge.jsonschema.util.JsonLoader.fromResource;
+import static com.github.fge.jackson.JsonLoader.fromResource;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

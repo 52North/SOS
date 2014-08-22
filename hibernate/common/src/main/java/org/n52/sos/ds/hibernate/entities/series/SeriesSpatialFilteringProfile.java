@@ -37,6 +37,7 @@ import org.n52.sos.ds.hibernate.entities.AbstractSpatialFilteringProfile;
  * @since 4.0.0
  * 
  */
+@Deprecated
 public class SeriesSpatialFilteringProfile extends AbstractSpatialFilteringProfile implements Serializable {
 
     private static final long serialVersionUID = 7200974625085342134L;

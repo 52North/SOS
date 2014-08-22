@@ -82,6 +82,9 @@ public class SoapChain {
 
     public void setBodyResponse(AbstractServiceResponse bodyResponse) {
         this.bodyResponse = bodyResponse;
+        if (hasSoapResponse()) {
+            getSoapResponse().setBodyContent(bodyResponse);
+        }
     }
 
     public SoapRequest getSoapRequest() {
@@ -106,6 +109,9 @@ public class SoapChain {
 
     public void setSoapResponse(SoapResponse soapResponse) {
         this.soapResponse = soapResponse;
+        if (hasBodyResponse() && !soapResponse.isSetBodyContent()) {
+            soapResponse.setBodyContent(getBodyResponse());
+        }
     }
 
     public HttpServletRequest getHttpRequest() {

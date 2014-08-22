@@ -909,4 +909,9 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
     private boolean isServiceIdentificationSectionRequested(final int sections) {
         return (sections & SERVICE_IDENTIFICATION) != 0;
     }
+
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return IDEPENDET_IDENTIFIER;
+    }
 }

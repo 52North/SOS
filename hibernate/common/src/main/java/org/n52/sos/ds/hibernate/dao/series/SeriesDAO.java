@@ -34,10 +34,14 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.series.Series;
+import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
@@ -366,5 +370,70 @@ public class SeriesDAO {
         }
         return hSeries;
     }
+
+    /**
+     * Update series values which will be used by the Timeseries API.
+     * Can be later used by the SOS.
+     * 
+     * @param series Series object
+     * @param hObservation Observation object
+     * @param session Hibernate session
+     */
+    public void updateSeriesWithFirstLatestValues(Series series, AbstractObservation hObservation, Session session) {
+        boolean minChanged = false;
+        boolean maxChanged = false;
+        if (!series.isSetFirstTimeStamp() || (series.isSetFirstTimeStamp() && series.getFirstTimeStamp().after(hObservation.getPhenomenonTimeStart()))) {
+            minChanged = true;
+            series.setFirstTimeStamp(hObservation.getPhenomenonTimeStart());
+        }
+        if (!series.isSetLastTimeStamp() || (series.isSetLastTimeStamp() && series.getLastTimeStamp().before(hObservation.getPhenomenonTimeEnd()))) {
+            maxChanged = true;
+            series.setLastTimeStamp(hObservation.getPhenomenonTimeEnd());
+        }
+
+        if (hObservation instanceof NumericObservation) {
+            if (minChanged) {
+                series.setFirstNumericValue(((NumericObservation) hObservation).getValue());
+            }
+            if (maxChanged) {
+                series.setLastNumericValue(((NumericObservation) hObservation).getValue());
+            }
+            if (!series.isSetUnit() && hObservation.isSetUnit()) {
+                // TODO check if both unit are equal. If not throw exception?
+                series.setUnit(hObservation.getUnit());
+            }
+        }
+        session.saveOrUpdate(series);
+        session.flush();
+    }
+
+	/**
+	 * Check {@link Series} if the deleted observation time stamp corresponds to
+	 * the first/last series time stamp
+	 * 
+	 * @param series
+	 *            Series to update
+	 * @param observation
+	 *            Deleted observation
+	 * @param session
+	 *            Hibernate session
+	 */
+	public void updateSeriesAfterObservationDeletion(Series series, SeriesObservation observation, Session session) {
+		SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO();
+		if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())) {
+			SeriesObservation firstObservation = seriesObservationDAO.getFirstObservationFor(series, session);
+			series.setFirstTimeStamp(firstObservation.getPhenomenonTimeStart());
+			if (firstObservation instanceof NumericObservation) {
+				series.setFirstNumericValue(((NumericObservation) firstObservation).getValue());
+			}
+		} else if (series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
+			SeriesObservation latestObservation = seriesObservationDAO.getLastObservationFor(series, session);
+			series.setLastTimeStamp(latestObservation.getPhenomenonTimeEnd());
+			if (latestObservation instanceof NumericObservation) {
+				series.setLastNumericValue(((NumericObservation) latestObservation).getValue());
+			}
+		}
+		session.saveOrUpdate(series);
+	}
 
 }

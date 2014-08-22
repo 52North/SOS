@@ -15,19 +15,19 @@
 				<sml:SensorML version="1.0.1">
 					<sml:member>
 						<sml:System>
-
+		
 							<!-- optional; generated if not present -->
 							<sml:identification>
 								<sml:IdentifierList>
 									<sml:identifier name="uniqueID">
 										<sml:Term definition="urn:ogc:def:identifier:OGC:1.0:uniqueID">
-											<sml:value>http://www.52north.org/test/procedure/9
-											</sml:value>
+											<sml:value>http://www.52north.org/test/procedure/9</sml:value>
 										</sml:Term>
 									</sml:identifier>
 									<sml:identifier name="longName">
 										<sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">
-											<sml:value>52°North Initiative for Geospatial Open Source Software GmbH (http://52north.org)</sml:value>
+											<sml:value>52°North Initiative for Geospatial Open Source
+												Software GmbH (http://52north.org)</sml:value>
 										</sml:Term>
 									</sml:identifier>
 									<sml:identifier name="shortName">
@@ -37,11 +37,12 @@
 									</sml:identifier>
 								</sml:IdentifierList>
 							</sml:identification>
-
+		
 							<sml:capabilities name="offerings">
 								<!-- Special capabilities used to specify offerings. -->
-								<!-- Parsed and removed during InsertSensor/UpdateSensorDescription, added during DescribeSensor. -->
-								<!-- Offering is generated if not specified. -->						
+								<!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
+									added during DescribeSensor. -->
+								<!-- Offering is generated if not specified. -->
 								<swe:SimpleDataRecord>
 									<!-- Field name is used for the offering's name -->
 									<swe:field name="Offering for sensor 9">
@@ -53,7 +54,8 @@
 							</sml:capabilities>
 							<sml:capabilities name="parentProcedures">
 								<!-- Special capabilities used to specify parent procedures. -->
-								<!-- Parsed and removed during InsertSensor/UpdateSensorDescription, added during DescribeSensor. -->
+								<!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
+									added during DescribeSensor. -->
 								<swe:SimpleDataRecord>
 									<swe:field name="parentProcedure">
 										<swe:Text>
@@ -64,16 +66,18 @@
 							</sml:capabilities>
 							<sml:capabilities name="featuresOfInterest">
 								<!-- Special capabilities used to specify features of interest. -->
-								<!-- Parsed and removed during InsertSensor/UpdateSensorDescription, added during DescribeSensor. -->
+								<!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
+									added during DescribeSensor. -->
 								<swe:SimpleDataRecord>
 									<swe:field name="featureOfInterestID">
 										<swe:Text>
-											<swe:value>http://www.52north.org/test/featureOfInterest/9</swe:value>											
+											<swe:value>http://www.52north.org/test/featureOfInterest/9
+											</swe:value>
 										</swe:Text>
 									</swe:field>
 								</swe:SimpleDataRecord>
 							</sml:capabilities>
-
+		
 							<sml:position name="sensorPosition">
 								<swe:Position referenceFrame="urn:ogc:def:crs:EPSG::4326">
 									<swe:location>
@@ -117,8 +121,7 @@
 										</swe:Category>
 									</sml:output>
 									<sml:output name="test_observable_property_9_2">
-										<swe:Count
-											definition="http://www.52north.org/test/observableProperty/9_2" />
+										<swe:Count definition="http://www.52north.org/test/observableProperty/9_2" />
 									</sml:output>
 									<sml:output name="test_observable_property_9_3">
 										<swe:Quantity
@@ -133,6 +136,30 @@
 										<swe:Boolean
 											definition="http://www.52north.org/test/observableProperty/9_5" />
 									</sml:output>
+									<sml:output name="test_observable_property_9_7">
+										<swe:DataArray>
+											<swe:elementCount>
+												<swe:Count/>
+											</swe:elementCount>
+											<swe:elementType name="defs">
+												<swe:DataRecord>
+													<swe:field name="phenomenonTime">
+														<swe:Time
+															definition="http://www.opengis.net/def/property/OGC/0/PhenomenonTime">
+															<swe:uom
+																xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian" />
+														</swe:Time>
+													</swe:field>
+													<swe:field name="test_observable_property_6">
+														<swe:Quantity
+															definition="http://www.52north.org/test/observableProperty/6">
+															<swe:uom code="test_unit_6" />
+														</swe:Quantity>
+													</swe:field>
+												</swe:DataRecord>
+											</swe:elementType>
+										</swe:DataArray>
+									</sml:output>
 								</sml:OutputList>
 							</sml:outputs>
 						</sml:System>
@@ -146,6 +173,7 @@
 			<swes:observableProperty>http://www.52north.org/test/observableProperty/9_4</swes:observableProperty>
 			<swes:observableProperty>http://www.52north.org/test/observableProperty/9_5</swes:observableProperty>
 			<swes:observableProperty>http://www.52north.org/test/observableProperty/9_6</swes:observableProperty>
+			<swes:observableProperty>http://www.52north.org/test/observableProperty/9_7</swes:observableProperty>
 			<swes:metadata>
 				<sos:SosInsertionMetadata>
 					<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement</sos:observationType>
@@ -154,6 +182,7 @@
 					<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation</sos:observationType>
 					<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation</sos:observationType>
 					<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_GeometryObservation</sos:observationType>
+					<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_SWEArrayObservation</sos:observationType>
 					<!-- multiple values possible -->
 					<sos:featureOfInterestType>http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint</sos:featureOfInterestType>
 				</sos:SosInsertionMetadata>

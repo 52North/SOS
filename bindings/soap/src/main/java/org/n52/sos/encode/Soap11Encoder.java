@@ -28,6 +28,7 @@
  */
 package org.n52.sos.encode;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,6 +50,7 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.N52XmlHelper;
 import org.n52.sos.w3c.SchemaLocation;
 import org.n52.sos.w3c.W3CConstants;
+import org.n52.sos.wsa.WsaActionHeader;
 import org.n52.sos.wsa.WsaConstants;
 import org.n52.sos.wsa.WsaHeader;
 import org.slf4j.Logger;
@@ -61,7 +63,7 @@ import com.google.common.collect.Sets;
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
-public class Soap11Encoder extends AbstractSoapEncoder<SOAPMessage> {
+public class Soap11Encoder extends AbstractSoapEncoder<SOAPMessage, SoapResponse> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Soap11Encoder.class);
 
@@ -98,22 +100,20 @@ public class Soap11Encoder extends AbstractSoapEncoder<SOAPMessage> {
                     addSchemaLocationForExceptionToSOAPMessage(soapResponseMessage);
                 } else {
                     action =
-                            createSOAPBody(soapResponseMessage, soapResponse.getSoapBodyContent(),
+                            createSOAPBody(soapResponseMessage, soapResponse,
                                     soapResponse.getSoapAction());
                 }
             }
             if (soapResponse.getHeader() != null) {
-                Map<String, SoapHeader> headers = soapResponse.getHeader();
-                for (String namespace : headers.keySet()) {
-                    SoapHeader header = headers.get(namespace);
-                    if (namespace.equals(WsaConstants.NS_WSA)) {
-                        WsaHeader wsa = (WsaHeader) header;
-                        wsa.setActionValue(action);
+                List<SoapHeader> headers = soapResponse.getHeader();
+                for (SoapHeader header : headers) {
+                    if (WsaConstants.NS_WSA.equals(header.getNamespace()) && header instanceof WsaActionHeader) {
+                        ((WsaHeader) header).setValue(action);
                     }
                     try {
                         Encoder<Map<QName, String>, SoapHeader> encoder =
                                 CodingRepository.getInstance().getEncoder(
-                                        CodingHelper.getEncoderKey(namespace, header));
+                                        CodingHelper.getEncoderKey(header.getNamespace(), header));
                         if (encoder != null) {
                             Map<QName, String> headerElements = encoder.encode(header);
                             for (QName qName : headerElements.keySet()) {

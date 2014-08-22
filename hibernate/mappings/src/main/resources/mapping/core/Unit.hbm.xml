@@ -10,7 +10,7 @@
             </generator>
         </id>
         <property name="unit" type="string">
-            <column name="unit" not-null="true" unique="true" />
+            <column name="unit" not-null="true" unique-key="unitUK"/>
         </property>
     </class>
 </hibernate-mapping>

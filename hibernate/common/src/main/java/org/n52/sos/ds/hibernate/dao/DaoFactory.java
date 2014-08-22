@@ -95,6 +95,7 @@ public class DaoFactory {
      * @return Currently supported Hibernate SpatialFilteringProfile data access
      *         implementation
      */
+    @Deprecated
     public AbstractSpatialFilteringProfileDAO<?> getSpatialFilteringProfileDAO(Session session) throws CodedException {
         if (HibernateHelper.isEntitySupported(SeriesSpatialFilteringProfile.class, session)) {
             return new SeriesSpatialFilteringProfileDAO();

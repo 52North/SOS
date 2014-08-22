@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.values.ObservationValueTime" table="observation">
+        <id name="observationId" type="long">
+            <column name="observationId" />
+            <generator class="native">
+            	<param name="sequence">observationId_seq</param>
+            </generator>
+        </id>
+         <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" fetch="select" lazy="no-proxy" foreign-key="observationFeatureFk">
+           	<column index="obsFeatureIdx" name="featureOfInterestId" not-null="true" unique-key="observationIdentity" />
+        </many-to-one>
+        <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" fetch="select" lazy="no-proxy" foreign-key="observationObPropFk">
+            <column index="obsObsPropIdx" name="observablePropertyId" not-null="true" unique-key="observationIdentity"/>
+        </many-to-one>
+        <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="select" lazy="no-proxy" foreign-key="observationProcedureFk">
+            <column index="obsProcedureIdx" name="procedureId" not-null="true" unique-key="observationIdentity" />
+        </many-to-one>
+         <property name="phenomenonTimeStart" type="timestamp" >
+            <column index="obsPhenTimeStartIdx" name="phenomenonTimeStart" length="29" not-null="true" unique-key="observationIdentity"/>
+        </property>
+        <property name="phenomenonTimeEnd" type="timestamp">
+            <column index="obsPhenTimeEndIdx" name="phenomenonTimeEnd" length="29" not-null="true" unique-key="observationIdentity"/>
+        </property>
+        <property name="resultTime" type="timestamp" >
+            <column index="obsResultTimeIdx" name="resultTime" length="29" not-null="true" unique-key="observationIdentity"/>
+        </property>
+        <property name="deleted" type="org.hibernate.type.TrueFalseType">
+            <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
+        </property>
+        <property name="validTimeStart" type="timestamp">
+            <column name="validTimeStart" length="29" />
+        </property>
+        <property name="validTimeEnd" type="timestamp">
+            <column name="validTimeEnd" length="29" />
+        </property>
+        <set name="offerings" table="observationHasOffering" inverse="false" fetch="select" lazy="true" >
+            <key>
+                <column name="observationId" not-null="true" index="obshasoffobservationidx" />
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Offering" foreign-key="observationOfferingFk" lazy="proxy">
+                <column name="offeringId" not-null="true" index="obshasoffofferingidx" />
+            </many-to-many>
+        </set>
+         <property name="samplingGeometry" type="org.hibernate.spatial.GeometryType">
+            <column name="samplingGeometry" />
+        </property>
+    </class>
+</hibernate-mapping>

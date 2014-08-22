@@ -62,8 +62,11 @@
         <c:if test="${not empty metadata.VERSION}">
             <p><strong>Version:</strong> ${fn:escapeXml(metadata.VERSION)}</p>
         </c:if>
-        <c:if test="${not empty metadata.SVN_VERSION}">
-            <p><strong>Revision:</strong> ${fn:escapeXml(metadata.SVN_VERSION)}</p>
+        <c:if test="${not empty metadata.GIT_BRANCH}">
+            <p><strong>Branch:</strong> ${fn:escapeXml(metadata.GIT_BRANCH)}</p>
+        </c:if>
+        <c:if test="${not empty metadata.GIT_COMMIT}">
+            <p><strong>Revision:</strong><a href="https://github.com/52North/SOS/commit/${fn:escapeXml(metadata.GIT_COMMIT)}"> ${fn:escapeXml(metadata.GIT_COMMIT)}</a></p>
         </c:if>
         <c:if test="${not empty metadata.BUILD_DATE}">
             <p><strong>Build date:</strong> ${fn:escapeXml(metadata.BUILD_DATE)}</p>

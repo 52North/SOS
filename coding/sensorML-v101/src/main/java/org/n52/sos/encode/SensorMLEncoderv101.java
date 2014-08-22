@@ -84,6 +84,9 @@ import net.opengis.sensorML.x101.SystemDocument;
 import net.opengis.sensorML.x101.SystemType;
 import net.opengis.sensorML.x101.TermDocument.Term;
 import net.opengis.swe.x101.AnyScalarPropertyType;
+import net.opengis.swe.x101.DataArrayDocument;
+import net.opengis.swe.x101.DataArrayType;
+import net.opengis.swe.x101.DataRecordType;
 import net.opengis.swe.x101.PositionType;
 import net.opengis.swe.x101.SimpleDataRecordType;
 import net.opengis.swe.x101.VectorType;
@@ -526,6 +529,9 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
     // TODO refactor/rename
     private void addAbstractProcessValues(final AbstractProcessType abstractProcess,
             final AbstractProcess sosAbstractProcess) throws OwsExceptionReport {
+        if (sosAbstractProcess.isSetGmlId()) {
+            abstractProcess.setId(sosAbstractProcess.getGmlId());
+        }
 
         addSpecialCapabilities(sosAbstractProcess);
         if (sosAbstractProcess.isSetCapabilities()) {
@@ -1260,10 +1266,14 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
             ioComponentPropertyType.addNewTimeRange().set(encodeObjectToXml);
             break;
         case DataArray:
-            ioComponentPropertyType.addNewAbstractDataArray1().set(encodeObjectToXml);
+        	if (encodeObjectToXml instanceof DataArrayDocument) {
+        		ioComponentPropertyType.addNewAbstractDataArray1().set(((DataArrayDocument)encodeObjectToXml).getDataArray1()).substitute(SweConstants.QN_DATA_ARRAY_SWE_101, DataArrayType.type);
+        	} else {
+        		ioComponentPropertyType.addNewAbstractDataArray1().set(encodeObjectToXml).substitute(SweConstants.QN_DATA_ARRAY_SWE_101, DataArrayType.type);
+        	}
             break;
         case DataRecord:
-            ioComponentPropertyType.addNewAbstractDataRecord().set(encodeObjectToXml);
+            ioComponentPropertyType.addNewAbstractDataRecord().set(encodeObjectToXml).substitute(SweConstants.QN_DATA_RECORD_SWE_101, DataRecordType.type);
             break;
         default:
 

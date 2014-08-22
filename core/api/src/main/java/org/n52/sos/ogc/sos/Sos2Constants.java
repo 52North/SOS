@@ -33,6 +33,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.http.MediaTypes;
 import org.n52.sos.w3c.SchemaLocation;
 
@@ -44,9 +45,11 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @since 4.0.0
  */
-public interface Sos2Constants {
+public interface Sos2Constants extends SosConstants{
 
     String NS_SOS_20 = "http://www.opengis.net/sos/2.0";
+    
+    String XPATH_PREFIX_SOS_20 = XmlHelper.getXPathPrefix(SosConstants.NS_SOS_PREFIX, NS_SOS_20);
 
     String SCHEMA_LOCATION_URL_SOS = "http://schemas.opengis.net/sos/2.0/sos.xsd";
 

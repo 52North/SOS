@@ -42,6 +42,8 @@ import org.n52.sos.ogc.swes.SwesConstants;
 import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.w3c.W3CConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,8 +59,10 @@ public class SwesExtensionDecoderv20 implements Decoder<SwesExtension<?>, XmlObj
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SwesDecoderv20.class);
 
-    private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.decoderKeysForElements(
-    /* SwesConstants.NS_SWES_20 */"http://www.w3.org/2001/XMLSchema", XmlAnyTypeImpl.class);
+    @SuppressWarnings("unchecked")
+    private static final Set<DecoderKey> DECODER_KEYS = CollectionHelper.union(CodingHelper.decoderKeysForElements(
+            W3CConstants.NS_XS , XmlAnyTypeImpl.class), CodingHelper.decoderKeysForElements(
+            SwesConstants.NS_SWES_20, XmlAnyTypeImpl.class));
 
     public SwesExtensionDecoderv20() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")

@@ -30,7 +30,6 @@ package org.n52.sos.gda;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Collections;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
@@ -46,6 +45,8 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.w3c.SchemaLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 /**
  * {@code Encoder} to handle {@link GetDataAvailabilityResponse}s.
@@ -65,14 +66,18 @@ public class GetDataAvailabilityXmlEncoder extends AbstractResponseEncoder<GetDa
 
     @Override
     protected Set<SchemaLocation> getConcreteSchemaLocations() {
-        return Collections.emptySet();
+        return Sets.newHashSet(GetDataAvailabilityConstants.GET_DATA_AVAILABILITY_SCHEMA_LOCATION);
     }
 
     @Override
     protected XmlObject create(GetDataAvailabilityResponse response) throws OwsExceptionReport {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            new GetDataAvailabilityStreamWriter(response.getVersion(), response.getDataAvailabilities()).write(out);
+            if (Sos2Constants.NS_SOS_20.equals(response.getNamespace())) {
+                new SosGetDataAvailabilityStreamWriter(response.getVersion(), response.getDataAvailabilities()).write(out);
+            } else {
+                new GetDataAvailabilityStreamWriter(response.getVersion(), response.getDataAvailabilities()).write(out);  
+            }
             return XmlObject.Factory.parse(out.toString("UTF8"));
         } catch (XMLStreamException ex) {
             throw new NoApplicableCodeException().causedBy(ex).withMessage("Error encoding response");

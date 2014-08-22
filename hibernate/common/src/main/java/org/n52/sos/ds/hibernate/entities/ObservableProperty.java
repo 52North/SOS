@@ -70,13 +70,19 @@ public class ObservableProperty implements Serializable, HasIdentifier, HasDescr
     }
 
     @Override
+    public boolean isSetIdentifier() {
+        return StringHelper.isNotEmpty(getIdentifier());
+    }
+
+    @Override
     public String getDescription() {
         return this.description;
     }
 
     @Override
-    public void setDescription(String description) {
+    public ObservableProperty setDescription(String description) {
         this.description = description;
+        return this;
     }
 
     public boolean isSetDescription() {

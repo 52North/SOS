@@ -60,7 +60,7 @@
             <div class="fn_box">
                 <h3>Affiliations</h3>
                 <p>The 52&deg;North affiliations:</p>
-                <a href="http://www.opengeospatial.org/" target="_blank" title="OGC Assiciate Members"><img border="0" alt="" src="static/images/logos/ogc.gif" /></a>
+                <a href="http://www.opengeospatial.org/" target="_blank" title="OGC Assiciate Members"><img border="0" alt="" src="<c:url value="/static/images/logos/ogc.gif" />" /></a>
             </div>
             <div class="fn_box">
                 <h3>Cooperation partners</h3>
@@ -88,7 +88,7 @@
         </script>
         <small>Tested in Firefox 17.0.1, Google Chrome 23.0.1271.95, Safari 6, Internet Explorer 10</small>
         <br/>
-        <small>Copyright &copy; 
+        <small>Copyright &copy;
             <script type="text/javascript">document.write(new Date().getFullYear());</script>
             <noscript>2012</noscript>
             52&deg;North Initiative for Geospatial Open Source Software GmbH. All Rights Reserved.

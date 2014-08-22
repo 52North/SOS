@@ -46,9 +46,11 @@
   <li>PostgreSQL with PostGIS</li>
   <li>Oracle / Oracle Spatial</li>
   <li>MySQL</li>
+  <li>SQL Server</li>
+  <li>H2/GeoDB (file / in memory)</li>
 </ul>
 
-<p>In the following sections you can find some information about PostgreSQL and Oracle</p>
+<p>In the following sections you can find some information about the supported databases</p>
 	
 <p>If you like to use <strong>PostgreSQL 9.x</strong> you can find here a detailed installation guide for the different platforms
 	in the <a target="_blank" href="http://wiki.postgresql.org/wiki/Detailed_installation_guides">PostgreSQL wiki</a>.
@@ -58,11 +60,15 @@
 </p>
 	
 <p>Documentation for <strong>Oracle</strong> can be found <a target="_blank" href="http://www.oracle.com/technetwork/database/enterprise-edition/documentation/index.html">here</a>.
-   How to install the 52�North SOS with Oracle is described in the <a target="_blank" href="https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#Oracle_installation">SOS wiki</a>
+   How to install the 52&deg;North SOS with Oracle is described in the <a target="_blank" href="https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#Oracle_installation">SOS wiki</a>
 </p>
 
 <p> If you like to use <strong>MySQL 5.6.x</strong> you can find here a detailed installation guide for the different platforms
 	in the <a target="_blank" href="http://dev.mysql.com/doc/">MySQL Documentation page</a>.
+</p>
+
+<p> If you like to use <strong>Microsoft SQL Server 2012</strong> you can find detailed installation information on the <a target="_blank" href="http://msdn.microsoft.com/en-us/library/bb545450%28v=sql.10%29.aspx">Microsoft SQL Server Developer Network page</a>.
+	How to install the 52&deg;North SOS with SQL Server is described in the <a target="_blank" href="https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#SQL_Server_installation">SOS wiki</a>
 </p>
 
 <div id="uploadForm">

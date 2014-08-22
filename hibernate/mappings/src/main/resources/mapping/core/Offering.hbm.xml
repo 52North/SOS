@@ -11,7 +11,7 @@
         </id>
         <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
         <property name="identifier" type="string">
-            <column name="identifier" not-null="true" unique="true" />
+            <column name="identifier" not-null="true" unique-key="offIdentifierUK"/>
         </property>
         <property name="name" type="string">
             <column name="name" />

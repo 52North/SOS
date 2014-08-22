@@ -41,4 +41,6 @@ package org.n52.sos.util;
 public interface Producer<T> {
 
     T get();
+    
+    T get(String identification);
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.Procedure" table="procedure">
+    <class name="org.n52.sos.ds.hibernate.entities.Procedure" table="`procedure`">
         <id name="procedureId" type="long">
             <column name="procedureId" />
             <generator class="native">
@@ -14,7 +14,7 @@
             <column name="procedureDescriptionFormatId" not-null="true" />
         </many-to-one>
         <property name="identifier" type="string">
-            <column name="identifier" not-null="true" unique="true" />
+            <column name="identifier" not-null="true" unique-key="procIdentifierUK"/>
         </property>
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
             <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
@@ -26,26 +26,30 @@
         <!-- remove the comments around the property "geom" if the procedures have a geometry column -->
         <!--
         <property name="geom" type="org.hibernate.spatial.GeometryType">
-            <column name="geom" unique="true" />
+            <column name="geom" unique-key="procGeomUk" />
         </property>
         -->
         <!-- supports types bigDecimal and string -->
         <!-- remove the comments around the next properties as need (leave altitude if only 2d coordinates are required) -->
         <!--  
         <property name="longitude" type="bigDecimal">
-           <column name="longitude" unique="true" />
+           <column name="longitude" unique-key="procLonLatUk" />
         </property>
         <property name="latitude" type="bigDecimal">
-        	<column name="latitude" unique="true" />
+        	<column name="latitude" unique-key="procLonLatUk" />
         </property>
         <property name="srid" type="integer">
-        	<column name="srid" unique="true" />
+        	<column name="srid" />
         </property> 
         -->
         <!--
         <property name="altitude" type="bigDecimal">
-        	<column name="altitude" unique="true" />
+        	<column name="altitude" />
         </property>
         -->
+        <!-- for timeseries API  -->
+        <property name="reference" type="org.hibernate.type.TrueFalseType">
+        	<column name="referenceFlag" default="'F'" check="referenceFlag in ('T','F')"/>
+        </property>
     </class>
 </hibernate-mapping>

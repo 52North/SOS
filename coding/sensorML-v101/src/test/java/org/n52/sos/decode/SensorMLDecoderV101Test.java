@@ -435,8 +435,18 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassTest {
         dataArray.addNewElementCount().addNewCount().setValue(new BigInteger("1"));
         DataComponentPropertyType addNewElementType = dataArray.addNewElementType();
         addNewElementType.setName("elementType");
-        addNewElementType.addNewBoolean();
+        addNewElementType.addNewAbstractDataRecord();
         return dataArray;
     }
 
+    @Test
+    public void should_set_gml_id() throws OwsExceptionReport {
+        SensorMLDocument xbSmlDoc = getSensorMLDoc();
+        SystemType xbSystem =
+                (SystemType) xbSmlDoc.getSensorML().addNewMember().addNewProcess()
+                        .substitute(SensorMLConstants.SYSTEM_QNAME, SystemType.type);
+        xbSystem.setId(TEST_ID_1);
+        AbstractProcess absProcess = decodeAbstractProcess(xbSmlDoc);
+        assertThat(absProcess.getGmlId(), is(TEST_ID_1));
+    }    
 }

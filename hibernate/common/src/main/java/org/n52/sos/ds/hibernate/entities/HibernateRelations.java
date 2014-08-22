@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
+import java.util.Date;
 import java.util.Set;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -63,8 +64,13 @@ public interface HibernateRelations {
 
         String getDescription();
 
-        void setDescription(String description);
+        HasDescription setDescription(String description);
 
+        /**
+         * Is description set
+         * 
+         * @return <code>true</code>, if description is set
+         */
         boolean isSetDescription();
     }
 
@@ -145,6 +151,13 @@ public interface HibernateRelations {
         String getIdentifier();
 
         HasIdentifier setIdentifier(String identifier);
+        
+        /**
+         * Is identifier set
+         * 
+         * @return <code>true</code>, if identifier is set
+         */
+        boolean isSetIdentifier();
     }
 
     interface HasName {
@@ -209,6 +222,43 @@ public interface HibernateRelations {
         Offering getOffering();
     }
     
+    interface HasPhenomenonTime {
+        
+        String PHENOMENON_TIME_START = "phenomenonTimeStart";
+
+        String PHENOMENON_TIME_END = "phenomenonTimeEnd";
+        
+        /**
+         * Get the start phenomenon time
+         * 
+         * @return Start phenomenon time
+         */
+        Date getPhenomenonTimeStart();
+
+        /**
+         * Set the start phenomenon time
+         * 
+         * @param phenomenonTimeStart
+         *            Start phenomenon time to set
+         */
+        void setPhenomenonTimeStart(Date phenomenonTimeStart);
+
+        /**
+         * Get the end phenomenon time
+         * 
+         * @return End phenomenon time
+         */
+        Date getPhenomenonTimeEnd();
+
+        /**
+         * Set the end phenomenon time
+         * 
+         * @param phenomenonTimeEnd
+         *            End phenomenon time to set
+         */
+        void setPhenomenonTimeEnd(Date phenomenonTimeEnd);
+    }
+    
     interface HasProcedureGetter {
         String PROCEDURE = "procedure";
 
@@ -264,6 +314,26 @@ public interface HibernateRelations {
 
         boolean isSetResultStructure();
     }
+    
+    interface HasResultTime {
+        
+        String RESULT_TIME = "resultTime";
+        
+        /**
+         * Get the result time
+         * 
+         * @return Result time
+         */
+        Date getResultTime();
+
+        /**
+         * Set the result tiem
+         * 
+         * @param resultTime
+         *            Result tiem to set
+         */
+        void setResultTime(Date resultTime);
+    }
 
     interface HasUnit {
         String UNIT = "unit";
@@ -271,6 +341,52 @@ public interface HibernateRelations {
         Unit getUnit();
 
         void setUnit(Unit unit);
+        
+        /**
+         * Is unit set
+         * 
+         * @return <code>true</code>, if unit is set
+         */
+        boolean isSetUnit();
+    }
+    
+    interface HasValidTime {
+        
+        String VALID_TIME_START = "validTimeStart";
+
+        String VALID_TIME_END = "validTimeEnd";
+        
+        /**
+         * Get the start valid time
+         * 
+         * @return Start valid time
+         */
+        Date getValidTimeStart();
+
+        /**
+         * Set the start valid time
+         * 
+         * @param validTimeStart
+         *            Start valid time to set
+         */
+        void setValidTimeStart(Date validTimeStart);
+
+        /**
+         * Get the end valid time
+         * 
+         * @return End valid time
+         */
+        Date getValidTimeEnd();
+
+        /**
+         * Set the end valid time
+         * 
+         * @param validTimeEnd
+         *            End valid time to set
+         */
+        void setValidTimeEnd(Date validTimeEnd);
+
+        boolean isSetValidTime();
     }
 
     interface HasUrl {
@@ -396,5 +512,36 @@ public interface HibernateRelations {
         Set<T> getChilds();
 
         HasParentChilds<T, S> setChilds(Set<T> childs);
+    }
+    
+    interface HasObservationId {
+        String ID = "observationId";
+        
+        /**
+         * Get the observation id
+         * 
+         * @return Observation id
+         */
+        long getObservationId();
+
+        /**
+         * Set the observation id
+         * 
+         * @param observationId
+         *            Observation id to set
+         */
+        void setObservationId(final long observationId);
+    }
+    
+    interface HasSamplingGeometry {
+        
+        String SAMPLING_GEOMETRY = "samplingGeometry";
+        
+        Geometry getSamplingGeometry();
+        
+        void setSamplingGeometry(Geometry samplingGeometry);
+        
+        boolean hasSamplingGeometry();
+        
     }
 }

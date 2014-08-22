@@ -60,6 +60,7 @@ import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +76,7 @@ import com.google.common.collect.Maps;
  */
 public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstants {
 
-    private static final String SQL_QUERY_ALL_OFFERING_TIME_EXTREMA = "getAllOfferingTimeExtrema";    
+    private static final String SQL_QUERY_OFFERING_TIME_EXTREMA = "getOfferingTimeExtrema";    
     
     private static final String SQL_QUERY_GET_MIN_DATE_FOR_OFFERING = "getMinDate4Offering";
 
@@ -107,22 +108,25 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     }
 
     /**
-     * Get all offering objects
+     * Get offering objects for cache update
      * 
+     * @param identifiers
+     *            Optional collection of offering identifiers to fetch. If null, all offerings are returned.
      * @param session
      *            Hibernate session
      * @return Offering objects
      */
     @SuppressWarnings("unchecked")
-    public List<Offering> getOfferingObjects(final Session session) {
-        Criteria criteria = session.createCriteria(Offering.class);
-        if (HibernateHelper.isEntitySupported(TOffering.class, session)) {
-            criteria.setFetchMode(TOffering.FEATURE_OF_INTEREST_TYPES, FetchMode.JOIN);
-            criteria.setFetchMode(TOffering.OBSERVATION_TYPES, FetchMode.JOIN);
-            criteria.setFetchMode(TOffering.RELATED_FEATURES, FetchMode.JOIN);
-        }
-
-        LOGGER.debug("QUERY getOfferingObjects(): {}", HibernateHelper.getSqlString(criteria));
+    public List<Offering> getOfferingObjectsForCacheUpdate(final Collection<String> identifiers, final Session session) {
+    	 Class<?> clazz = Offering.class;
+    	 if (HibernateHelper.isEntitySupported(TOffering.class, session)) {
+    		 clazz = TOffering.class;
+    	 }
+    	 Criteria criteria = session.createCriteria(clazz);
+		if (CollectionHelper.isNotEmpty(identifiers)) {
+		    criteria.add(Restrictions.in(Offering.IDENTIFIER, identifiers));
+		}
+        LOGGER.debug("QUERY getOfferingObjectsForCacheUpdate(): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
     
@@ -275,20 +279,26 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     }
     
     /**
-     * Get all offering time extrema
+     * Get offering time extrema
      * 
+     * @param identifiers
+     *            Optional collection of offering identifiers to fetch. If null, all offerings are returned.
      * @param session
      *            Hibernate session Hibernate session
      * @return Map of offering time extrema, keyed by offering identifier
      * @throws CodedException
      */
     @SuppressWarnings("unchecked")
-    public Map<String,OfferingTimeExtrema> getAllOfferingTimeExtrema(final Session session) throws CodedException {
+    public Map<String,OfferingTimeExtrema> getOfferingTimeExtrema(final Collection<String> identifiers,
+            final Session session) throws CodedException {
         List<Object[]> results = null;
-        if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_ALL_OFFERING_TIME_EXTREMA, session)) {
-            Query namedQuery = session.getNamedQuery(SQL_QUERY_ALL_OFFERING_TIME_EXTREMA);
-            LOGGER.debug("QUERY getAllOfferingTimeExtrema() with NamedQuery: {}",
-                    SQL_QUERY_ALL_OFFERING_TIME_EXTREMA);
+        if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_OFFERING_TIME_EXTREMA, session)) {
+            Query namedQuery = session.getNamedQuery(SQL_QUERY_OFFERING_TIME_EXTREMA);
+            if (CollectionHelper.isNotEmpty(identifiers)) {
+                namedQuery.setParameterList("identifiers", identifiers);
+            }
+            LOGGER.debug("QUERY getOfferingTimeExtrema() with NamedQuery: {}",
+                    SQL_QUERY_OFFERING_TIME_EXTREMA);
             results = namedQuery.list();
         } else {
             Criteria criteria = DaoFactory.getInstance().getObservationDAO(session)
@@ -301,7 +311,10 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
                     .add(Projections.max(AbstractObservation.PHENOMENON_TIME_END))
                     .add(Projections.min(AbstractObservation.RESULT_TIME))
                     .add(Projections.max(AbstractObservation.RESULT_TIME)));
-            LOGGER.debug("QUERY getAllOfferingTimeExtrema(): {}", HibernateHelper.getSqlString(criteria)); 
+            if (CollectionHelper.isNotEmpty(identifiers)) {
+                criteria.add(Restrictions.in(Offering.IDENTIFIER, identifiers));
+            }
+            LOGGER.debug("QUERY getOfferingTimeExtrema(): {}", HibernateHelper.getSqlString(criteria)); 
             results = criteria.list();
         }
         

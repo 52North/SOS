@@ -31,10 +31,13 @@ package org.n52.sos.cache.ctrl.action;
 import java.util.Set;
 
 import org.n52.sos.cache.WritableContentCache;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.DeleteSensorRequest;
 import org.n52.sos.util.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 /**
  * When executing this &auml;ction (see {@link Action}), the following relations
@@ -48,7 +51,7 @@ import org.slf4j.LoggerFactory;
  *         J&uuml;rrens</a>
  * @since 4.0.0
  */
-public class SensorDeletionUpdate extends InMemoryCacheUpdate {
+public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorDeletionUpdate.class);
 
     private final DeleteSensorRequest request;
@@ -79,37 +82,46 @@ public class SensorDeletionUpdate extends InMemoryCacheUpdate {
             }
         }
 
-        final Set<String> observationIdentifiers = cache.getObservationIdentifiersForProcedure(procedure);
-        cache.removeObservationIdentifiersForProcedure(procedure);
-        cache.removeObservationIdentifiers(observationIdentifiers);
-
+        Set<String> offeringsNeedingReload = Sets.newHashSet();
         for (String offering : cache.getOfferingsForProcedure(procedure)) {
-            cache.removeMaxPhenomenonTimeForOffering(offering);
-            cache.removeMinPhenomenonTimeForOffering(offering);
-            cache.removeMaxResultTimeForOffering(offering);
-            cache.removeMinResultTimeForOffering(offering);
-            cache.removeNameForOffering(offering);
-            cache.removeFeaturesOfInterestForOffering(offering);
-            cache.removeRelatedFeaturesForOffering(offering);
-            cache.removeObservationTypesForOffering(offering);
-            cache.removeEnvelopeForOffering(offering);
-            cache.removeSpatialFilteringProfileEnvelopeForOffering(offering);
-            for (String observableProperty : cache.getObservablePropertiesForOffering(offering)) {
-                cache.removeOfferingForObservableProperty(observableProperty, offering);
-            }
-            cache.removeObservablePropertiesForOffering(offering);
-            Set<String> resultTemplatesToRemove = cache.getResultTemplatesForOffering(offering);
-            cache.removeResultTemplatesForOffering(offering);
-            cache.removeResultTemplates(resultTemplatesToRemove);
-            for (String resultTemplate : resultTemplatesToRemove) {
-                cache.removeFeaturesOfInterestForResultTemplate(resultTemplate);
-                cache.removeObservablePropertiesForResultTemplate(resultTemplate);
-            }
-            cache.removeOfferingForProcedure(procedure, offering);
             cache.removeProcedureForOffering(offering, procedure);
-            cache.removeOffering(offering);
+
+            if (cache.getHiddenChildProceduresForOffering(offering).contains(procedure)) {
+                //offering is a parent offering, don't delete it but we need to reload all its cache data
+                offeringsNeedingReload.add(offering);
+            } else {
+                //offering is not a parent offering, destroy it
+                cache.removeMaxPhenomenonTimeForOffering(offering);
+                cache.removeMinPhenomenonTimeForOffering(offering);
+                cache.removeMaxResultTimeForOffering(offering);
+                cache.removeMinResultTimeForOffering(offering);
+                cache.removeNameForOffering(offering);
+                cache.removeFeaturesOfInterestForOffering(offering);
+                cache.removeRelatedFeaturesForOffering(offering);
+                cache.removeObservationTypesForOffering(offering);
+                cache.removeEnvelopeForOffering(offering);
+                cache.removeSpatialFilteringProfileEnvelopeForOffering(offering);
+                for (String observableProperty : cache.getObservablePropertiesForOffering(offering)) {
+                    cache.removeOfferingForObservableProperty(observableProperty, offering);
+                }
+                cache.removeObservablePropertiesForOffering(offering);
+                Set<String> resultTemplatesToRemove = cache.getResultTemplatesForOffering(offering);
+                cache.removeResultTemplatesForOffering(offering);
+                cache.removeResultTemplates(resultTemplatesToRemove);
+                for (String resultTemplate : resultTemplatesToRemove) {
+                    cache.removeFeaturesOfInterestForResultTemplate(resultTemplate);
+                    cache.removeObservablePropertiesForResultTemplate(resultTemplate);
+                }
+                cache.removeOffering(offering);
+            }
         }
 
+        try {
+            getDao().updateCacheOfferings(cache, offeringsNeedingReload);
+        } catch (OwsExceptionReport ex) {
+            fail(ex);
+        }
+        
         cache.removeRolesForRelatedFeatureNotIn(cache.getRelatedFeatures());
         cache.setFeaturesOfInterest(cache.getFeaturesOfInterestWithOffering());
 

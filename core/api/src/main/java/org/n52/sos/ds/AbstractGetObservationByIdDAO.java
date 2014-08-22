@@ -46,8 +46,7 @@ public abstract class AbstractGetObservationByIdDAO extends AbstractOperationDAO
 
     @Override
     public void setOperationsMetadata(OwsOperation opsMeta, String service, String version) throws OwsExceptionReport {
-        opsMeta.addPossibleValuesParameter(Sos2Constants.GetObservationByIdParams.observation, getCache()
-                .getObservationIdentifiers());
+            opsMeta.addAnyParameterValue(Sos2Constants.GetObservationByIdParams.observation);
     }
 
     public abstract GetObservationByIdResponse getObservationById(GetObservationByIdRequest request)

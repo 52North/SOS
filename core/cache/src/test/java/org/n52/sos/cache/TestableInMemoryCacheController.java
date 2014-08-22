@@ -32,18 +32,23 @@ import java.io.File;
 import java.io.IOException;
 
 import org.n52.sos.cache.ctrl.ContentCacheControllerImpl;
+import org.n52.sos.cache.ctrl.persistence.ImmediatePersistenceStrategy;
+import org.n52.sos.ds.CacheFeederDAORepository;
+import org.n52.sos.ds.MockCacheFeederDAO;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-/**
- * @author Christian Autermann <c.autermann@52north.org>
- * 
- * @since 4.0.0
- */
+
 public class TestableInMemoryCacheController extends ContentCacheControllerImpl {
     private static File tempFile;
 
+    public TestableInMemoryCacheController() {
+        super(new ImmediatePersistenceStrategy(tempFile));
+        setUpdateInterval(Integer.MAX_VALUE);
+    }
+
     public static void setUp() {
         try {
+            CacheFeederDAORepository.createInstance(MockCacheFeederDAO.DATASOURCE_DAO_IDENTIFIER);
             tempFile = File.createTempFile("TestableInMemoryCacheController", "");
         } catch (IOException ex) {
             throw new RuntimeException(ex);
@@ -56,15 +61,6 @@ public class TestableInMemoryCacheController extends ContentCacheControllerImpl 
 
     public static File getTempFile() {
         return tempFile;
-    }
-
-    public TestableInMemoryCacheController() {
-        setUpdateInterval(Integer.MAX_VALUE);
-    }
-
-    @Override
-    protected File getCacheFile() {
-        return getTempFile();
     }
 
     @Override

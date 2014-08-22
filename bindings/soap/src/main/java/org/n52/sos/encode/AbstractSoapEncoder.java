@@ -43,15 +43,17 @@ import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.OwsExceptionCode;
-import org.n52.sos.exception.ows.concrete.XmlDecodingException;
+import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.sos.exception.sos.SosExceptionCode;
 import org.n52.sos.exception.swes.SwesExceptionCode;
 import org.n52.sos.ogc.ows.ExceptionCode;
 import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosSoapConstants;
+import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.soap.SoapFault;
 import org.n52.sos.soap.SoapHelper;
@@ -71,7 +73,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
-public abstract class AbstractSoapEncoder<T> implements Encoder<T, SoapResponse>, Constants {
+public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Constants {
     public static final String DEFAULT_FAULT_REASON = "A server exception was encountered.";
 
     public static final String MISSING_RESPONSE_DETAIL_TEXT = "Missing SOS response document!";
@@ -110,7 +112,7 @@ public abstract class AbstractSoapEncoder<T> implements Encoder<T, SoapResponse>
     }
 
     @Override
-    public T encode(SoapResponse response) throws OwsExceptionReport {
+    public T encode(S response) throws OwsExceptionReport {
         return encode(response, null);
     }
 
@@ -128,10 +130,9 @@ public abstract class AbstractSoapEncoder<T> implements Encoder<T, SoapResponse>
      * 
      * @throws SOAPException
      *             if an error occurs.
-     * @throws XmlDecodingException
      */
     protected String createSOAPBody(SOAPMessage soapResponseMessage, XmlObject sosResponse, String actionURI)
-            throws SOAPException, XmlDecodingException {
+            throws SOAPException {
 
         if (sosResponse != null) {
             addAndRemoveSchemaLocationForSOAP(sosResponse, soapResponseMessage);
@@ -148,6 +149,49 @@ public abstract class AbstractSoapEncoder<T> implements Encoder<T, SoapResponse>
             createSOAPFault(soapResponseMessage.getSOAPBody().addFault(), fault);
         }
         return null;
+    }
+
+    /**
+     * Create and add the SOAPBody content
+     * 
+     * @param soapResponseMessage
+     *            SOAPMessage to add the body
+     * @param soapResponse
+     *            SOS internal SOAP response
+     * @param actionURI
+     *            The ation URI
+     * @return action URI
+     * @throws SOAPException
+     *             If an error occurs when add content to {@link SOAPMessage}
+     * @throws OwsExceptionReport
+     *             If an error occurs while encoding the body content
+     */
+    protected String createSOAPBody(SOAPMessage soapResponseMessage, SoapResponse soapResponse, String actionURI)
+            throws SOAPException, OwsExceptionReport {
+        return createSOAPBody(soapResponseMessage, getBodyContent(soapResponse), actionURI);
+    }
+
+    /**
+     * Get the content for the SOAPBody as {@link XmlObject}
+     * 
+     * @param response
+     *            SOAP response
+     * @return SOAPBody content as {@link XmlObject}
+     * @throws OwsExceptionReport
+     *             If no encoder is available, the object to encode is not
+     *             supported or an error occurs during the encoding
+     */
+    protected XmlObject getBodyContent(SoapResponse response) throws OwsExceptionReport {
+        if (response.isSetXmlBodyContent()) {
+            return response.getSoapBodyContent();
+        }
+        OperationEncoderKey key =
+                new OperationEncoderKey(response.getBodyContent().getOperationKey(), MediaTypes.APPLICATION_XML);
+        Encoder<Object, AbstractServiceResponse> encoder = CodingRepository.getInstance().getEncoder(key);
+        if (encoder == null) {
+            throw new NoEncoderForKeyException(key);
+        }
+        return (XmlObject) encoder.encode(response.getBodyContent());
     }
 
     /**

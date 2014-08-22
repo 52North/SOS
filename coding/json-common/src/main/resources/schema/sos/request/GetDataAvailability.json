@@ -23,6 +23,9 @@
         },
         "featureOfInterest": {
           "$ref": "#/definitions/uriOrUriList"
+        },
+        "offering": {
+          "$ref": "#/definitions/uriOrUriList"
         }
       }
     }

@@ -76,6 +76,8 @@ public interface SweConstants {
     String EN_DATA_RECORD = "DataRecord";
 
     String EN_ENVELOPE = "Envelope";
+    
+    String EN_FIELD = "field";
 
     String EN_OBSERVABLE_PROPERTY = "ObservableProperty";
 
@@ -98,8 +100,12 @@ public interface SweConstants {
     String EN_TIME = "Time";
 
     String EN_TIME_RANGE = "TimeRange";
+    
+    String EN_UOM = "uom";
 
     String EN_VECTOR = "Vector";
+    
+    String EN_VALUE = "value";
 
     String VT_BOOLEAN = Joiner.on(Constants.COLON_CHAR).join(NS_SWE_PREFIX, EN_BOOLEAN);
 
@@ -143,6 +149,8 @@ public interface SweConstants {
 
     QName QN_DATA_ARRAY_PROPERTY_TYPE_SWE_200 = new QName(NS_SWE_20, EN_DATA_ARRAY_PROPERTY_TYPE, NS_SWE_PREFIX);
 
+    QName QN_FIELD_200 = new QName(NS_SWE_20, EN_FIELD, NS_SWE_PREFIX);
+
     QName QN_QUANTITY_SWE_101 = new QName(NS_SWE_101, EN_QUANTITY, NS_SWE_PREFIX);
 
     QName QN_QUANTITY_SWE_200 = new QName(NS_SWE_20, EN_QUANTITY, NS_SWE_PREFIX);
@@ -170,8 +178,14 @@ public interface SweConstants {
     QName QN_ENVELOPE_SWE_101 = new QName(NS_SWE_101, EN_ENVELOPE, NS_SWE_PREFIX);
 
     QName QN_TIME_SWE_200 = new QName(NS_SWE_20, EN_TIME, NS_SWE_PREFIX);
+    
+    QName QN_UOM_SWE_200 = new QName(NS_SWE_20, EN_UOM, NS_SWE_PREFIX);
 
     QName QN_VECTOR_SWE_200 = new QName(NS_SWE_20, EN_VECTOR, NS_SWE_PREFIX);
+
+    QName QN_VALUE_SWE_200 = new QName(NS_SWE_20, EN_VALUE, NS_SWE_PREFIX);
+
+	QName QN_DATA_ARRAY_SWE_101 = new QName(NS_SWE_101, EN_DATA_ARRAY, NS_SWE_PREFIX);
 
     /**
      * Enum for SensorML types

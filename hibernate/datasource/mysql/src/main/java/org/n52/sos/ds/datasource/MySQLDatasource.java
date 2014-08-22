@@ -48,6 +48,7 @@ import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.exception.ConfigurationException;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 /**
  * Hibernate datasource implementation for MySQL databases.
@@ -94,7 +95,7 @@ public class MySQLDatasource extends AbstractHibernateFullDBDatasource {
         setPasswordDefault(PASSWORD_DEFAULT_VALUE);
         setPasswordDescription(PASSWORD_DESCRIPTION);
         setDatabaseDefault(DATABASE_DEFAULT_VALUE);
-        setDatabaseDescription(HOST_DESCRIPTION);
+        setDatabaseDescription(DATABASE_DESCRIPTION);
         setHostDefault(HOST_DEFAULT_VALUE);
         setHostDescription(HOST_DESCRIPTION);
         setPortDefault(PORT_DEFAULT_VALUE);
@@ -159,11 +160,6 @@ public class MySQLDatasource extends AbstractHibernateFullDBDatasource {
                 String.format("jdbc:mysql://%s:%d/%s", settings.get(HOST_KEY), settings.get(PORT_KEY),
                         settings.get(DATABASE_KEY));
         return url;
-    }
-
-    @Override
-    protected String[] checkDropSchema(String[] dropSchema) {
-        return dropSchema;
     }
 
     @Override

@@ -28,16 +28,11 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCodespace;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescription;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterestGetter;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservablePropertyGetter;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureGetter;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 
@@ -48,30 +43,10 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
  * @since 4.0.0
  * 
  */
-public abstract class AbstractObservation implements HasIdentifier, HasDeletedFlag, HasFeatureOfInterestGetter,
-        HasObservablePropertyGetter, HasProcedureGetter, HasOfferings, HasCodespace, HasUnit {
+public abstract class AbstractObservation extends AbstractObservationTime implements HasIdentifier, HasFeatureOfInterestGetter,
+        HasObservablePropertyGetter, HasProcedureGetter, HasCodespace, HasUnit, HasDescription {
 
-    public static final String ID = "observationId";
-
-    public static final String PHENOMENON_TIME_START = "phenomenonTimeStart";
-
-    public static final String PHENOMENON_TIME_END = "phenomenonTimeEnd";
-
-    public static final String VALID_TIME_START = "validTimeStart";
-
-    public static final String VALID_TIME_END = "validTimeEnd";
-
-    public static final String RESULT_TIME = "resultTime";
-
-    public static final String DESCRIPTION = "description";
-
-    private long observationId;
-
-    private Date phenomenonTimeStart;
-
-    private Date phenomenonTimeEnd;
-
-    private Date resultTime;
+    private static final long serialVersionUID = -5638600640028433573L;
 
     private String identifier;
 
@@ -79,34 +54,7 @@ public abstract class AbstractObservation implements HasIdentifier, HasDeletedFl
 
     private String description;
 
-    private boolean deleted;
-
-    private Date validTimeStart;
-
-    private Date validTimeEnd;
-
     private Unit unit;
-
-    private Set<Offering> offerings = new HashSet<Offering>(0);
-
-    /**
-     * Get observation id
-     * 
-     * @return observation id
-     */
-    public long getObservationId() {
-        return observationId;
-    }
-
-    /**
-     * Set observation id
-     * 
-     * @param observationId
-     *            Observation id to set
-     */
-    public void setObservationId(final long observationId) {
-        this.observationId = observationId;
-    }
 
     @Override
     public String getIdentifier() {
@@ -129,55 +77,18 @@ public abstract class AbstractObservation implements HasIdentifier, HasDeletedFl
         this.codespace = codespace;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public AbstractObservation setDescription(final String description) {
         this.description = description;
         return this;
     }
 
-    public Date getPhenomenonTimeStart() {
-        return phenomenonTimeStart;
-    }
-
-    public void setPhenomenonTimeStart(final Date phenomenonTimeStart) {
-        this.phenomenonTimeStart = phenomenonTimeStart;
-    }
-
-    public Date getPhenomenonTimeEnd() {
-        return phenomenonTimeEnd;
-    }
-
-    public void setPhenomenonTimeEnd(final Date phenomenonTimeEnd) {
-        this.phenomenonTimeEnd = phenomenonTimeEnd;
-    }
-
-    public Date getResultTime() {
-        return resultTime;
-    }
-
-    public void setResultTime(final Date resultTime) {
-        this.resultTime = resultTime;
-    }
-
-    public Date getValidTimeStart() {
-        return validTimeStart;
-    }
-
-    public void setValidTimeStart(final Date validTimeStart) {
-        this.validTimeStart = validTimeStart;
-    }
-
-    public Date getValidTimeEnd() {
-        return validTimeEnd;
-    }
-
-    public void setValidTimeEnd(final Date validTimeEnd) {
-        this.validTimeEnd = validTimeEnd;
-    }
-
+    
     @Override
     public Unit getUnit() {
         return unit;
@@ -189,36 +100,6 @@ public abstract class AbstractObservation implements HasIdentifier, HasDeletedFl
     }
 
     @Override
-    public Set<Offering> getOfferings() {
-        return offerings;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void setOfferings(final Object offerings) {
-        if (offerings instanceof Set<?>) {
-            this.offerings = (Set<Offering>) offerings;
-        } else {
-            getOfferings().add((Offering) offerings);
-        }
-    }
-
-    @Override
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    @Override
-    public AbstractObservation setDeleted(final boolean deleted) {
-        this.deleted = deleted;
-        return this;
-    }
-
-    /**
-     * Is identifier set
-     * 
-     * @return <code>true</code>, if identifier is set
-     */
     public boolean isSetIdentifier() {
         return getIdentifier() != null && !getIdentifier().isEmpty();
     }
@@ -228,20 +109,12 @@ public abstract class AbstractObservation implements HasIdentifier, HasDeletedFl
         return getCodespace() != null && getCodespace().isSetCodespace();
     }
 
-    /**
-     * Is description set
-     * 
-     * @return <code>true</code>, if description is set
-     */
+    @Override
     public boolean isSetDescription() {
         return getDescription() != null && !getDescription().isEmpty();
     }
 
-    /**
-     * Is unit set
-     * 
-     * @return <code>true</code>, if unit is set
-     */
+    @Override
     public boolean isSetUnit() {
         return getUnit() != null && getUnit().isSetUnit();
     }

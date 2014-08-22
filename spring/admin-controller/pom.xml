@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>spring</artifactId>
-        <version>4.0.1</version>
+        <version>4.1.0</version>
     </parent>
     <artifactId>admin-controller</artifactId>
     <name>52°North SOS - Web Admin Controller</name>
@@ -45,6 +45,10 @@
 		<dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-sos-v20</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
     </dependencies>
 </project>

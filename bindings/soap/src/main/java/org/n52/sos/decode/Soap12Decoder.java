@@ -54,7 +54,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Maps;
 
 /**
  * class encapsulates decoding methods for SOAP elements.

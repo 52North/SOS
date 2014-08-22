@@ -121,8 +121,8 @@ public class TimeInstant extends Time {
      * @param date Value date
      */
     public TimeInstant(Date date) {
-        if (value != null) {
-            this.value = new DateTime(value, DateTimeZone.UTC);
+        if (date != null) {
+            this.value = new DateTime(date, DateTimeZone.UTC);
         } else {
             this.indeterminateValue = TimeIndeterminateValue.unknown;
         }

@@ -4,9 +4,8 @@ Licensed under GNU General Public License, Version 2.0
 
 This project includes: 
 
-  "Java Concurrency in Practice" book annotations under Creative Commons Attribution License, http://creativecommons.org/licenses/by/2.5
-  52North SOS Integration and Compliance 2.0 under GPLv2
-  52North SOS Integration and Compliance Common under GPLv2
+  52North SOS Integration and Compliance 2.0 under Eclipse Public License 1.0
+  52North SOS Integration and Compliance Common under Eclipse Public License 1.0
   52°North Aggregated Third Party modules under GPLv2
   52°North Sensor Observation Service under GPLv2
   52°North SOS - 2.0 XML Request Coding under GPLv2
@@ -15,7 +14,6 @@ This project includes:
   52°North SOS - Cache under GPLv2
   52°North SOS - Coding Modules under GPLv2
   52°North SOS - Core Modules under GPLv2
-  52°North SOS - Example Data under GPLv2
   52°North SOS - Extension Delete Observation under GPLv2
   52°North SOS - Extension Delete Observation - Hibernate DAO under GPLv2
   52°North SOS - Extension Delete Observation - JSON under GPLv2
@@ -43,6 +41,7 @@ This project includes:
   52°North SOS - Hibernate Oracle Datasource under GPLv2
   52°North SOS - Hibernate Postgres/PostGIS Datasource under GPLv2
   52°North SOS - Hibernate Session Factory under GPLv2
+  52°North SOS - Hibernate SQL Server Datasource under GPLv2
   52°North SOS - JSON Binding under GPLv2
   52°North SOS - JSON Coding under GPLv2
   52°North SOS - JSON Common under GPLv2
@@ -73,39 +72,43 @@ This project includes:
   52°North SOS - Web Views under GPLv2
   52°North SOS - Webapp under GPLv2
   52°North Third Party - NCName resolver under BSD 2-clause "Simplified" or "FreeBSD"
-                    License
-  A Hibernate Core Module under GNU Lesser General Public License
+                License
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
-  c3p0:JDBC DataSources/Resource Pools under GNU LESSER GENERAL PUBLIC LICENSE
+  c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   Commons Codec under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
-  Commons Logging under The Apache Software License, Version 2.0
+  Core Hibernate O/RM functionality under GNU Lesser General Public License
   CORS Filter under The Apache Software License, Version 2.0
   dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
+  FindBugs-jsr305 under The Apache Software License, Version 2.0
   GeoDB Core under BSD style, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   H2 Database Engine under The H2 License, Version 1.0
   Hamcrest All under New BSD License
   Hamcrest Core under BSD style
   hatbox under GNU Lesser General Public License (LGPL) version 2.1
-  Hibernate Commons Annotations under GNU LESSER GENERAL PUBLIC LICENSE
+  Hibernate Commons Annotations under GNU Lesser General Public License
   hibernate-spatial under GNU Lesser General Public License (LGPL) version 2.1
+  Hibernate/c3p0 Integration under GNU Lesser General Public License
   HttpClient under Apache License
   HttpCore under Apache License
-  Jackson-annotations under The Apache Software License, Version 2.0
-  Jackson-core under The Apache Software License, Version 2.0
-  jackson-databind under The Apache Software License, Version 2.0
+  Jackson-annotations under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
+  Jackson-core under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
+  jackson-databind under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
+  Java Annotation Indexer under AL 2.0
+  Java Persistence API, Version 2.1 under Eclipse Public License (EPL), Version 1.0 or Eclipse Distribution License (EDL), Version 1.0
   Java Property Utility under The Apache Software License, Version 2.0
+  Java Transaction API under Common Development and Distribution License or GNU General Public License, Version 2 with the Classpath Exception
+  JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail API jar under CDDL or GPLv2+CE
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
-  JBoss Logging 3 under GNU Lesser General Public License, version 2.1
+  JBoss Logging 3 under Apache License, version 2.0
+  JBoss Logging I18n Annotations under Public Domain
   JCL 1.1.1 implemented over SLF4J under MIT License
   Jettison under Apache License, Version 2.0
-  Joda time under Apache 2
-  JPA 2.0 API under Eclipse Distribution License, Version 1.0
-  json-schema-core under LGPLv3 or later
-  json-schema-validator under LGPLv3 or later
+  Joda-Time under Apache 2
+  JOpt Simple under The MIT License
   jsp-api under CDDL 1.1 or GPL2 w/ CPE
   jstl under CDDL 1.1 or GPL2 w/ CPE
   JTS Topology Suite under Lesser General Public License (LGPL)
@@ -115,9 +118,11 @@ This project includes:
   Log4j Implemented Over SLF4J under Apache Software Licenses
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
+  mchange-commons-java library under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   Mockito under The MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0
   MySQL java connector under The GNU General Public License, Version 2
+  null under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
   OASIS WS-N specification schemas - including WS-BrokeredNotification (v1.3) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   OASIS WS-Resources specification schemas v1.2 under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Objenesis under MIT License
@@ -163,11 +168,12 @@ This project includes:
   spring-security-web under The Apache Software License, Version 2.0
   spring-tx under The Apache Software License, Version 2.0
   SQLite JDBC under The Apache Software License, Version 2.0
+  sqljdbc4 under MICROSOFT SOFTWARE LICENSE TERMS, http://download.microsoft.com/download/0/2/A/02AAE597-3865-456C-AE7F-613F99F850A8/license.txt
   StAX API under The Apache Software License, Version 2.0
-  Transaction 1.1 API under lgpl
   W3C SOAP specification recommondation (v1.2 part 1) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   W3C WS-Addressing specification schemas (v1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   W3C xlink schema (spec. v1.1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  XML Commons External Components XML APIs under The Apache Software License, Version 2.0
   XmlBeans under The Apache Software License, Version 2.0
   XmlBeansXPath under The Apache Software License, Version 2.0
   XMLUnit for Java under BSD License

@@ -145,6 +145,8 @@ public interface ControllerConstants {
         String ADMIN_CACHE_SUMMARY = "/admin/cache/summary";
         
         String ADMIN_CACHE_LOADING = "/admin/cache/loading";
+        
+        String ADMIN_CACHE_DUMP = "/admin/cache/dump";        
 
         String ADMIN_RELOAD_CAPABILITIES_CACHE = "/admin/cache/reload";
 

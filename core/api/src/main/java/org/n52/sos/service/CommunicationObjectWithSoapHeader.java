@@ -28,7 +28,7 @@
  */
 package org.n52.sos.service;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * Interface to provide SOAP Header support in Request and Response objects.
@@ -43,13 +43,13 @@ public interface CommunicationObjectWithSoapHeader {
     /**
      * @return the SoapHeader encoded as an InputStream containing XML.
      */
-    Map<String, SoapHeader> getSoapHeader();
+    List<SoapHeader> getSoapHeader();
 
     /**
      * @param header
      *            the SoapHeader encoded as an InputStream containing XML.
      */
-    void setSoapHeader(Map<String, SoapHeader> header);
+    void setSoapHeader(List<SoapHeader> header);
 
     /**
      * Convenience method to check if the SoapHeader is set.

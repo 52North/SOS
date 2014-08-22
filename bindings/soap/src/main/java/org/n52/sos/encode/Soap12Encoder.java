@@ -28,7 +28,11 @@
  */
 package org.n52.sos.encode;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.AbstractMap;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -38,13 +42,18 @@ import javax.xml.soap.SOAPConstants;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
+import org.n52.sos.encode.streaming.Soap12XmlStreamWriter;
+import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OwsExceptionCode;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.service.SoapHeader;
+import org.n52.sos.soap.SoapConstants;
 import org.n52.sos.soap.SoapFault;
 import org.n52.sos.soap.SoapHelper;
 import org.n52.sos.soap.SoapResponse;
@@ -52,8 +61,12 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.N52XmlHelper;
 import org.n52.sos.util.OwsHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.SchemaLocation;
 import org.n52.sos.w3c.W3CConstants;
+import org.n52.sos.wsa.WsaActionHeader;
+import org.n52.sos.wsa.WsaConstants;
+import org.n52.sos.wsa.WsaHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.x2003.x05.soapEnvelope.Body;
@@ -71,17 +84,29 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
 /**
+ * Encoder implementation for SOAP 1.2
+ * 
  * @since 4.0.0
  * 
  */
-public class Soap12Encoder extends AbstractSoapEncoder<XmlObject> {
+public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implements
+        StreamingEncoder<XmlObject, Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Soap12Encoder.class);
 
+    private static final Set<EncoderKey> ENCODER_KEY_TYPES = CodingHelper.encoderKeysForElements(
+            SoapConstants.NS_SOAP_12, SoapFault.class, OwsExceptionReport.class);
+
     public Soap12Encoder() {
-        super(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE);
+        super(SoapConstants.NS_SOAP_12);
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
                 Joiner.on(", ").join(getEncoderKeyType()));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Set<EncoderKey> getEncoderKeyType() {
+        return Collections.unmodifiableSet(CollectionHelper.union(ENCODER_KEY_TYPES, super.getEncoderKeyType()));
     }
 
     @Override
@@ -91,11 +116,40 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject> {
     }
 
     @Override
-    public XmlObject encode(final SoapResponse response, final Map<HelperValues, String> additionalValues)
+    public XmlObject encode(final Object element, final Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
-        if (response == null) {
-            throw new UnsupportedEncoderInputException(this, response);
+        if (element instanceof SoapResponse) {
+            return createSOAP12Envelope((SoapResponse) element, additionalValues);
+        } else if (element instanceof SoapFault) {
+            return createSOAP12Fault((SoapFault) element);
+        } else if (element instanceof OwsExceptionReport) {
+            return createSOAP12FaultFromExceptionResponse((OwsExceptionReport) element);
+        } else {
+            throw new UnsupportedEncoderInputException(this, element);
         }
+    }
+
+    @Override
+    public void encode(Object element, OutputStream outputStream) throws OwsExceptionReport {
+        encode(element, outputStream, new EncodingValues());
+    }
+
+    @Override
+    public void encode(Object element, OutputStream outputStream, EncodingValues encodingValues)
+            throws OwsExceptionReport {
+        if (element instanceof SoapResponse) {
+            new Soap12XmlStreamWriter().write((SoapResponse) element, outputStream);
+        } else {
+            try {
+                ((XmlObject) encode(element, encodingValues.getAdditionalValues())).save(outputStream, XmlOptionsHelper.getInstance().getXmlOptions());
+            } catch (IOException ioe) {
+                throw new NoApplicableCodeException().causedBy(ioe).withMessage("Error while writing element to stream!");
+            }
+        }
+    }
+
+    private XmlObject createSOAP12Envelope(final SoapResponse response,
+            final Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
         String action = null;
         final EnvelopeDocument envelopeDoc = EnvelopeDocument.Factory.newInstance();
         final Envelope envelope = envelopeDoc.addNewEnvelope();
@@ -115,7 +169,8 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject> {
                                 N52XmlHelper.getSchemaLocationForOWS110Exception()));
             } else {
                 action = response.getSoapAction();
-                final XmlObject bodyContent = response.getSoapBodyContent();
+
+                final XmlObject bodyContent = getBodyContent(response);
                 String value = null;
                 Node nodeToRemove = null;
                 final NamedNodeMap attributeMap = bodyContent.getDomNode().getFirstChild().getAttributes();
@@ -142,37 +197,34 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject> {
             }
         }
 
-        // if (response.getHeader() != null) {
-        // Map<String, SoapHeader> headers = response.getHeader();
-        // for (String namespace : headers.keySet()) {
-        // SoapHeader header = headers.get(namespace);
-        // if (namespace.equals(WsaConstants.NS_WSA)) {
-        // WsaHeader wsa = (WsaHeader) header;
-        // wsa.setActionValue(action);
-        // }
-        // try {
-        // Encoder encoder = Configurator.getInstance().getEncoder(namespace);
-        // if (encoder != null) {
-        // Map<QName, String> headerElements = (Map<QName, String>)
-        // encoder.encode(header);
-        // for (QName qName : headerElements.keySet()) {
-        // soapResponseMessage.getSOAPHeader().addChildElement(qName)
-        // .setTextContent(headerElements.get(qName));
-        // }
-        // }
-        // } catch (OwsExceptionReport owse) {
-        // throw owse;
-        // }
-        // }
-        //
-        // } else {
-        // soapResponseMessage.getSOAPHeader().detachNode();
-        // }
+        if (response.getHeader() != null) {
+            createSOAP12Header(envelope, response.getHeader(),action);
+        } else {
+            envelope.addNewHeader();
+        }
 
         // TODO for testing an validating
         // checkAndValidateSoapMessage(envelopeDoc);
 
         return envelopeDoc;
+    }
+
+    private void createSOAP12Header(Envelope envelope, List<SoapHeader> headers, String action) throws OwsExceptionReport {
+        Node headerDomNode = envelope.addNewHeader().getDomNode();
+        for (SoapHeader header : headers) {
+            if (WsaConstants.NS_WSA.equals(header.getNamespace()) && header instanceof WsaActionHeader) {
+                ((WsaHeader) header).setValue(action);
+            }
+            try {
+                XmlObject xmObject = CodingHelper.encodeObjectToXml(header.getNamespace(), header);
+                if (xmObject != null) {
+                    Node ownerDoc = headerDomNode.getOwnerDocument().importNode(xmObject.getDomNode().getFirstChild(), true);
+                    headerDomNode.insertBefore(ownerDoc, null);
+                }
+            } catch (OwsExceptionReport owse) {
+                throw owse;
+            }
+        }
     }
 
     private XmlObject createSOAP12Fault(final SoapFault soapFault) {

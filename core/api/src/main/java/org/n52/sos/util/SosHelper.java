@@ -252,7 +252,7 @@ public class SosHelper implements Constants {
                 srid = Integer.valueOf(srsName.replace(urnSrsPrefix, Constants.EMPTY_STRING)
                                               .replace(urlSrsPrefix, Constants.EMPTY_STRING));
             } catch (final NumberFormatException nfe) {
-                throw new NoApplicableCodeException()
+                throw new InvalidParameterValueException()
                         .causedBy(nfe)
                         .at(SosConstants.GetObservationParams.srsName)
                         .withMessage(

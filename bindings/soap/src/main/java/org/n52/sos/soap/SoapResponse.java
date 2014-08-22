@@ -28,10 +28,11 @@
  */
 package org.n52.sos.soap;
 
-import java.util.Map;
+import java.util.List;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.service.SoapHeader;
 
 /**
@@ -48,14 +49,15 @@ public class SoapResponse {
 
     private SoapFault soapFault;
 
-    private XmlObject bodyContent;
+    private XmlObject xmlBodyContent;
+    
+    private AbstractServiceResponse bodyContent;
 
-    private Map<String, SoapHeader> header;
+    private List<SoapHeader> header;
 
     private OwsExceptionReport exception;
 
     public SoapResponse() {
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -105,7 +107,7 @@ public class SoapResponse {
     }
 
     public XmlObject getSoapBodyContent() {
-        return bodyContent;
+        return xmlBodyContent;
     }
 
     public void setSoapAction(String soapAction) {
@@ -116,15 +118,23 @@ public class SoapResponse {
         return soapAction;
     }
 
-    public void setSoapBodyContent(XmlObject bodyContent) {
-        this.bodyContent = bodyContent;
+    public void setSoapBodyContent(XmlObject xmlBodyContent) {
+        this.xmlBodyContent = xmlBodyContent;
+    }
+    
+    public void setBodyContent(AbstractServiceResponse response) {
+        this.bodyContent = response;
+    }
+    
+    public AbstractServiceResponse getBodyContent() {
+        return bodyContent;
     }
 
-    public void setHeader(Map<String, SoapHeader> map) {
-        this.header = map;
+    public void setHeader(List<SoapHeader> list) {
+        this.header = list;
     }
 
-    public Map<String, SoapHeader> getHeader() {
+    public List<SoapHeader> getHeader() {
         return header;
     }
 
@@ -138,6 +148,18 @@ public class SoapResponse {
 
     public boolean hasException() {
         return exception != null;
+    }
+
+    public boolean isSetXmlBodyContent() {
+        return getSoapBodyContent() != null;
+    }
+
+    public boolean isSetBodyContent() {
+        return getBodyContent() != null;
+    }
+    
+    public boolean isSetSoapFault() {
+        return getSoapFault() != null;
     }
 
 }

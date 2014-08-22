@@ -53,6 +53,6 @@ public abstract class DeleteObservationAbstractDAO extends AbstractOperationDAO 
     @Override
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
-        opsMeta.addPossibleValuesParameter(PARAMETER_NAME, getCache().getObservationIdentifiers());
+        opsMeta.addAnyParameterValue(PARAMETER_NAME);
     }
 }

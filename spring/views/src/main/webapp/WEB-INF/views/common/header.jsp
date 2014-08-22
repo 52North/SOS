@@ -41,7 +41,7 @@
 		<meta name="author" content="c.autermann@52north.org" />
 		<meta name="Date-Creation-yyyymmdd" content="20120306" />
 		<meta name="Date-Revision-yyyymmdd" content="20120307" />
-		<link href="<c:url value="/static/images/favicon.ico" />" rel="shortcut icon" type="image/x-icon" />        
+		<link href="<c:url value="/static/images/favicon.ico" />" rel="shortcut icon" type="image/x-icon" />
 		<link rel="stylesheet" href="<c:url value="/static/css/52n.css" />" type="text/css" />
 		<link rel="stylesheet" href="<c:url value="/static/css/52n.cssmenu.css" />" type="text/css"/>
 		<link rel="stylesheet" href="<c:url value="/static/lib/bootstrap-2.3.1.min.css" />" type="text/css" />
@@ -51,11 +51,11 @@
 		<script type="text/javascript" src="<c:url value="/static/lib/bootstrap-2.3.1.min.js" />"></script>
 		<script type="text/javascript" src="<c:url value="/static/js/application.js" />"></script>
 		<title>52&deg;North Sensor Observation Service</title>
-		
+
         <c:if test="${sos:hasInstaller() and not sos:configurated(pageContext.servletContext)}">
             <script type="text/javascript">
-				$(function() { 
-					showMessage('You first have to complete the installation process! Click <a href="<c:url value="/install/index" />"><strong>here</strong></a> to start it.', "error"); 
+				$(function() {
+					showMessage('You first have to complete the installation process! Click <a href="<c:url value="/install/index" />"><strong>here</strong></a> to start it.', "error");
 				});
 			</script>
 		</c:if>
@@ -152,6 +152,10 @@
                                                             <span class="menu-title">Reset</span>
                                                         </a>
                                                     </li>
+                                                    <%-- include extra admin menu items if file exists (used by custom builds) --%>
+                                                    <c:if test="${sos:viewExists(pageContext.servletContext, 'common/extra-admin-menu-items.jsp')}">
+                                                        <jsp:include page="extra-admin-menu-items.jsp" />
+                                                    </c:if>
                                                 </ul>
                                             </sec:authorize>
                                         </li>
@@ -163,7 +167,7 @@
 											</a>
 										</li>
 									</sec:authorize>
-								</ul>                                   
+								</ul>
 							</div>
 						</div>
 					</div>
@@ -173,3 +177,7 @@
 				</script>
 				<div class="container">
 					<div id="content" class="span12">
+                        <div id="noscript" class="alert alert-danger">
+                           <strong>Warning!</strong> This page makes heavy use of JavaScript and is virtually unusable if JavaScript is disabled.
+                        </div>
+                        <script type="text/javascript">$("#noscript").hide();</script>

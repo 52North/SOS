@@ -57,7 +57,9 @@ public class GetDataAvailabilityJsonEncoder extends AbstractSosResponseEncoder<G
                         .put(JSONConstants.PROCEDURE, da.getProcedure().getHref())
                         .put(JSONConstants.OBSERVED_PROPERTY, da.getObservedProperty().getHref())
                         .put(JSONConstants.PHENOMENON_TIME, encodeObjectToJson(da.getPhenomenonTime()));
-            objectNode.put(JSONConstants.VALUE_COUNT, da.getValueCount());
+            if (da.isSetCount()) {
+                objectNode.put(JSONConstants.COUNT, da.getCount());
+            }
         }
     }
 }

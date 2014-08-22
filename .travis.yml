@@ -1,10 +1,15 @@
 language: java
-#notifications:
-#	email: false
 jdk:
-    - openjdk6
     - openjdk7
     - oraclejdk7
-#    - oraclejdk8
+    - oraclejdk8
 install: true
-script: mvn clean install -P develop
+script: mvn clean install
+notifications:
+  irc:
+    channels:
+      - "chat.freenode.net#52north"
+    on_success: always
+    on_failure: always
+    use_notice: true
+    skip_join: false

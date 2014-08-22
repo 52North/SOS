@@ -29,79 +29,42 @@
 package org.n52.sos.wsa;
 
 import org.n52.sos.service.SoapHeader;
+import org.n52.sos.util.StringHelper;
 
 /**
  * @since 4.0.0
  * 
  */
-public class WsaHeader implements SoapHeader {
-
-    private String toValue;
-
-    private String actionValue;
-
-    private String replyToAddress;
-
-    private String messageID;
-
-    /**
-     * @return the toValue
-     */
-    public String getToValue() {
-        return toValue;
+public abstract class WsaHeader implements SoapHeader {
+    
+    private String value;
+    
+    public WsaHeader(String value) {
+        this.value = value;
     }
 
     /**
-     * @param toValue
-     *            the toValue to set
+     * @return the value
      */
-    public void setToValue(String toValue) {
-        this.toValue = toValue;
+    public String getValue() {
+        return value;
     }
 
     /**
-     * @return the actionValue
+     * @param value
+     *            the value to set
      */
-    public String getActionValue() {
-        return actionValue;
+    public void setValue(String value) {
+        this.value = value;
     }
-
-    /**
-     * @param actionValue
-     *            the actionValue to set
-     */
-    public void setActionValue(String actionValue) {
-        this.actionValue = actionValue;
+    
+    public boolean isSetValue() {
+        return StringHelper.isNotEmpty(getValue());
     }
-
-    /**
-     * @return the replyToAddress
-     */
-    public String getReplyToAddress() {
-        return replyToAddress;
+    
+    @Override
+    public String getNamespace() {
+        return WsaConstants.NS_WSA;
     }
-
-    /**
-     * @param replyToAddress
-     *            the replyToAddress to set
-     */
-    public void setReplyToAddress(String replyToAddress) {
-        this.replyToAddress = replyToAddress;
-    }
-
-    /**
-     * @return the messageID
-     */
-    public String getMessageID() {
-        return messageID;
-    }
-
-    /**
-     * @param messageID
-     *            the messageID to set
-     */
-    public void setMessageID(String messageID) {
-        this.messageID = messageID;
-    }
-
+    
 }

@@ -100,8 +100,8 @@
 	</tr>
 	<tr>
 		<td align="center" style="width:25%;"><a target="_blank" href="http://www.zgis.at"><img alt="ZIGS"  align="middle" width="128" src="static/images/contribution/UniSalzburgZGIS_1.jpg"/></a></td>
-		<td align="center" style="width:25%;"><a target="_blank" href="http://52north.org/about/get-involved">Your logo?!<br/>Get involved!</a></td>
-		<td align="center" style="width:25%;"><img alt="Placeholder"  align="middle" width="85" src="static/images/contribution/placeholder.png" /></a></td>
+		<td align="center" style="width:25%;"><a target="_blank" href="<c:url value="/get-involved" />">Your logo?!<br/>Get involved!</a></td>
+		<td align="center" style="width:25%;"><img alt="Placeholder" align="middle" width="85" src="static/images/contribution/placeholder.png" /></td>
 	</tr>
 </table>
 
@@ -125,12 +125,24 @@
 		<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a href="http://www.geoviqua.org/" title="GeoViQua">GeoViQua</a> (co-funded by the European Commission under the grant agreement n&deg;265178)</td>
 	</tr>
 	<tr>
-		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.ioos.noaa.gov"><img alt="IOOS - Integrated Ocean Observing System" align="middle" width="172" src="static/images/funding/logo_ioos.png" /></a></td>
+		<td align="center" style="padding:3px;width:30%;">
+				<a target="_blank" href="http://inspire.ec.europa.eu"><img alt="INSPIRE" align="middle" width="60" src="static/images/funding/inspire-logo.jpg" /></a>
+				<a target="_blank" href="http://ec.europa.eu/isa/"><img alt="ISA" align="middle" width="60" src="static/images/funding/ISALogo.png" /></a>
+				<a target="_blank" href="http://ec.europa.eu/isa/actions/01-trusted-information-exchange/1-17action_en.htm"><img alt="ARE3NA" align="middle" width="60" src="static/images/funding/ARe3NA.png" /></a>
+		</td>
+		<td style="padding:3px;width:70%;">The enhancements to make the 52&deg;North SOS an <a target="_blank" href="http://inspire.ec.europa.eu/">INSPIRE</a> compliant Download Service were funded by the <a target="_blank" href="http://ec.europa.eu/dgs/jrc/">JRC</a> under the <a target="_blank" href="http://ec.europa.eu/isa/">ISA</a> Programme's Action 1.17: A Reusable INSPIRE Reference Platform (<a target="_blank" href="http://ec.europa.eu/isa/actions/01-trusted-information-exchange/1-17action_en.htm">ARE3NA</a>).</td>
+	</tr>
+	<tr>
+		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.ioos.noaa.gov"><img alt="IOOS - Integrated Ocean Observing System" align="middle" width="156" src="static/images/funding/logo_ioos.png" /></a></td>
 		<td style="padding:3px;width:70%;">The <a target="_blank" href="http://www.ioos.noaa.gov">IOOS</a> project with the mission: <br/>Lead the integration of ocean, coastal, and Great Lakes observing capabilities, in collaboration with Federal and non-Federal partners, to maximize access to data and generation of information products, inform decision making, and promote economic, environmental, and social benefits to our Nation and the world. </td>
 	</tr>
 	<tr>
 		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.wupperverband.de"><img alt="Wupperverband" align="middle" width="196" src="static/images/funding/logo_wv.jpg" /></a></td>
 		<td style="padding:3px;width:70%;">The <a target="_blank" href="http://www.wupperverband.de/">Wupperverband</a> for water, humans and the environment (Germany)</td>
+	</tr>
+	<tr>
+		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.ivl.se/english"><img alt="IVL Swedish Environmental Research Institute" align="middle" width="196" src="static/images/funding/ivl_eng_rgb_70mm.png" /></a></td>
+		<td style="padding:3px;width:70%;">The <a target="_blank" href="http://www.ivl.se/english">IVL Swedish Environmental Research Institute</a> is an independent, non-profit research institute, owned by a foundation jointly established by the Swedish Government and Swedish industry.</td>
 	</tr>
 	<tr>
 		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.dlr.de"><img alt="German Aerospace Centre" align="middle" width="172" src="static/images/funding/DLR-logo.jpg" /></a></td>

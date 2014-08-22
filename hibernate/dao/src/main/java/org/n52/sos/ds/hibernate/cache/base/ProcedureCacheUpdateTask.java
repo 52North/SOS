@@ -32,7 +32,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO.ProcedureTimeExtrema;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -60,10 +59,6 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
     }
 
     protected void getProcedureInformationFromDbAndAddItToCacheMaps() throws OwsExceptionReport {
-        //observation identifiers
-        getCache().setObservationIdentifiersForProcedure(procedureId, DaoFactory.getInstance().getObservationDAO(getSession())
-                .getObservationIdentifiers(procedureId, getSession()));
-
         //temporal extent
         ProcedureTimeExtrema pte = new ProcedureDAO().getProcedureTimeExtrema(getSession(), procedureId);
         if (pte != null) {

@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.AbstractSpatialFilteringProfile;
@@ -52,6 +53,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * 
  */
 @Configurable
+@Deprecated
 public class SpatialFilteringProfileDAO extends AbstractSpatialFilteringProfileDAO<SpatialFilteringProfile> {
 
     @Override
@@ -91,6 +93,11 @@ public class SpatialFilteringProfileDAO extends AbstractSpatialFilteringProfileD
     @Override
     protected SpatialFilteringProfile getSpatialFilteringProfileImpl() {
         return new SpatialFilteringProfile();
+    }
+
+    @Override
+    public DetachedCriteria getDetachedCriteriaFor(SpatialFilter filter) throws OwsExceptionReport {
+        return getDetachedCriteria(SpatialFilteringProfile.class, filter);
     }
 
 }

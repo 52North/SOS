@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>bindings</artifactId>
-        <version>4.0.1</version>
+        <version>4.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>binding-soap</artifactId>
@@ -24,6 +24,10 @@
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-soap-v12</artifactId>
+        </dependency>
+          <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-wsa-v10</artifactId>
         </dependency>
         <dependency>
             <groupId>org.n52.sensorweb</groupId>

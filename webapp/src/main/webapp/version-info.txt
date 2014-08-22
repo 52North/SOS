@@ -2,13 +2,12 @@ General Infos:
 ==============
 project = 52North SOS Reference Implementation (${artifactId})
 version = ${project.version}
-builddate = ${timestamp}
+builddate = ${git.build.time}
 
 Subversion Infos:
 =================
-repository = ${svn.info.repository}
-path = ${svn.info.path}
-revision = ${svn.info.revision}
-mixedRevisions = ${svn.info.mixedRevisions}
-committedRevision = ${svn.info.committedRevision}
-committedDate = ${svn.info.committedDate}
+repository = ${git.repository}
+path = ${git.branch}
+revision = ${git.commit.id}
+lastCommitMessage = ${git.commit.message.short}
+lastCommitDate = ${git.commit.time}

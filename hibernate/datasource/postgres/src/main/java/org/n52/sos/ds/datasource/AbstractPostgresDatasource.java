@@ -37,6 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,6 +50,7 @@ import org.n52.sos.exception.ConfigurationException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
@@ -240,6 +242,15 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
                 checkedSchema.add(string);
             }
         }
-        return checkedSchema.toArray(new String[checkedSchema.size()]);
+        return checkScriptForGeneratedAndDuplicatedEntries(checkedSchema.toArray(new String[checkedSchema.size()]));
     }
+
+    @Override
+    public Properties getDatasourceProperties(Map<String, Object> settings) {
+        Properties p = super.getDatasourceProperties(settings);
+        p.put(HibernateConstants.C3P0_PREFERRED_TEST_QUERY, "SELECT 1");
+        return p;
+    }
+
+
 }

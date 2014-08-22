@@ -38,6 +38,13 @@ import javax.servlet.http.HttpSession;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.n52.sos.config.SettingValue;
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.Datasource;
@@ -47,17 +54,10 @@ import org.n52.sos.web.ControllerConstants;
 import org.n52.sos.web.MetaDataHandler;
 import org.n52.sos.web.auth.UserService;
 import org.n52.sos.web.install.InstallConstants.Step;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.INSTALL_FINISH)
@@ -92,19 +92,25 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
         Properties properties = datasource.getDatasourceProperties(c.getDatabaseSettings());
         // save the used datasource class
         properties.put(Datasource.class.getCanonicalName(), datasource.getClass().getCanonicalName());
-
         try {
             if (c.isDropSchema()) {
                 String[] dropSchema = datasource.dropSchema(c.getDatabaseSettings());
+                LOG.debug("Drop database with the following statements!");
                 datasource.execute(dropSchema, c.getDatabaseSettings());
+                LOG.debug("Dropping the database finished!");
             }
+            datasource.prepare(c.getDatabaseSettings());
             if (c.isCreateSchema()) {
                 String[] createSchema = datasource.createSchema(c.getDatabaseSettings());
+                LOG.debug("Create database with the following statements!");
                 datasource.execute(createSchema, c.getDatabaseSettings());
+                if (datasource.isPostCreateSchema()) {
+                    datasource.executePostCreateSchema(c.getDatabaseSettings());
+                }
+                LOG.debug("Database creation finished!");
             }
             if (c.isForceUpdateSchema()) {
                 String[] updateSchema = datasource.updateSchema(c.getDatabaseSettings());
-                datasource.execute(updateSchema, c.getDatabaseSettings());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Update database with the following statements:");
                     int counter = 1;
@@ -112,6 +118,8 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
                         LOG.debug("{}. Statement: {}", counter++, string);
                     }
                 }
+                datasource.execute(updateSchema, c.getDatabaseSettings());
+                LOG.debug("Updating the database finished!");
             }
         } catch (Throwable e) {
             throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_CONNECT_TO_THE_DATABASE,
@@ -119,6 +127,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
         }
         saveServiceSettings(c);
         createAdministratorUser(c);
+        datasource.checkPostCreation(properties);
         saveDatabaseProperties(properties, c);
         saveInstallationDate();
         instantiateConfigurator(properties, c);

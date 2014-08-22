@@ -4,12 +4,12 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>bindings</artifactId>
-        <version>4.0.1</version>
+        <version>4.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>rest</artifactId>
     <packaging>pom</packaging>
-    <version>0.1.2</version>
+    <version>4.1.0</version>
     <name>52°North SOS - Extension REST Binding</name>
     <description>RESTful binding for the 52°North SOS</description>
     <url>http://52north.org/communities/sensorweb/sosREST/</url>
@@ -70,56 +70,4 @@
             <organizationUrl>http://52north.org/</organizationUrl>
         </contributor>
     </contributors>
-    <dependencyManagement>
-        <dependencies>
-            <!-- XML Beans Generated Classes -->
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>rest-xml</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-    <repositories>
-        <repository>
-            <id>n52-releases</id>
-            <name>52n Releases</name>
-            <url>http://52north.org/maven/repo/releases/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>n52s</id>
-            <name>52n Snapshots</name>
-            <url>http://52north.org/maven/repo/snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-release-plugin</artifactId>
-                        <configuration>
-                            <preparationGoals>clean</preparationGoals>
-                            <autoVersionSubmodules>true</autoVersionSubmodules>
-                            <tagBase>${svn.url}tags</tagBase>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

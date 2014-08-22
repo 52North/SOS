@@ -34,10 +34,15 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.n52.sos.convert.ConverterException;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.series.SeriesDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.series.Series;
+import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
+import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -64,8 +69,16 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
             session = hibernateSessionHolder.getSession();
             transaction = session.beginTransaction();
             String id = request.getObservationIdentifier();
-            AbstractObservation observation =
-                    DaoFactory.getInstance().getObservationDAO(session).getObservationByIdentifier(id, session);
+            AbstractObservation observation = null;
+            try {
+                observation =
+                        DaoFactory.getInstance().getObservationDAO(session).getObservationByIdentifier(id, session);
+            } catch (HibernateException he) {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+                throw new InvalidParameterValueException(DeleteObservationConstants.PARAMETER_NAME, request.getObservationIdentifier());
+            }
             OmObservation so = null;
             if (observation != null) {
                 so =
@@ -74,10 +87,10 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
                                         request.getVersion(), null, session).iterator().next();
                 observation.setDeleted(true);
                 session.saveOrUpdate(observation);
+                checkSeriesForFirstLatest(observation, session);
                 session.flush();
             } else {
-                throw new NoApplicableCodeException().withMessage(
-                        "The requested identifier (%s) is not contained in database", id);
+                throw new InvalidParameterValueException(DeleteObservationConstants.PARAMETER_NAME, request.getObservationIdentifier());
             }
             transaction.commit();
             response.setObservationId(request.getObservationIdentifier());
@@ -96,4 +109,26 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
         }
         return response;
     }
+
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    }
+
+	/**
+	 * Check if {@link Series} should be updated
+	 * 
+	 * @param observation
+	 *            Deleted observation
+	 * @param session
+	 *            Hibernate session
+	 */
+	private void checkSeriesForFirstLatest(AbstractObservation observation, Session session) {
+		if (observation instanceof SeriesObservation) {
+			Series series = ((SeriesObservation)observation).getSeries();
+			if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart()) || series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
+				new SeriesDAO().updateSeriesAfterObservationDeletion(series, (SeriesObservation)observation, session);
+			}
+		}
+	}
 }

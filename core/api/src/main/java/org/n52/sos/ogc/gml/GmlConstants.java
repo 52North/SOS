@@ -136,6 +136,10 @@ public interface GmlConstants extends Constants {
     String EN_LOWER_CORNER = "lowerCorner";
 
     String EN_UPPER_CORNER = "upperCorner";
+    
+    String EN_FEATURE_MEMBER = "featureMember";
+
+    String EN_IDENTIFIER = "identifier";
 
     /* attribute names in GML */
 
@@ -169,11 +173,16 @@ public interface GmlConstants extends Constants {
 
     QName QN_TIME_INSTANT_32 = new QName(NS_GML_32, EN_TIME_INSTANT, NS_GML_PREFIX);
 
+    /**
+     * The {@code QName} for {@code gml:TimePeriod}.
+     */
     QName QN_TIME_PERIOD_32 = new QName(NS_GML_32, EN_TIME_PERIOD, NS_GML_PREFIX);
 
     QName QN_ABSTRACT_FEATURE_COLLECTION = new QName(NS_GML, EN_ABSTRACT_FEATURE_COLLECTION, NS_GML_PREFIX);
 
     QName QN_FEATURE_COLLECTION = new QName(NS_GML, OmConstants.EN_FEATURE_COLLECTION, NS_GML_PREFIX);
+    
+    QName QN_FEATURE_MEMBER = new QName(NS_GML, EN_FEATURE_MEMBER, NS_GML_PREFIX);
 
     QName QN_ABSTRACT_RING = new QName(NS_GML, EN_ABSTRACT_RING_311, NS_GML_PREFIX);
 
@@ -192,6 +201,33 @@ public interface GmlConstants extends Constants {
     QName QN_ABSTRACT_FEATURE_GML_32 = new QName(NS_GML_32, EN_ABSTRACT_FEATURE_32, NS_GML_PREFIX);
 
     QName QN_ABSTRACT_TIME_32 = new QName(NS_GML_32, EN_ABSTRACT_TIME_OBJECT_32, NS_GML_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gml:id}.
+     */
+    QName QN_ID_32 = new QName(NS_GML_32, AN_ID, NS_GML_PREFIX);
+
+    QName QN_DESCRIPTION_32 = new QName(NS_GML_32, EN_DESCRIPTION, NS_GML_PREFIX);
+    
+    QName QN_ID = new QName(NS_GML, AN_ID, NS_GML_PREFIX);
+
+    QName QN_BEGIN_POSITION_32 = new QName(GmlConstants.NS_GML_32, GmlConstants.EN_BEGIN_POSITION,
+            GmlConstants.NS_GML_PREFIX);
+
+    /**
+     * The {@code QName} for {@code gml:endPosition}.
+     */
+    QName QN_END_POSITION_32 = new QName(GmlConstants.NS_GML_32, GmlConstants.EN_END_POSITION, GmlConstants.NS_GML_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gml:timePosition}.
+     */
+    QName QN_TIME_POSITION_32 = new QName(GmlConstants.NS_GML_32, GmlConstants.EN_TIME_POSITION, GmlConstants.NS_GML_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gml:identifier}.
+     */
+    QName QN_IDENTIFIER_32 = new QName(NS_GML_32, EN_IDENTIFIER, NS_GML_PREFIX);
 
     /** string constant for ascending sorting order */
     String SORT_ORDER_ASC = SortingOrder.ASC.name();

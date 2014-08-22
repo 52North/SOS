@@ -32,6 +32,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -43,6 +44,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.sos.ogc.sos.SosEnvelope;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -95,7 +100,7 @@ public class CacheImplTest {
     @Test
     public void should_return_different_hashCodes_for_different_instances() {
         WritableCache cache = new WritableCache();
-        cache.setObservationIdentifiers(Collections.singleton("o_1"));
+        cache.setProcedures(Collections.singleton("p_1"));
         assertNotEquals("hashCode() of different caches are equal", cache.hashCode(), new ReadableCache());
     }
 
@@ -106,5 +111,12 @@ public class CacheImplTest {
 
         assertThat(instance.getGlobalEnvelope(), not(nullValue()));
         assertThat(instance.getGlobalEnvelope(), is(emptySosEnvelope));
+    }
+
+    @Test
+    public void should_serialize_to_json() throws JsonProcessingException {
+        String json = new ObjectMapper().writeValueAsString(instance);
+        assertNotNull(json);
+        assertFalse(json.isEmpty());        
     }
 }

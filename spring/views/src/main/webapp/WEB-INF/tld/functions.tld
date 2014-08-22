@@ -23,4 +23,19 @@
         <function-class>org.n52.sos.web.JstlFunctions</function-class>
         <function-signature>boolean hasAdministrator()</function-signature>
     </function>
+    <function>
+        <name>viewExists</name>
+        <function-class>org.n52.sos.web.JstlFunctions</function-class>
+        <function-signature>boolean viewExists(javax.servlet.ServletContext, java.lang.String)</function-signature>
+    </function>
+    <function>
+        <name>staticExtensionExists</name>
+        <function-class>org.n52.sos.web.JstlFunctions</function-class>
+        <function-signature>boolean staticExtensionExists(javax.servlet.ServletContext, java.lang.String)</function-signature>
+    </function>
+    <function>
+        <name>mapToJson</name>
+        <function-class>org.n52.sos.web.JstlFunctions</function-class>
+        <function-signature>java.lang.String mapToJson(java.util.Map)</function-signature>
+    </function>    
 </taglib>

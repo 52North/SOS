@@ -32,13 +32,14 @@
 -- ###############################################################################################
 
 -- create series table and sequence add constraints to series
-create table series (seriesId bigint not null auto_increment, featureOfInterestId bigint not null, observablePropertyId bigint not null, procedureId bigint not null, deleted char(1) default 'F' not null, primary key (seriesId), unique (featureOfInterestId, observablePropertyId, procedureId)) ENGINE=InnoDB;
+create table series (seriesId bigint not null auto_increment, featureOfInterestId bigint not null, observablePropertyId bigint not null, procedureId bigint not null, deleted char(1) default 'F' not null, firstTimeStamp datetime, lastTimeStamp datetime, firstNumericValue decimal(19,2), lastNumericValue decimal(19,2), unitId bigint, primary key (seriesId)) ENGINE=InnoDB;
 create index seriesFeatureIdx on series (featureOfInterestId);
 create index seriesObsPropIdx on series (observablePropertyId);
 create index seriesProcedureIdx on series (procedureId);
 alter table series add index seriesFeatureFk (featureOfInterestId), add constraint seriesFeatureFk foreign key (featureOfInterestId) references featureOfInterest (featureOfInterestId);
 alter table series add index seriesObPropFk (observablePropertyId), add constraint seriesObPropFk foreign key (observablePropertyId) references observableProperty (observablePropertyId);
 alter table series add index seriesProcedureFk (procedureId), add constraint seriesProcedureFk foreign key (procedureId) references `procedure` (procedureId);
+alter table series add index seriesUnitFk (unitId), add constraint seriesUnitFk foreign key (unitId) references unit (unitId);
 
 -- add series column to observation table
 ALTER TABLE observation ADD COLUMN seriesId int8;

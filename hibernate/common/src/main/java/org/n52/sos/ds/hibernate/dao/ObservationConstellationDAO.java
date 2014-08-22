@@ -340,7 +340,7 @@ public class ObservationConstellationDAO {
                         hoc.getProcedure(),
                         obsprop.get(child.getIdentifier()),
                         hoc.getOffering(),
-                        false,
+                        true,
                         session);
             }
 

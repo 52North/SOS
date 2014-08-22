@@ -69,8 +69,11 @@ import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.MediaType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.sos.service.ServiceConfiguration;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -85,7 +88,7 @@ import com.google.common.collect.Sets;
  * @param <A>
  *            the response type
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
@@ -104,7 +107,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
 
     private final Class<Q> requestType;
 
-    
+
     public AbstractRequestOperator(String service, String version, String operationName, Class<Q> requestType) {
         this.operationName = operationName;
         this.requestOperatorKeyType = new RequestOperatorKey(service, version, operationName);
@@ -112,7 +115,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         this.dao = initDAO(service, operationName);
         LOGGER.info("{} initialized successfully!", getClass().getSimpleName());
     }
-    
+
     @SuppressWarnings("unchecked")
     protected D initDAO(String service, String operationName) {
     	 D dao = (D) OperationDAORepository.getInstance().getOperationDAO(service, operationName);
@@ -210,13 +213,13 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
 
     /**
      * method checks whether this SOS supports the requested versions
-     * 
+     *
      * @param service
      *            requested service
-     * 
+     *
      * @param versions
      *            the requested versions of the SOS
-     * 
+     *
      * @throws OwsExceptionReport
      *             * if this SOS does not support the requested versions
      */
@@ -245,11 +248,11 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
 
     /**
      * method checks whether this SOS supports the single requested version
-     * 
+     *
      * @param request
      *            the request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if this SOS does not support the requested versions
      */
@@ -270,13 +273,13 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
     /**
      * method checks, whether the passed string containing the requested
      * versions of the SOS contains the versions, the 52n SOS supports
-     * 
+     *
      * @param service
      *            requested service
      * @param versionsString
      *            comma seperated list of requested service versions
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if the versions list is empty or no matching version is *
      *             contained
@@ -294,11 +297,11 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
 
     /**
      * checks whether the required service parameter is correct
-     * 
+     *
      * @param service
      *            service parameter of the request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             if service parameter is incorrect
      */
@@ -313,13 +316,13 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
 
     /**
      * checks whether the requested sensor ID is valid
-     * 
+     *
      * @param procedureID
      *            the sensor ID which should be checked
      * @param parameterName
      *            the parameter name
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if the value of the sensor ID parameter is incorrect
      */
@@ -402,6 +405,11 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         throw new InvalidParameterValueException(parameterName, featureOfInterest);
     }
 
+    protected void checkObservedProperties(final List<String> observedProperties, final Enum<?> parameterName)
+            throws OwsExceptionReport {
+        checkObservedProperties(observedProperties, parameterName.name());
+    }
+
     protected void checkObservedProperties(final List<String> observedProperties, final String parameterName)
             throws OwsExceptionReport {
         if (observedProperties != null) {
@@ -422,7 +430,11 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         if (observedProperty == null || observedProperty.isEmpty()) {
             throw new MissingParameterValueException(parameterName);
         }
-        if (!getCache().hasObservableProperty(observedProperty)) {
+        if (getCache().hasObservableProperty(observedProperty)) {
+            return;
+        }
+        if (!ServiceConfiguration.getInstance().isIncludeChildObservableProperties() ||
+            !getCache().isCompositePhenomenonComponent(observedProperty)) {
             throw new InvalidParameterValueException(parameterName, observedProperty);
         }
     }

@@ -30,6 +30,7 @@ package org.n52.sos.ds;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -193,12 +194,26 @@ public abstract class AbstractOperationDAO implements OperationDAO {
     }
 
     protected void addObservablePropertyParameter(OwsOperation opsMeta) {
-        addObservablePropertyParameter(opsMeta, getCache().getObservableProperties());
+        addObservablePropertyParameter(opsMeta, getObservableProperties());
+    }
+
+
+    protected Collection<String> getObservableProperties() {
+        if (ServiceConfiguration.getInstance().isIncludeChildObservableProperties()) {
+            Set<String> observableProperties = new HashSet<>(getCache().getObservableProperties());
+            for (String compositePhenomenon : getCache().getCompositePhenomenons()) {
+                observableProperties.addAll(getCache()
+                        .getObservablePropertiesForCompositePhenomenon(compositePhenomenon));
+            }
+            return observableProperties;
+        } else {
+            return getCache().getObservableProperties();
+        }
     }
 
     protected void addObservablePropertyParameter(OwsOperation opsMeta, Collection<String> observedProperties) {
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
-        opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.observedProperty, observedProperties);
+            opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.observedProperty, observedProperties);
         } else {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.observedProperty);
         }

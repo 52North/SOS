@@ -58,7 +58,6 @@ import static org.n52.sos.util.builder.SweTimeBuilder.aSweTime;
 
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -501,26 +500,10 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     }
 
     @Test
-    public void should_not_contain_roles_for_deleted_related_features_after_DeleteSensor() throws OwsExceptionReport {
-        deleteSensorPreparation();
-
-        assertTrue("roles for deleted related features are STILL in cache", onlyValidRelatedFeaturesAreInRoleMap());
-    }
-
-    @Test
     public void should_not_contain_offering_names_after_DeleteSensor() throws OwsExceptionReport {
         deleteSensorPreparation();
 
         assertNull("offering name STILL in cache", getCache().getNameForOffering(OFFERING));
-    }
-
-    @Test
-    public void should_not_contain_composite_phenomenons_after_DeleteSensor() throws OwsExceptionReport {
-        deleteSensorPreparation();
-
-        assertTrue("composite phenomenons STILL in cache for deleted sensor", getCache()
-                .getCompositePhenomenonsForOffering(OFFERING) == null
-                || getCache().getCompositePhenomenonsForOffering(OFFERING).isEmpty());
     }
 
     @Test
@@ -819,16 +802,6 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
     private void insertResultTemplateResponse(String resultTemplateIdentifier) {
         response = anInsertResultTemplateResponse().setTemplateIdentifier(resultTemplateIdentifier).build();
-    }
-
-    private boolean onlyValidRelatedFeaturesAreInRoleMap() {
-        Set<String> allowedRelatedFeatures = getCache().getRelatedFeatures();
-        for (String relatedFeatureWithRole : ((WritableCache) getCache()).getRolesForRelatedFeaturesMap().keySet()) {
-            if (!allowedRelatedFeatures.contains(relatedFeatureWithRole)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private String getProcedureIdentifier() {

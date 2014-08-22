@@ -31,37 +31,115 @@ package org.n52.sos.cache;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collections;
 
 import org.joda.time.DateTime;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
+import org.n52.sos.ogc.sos.SosEnvelope;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
-public class ReadableCacheTest {
-
+public class InMemoryCacheImplTest {
     private static final String OFFERING_IDENTIFIER = "test-offering";
+    private static InMemoryCacheImpl instance;
+
+    @Before
+    public void initInstance() {
+        instance = new InMemoryCacheImpl();
+    }
+
+    @After
+    public void resetInstance() {
+        instance = null;
+    }
 
     @Test
-    public final void should_return_true_if_min_resulttime_for_offering_is_available() {
-        final WritableCache cache = new WritableCache();
-        cache.setMinResultTimeForOffering(ReadableCacheTest.OFFERING_IDENTIFIER, new DateTime(52l));
+    public void defaultConstructorReturnsObject() {
+        initInstance();
+        assertNotNull("instance is null", instance);
+        assertTrue("right class", instance instanceof InMemoryCacheImpl);
+    }
 
-        assertThat(cache.hasMinResultTimeForOffering(ReadableCacheTest.OFFERING_IDENTIFIER), is(TRUE));
+    @Test
+    public void equalsWithNewInstances() {
+        InMemoryCacheImpl anotherInstance = new InMemoryCacheImpl();
+        assertEquals("equals failed", instance, anotherInstance);
+    }
+
+    @Test
+    public void equalsWithSelf() {
+        assertEquals("I am not equal with me", instance, instance);
+    }
+
+    @Test
+    public void equalsWithNull() {
+        assertNotEquals("equal with null", instance, null);
+    }
+
+    @Test
+    public void equalWithOtherClass() {
+        assertNotEquals("equal with Object", instance, new Object());
+    }
+
+    @Test
+    public void should_return_different_hashCodes_for_different_instances() {
+        InMemoryCacheImpl cache = new InMemoryCacheImpl();
+        cache.setProcedures(Collections.singleton("p_1"));
+        assertNotEquals("hashCode() of different caches are equal", cache.hashCode(), new InMemoryCacheImpl());
+    }
+
+    @Test
+    public void should_return_empty_global_envelope_when_setEnvelope_is_called_with_null_parameter() {
+        instance.setGlobalEnvelope(null);
+        final SosEnvelope emptySosEnvelope = new SosEnvelope(null, instance.getDefaultEPSGCode());
+
+        assertThat(instance.getGlobalEnvelope(), not(nullValue()));
+        assertThat(instance.getGlobalEnvelope(), is(emptySosEnvelope));
+    }
+
+    @Test
+    public void should_serialize_to_json() throws JsonProcessingException {
+        String json = new ObjectMapper().writeValueAsString(instance);
+        assertNotNull(json);
+        assertFalse(json.isEmpty());
+    }
+
+    @Test
+    public void should_return_true_if_min_resulttime_for_offering_is_available() {
+        final InMemoryCacheImpl cache = new InMemoryCacheImpl();
+        cache.setMinResultTimeForOffering(OFFERING_IDENTIFIER, new DateTime(52l));
+
+        assertThat(cache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), is(TRUE));
     }
 
     @Test
     public void should_return_false_if_min_resulttime_for_offering_is_null() {
-        final ReadableCache readCache = new ReadableCache();
+        final InMemoryCacheImpl readCache = new InMemoryCacheImpl();
 
         assertThat(readCache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), is(FALSE));
 
-        final WritableCache cache = new WritableCache();
+        final InMemoryCacheImpl cache = new InMemoryCacheImpl();
         cache.setMinResultTimeForOffering(OFFERING_IDENTIFIER, null);
 
         assertThat(cache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), is(FALSE));
@@ -69,7 +147,7 @@ public class ReadableCacheTest {
 
     @Test
     public void should_return_false_if_relatedFeature_has_no_children() {
-        final ReadableCache readCache = new WritableCache();
+        final InMemoryCacheImpl readCache = new InMemoryCacheImpl();
         final String relatedFeature = "test-feature";
         ((WritableContentCache) readCache).addRelatedFeatureForOffering("test-offering", relatedFeature);
 
@@ -80,7 +158,7 @@ public class ReadableCacheTest {
 
     @Test
     public void should_return_true_if_relatedFeature_has_one_or_more_children() {
-        final ReadableCache readCache = new WritableCache();
+        final InMemoryCacheImpl readCache = new InMemoryCacheImpl();
         final String relatedFeature = "test-feature";
         final String relatedFeature2 = "test-feature-2";
         final String offering = "test-offering";

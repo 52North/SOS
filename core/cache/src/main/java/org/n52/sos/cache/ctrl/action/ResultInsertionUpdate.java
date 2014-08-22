@@ -30,13 +30,14 @@ package org.n52.sos.cache.ctrl.action;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.util.Action;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -48,7 +49,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * <li>'Result template identifier' &rarr; 'feature of interest' relation</li>
  * </ul>
  * TODO update list above
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @since 4.0.0

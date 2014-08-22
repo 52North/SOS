@@ -127,6 +127,7 @@ public abstract class ObservationFactory {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     public Class<? extends Observation> classForObservationType(
             String observationType) {
         if (observationType != null) {

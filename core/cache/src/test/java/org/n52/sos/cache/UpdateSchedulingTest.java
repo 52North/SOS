@@ -51,7 +51,7 @@ public class UpdateSchedulingTest extends AbstractCacheControllerTest {
     @Test
     public void test() throws InterruptedException {
         final TestableInMemoryCacheController ue = new TestableInMemoryCacheController();
-        ue.setCache(new WritableCache());
+        ue.setCache(new InMemoryCacheImpl());
         ExecutorService e = Executors.newFixedThreadPool(10, new GroupedAndNamedThreadFactory("test"));
 
         e.execute(new BlockingCacheUpdate(ue, "complete0", TIMEOUT));

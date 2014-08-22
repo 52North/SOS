@@ -47,48 +47,62 @@ import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
 
     public void addIdentifierNameDescription(AbstractGML abstractFeature,
-            IdentifierNameDescriptionEntity entity, Session session) {
+                                             IdentifierNameDescriptionEntity entity,
+                                             Session session) {
         addIdentifier(abstractFeature, entity, session);
         addName(abstractFeature, entity, session);
         addDescription(abstractFeature, entity);
     }
 
-    public void addIdentifier(AbstractGML abstractFeature, IdentifierNameDescriptionEntity entity,
-            Session session) {
-        if (abstractFeature.isSetIdentifier()) {
-            entity.setIdentifier(abstractFeature.getIdentifierCodeWithAuthority().getValue());
-            if (abstractFeature.getIdentifierCodeWithAuthority().isSetCodeSpace()) {
-                entity.setCodespace(new CodespaceDAO().getOrInsertCodespace(abstractFeature.getIdentifierCodeWithAuthority()
-                        .getCodeSpace(), session));
-            }
-        }
-        if (!entity.isSetCodespace()) {
-            entity.setCodespace(new CodespaceDAO().getOrInsertCodespace(OGCConstants.UNKNOWN, session));
-        }
+    public void addIdentifier(AbstractGML abstractFeature,
+                              IdentifierNameDescriptionEntity entity,
+                              Session session) {
+        addIdentifier(entity, abstractFeature.getIdentifierCodeWithAuthority(), session);
     }
 
-    protected void addName(AbstractGML abstractFeature, IdentifierNameDescriptionEntity entity,
-            Session session) {
-        if (abstractFeature.isSetName()) {
-            entity.setName(abstractFeature.getFirstName().getValue());
-            if (abstractFeature.getFirstName().isSetCodeSpace()) {
-                entity.setCodespaceName(new CodespaceDAO().getOrInsertCodespace(abstractFeature.getFirstName()
-                        .getCodeSpace(), session));
-            }
-        }
-        if (!entity.isSetCodespaceName()) {
-            entity.setCodespaceName(new CodespaceDAO().getOrInsertCodespace(OGCConstants.UNKNOWN, session));
-        }
+    public void addIdentifier(IdentifierNameDescriptionEntity entity,
+                              CodeWithAuthority identifier, Session session) {
+        String value = identifier != null && identifier.isSetValue()
+                               ? identifier.getValue() : null;
+        String codespace = identifier != null && identifier.isSetCodeSpace()
+                                   ? identifier.getCodeSpace()
+                           : OGCConstants.UNKNOWN;
+        entity.setIdentifier(value);
+        entity.setCodespace(new CodespaceDAO()
+                .getOrInsertCodespace(codespace, session));
     }
 
-    protected void addDescription(AbstractGML abstractFeature, IdentifierNameDescriptionEntity entity) {
-        if (abstractFeature.isSetDescription()) {
-            entity.setDescription(abstractFeature.getDescription());
+    public void addName(AbstractGML abstractFeature,
+                        IdentifierNameDescriptionEntity entity,
+                        Session session) {
+        addName(entity, abstractFeature.getFirstName(), session);
+    }
+
+    public void addName(IdentifierNameDescriptionEntity entity, CodeType name,
+                        Session session) {
+        String value = name != null && name.isSetValue()
+                               ? name.getValue() : null;
+        String codespace = name != null && name.isSetCodeSpace()
+                                   ? name.getCodeSpace() : OGCConstants.UNKNOWN;
+        entity.setName(value);
+        entity.setCodespaceName(new CodespaceDAO()
+                .getOrInsertCodespace(codespace, session));
+    }
+
+    public void addDescription(AbstractGML abstractFeature,
+                               IdentifierNameDescriptionEntity entity) {
+        addDescription(entity, abstractFeature.getDescription());
+    }
+
+    public void addDescription(IdentifierNameDescriptionEntity entity,
+                               String description) {
+        if (description != null && !description.isEmpty()) {
+            entity.setDescription(description);
         }
     }
 
     public void getAndAddIdentifierNameDescription(AbstractGML abstractFeature,
-            IdentifierNameDescriptionEntity entity) {
+                                                   IdentifierNameDescriptionEntity entity) {
         abstractFeature.setIdentifier(getIdentifier(entity));
         abstractFeature.addName(getName(entity));
         abstractFeature.setDescription(getDescription(entity));
@@ -122,17 +136,17 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
 
     public void insertNames(FeatureOfInterest feature, List<CodeType> name, Session session) {
         CodespaceDAO codespaceDAO = new CodespaceDAO();
-        I18NDAO<I18NFeatureMetadata> dao
-                = I18NDAORepository.getInstance().getDAO(I18NFeatureMetadata.class);
+        I18NDAO<I18NFeatureMetadata> dao = I18NDAORepository.getInstance().getDAO(I18NFeatureMetadata.class);
         for (CodeType codeType : name) {
             Codespace codespace = codespaceDAO.getOrInsertCodespace(codeType.getCodeSpace(), session);
 //            i18ndao.insertI18N(feature, new I18NInsertionObject(codespace, codeType.getValue()), session);
         }
     }
 
-    public void insertNameAndDescription(IdentifierNameDescriptionEntity entity, SamplingFeature samplingFeature, Session session) {
+    public void insertNameAndDescription(IdentifierNameDescriptionEntity entity,
+                                         SamplingFeature samplingFeature,
+                                         Session session) {
         if (samplingFeature.isSetName()) {
-
 
         }
 //        session.saveOrUpdate(

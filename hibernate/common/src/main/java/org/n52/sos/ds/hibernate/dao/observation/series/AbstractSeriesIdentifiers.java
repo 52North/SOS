@@ -10,11 +10,11 @@
  * the following licenses, the combination of the program with the linked
  * library is not considered a "derivative work" of the program:
  *
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
+ * - Apache License, version 2.0
+ * - Apache Software License, version 1.0
+ * - GNU Lesser General Public License, version 3
+ * - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ * - Common Development and Distribution License (CDDL), version 1.0
  *
  * Therefore the distribution of the program linked with libraries licensed
  * under the aforementioned licenses, is permitted by the copyright holders
@@ -30,12 +30,12 @@ package org.n52.sos.ds.hibernate.dao.observation.series;
 
 import org.hibernate.Criteria;
 
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
 
-public abstract class AbstractSeriesIdentifiers {
-    
-    public abstract void addIdentifierRestrictionsToCritera(Criteria c);
-    
-    public abstract void addValuesToSeries(Series series);
+public interface AbstractSeriesIdentifiers {
+
+    void addIdentifierRestrictionsToCritera(Criteria c);
+
+    void addValuesToSeries(HasWriteableObservationContext series);
 
 }

@@ -64,12 +64,9 @@ import org.n52.sos.ogc.om.OmCompositePhenomenon;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-/**
- * Hibernate data access class for observable properties
- *
- * @author CarstenHollmann
- * @since 4.0.0
- */
+import com.google.common.collect.Lists;
+
+
 public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservablePropertyDAO.class);
@@ -238,38 +235,48 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
      * Insert and/or get observable property objects for SOS observable
      * properties
      *
-     * @param observableProperty
+     * @param observableProperties
      *            SOS observable properties
      * @param session
      *            Hibernate session
      * @return Observable property objects
      */
     public List<ObservableProperty> getOrInsertObservableProperty(
-            List<? extends AbstractPhenomenon> observableProperty, Session session) {
-        Map<String, ObservableProperty> existing = getExistingObservableProperties(observableProperty, session);
-        insertNonExisting(observableProperty, existing, session);
-        insertHierachy(observableProperty, existing, session);
-        return new ArrayList<>(existing.values());
+            List<? extends AbstractPhenomenon> observableProperties, Session session) {
+        return new ArrayList<>(getOrInsertObservablePropertyAsMap(observableProperties, session).values());
+    }
+
+    public Map<String, ObservableProperty> getOrInsertObservablePropertyAsMap(
+            List<? extends AbstractPhenomenon> observableProperties, Session session) {
+        Map<String, ObservableProperty> existing = getExistingObservableProperties(observableProperties, session);
+        insertNonExisting(observableProperties, existing, session);
+        insertHierachy(observableProperties, existing, session);
+        return existing;
     }
 
     protected void insertNonExisting(
-            List<? extends AbstractPhenomenon> observableProperty,
-            Map<String, ObservableProperty> existing,
-            Session session)
+            List<? extends AbstractPhenomenon> observableProperties,
+            Map<String, ObservableProperty> existing, Session session)
             throws HibernateException {
-        for (AbstractPhenomenon sosObsProp : observableProperty) {
-            if (!existing.containsKey(sosObsProp.getIdentifier())) {
-                TObservableProperty obsProp = new TObservableProperty();
-                addIdentifierNameDescription(sosObsProp, obsProp, session);
-                session.save(obsProp);
-                session.flush();
-                session.refresh(obsProp);
-                existing.put(obsProp.getIdentifier(), obsProp);
-            }
-            if (sosObsProp instanceof OmCompositePhenomenon) {
-                insertNonExisting(((OmCompositePhenomenon) sosObsProp)
-                        .getPhenomenonComponents(), existing, session);
-            }
+        for (AbstractPhenomenon sosObsProp : observableProperties) {
+            insertNonExisting(sosObsProp, existing, session);
+        }
+    }
+
+    protected void insertNonExisting(AbstractPhenomenon sosObsProp,
+                                     Map<String, ObservableProperty> existing,
+                                     Session session)
+            throws HibernateException {
+        if (!existing.containsKey(sosObsProp.getIdentifier())) {
+            TObservableProperty obsProp = new TObservableProperty();
+            addIdentifierNameDescription(sosObsProp, obsProp, session);
+            session.save(obsProp);
+            session.flush();
+            session.refresh(obsProp);
+            existing.put(obsProp.getIdentifier(), obsProp);
+        }
+        if (sosObsProp instanceof OmCompositePhenomenon) {
+            insertNonExisting(((OmCompositePhenomenon) sosObsProp).getPhenomenonComponents(), existing, session);
         }
     }
 
@@ -298,23 +305,25 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     protected void insertHierachy(List<? extends AbstractPhenomenon> observableProperty,
                                   Map<String, ObservableProperty> existing,
                                   Session session) {
-        Set<ObservableProperty> toSave = new HashSet<>(existing.size());
         for (AbstractPhenomenon sosObsProp : observableProperty) {
             if (sosObsProp instanceof OmCompositePhenomenon) {
-                OmCompositePhenomenon parent = (OmCompositePhenomenon) sosObsProp;
-                TObservableProperty parentObsProp = getTObservableProperty(parent.getIdentifier(), existing, session);
-                for (OmObservableProperty child : parent.getPhenomenonComponents()) {
-                    TObservableProperty childObsProp = getTObservableProperty(child.getIdentifier(), existing, session);
-                    childObsProp.addParent(parentObsProp);
-                    parentObsProp.addChild(childObsProp);
-                    toSave.add(childObsProp);
-                }
-                toSave.add(parentObsProp);
+                insertHierachy((OmCompositePhenomenon) sosObsProp, existing, session);
             }
         }
-        for (ObservableProperty obsProp: toSave) {
-            session.save(obsProp);
+    }
+
+    protected void insertHierachy(OmCompositePhenomenon parent,
+                                  Map<String, ObservableProperty> existing,
+                                  Session session) throws HibernateException {
+        TObservableProperty parentObsProp = getTObservableProperty(parent.getIdentifier(), existing, session);
+        for (OmObservableProperty child : parent) {
+            TObservableProperty childObsProp = getTObservableProperty(child.getIdentifier(), existing, session);
+            childObsProp.addParent(parentObsProp);
+            session.update(childObsProp);
         }
+        // do not save the parent, as it would result in a duplicate key error...
+        session.flush();
+        session.refresh(parentObsProp);
     }
 
     private TObservableProperty getTObservableProperty(String identifier, Map<String, ObservableProperty> observableProperties, Session session) {

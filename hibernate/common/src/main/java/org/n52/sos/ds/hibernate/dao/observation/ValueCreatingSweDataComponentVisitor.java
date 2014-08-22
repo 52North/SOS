@@ -1,0 +1,167 @@
+package org.n52.sos.ds.hibernate.dao.observation;
+
+import java.math.BigDecimal;
+
+import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.ogc.om.values.BooleanValue;
+import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.ComplexValue;
+import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TextValue;
+import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sensorML.elements.SmlPosition;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweEnvelope;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.SweSimpleDataRecord;
+import org.n52.sos.ogc.swe.SweVector;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.sos.ogc.swe.simpleType.SweCategory;
+import org.n52.sos.ogc.swe.simpleType.SweCount;
+import org.n52.sos.ogc.swe.simpleType.SweCountRange;
+import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
+import org.n52.sos.ogc.swe.simpleType.SweQuantity;
+import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
+import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.ogc.swe.simpleType.SweTime;
+import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
+import org.n52.sos.ogc.swe.stream.StreamingSweDataArray;
+
+/**
+ * TODO JavaDoc
+ *
+ * @author Christian Autermann
+ */
+public class ValueCreatingSweDataComponentVisitor implements
+        SweDataComponentVisitor<Value<?>> {
+
+    private ValueCreatingSweDataComponentVisitor() {
+    }
+
+    private OwsExceptionReport notSupported(SweAbstractDataComponent component)
+            throws OwsExceptionReport {
+        throw new NoApplicableCodeException()
+                .withMessage("SweDataComponent {} is not supported as an observation value", component
+                             .getDataComponentType());
+    }
+
+    @Override
+    public Value<?> visit(SweField component)
+            throws OwsExceptionReport {
+        return component.getElement().accept(this);
+    }
+
+    @Override
+    public Value<?> visit(SweDataRecord component) {
+        return new ComplexValue(component);
+    }
+
+    @Override
+    public Value<?> visit(SweSimpleDataRecord component) {
+        return new ComplexValue(component);
+    }
+
+    @Override
+    public Value<?> visit(SweDataArray component) {
+        return new SweDataArrayValue(component);
+    }
+
+    @Override
+    public Value<?> visit(SweCount component) {
+        return new CountValue(component.getValue());
+    }
+
+    @Override
+    public Value<?> visit(SweBoolean component) {
+        return new BooleanValue(component.getValue());
+    }
+
+    @Override
+    public Value<?> visit(SweCategory component) {
+        return new CategoryValue(component.getValue(), component.getUom());
+    }
+
+    @Override
+    public Value<?> visit(SweQuantity component) {
+        return new QuantityValue(BigDecimal.valueOf(component.getValue()),
+                                 component.getUom());
+    }
+
+    @Override
+    public Value<?> visit(SweText component) {
+        return new TextValue(component.getValue());
+    }
+
+    @Override
+    public Value<?> visit(SweObservableProperty component)
+            throws OwsExceptionReport {
+        throw notSupported(component);
+    }
+
+    @Override
+    public Value<?> visit(SweQuantityRange component)
+            throws OwsExceptionReport {
+        throw notSupported(component);
+    }
+
+    @Override
+    public Value<?> visit(SweCountRange component)
+            throws OwsExceptionReport {
+        throw notSupported(component);
+    }
+
+    @Override
+    public Value<?> visit(SweTime component)
+            throws OwsExceptionReport {
+        throw notSupported(component);
+    }
+
+    @Override
+    public Value<?> visit(SweTimeRange component)
+            throws OwsExceptionReport {
+        throw notSupported(component);
+    }
+
+    @Override
+    public Value<?> visit(SweEnvelope component)
+            throws OwsExceptionReport {
+        throw notSupported(component);
+    }
+
+    @Override
+    public Value<?> visit(SweVector component)
+            throws OwsExceptionReport {
+        throw notSupported(component);
+    }
+
+    @Override
+    public Value<?> visit(StreamingSweDataArray component)
+            throws OwsExceptionReport {
+        throw notSupported(component);
+    }
+
+    @Override
+    public Value<?> visit(SmlPosition component)
+            throws OwsExceptionReport {
+        throw notSupported(component);
+    }
+
+    public static ValueCreatingSweDataComponentVisitor getInstance() {
+        return Holder.INSTANCE;
+    }
+
+    private static class Holder {
+        private static final ValueCreatingSweDataComponentVisitor INSTANCE
+                = new ValueCreatingSweDataComponentVisitor();
+
+        private Holder() {
+        }
+    }
+
+}

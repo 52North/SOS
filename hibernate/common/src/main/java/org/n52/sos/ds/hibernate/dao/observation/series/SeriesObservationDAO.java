@@ -34,41 +34,14 @@ import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
-import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
+import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesBlobObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesBooleanObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesCategoryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesComplexObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesCountObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesGeometryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesNumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesSweDataArrayObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesTextObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
 
-/**
- * Hibernate data access class for series observations
- *
- * @since 4.0.0
- *
- */
+
 public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
 
     /**
@@ -225,64 +198,7 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
-    protected Class<? extends AbstractObservation> getObservationClass() {
-        return AbstractSeriesObservation.class;
+    protected ObservationFactory getObservationFactory() {
+        return SeriesObservationFactory.getInstance();
     }
-
-    @Override
-    protected Class<? extends TemporalReferencedObservation> getObservationTimeClass() {
-        return TemporalReferencedSeriesObservation.class;
-    }
-
-    @Override
-    protected Class<ContextualReferencedSeriesObservation> getObservationInfoClass() {
-        return ContextualReferencedSeriesObservation.class;
-    }
-
-    @Override
-    protected Class<? extends BlobObservation> getBlobObservationClass() {
-        return SeriesBlobObservation.class;
-    }
-
-    @Override
-    protected Class<? extends BooleanObservation> getBooleanObservationClass() {
-        return SeriesBooleanObservation.class;
-    }
-
-    @Override
-    protected Class<? extends CategoryObservation> getCategoryObservationClass() {
-        return SeriesCategoryObservation.class;
-    }
-
-    @Override
-    protected Class<? extends CountObservation> getCountObservationClass() {
-        return SeriesCountObservation.class;
-    }
-
-    @Override
-    protected Class<? extends GeometryObservation> getGeometryObservationClass() {
-        return SeriesGeometryObservation.class;
-    }
-
-    @Override
-    protected Class<? extends NumericObservation> getNumericObservationClass() {
-        return SeriesNumericObservation.class;
-    }
-
-    @Override
-    protected Class<? extends SweDataArrayObservation> getSweDataArrayObservationClass() {
-        return SeriesSweDataArrayObservation.class;
-    }
-
-    @Override
-    protected Class<? extends TextObservation> getTextObservationClass() {
-        return SeriesTextObservation.class;
-    }
-
-    @Override
-    protected Class<? extends ComplexObservation> getComplexObservationClass() {
-        return SeriesComplexObservation.class;
-    }
-
 }

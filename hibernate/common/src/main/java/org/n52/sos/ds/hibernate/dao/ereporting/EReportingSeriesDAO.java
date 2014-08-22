@@ -35,20 +35,15 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
+import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
-import org.n52.sos.ds.hibernate.dao.observation.series.SeriesIdentifiers;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.request.GetObservationRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class EReportingSeriesDAO extends AbstractSeriesDAO {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(EReportingSeriesDAO.class);
 
     @Override
     protected Class<?> getSeriesClass() {
@@ -81,13 +76,13 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    public EReportingSeries getOrInsertSeries(SeriesIdentifiers identifiers, Session session) throws CodedException {
+    public EReportingSeries getOrInsertSeries(ObservationContext identifiers, Session session) throws CodedException {
         return (EReportingSeries) super.getOrInsert(identifiers, session);
     }
-    
+
     /**
      * Add EReportingSamplingPoint restriction to Hibernate Criteria
-     * 
+     *
      * @param c
      *            Hibernate Criteria to add restriction
      * @param samplingPoint
@@ -97,10 +92,10 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
         c.createCriteria(EReportingSeries.SAMPLING_POINT).add(Restrictions.eq(EReportingSamplingPoint.IDENTIFIER, samplingPoint));
 
     }
-    
+
     /**
      * Add EReportingSamplingPoint restriction to Hibernate Criteria
-     * 
+     *
      * @param c
      *            Hibernate Criteria to add restriction
      * @param samplingPoint
@@ -112,7 +107,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
 
     /**
      * Add EReportingSamplingPoint restriction to Hibernate Criteria
-     * 
+     *
      * @param c
      *            Hibernate Criteria to add restriction
      * @param samplingPoints
@@ -121,5 +116,5 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     public void addEReportingSamplingPointToCriteria(Criteria c, Collection<String> samplingPoints) {
         c.createCriteria(EReportingSeries.SAMPLING_POINT).add(Restrictions.in(EReportingSamplingPoint.IDENTIFIER, samplingPoints));
     }
-    
+
 }

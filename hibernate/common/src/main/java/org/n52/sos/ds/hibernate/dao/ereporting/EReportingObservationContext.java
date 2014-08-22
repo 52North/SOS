@@ -31,12 +31,12 @@ package org.n52.sos.ds.hibernate.dao.ereporting;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
-import org.n52.sos.ds.hibernate.dao.observation.series.SeriesIdentifiers;
+import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasEReportingSamplingPoint;
 
-public class EReportingSeriesIdentifiers extends SeriesIdentifiers {
+public class EReportingObservationContext extends ObservationContext {
     private EReportingSamplingPoint samplingPoint;
 
     /**
@@ -47,8 +47,8 @@ public class EReportingSeriesIdentifiers extends SeriesIdentifiers {
     }
 
     /**
-     * @param featureOfInterest
-     *            the featureOfInterest to set
+     * @param samplingPoint
+     *            the samplingPoint to set
      */
     public void setSamplingPoint(EReportingSamplingPoint samplingPoint) {
         this.samplingPoint = samplingPoint;
@@ -59,31 +59,18 @@ public class EReportingSeriesIdentifiers extends SeriesIdentifiers {
     }
 
     @Override
-    public void addIdentifierRestrictionsToCritera(Criteria c) {
-        super.addIdentifierRestrictionsToCritera(c);
+    public void addIdentifierRestrictionsToCritera(Criteria criteria) {
+        super.addIdentifierRestrictionsToCritera(criteria);
         if (isSetSamplingPoint()) {
-            addSamplingPointToCriteria(c, getSamplingPoint());
+            criteria.add(Restrictions.eq(HasEReportingSamplingPoint.SAMPLING_POINT, getSamplingPoint()));
         }
     }
 
     @Override
-    public void addValuesToSeries(Series series) {
-        super.addValuesToSeries(series);
-        if (isSetSamplingPoint() && series instanceof EReportingSeries) {
-            ((EReportingSeries) series).setSamplingPoint(getSamplingPoint());
+    public void addValuesToSeries(HasWriteableObservationContext contextual) {
+        super.addValuesToSeries(contextual);
+        if (isSetSamplingPoint() && contextual instanceof HasEReportingSamplingPoint) {
+            ((HasEReportingSamplingPoint) contextual).setSamplingPoint(getSamplingPoint());
         }
-    }
-
-    /**
-     * Add SamplingPoint restriction to Hibernate Criteria
-     * 
-     * @param c
-     *            Hibernate Criteria to add restriction
-     * @param samplingPoint
-     *            SamplingPoint to add
-     */
-    private void addSamplingPointToCriteria(Criteria c, EReportingSamplingPoint samplingPoint) {
-        c.add(Restrictions.eq(EReportingSeries.SAMPLING_POINT, samplingPoint));
-
     }
 }

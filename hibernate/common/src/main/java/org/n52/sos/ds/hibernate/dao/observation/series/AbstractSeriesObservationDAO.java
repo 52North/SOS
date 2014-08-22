@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
@@ -58,9 +59,9 @@ import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
@@ -77,14 +78,10 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesObservationDAO.class);
 
     @Override
-    protected void addObservationIdentifiersToObservation(ObservationIdentifiers observationIdentifiers,
+    protected void addObservationContextToObservation(ObservationContext ctx,
             Observation<?> observation, Session session) throws CodedException {
-        SeriesIdentifiers identifiers = new SeriesIdentifiers();
-        identifiers.setFeatureOfInterest(observationIdentifiers.getFeatureOfInterest());
-        identifiers.setObservableProperty(observationIdentifiers.getObservableProperty());
-        identifiers.setProcedure(observationIdentifiers.getProcedure());
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
-        Series series = seriesDAO.getOrInsertSeries(identifiers,session);
+        Series series = seriesDAO.getOrInsertSeries(ctx, session);
         ((SeriesObservation) observation).setSeries(series);
         seriesDAO.updateSeriesWithFirstLatestValues(series, observation, session);
     }
@@ -95,7 +92,12 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         Criteria criteria = getDefaultObservationInfoCriteria(session);
         Criteria seriesCriteria = criteria.createCriteria(ContextualReferencedSeriesObservation.SERIES);
         seriesCriteria.createCriteria(Series.FEATURE_OF_INTEREST).add(eq(FeatureOfInterest.IDENTIFIER, feature));
-        seriesCriteria.createCriteria(AbstractObservation.PROCEDURE).add(eq(Procedure.IDENTIFIER, procedure));
+        seriesCriteria.createCriteria(Series.PROCEDURE).add(eq(Procedure.IDENTIFIER, procedure));
+
+        if (!isIncludeChildObservableProperties()) {
+            seriesCriteria.createCriteria(AbstractObservation.VALUE).createCriteria(AbstractObservation.ID);
+        }
+
         return criteria;
     }
 
@@ -239,7 +241,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     @SuppressWarnings("unchecked")
     public List<Date> getResultTimesForSeriesObservation(Series series, List<String> offerings, Criterion filter,
             Session session) {
-        Criteria criteria = createCriteriaFor(getObservationTimeClass(), series, session);
+        Criteria criteria = createCriteriaFor(getObservationFactory().temporalReferencedClass(), series, session);
         if (CollectionHelper.isNotEmpty(offerings)) {
             criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS).add(
                     Restrictions.in(Offering.IDENTIFIER, offerings));
@@ -265,7 +267,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      */
     public Criteria getMinMaxTimeCriteriaForSeriesObservation(Series series, Collection<String> offerings,
             Session session) {
-        Criteria criteria = createCriteriaFor(getObservationTimeClass(), series, session);
+        Criteria criteria = createCriteriaFor(getObservationFactory().temporalReferencedClass(), series, session);
         if (CollectionHelper.isNotEmpty(offerings)) {
             criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS).add(
                     Restrictions.in(Offering.IDENTIFIER, offerings));
@@ -432,7 +434,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      * @return Min time from series observations
      */
     public DateTime getMinSeriesObservationTime(Series series, Session session) {
-        Criteria criteria = createCriteriaFor(getObservationTimeClass(), series, session);
+        Criteria criteria = createCriteriaFor(getObservationFactory().temporalReferencedClass(), series, session);
         criteria.setProjection(Projections.min(TemporalReferencedSeriesObservation.PHENOMENON_TIME_START));
         Object min = criteria.uniqueResult();
         if (min != null) {
@@ -451,7 +453,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      * @return Max time from series observations
      */
     public DateTime getMaxSeriesObservationTime(Series series, Session session) {
-        Criteria criteria = createCriteriaFor(getObservationTimeClass(), series, session);
+        Criteria criteria = createCriteriaFor(getObservationFactory().temporalReferencedClass(), series, session);
         criteria.setProjection(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END));
         Object max = criteria.uniqueResult();
         if (max != null) {
@@ -596,7 +598,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 
     protected Criteria getSeriesObservationCriteriaForSosIndeterminateTimeFilter(Series series,
             List<String> offerings, SosIndeterminateTime sosIndeterminateTime, Session session) {
-        final Criteria criteria = createCriteriaFor(getObservationClass(), series, offerings, session);
+        final Criteria criteria = createCriteriaFor(getObservationFactory().observationClass(), series, offerings, session);
         criteria.addOrder(getOrder(sosIndeterminateTime)).setMaxResults(1);
         LOGGER.debug("QUERY getSeriesObservationForSosIndeterminateTimeFilter(series, offerings,(first,latest)): {}",
                 HibernateHelper.getSqlString(criteria));
@@ -605,7 +607,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 
     protected Criteria getSeriesObservationCriteriaFor(Series series, List<String> offerings,
             Criterion filterCriterion, Session session) {
-        final Criteria criteria = createCriteriaFor(getObservationClass(), series, offerings, session);
+        final Criteria criteria = createCriteriaFor(getObservationFactory().observationClass(), series, offerings, session);
         criteria.add(filterCriterion);
         LOGGER.debug("QUERY getSeriesObservationFor(series, offerings, temporalFilter): {}",
                 HibernateHelper.getSqlString(criteria));

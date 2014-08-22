@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -40,37 +39,13 @@ import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdConstants.AssessmentType;
 import org.n52.sos.aqd.AqdSamplingPoint;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.ereporting.EReportingObservationContext;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingSamplingPointDAO;
-import org.n52.sos.ds.hibernate.dao.ereporting.EReportingSeriesIdentifiers;
+import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
+import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
-import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.ContextualReferencedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingBlobObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingBooleanObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingCategoryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingComplexObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingCountObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingGeometryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingNumericObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingSweDataArrayObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingTextObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
@@ -148,33 +123,23 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
     }
 
     @Override
-    protected void addObservationIdentifiersToObservation(ObservationIdentifiers observationIdentifiers,
+    protected void addObservationContextToObservation(ObservationContext ctx,
             Observation<?> observation, Session session) throws CodedException {
-        EReportingSeriesIdentifiers identifiers = new EReportingSeriesIdentifiers();
-        identifiers.setFeatureOfInterest(observationIdentifiers.getFeatureOfInterest());
-        identifiers.setObservableProperty(observationIdentifiers.getObservableProperty());
-        identifiers.setProcedure(observationIdentifiers.getProcedure());
-        if (observationIdentifiers instanceof EReportingObservationIdentifiers) {
-            identifiers.setSamplingPoint(((EReportingObservationIdentifiers) observationIdentifiers)
-                    .getSamplingPoint());
-        }
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
-        Series series = seriesDAO.getOrInsertSeries(identifiers, session);
+        Series series = seriesDAO.getOrInsertSeries(ctx, session);
         ((AbstractSeriesObservation) observation).setSeries(series);
         seriesDAO.updateSeriesWithFirstLatestValues(series, observation, session);
     }
 
     @Override
-    protected ObservationIdentifiers createObservationIdentifiers(
-            Set<ObservationConstellation> hObservationConstellations) {
-        EReportingObservationIdentifiers observationIdentifiers = new EReportingObservationIdentifiers();
-        return observationIdentifiers;
+    protected ObservationContext createObservationContext() {
+        return new EReportingObservationContext();
     }
 
     @Override
-    protected ObservationIdentifiers addAdditionalObjectsToObservationIdentifiers(
-            ObservationIdentifiers observationIdentifiers, OmObservation sosObservation, Session session) {
-        if (observationIdentifiers instanceof EReportingObservationIdentifiers) {
+    protected ObservationContext fillObservationContext(
+            ObservationContext ctx, OmObservation sosObservation, Session session) {
+        if (ctx instanceof EReportingObservationContext) {
             if (sosObservation.isSetParameter()) {
                 AqdSamplingPoint samplingPoint = new AqdSamplingPoint();
                 List<NamedValue<?>> remove = Lists.newArrayList();
@@ -188,11 +153,11 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
                     }
                 }
                 sosObservation.getParameter().removeAll(remove);
-                ((EReportingObservationIdentifiers) observationIdentifiers)
+                ((EReportingObservationContext) ctx)
                         .setSamplingPoint(new EReportingSamplingPointDAO().getOrInsert(samplingPoint, session));
             }
         }
-        return observationIdentifiers;
+        return ctx;
     }
 
     private AqdSamplingPoint addSamplingPointParameterValuesToAqdSamplingPoint(AqdSamplingPoint samplingPoint,
@@ -229,85 +194,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
-    protected Class<? extends AbstractObservation> getObservationClass() {
-        return AbstractEReportingObservation.class;
+    protected ObservationFactory getObservationFactory() {
+        return EReportingObservationFactory.getInstance();
     }
-
-    @Override
-    protected Class<? extends ContextualReferencedObservation> getObservationInfoClass() {
-        return ContextualReferencedEReportingObservation.class;
-    }
-
-    @Override
-    protected Class<? extends TemporalReferencedObservation> getObservationTimeClass() {
-        return TemporalReferencedEReportingObservation.class;
-    }
-
-    @Override
-    protected Class<? extends BlobObservation> getBlobObservationClass() {
-        return EReportingBlobObservation.class;
-    }
-
-    @Override
-    protected Class<? extends BooleanObservation> getBooleanObservationClass() {
-        return EReportingBooleanObservation.class;
-    }
-
-    @Override
-    protected Class<? extends CategoryObservation> getCategoryObservationClass() {
-        return EReportingCategoryObservation.class;
-    }
-
-    @Override
-    protected Class<? extends CountObservation> getCountObservationClass() {
-        return EReportingCountObservation.class;
-    }
-
-    @Override
-    protected Class<? extends GeometryObservation> getGeometryObservationClass() {
-        return EReportingGeometryObservation.class;
-    }
-
-    @Override
-    protected Class<? extends NumericObservation> getNumericObservationClass() {
-        return EReportingNumericObservation.class;
-    }
-
-    @Override
-    protected Class<? extends SweDataArrayObservation> getSweDataArrayObservationClass() {
-        return EReportingSweDataArrayObservation.class;
-    }
-
-    @Override
-    protected Class<? extends TextObservation> getTextObservationClass() {
-        return EReportingTextObservation.class;
-    }
-
-    @Override
-    protected Class<? extends ComplexObservation> getComplexObservationClass() {
-        return EReportingComplexObservation.class;
-    }
-
-    protected class EReportingObservationIdentifiers extends ObservationIdentifiers {
-
-        private EReportingSamplingPoint samplingPoint;
-
-        /**
-         * @return the samplingPoint
-         */
-        public EReportingSamplingPoint getSamplingPoint() {
-            return samplingPoint;
-        }
-
-        /**
-         * @param samplingPoint
-         *            the samplingPoint to set
-         */
-        public void setSamplingPoint(EReportingSamplingPoint samplingPoint) {
-            this.samplingPoint = samplingPoint;
-        }
-
-    }
-
 }

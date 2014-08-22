@@ -47,23 +47,20 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.full.LegacyBlobObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.full.LegacyBooleanObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.full.LegacyCategoryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.full.LegacyComplexObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.full.LegacyCountObservation;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
+import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.full.LegacyNumericObservation;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.full.LegacySweDataArrayObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.full.LegacyTextObservation;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.LegacyObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -72,22 +69,6 @@ import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
-
-import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
-import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.full.LegacyGeometryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.LegacyObservation;
 
 
 public class LegacyObservationDAO extends AbstractObservationDAO {
@@ -99,12 +80,11 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
     public static final String SQL_QUERY_GET_FIRST_OBSERVATION_TIME = "getFirstObservationTime";
 
     @Override
-    protected void addObservationIdentifiersToObservation(ObservationIdentifiers observationIdentifiers,
-            Observation<?> observation, Session session) {
+    protected void addObservationContextToObservation(ObservationContext ctx, Observation<?> observation, Session session) {
         LegacyObservation<?> hObservation = (LegacyObservation<?>) observation;
-        hObservation.setFeatureOfInterest(observationIdentifiers.getFeatureOfInterest());
-        hObservation.setObservableProperty(observationIdentifiers.getObservableProperty());
-        hObservation.setProcedure(observationIdentifiers.getProcedure());
+        hObservation.setFeatureOfInterest(ctx.getFeatureOfInterest());
+        hObservation.setObservableProperty(ctx.getObservableProperty());
+        hObservation.setProcedure(ctx.getProcedure());
     }
 
     @Override
@@ -293,17 +273,18 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
         }
 
         if (CollectionHelper.isNotEmpty(request.getObservedProperties())) {
-            c.createCriteria(AbstractLegacyObservation.OBSERVABLE_PROPERTY).add(
-                    Restrictions.in(ObservableProperty.IDENTIFIER, request.getObservedProperties()));
+            c.createCriteria(AbstractLegacyObservation.OBSERVABLE_PROPERTY)
+                    .add(Restrictions.in(ObservableProperty.IDENTIFIER, request.getObservedProperties()));
         }
 
         if (CollectionHelper.isNotEmpty(features)) {
-            c.createCriteria(AbstractLegacyObservation.FEATURE_OF_INTEREST).add(
-                    Restrictions.in(FeatureOfInterest.IDENTIFIER, features));
+            c.createCriteria(AbstractLegacyObservation.FEATURE_OF_INTEREST)
+                    .add(Restrictions.in(FeatureOfInterest.IDENTIFIER, features));
         }
 
         if (CollectionHelper.isNotEmpty(request.getOfferings())) {
-            c.createCriteria(AbstractLegacyObservation.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
+            c.createCriteria(AbstractLegacyObservation.OFFERINGS)
+                    .add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
         }
 
         String logArgs = "request, features, offerings";
@@ -342,17 +323,19 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
 
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
 
-        c.createCriteria(AbstractLegacyObservation.PROCEDURE).add(Restrictions.eq(Procedure.ID, oc.getProcedure().getProcedureId()));
+        c.createCriteria(AbstractLegacyObservation.PROCEDURE)
+                .add(Restrictions.eq(Procedure.ID, oc.getProcedure().getProcedureId()));
 
-        c.createCriteria(AbstractLegacyObservation.OBSERVABLE_PROPERTY).add(
-                Restrictions.eq(ObservableProperty.ID, oc.getObservableProperty().getObservablePropertyId()));
+        c.createCriteria(AbstractLegacyObservation.OBSERVABLE_PROPERTY)
+                .add(Restrictions.eq(ObservableProperty.ID, oc.getObservableProperty().getObservablePropertyId()));
 
         if (CollectionHelper.isNotEmpty(features)) {
-            c.createCriteria(AbstractLegacyObservation.FEATURE_OF_INTEREST).add(
-                    Restrictions.in(FeatureOfInterest.IDENTIFIER, features));
+            c.createCriteria(AbstractLegacyObservation.FEATURE_OF_INTEREST)
+                    .add(Restrictions.in(FeatureOfInterest.IDENTIFIER, features));
         }
 
-        c.createCriteria(AbstractLegacyObservation.OFFERINGS).add(Restrictions.eq(Offering.ID, oc.getOffering().getOfferingId()));
+        c.createCriteria(AbstractLegacyObservation.OFFERINGS)
+                .add(Restrictions.eq(Offering.ID, oc.getOffering().getOfferingId()));
 
         String logArgs = "request, features, offerings";
         logArgs += ", sosIndeterminateTime";
@@ -363,14 +346,12 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
 
     public ScrollableResults getStreamingObservationsFor(GetObservationRequest request, Set<String> features,
             Criterion temporalFilterCriterion, Session session) throws HibernateException, OwsExceptionReport {
-        return getObservationCriteriaFor(request, features, temporalFilterCriterion, null, session).setReadOnly(true)
-                .scroll(ScrollMode.FORWARD_ONLY);
+        return scroll(getObservationCriteriaFor(request, features, temporalFilterCriterion, null, session));
     }
 
     public ScrollableResults getStreamingObservationsFor(GetObservationRequest request, Set<String> features,
             Session session) throws HibernateException, OwsExceptionReport {
-        return getObservationCriteriaFor(request, features, null, null, session).setReadOnly(true).scroll(
-                ScrollMode.FORWARD_ONLY);
+        return scroll(getObservationCriteriaFor(request, features, null, null, session));
     }
 
     public ScrollableResults getNotMatchingSeries(Set<Long> procedureIds, Set<Long> observablePropertyIds,
@@ -379,6 +360,15 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
         Criteria c =
                 getObservationCriteriaFor(request, features, temporalFilterCriterion, null, session);
         addAliasAndNotRestrictionFor(c, procedureIds, observablePropertyIds, featureIds);
+        return scroll(c);
+    }
+
+    @Override
+    protected ObservationFactory getObservationFactory() {
+        return LegacyObservationFactory.getInstance();
+    }
+
+    protected static ScrollableResults scroll(Criteria c) {
         return c.setReadOnly(true).scroll(ScrollMode.FORWARD_ONLY);
     }
 
@@ -386,7 +376,7 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
             Set<Long> featureIds, GetObservationRequest request, Set<String> features, Session session) throws OwsExceptionReport {
         Criteria c = getObservationCriteriaFor(request, features, null, null, session);
         addAliasAndNotRestrictionFor(c, procedureIds, observablePropertyIds, featureIds);
-        return c.setReadOnly(true).scroll(ScrollMode.FORWARD_ONLY);
+        return scroll(c);
     }
 
     @SuppressWarnings("unchecked")
@@ -407,64 +397,4 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
         c.add(Restrictions.not(Restrictions.in("f." + FeatureOfInterest.ID, featureIds)));
     }
 
-    @Override
-    @SuppressWarnings("rawtypes")
-    protected Class<? extends AbstractObservation> getObservationClass() {
-        return AbstractLegacyObservation.class;
-    }
-
-    @Override
-    protected Class<? extends ContextualReferencedObservation> getObservationInfoClass() {
-        return ContextualReferencedLegacyObservation.class;
-    }
-
-    @Override
-    protected Class<? extends TemporalReferencedObservation> getObservationTimeClass() {
-        return ContextualReferencedLegacyObservation.class;
-    }
-
-    @Override
-    protected Class<? extends BlobObservation> getBlobObservationClass() {
-        return LegacyBlobObservation.class;
-    }
-
-    @Override
-    protected Class<? extends BooleanObservation> getBooleanObservationClass() {
-        return LegacyBooleanObservation.class;
-    }
-
-    @Override
-    protected Class<? extends CategoryObservation> getCategoryObservationClass() {
-        return LegacyCategoryObservation.class;
-    }
-
-    @Override
-    protected Class<? extends CountObservation> getCountObservationClass() {
-        return LegacyCountObservation.class;
-    }
-
-    @Override
-    protected Class<? extends GeometryObservation> getGeometryObservationClass() {
-        return LegacyGeometryObservation.class;
-    }
-
-    @Override
-    protected Class<? extends NumericObservation> getNumericObservationClass() {
-        return LegacyNumericObservation.class;
-    }
-
-    @Override
-    protected Class<? extends SweDataArrayObservation> getSweDataArrayObservationClass() {
-        return LegacySweDataArrayObservation.class;
-    }
-
-    @Override
-    protected Class<? extends TextObservation> getTextObservationClass() {
-        return LegacyTextObservation.class;
-    }
-
-    @Override
-    protected Class<? extends ComplexObservation> getComplexObservationClass() {
-        return LegacyComplexObservation.class;
-    }
 }

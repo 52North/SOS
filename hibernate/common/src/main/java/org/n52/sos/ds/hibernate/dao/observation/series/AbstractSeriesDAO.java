@@ -37,11 +37,12 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.CodedException;
@@ -125,9 +126,9 @@ public abstract class AbstractSeriesDAO {
      * @return Series object
      * @throws CodedException
      */
-    public abstract Series getOrInsertSeries(SeriesIdentifiers identifiers, final Session session) throws CodedException;
+    public abstract Series getOrInsertSeries(ObservationContext identifiers, final Session session) throws CodedException;
 
-    protected Series getOrInsert(SeriesIdentifiers identifiers, final Session session) throws CodedException {
+    protected Series getOrInsert(ObservationContext identifiers, final Session session) throws CodedException {
         Criteria criteria = getDefaultAllSeriesCriteria(session);
         identifiers.addIdentifierRestrictionsToCritera(criteria);
         LOGGER.debug("QUERY getOrInsertSeries(feature, observableProperty, procedure): {}",

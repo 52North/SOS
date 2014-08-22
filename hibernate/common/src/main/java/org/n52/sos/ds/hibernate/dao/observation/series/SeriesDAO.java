@@ -40,15 +40,15 @@ import org.n52.sos.request.GetObservationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
+
 /**
  * Hibernate data access class for series
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class SeriesDAO extends AbstractSeriesDAO {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SeriesDAO.class);
 
     @Override
     @SuppressWarnings("unchecked")
@@ -75,7 +75,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    public Series getOrInsertSeries(SeriesIdentifiers identifiers, final Session session) throws CodedException {
+    public Series getOrInsertSeries(ObservationContext identifiers, final Session session) throws CodedException {
         return getOrInsert(identifiers, session);
     }
 

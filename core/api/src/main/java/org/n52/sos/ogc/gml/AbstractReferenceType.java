@@ -55,7 +55,10 @@ public class AbstractReferenceType {
      * @return Href
      */
     public String getHref() {
-        return href.getHref();
+    	if (href != null) {
+    		return href.getHref();
+    	}
+        return null;
     }
 
     /**

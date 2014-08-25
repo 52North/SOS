@@ -24,6 +24,10 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>api-aqd-v10</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>ereporting</artifactId>
+		</dependency>
 		<!-- Test dependencies -->
 		<dependency>
 			<groupId>junit</groupId>

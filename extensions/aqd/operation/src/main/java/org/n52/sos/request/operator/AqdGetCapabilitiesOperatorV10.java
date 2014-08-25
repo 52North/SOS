@@ -71,9 +71,11 @@ public class AqdGetCapabilitiesOperatorV10
 			GetCapabilitiesResponse response) {
 		SosCapabilities capabilities = response.getCapabilities();
 //		capabilities.setService(AqdConstants.AQD);
-		for (OwsParameterValue owsParameterValue : capabilities.getOperationsMetadata().getCommonValues().get(OWSConstants.RequestParams.service.name())) {
-			if (owsParameterValue instanceof OwsParameterValuePossibleValues) {
-				((OwsParameterValuePossibleValues) owsParameterValue).addValue(AqdConstants.AQD);
+		if (capabilities.isSetOperationsMetadata()) {
+			for (OwsParameterValue owsParameterValue : capabilities.getOperationsMetadata().getCommonValues().get(OWSConstants.RequestParams.service.name())) {
+				if (owsParameterValue instanceof OwsParameterValuePossibleValues) {
+					((OwsParameterValuePossibleValues) owsParameterValue).addValue(AqdConstants.AQD);
+				}
 			}
 		}
 		return response;

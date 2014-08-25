@@ -216,7 +216,11 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 				getCache().addOfferingIdentifierHumanReadableName(offeringId, offering.getName());
 			}
 		} else {
-			getCache().addOfferingIdentifierHumanReadableName(offeringId, name.getDefaultLocalization().get().getText());
+			if (name.getDefaultLocalization().isPresent()) {
+				getCache().addOfferingIdentifierHumanReadableName(offeringId, name.getDefaultLocalization().get().getText());
+			} else {
+				getCache().addOfferingIdentifierHumanReadableName(offeringId, offeringId);
+			}
 		}
 		
 	}

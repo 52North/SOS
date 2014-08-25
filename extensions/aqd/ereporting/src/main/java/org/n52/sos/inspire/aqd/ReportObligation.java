@@ -55,7 +55,11 @@ public class ReportObligation {
         return this;
     }
 
-    public InspireID getInspireID() {
+    public boolean isSetChange() {
+		return getChange() != null;
+	}
+
+	public InspireID getInspireID() {
         return inspireID;
     }
 
@@ -64,7 +68,11 @@ public class ReportObligation {
         return this;
     }
 
-    public Referenceable<Time> getReportingPeriod() {
+    public boolean isSetInspireID() {
+		return getInspireID() != null;
+	}
+
+	public Referenceable<Time> getReportingPeriod() {
         return reportingPeriod;
     }
 
@@ -72,6 +80,10 @@ public class ReportObligation {
             Referenceable<Time> reportingPeriod) {
         this.reportingPeriod = Preconditions.checkNotNull(reportingPeriod);
         return this;
+    }
+    
+    public boolean isValid() {
+    	return isSetInspireID() && isSetChange(); 
     }
 
     @Override

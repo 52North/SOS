@@ -168,6 +168,8 @@ public interface OmConstants {
     String PHEN_SAMPLING_TIME = "http://www.opengis.net/def/property/OGC/0/SamplingTime";
 
     String PHENOMENON_TIME = "http://www.opengis.net/def/property/OGC/0/PhenomenonTime";
+    
+    String RESULT_TIME = "http://www.opengis.net/def/property/OGC/0/ResultTime";
 
     String PHENOMENON_TIME_NAME = EN_PHENOMENON_TIME;
     

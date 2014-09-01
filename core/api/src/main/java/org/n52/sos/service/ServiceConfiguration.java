@@ -449,7 +449,7 @@ public class ServiceConfiguration {
         return includeChildObservableProperties;
     }
 
-    @Setting(ServiceSettings.INCLUDE_CHILD_OBSERVABLE_PROPERTIES)
+    @Setting(ServiceSettings.EXPOSE_CHILD_OBSERVABLE_PROPERTIES)
     public void setIncludeChildObservableProperties(boolean include) {
         this.includeChildObservableProperties = include;
     }

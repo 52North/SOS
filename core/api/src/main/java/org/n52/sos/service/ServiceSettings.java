@@ -69,7 +69,7 @@ public class ServiceSettings implements SettingDefinitionProvider {
 
     public static final String  VALIDATE_RESPONSE = "service.response.validate";
 
-    public static final String INCLUDE_CHILD_OBSERVABLE_PROPERTIES = "service.includeChildObservableProperties";
+    public static final String EXPOSE_CHILD_OBSERVABLE_PROPERTIES = "service.exposeChildObservableProperties";
 
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Service").setOrder(2);
 
@@ -173,15 +173,15 @@ public class ServiceSettings implements SettingDefinitionProvider {
                     .setDescription(
                             "Whether the SOS should validate the XML response when the debug mode is disabled.");
 
-     public static final BooleanSettingDefinition INCLUDE_CHILD_OBSERVABLE_PROPERTIES_DEFINITION =
+     public static final BooleanSettingDefinition EXPOSE_CHILD_OBSERVABLE_PROPERTIES_DEFINITION =
             new BooleanSettingDefinition()
                     .setGroup(GROUP)
                     .setOrder(ORDER_17)
-                    .setKey(INCLUDE_CHILD_OBSERVABLE_PROPERTIES)
+                    .setKey(EXPOSE_CHILD_OBSERVABLE_PROPERTIES)
                     .setDefaultValue(false)
-                    .setTitle("Should this SOS include child observable properties?")
+                    .setTitle("Should this SOS expose child observable properties?")
                     .setDescription(
-                            "Whether the SOS should make children of composite phenomenons (e.g. in complex observations) accessible.");
+                            "Whether the SOS should expose the children of composite phenomenons (e.g. in complex observations) instead of their parents.");
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = Sets.<SettingDefinition<?, ?>> newHashSet(
             SERVICE_URL_DEFINITION,
@@ -194,7 +194,7 @@ public class ServiceSettings implements SettingDefinitionProvider {
             ADD_OUTPUTS_TO_SENSOR_ML_DEFINITION,
             STRICT_SPATIAL_FILTERING_PROFILE_DEFINITION,
             VALIDATE_RESPONSE_DEFINITION,
-            INCLUDE_CHILD_OBSERVABLE_PROPERTIES_DEFINITION);
+            EXPOSE_CHILD_OBSERVABLE_PROPERTIES_DEFINITION);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

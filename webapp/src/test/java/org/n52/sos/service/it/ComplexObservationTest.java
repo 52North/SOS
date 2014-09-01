@@ -441,7 +441,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     }
 
     private static void showChildren(boolean show) {
-        changeSetting(ServiceSettings.INCLUDE_CHILD_OBSERVABLE_PROPERTIES,
+        changeSetting(ServiceSettings.EXPOSE_CHILD_OBSERVABLE_PROPERTIES,
                       Boolean.toString(show));
     }
 

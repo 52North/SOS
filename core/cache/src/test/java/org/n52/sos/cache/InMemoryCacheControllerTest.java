@@ -86,6 +86,7 @@ import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.response.InsertSensorResponse;
 import org.n52.sos.util.Constants;
+import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.builder.DeleteSensorRequestBuilder;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -159,8 +160,8 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     public void should_update_global_temporal_BoundingBox_after_InsertObservation() throws OwsExceptionReport {
         updateCacheWithSingleObservation(PROCEDURE);
         final DateTime phenomenonTime =
-                ((TimeInstant) ((InsertObservationRequest) request).getObservations().get(0).getPhenomenonTime())
-                        .getValue();
+                DateTimeHelper.toUTC(((TimeInstant) ((InsertObservationRequest) request).getObservations().get(0).getPhenomenonTime())
+                        .getValue());
 
         assertEquals("maxtime", getCache().getMaxPhenomenonTime(), phenomenonTime);
 

@@ -127,8 +127,10 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                     if (offering instanceof TOffering) {
                         TOffering tOffering = (TOffering) offering;
                         // Related features
-                        cache.setRelatedFeaturesForOffering(prefixedOfferingId,
-                                                             getRelatedFeatureIdentifiersFrom(tOffering));
+                        Set<String> relatedFeatures = getRelatedFeatureIdentifiersFrom(tOffering);
+                        if (!relatedFeatures.isEmpty()) {
+                            cache.setRelatedFeaturesForOffering(prefixedOfferingId, relatedFeatures);
+                        }
                         cache.setAllowedObservationTypeForOffering(prefixedOfferingId,
                                                                     getObservationTypesFromObservationType(tOffering.getObservationTypes()));
                         // featureOfInterestTypes
@@ -221,7 +223,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     }
 
     protected Set<String> getRelatedFeatureIdentifiersFrom(TOffering hOffering) {
-        Set<String> relatedFeatureList = new HashSet<String>(hOffering.getRelatedFeatures().size());
+        Set<String> relatedFeatureList = new HashSet<>(hOffering.getRelatedFeatures().size());
         for (RelatedFeature hRelatedFeature : hOffering.getRelatedFeatures()) {
             if (hRelatedFeature.getFeatureOfInterest() != null
                     && hRelatedFeature.getFeatureOfInterest().getIdentifier() != null) {

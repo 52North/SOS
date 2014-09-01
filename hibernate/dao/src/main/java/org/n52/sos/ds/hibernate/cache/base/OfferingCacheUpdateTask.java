@@ -129,8 +129,10 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         // Procedures
         final Map<ProcedureFlag, Set<String>> procedureIdentifiers = getProcedureIdentifier(session);
         getCache().setProceduresForOffering(prefixedOfferingId, procedureIdentifiers.get(ProcedureFlag.PARENT));
-        getCache().setHiddenChildProceduresForOffering(prefixedOfferingId,
-                procedureIdentifiers.get(ProcedureFlag.HIDDEN_CHILD));
+        Set<String> hiddenChilds = procedureIdentifiers.get(ProcedureFlag.HIDDEN_CHILD);
+        if (!hiddenChilds.isEmpty()) {
+            getCache().setHiddenChildProceduresForOffering(prefixedOfferingId, hiddenChilds);
+        }
 
         // Observable properties
         getCache().setObservablePropertiesForOffering(prefixedOfferingId, getObservablePropertyIdentifier(session));
@@ -205,7 +207,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
                 description.addLocalization(locale, offering.getDescription());
             }
         }
-        
+
         getCache().setI18nDescriptionForOffering(offeringId, description);
         getCache().setI18nNameForOffering(offeringId, name);
         addHumanReadableIdentifier(offeringId, offering, name);
@@ -220,7 +222,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 		} else {
 			getCache().addOfferingIdentifierHumanReadableName(offeringId, name.getDefaultLocalization().get().getText());
 		}
-		
+
 	}
 
 	protected Map<ProcedureFlag, Set<String>> getProcedureIdentifier(Session session) throws OwsExceptionReport {

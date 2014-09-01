@@ -247,7 +247,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *            Hibernate session
      *
      * @return Map of foi identifier to procedure identifier collection
-     * @throws HibernateException 
+     * @throws HibernateException
      * @throws CodedException
      */
     @SuppressWarnings("unchecked")
@@ -401,11 +401,11 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @param session
      *            Hibernate session
      * @return Procedure identifiers
-     * @throws CodedException 
+     * @throws CodedException
      */
     @SuppressWarnings("unchecked")
     public Collection<String> getProcedureIdentifiersForObservableProperty(final String observablePropertyIdentifier,
-            final Session session) throws CodedException {
+            final Session session) throws OwsExceptionReport {
         final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class);
         Criteria c = null;
         if (flag) {
@@ -771,7 +771,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @param session
      *            Hibernate session
      * @return Hiberante Detached Criteria with Procedure entities
-     * @throws CodedException 
+     * @throws CodedException
      */
     private DetachedCriteria getDetachedCriteriaProceduresForFeatureOfInterestFromSeries(
             FeatureOfInterest featureOfInterest, Session session) throws CodedException {
@@ -811,7 +811,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @param session
      *            Hibernate session
      * @return Hiberante Detached Criteria with Procedure entities
-     * @throws CodedException 
+     * @throws CodedException
      */
     private DetachedCriteria getDetachedCriteriaProceduresForObservablePropertyFromSeries(
             String observablePropertyIdentifier, Session session) throws CodedException {

@@ -201,6 +201,7 @@ public class ObservationConstellationDAO {
                     .createAlias(ObservationConstellation.OFFERING, "o")
                     .createAlias(ObservationConstellation.PROCEDURE, "p")
                     .createAlias(ObservationConstellation.OBSERVABLE_PROPERTY, "op")
+                    .add(Restrictions.eq("op." + ObservableProperty.HIDDEN_CHILD, false))
                     .createAlias(ObservationConstellation.OBSERVATION_TYPE, "ot", JoinType.LEFT_OUTER_JOIN)
                     .add(Restrictions.eq(ObservationConstellation.DELETED, false))
                     .setProjection(Projections.projectionList()

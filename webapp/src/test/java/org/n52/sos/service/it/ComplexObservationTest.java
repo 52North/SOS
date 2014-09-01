@@ -29,9 +29,12 @@
 package org.n52.sos.service.it;
 
 import static org.hamcrest.Matchers.arrayWithSize;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 
 import java.util.Iterator;
@@ -58,6 +61,7 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.w3c.dom.Node;
 
+import org.n52.sos.cache.ContentCache;
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingValue;
 import org.n52.sos.config.SettingValueFactory;
@@ -123,6 +127,15 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     private static final String OFFERING_CAPABILITIES_NAME = "offerings";
     private static final String UNIQUE_ID_NAME = "uniqueID";
 
+    private static final String[] CHILD_OBSERVABLE_PROPERTIES = {
+        CHILD_OBSERVABLE_PROPERTY_1, CHILD_OBSERVABLE_PROPERTY_2,
+        CHILD_OBSERVABLE_PROPERTY_3, CHILD_OBSERVABLE_PROPERTY_4,
+        CHILD_OBSERVABLE_PROPERTY_5 };
+    private static final String[] ALL_OBSERVABLE_PROPERTIES = {
+        PARENT_OBSERVABLE_PROPERTY, CHILD_OBSERVABLE_PROPERTY_1,
+        CHILD_OBSERVABLE_PROPERTY_2, CHILD_OBSERVABLE_PROPERTY_3,
+        CHILD_OBSERVABLE_PROPERTY_4, CHILD_OBSERVABLE_PROPERTY_5 };
+
     @Rule
     public final ErrorCollector errors = new ErrorCollector();
 
@@ -136,17 +149,13 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     @After
     public void after() throws OwsExceptionReport {
         H2Configuration.truncate();
-        refreshCache();
-    }
-
-    private void refreshCache() throws OwsExceptionReport {
         Configurator.getInstance().getCacheController().update();
     }
 
     @Test
     public void testHiddenParentChildQuery() {
         showChildren(true);
-        checkSingleChildObservations(kvp(SosConstants.Operations.GetObservation).query(SosConstants.GetObservationParams.observedProperty, Joiner.on(",").join(CHILD_OBSERVABLE_PROPERTY_1, CHILD_OBSERVABLE_PROPERTY_2, CHILD_OBSERVABLE_PROPERTY_3,CHILD_OBSERVABLE_PROPERTY_4,CHILD_OBSERVABLE_PROPERTY_5)).response().asXmlObject());
+        checkSingleChildObservations(kvp(SosConstants.Operations.GetObservation).query(SosConstants.GetObservationParams.observedProperty, Joiner.on(",").join(CHILD_OBSERVABLE_PROPERTIES)).response().asXmlObject());
     }
 
     @Test
@@ -204,75 +213,30 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     }
 
     @Test
-    public void testHiddenChildrenNoQuery() {
+    public void testHiddenChildrenNoQuery() throws OwsExceptionReport  {
         showChildren(false);
         checkSingleParentObservation(kvp(SosConstants.Operations.GetObservation).response().asXmlObject());
     }
 
     @Test
-    public void testHiddenParentChildQueryCacheRefreshed() throws OwsExceptionReport {
-        showChildren(true);refreshCache();
-        checkSingleChildObservations(kvp(SosConstants.Operations.GetObservation).query(SosConstants.GetObservationParams.observedProperty, Joiner.on(",").join(CHILD_OBSERVABLE_PROPERTY_1, CHILD_OBSERVABLE_PROPERTY_2, CHILD_OBSERVABLE_PROPERTY_3,CHILD_OBSERVABLE_PROPERTY_4,CHILD_OBSERVABLE_PROPERTY_5)).response().asXmlObject());
-    }
+    public void testDatabaseCacheUpdate() throws OwsExceptionReport {
+        ContentCache imcache = Configurator.getInstance().getCacheController().getCache();
+        Configurator.getInstance().getCacheController().update();
+        ContentCache dbcache = Configurator.getInstance().getCacheController().getCache();
 
-    @Test
-    public void testHiddenParentWithQueryCacheRefreshed() throws OwsExceptionReport {
-        showChildren(true);refreshCache();
-        checkSingleChildObservations(kvp(SosConstants.Operations.GetObservation).query(SosConstants.GetObservationParams.procedure, PROCEDURE).query(SosConstants.GetObservationParams.offering, OFFERING).query(SosConstants.GetObservationParams.featureOfInterest, FEATURE_OF_INTEREST).response().asXmlObject());
-    }
+        assertThat(dbcache, is(not(sameInstance(imcache))));
 
-    @Test
-    public void testHiddenParentNoQueryCacheRefreshed() throws OwsExceptionReport {
-        showChildren(true);refreshCache();
-        checkSingleChildObservations(kvp(SosConstants.Operations.GetObservation).response().asXmlObject());
-    }
+        errors.checkThat(dbcache.getObservableProperties(), is(equalTo(imcache.getObservableProperties())));
+        errors.checkThat(dbcache.getCompositePhenomenons(), is(equalTo(imcache.getCompositePhenomenons())));
+        errors.checkThat(dbcache.getObservablePropertiesForOffering(OFFERING), is(equalTo(imcache.getObservablePropertiesForOffering(OFFERING))));
+        errors.checkThat(dbcache.getObservablePropertiesForProcedure(PROCEDURE), is(equalTo(imcache.getObservablePropertiesForProcedure(PROCEDURE))));
 
-    @Test
-    public void testHiddenParentParentQueryCacheRefreshed() throws OwsExceptionReport {
-        showChildren(true);refreshCache();
-        checkInvalidObservedProperty(kvp(SosConstants.Operations.GetObservation).query(SosConstants.GetObservationParams.observedProperty, PARENT_OBSERVABLE_PROPERTY).response().asXmlObject());
-    }
-
-    @Test
-    public  void testHiddenChildrenChild5QueryCacheRefreshed() throws OwsExceptionReport {
-        showChildren(false);refreshCache();
-        checkInvalidObservedProperty(kvp(SosConstants.Operations.GetObservation).query(SosConstants.GetObservationParams.observedProperty, CHILD_OBSERVABLE_PROPERTY_5).response().asXmlObject());
-    }
-
-    @Test
-    public  void testHiddenChildrenChild4QueryCacheRefreshed() throws OwsExceptionReport {
-        showChildren(false);refreshCache();
-        checkInvalidObservedProperty(kvp(SosConstants.Operations.GetObservation).query(SosConstants.GetObservationParams.observedProperty, CHILD_OBSERVABLE_PROPERTY_4).response().asXmlObject());
-    }
-
-    @Test
-    public void testHiddenChildrenChild3QueryCacheRefreshed() throws OwsExceptionReport {
-        showChildren(false);refreshCache();
-        checkInvalidObservedProperty(kvp(SosConstants.Operations.GetObservation).query(SosConstants.GetObservationParams.observedProperty, CHILD_OBSERVABLE_PROPERTY_3).response().asXmlObject());
-    }
-
-    @Test
-    public void testHiddenChildrenChild2QueryCacheRefreshed() throws OwsExceptionReport {
-        showChildren(false);refreshCache();
-        checkInvalidObservedProperty(kvp(SosConstants.Operations.GetObservation).query(SosConstants.GetObservationParams.observedProperty, CHILD_OBSERVABLE_PROPERTY_2).response().asXmlObject());
-    }
-
-    @Test
-    public void testHiddenChildrenChild1QueryCacheRefreshed() throws OwsExceptionReport {
-        showChildren(false);refreshCache();
-        checkInvalidObservedProperty(kvp(SosConstants.Operations.GetObservation).query(SosConstants.GetObservationParams.observedProperty, CHILD_OBSERVABLE_PROPERTY_1).response().asXmlObject());
-    }
-
-    @Test
-    public void testHiddenChildrenParentQueryCacheRefreshed() throws OwsExceptionReport {
-        showChildren(false);refreshCache();
-        checkSingleParentObservation(kvp(SosConstants.Operations.GetObservation).query(SosConstants.GetObservationParams.observedProperty, PARENT_OBSERVABLE_PROPERTY).response().asXmlObject());
-    }
-
-    @Test
-    public void testHiddenChildrenNoQueryCacheRefreshed() throws OwsExceptionReport {
-        showChildren(false);refreshCache();
-        checkSingleParentObservation(kvp(SosConstants.Operations.GetObservation).response().asXmlObject());
+        for (String observableProperty : ALL_OBSERVABLE_PROPERTIES) {
+            errors.checkThat(dbcache.getProceduresForObservableProperty(observableProperty), is(equalTo(imcache.getProceduresForObservableProperty(observableProperty))));
+            errors.checkThat(dbcache.getOfferingsForObservableProperty(observableProperty), is(equalTo(imcache.getOfferingsForObservableProperty(observableProperty))));
+            errors.checkThat(dbcache.getCompositePhenomenonForObservableProperty(observableProperty), is(equalTo(imcache.getCompositePhenomenonForObservableProperty(observableProperty))));
+            errors.checkThat(dbcache.getObservablePropertiesForCompositePhenomenon(observableProperty), is(equalTo(imcache.getObservablePropertiesForCompositePhenomenon(observableProperty))));
+        }
     }
 
     private void checkSingleParentObservation(XmlObject getObservationResponse) {

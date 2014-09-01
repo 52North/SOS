@@ -38,11 +38,11 @@ import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.AbstractGetObservationDAO;
 import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
-import org.n52.sos.exception.ows.concrete.InvalidServiceParameterException;
+import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
-import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
+import org.n52.sos.inspire.aqd.ReportObligationType;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -82,6 +82,8 @@ public class AqdGetObservationOperatorV10
 	@Override
 	public GetObservationResponse receive(GetObservationRequest request)
 			throws OwsExceptionReport {
+		// TODO get FLOW from request/response
+		checkReportingHeader(ReportObligationType.E2A);
 		boolean checkForMergeObservationsInResponse = checkForMergeObservationsInResponse(request);
 		request.setMergeObservationValues(checkForMergeObservationsInResponse);
         final GetObservationResponse response = (GetObservationResponse)changeResponseServiceVersion(getDao().getObservation((GetObservationRequest) changeRequestServiceVersion(request)));
@@ -170,9 +172,14 @@ public class AqdGetObservationOperatorV10
         try {
             if (request.getResponseFormat() == null) {
             	request.setResponseFormat(AqdConstants.NS_AQD);
+            } else {
+                SosHelper.checkResponseFormat(request.getResponseFormat(), request.getService(),
+                        request.getVersion());
+            	if (!AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
+            		throw new InvalidResponseFormatParameterException(request.getResponseFormat());
+            	}
             }
-            SosHelper.checkResponseFormat(request.getResponseFormat(), request.getService(),
-                    request.getVersion());
+            
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

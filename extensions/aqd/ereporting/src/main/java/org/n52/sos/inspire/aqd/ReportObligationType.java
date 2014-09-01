@@ -34,11 +34,11 @@ package org.n52.sos.inspire.aqd;
  * @author Christian Autermann
  */
 public enum ReportObligationType {
-    B("B", "Information on zones and agglomerations"),
-    C("C", "Information on the assessment regime"),
-    D("D", "Information on the assessment methods"),
-    E1A("E1a", "Primary validated assessment data - measurements"),
-    E1B("E1b", "Primary validated assessment data - modelled"),
+//    B("B", "Information on zones and agglomerations"),
+//    C("C", "Information on the assessment regime"),
+//    D("D", "Information on the assessment methods"),
+//    E1A("E1a", "Primary validated assessment data - measurements"),
+//    E1B("E1b", "Primary validated assessment data - modelled"),
     E2A("E2a", "Primary up-to-date assessment data - measurements");
     private final String title;
     private final String description;

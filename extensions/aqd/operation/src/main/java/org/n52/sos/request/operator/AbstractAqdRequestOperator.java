@@ -34,9 +34,12 @@ import org.n52.sos.ds.OperationDAO;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.OperationEncoderKey;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
+import org.n52.sos.inspire.aqd.ReportObligationRepository;
+import org.n52.sos.inspire.aqd.ReportObligationType;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -73,6 +76,10 @@ public abstract class AbstractAqdRequestOperator<D extends OperationDAO, Q exten
 		response.setService(AqdConstants.AQD);
 		response.setVersion(AqdConstants.VERSION);
 		return response;
+	}
+	
+	protected void checkReportingHeader(ReportObligationType type) throws CodedException {
+		ReportObligationRepository.getInstance().createHeader(type);
 	}
 	
     @Override

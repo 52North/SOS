@@ -40,6 +40,7 @@ import org.n52.sos.encode.AbstractResponseEncoder;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.OperationEncoderKey;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
@@ -71,7 +72,8 @@ public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceRespon
         return Sets.newHashSet(AqdConstants.NS_AQD_SCHEMA_LOCATION);
     }
     
-	protected EReportingHeader getEReportingHeader(ReportObligationType type) {
+	protected EReportingHeader getEReportingHeader(ReportObligationType type)
+			throws CodedException {
 		return ReportObligationRepository.getInstance().createHeader(type);
 	}
 

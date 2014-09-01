@@ -76,7 +76,9 @@ public class AqdGetObservationResponseEncoder extends
 			timePeriod.extendToContain(observation.getPhenomenonTime());
 			featureCollection.addMember(observation);
 		}
-		eReportingHeader.setReportingPeriod(Referenceable.of((Time)timePeriod));
+		if (timePeriod.isEmpty()) {
+			eReportingHeader.setReportingPeriod(Referenceable.of((Time)timePeriod));
+		}
 		Map<HelperValues, String> additionalValues = new EnumMap<HelperValues, String>(HelperValues.class);
 		additionalValues.put(HelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2);
 		additionalValues.put(HelperValues.DOCUMENT, null);

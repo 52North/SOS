@@ -34,6 +34,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.inspire.aqd.persistence.ReportingHeaderSQLiteManager;
 import org.n52.sos.service.SosContextListener;
 
@@ -118,13 +120,19 @@ public class ReportObligationRepository {
         this._saveReportObligation(type, obligation);
     }
 
-    public EReportingHeader createHeader(ReportObligationType flow) {
+    public EReportingHeader createHeader(ReportObligationType flow) throws CodedException {
         ReportObligation reportObligation = getReportObligation(flow);
-        return new EReportingHeader()
-                .setChange(reportObligation.getChange())
-                .setInspireID(reportObligation.getInspireID())
-                .setReportingPeriod(reportObligation.getReportingPeriod())
-                .setReportingAuthority(getReportingAuthority());
+        if (reportObligation.isValid()) {
+	        return new EReportingHeader()
+	                .setChange(reportObligation.getChange())
+	                .setInspireID(reportObligation.getInspireID())
+	                .setReportingPeriod(reportObligation.getReportingPeriod())
+	                .setReportingAuthority(getReportingAuthority());
+        }
+		throw new NoApplicableCodeException()
+					.at("AQD Repoting Header")
+					.withMessage(
+							"No AQD Repoting Header set for %s! Please go to the admin interface (Admin -> Settings -> eReporting) and configure the AQD Repoting Header!", flow.name());
     }
 
     private void _saveReportingAuthority(RelatedParty relatedParty) {

@@ -42,6 +42,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.encode.xml.stream.inspire.aqd.EReportingHeaderEncoder;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.inspire.aqd.EReportingHeader;
@@ -145,7 +146,9 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
 			timePeriod.extendToContain(observation.getPhenomenonTime());
 			featureCollection.addMember(observation);
 		}
-		eReportingHeader.setReportingPeriod(Referenceable.of((Time)timePeriod));
+		if (timePeriod.isEmpty()) {
+			eReportingHeader.setReportingPeriod(Referenceable.of((Time)timePeriod));
+		}
 		Map<HelperValues, String> additionalValues = new EnumMap<HelperValues, String>(HelperValues.class);
 		additionalValues.put(HelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2);
 		additionalValues.put(HelperValues.DOCUMENT, null);
@@ -172,7 +175,7 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
 		
 	}
 
-	protected EReportingHeader getEReportingHeader(ReportObligationType type) {
+	protected EReportingHeader getEReportingHeader(ReportObligationType type) throws CodedException {
 		return ReportObligationRepository.getInstance().createHeader(type);
 	}
 }

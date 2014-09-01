@@ -74,6 +74,9 @@ public interface WritableCompositePhenomenonCache extends
     void addObservablePropertyForCompositePhenomenon(String compositePhenomenon,
                                                      String observableProperty);
 
+    void addCompositePhenomenonForObservableProperty(String observableProperty,
+                                                     String compositePhenomenon);
+
     void addObservablePropertiesForCompositePhenomenon(
             String compositePhenomenon, Collection<String> observableProperty);
 
@@ -84,5 +87,10 @@ public interface WritableCompositePhenomenonCache extends
             String compositePhenomenon);
 
     void clearObservablePropertiesForCompositePhenomenon();
+
+    void clearCompositePhenomenonsForObservableProperty();
+    
+    void clearCompositePhenomenonsForObservableProperty(String observableProperty);
+
 
 }

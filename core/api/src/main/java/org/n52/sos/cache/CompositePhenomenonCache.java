@@ -122,11 +122,11 @@ public interface CompositePhenomenonCache {
      * Gets the composite phenomenon (or parent) for the specified observable
      * property.
      *
-     * @param observableProperty the obserable property
+     * @param observableProperty the observable property
      *
      * @return the composite phenomenon or {@code null}
      */
-    String getCompositePhenomenonForObservableProperty(String observableProperty);
+    Set<String> getCompositePhenomenonForObservableProperty(String observableProperty);
 
     /**
      * Checks if the specified observable property is a component of a composite

@@ -189,13 +189,13 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
             OmCompositePhenomenon parent = (OmCompositePhenomenon) observableProperty;
             cache.addCompositePhenomenon(parent.getIdentifier());
             cache.addCompositePhenomenonForProcedure(procedure, parent.getIdentifier());
-
             for (String offering : request.getOfferings()) {
                 cache.addCompositePhenomenonForOffering(offering, parent.getIdentifier());
             }
 
             for (OmObservableProperty child : parent) {
                 cache.addObservablePropertyForCompositePhenomenon(parent.getIdentifier(), child.getIdentifier());
+                cache.addCompositePhenomenonForObservableProperty(child.getIdentifier(), parent.getIdentifier());
             }
         }
     }

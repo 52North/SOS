@@ -113,7 +113,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     private final SetMultiMap<String,String> compositePhenomenonsForProcedure = newSynchronizedSetMultiMap();
     private final SetMultiMap<String,String> compositePhenomenonsForOffering = newSynchronizedSetMultiMap();
     private final SetMultiMap<String,String> observablePropertiesForCompositePhenomenon = newSynchronizedSetMultiMap();
-    private final Map<String,String> compositePhenomenonForObservableProperty = newSynchronizedMap();
+    private final SetMultiMap<String,String> compositePhenomenonForObservableProperty = newSynchronizedSetMultiMap();
     private int defaultEpsgCode = Constants.EPSG_WGS84;
     private SosEnvelope globalEnvelope = new SosEnvelope(null, defaultEpsgCode);
 
@@ -2315,13 +2315,14 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     }
 
     @Override
-    public String getCompositePhenomenonForObservableProperty(String observableProperty) {
-        return this.compositePhenomenonForObservableProperty.get(observableProperty);
+    public Set<String> getCompositePhenomenonForObservableProperty(String observableProperty) {
+        return copyOf(this.compositePhenomenonForObservableProperty.get(observableProperty));
     }
 
     @Override
     public boolean isCompositePhenomenonComponent(String observableProperty) {
-        return getCompositePhenomenonForObservableProperty(observableProperty) != null;
+        return this.compositePhenomenonForObservableProperty.containsKey(observableProperty) &&
+               !this.compositePhenomenonForObservableProperty.get(observableProperty).isEmpty();
     }
 
     @Override
@@ -2428,6 +2429,16 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
         this.compositePhenomenonsForOffering.clear();
     }
 
+     @Override
+    public void addCompositePhenomenonForObservableProperty(String observableProperty,
+                                                            String compositePhenomenon) {
+         notNullOrEmpty(COMPOSITE_PHENOMENON, compositePhenomenon);
+        notNullOrEmpty(OBSERVABLE_PROPERTY, observableProperty);
+        LOG.trace("Adding composite phenomenon {} to to observable property {}", compositePhenomenon, observableProperty);
+        this.compositePhenomenonForObservableProperty.add(observableProperty, compositePhenomenon);
+        addCompositePhenomenon(compositePhenomenon);
+    }
+
     @Override
     public void addObservablePropertyForCompositePhenomenon(String compositePhenomenon,
                                                             String observableProperty) {
@@ -2465,5 +2476,17 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     public void clearObservablePropertiesForCompositePhenomenon() {
         LOG.trace("Clearing observable properties for composite phenomenon");
         this.observablePropertiesForCompositePhenomenon.clear();
+    }
+
+    @Override
+    public void clearCompositePhenomenonsForObservableProperty() {
+        LOG.trace("Clearing composite phenomenon for observable properties");
+        this.compositePhenomenonForObservableProperty.clear();
+    }
+
+    @Override
+    public void clearCompositePhenomenonsForObservableProperty(String observableProperty) {
+        LOG.trace("Clearing composite phenomenon for observable property {}", observableProperty);
+        this.compositePhenomenonForObservableProperty.remove(observableProperty);
     }
 }

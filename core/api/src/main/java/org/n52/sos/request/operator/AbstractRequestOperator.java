@@ -430,13 +430,18 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         if (observedProperty == null || observedProperty.isEmpty()) {
             throw new MissingParameterValueException(parameterName);
         }
-        if (getCache().hasObservableProperty(observedProperty)) {
-            return;
-        }
-        if (!ServiceConfiguration.getInstance().isIncludeChildObservableProperties() ||
-            !getCache().isCompositePhenomenonComponent(observedProperty)) {
+        if (ServiceConfiguration.getInstance()
+                .isIncludeChildObservableProperties()) {
+            if (getCache().isCompositePhenomenon(observedProperty) ||
+                !(getCache().isCompositePhenomenonComponent(observedProperty) ||
+                  getCache().hasObservableProperty(observedProperty))) {
+                throw new InvalidParameterValueException(parameterName, observedProperty);
+            }
+        } else if (getCache().isCompositePhenomenonComponent(observedProperty) ||
+                   !getCache().hasObservableProperty(observedProperty)) {
             throw new InvalidParameterValueException(parameterName, observedProperty);
         }
+
     }
 
     protected void checkObservedProperty(final String observedProperty, final Enum<?> parameterName)

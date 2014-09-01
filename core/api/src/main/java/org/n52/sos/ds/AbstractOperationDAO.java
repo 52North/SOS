@@ -197,18 +197,16 @@ public abstract class AbstractOperationDAO implements OperationDAO {
         addObservablePropertyParameter(opsMeta, getObservableProperties());
     }
 
-
     protected Collection<String> getObservableProperties() {
+        Set<String> observableProperties = getCache().getObservableProperties();
         if (ServiceConfiguration.getInstance().isIncludeChildObservableProperties()) {
-            Set<String> observableProperties = new HashSet<>(getCache().getObservableProperties());
-            for (String compositePhenomenon : getCache().getCompositePhenomenons()) {
-                observableProperties.addAll(getCache()
-                        .getObservablePropertiesForCompositePhenomenon(compositePhenomenon));
+            Set<String> compositePhenomenons = getCache().getCompositePhenomenons();
+            observableProperties.removeAll(compositePhenomenons);
+            for (String compositePhenomenon : compositePhenomenons) {
+                observableProperties.addAll(getCache().getObservablePropertiesForCompositePhenomenon(compositePhenomenon));
             }
-            return observableProperties;
-        } else {
-            return getCache().getObservableProperties();
         }
+        return observableProperties;
     }
 
     protected void addObservablePropertyParameter(OwsOperation opsMeta, Collection<String> observedProperties) {

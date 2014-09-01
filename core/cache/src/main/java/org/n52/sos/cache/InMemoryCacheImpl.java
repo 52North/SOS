@@ -49,6 +49,7 @@ import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
+import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.SetMultiMap;
 import org.n52.sos.util.StringHelper;
 
@@ -253,7 +254,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
                     && Objects.equal(this.compositePhenomenonsForOffering, other.compositePhenomenonsForOffering)
                     && Objects.equal(this.observablePropertiesForCompositePhenomenon, other.observablePropertiesForCompositePhenomenon)
                     && Objects.equal(this.compositePhenomenonForObservableProperty, other.compositePhenomenonForObservableProperty);
-        }
+            }
         return false;
     }
 
@@ -987,7 +988,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
         if (maxTime == null) {
             this.maxPhenomenonTimeForOfferings.remove(offering);
         } else {
-            this.maxPhenomenonTimeForOfferings.put(offering, maxTime);
+            this.maxPhenomenonTimeForOfferings.put(offering, DateTimeHelper.toUTC(maxTime));
         }
     }
 
@@ -998,7 +999,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
         if (minTime == null) {
             this.minPhenomenonTimeForOfferings.remove(offering);
         } else {
-            this.minPhenomenonTimeForOfferings.put(offering, minTime);
+            this.minPhenomenonTimeForOfferings.put(offering, DateTimeHelper.toUTC(minTime));
         }
     }
 
@@ -1009,7 +1010,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
         if (maxTime == null) {
             this.maxPhenomenonTimeForProcedures.remove(procedure);
         } else {
-            this.maxPhenomenonTimeForProcedures.put(procedure, maxTime);
+            this.maxPhenomenonTimeForProcedures.put(procedure, DateTimeHelper.toUTC(maxTime));
         }
     }
 
@@ -1020,7 +1021,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
         if (minTime == null) {
             this.minPhenomenonTimeForProcedures.remove(procedure);
         } else {
-            this.minPhenomenonTimeForProcedures.put(procedure, minTime);
+            this.minPhenomenonTimeForProcedures.put(procedure, DateTimeHelper.toUTC(minTime));
         }
     }
 
@@ -1540,13 +1541,13 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     @Override
     public void setMaxPhenomenonTime(final DateTime maxEventTime) {
         LOG.trace("Setting Maximal EventTime to {}", maxEventTime);
-        this.globalPhenomenonTimeEnvelope.setEnd(maxEventTime);
+        this.globalPhenomenonTimeEnvelope.setEnd(DateTimeHelper.toUTC(maxEventTime));
     }
 
     @Override
     public void setMinPhenomenonTime(final DateTime minEventTime) {
         LOG.trace("Setting Minimal EventTime to {}", minEventTime);
-        this.globalPhenomenonTimeEnvelope.setStart(minEventTime);
+        this.globalPhenomenonTimeEnvelope.setStart(DateTimeHelper.toUTC(minEventTime));
     }
 
     @Override
@@ -1788,7 +1789,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     @Override
     public void setMaxResultTime(final DateTime maxResultTime) {
         LOG.trace("Setting Maximal ResultTime to {}", maxResultTime);
-        this.globalResultTimeEnvelope.setEnd(maxResultTime);
+        this.globalResultTimeEnvelope.setEnd(DateTimeHelper.toUTC(maxResultTime));
     }
 
     @Override
@@ -1798,14 +1799,14 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
         if (maxTime == null) {
             this.maxResultTimeForOfferings.remove(offering);
         } else {
-            this.maxResultTimeForOfferings.put(offering, maxTime);
+            this.maxResultTimeForOfferings.put(offering, DateTimeHelper.toUTC(maxTime));
         }
     }
 
     @Override
     public void setMinResultTime(final DateTime minResultTime) {
         LOG.trace("Setting Minimal ResultTime to {}", minResultTime);
-        this.globalResultTimeEnvelope.setStart(minResultTime);
+        this.globalResultTimeEnvelope.setStart(DateTimeHelper.toUTC(minResultTime));
     }
 
     @Override
@@ -1815,7 +1816,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
         if (minTime == null) {
             this.minResultTimeForOfferings.remove(offering);
         } else {
-            this.minResultTimeForOfferings.put(offering, minTime);
+            this.minResultTimeForOfferings.put(offering, DateTimeHelper.toUTC(minTime));
         }
     }
 

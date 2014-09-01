@@ -108,7 +108,8 @@ public class SOS40ComplianceTestSuite extends MockHttpExecutor
             org.n52.sos.service.it.v2.rest.OfferingsTest.class,
             org.n52.sos.service.it.v2.rest.SensorsTest.class,
             org.n52.sos.service.it.v2.rest.ServiceEndpointTest.class,
-            org.n52.sos.service.it.ContentNegotiationEndpointTest.class
+            org.n52.sos.service.it.ContentNegotiationEndpointTest.class,
+            org.n52.sos.service.it.ComplexObservationTest.class
         };
     }
 

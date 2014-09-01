@@ -192,34 +192,4 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
             returnSession(session);
         }
     }
-
-    public void testComplexObservation()
-            throws OwsExceptionReport {
-        Set<ObservationConstellation> observationConstellations = null;
-        FeatureOfInterest featureOfInterest = null;
-        OmObservation observation = null;
-        Session session = getSession();
-
-        HibernateObservationBuilder b = new HibernateObservationBuilder(session);
-
-        ObservablePropertyDAO opdao = new ObservablePropertyDAO();
-        ComplexObservationBuilder complexObservationBuilder = new ComplexObservationBuilder();
-        DateTime time = DateTime.now();
-        OmObservation ob = complexObservationBuilder.createComplexObservation(time);
-
-        OmObservationConstellation observationConstellation = ob.getObservationConstellation();
-
-
-        observationDAO.insertObservationSingleValue(
-            observationConstellations,
-            featureOfInterest,
-            observation,
-            session
-        );
-    }
-
-
-
-
-
 }

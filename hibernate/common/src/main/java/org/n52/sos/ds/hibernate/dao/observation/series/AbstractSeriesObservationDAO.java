@@ -243,8 +243,8 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             Session session) {
         Criteria criteria = createCriteriaFor(getObservationFactory().temporalReferencedClass(), series, session);
         if (CollectionHelper.isNotEmpty(offerings)) {
-            criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS).add(
-                    Restrictions.in(Offering.IDENTIFIER, offerings));
+            criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS)
+                    .add(Restrictions.in(Offering.IDENTIFIER, offerings));
         }
         if (filter != null) {
             criteria.add(filter);
@@ -280,17 +280,16 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 
     public ScrollableResults getSeriesNotMatchingSeries(Set<Long> seriesIDs, GetObservationRequest request,
             Set<String> features, Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
-        Criteria c = getSeriesObservationCriteriaFor(request, features, temporalFilterCriterion, null, session).createAlias(AbstractSeriesObservation.SERIES, "s");
-        c.add(Restrictions.not(Restrictions.in("s." + Series.ID, seriesIDs)));
+        Criteria c = getSeriesObservationCriteriaFor(request, features, temporalFilterCriterion, null, session);
+        c.createCriteria(AbstractSeriesObservation.SERIES)
+            .add(Restrictions.not(Restrictions.in(Series.ID, seriesIDs)));
         c.setProjection(Projections.property(AbstractSeriesObservation.SERIES));
         return c.setReadOnly(true).scroll(ScrollMode.FORWARD_ONLY);
     }
 
     public ScrollableResults getSeriesNotMatchingSeries(Set<Long> seriesIDs, GetObservationRequest request,
             Set<String> features, Session session) throws OwsExceptionReport {
-        Criteria c = getSeriesObservationCriteriaFor(request, features, null, null, session).createAlias(AbstractSeriesObservation.SERIES, "s");
-        c.add(Restrictions.not(Restrictions.in("s." + Series.ID, seriesIDs)));
-        return c.setReadOnly(true).scroll(ScrollMode.FORWARD_ONLY);
+        return getSeriesNotMatchingSeries(seriesIDs, request, features, null, session);
     }
 
     /**
@@ -312,39 +311,44 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      */
     protected Criteria getSeriesObservationCriteriaFor(GetObservationRequest request, Collection<String> features,
                 Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
-            final Criteria c = getDefaultObservationCriteria(session)
-                    .createAlias(AbstractSeriesObservation.SERIES, "s");
+            final Criteria observationCriteria = getDefaultObservationCriteria(session);
 
-            checkAndAddSpatialFilteringProfileCriterion(c, request, session);
+
+            Criteria seriesCriteria = observationCriteria.createCriteria(AbstractSeriesObservation.SERIES);
+
+            checkAndAddSpatialFilteringProfileCriterion(observationCriteria, request, session);
 
             if (CollectionHelper.isNotEmpty(request.getProcedures())) {
-                c.createCriteria("s." + Series.PROCEDURE).add(Restrictions.in(Procedure.IDENTIFIER, request.getProcedures()));
+                seriesCriteria.createCriteria(Series.PROCEDURE)
+                        .add(Restrictions.in(Procedure.IDENTIFIER, request.getProcedures()));
             }
 
             if (CollectionHelper.isNotEmpty(request.getObservedProperties())) {
-                c.createCriteria("s." + Series.OBSERVABLE_PROPERTY).add(Restrictions.in(ObservableProperty.IDENTIFIER,
-                        request.getObservedProperties()));
+                seriesCriteria.createCriteria(Series.OBSERVABLE_PROPERTY)
+                        .add(Restrictions.in(ObservableProperty.IDENTIFIER, request.getObservedProperties()));
             }
 
             if (CollectionHelper.isNotEmpty(features)) {
-                c.createCriteria("s." + Series.FEATURE_OF_INTEREST).add(Restrictions.in(FeatureOfInterest.IDENTIFIER, features));
+                seriesCriteria.createCriteria(Series.FEATURE_OF_INTEREST)
+                        .add(Restrictions.in(FeatureOfInterest.IDENTIFIER, features));
             }
 
             if (CollectionHelper.isNotEmpty(request.getOfferings())) {
-                c.createCriteria(AbstractSeriesObservation.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
+                observationCriteria.createCriteria(AbstractSeriesObservation.OFFERINGS)
+                        .add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
             }
 
             String logArgs = "request, features, offerings";
             if (filterCriterion != null) {
                 logArgs += ", filterCriterion";
-                c.add(filterCriterion);
+                observationCriteria.add(filterCriterion);
             }
             if (sosIndeterminateTime != null) {
                 logArgs += ", sosIndeterminateTime";
-                addIndeterminateTimeRestriction(c, sosIndeterminateTime);
+                addIndeterminateTimeRestriction(observationCriteria, sosIndeterminateTime);
             }
-            LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
-            return c;
+            LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(observationCriteria));
+            return observationCriteria;
     }
 
     /**

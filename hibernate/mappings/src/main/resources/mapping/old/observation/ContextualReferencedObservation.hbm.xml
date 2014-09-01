@@ -105,12 +105,21 @@ Useful to avoid many joins for queries where we don't care about the observation
                     default="'F'"
                     check="deleted in ('T','F')" />
         </property>
-        <property name="hiddenChild"
+        <property name="child"
                   type="org.hibernate.type.TrueFalseType">
-            <column name="hiddenChild"
+            <column name="child"
                     not-null="true"
                     default="'F'"
-                    check="hiddenChild in ('T','F')" />
+                    length="1"
+                    check="child in ('T','F')" />
+        </property>
+        <property name="parent"
+                  type="org.hibernate.type.TrueFalseType">
+            <column name="parent"
+                    not-null="true"
+                    default="'F'"
+                    length="1"
+                    check="parent in ('T','F')" />
         </property>
         <property name="validTimeStart"
                   type="timestamp">

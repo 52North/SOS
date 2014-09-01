@@ -30,12 +30,21 @@
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
             <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
         </property>
-        <property name="hiddenChild"
+        <property name="child"
                   type="org.hibernate.type.TrueFalseType">
-            <column name="hiddenChild"
+            <column name="child"
                     not-null="true"
                     default="'F'"
-                    check="hiddenChild in ('T','F')" />
+                    length="1"
+                    check="child in ('T','F')" />
+        </property>
+        <property name="parent"
+                  type="org.hibernate.type.TrueFalseType">
+            <column name="parent"
+                    not-null="true"
+                    default="'F'"
+                    length="1"
+                    check="parent in ('T','F')" />
         </property>
         <property name="validTimeStart" type="timestamp">
             <column name="validTimeStart" length="29" />

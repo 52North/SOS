@@ -32,8 +32,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasHiddenChildFlag;
 import org.n52.sos.ds.hibernate.entities.Offering;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -47,7 +45,8 @@ public abstract class AbstractBaseObservation
     private Set<Offering> offerings = new HashSet<>(0);
     private Geometry samplingGeometry;
     private boolean deleted;
-    private boolean hiddenChild;
+    private boolean child;
+    private boolean parent;
 
     @Override
     public boolean getDeleted() {
@@ -105,13 +104,23 @@ public abstract class AbstractBaseObservation
     }
 
     @Override
-    public boolean isHiddenChild() {
-        return this.hiddenChild;
+    public boolean isChild() {
+        return this.child;
     }
 
     @Override
-    public void setHiddenChild(boolean hiddenChild) {
-        this.hiddenChild = hiddenChild;
+    public boolean isParent() {
+        return this.parent;
+    }
+
+    @Override
+    public void setParent(boolean parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public void setChild(boolean child) {
+        this.child = child;
     }
 
 }

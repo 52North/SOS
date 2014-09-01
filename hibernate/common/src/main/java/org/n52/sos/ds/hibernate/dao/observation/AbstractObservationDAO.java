@@ -61,11 +61,11 @@ import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
@@ -404,9 +404,16 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     @SuppressWarnings("rawtypes")
     private Criteria getDefaultCriteria(Class clazz, Session session) {
-        return session.createCriteria(clazz)
-                .add(Restrictions.eq(Observation.DELETED, false))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        Criteria criteria = session.createCriteria(clazz)
+                .add(Restrictions.eq(Observation.DELETED, false));
+
+        if (!isIncludeChildObservableProperties()) {
+            criteria.add(Restrictions.eq(Observation.CHILD, false));
+        } else {
+            criteria.add(Restrictions.eq(Observation.PARENT, false));
+        }
+
+        return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
     protected boolean isIncludeChildObservableProperties() {
@@ -1190,7 +1197,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         @Override
         public Observation<?> visit(ComplexValue value)
                 throws OwsExceptionReport {
-            return persist(observationFactory.complex(), persistChildren(value.getValue()));
+            ComplexObservation complex = observationFactory.complex();
+            complex.setParent(true);
+            return persist(complex, persistChildren(value.getValue()));
         }
 
         @Override
@@ -1280,7 +1289,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             if (!childObservation) {
                 daos.observation().addIdentifier(sosObservation, observation, session);
             } else {
-                observation.setHiddenChild(true);
+                observation.setChild(true);
             }
 
             daos.observation().addName(sosObservation, observation, session);

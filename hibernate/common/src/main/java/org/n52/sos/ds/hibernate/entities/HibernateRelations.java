@@ -194,6 +194,18 @@ public interface HibernateRelations {
         boolean isHiddenChild();
     }
 
+    interface HasChildFlag {
+        String CHILD = "child";
+        void setChild(boolean child);
+        boolean isChild();
+    }
+
+    interface HasParentFlag {
+        String PARENT = "parent";
+        void setParent(boolean parent);
+        boolean isParent();
+    }
+
     interface HasIdentifier {
         String IDENTIFIER = "identifier";
 

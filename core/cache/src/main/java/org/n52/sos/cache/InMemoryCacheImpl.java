@@ -71,7 +71,6 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     private final SetMultiMap<String, String> childProceduresForProcedures = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> featuresOfInterestForOfferings = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> featuresOfInterestForResultTemplates = newSynchronizedSetMultiMap();
-    private final SetMultiMap<String, String> childObservablePropertiesForObservableProperties = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> observablePropertiesForOfferings = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> observablePropertiesForProcedures = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> observationTypesForOfferings = newSynchronizedSetMultiMap();
@@ -155,7 +154,6 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
                                 childProceduresForProcedures,
                                 featuresOfInterestForOfferings,
                                 featuresOfInterestForResultTemplates,
-                                childObservablePropertiesForObservableProperties,
                                 observablePropertiesForOfferings,
                                 observablePropertiesForProcedures,
                                 observationTypesForOfferings,
@@ -215,7 +213,6 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
                     && Objects.equal(this.childProceduresForProcedures, other.childProceduresForProcedures)
                     && Objects.equal(this.featuresOfInterestForOfferings, other.featuresOfInterestForOfferings)
                     && Objects.equal(this.featuresOfInterestForResultTemplates, other.featuresOfInterestForResultTemplates)
-                    && Objects.equal(this.childObservablePropertiesForObservableProperties, other.childObservablePropertiesForObservableProperties)
                     && Objects.equal(this.observablePropertiesForOfferings, other.observablePropertiesForOfferings)
                     && Objects.equal(this.observablePropertiesForProcedures, other.observablePropertiesForProcedures)
                     && Objects.equal(this.observedPropertiesForResultTemplates, other.observedPropertiesForResultTemplates)

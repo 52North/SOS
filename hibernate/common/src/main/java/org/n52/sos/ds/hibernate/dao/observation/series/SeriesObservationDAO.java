@@ -198,7 +198,7 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
     }
 
     @Override
-    protected ObservationFactory getObservationFactory() {
+    public ObservationFactory getObservationFactory() {
         return SeriesObservationFactory.getInstance();
     }
 }

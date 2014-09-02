@@ -63,7 +63,7 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
             session = getSession();
             transaction = session.beginTransaction();
             ScrollableIterable<Observation<?>> i =
-                    ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass(session)));
+                    ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass()));
             for (Observation<?> o : i) {
                 session.delete(o);
             }
@@ -100,7 +100,7 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
     private Set<Identifier> filter(TimePrimitiveFieldDescriptor d, TemporalRestriction r, Time time, Session session)
             throws OwsExceptionReport {
         List<String> list =
-                session.createCriteria(getObservationClass(session)).add(r.get(d, time))
+                session.createCriteria(getObservationClass()).add(r.get(d, time))
                         .setProjection(Projections.distinct(Projections.property(AbstractObservation.IDENTIFIER))).list();
         Set<Identifier> s = EnumSet.noneOf(Identifier.class);
         for (String id : list) {

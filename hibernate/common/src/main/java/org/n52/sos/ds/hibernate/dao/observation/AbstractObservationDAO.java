@@ -512,9 +512,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         return new ObservationContext();
     }
 
-    protected ObservationContext fillObservationContext(ObservationContext observationIdentifiers,
-            OmObservation sosObservation, Session session) {
-        return observationIdentifiers;
+    protected ObservationContext fillObservationContext(ObservationContext ctx, OmObservation sosObservation, Session session) {
+        return ctx;
     }
 
     /**
@@ -1092,7 +1091,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     public abstract List<Geometry> getSamplingGeometries(String feature, Session session);
 
-    protected abstract ObservationFactory getObservationFactory();
+    public abstract ObservationFactory getObservationFactory();
 
     private static class ObservationPersister
             implements ValueVisitor<Observation<?>> {

@@ -28,13 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
-import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationFactory;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.ContextualReferencedEReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingBlobObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingBooleanObservation;
@@ -54,29 +54,30 @@ import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class EReportingObservationFactory extends ObservationFactory {
+public class EReportingObservationFactory extends SeriesObservationFactory {
     protected EReportingObservationFactory() {
     }
 
     @Override
     @SuppressWarnings("rawtypes")
-    public Class<? extends Observation> observationClass() {
+    public Class<? extends EReportingObservation> observationClass() {
         return AbstractEReportingObservation.class;
     }
 
     @Override
-    public Class<? extends ContextualReferencedObservation> contextualReferencedClass() {
+    public Class<? extends ContextualReferencedEReportingObservation> contextualReferencedClass() {
         return ContextualReferencedEReportingObservation.class;
     }
 
     @Override
-    public Class<? extends TemporalReferencedObservation> temporalReferencedClass() {
+    public Class<? extends TemporalReferencedEReportingObservation> temporalReferencedClass() {
         return TemporalReferencedEReportingObservation.class;
     }
 
@@ -123,6 +124,16 @@ public class EReportingObservationFactory extends ObservationFactory {
     @Override
     public Class<? extends ComplexObservation> complexClass() {
         return EReportingComplexObservation.class;
+    }
+
+    @Override
+    public Series series() {
+        return new EReportingSeries();
+    }
+
+    @Override
+    public Class<? extends Series> seriesClass() {
+        return EReportingSeries.class;
     }
 
     public static EReportingObservationFactory getInstance() {

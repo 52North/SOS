@@ -364,7 +364,7 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
     }
 
     @Override
-    protected ObservationFactory getObservationFactory() {
+    public ObservationFactory getObservationFactory() {
         return LegacyObservationFactory.getInstance();
     }
 

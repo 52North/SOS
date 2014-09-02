@@ -29,9 +29,6 @@
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
-import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
@@ -43,6 +40,8 @@ import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservatio
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesBlobObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesBooleanObservation;
@@ -65,17 +64,17 @@ public class SeriesObservationFactory extends ObservationFactory {
 
     @Override
     @SuppressWarnings("rawtypes")
-    public Class<? extends Observation> observationClass() {
+    public Class<? extends SeriesObservation> observationClass() {
         return AbstractSeriesObservation.class;
     }
 
     @Override
-    public Class<? extends TemporalReferencedObservation> temporalReferencedClass() {
+    public Class<? extends TemporalReferencedSeriesObservation> temporalReferencedClass() {
         return TemporalReferencedSeriesObservation.class;
     }
 
     @Override
-    public Class<? extends ContextualReferencedObservation> contextualReferencedClass() {
+    public Class<? extends ContextualReferencedSeriesObservation> contextualReferencedClass() {
         return ContextualReferencedSeriesObservation.class;
     }
 
@@ -122,6 +121,14 @@ public class SeriesObservationFactory extends ObservationFactory {
     @Override
     public Class<? extends ComplexObservation> complexClass() {
         return SeriesComplexObservation.class;
+    }
+
+    public Series series() {
+        return new Series();
+    }
+
+    public Class<? extends Series> seriesClass() {
+        return Series.class;
     }
 
     public static SeriesObservationFactory getInstance() {

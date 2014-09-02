@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.service.it;
+package org.n52.sos.service.it.functional;
 
 import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.equalTo;
@@ -103,6 +103,8 @@ import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceSettings;
+import org.n52.sos.service.it.AbstractComplianceSuiteTest;
+import org.n52.sos.service.it.Client;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.util.http.MediaTypes;
@@ -126,15 +128,21 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     private static final String FEATURE_OF_INTEREST = "featureOfInterest";
     private static final String OFFERING_CAPABILITIES_NAME = "offerings";
     private static final String UNIQUE_ID_NAME = "uniqueID";
-
     private static final String[] CHILD_OBSERVABLE_PROPERTIES = {
-        CHILD_OBSERVABLE_PROPERTY_1, CHILD_OBSERVABLE_PROPERTY_2,
-        CHILD_OBSERVABLE_PROPERTY_3, CHILD_OBSERVABLE_PROPERTY_4,
-        CHILD_OBSERVABLE_PROPERTY_5 };
+        CHILD_OBSERVABLE_PROPERTY_1,
+        CHILD_OBSERVABLE_PROPERTY_2,
+        CHILD_OBSERVABLE_PROPERTY_3,
+        CHILD_OBSERVABLE_PROPERTY_4,
+        CHILD_OBSERVABLE_PROPERTY_5
+    };
     private static final String[] ALL_OBSERVABLE_PROPERTIES = {
-        PARENT_OBSERVABLE_PROPERTY, CHILD_OBSERVABLE_PROPERTY_1,
-        CHILD_OBSERVABLE_PROPERTY_2, CHILD_OBSERVABLE_PROPERTY_3,
-        CHILD_OBSERVABLE_PROPERTY_4, CHILD_OBSERVABLE_PROPERTY_5 };
+        PARENT_OBSERVABLE_PROPERTY,
+        CHILD_OBSERVABLE_PROPERTY_1,
+        CHILD_OBSERVABLE_PROPERTY_2,
+        CHILD_OBSERVABLE_PROPERTY_3,
+        CHILD_OBSERVABLE_PROPERTY_4,
+        CHILD_OBSERVABLE_PROPERTY_5
+    };
 
     @Rule
     public final ErrorCollector errors = new ErrorCollector();

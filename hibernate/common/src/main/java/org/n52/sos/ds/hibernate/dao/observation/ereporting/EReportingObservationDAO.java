@@ -194,7 +194,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
     }
 
     @Override
-    protected ObservationFactory getObservationFactory() {
+    public ObservationFactory getObservationFactory() {
         return EReportingObservationFactory.getInstance();
     }
 }

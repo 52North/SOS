@@ -45,42 +45,24 @@ import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 
-/**
- * Hibernate data access factory.
- *
- * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.0.0
- *
- */
+
 public class DaoFactory {
     /**
      * instance
      */
-    private static DaoFactory instance;
-
-    /**
-     * Get the DaoFactory instance
-     *
-     * @return Returns the instance of the DaoFactory.
-     */
-    public static synchronized DaoFactory getInstance() {
-        if (instance == null) {
-            instance = new DaoFactory();
-        }
-        return instance;
-    }
+    private static final DaoFactory INSTANCE = new DaoFactory();
 
     public AbstractSeriesDAO getSeriesDAO() throws CodedException {
         if (HibernateHelper.isEntitySupported(AbstractEReportingObservation.class)) {
@@ -103,8 +85,7 @@ public class DaoFactory {
      * @throws OwsExceptionReport
      *                        If no Hibernate Observation data access is supported
      */
-    public AbstractObservationDAO getObservationDAO()
-            throws OwsExceptionReport {
+    public AbstractObservationDAO getObservationDAO() throws OwsExceptionReport {
         if (HibernateHelper.isEntitySupported(AbstractEReportingObservation.class)) {
             return new EReportingObservationDAO();
         } else if (HibernateHelper.isEntitySupported(AbstractSeriesObservation.class)) {
@@ -117,7 +98,8 @@ public class DaoFactory {
         }
     }
 
-    public AbstractObservationTimeDAO getObservationTimeDAO() throws CodedException {
+    public AbstractObservationTimeDAO getObservationTimeDAO()
+            throws CodedException {
         if (HibernateHelper.isEntitySupported(TemporalReferencedEReportingObservation.class)) {
             return new EReportingObservationTimeDAO();
         } else if (HibernateHelper.isEntitySupported(TemporalReferencedSeriesObservation.class)) {
@@ -142,7 +124,7 @@ public class DaoFactory {
     }
 
     public AbstractValueTimeDAO getValueTimeDAO() throws CodedException {
-        if (HibernateHelper.isEntitySupported(AbstractEReportingObservation.class)) {
+        if (HibernateHelper.isEntitySupported(TemporalReferencedEReportingObservation.class)) {
             return new EReportingValueTimeDAO();
         } else if (HibernateHelper.isEntitySupported(TemporalReferencedSeriesObservation.class)) {
             return new SeriesValueTimeDAO();
@@ -152,6 +134,18 @@ public class DaoFactory {
             throw new NoApplicableCodeException()
                     .withMessage("Implemented value time DAO is missing!");
         }
+    }
+
+    private DaoFactory() {
+    }
+
+    /**
+     * Get the DaoFactory instance
+     *
+     * @return Returns the instance of the DaoFactory.
+     */
+    public static DaoFactory getInstance() {
+        return INSTANCE;
     }
 
 }

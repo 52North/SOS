@@ -46,6 +46,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.convert.ConverterException;
@@ -125,11 +126,11 @@ import com.google.common.collect.Sets;
  * from the normal build and set up to run multiple (100) times. They can be run
  * directly from Eclipse or via Maven on the command line with the dao-test
  * profile (mvn -P dao-test clean install)
- * 
+ *
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 @RunWith(Parameterized.class)
 public class InsertDAOTest extends HibernateTestCase {
@@ -667,6 +668,6 @@ public class InsertDAOTest extends HibernateTestCase {
             assertThat(quantityValue.getUnit(), is(obsUnit));
         }
 
-        
+
     }
 }

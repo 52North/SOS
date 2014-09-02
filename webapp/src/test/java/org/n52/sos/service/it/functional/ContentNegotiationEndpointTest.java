@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.service.it;
+package org.n52.sos.service.it.functional;
 
 import static org.hamcrest.Matchers.is;
 import static org.n52.sos.service.it.util.XPath.hasXPath;
@@ -42,6 +42,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
+
 import org.n52.sos.binding.BindingRepository;
 import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -54,6 +55,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import org.n52.sos.service.it.AbstractComplianceSuiteTest;
+import org.n52.sos.service.it.Response;
 
 /**
  * TODO JavaDoc

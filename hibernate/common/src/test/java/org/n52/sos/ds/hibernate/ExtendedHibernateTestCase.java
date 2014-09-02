@@ -30,11 +30,10 @@ package org.n52.sos.ds.hibernate;
 
 import org.hibernate.Session;
 
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * Abstract test class that contains implemented methods
@@ -46,17 +45,22 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
  */
 public abstract class ExtendedHibernateTestCase extends HibernateTestCase {
 
-    protected static Class<?> getObservationClass(Session session) {
-        if (HibernateHelper.isEntitySupported(AbstractSeriesObservation.class)) {
-            return AbstractSeriesObservation.class;
-        }
-        return AbstractLegacyObservation.class;
+    @Deprecated
+    protected static Class<?> getObservationClass(Session session) throws OwsExceptionReport {
+        return DaoFactory.getInstance().getObservationDAO().getObservationFactory().observationClass();
     }
 
-    protected static Class<?> getObservationInfoClass(Session session) {
-        if (HibernateHelper.isEntitySupported(ContextualReferencedSeriesObservation.class)) {
-            return ContextualReferencedSeriesObservation.class;
-        }
-        return ContextualReferencedLegacyObservation.class;
+    @Deprecated
+    protected static Class<?> getObservationInfoClass(Session session) throws OwsExceptionReport {
+        return DaoFactory.getInstance().getObservationDAO().getObservationFactory().contextualReferencedClass();
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected static Class<? extends Observation> getObservationClass() throws OwsExceptionReport {
+        return DaoFactory.getInstance().getObservationDAO().getObservationFactory().observationClass();
+    }
+
+    protected static Class<? extends ContextualReferencedObservation> getContextualReferencedObservationClass() throws OwsExceptionReport {
+        return DaoFactory.getInstance().getObservationDAO().getObservationFactory().contextualReferencedClass();
     }
 }

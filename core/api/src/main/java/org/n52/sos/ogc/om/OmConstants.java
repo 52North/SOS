@@ -265,4 +265,17 @@ public interface OmConstants {
 
     QName QN_OM_20_NAMED_VALUE = new QName(NS_OM_2, EN_NAMED_VALUE, NS_OM_PREFIX);
 
+    Set<String> OBSERVATION_TYPES = ImmutableSet.of(
+            OBS_TYPE_MEASUREMENT,
+            OBS_TYPE_CATEGORY_OBSERVATION,
+            OBS_TYPE_COMPLEX_OBSERVATION,
+            OBS_TYPE_COUNT_OBSERVATION,
+            OBS_TYPE_GEOMETRY_OBSERVATION,
+            OBS_TYPE_TEXT_OBSERVATION,
+            OBS_TYPE_TRUTH_OBSERVATION,
+            OBS_TYPE_OBSERVATION,
+            OBS_TYPE_UNKNOWN,
+            OBS_TYPE_SWE_ARRAY_OBSERVATION
+    );
+
 }

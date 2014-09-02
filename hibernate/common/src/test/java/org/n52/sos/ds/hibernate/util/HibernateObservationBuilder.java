@@ -38,7 +38,8 @@ import org.joda.time.DateTime;
 
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationFactory;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
@@ -52,38 +53,32 @@ import org.n52.sos.ds.hibernate.entities.TOffering;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.full.LegacyBooleanObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
+import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesBooleanObservation;
-import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.google.common.collect.Sets;
 
-/**
- * @author Christian Autermann <c.autermann@52north.org>
- *
- * @since 4.0.0
- */
+
 public class HibernateObservationBuilder {
     public static final String CODESPACE = "Codespace";
-
     public static final String UNIT = "Unit";
-
     public static final String OFFERING_1 = "Offering1";
-
     public static final String OFFERING_2 = "Offering2";
-
     public static final String FEATURE_OF_INTEREST = "FeatureOfInterest";
-
     public static final String OBSERVABLE_PROPERTY = "ObservableProperty";
-
     public static final String PROCEDURE_DESCRIPTION_FORMAT = "ProcedureDescriptionFormat";
-
     public static final String FEATURE_OF_INTEREST_TYPE = "FeatureOfInterestType";
-
     public static final String OBSERVATION_TYPE = "ObservationType";
+    public static final String EREPORTING_SAMPLING_POINT = "samplingPoint";
+    public static final String EREPORTING_ASSESSMENT_TYPE = "assessmentType";
 
     private final Session session;
 
@@ -94,19 +89,24 @@ public class HibernateObservationBuilder {
     public Observation<?> createObservation(String id, Date phenomenonTimeStart, Date phenomenonTimeEnd, Date resultTime,
             Date validTimeStart, Date validTimeEnd) throws OwsExceptionReport {
         AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-        Observation<?> observation;
-        if (observationDAO instanceof SeriesObservationDAO) {
-            SeriesBooleanObservation seriesBooleanObservation  = new SeriesBooleanObservation();
+
+        ObservationFactory observationFactory = observationDAO.getObservationFactory();
+        BooleanObservation observation = observationFactory.truth();
+        observation.setValue(true);
+        if (observation instanceof AbstractSeriesObservation) {
+            AbstractSeriesObservation<?> seriesBooleanObservation = (AbstractSeriesObservation<?>) observation;
             seriesBooleanObservation.setSeries(getSeries());
-            seriesBooleanObservation.setValue(true);
-            observation = seriesBooleanObservation;
+            if (observation instanceof AbstractEReportingObservation) {
+                AbstractEReportingObservation<?> abstractEReportingObservation
+                        = (AbstractEReportingObservation) observation;
+                abstractEReportingObservation.setValidation(1);
+                abstractEReportingObservation.setVerification(1);
+            }
         } else {
-            LegacyBooleanObservation booleanObservation = new LegacyBooleanObservation();
+            AbstractLegacyObservation<?> booleanObservation = (AbstractLegacyObservation<?>) observation;
             booleanObservation.setFeatureOfInterest(getFeatureOfInterest());
             booleanObservation.setProcedure(getProcedure());
             booleanObservation.setObservableProperty(getObservableProperty());
-            booleanObservation.setValue(true);
-            observation = booleanObservation;
         }
         observation.setDeleted(false);
         observation.setIdentifier(id);
@@ -256,19 +256,29 @@ public class HibernateObservationBuilder {
         return codespace;
     }
 
-    protected Series getSeries() {
+    protected Series getSeries() throws OwsExceptionReport {
+        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+
+        SeriesObservationFactory observationFactory = (SeriesObservationFactory) observationDAO.getObservationFactory();
+
         Criteria criteria =
-                session.createCriteria(Series.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                session.createCriteria(observationFactory.seriesClass()).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                         .add(Restrictions.eq(Series.FEATURE_OF_INTEREST, getFeatureOfInterest()))
                         .add(Restrictions.eq(Series.OBSERVABLE_PROPERTY, getObservableProperty()))
                         .add(Restrictions.eq(Series.PROCEDURE, getProcedure()));
         Series series = (Series) criteria.uniqueResult();
         if (series == null) {
-            series = new Series();
+            series = observationFactory.series();
             series.setObservableProperty(getObservableProperty());
             series.setProcedure(getProcedure());
             series.setFeatureOfInterest(getFeatureOfInterest());
             series.setDeleted(false);
+
+            if (series instanceof EReportingSeries) {
+                EReportingSeries eReportingSeries = (EReportingSeries) series;
+                eReportingSeries.setSamplingPoint(getEReportingSamplingPoint());
+            }
+
             session.save(series);
             session.flush();
             session.refresh(series);
@@ -279,6 +289,45 @@ public class HibernateObservationBuilder {
             session.refresh(series);
         }
         return series;
+    }
+
+    protected EReportingSamplingPoint getEReportingSamplingPoint() {
+
+        EReportingSamplingPoint assessmentType
+                = (EReportingSamplingPoint) session
+                .createCriteria(EReportingSamplingPoint.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .add(Restrictions.eq(EReportingSamplingPoint.IDENTIFIER, EREPORTING_SAMPLING_POINT))
+                .uniqueResult();
+        if (assessmentType == null) {
+            assessmentType = new EReportingSamplingPoint();
+            assessmentType.setIdentifier(EREPORTING_SAMPLING_POINT);
+            assessmentType.setAssessmentType(getEReportingAssessmentType());
+            session.save(assessmentType);
+            session.flush();
+            session.refresh(assessmentType);
+        }
+        return assessmentType;
+
+    }
+
+    public EReportingAssessmentType getEReportingAssessmentType() {
+        EReportingAssessmentType assessmentType
+                = (EReportingAssessmentType) session
+                .createCriteria(EReportingAssessmentType.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .add(Restrictions.eq(EReportingAssessmentType.ASSESSMENT_TYPE, EREPORTING_ASSESSMENT_TYPE))
+                .uniqueResult();
+        if (assessmentType == null) {
+            assessmentType = new EReportingAssessmentType();
+            assessmentType.setAssessmentType(EREPORTING_ASSESSMENT_TYPE);
+            assessmentType.setUri(EREPORTING_ASSESSMENT_TYPE);
+            session.save(assessmentType);
+            session.flush();
+            session.refresh(assessmentType);
+        }
+
+        return assessmentType;
     }
 
     protected Procedure getProcedure() {

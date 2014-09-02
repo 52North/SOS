@@ -37,6 +37,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 
+import java.math.BigDecimal;
 import java.util.Iterator;
 
 import javax.xml.namespace.NamespaceContext;
@@ -75,6 +76,7 @@ import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.OmCompositePhenomenon;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
@@ -84,6 +86,7 @@ import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.ComplexValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorML;
@@ -116,8 +119,10 @@ import com.google.common.collect.Iterators;
 
 public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     private static final NamespaceContextImpl NS_CTX = new NamespaceContextImpl();
-    private static final String PROCEDURE = "procedure";
-    private static final String OFFERING = "offering";
+    private static final String COMPLEX_OBSERVATION_PROCEDURE = "procedure";
+    private static final String COMPLEX_OBSERVATION_OFFERING = "offering";
+    private static final String NUMERIC_OBSERVATION_PROCEDURE = "numericProcedure";
+    private static final String NUMERIC_OBSERVATION_OFFERING = "numericOffering";
     private static final String PARENT_OBSERVABLE_PROPERTY = "http://example.tld/phenomenon/parent";
     private static final String CHILD_OBSERVABLE_PROPERTY_5 = "http://example.tld/phenomenon/child/5";
     private static final String CHILD_OBSERVABLE_PROPERTY_4 = "http://example.tld/phenomenon/child/4";
@@ -143,6 +148,8 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
         CHILD_OBSERVABLE_PROPERTY_4,
         CHILD_OBSERVABLE_PROPERTY_5
     };
+    private static final String UNIT = "unit";
+    private static final String CODESPACE = "codespace";
 
     @Rule
     public final ErrorCollector errors = new ErrorCollector();
@@ -150,8 +157,8 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
 
     @Before
     public void before() throws OwsExceptionReport {
-        assertThat(pox().entity(createInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
-        assertThat(pox().entity(createInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertObservationResponseDocument.class)));
+        assertThat(pox().entity(createComplexInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
+        assertThat(pox().entity(createComplexInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertObservationResponseDocument.class)));
     }
 
     @After
@@ -169,7 +176,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     @Test
     public void testHiddenParentWithQuery() {
         showChildren(true);
-        checkSingleChildObservations(kvp(SosConstants.Operations.GetObservation).query(SosConstants.GetObservationParams.procedure, PROCEDURE).query(SosConstants.GetObservationParams.offering, OFFERING).query(SosConstants.GetObservationParams.featureOfInterest, FEATURE_OF_INTEREST).response().asXmlObject());
+        checkSingleChildObservations(kvp(SosConstants.Operations.GetObservation).query(SosConstants.GetObservationParams.procedure, COMPLEX_OBSERVATION_PROCEDURE).query(SosConstants.GetObservationParams.offering, COMPLEX_OBSERVATION_OFFERING).query(SosConstants.GetObservationParams.featureOfInterest, FEATURE_OF_INTEREST).response().asXmlObject());
     }
 
     @Test
@@ -227,6 +234,53 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     }
 
     @Test
+    public void testInsertComplexThenNumericObservation() throws OwsExceptionReport {
+        assertThat(pox().entity(createNumericInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
+        assertThat(pox().entity(createNumericInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(ExceptionReportDocument.class)));
+    }
+
+    @Test
+    public void testInsertNumericThenComplexObservation() throws OwsExceptionReport {
+        after();
+        assertThat(pox().entity(createNumericInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
+        assertThat(pox().entity(createNumericInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertObservationResponseDocument.class)));
+        assertThat(pox().entity(createComplexInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
+        assertThat(pox().entity(createComplexInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(ExceptionReportDocument.class)));
+    }
+
+    private void checkObservationCount(int count, XmlObject response) {
+        assertThat(response, is(instanceOf(GetObservationResponseDocument.class)));
+        GetObservationResponseDocument document = (GetObservationResponseDocument) response;
+        errors.checkThat(document.getGetObservationResponse().getObservationDataArray(), arrayWithSize(count));
+    }
+
+    @Test
+    public void testInsertMultipleComplexObservations() throws OwsExceptionReport {
+        DateTime now = DateTime.now();
+        for (int i = 0; i < 5; ++i) {
+            assertThat(pox().entity(createComplexInsertObservationRequest(now.plusHours(i)).xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertObservationResponseDocument.class)));
+        }
+        showChildren(false);
+        checkObservationCount(6, kvp(SosConstants.Operations.GetObservation).response().asXmlObject());
+        showChildren(true);
+        checkObservationCount(30, kvp(SosConstants.Operations.GetObservation).response().asXmlObject());
+    }
+
+    @Test
+    public void testInsertMultipleNumericObservations() throws OwsExceptionReport {
+        after();
+        assertThat(pox().entity(createNumericInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
+        DateTime now = DateTime.now();
+        for (int i = 0; i < 5; ++i) {
+            assertThat(pox().entity(createNumericInsertObservationRequest(now.plusHours(i)).xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertObservationResponseDocument.class)));
+        }
+        showChildren(false);
+        checkObservationCount(5, kvp(SosConstants.Operations.GetObservation).response().asXmlObject());
+        showChildren(true);
+        checkObservationCount(5, kvp(SosConstants.Operations.GetObservation).response().asXmlObject());
+    }
+
+    @Test
     public void testDatabaseCacheUpdate() throws OwsExceptionReport {
         ContentCache imcache = Configurator.getInstance().getCacheController().getCache();
         Configurator.getInstance().getCacheController().update();
@@ -236,8 +290,8 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
 
         errors.checkThat(dbcache.getObservableProperties(), is(equalTo(imcache.getObservableProperties())));
         errors.checkThat(dbcache.getCompositePhenomenons(), is(equalTo(imcache.getCompositePhenomenons())));
-        errors.checkThat(dbcache.getObservablePropertiesForOffering(OFFERING), is(equalTo(imcache.getObservablePropertiesForOffering(OFFERING))));
-        errors.checkThat(dbcache.getObservablePropertiesForProcedure(PROCEDURE), is(equalTo(imcache.getObservablePropertiesForProcedure(PROCEDURE))));
+        errors.checkThat(dbcache.getObservablePropertiesForOffering(COMPLEX_OBSERVATION_OFFERING), is(equalTo(imcache.getObservablePropertiesForOffering(COMPLEX_OBSERVATION_OFFERING))));
+        errors.checkThat(dbcache.getObservablePropertiesForProcedure(COMPLEX_OBSERVATION_PROCEDURE), is(equalTo(imcache.getObservablePropertiesForProcedure(COMPLEX_OBSERVATION_PROCEDURE))));
 
         for (String observableProperty : ALL_OBSERVABLE_PROPERTIES) {
             errors.checkThat(dbcache.getProceduresForObservableProperty(observableProperty), is(equalTo(imcache.getProceduresForObservableProperty(observableProperty))));
@@ -255,10 +309,10 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
         errors.checkThat(document.getGetObservationResponse().getObservationDataArray(), arrayWithSize(1));
         errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:observedProperty/@xlink:href", NS_CTX, is(PARENT_OBSERVABLE_PROPERTY)));
         errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:featureOfInterest/@xlink:href", NS_CTX, is(FEATURE_OF_INTEREST)));
-        errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:procedure/@xlink:href", NS_CTX, is(PROCEDURE)));
+        errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:procedure/@xlink:href", NS_CTX, is(COMPLEX_OBSERVATION_PROCEDURE)));
         errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result/swe:DataRecord/swe:field/swe:Quantity/@definition", NS_CTX, is(CHILD_OBSERVABLE_PROPERTY_1)));
         errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result/swe:DataRecord/swe:field/swe:Quantity/swe:value", NS_CTX, is("42.0")));
-        errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result/swe:DataRecord/swe:field/swe:Quantity/swe:uom/@code", NS_CTX, is("unit")));
+        errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result/swe:DataRecord/swe:field/swe:Quantity/swe:uom/@code", NS_CTX, is(UNIT)));
         errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result/swe:DataRecord/swe:field/swe:Boolean/@definition", NS_CTX, is(CHILD_OBSERVABLE_PROPERTY_2)));
         errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result/swe:DataRecord/swe:field/swe:Boolean/swe:value", NS_CTX, is("true")));
         errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result/swe:DataRecord/swe:field/swe:Count/@definition", NS_CTX, is(CHILD_OBSERVABLE_PROPERTY_3)));
@@ -267,7 +321,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
         errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result/swe:DataRecord/swe:field/swe:Text/swe:value", NS_CTX, is("42")));
         errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result/swe:DataRecord/swe:field/swe:Category/@definition", NS_CTX, is(CHILD_OBSERVABLE_PROPERTY_5)));
         errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result/swe:DataRecord/swe:field/swe:Category/swe:value", NS_CTX, is("52")));
-        errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result/swe:DataRecord/swe:field/swe:Category/swe:codeSpace/@xlink:href", NS_CTX, is("codespace")));
+        errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result/swe:DataRecord/swe:field/swe:Category/swe:codeSpace/@xlink:href", NS_CTX, is(CODESPACE)));
     }
 
     private void checkSingleChildObservations(XmlObject getObservationResponse) {
@@ -277,7 +331,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
         Node node = getObservationResponse.getDomNode();
         errors.checkThat(document.getGetObservationResponse().getObservationDataArray(), arrayWithSize(5));
         errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result[@xsi:type=\"ns:MeasureType\"]", NS_CTX, is("42.0")));
-        errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result[@xsi:type=\"ns:MeasureType\"]/@uom", NS_CTX, is("unit")));
+        errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result[@xsi:type=\"ns:MeasureType\"]/@uom", NS_CTX, is(UNIT)));
         errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result[@xsi:type=\"ns:MeasureType\"]/../om:observedProperty/@xlink:href", NS_CTX, is(CHILD_OBSERVABLE_PROPERTY_1)));
         errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result[@xsi:type=\"xs:boolean\"]", NS_CTX, is("true")));
         errors.checkThat(node, hasXPath("/sos:GetObservationResponse/sos:observationData/om:OM_Observation/om:result[@xsi:type=\"xs:boolean\"]/../om:observedProperty/@xlink:href", NS_CTX, is(CHILD_OBSERVABLE_PROPERTY_2)));
@@ -311,7 +365,24 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
                 .query(OWSConstants.RequestParams.request, operation);
     }
 
-    protected InsertSensorDocument createInsertSensorRequest() throws OwsExceptionReport {
+
+    private InsertSensorDocument createComplexInsertSensorRequest() throws OwsExceptionReport {
+        return createInsertSensorRequest(createComplexObservationProcedure());
+    }
+
+    private InsertSensorDocument createNumericInsertSensorRequest() throws OwsExceptionReport {
+        return createInsertSensorRequest(createNumericObservationProcedure());
+    }
+
+    private SensorML createComplexObservationProcedure() {
+        return createProcedure(COMPLEX_OBSERVATION_PROCEDURE, COMPLEX_OBSERVATION_OFFERING);
+    }
+
+    private SensorML createNumericObservationProcedure() {
+        return createProcedure(NUMERIC_OBSERVATION_PROCEDURE, NUMERIC_OBSERVATION_OFFERING);
+    }
+
+    protected InsertSensorDocument createInsertSensorRequest(SensorML procedure) throws OwsExceptionReport {
         InsertSensorDocument document = InsertSensorDocument.Factory.newInstance();
         InsertSensorType insertSensor = document.addNewInsertSensor();
         insertSensor.setService(SosConstants.SOS);
@@ -319,7 +390,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
         insertSensor.addObservableProperty(PARENT_OBSERVABLE_PROPERTY);
         insertSensor.setProcedureDescriptionFormat(SensorMLConstants.NS_SML);
         insertSensor.addNewMetadata().addNewInsertionMetadata().set(createSensorInsertionMetadata());
-        insertSensor.addNewProcedureDescription().set(CodingHelper.encodeObjectToXml(SensorMLConstants.NS_SML, createProcedure()));
+        insertSensor.addNewProcedureDescription().set(CodingHelper.encodeObjectToXml(SensorMLConstants.NS_SML, procedure));
         return document;
     }
 
@@ -327,40 +398,55 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
         SosInsertionMetadataType sosInsertionMetadata = SosInsertionMetadataType.Factory.newInstance();
         sosInsertionMetadata.addFeatureOfInterestType(OGCConstants.UNKNOWN);
         sosInsertionMetadata.addFeatureOfInterestType(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_POINT);
-        sosInsertionMetadata.addObservationType(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
+        for (String observationType : OmConstants.OBSERVATION_TYPES) {
+            sosInsertionMetadata.addObservationType(observationType);
+        }
         return sosInsertionMetadata;
     }
 
-    protected SensorML createProcedure() {
+    protected SensorML createProcedure(String procedure, String offering) {
         SensorML wrapper = new SensorML();
         org.n52.sos.ogc.sensorML.System sensorML = new org.n52.sos.ogc.sensorML.System();
         wrapper.addMember(sensorML);
-        sensorML.addIdentifier(new SmlIdentifier(UNIQUE_ID_NAME, OGCConstants.URN_UNIQUE_IDENTIFIER, PROCEDURE));
-        sensorML.addCapabilities(createOfferingCapabilities());
-        sensorML.addPhenomenon(createPhenomenon());
-        wrapper.setIdentifier(new CodeWithAuthority(PROCEDURE, "codespace"));
+        sensorML.addIdentifier(new SmlIdentifier(UNIQUE_ID_NAME, OGCConstants.URN_UNIQUE_IDENTIFIER, procedure));
+        sensorML.addCapabilities(createOfferingCapabilities(offering));
+        sensorML.addPhenomenon(createCompositePhenomenon());
+        wrapper.setIdentifier(new CodeWithAuthority(procedure, CODESPACE));
         return wrapper;
     }
 
-    private SmlCapabilities createOfferingCapabilities() {
-        return new SmlCapabilities(OFFERING_CAPABILITIES_NAME, new SweSimpleDataRecord()
-                .addField(createOfferingField()));
+    private SmlCapabilities createOfferingCapabilities(String offering) {
+        return new SmlCapabilities(OFFERING_CAPABILITIES_NAME, new SweSimpleDataRecord().addField(createOfferingField(offering)));
     }
 
-    private SweField createOfferingField() {
-        return new SweField(OFFERING, new SweText()
-                .setValue(OFFERING)
-                .setDefinition(OGCConstants.URN_OFFERING_ID));
+    private SweField createOfferingField(String offering) {
+        return new SweField(offering, new SweText().setValue(offering).setDefinition(OGCConstants.URN_OFFERING_ID));
     }
 
-    protected InsertObservationDocument createInsertObservationRequest() throws OwsExceptionReport {
+    protected InsertObservationDocument createComplexInsertObservationRequest() throws OwsExceptionReport {
+        return createComplexInsertObservationRequest(DateTime.now());
+    }
+
+    protected InsertObservationDocument createComplexInsertObservationRequest(DateTime time) throws OwsExceptionReport {
+        return createInsertObservationRequest(createComplexObservation(time), COMPLEX_OBSERVATION_OFFERING);
+    }
+
+    protected InsertObservationDocument createNumericInsertObservationRequest() throws OwsExceptionReport {
+        return createNumericInsertObservationRequest(DateTime.now());
+    }
+
+    protected InsertObservationDocument createNumericInsertObservationRequest(DateTime time) throws OwsExceptionReport {
+        return createInsertObservationRequest(createNumericObservation(time), NUMERIC_OBSERVATION_OFFERING);
+    }
+
+    protected InsertObservationDocument createInsertObservationRequest(OmObservation observation, String offering) throws OwsExceptionReport {
         InsertObservationDocument document = InsertObservationDocument.Factory.newInstance();
         InsertObservationType insertObservation = document.addNewInsertObservation();
         insertObservation.setService(SosConstants.SOS);
         insertObservation.setVersion(Sos2Constants.SERVICEVERSION);
-        insertObservation.addNewOffering().setStringValue(OFFERING);
+        insertObservation.addNewOffering().setStringValue(offering);
         insertObservation.addNewObservation().addNewOMObservation().set(CodingHelper
-                .encodeObjectToXml(OmConstants.NS_OM_2, createComplexObservation(DateTime.now())));
+                .encodeObjectToXml(OmConstants.NS_OM_2, observation));
         return document;
     }
 
@@ -371,7 +457,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
         TimePeriod validTime = new TimePeriod(time.minusMinutes(5), time.plusMinutes(5));
 
         OmObservation observation = new OmObservation();
-        observation.setObservationConstellation(createObservationConstellation());
+        observation.setObservationConstellation(createObservationConstellation(COMPLEX_OBSERVATION_PROCEDURE, COMPLEX_OBSERVATION_OFFERING, OmConstants.OBS_TYPE_COMPLEX_OBSERVATION, createCompositePhenomenon()));
         observation.setResultTime(resultTime);
         observation.setValidTime(validTime);
         observation.setValue(new SingleObservationValue<>(phenomenonTime, new ComplexValue(createSweDataRecord())));
@@ -379,12 +465,26 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
         return observation;
     }
 
-    private OmObservationConstellation createObservationConstellation() {
+    private OmObservation createNumericObservation(DateTime time) {
+        TimeInstant resultTime = new TimeInstant(time);
+        TimeInstant phenomenonTime = new TimeInstant(time);
+        TimePeriod validTime = new TimePeriod(time.minusMinutes(5), time.plusMinutes(5));
+
+        OmObservation observation = new OmObservation();
+        observation.setObservationConstellation(createObservationConstellation(NUMERIC_OBSERVATION_PROCEDURE, NUMERIC_OBSERVATION_OFFERING, OmConstants.OBS_TYPE_MEASUREMENT, createObservableProperty()));
+        observation.setResultTime(resultTime);
+        observation.setValidTime(validTime);
+        observation.setValue(new SingleObservationValue<>(phenomenonTime, new QuantityValue(BigDecimal.valueOf(42), UNIT)));
+
+        return observation;
+    }
+
+    private OmObservationConstellation createObservationConstellation(String procedure, String offering, String observationType, AbstractPhenomenon observableProperty) {
         OmObservationConstellation observationConstellation = new OmObservationConstellation();
         observationConstellation.setFeatureOfInterest(createFeature());
-        observationConstellation.setObservableProperty(createPhenomenon());
-        observationConstellation.setObservationType(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
-        observationConstellation.setProcedure(createProcedure());
+        observationConstellation.setObservableProperty(observableProperty);
+        observationConstellation.setObservationType(observationType);
+        observationConstellation.setProcedure(createProcedure(procedure, offering));
         return observationConstellation;
     }
 
@@ -405,7 +505,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     private SweField createSweCategoryField() {
         SweCategory sweCategory = new SweCategory();
         sweCategory.setDefinition(CHILD_OBSERVABLE_PROPERTY_5);
-        sweCategory.setCodeSpace("codespace");
+        sweCategory.setCodeSpace(CODESPACE);
         sweCategory.setValue("52");
         return new SweField("child5", sweCategory);
     }
@@ -434,12 +534,12 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     private SweField createSweQuantityField() {
         SweQuantity sweQuantity = new SweQuantity();
         sweQuantity.setDefinition(CHILD_OBSERVABLE_PROPERTY_1);
-        sweQuantity.setUom("unit");
+        sweQuantity.setUom(UNIT);
         sweQuantity.setValue(42.0);
         return new SweField("child1", sweQuantity);
     }
 
-    protected OmCompositePhenomenon createPhenomenon() {
+    protected OmCompositePhenomenon createCompositePhenomenon() {
         OmCompositePhenomenon observableProperty = new OmCompositePhenomenon(PARENT_OBSERVABLE_PROPERTY);
         observableProperty.addPhenomenonComponent(new OmObservableProperty(CHILD_OBSERVABLE_PROPERTY_1));
         observableProperty.addPhenomenonComponent(new OmObservableProperty(CHILD_OBSERVABLE_PROPERTY_2));
@@ -447,10 +547,12 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
         observableProperty.addPhenomenonComponent(new OmObservableProperty(CHILD_OBSERVABLE_PROPERTY_4));
         return observableProperty;
     }
+    protected OmObservableProperty createObservableProperty() {
+        return new OmObservableProperty(PARENT_OBSERVABLE_PROPERTY);
+    }
 
     private static void showChildren(boolean show) {
-        changeSetting(ServiceSettings.EXPOSE_CHILD_OBSERVABLE_PROPERTIES,
-                      Boolean.toString(show));
+        changeSetting(ServiceSettings.EXPOSE_CHILD_OBSERVABLE_PROPERTIES, Boolean.toString(show));
     }
 
     private static void changeSetting(String setting, String value) {

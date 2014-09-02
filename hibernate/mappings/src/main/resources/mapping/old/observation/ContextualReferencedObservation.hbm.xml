@@ -7,7 +7,7 @@ Useful to avoid many joins for queries where we don't care about the observation
 (e.g. cache queries like getProceduresForOffering, etc)
 -->
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedLegacyObservation"
+    <class name="org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation"
            table="observation">
         <id name="observationId"
             type="long">

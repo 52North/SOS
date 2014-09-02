@@ -147,7 +147,7 @@
                     not-null="true"
                     default="3"/>
         </property>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.full.ereporting.EReportingBlobObservation"
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingBlobObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation"
                          table="blobValue">
             <key column="observationId"
@@ -155,7 +155,7 @@
             <property name="value"
                       type="blob" />
         </joined-subclass>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.full.ereporting.EReportingBooleanObservation"
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingBooleanObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation"
                          table="booleanValue"
                          check="value in ('T','F')">
@@ -164,7 +164,7 @@
             <property name="value"
                       type="org.hibernate.type.TrueFalseType"/>
         </joined-subclass>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.full.ereporting.EReportingCategoryObservation"
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingCategoryObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation"
                          table="categoryValue">
             <key column="observationId"
@@ -172,7 +172,7 @@
             <property name="value"
                       type="string" />
         </joined-subclass>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.full.ereporting.EReportingCountObservation"
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingCountObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation"
                          table="countValue">
             <key column="observationId"
@@ -180,7 +180,7 @@
             <property name="value"
                       type="integer" />
         </joined-subclass>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.full.ereporting.EReportingGeometryObservation"
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingGeometryObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation"
                          table="geometryValue">
             <key column="observationId"
@@ -188,7 +188,7 @@
             <property name="value"
                       type="org.hibernate.spatial.GeometryType" />
         </joined-subclass>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.full.ereporting.EReportingNumericObservation"
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingNumericObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation"
                          table="numericValue">
             <key column="observationId"
@@ -196,7 +196,7 @@
             <property name="value"
                       type="big_decimal" />
         </joined-subclass>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.full.ereporting.EReportingTextObservation"
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingTextObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation"
                          table="textValue">
             <key column="observationId"
@@ -204,7 +204,7 @@
             <property name="value"
                       type="org.hibernate.type.StringClobType" />
         </joined-subclass>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.full.ereporting.EReportingSweDataArrayObservation"
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingSweDataArrayObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation"
                          table="sweDataArrayValue">
             <key column="observationId"
@@ -212,7 +212,7 @@
             <property name="value"
                       type="org.hibernate.type.StringClobType" />
         </joined-subclass>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.full.ereporting.EReportingComplexObservation"
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingComplexObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation"
                          table="complexValue">
             <key column="observationId"

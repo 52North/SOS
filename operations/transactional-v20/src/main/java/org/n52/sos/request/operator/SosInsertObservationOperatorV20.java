@@ -383,10 +383,25 @@ public class SosInsertObservationOperatorV20 extends
 
     private void checkObservationConstellationParameter(final OmObservationConstellation obsConstallation)
             throws OwsExceptionReport {
-        checkProcedureID(obsConstallation.getProcedure().getIdentifier(),
-                Sos2Constants.InsertObservationParams.procedure.name());
-        checkObservedProperty(obsConstallation.getObservableProperty().getIdentifier(),
-                Sos2Constants.InsertObservationParams.observedProperty.name());
+        AbstractPhenomenon observableProperty = obsConstallation.getObservableProperty();
+        String observablePropertyIdentifier = observableProperty.getIdentifier();
+
+        if (hasObservations(observablePropertyIdentifier) &&
+            observableProperty.isComposite() != getCache().isCompositePhenomenon(observablePropertyIdentifier)) {
+            throw new InvalidParameterValueException(Sos2Constants.InsertObservationParams.observedProperty, observablePropertyIdentifier);
+        }
+
+        checkProcedureID(obsConstallation.getProcedure().getIdentifier(), Sos2Constants.InsertObservationParams.procedure);
+        checkObservedProperty(observablePropertyIdentifier, Sos2Constants.InsertObservationParams.observedProperty, true);
+    }
+
+    private boolean hasObservations(String observableProperty) {
+        for (String offering : getCache().getOfferingsForObservableProperty(observableProperty)) {
+            if (getCache().hasMaxPhenomenonTimeForOffering(offering)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void checkOrSetObservationType(final OmObservation sosObservation, final boolean isSplitObservations)

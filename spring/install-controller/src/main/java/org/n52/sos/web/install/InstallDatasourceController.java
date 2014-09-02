@@ -93,7 +93,10 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
                             }
                         }
                     }
-                    datasource.checkSchemaCreation(c.getDatabaseSettings());
+                    if (!datasource.checkSchemaCreation(c.getDatabaseSettings())) {
+                        throw new InstallationSettingsError(c, String.format(
+                                ErrorMessages.COULD_NOT_CREATE_SOS_TABLES, "schema creation test table"));                        
+                    }
                 } else if (!alreadyExistent) {
                     throw new InstallationSettingsError(c, ErrorMessages.NO_TABLES_AND_SHOULD_NOT_CREATE);
                 } else {

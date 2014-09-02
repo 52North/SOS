@@ -43,9 +43,9 @@ import org.n52.sos.wsdl.WSDLOperation;
 
 /**
  * {@code IRequestOperator} to handle {@link GetDataAvailabilityRequest}s.
- * 
+ *
  * @author Christian Autermann
- * 
+ *
  * @since 4.0.0
  */
 public class GetDataAvailabilityOperator
@@ -91,7 +91,7 @@ public class GetDataAvailabilityOperator
 
         try {
             checkObservedProperties(sosRequest.getObservedProperties(),
-                    GetDataAvailabilityParams.observedProperty.name());
+                    GetDataAvailabilityParams.observedProperty.name(), false);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

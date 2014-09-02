@@ -334,6 +334,21 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         }
     }
 
+    /**
+     * checks whether the requested sensor ID is valid
+     *
+     * @param procedureID
+     *            the sensor ID which should be checked
+     * @param parameterName
+     *            the parameter name
+     *
+     * @throws OwsExceptionReport
+     *             * if the value of the sensor ID parameter is incorrect
+     */
+    protected void checkProcedureID(final String procedureID, final Enum<?> parameterName) throws OwsExceptionReport {
+        checkProcedureID(procedureID, parameterName.name());
+    }
+
     protected void checkProcedureIDs(final Collection<String> procedureIDs, final String parameterName)
             throws OwsExceptionReport {
         if (procedureIDs != null) {
@@ -405,18 +420,18 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         throw new InvalidParameterValueException(parameterName, featureOfInterest);
     }
 
-    protected void checkObservedProperties(final List<String> observedProperties, final Enum<?> parameterName)
+    protected void checkObservedProperties(final List<String> observedProperties, final Enum<?> parameterName, boolean insertion)
             throws OwsExceptionReport {
-        checkObservedProperties(observedProperties, parameterName.name());
+        checkObservedProperties(observedProperties, parameterName.name(), insertion);
     }
 
-    protected void checkObservedProperties(final List<String> observedProperties, final String parameterName)
+    protected void checkObservedProperties(final List<String> observedProperties, final String parameterName, boolean insertion)
             throws OwsExceptionReport {
         if (observedProperties != null) {
             final CompositeOwsException exceptions = new CompositeOwsException();
             for (final String observedProperty : observedProperties) {
                 try {
-                    checkObservedProperty(observedProperty, parameterName);
+                    checkObservedProperty(observedProperty, parameterName, insertion);
                 } catch (final OwsExceptionReport e) {
                     exceptions.add(e);
                 }
@@ -425,12 +440,16 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         }
     }
 
-    protected void checkObservedProperty(final String observedProperty, final String parameterName)
+    protected void checkObservedProperty(String observedProperty, String parameterName, boolean insertion)
             throws OwsExceptionReport {
         if (observedProperty == null || observedProperty.isEmpty()) {
             throw new MissingParameterValueException(parameterName);
         }
-        if (ServiceConfiguration.getInstance()
+        if (insertion) {
+            if (!getCache().hasObservableProperty(observedProperty)) {
+                throw new InvalidParameterValueException(parameterName, observedProperty);
+            }
+        } else if (ServiceConfiguration.getInstance()
                 .isIncludeChildObservableProperties()) {
             if (getCache().isCompositePhenomenon(observedProperty) ||
                 !(getCache().isCompositePhenomenonComponent(observedProperty) ||
@@ -444,9 +463,9 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
 
     }
 
-    protected void checkObservedProperty(final String observedProperty, final Enum<?> parameterName)
+    protected void checkObservedProperty(final String observedProperty, final Enum<?> parameterName, boolean insertion)
             throws OwsExceptionReport {
-        checkObservedProperty(observedProperty, parameterName.name());
+        checkObservedProperty(observedProperty, parameterName.name(), insertion);
     }
 
     protected void checkOfferings(final Collection<String> offerings, final String parameterName) throws OwsExceptionReport {

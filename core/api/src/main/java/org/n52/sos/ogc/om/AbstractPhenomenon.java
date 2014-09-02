@@ -105,7 +105,10 @@ public abstract class AbstractPhenomenon extends AbstractFeature
 
 	@Override
 	public String toString() {
-		return String.format("AbstractPhenomenon [identifier=%s, description=%s]",
-                             getIdentifierCodeWithAuthority().getValue(), getDescription());
+		return Objects.toStringHelper(this)
+                .omitNullValues()
+                .add("identifier", getIdentifier())
+                .add("description", getDescription())
+                .toString();
 	}
 }

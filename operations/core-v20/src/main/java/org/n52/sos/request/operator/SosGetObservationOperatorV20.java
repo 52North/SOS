@@ -127,7 +127,7 @@ public class SosGetObservationOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            checkObservedProperties(sosRequest.getObservedProperties(), SosConstants.GetObservationParams.observedProperty);
+            checkObservedProperties(sosRequest.getObservedProperties(), SosConstants.GetObservationParams.observedProperty, false);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

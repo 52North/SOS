@@ -117,9 +117,6 @@ public class SosInsertObservationOperatorV20 extends
         if (isSetExtensionSplitDataArrayIntoObservations(request)) {
             splitDataArrayIntoObservations(request);
         }
-
-        createCompositePhenomenons(request);
-
         InsertObservationResponse response = getDao().insertObservation(request);
         SosEventBus.fire(new ObservationInsertion(request, response));
         return response;
@@ -267,6 +264,7 @@ public class SosInsertObservationOperatorV20 extends
 
     @Override
     protected void checkParameters(final InsertObservationRequest request) throws OwsExceptionReport {
+        createCompositePhenomenons(request);
         final CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(request.getService());

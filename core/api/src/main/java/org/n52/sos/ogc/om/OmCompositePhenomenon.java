@@ -104,4 +104,14 @@ public class OmCompositePhenomenon extends AbstractPhenomenon implements Iterabl
             return getPhenomenonComponents().iterator();
         }
     }
+
+    @Override
+    public boolean isComposite() {
+        return true;
+    }
+
+    @Override
+    public boolean isObservableProperty() {
+        return false;
+    }
 }

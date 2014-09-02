@@ -125,4 +125,14 @@ public class OmObservableProperty extends AbstractPhenomenon {
         return StringHelper.isNotEmpty(getUnit());
     }
 
+    @Override
+    public boolean isComposite() {
+        return false;
+    }
+
+    @Override
+    public boolean isObservableProperty() {
+        return true;
+    }
+
 }

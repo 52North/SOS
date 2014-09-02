@@ -40,7 +40,7 @@ import com.google.common.base.Objects;
  *
  * @since 4.0.0
  */
-public class AbstractPhenomenon extends AbstractFeature
+public abstract class AbstractPhenomenon extends AbstractFeature
     implements Comparable<AbstractPhenomenon>, Serializable {
     /**
      * serial number
@@ -86,8 +86,22 @@ public class AbstractPhenomenon extends AbstractFeature
 
     @Override
     public int compareTo(final AbstractPhenomenon o) {
-        return getIdentifierCodeWithAuthority().compareTo(o.getIdentifierCodeWithAuthority());
+        return getIdentifierCodeWithAuthority().compareTo(o
+                .getIdentifierCodeWithAuthority());
     }
+
+    public abstract boolean isComposite();
+
+    public abstract boolean isObservableProperty();
+
+    public OmObservableProperty asObservableProperty() {
+        return (OmObservableProperty) this;
+    }
+
+    public OmCompositePhenomenon asCompositePhenomenon() {
+        return (OmCompositePhenomenon) this;
+    }
+
 
 	@Override
 	public String toString() {

@@ -273,8 +273,6 @@ public interface OmConstants {
             OBS_TYPE_GEOMETRY_OBSERVATION,
             OBS_TYPE_TEXT_OBSERVATION,
             OBS_TYPE_TRUTH_OBSERVATION,
-            OBS_TYPE_OBSERVATION,
-            OBS_TYPE_UNKNOWN,
             OBS_TYPE_SWE_ARRAY_OBSERVATION
     );
 

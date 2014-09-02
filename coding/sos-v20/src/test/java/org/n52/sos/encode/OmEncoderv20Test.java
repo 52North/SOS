@@ -193,11 +193,6 @@ public class OmEncoderv20Test {
         Configurator configurator = mock(Configurator.class);
         when(configurator.getProfileHandler()).thenReturn(new DefaultProfileHandler());
         Configurator.setInstance(configurator);
-//        mockSettingsManager();
-    }
-
-    protected static void mockConfigurator() {
-
     }
 
     private class Checker {
@@ -214,12 +209,6 @@ public class OmEncoderv20Test {
         }
     }
 
-//    protected static void mockSettingsManager()
-//            throws ConfigurationException {
-//        mockStatic(SettingsManager.class);
-//        SettingsManager settingsManager = mock(SettingsManager.class);
-//        when(SettingsManager.getInstance()).thenReturn(settingsManager);
-//    }
     private class NamespaceContextImpl implements NamespaceContext {
         private ImmutableBiMap<String, String> map = ImmutableBiMap
                 .<String, String>builder()

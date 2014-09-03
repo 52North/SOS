@@ -109,12 +109,13 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
         try {
             conn = openConnection(settings);
             stmt = conn.createStatement();
-            String schema = (String) settings.get(createSchemaDefinition().getKey());
-            schema = schema == null ? "" : "." + schema;
+            final String schema = (String) settings.get(createSchemaDefinition().getKey());
+            final String schemaPrefix = schema == null ? "" : "\"" + schema + "\".";
+            final String testTable = schemaPrefix + "sos_installer_test_table";
             final String command =
-                    String.format("BEGIN; " + "DROP TABLE IF EXISTS \"%1$ssos_installer_test_table\"; "
-                            + "CREATE TABLE \"%1$ssos_installer_test_table\" (id integer NOT NULL); "
-                            + "DROP TABLE \"%1$ssos_installer_test_table\"; " + "END;", schema);
+                    String.format("BEGIN; " + "DROP TABLE IF EXISTS %1$s; "
+                            + "CREATE TABLE %1$s (id integer NOT NULL); "
+                            + "DROP TABLE %1$s; " + "END;", testTable);
             stmt.execute(command);
             return true;
         } catch (SQLException e) {

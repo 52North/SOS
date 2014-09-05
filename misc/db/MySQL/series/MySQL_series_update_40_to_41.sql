@@ -27,38 +27,14 @@
 -- Public License for more details.
 --
 
-SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE TABLE blobValue;
-TRUNCATE TABLE booleanValue;
-TRUNCATE TABLE categoryValue;
-TRUNCATE TABLE compositePhenomenon;
-TRUNCATE TABLE countValue;
-TRUNCATE TABLE featureRelation;
-TRUNCATE TABLE geometryValue;
-TRUNCATE TABLE numericValue;
-TRUNCATE TABLE observationConstellation;
-TRUNCATE TABLE observationHasOffering;
-TRUNCATE TABLE offeringAllowedFeatureType;
-TRUNCATE TABLE offeringAllowedObservationType;
-TRUNCATE TABLE offeringHasRelatedFeature;
-TRUNCATE TABLE relatedFeatureHasRole;
-TRUNCATE TABLE relatedFeatureRole;
-TRUNCATE TABLE resultTemplate;
-TRUNCATE TABLE offering;
-TRUNCATE TABLE sensorSystem;
-TRUNCATE TABLE spatialfilteringprofile;
-TRUNCATE TABLE parameter;
-TRUNCATE TABLE observation;
-TRUNCATE TABLE observableProperty;
-TRUNCATE TABLE swedataarrayvalue;
-TRUNCATE TABLE textValue;
-TRUNCATE TABLE unit;
-TRUNCATE TABLE validProcedureTime;
-TRUNCATE TABLE `procedure`;
-TRUNCATE TABLE featureOfInterest;
-TRUNCATE TABLE relatedFeature;
-TRUNCATE TABLE codespace;
-TRUNCATE TABLE procedureDescriptionFormat;
-TRUNCATE TABLE featureOfInterestType;
-TRUNCATE TABLE observationType;
-SET FOREIGN_KEY_CHECKS = 1;
+ALTER TABLE series ADD COLUMN firstTimeStamp datetime;
+ALTER TABLE series ADD COLUMN lastTimeStamp datetime;
+ALTER TABLE series ADD COLUMN firstNumericValue decimal(19,2);
+ALTER TABLE series ADD COLUMN lastNumericValue decimal(19,2);
+ALTER TABLE series ADD COLUMN unitId bigint;
+
+alter table series add constraint seriesUnitFk foreign key (unitId) references unit;
+
+ALTER TABLE `procedure` ADD COLUMN referenceFlag char(1) default 'F';
+
+ALTER TABLE observation ADD COLUMN samplingGeometry GEOMETRY;

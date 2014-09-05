@@ -46,7 +46,6 @@ TRUNCATE TABLE relatedFeatureRole;
 TRUNCATE TABLE resultTemplate;
 TRUNCATE TABLE offering;
 TRUNCATE TABLE sensorSystem;
-TRUNCATE TABLE spatialfilteringprofile;
 TRUNCATE TABLE parameter;
 TRUNCATE TABLE observation;
 TRUNCATE TABLE observableProperty;

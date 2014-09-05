@@ -1,6 +1,6 @@
 # 52°North SOS
 
-README file for the 52°North Sensor Observation Service (SOS) version 4.0.0
+README file for the 52°North Sensor Observation Service (SOS) version 4.2
 
 This is the repository of the [52°North Sensor Observation Service (SOS)][1].
 

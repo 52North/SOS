@@ -290,8 +290,10 @@ public class InsertDAOTest extends HibernateTestCase {
         SweDataRecord dataRecord = new SweDataRecord();
         SweTime sweTime = new SweTime();
         sweTime.setUom(OmConstants.PHEN_UOM_ISO8601);
+        sweTime.setDefinition(OmConstants.PHENOMENON_TIME);
         dataRecord.addField(new SweField("time", sweTime));
         SweQuantity airTemp = new SweQuantity();
+        airTemp.setDefinition(obsPropId);
         airTemp.setUom(TEMP_UNIT);
         dataRecord.addField(new SweField("air_temperature", airTemp));
         SosResultStructure resultStructure = new SosResultStructure();

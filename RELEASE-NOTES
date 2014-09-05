@@ -11,6 +11,16 @@ Changes since last release
 
  --- New features ---
  
+ --- Changes ---
+  
+ --- Fixed issues ---
+
+
+Release 52n-sos-4.1
+==================================
+
+ --- New features ---
+ 
     * Binding selection by ContentType at /sos and /service
     * Add columns to mapping files for an easier integration of the Timeseries API (only for Series concept)
       * Added first/latest time (all) and value (only OM_Measurement) columns to series table and update 
@@ -42,6 +52,8 @@ Changes since last release
       * Corresponding to the selected datasource, the required DAOs and ConnectionProvider are loaded during 
         the initialization.
       * https://github.com/52North/SOS/commit/d906f74267e8efcc51e53703a391aafb29119178
+    * If featureOfInterest geometry is missing, create the geometry from existing samplingGeometries
+      * https://github.com/52North/SOS/commit/dc8ce1eb00de99b09e4a60574be96c34bf441eb2
  
  --- Changes ---
  
@@ -78,6 +90,8 @@ Changes since last release
       * For each supported DBMS an update script is available (/misc/db/..) to add the new column, copy the 
         samplingGeometries and remove the spatialfilteringprofile table.
       * https://github.com/52North/SOS/commit/65e8a4d7867f3e19c3c444438f79df5a3616fb8d
+    * Change offering fetch mode to lazy to reduce the number of subqueries when querying the observations.
+      * https://github.com/52North/SOS/commit/67475c6d3741641d02a4be4fb6c466526152c09f
       
  
  --- Fixed bugs ---
@@ -99,13 +113,33 @@ Changes since last release
     * Fix problem with duplicated entries in generated SQL scripts.
       * https://github.com/52North/SOS/commit/6e70d910e6f8f7140d79f65c83250cf5370b73fc
     * Fix #74: Exception when executing SOS 1.0.0 DescribeSensor requests
-      * https://github.com/CarstenHollmann/SOS/commit/7e0e6a2ca8670e8f7ec632d899d9781391a04bbd
+      * https://github.com/52North/SOS/commit/7e0e6a2ca8670e8f7ec632d899d9781391a04bbd
+    * Throw exception if the inserted sensor description has swe:DataArray sml:output element without a swe:DataRecord elementType element.
+      * https://github.com/52North/SOS/commit/5c55aeeb92a8ed60a12449c1171b757a38fc57bc
+    * Fix GetObservation invalid srs exception code.
+      * https://github.com/52North/SOS/commit/0b20dd424be7556a767170ba8392897b36cdd8c8
+    * Fix #79: File-based H2/GeoDB fails on sampling geometry index
+      * https://github.com/52North/SOS/commit/a5814ee539f25ada7eeedd75e63a37e68c6682cf
+    * Fix #81: GetDataAvailability returns invalid times and value counts
+      * https://github.com/52North/SOS/commit/49c004ff8a7255aed677bef05c913254070387e1
+    * Fix #83: Update GetInvolved link on client landing page
+      * https://github.com/52North/SOS/commit/c710a08dcdc05545d5515a24e643bc191bf71a94
+    * Fix #84: AbstractSettingsDefinition equals() returns true if all variables are the same except key, title and description
+      * https://github.com/52North/SOS/commit/c710a08dcdc05545d5515a24e643bc191bf71a94
+    * Fix used Hibernate mapping path constants
+      * https://github.com/52North/SOS/commit/8be9ad0d4bb6e388e9b8a5f9ed05ed6423b994d4
+    * Fix #87: Inform user about javascript requirement for the webapp
+      * https://github.com/52North/SOS/commit/5014f1fa00199e573b80ca931928fa53542602f7
+    * Fix #80: Resetting the SOS does not delete the cache file
+      * https://github.com/52North/SOS/commit/a43b945940963ec4152da7769de242213e219a70
     * Fix #101: SOS 1.0.0 GetObservation SOAP request fails
       * https://github.com/52North/SOS/commit/4972a4e0a13bc0e3e5cb951f4d322c064a22e8de
     * Fix #106: Possible thread safety issue in HTTPUtils' GenericWritable
-      * https://github.com/CarstenHollmann/SOS/commit/835ce396cc9dda645a15bb2c538580943af7cfd5
+      * https://github.com/52North/SOS/commit/835ce396cc9dda645a15bb2c538580943af7cfd5
     * Fix #109: First position is missing in the featuerOfInterest geometry if generated from samplingGeometries
-      * https://github.com/CarstenHollmann/SOS/commit/6ccf283def95198c3ba8dd452ee10232a7a6251f
+      * https://github.com/52North/SOS/commit/6ccf283def95198c3ba8dd452ee10232a7a6251f
+	* Fix #116: Time fields in observation table are identical when executing InsertResult with om:resultTime
+	  * https://github.com/52North/SOS/commit/286cd8d166e3bfd95b936aec4d9ad4d487aa800b
  
  
 Release 52n-sos-4.0.1

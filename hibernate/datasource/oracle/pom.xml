@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.n52.sensorweb.sos</groupId>
 		<artifactId>hibernate-datasource</artifactId>
-		<version>4.1.0-SNAPSHOT</version>
+		<version>4.2.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>hibernate-datasource-oracle</artifactId>
@@ -27,7 +27,6 @@
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc6</artifactId>
-			<version>11.2.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- Hibernate Core Dependencies -->

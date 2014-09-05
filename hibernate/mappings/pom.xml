@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>hibernate</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.2.0-SNAPSHOT</version>
     </parent>
     <artifactId>hibernate-mappings</artifactId>
     <name>52°North SOS - Hibernate Mappings</name>
@@ -32,23 +32,9 @@
             <artifactId>jts</artifactId>
         </dependency>
         <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
         </dependency>
-        <!--   
-        <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc6</artifactId>
-            <version>11.2.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-        	<groupId>com.microsoft</groupId>
-			<artifactId>sqljdbc4</artifactId>
-			<version>4.0</version>
-			<scope>provided</scope>
-		</dependency>
-    	-->
     </dependencies>
     <profiles>
         <profile>

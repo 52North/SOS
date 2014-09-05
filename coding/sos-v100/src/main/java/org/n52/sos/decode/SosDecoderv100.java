@@ -333,7 +333,18 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
         GetObservationById getObsById = getObsByIdDoc.getGetObservationById();
         getObsByIdRequest.setService(getObsById.getService());
         getObsByIdRequest.setVersion(getObsById.getVersion());
-        getObsByIdRequest.setResponseFormat(getObsById.getResponseFormat());
+        if (getObsById.isSetResponseFormat()) {
+            try {
+                String responseFormat = URLDecoder.decode(getObsById.getResponseFormat(), "UTF-8");
+                // parse responseFormat through MediaType to ensure it's a mime type and eliminate whitespace variations
+                getObsByIdRequest.setResponseFormat(MediaType.normalizeString(responseFormat));
+            } catch (UnsupportedEncodingException e) {
+                throw new NoApplicableCodeException().causedBy(e).withMessage("Error while decoding response format!");
+            }
+
+        } else {
+            getObsByIdRequest.setResponseFormat(OmConstants.CONTENT_TYPE_OM.toString());
+        }
         Enum responseMode = getObsById.getResponseMode();
         if (responseMode != null && responseMode.toString().equalsIgnoreCase(SosConstants.RESPONSE_MODE_INLINE)) {
             getObsByIdRequest.setResponseMode(SosConstants.RESPONSE_MODE_INLINE);

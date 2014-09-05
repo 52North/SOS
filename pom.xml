@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
-    <version>4.1.0-SNAPSHOT</version>
+    <version>4.2.0-SNAPSHOT</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation</url>
@@ -69,6 +69,8 @@
         <hibernate.spatial.version>4.3-52N</hibernate.spatial.version>
         <sqlite.version>3.7.2</sqlite.version>
         <jackson.version>2.3.3</jackson.version>
+        <ojdbc6.version>11.2.0</ojdbc6.version>
+        <sqljdbc4.version>4.0</sqljdbc4.version>
 
         <!-- 52N dependency versions -->
         <n52.common.xml.version>1.1.5</n52.common.xml.version>
@@ -76,13 +78,13 @@
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
         <!-- managed dependencies with ${project.version} will be wrong in submodules
         with different versions -->
-        <sos.version>4.1.0-SNAPSHOT</sos.version>
-        <do.version>0.2.0-SNAPSHOT</do.version>
-        <rest-binding.version>0.2.0-SNAPSHOT</rest-binding.version>
+        <sos.version>4.2.0-SNAPSHOT</sos.version>
+        <do.version>4.2.0-SNAPSHOT</do.version>
+        <rest-binding.version>4.2.0-SNAPSHOT</rest-binding.version>
         <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
         <org.springframework.version>3.2.6.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
-        <sos.test.suite.version>1.0.0-M4</sos.test.suite.version>
+        <sos.test.suite.version>1.0.0-M5</sos.test.suite.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -881,6 +883,16 @@
                 <artifactId>xmlunit</artifactId>
                 <version>1.5</version>
             </dependency>
+	        <dependency>
+	            <groupId>com.oracle</groupId>
+	            <artifactId>ojdbc6</artifactId>
+	            <version>${ojdbc6.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.microsoft</groupId>
+	            <artifactId>sqljdbc4</artifactId>
+	            <version>${sqljdbc4.version}</version>
+	        </dependency>            
         </dependencies>
     </dependencyManagement>
     <build>
@@ -960,6 +972,18 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>            
             <plugin>
                 <groupId>org.codehaus.groovy.maven</groupId>
                 <artifactId>gmaven-plugin</artifactId>

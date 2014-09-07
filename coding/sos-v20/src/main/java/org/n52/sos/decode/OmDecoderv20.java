@@ -28,7 +28,6 @@
  */
 package org.n52.sos.decode;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -247,7 +246,7 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
             namedValue.setValue((GeometryValue) value);
             return namedValue;
         } else if (value instanceof QuantityValue) {
-            NamedValue<BigDecimal> namedValue = new NamedValue<BigDecimal>();
+            NamedValue<Double> namedValue = new NamedValue<Double>();
             namedValue.setValue((QuantityValue) value);
             return namedValue;
         } else if (value instanceof TextValue) {
@@ -428,7 +427,7 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
             if (decodedObject instanceof ObservationValue) {
                 return (ObservationValue) decodedObject;
             } else if (decodedObject instanceof GmlMeasureType) {
-                SingleObservationValue<BigDecimal> result = new SingleObservationValue<BigDecimal>();
+                SingleObservationValue<Double> result = new SingleObservationValue<Double>();
                 GmlMeasureType measureType = (GmlMeasureType) decodedObject;
                 QuantityValue quantitiyValue = new QuantityValue(measureType.getValue(), measureType.getUnit());
                 result.setValue(quantitiyValue);

@@ -234,7 +234,6 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
             unit = singleObservationValue.getValue().getUnit();
             if (sosObservation.getValue().getValue() instanceof QuantityValue) {
                 QuantityValue quantityValue = (QuantityValue) singleObservationValue.getValue();
-                // FIXME equals on BigDecimal and Double.NaN
                 if (!quantityValue.getValue().equals(Double.NaN)) {
                     String value = Double.toString(quantityValue.getValue().doubleValue());
                     addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time, value);
@@ -254,7 +253,6 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
             for (TimeValuePair timeValuePair : timeValuePairs) {
                 if (timeValuePair.getValue() instanceof QuantityValue) {
                     QuantityValue quantityValue = (QuantityValue) timeValuePair.getValue();
-                    // FIXME equals on BigDecimal and Double.NaN
                     if (!quantityValue.getValue().equals(Double.NaN)) {
                         timeValuePair.getTime();
                         String time = getTimeString(timeValuePair.getTime());
@@ -332,7 +330,6 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
             unit = singleObservationValue.getValue().getUnit();
             if (observationValue.getValue() instanceof QuantityValue) {
                 QuantityValue quantityValue = (QuantityValue) singleObservationValue.getValue();
-                // FIXME equals on BigDecimal and Double.NaN
                 if (!quantityValue.getValue().equals(Double.NaN)) {
                     String value = Double.toString(quantityValue.getValue().doubleValue());
                     addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time, value);
@@ -352,7 +349,6 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
             for (TimeValuePair timeValuePair : timeValuePairs) {
                 if (timeValuePair.getValue() instanceof QuantityValue) {
                     QuantityValue quantityValue = (QuantityValue) timeValuePair.getValue();
-                    // FIXME equals on BigDecimal and Double.NaN
                     if (!quantityValue.getValue().equals(Double.NaN)) {
                         timeValuePair.getTime();
                         String time = getTimeString(timeValuePair.getTime());

@@ -56,7 +56,6 @@ import static org.n52.sos.util.builder.SweDataArrayBuilder.aSweDataArray;
 import static org.n52.sos.util.builder.SweDataArrayValueBuilder.aSweDataArrayValue;
 import static org.n52.sos.util.builder.SweTimeBuilder.aSweTime;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Set;
 
@@ -965,7 +964,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
                                         .setValue(
                                                 aQuantityValue()
                                                         .setValue(
-                                                                aQuantitiy().setValue(new BigDecimal(2.0))
+                                                                aQuantitiy().setValue(2.0)
                                                                         .setUnit("m").build())
                                                         .setPhenomenonTime(phenomenonTime).build())
                                         .setIdentifier(CODESPACE, OBSERVATION_ID).build()).build();

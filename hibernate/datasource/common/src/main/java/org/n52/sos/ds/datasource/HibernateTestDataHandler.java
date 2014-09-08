@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.datasource;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -427,10 +426,7 @@ public class HibernateTestDataHandler {
     }
 
     private void createNumericObservations(int identifierIndex) {
-        BigDecimal[] values =
-                new BigDecimal[] { new BigDecimal("1.2"), new BigDecimal("1.3"), new BigDecimal("1.4"), new BigDecimal("1.5"),
-                        new BigDecimal("1.6"), new BigDecimal("1.7"), new BigDecimal("1.8"), new BigDecimal("1.9"),
-                        new BigDecimal("2.0"), new BigDecimal("2.1") };
+        double[] values = new double[] { 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1 };
 
         GregorianCalendar calendar = new GregorianCalendar(2012, 11, 19, 13, 00);
         for (int i = 0; i < values.length; i++) {
@@ -557,7 +553,7 @@ public class HibernateTestDataHandler {
         observation.setResultTime(calendar.getTime());
 
         observation.setIdentifier(id);
-        observation.setValue(new BigDecimal("3.5"));
+        observation.setValue(3.5);
 
         return observation;
     }

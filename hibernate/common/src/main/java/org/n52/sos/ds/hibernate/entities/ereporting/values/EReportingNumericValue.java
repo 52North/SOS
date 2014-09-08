@@ -28,23 +28,21 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting.values;
 
-import java.math.BigDecimal;
-
 import org.n52.sos.ds.hibernate.entities.interfaces.NumericValue;
 
 public class EReportingNumericValue extends EReportingValue implements NumericValue {
 
     private static final long serialVersionUID = -5023559176351981016L;
 
-    private BigDecimal value;
+    private Double value;
 
     @Override
-    public BigDecimal getValue() {
+    public Double getValue() {
         return this.value;
     }
 
     @Override
-    public void setValue(BigDecimal value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 

@@ -28,23 +28,21 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
-import java.math.BigDecimal;
-
 import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 
 public class EReportingNumericObservation extends EReportingObservation implements NumericObservation {
 
     private static final long serialVersionUID = -9136641539362661747L;
 
-    private BigDecimal value;
+    private Double value;
 
     @Override
-    public BigDecimal getValue() {
+    public Double getValue() {
         return this.value;
     }
 
     @Override
-    public void setValue(BigDecimal value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 

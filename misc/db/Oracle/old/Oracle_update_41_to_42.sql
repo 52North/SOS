@@ -1,0 +1,2 @@
+--update numeric columns to double
+ALTER TABLE NUMERICVALUE MODIFY VALUE DOUBLE PRECISION;

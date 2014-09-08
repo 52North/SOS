@@ -28,7 +28,6 @@
  */
 package org.n52.sos.request.operator;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -196,9 +195,9 @@ public class SosInsertObservationOperatorV20 extends
         } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_COUNT_OBSERVATION)) {
             value = new SingleObservationValue<Integer>(new CountValue(Integer.parseInt(valueString)));
         } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_MEASUREMENT)) {
-            final QuantityValue quantity = new QuantityValue(new BigDecimal(valueString));
+            final QuantityValue quantity = new QuantityValue(Double.parseDouble(valueString));
             quantity.setUnit(getUom(resultDefinitionField));
-            value = new SingleObservationValue<BigDecimal>(quantity);
+            value = new SingleObservationValue<Double>(quantity);
         } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION)) {
             final CategoryValue cat = new CategoryValue(valueString);
             cat.setUnit(getUom(resultDefinitionField));

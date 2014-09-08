@@ -228,6 +228,7 @@ public class GeometryHandler {
      *            Value to check
      * @return Double value
      */
+    //TODO replace with JavaHelper.asDouble?
     public double getValueAsDouble(final Object value) {
         if (value instanceof String) {
             return Double.valueOf((String) value).doubleValue();

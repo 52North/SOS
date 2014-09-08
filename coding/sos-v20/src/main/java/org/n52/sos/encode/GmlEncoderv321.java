@@ -252,93 +252,74 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
 		}
 		return false;
 	}
+    
+    private XmlObject createFeature(final AbstractFeature feature, final Map<HelperValues, String> additionalValues)
+            throws OwsExceptionReport {
+        final FeaturePropertyType featurePropertyType =
+                FeaturePropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        if (isNotSamplingFeature(feature) || additionalValues.containsKey(HelperValues.REFERENCED)) {
+            featurePropertyType.setHref(feature.getIdentifierCodeWithAuthority().getValue());
+            return featurePropertyType;
+        } else {
+            final SamplingFeature samplingFeature = (SamplingFeature) feature;
+            if (samplingFeature.isSetGmlID()) {
+                featurePropertyType.setHref("#" + samplingFeature.getGmlId());
+                return featurePropertyType;
+            } else {
+                if (additionalValues.containsKey(HelperValues.ENCODE)
+                        && additionalValues.get(HelperValues.ENCODE).equals("false") || !samplingFeature.isEncode()) {
+                    featurePropertyType.setHref(feature.getIdentifierCodeWithAuthority().getValue());
+                    if (feature instanceof SamplingFeature && samplingFeature.isSetName()) {
+                        featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());
+                    }
+                    return featurePropertyType;
+                }
+                if (!samplingFeature.isSetGeometry()) {
+                    featurePropertyType.setHref(samplingFeature.getIdentifierCodeWithAuthority().getValue());
+                    if (samplingFeature.isSetName()) {
+                        featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());
+                    }
+                    return featurePropertyType;
+                }
+                if (samplingFeature.isSetUrl()) {
+                    featurePropertyType.setHref(samplingFeature.getUrl());
+                    if (samplingFeature.isSetName()) {
+                        featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());
+                    }
+                    return featurePropertyType;
+                } else {
+                    String namespace;
+                    if (additionalValues.containsKey(HelperValues.ENCODE_NAMESPACE)) {
+                        namespace = additionalValues.get(HelperValues.ENCODE_NAMESPACE);
+                    } else {
+                        namespace = OMHelper.getNamespaceForFeatureType(samplingFeature.getFeatureType());
+                    }
+                    final XmlObject encodedXmlObject = CodingHelper.encodeObjectToXml(namespace, samplingFeature);
 
-	private XmlObject createFeature(final AbstractFeature feature,
-			final Map<HelperValues, String> additionalValues)
-			throws OwsExceptionReport {
-		final FeaturePropertyType featurePropertyType = FeaturePropertyType.Factory
-				.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-		if (isNotSamplingFeature(feature)) {
-			featurePropertyType.setHref(feature
-					.getIdentifierCodeWithAuthority().getValue());
-			return featurePropertyType;
-		} else {
-			final SamplingFeature samplingFeature = (SamplingFeature) feature;
-			if (samplingFeature.isSetGmlID()) {
-				featurePropertyType.setHref("#" + samplingFeature.getGmlId());
-				return featurePropertyType;
-			} else {
-				if (additionalValues.containsKey(HelperValues.ENCODE)
-						&& additionalValues.get(HelperValues.ENCODE).equals(
-								"false") || !samplingFeature.isEncode()) {
-					featurePropertyType.setHref(feature
-							.getIdentifierCodeWithAuthority().getValue());
-					if (feature instanceof SamplingFeature
-							&& samplingFeature.isSetName()) {
-						featurePropertyType.setTitle(samplingFeature
-								.getFirstName().getValue());
-					}
-					return featurePropertyType;
-				}
-				if (!samplingFeature.isSetGeometry()) {
-					featurePropertyType.setHref(samplingFeature
-							.getIdentifierCodeWithAuthority().getValue());
-					if (samplingFeature.isSetName()) {
-						featurePropertyType.setTitle(samplingFeature
-								.getFirstName().getValue());
-					}
-					return featurePropertyType;
-				}
-				if (samplingFeature.isSetUrl()) {
-					featurePropertyType.setHref(samplingFeature.getUrl());
-					if (samplingFeature.isSetName()) {
-						featurePropertyType.setTitle(samplingFeature
-								.getFirstName().getValue());
-					}
-					return featurePropertyType;
-				} else {
-					String namespace;
-					if (additionalValues
-							.containsKey(HelperValues.ENCODE_NAMESPACE)) {
-						namespace = additionalValues
-								.get(HelperValues.ENCODE_NAMESPACE);
-					} else {
-						namespace = OMHelper
-								.getNamespaceForFeatureType(samplingFeature
-										.getFeatureType());
-					}
-					final XmlObject encodedXmlObject = CodingHelper
-							.encodeObjectToXml(namespace, samplingFeature);
-
-					if (encodedXmlObject != null) {
-						return encodedXmlObject;
-					} else {
-						if (samplingFeature.getXmlDescription() != null) {
-							try {
-								// TODO how set gml:id in already existing
-								// XmlDescription? <-- XmlCursor
-								return XmlObject.Factory.parse(samplingFeature
-										.getXmlDescription());
-							} catch (final XmlException xmle) {
-								throw new NoApplicableCodeException()
-										.causedBy(xmle)
-										.withMessage(
-												"Error while encoding featurePropertyType!");
-							}
-						} else {
-							featurePropertyType.setHref(samplingFeature
-									.getIdentifier());
-							if (samplingFeature.isSetName()) {
-								featurePropertyType.setTitle(samplingFeature
-										.getFirstName().getValue());
-							}
-							return featurePropertyType;
-						}
-					}
-				}
-			}
-		}
-	}
+                    if (encodedXmlObject != null) {
+                        return encodedXmlObject;
+                    } else {
+                        if (samplingFeature.getXmlDescription() != null) {
+                            try {
+                                // TODO how set gml:id in already existing
+                                // XmlDescription? <-- XmlCursor
+                                return XmlObject.Factory.parse(samplingFeature.getXmlDescription());
+                            } catch (final XmlException xmle) {
+                                throw new NoApplicableCodeException().causedBy(xmle).withMessage(
+                                        "Error while encoding featurePropertyType!");
+                            }
+                        } else {
+                            featurePropertyType.setHref(samplingFeature.getIdentifierCodeWithAuthority().getValue());
+                            if (samplingFeature.isSetName()) {
+                                featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());
+                            }
+                            return featurePropertyType;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 	private boolean isNotSamplingFeature(final AbstractFeature feature) {
 		return !(feature instanceof SamplingFeature);

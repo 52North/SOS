@@ -215,7 +215,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
             throws OwsExceptionReport {
         final FeaturePropertyType featurePropertyType =
                 FeaturePropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        if (isNotSamplingFeature(feature)) {
+        if (isNotSamplingFeature(feature) || additionalValues.containsKey(HelperValues.REFERENCED)) {
             featurePropertyType.setHref(feature.getIdentifierCodeWithAuthority().getValue());
             return featurePropertyType;
         } else {

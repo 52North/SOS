@@ -144,6 +144,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         p.put(HibernateConstants.CONNECTION_AUTO_RECONNECT_FOR_POOLS, "true");
         p.put(HibernateConstants.CONNECTION_TEST_ON_BORROW, "true");
         p.put(PROVIDED_JDBC, settings.get(PROVIDED_JDBC_DRIVER_KEY).toString());
+        p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         addMappingFileDirectories(settings, p);
 
         return p;
@@ -170,6 +171,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         settings.put(MAX_POOL_SIZE_KEY, current.getProperty(HibernateConstants.C3P0_MAX_SIZE));
         settings.put(BATCH_SIZE_KEY, current.getProperty(HibernateConstants.JDBC_BATCH_SIZE));
         settings.put(TRANSACTIONAL_KEY, isTransactional(current));
+        settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
         settings.put(PROVIDED_JDBC_DRIVER_KEY,
                 current.getProperty(PROVIDED_JDBC, PROVIDED_JDBC_DRIVER_DEFAULT_VALUE.toString()));
         final String url = current.getProperty(HibernateConstants.CONNECTION_URL);

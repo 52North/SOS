@@ -52,7 +52,6 @@ public class PostgresCoreDatasource extends AbstractPostgresDatasource {
         setPortDescription(PORT_DESCRIPTION);
         setSchemaDefault(SCHEMA_DEFAULT_VALUE);
         setSchemaDescription(SCHEMA_DESCRIPTION);
-        getSpatialFilteringProfileDefiniton().setDefaultValue(false);
         super.setTransactional(false);
     }
 

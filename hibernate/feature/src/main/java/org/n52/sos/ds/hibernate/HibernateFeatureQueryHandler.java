@@ -119,7 +119,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             return createSosAbstractFeature((FeatureOfInterest) q.uniqueResult(), queryObject);
         } catch (final HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage(
-                    "An error occurs while querying feature data for a featureOfInterest identifier!");
+                    "An error occurred while querying feature data for a featureOfInterest identifier!");
         }
 
     }
@@ -157,7 +157,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             }
         } catch (final HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage(
-                    "An error occurs while querying feature identifiers for spatial filter!");
+                    "An error occurred while querying feature identifiers for spatial filter!");
         }
     }
 
@@ -542,15 +542,12 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                     List<Coordinate> coordinates = Lists.newLinkedList();
                     Geometry lastGeoemtry = null;
                     for (Geometry geometry : geometries) {
-                        if (lastGeoemtry == null) {
+                        if (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry)) {
+                        	coordinates.add(GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(geometry).getCoordinate());
                             lastGeoemtry = geometry;
-                        }
-                        if (geometry.getSRID() != srid) {
-                           srid = geometry.getSRID();
-                        }
-                        if (!geometry.equalsTopo(lastGeoemtry)) {
-                            coordinates.add(GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(geometry).getCoordinate());
-                            lastGeoemtry = geometry;
+                            if (geometry.getSRID() != srid) {
+                                srid = geometry.getSRID();
+                             }
                         }
                     }
                     Geometry geom = null;

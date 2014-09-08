@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.n52.sos.cache.ContentCacheUpdate;
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.cache.ctrl.action.CompleteCacheUpdate;
-import org.n52.sos.cache.ctrl.persistence.CachePersistenceStrategy;
+import org.n52.sos.cache.ContentCachePersistenceStrategy;
 import org.n52.sos.cache.ctrl.persistence.CachePersistenceStrategyFactory;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
@@ -62,10 +62,10 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
 
     private final ReentrantLock lock = new ReentrantLock();
 
-    private final CachePersistenceStrategy persistenceStrategy;
+    private final ContentCachePersistenceStrategy persistenceStrategy;
 
     public ContentCacheControllerImpl(
-            CachePersistenceStrategy persistenceStrategy) {
+            ContentCachePersistenceStrategy persistenceStrategy) {
         this.persistenceStrategy = persistenceStrategy;
         loadOrCreateCache();
     }
@@ -215,6 +215,11 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
     @Override
     public void update() throws OwsExceptionReport {
         update(new CompleteCacheUpdate());
+    }
+
+    @Override
+    public ContentCachePersistenceStrategy getContentCachePersistenceStrategy() {
+        return this.persistenceStrategy;
     }
 
     private enum State {

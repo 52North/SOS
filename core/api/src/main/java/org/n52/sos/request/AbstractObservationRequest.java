@@ -31,8 +31,12 @@ package org.n52.sos.request;
 import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.util.StringHelper;
 
-public abstract class AbstractObservationRequest extends AbstractServiceRequest<AbstractObservationResponse> implements SrsNameRequest {
-    
+/**
+ * SOS AbstractObservation request
+ * 
+ * @since 4.0.0
+ */
+public abstract class AbstractObservationRequest extends AbstractServiceRequest<AbstractObservationResponse> implements ResponseFormat, SrsNameRequest {
     /**
      * SRS name
      */
@@ -58,6 +62,7 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
      * 
      * @return response format
      */
+    @Override
     public String getResponseFormat() {
         return responseFormat;
     }
@@ -68,10 +73,12 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
      * @param responseFormat
      *            response format
      */
+    @Override
     public void setResponseFormat(String responseFormat) {
         this.responseFormat = responseFormat;
     }
 
+    @Override
     public boolean isSetResponseFormat() {
         return StringHelper.isNotEmpty(getResponseFormat());
     }

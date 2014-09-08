@@ -59,7 +59,7 @@
         <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit" fetch="select" lazy="no-proxy" foreign-key="observationUnitFk">
             <column name="unitId" not-null="false" />
         </many-to-one>
-        <set name="offerings" table="observationHasOffering" inverse="false" fetch="select" lazy="false">
+        <set name="offerings" table="observationHasOffering" inverse="false" fetch="select" lazy="true">
             <key>
                 <column name="observationId" not-null="true" />
             </key>
@@ -68,7 +68,7 @@
             </many-to-many>
         </set>
          <property name="samplingGeometry" type="org.hibernate.spatial.GeometryType">
-            <column name="samplingGeometry" index="samplingGeomidx"/>
+            <column name="samplingGeometry" />
         </property>
     </class>
 </hibernate-mapping>

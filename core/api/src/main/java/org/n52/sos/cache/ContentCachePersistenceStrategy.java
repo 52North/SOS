@@ -26,11 +26,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.cache.ctrl.persistence;
+package org.n52.sos.cache;
 
-
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.cache.WritableContentCache;
+import org.n52.sos.util.Cleanupable;
 
 import com.google.common.base.Optional;
 
@@ -39,13 +37,38 @@ import com.google.common.base.Optional;
  *
  * @author Christian Autermann
  */
-public interface CachePersistenceStrategy {
+public interface ContentCachePersistenceStrategy extends Cleanupable {
+    /**
+     * Read the persisted content cache if it present.
+     *
+     * @return the cache
+     */
     Optional<WritableContentCache> load();
 
+    /**
+     * Persist the specified cache in the event of a partial content update.
+     *
+     * @param cache the cache
+     */
     void persistOnPartialUpdate(ContentCache cache);
 
+    /**
+     * Persist the specified cache in the event of a complete content update.
+     *
+     * @param cache the cache
+     */
     void persistOnCompleteUpdate(ContentCache cache);
 
+    /**
+     * Persist the specified cache in the event of a service shutdown.
+     *
+     * @param cache the cache
+     */
     void persistOnShutdown(ContentCache cache);
 
+    /**
+     * Delete any persistent cache instances created by this strategy.
+     */
+    @Override
+    public void cleanup();
 }

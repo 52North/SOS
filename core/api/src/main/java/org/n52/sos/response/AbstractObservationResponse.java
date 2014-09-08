@@ -32,6 +32,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.request.ResponseFormat;
+import org.n52.sos.util.StringHelper;
 
 /**
  * TODO JavaDoc
@@ -40,7 +42,7 @@ import org.n52.sos.ogc.om.OmObservation;
  * 
  * @since 4.0.0
  */
-public abstract class AbstractObservationResponse extends AbstractServiceResponse {
+public abstract class AbstractObservationResponse extends AbstractServiceResponse implements ResponseFormat {
     private List<OmObservation> observationCollection;
 
     private String responseFormat;
@@ -55,12 +57,19 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
         this.observationCollection = observationCollection;
     }
 
+    @Override
     public String getResponseFormat() {
         return responseFormat;
     }
 
+    @Override
     public void setResponseFormat(final String responseFormat) {
         this.responseFormat = responseFormat;
+    }
+    
+    @Override
+    public boolean isSetResponseFormat() {
+    	return StringHelper.isNotEmpty(getResponseFormat());
     }
 
     public void setResultModel(final String resultModel) {

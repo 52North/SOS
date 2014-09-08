@@ -28,6 +28,8 @@
  */
 package org.n52.sos.encode.sos.v2;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import net.opengis.sos.x20.GetResultTemplateResponseDocument;
@@ -44,6 +46,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
+import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.response.GetResultTemplateResponse;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -83,7 +86,9 @@ public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder
                         "ResultEncoding element encoding is not supported!");
             }
         } else {
-            XmlObject xml = encodeSwe(resultEncoding.getEncoding());
+        	Map<HelperValues, String> helperValues = new HashMap<HelperValues, String>(1);
+        	helperValues.put(HelperValues.DOCUMENT, null);
+            XmlObject xml = encodeSwe(helperValues, resultEncoding.getEncoding());
             if (xml instanceof TextEncodingDocument) {
                 xbEncoding = (TextEncodingDocument) xml;
             } else {
@@ -107,7 +112,9 @@ public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder
                         .withMessage("ResultStructure element encoding is not supported!");
             }
         } else {
-            XmlObject xml = encodeSwe(resultStructure.getResultStructure());
+        	Map<HelperValues, String> helperValues = new HashMap<HelperValues, String>(1);
+        	helperValues.put(HelperValues.DOCUMENT, null);
+            XmlObject xml = encodeSwe(helperValues, resultStructure.getResultStructure());
             if (xml instanceof DataRecordDocument) {
                 dataRecordDoc = (DataRecordDocument) xml;
             } else {

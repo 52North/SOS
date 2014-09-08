@@ -40,7 +40,7 @@ import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a> TODO test extent to methods!!!
- * 
+ *
  * @since 4.0.0
  */
 public class TimePeriodTest {
@@ -146,13 +146,12 @@ public class TimePeriodTest {
 
     @Test
     public void testIndeterminateNowEnd() {
-        TimePeriod timePeriod = new TimePeriod(new DateTime(), null, null, TimeIndeterminateValue.now);
-        DateTime beforeAccess = new DateTime();
-        DateTime nowValue = timePeriod.resolveEnd();
-        assertNotNull("TimePeriod end now value is null", nowValue);
-        assertTrue("TimePeriod end now value is too early",
-                nowValue.isAfter(beforeAccess) || nowValue.isEqual(beforeAccess));
-        assertTrue("TimePeriod end now value is too late", nowValue.isBeforeNow() || nowValue.isEqualNow());
+        DateTime beforeResolve = new DateTime();
+        DateTime resolvedValue = new TimePeriod(new DateTime(), null, null, TimeIndeterminateValue.now).resolveEnd();
+        DateTime afterResolve = new DateTime();
+        assertNotNull("TimePeriod end now value is null", resolvedValue);
+        assertTrue("TimePeriod end now value is too early", resolvedValue.isAfter(beforeResolve) || resolvedValue.isEqual(beforeResolve));
+        assertTrue("TimePeriod end now value is too late", resolvedValue.isBefore(afterResolve)|| resolvedValue.isEqual(afterResolve));
     }
 
 }

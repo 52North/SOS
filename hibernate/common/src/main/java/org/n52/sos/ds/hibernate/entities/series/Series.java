@@ -29,14 +29,17 @@
 package org.n52.sos.ds.hibernate.entities.series;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservableProperty;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.*;
 /**
  * Hibernate entity for series
  * 
@@ -64,9 +67,9 @@ public class Series implements Serializable, HasProcedure, HasObservableProperty
     
     private Date lastTimeStamp;
     
-    private BigDecimal firstNumericValue;
+    private Double firstNumericValue;
     
-    private BigDecimal lastNumericValue;
+    private Double lastNumericValue;
     
     private Unit unit;
     
@@ -174,14 +177,14 @@ public class Series implements Serializable, HasProcedure, HasObservableProperty
     /**
      * @return the firstNumericValue
      */
-    public BigDecimal getFirstNumericValue() {
+    public Double getFirstNumericValue() {
         return firstNumericValue;
     }
 
     /**
      * @param firstNumericValue the firstNumericValue to set
      */
-    public void setFirstNumericValue(BigDecimal firstNumericValue) {
+    public void setFirstNumericValue(Double firstNumericValue) {
         this.firstNumericValue = firstNumericValue;
     }
     
@@ -192,14 +195,14 @@ public class Series implements Serializable, HasProcedure, HasObservableProperty
     /**
      * @return the lastNumericValue
      */
-    public BigDecimal getLastNumericValue() {
+    public Double getLastNumericValue() {
         return lastNumericValue;
     }
 
     /**
      * @param lastNumericValue the lastNumericValue to set
      */
-    public void setLastNumericValue(BigDecimal lastNumericValue) {
+    public void setLastNumericValue(Double lastNumericValue) {
         this.lastNumericValue = lastNumericValue;
     }
     

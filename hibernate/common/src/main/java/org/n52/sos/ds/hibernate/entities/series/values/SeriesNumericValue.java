@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities.series.values;
 
-import java.math.BigDecimal;
-
 import org.n52.sos.ds.hibernate.entities.interfaces.NumericValue;
 
 /**
@@ -42,17 +40,17 @@ import org.n52.sos.ds.hibernate.entities.interfaces.NumericValue;
  */
 public class SeriesNumericValue extends SeriesValue implements NumericValue {
     
-    private static final long serialVersionUID = 7487419141361171657L;
+    private static final long serialVersionUID = 7487419141361171658L;
     
-    private BigDecimal value;
+    private Double value;
 
     @Override
-    public BigDecimal getValue() {
+    public Double getValue() {
         return value;
     }
 
     @Override
-    public void setValue(BigDecimal value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 

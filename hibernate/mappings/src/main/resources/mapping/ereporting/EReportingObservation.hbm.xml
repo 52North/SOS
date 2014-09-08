@@ -87,7 +87,7 @@
         </joined-subclass>
 		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingNumericObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" table="numericValue">
         	<key column="observationId" foreign-key="observationNumericValueFk" />
-         	<property name="value" type="big_decimal" />
+         	<property name="value" type="double" />
         </joined-subclass>
 		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingTextObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" table="textValue">
         	<key column="observationId" foreign-key="observationTextValueFk" />

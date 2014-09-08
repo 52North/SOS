@@ -85,6 +85,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -253,7 +254,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                                 + JavaHelper.generateID(samplingFeature.getXmlDescription());
                 samplingFeature.setIdentifier(new CodeWithAuthority(featureIdentifier));
             }
-            return insertFeatureOfInterest(samplingFeature, session);
+            return insertFeatureOfInterest(samplingFeature, session).getIdentifier();
         }
     }
 
@@ -344,7 +345,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         return sampFeat;
     }
 
-    protected String insertFeatureOfInterest(final SamplingFeature samplingFeature, final Session session)
+    protected FeatureOfInterest insertFeatureOfInterest(final SamplingFeature samplingFeature, final Session session)
             throws OwsExceptionReport {
         if (!GeometryHandler.getInstance().isSpatialDatasource()) {
             throw new NotYetSupportedException("Insertion of full encoded features for non spatial datasources");
@@ -374,15 +375,25 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                         samplingFeature.getFeatureType(), session));
             }
 
-            // TODO: create relationship
-            // if (samplingFeature.isSetSampledFeatures()) {
-            // }
+            if (samplingFeature.isSetSampledFeatures()) {
+                Set<FeatureOfInterest> parents =
+                        Sets.newHashSetWithExpectedSize(samplingFeature.getSampledFeatures().size());
+                for (AbstractFeature sampledFeature : samplingFeature.getSampledFeatures()) {
+                    if (sampledFeature instanceof SamplingFeature) {
+                        parents.add(insertFeatureOfInterest((SamplingFeature) sampledFeature, session));
+                    } else {
+                        parents.add(insertFeatureOfInterest(new SamplingFeature(sampledFeature.getIdentifier()), session));
+                    }
+                }
+                ((TFeatureOfInterest) feature).setParents(parents);
+            }
             session.save(feature);
             session.flush();
-            return newId;
-        } else {
-            return feature.getIdentifier();
+//            return newId;
+//        } else {
+//            return feature.getIdentifier();
         }
+        return feature;
     }
 
     protected void processGeometryPreSave(final SamplingFeature ssf, final FeatureOfInterest f, Session session)

@@ -226,7 +226,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
             ((StreamingEncoder<XmlObject, OmObservation>) encoder).encode(observation, getOutputStream(),
                     encodingValues.setAsDocument(true).setEmbedded(true).setIndent(indent));
         } else {
-            rawText(((XmlObject) encoder.encode(observation, encodingValues.getAdditionalValues()))
+            rawText((encoder.encode(observation, encodingValues.getAdditionalValues()))
                     .xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
         }
         indent--;

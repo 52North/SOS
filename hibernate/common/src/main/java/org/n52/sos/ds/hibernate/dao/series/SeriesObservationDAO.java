@@ -259,5 +259,5 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
     @Override
     protected Class<?> getTextObservationClass() {
         return SeriesTextObservation.class;
-    }  
+    }
 }

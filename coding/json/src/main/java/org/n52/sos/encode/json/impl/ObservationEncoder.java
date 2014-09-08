@@ -32,7 +32,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.n52.sos.coding.json.JSONConstants;
-import org.n52.sos.coding.json.JSONUtils;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.om.OmConstants;
@@ -61,6 +60,7 @@ import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.ogc.swe.simpleType.SweTime;
+import org.n52.sos.util.JSONUtils;
 import org.n52.sos.util.OMHelper;
 
 import com.fasterxml.jackson.databind.JsonNode;

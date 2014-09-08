@@ -41,7 +41,6 @@ import static org.n52.sos.coding.json.JSONConstants.TEMPORAL_FILTER;
 
 import java.util.List;
 
-import org.n52.sos.coding.json.JSONUtils;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
 import org.n52.sos.ogc.filter.SpatialFilter;
@@ -50,6 +49,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.util.JSONUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

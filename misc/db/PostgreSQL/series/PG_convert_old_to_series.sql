@@ -33,10 +33,15 @@
 
 -- create series table and sequence add constraints to series
 CREATE sequence seriesId_seq;
-CREATE TABLE series (seriesId int8 not null, featureOfInterestId int8 not null, observablePropertyId int8 not null, procedureId int8 not null, deleted char(1) default 'F' not null check (deleted in ('T','F')), primary key (seriesId), unique (featureOfInterestId, observablePropertyId, procedureId));
+create table series (seriesId int8 not null, featureOfInterestId int8 not null, observablePropertyId int8 not null, procedureId int8 not null, deleted char(1) default 'F' not null check (deleted in ('T','F')), firstTimeStamp timestamp, lastTimeStamp timestamp, firstNumericValue numeric(19, 2), lastNumericValue numeric(19, 2), unitId int8, primary key (seriesId));
+ALTER TABLE series add constraint seriesIdentity unique (featureOfInterestId, observablePropertyId, procedureId);
+CREATE INDEX seriesFeatureIdx on series (featureOfInterestId);
+CREATE INDEX seriesObsPropIdx on series (observablePropertyId);
+CREATE INDEX seriesProcedureIdx on series (procedureId);
 ALTER TABLE series add constraint seriesFeatureFk foreign key (featureOfInterestId) references featureOfInterest;
 ALTER TABLE series add constraint seriesObPropFk foreign key (observablePropertyId) references observableProperty;
-ALTER TABLE series add constraint seriesProcedureFk foreign key (procedureId) references procedure;
+ALTER TABLE series add constraint seriesProcedureFk foreign key (procedureId) references "procedure";
+ALTER TABLE series add constraint seriesUnitFk foreign key (unitId) references unit;
 
 -- add series column to observation table
 ALTER TABLE observation ADD COLUMN seriesId int8;
@@ -50,7 +55,7 @@ UPDATE observation o SET seriesid = s.seriesid FROM series s WHERE o.featureofin
 
 -- set series column to not null and add unique constraint
 ALTER TABLE observation ALTER COLUMN seriesId SET NOT NULL;
-ALTER TABLE observation ADD unique (seriesId, phenomenonTimeStart, phenomenonTimeEnd, resultTime);
+ALTER TABLE observation add constraint observationIdentity unique (seriesId, phenomenonTimeStart, phenomenonTimeEnd, resultTime);
 
 -- drop old constraints and drop old columns
 ALTER TABLE observation DROP CONSTRAINT IF EXISTS observation_featureofinterestid_observablepropertyid_proced_key;

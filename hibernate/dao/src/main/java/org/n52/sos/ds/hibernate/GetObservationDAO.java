@@ -246,7 +246,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         List<OmObservation> result = HibernateGetObservationHelper.toSosObservation(observations, request, LocaleHelper.fromRequest(request), session);
         Set<OmObservationConstellation> timeSeries = Sets.newHashSet();
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowMetadataOfEmptyObservations()
-                || Integer.MAX_VALUE != ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries()) {
+                || ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries() > 0) {
             for (OmObservation omObservation : result) {
                 timeSeries.add(omObservation.getObservationConstellation());
             }

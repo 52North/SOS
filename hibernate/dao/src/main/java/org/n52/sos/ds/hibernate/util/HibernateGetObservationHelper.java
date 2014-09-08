@@ -120,7 +120,7 @@ public class HibernateGetObservationHelper {
      */
     public static void checkMaxNumberOfReturnedTimeSeries(Collection<SeriesObservation> seriesObservations,
             int metadataObservationsCount) throws CodedException {
-        if (Integer.MAX_VALUE != ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries()) {
+        if (ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries() > 0) {
             Set<Long> seriesIds = Sets.newHashSet();
             for (SeriesObservation seriesObs : seriesObservations) {
                 seriesIds.add(seriesObs.getSeries().getSeriesId());
@@ -139,7 +139,7 @@ public class HibernateGetObservationHelper {
      */
     public static void checkMaxNumberOfReturnedSeriesSize(int size) throws CodedException {
         // FIXME refactor profile handling
-        if (size > ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries()) {
+        if (ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries() > 0 && size > ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries()) {
             throw new ResponseExceedsSizeLimitException().at("maxNumberOfReturnedTimeSeries");
         }
     }
@@ -154,7 +154,7 @@ public class HibernateGetObservationHelper {
      */
     public static void checkMaxNumberOfReturnedValues(int size) throws CodedException {
         // FIXME refactor profile handling
-        if (size > ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues()) {
+        if (ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues() > 0 &&  size > ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues()) {
             throw new ResponseExceedsSizeLimitException().at("maxNumberOfReturnedValues");
         }
     }

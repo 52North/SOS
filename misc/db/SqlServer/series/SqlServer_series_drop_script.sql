@@ -27,4 +27,36 @@
 -- Public License for more details.
 --
 
-ALTER TABLE observation ADD COLUMN  description character varying(255);
+drop table dbo.blobValue;
+drop table dbo.booleanValue;
+drop table dbo.categoryValue;
+drop table dbo.countValue;
+drop table dbo.geometryValue;
+drop table dbo.numericValue;
+drop table dbo.sweDataArrayValue;
+drop table dbo.textValue;
+drop table dbo.compositePhenomenon;
+drop table dbo.parameter;
+drop table dbo.observationHasOffering;
+drop table dbo.offeringAllowedFeatureType;
+drop table dbo.offeringAllowedObservationType;
+drop table dbo.offeringHasRelatedFeature;
+drop table dbo.relatedFeatureHasRole;
+drop table dbo.relatedFeatureRole;
+drop table dbo.relatedFeature;
+drop table dbo.sensorSystem;
+drop table dbo.validProcedureTime;
+drop table dbo.resultTemplate;
+drop table dbo.featureRelation;
+drop table dbo.observationConstellation;
+drop table dbo.observation;
+drop table dbo.series;
+drop table dbo.unit;
+drop table dbo.observationType;
+drop table dbo.featureOfInterest;
+drop table dbo.observableProperty;
+drop table dbo.offering;
+drop table dbo.[procedure];
+drop table dbo.featureOfInterestType;
+drop table dbo.procedureDescriptionFormat;
+drop table dbo.codespace;

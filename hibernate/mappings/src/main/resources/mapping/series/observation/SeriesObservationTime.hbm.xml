@@ -39,7 +39,7 @@
             <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
         </property>
         <property name="samplingGeometry" type="org.hibernate.spatial.GeometryType">
-            <column name="samplingGeometry" index="samplingGeomidx"/>
+            <column name="samplingGeometry"/>
         </property>
     </class>
 </hibernate-mapping>

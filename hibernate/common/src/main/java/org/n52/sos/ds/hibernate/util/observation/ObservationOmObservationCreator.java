@@ -349,6 +349,39 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return foiID;
     }
 
+//    private void createValue(AbstractObservation hObservation, String phenomenonId, String procedureId,
+//            String featureId) throws OwsExceptionReport {
+//        LOGGER.trace("Creating Value...");
+//        final Value<?> value = getValueFromObservation(hObservation);
+//        if (value != null) {
+//            if (hObservation.getUnit() != null) {
+//                value.setUnit(hObservation.getUnit().getUnit());
+//            }
+//            checkOrSetObservablePropertyUnit(getObservedProperty(phenomenonId), value.getUnit());
+//            OmObservationConstellation obsConst =
+//                    createObservationConstellation(hObservation, procedureId, phenomenonId, featureId);
+//            final OmObservation sosObservation = createNewObservation(obsConst, hObservation, value);
+//            // add SpatialFilteringProfile
+//            if (hObservation.hasSamplingGeometry()) {
+//                sosObservation.addParameter(createSpatialFilteringProfileParameter(hObservation.getSamplingGeometry()));
+//            } else if (isSetSpatialFilteringProfileAdder()) {
+//                getSpatialFilteringProfileAdder().add(hObservation.getObservationId(), sosObservation);
+//            } else {
+//            	if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
+//            		AbstractFeature feature = getFeature(featureId);
+//            		if (feature != null && feature instanceof SamplingFeature && ((SamplingFeature)feature).isSetGeometry())
+//            		sosObservation.addParameter(createSpatialFilteringProfileParameter(((SamplingFeature)feature).getGeometry()));
+//                }
+//            }
+//            observationCollection.add(sosObservation);
+//            getSession().evict(hObservation);
+//            // TODO check for ScrollableResult vs
+//            // setFetchSize/setMaxResult
+//            // + setFirstResult
+//        }
+//        LOGGER.trace("Creating Value done.");
+//    }
+
     private OmObservationConstellation createObservationConstellation(AbstractObservation hObservation,
             String procedureId, String phenomenonId, String featureId) {
         OmObservationConstellation obsConst =

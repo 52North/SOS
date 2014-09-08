@@ -191,7 +191,7 @@ public class DeleteObservationEncoderTest {
         assertThat(schemLoc.getNamespace(), is("http://www.opengis.net/sosdo/1.0"));
         assertThat(
                 schemLoc.getSchemaFileUrl(),
-                is("https://svn.52north.org/svn/swe/main/SOS/Extensions/Operation/DeleteObservation/trunk/xml/src/main/xsd/sosdo.xsd"));
+                is("https://raw.githubusercontent.com/52North/SOS/master/extensions/do/xml/src/main/xsd/sosdo.xsd"));
     }
 
 }

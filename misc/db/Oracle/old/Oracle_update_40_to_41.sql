@@ -27,4 +27,6 @@
 -- Public License for more details.
 --
 
-ALTER TABLE observation ADD COLUMN  description character varying(255);
+ALTER TABLE procedure ADD referenceFlag char(1 char) default 'F' check (referenceFlag in ('T','F'));
+
+ALTER TABLE observation ADD samplingGeometry GEOMETRY;

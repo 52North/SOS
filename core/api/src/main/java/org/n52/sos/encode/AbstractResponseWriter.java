@@ -29,7 +29,11 @@
 package org.n52.sos.encode;
 
 import org.n52.sos.coding.CodingRepository;
+import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.util.http.MediaType;
+import org.n52.sos.util.http.MediaTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract {@link ResponseWriter} class for response streaming
@@ -40,10 +44,11 @@ import org.n52.sos.util.http.MediaType;
  * @param <T>
  *            generic for the element to write
  */
-public abstract class AbstractResponseWriter<T> implements ResponseWriter<T> {
-   
+public abstract class AbstractResponseWriter<T> implements ResponseWriter<T> {   
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(AbstractResponseWriter.class);
     private MediaType contentType;
-    
+
     @Override
     public MediaType getContentType() {
         return contentType;
@@ -72,4 +77,27 @@ public abstract class AbstractResponseWriter<T> implements ResponseWriter<T> {
     protected <D, S> Encoder<D, S> getEncoder(EncoderKey key) {
         return CodingRepository.getInstance().getEncoder(key);
     }
+
+    
+	@Override
+	public MediaType getEncodedContentType(ResponseFormat responseFormat) {
+		if (responseFormat.isSetResponseFormat()) {
+			MediaType contentTypeFromResponseFormat = null;
+			try {
+				contentTypeFromResponseFormat = MediaType.parse(
+						responseFormat.getResponseFormat())
+						.withoutParameters();
+			} catch (IllegalArgumentException iae) {
+				LOGGER.debug("Requested responseFormat {} is not a MediaType",
+						responseFormat.getResponseFormat());
+			}
+			if (contentTypeFromResponseFormat != null) {
+				if (MediaTypes.COMPATIBLE_TYPES.containsEntry(contentTypeFromResponseFormat, getContentType())) {
+					return getContentType();
+				}
+				return contentTypeFromResponseFormat;
+			}
+		}
+		return getContentType();
+	}
 }

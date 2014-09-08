@@ -40,6 +40,7 @@ import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.series.Series;
+import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -396,6 +397,35 @@ public abstract class AbstractSeriesDAO {
         session.saveOrUpdate(series);
         session.flush();
     }
+    
+	/**
+	 * Check {@link Series} if the deleted observation time stamp corresponds to
+	 * the first/last series time stamp
+	 * 
+	 * @param series
+	 *            Series to update
+	 * @param observation
+	 *            Deleted observation
+	 * @param session
+	 *            Hibernate session
+	 */
+	public void updateSeriesAfterObservationDeletion(Series series, SeriesObservation observation, Session session) {
+		SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO();
+		if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())) {
+			SeriesObservation firstObservation = seriesObservationDAO.getFirstObservationFor(series, session);
+			series.setFirstTimeStamp(firstObservation.getPhenomenonTimeStart());
+			if (firstObservation instanceof NumericObservation) {
+				series.setFirstNumericValue(((NumericObservation) firstObservation).getValue());
+			}
+		} else if (series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
+			SeriesObservation latestObservation = seriesObservationDAO.getLastObservationFor(series, session);
+			series.setLastTimeStamp(latestObservation.getPhenomenonTimeEnd());
+			if (latestObservation instanceof NumericObservation) {
+				series.setLastNumericValue(((NumericObservation) latestObservation).getValue());
+			}
+		}
+		session.saveOrUpdate(series);
+	}
     
     /**
      * Create series query criteria for parameter

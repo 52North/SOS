@@ -27,7 +27,6 @@
 		<dependency>
 			<groupId>com.microsoft</groupId>
 			<artifactId>sqljdbc4</artifactId>
-			<version>4.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- Hibernate Core Dependencies -->

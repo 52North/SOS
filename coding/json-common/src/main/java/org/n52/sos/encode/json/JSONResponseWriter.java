@@ -32,7 +32,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.n52.sos.util.JSONUtils;
-import org.n52.sos.encode.ResponseWriter;
+import org.n52.sos.encode.AbstractResponseWriter;
+import org.n52.sos.encode.ResponseProxy;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.http.MediaTypes;
 
@@ -45,14 +46,10 @@ import com.fasterxml.jackson.databind.JsonNode;
  * 
  * @since 4.0.0
  */
-public class JSONResponseWriter implements ResponseWriter<JsonNode> {
-    @Override
-    public Class<JsonNode> getType() {
-        return JsonNode.class;
-    }
+public class JSONResponseWriter extends AbstractResponseWriter<JsonNode> {
 
     @Override
-    public void write(JsonNode t, OutputStream out) throws IOException {
+    public void write(JsonNode t, OutputStream out, ResponseProxy responseProxy) throws IOException {
         JSONUtils.print(out, t);
     }
 

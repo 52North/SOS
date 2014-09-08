@@ -27,6 +27,7 @@
 -- Public License for more details.
 --
 
+drop table if exists "procedure" cascade;
 alter table blobValue drop constraint observationBlobValueFk;
 alter table booleanValue drop constraint observationBooleanValueFk;
 alter table categoryValue drop constraint observationCategoryValueFk;
@@ -119,7 +120,6 @@ drop table if exists offeringAllowedFeatureType cascade;
 drop table if exists offeringAllowedObservationType cascade;
 drop table if exists offeringHasRelatedFeature cascade;
 drop table if exists parameter cascade;
-drop table if exists procedure cascade;
 drop table if exists procedureDescriptionFormat cascade;
 drop table if exists relatedFeature cascade;
 drop table if exists relatedFeatureHasRole cascade;
@@ -127,7 +127,6 @@ drop table if exists relatedFeatureRole cascade;
 drop table if exists resultTemplate cascade;
 drop table if exists sensorSystem cascade;
 drop table if exists series cascade;
-drop table if exists spatialFilteringProfile cascade;
 drop table if exists sweDataArrayValue cascade;
 drop table if exists textValue cascade;
 drop table if exists unit cascade;
@@ -151,7 +150,6 @@ drop sequence procedureId_seq;
 drop sequence relatedFeatureId_seq;
 drop sequence relatedFeatureRoleId_seq;
 drop sequence resultTemplateId_seq;
-drop sequence seriesid_seq;
-drop sequence spatialFilteringProfileId_seq;
+drop sequence seriesId_seq;
 drop sequence unitId_seq;
 drop sequence validProcedureTimeId_seq;

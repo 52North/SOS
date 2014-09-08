@@ -449,7 +449,7 @@ public class SensorMLDecoderV101Test  {
         dataArray.addNewElementCount().addNewCount().setValue(new BigInteger("1"));
         DataComponentPropertyType addNewElementType = dataArray.addNewElementType();
         addNewElementType.setName("elementType");
-        addNewElementType.addNewBoolean();
+        addNewElementType.addNewAbstractDataRecord();
         return dataArray;
     }
 

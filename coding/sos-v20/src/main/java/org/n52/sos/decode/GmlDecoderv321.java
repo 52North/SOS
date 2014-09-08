@@ -28,7 +28,6 @@
  */
 package org.n52.sos.decode;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -333,7 +332,7 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
     }
 
     private GmlMeasureType parseMeasureType(MeasureType measureType) {
-        GmlMeasureType sosMeasureType = new GmlMeasureType(new BigDecimal(measureType.getStringValue()));
+        GmlMeasureType sosMeasureType = new GmlMeasureType(measureType.getDoubleValue());
         sosMeasureType.setUnit(measureType.getUom());
         return sosMeasureType;
     }

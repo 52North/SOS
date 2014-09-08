@@ -151,13 +151,14 @@ public class OracleDatasource extends AbstractHibernateFullDBDatasource {
      * {@link Datasource#checkSchemaCreation(Map)} for testing
      */
     void doCheckSchemaCreation(String schema, Statement stmt) throws SQLException {
-        schema = schema == null ? "" : schema + ".";
+        final String schemaPrefix = schema == null ? "" : "\"" + schema + "\"."; 
+        final String testTable = schemaPrefix + "sos_test"; 
         final String command =
-                String.format("BEGIN\n" + "  BEGIN\n" + "    EXECUTE IMMEDIATE 'DROP TABLE \"%1$ssos_test\"';\n"
+                String.format("BEGIN\n" + "  BEGIN\n" + "    EXECUTE IMMEDIATE 'DROP TABLE %1$s';\n"
                         + "  EXCEPTION\n" + "    WHEN OTHERS THEN\n" + "      IF SQLCODE != -942 THEN\n"
                         + "        RAISE;\n" + "      END IF;\n" + "  END;\n"
-                        + "  EXECUTE IMMEDIATE 'CREATE TABLE \"%1$ssos_test\" (id integer NOT NULL)';\n"
-                        + "  EXECUTE IMMEDIATE 'DROP TABLE \"%1$ssos_test\"';\n" + "END;\n", schema);
+                        + "  EXECUTE IMMEDIATE 'CREATE TABLE %1$s (id integer NOT NULL)';\n"
+                        + "  EXECUTE IMMEDIATE 'DROP TABLE %1$s';\n" + "END;\n", testTable);
         stmt.execute(command);
     }
 

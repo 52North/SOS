@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -41,6 +40,7 @@ import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.ObservationValue;
+import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
@@ -97,6 +97,7 @@ public class ObservationUnfolder {
             for (final List<String> block : values) {
                 int tokenIndex = 0;
                 Time phenomenonTime = null;
+                TimeInstant resultTime = null;
                 final List<Value<?>> observedValues = new LinkedList<Value<?>>();
                 // map to store the observed properties
                 final Map<Value<?>, String> definitionsForObservedValues = Maps.newHashMap();
@@ -111,7 +112,13 @@ public class ObservationUnfolder {
                      */
                     if (fieldForToken instanceof SweTime) {
                         try {
-                            phenomenonTime = new TimeInstant(DateTimeHelper.parseIsoString2DateTime(token));
+                        	if (fieldForToken.isSetDefinition() && OmConstants.RESULT_TIME.equals(fieldForToken.getDefinition())) {
+                    			resultTime = new TimeInstant(DateTimeHelper.parseIsoString2DateTime(token));
+                    		} else {
+                    			if (phenomenonTime == null) {
+                    				phenomenonTime = new TimeInstant(DateTimeHelper.parseIsoString2DateTime(token));
+                    			}
+                    		}
                         } catch (final OwsExceptionReport e) {
                             throw e;
                         } catch (final Exception e) {
@@ -143,7 +150,7 @@ public class ObservationUnfolder {
                      * observation values
                      */
                     else if (fieldForToken instanceof SweQuantity) {
-                        observedValue = new QuantityValue(new BigDecimal(token));
+                        observedValue = new QuantityValue(Double.parseDouble(token));
                         observedValue.setUnit(((SweQuantity) fieldForToken).getUom());
                     } else if (fieldForToken instanceof SweBoolean) {
                         observedValue = new BooleanValue(Boolean.parseBoolean(token));
@@ -167,7 +174,7 @@ public class ObservationUnfolder {
                 }
                 for (final Value<?> iValue : observedValues) {
                     final OmObservation newObservation =
-                            createSingleValueObservation(multiObservation, phenomenonTime, iValue);
+                            createSingleValueObservation(multiObservation, phenomenonTime, resultTime, iValue);
                     observationCollection.add(newObservation);
                 }
             }
@@ -177,7 +184,7 @@ public class ObservationUnfolder {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private OmObservation createSingleValueObservation(final OmObservation multiObservation,
-            final Time phenomenonTime, final Value<?> iValue) {
+            final Time phenomenonTime, TimeInstant resultTime, final Value<?> iValue) {
         final ObservationValue<?> value = new SingleObservationValue(phenomenonTime, iValue);
         final OmObservation newObservation = new OmObservation();
         newObservation.setNoDataValue(multiObservation.getNoDataValue());
@@ -193,7 +200,17 @@ public class ObservationUnfolder {
          */
         newObservation.setObservationConstellation(obsConst);
         newObservation.setValidTime(multiObservation.getValidTime());
-        newObservation.setResultTime(multiObservation.getResultTime());
+        if (resultTime != null && !resultTime.isEmpty()) {
+        	newObservation.setResultTime(resultTime);
+        } else if (multiObservation.isSetResultTime() && !multiObservation.getResultTime().isEmpty()) {
+        	newObservation.setResultTime(multiObservation.getResultTime());
+        } else {
+        	if (phenomenonTime instanceof TimeInstant) {
+        		newObservation.setResultTime((TimeInstant)phenomenonTime);
+        	} else if (phenomenonTime instanceof TimePeriod) {
+        		newObservation.setResultTime(new TimeInstant(((TimePeriod)phenomenonTime).getEnd()));
+        	}
+        }
         newObservation.setTokenSeparator(multiObservation.getTokenSeparator());
         newObservation.setTupleSeparator(multiObservation.getTupleSeparator());
         newObservation.setResultType(multiObservation.getResultType());

@@ -1362,6 +1362,32 @@
 			"method":"POST"
 		},
 		{
+			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResultWithResultTime.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"InsertResult",
+			"title":"with ResultTime",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResultTemplateWithResultTime.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"InsertResultTemplate",
+			"title":"with ResultTime",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertSensor.xml",
 			"service":"SOS",
 			"version":"2.0.0",
@@ -1757,6 +1783,32 @@
 			"version":"2.0.0",
 			"binding": "application/soap+xml",
 			"operation":"InsertResultTemplate",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResultWithResultTime.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"InsertResult",
+			"title":"with ResultTime",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResultTemplateWithResultTime.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"InsertResultTemplate",
+			"title":"with ResultTime",
 			"headers":{
 				"Accept":"application/soap+xml",
 				"Content-Type":"application/soap+xml"

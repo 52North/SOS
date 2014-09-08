@@ -105,8 +105,28 @@ public class MySQLDatasource extends AbstractHibernateFullDBDatasource {
     }
 
     @Override
-    public boolean checkSchemaCreation(Map<String, Object> arg0) {
-        return false;
+    public boolean checkSchemaCreation(Map<String, Object> settings) {
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            conn = openConnection(settings);
+            stmt = conn.createStatement();
+            final String schema = (String) settings.get(createSchemaDefinition().getKey());
+            // mysql uses backticks (`) to quote
+            final String schemaPrefix = schema == null ? "" : "`" + schema + "`.";
+            final String testTable = schemaPrefix + "sos_installer_test_table";
+            final String dropTestTable = String.format("DROP TABLE IF EXISTS %1$s;", testTable);
+            final String createTestTable = String.format("CREATE TABLE %1$s (id integer NOT NULL);", testTable);
+            stmt.execute(dropTestTable);
+            stmt.execute(createTestTable);
+            stmt.execute(dropTestTable);
+            return true;
+        } catch (SQLException e) {
+            return false;
+        } finally {
+            close(stmt);
+            close(conn);
+        }        
     }
 
     @Override

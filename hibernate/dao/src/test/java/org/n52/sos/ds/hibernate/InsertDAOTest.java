@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -51,8 +50,8 @@ import org.n52.sos.config.SettingsManager;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
+import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.ObservationInsertion;
 import org.n52.sos.event.events.ResultInsertion;
@@ -290,8 +289,10 @@ public class InsertDAOTest extends HibernateTestCase {
         SweDataRecord dataRecord = new SweDataRecord();
         SweTime sweTime = new SweTime();
         sweTime.setUom(OmConstants.PHEN_UOM_ISO8601);
+        sweTime.setDefinition(OmConstants.PHENOMENON_TIME);
         dataRecord.addField(new SweField("time", sweTime));
         SweQuantity airTemp = new SweQuantity();
+        airTemp.setDefinition(obsPropId);
         airTemp.setUom(TEMP_UNIT);
         dataRecord.addField(new SweField("air_temperature", airTemp));
         SosResultStructure resultStructure = new SosResultStructure();
@@ -473,9 +474,9 @@ public class InsertDAOTest extends HibernateTestCase {
         returnSession(session);
 
         obs.setResultTime(new TimeInstant(OBS_TIME));
-        SingleObservationValue<BigDecimal> obsVal = new SingleObservationValue<BigDecimal>();
+        SingleObservationValue<Double> obsVal = new SingleObservationValue<Double>();
         obsVal.setPhenomenonTime(new TimeInstant(OBS_TIME));
-        obsVal.setValue(new QuantityValue(BigDecimal.valueOf(OBS_VAL), TEMP_UNIT));
+        obsVal.setValue(new QuantityValue(Double.valueOf(OBS_VAL), TEMP_UNIT));
         obs.setValue(obsVal);
         req.setObservation(Lists.newArrayList(obs));
         InsertObservationResponse resp = insertObservationDAO.insertObservation(req);

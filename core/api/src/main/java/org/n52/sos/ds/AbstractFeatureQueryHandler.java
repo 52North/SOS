@@ -135,6 +135,7 @@ public abstract class AbstractFeatureQueryHandler implements FeatureQueryHandler
         }
     }
 
+    //TODO replace with JavaHelper.asDouble?
     protected double getValueAsDouble(final Object value) {
         if (value instanceof String) {
             return Double.valueOf((String) value).doubleValue();

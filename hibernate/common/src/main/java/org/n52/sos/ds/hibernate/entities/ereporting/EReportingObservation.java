@@ -37,9 +37,9 @@ public class EReportingObservation extends SeriesObservation implements HasERepo
 
     private static final long serialVersionUID = 2878044983511090422L;
     
-    private Integer validation;
+    private Integer validation = new Integer(-1);
 
-    private Integer verification;
+    private Integer verification = new Integer(3);
     
     public EReportingSeries getEReportingSeries() {
         if (hasEReportingSeries()) {

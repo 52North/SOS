@@ -127,7 +127,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         if (changeable) {
             assertEquals(9, keys.size());
         } else {
-            assertEquals((transactional && concept) ? maxCount : counter, keys.size());
+            assertEquals((transactional && concept && multiLanguage) ? maxCount : counter, keys.size());
         }
         assertTrue(keys.contains(AbstractHibernateDatasource.HOST_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.PORT_KEY));

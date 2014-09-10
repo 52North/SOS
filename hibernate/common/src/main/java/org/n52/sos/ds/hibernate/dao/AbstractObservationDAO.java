@@ -1163,4 +1163,19 @@ public abstract class AbstractObservationDAO extends TimeCreator {
     }
 
     public abstract List<Geometry> getSamplingGeometries(String feature,  Session session);
+
+    /**
+     * Check if the observation table contains samplingGeometries with values
+     * 
+     * @param session
+     *            Hibernate session
+     * @return <code>true</code>, if the observation table contains samplingGeometries with values
+     */
+    public boolean containsSamplingGeometries(Session session) {
+        Criteria criteria = getDefaultObservationInfoCriteria(session);
+        criteria.add(Restrictions.isNotNull(AbstractObservation.SAMPLING_GEOMETRY));
+        criteria.setProjection(Projections.rowCount());
+        LOGGER.debug("QUERY containsSamplingGeometries(): {}", HibernateHelper.getSqlString(criteria));
+        return (Long) criteria.uniqueResult() > 0;
+    }
 }

@@ -170,15 +170,32 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     @Override
     protected OfferingCacheUpdateTask[] getUpdatesToExecute() {
         Collection<OfferingCacheUpdateTask> offeringUpdateTasks = Lists.newArrayList();
+        boolean hasSamplingGeometry = checkForSamplingGeometry();
         for (Offering offering : getOfferingsToUpdate()){
             if (shouldOfferingBeProcessed(offering.getIdentifier())) {
                 offeringUpdateTasks.add(new OfferingCacheUpdateTask(offering.getIdentifier(),
-                        getOfferingObservationConstellationInfo().get(offering.getIdentifier())));
+                        getOfferingObservationConstellationInfo().get(offering.getIdentifier()), hasSamplingGeometry));
             }
         }
         return offeringUpdateTasks.toArray(new OfferingCacheUpdateTask[offeringUpdateTasks.size()]);
     }    
     
+    /**
+     * Check if the observation table contains samplingGeometries with values.
+     * 
+     * @return <code>true</code>, if the observation table contains samplingGeometries with values
+     */
+    private boolean checkForSamplingGeometry() {
+        try {
+            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(getSession());
+            return observationDAO.containsSamplingGeometries(getSession());
+        } catch (CodedException ce) {
+            LOGGER.error("Error while getting observation DAO class from factory!", ce);
+            getErrors().add(ce);
+        }
+        return false;
+    }
+
     protected boolean shouldOfferingBeProcessed(String offeringIdentifier) {
         try {        
             if (HibernateHelper.isEntitySupported(ObservationConstellation.class, getSession())) {

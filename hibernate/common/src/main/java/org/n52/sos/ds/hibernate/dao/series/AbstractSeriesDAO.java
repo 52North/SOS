@@ -33,6 +33,8 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
@@ -42,10 +44,12 @@ import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.ProcedureTimeExtrema;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -426,6 +430,24 @@ public abstract class AbstractSeriesDAO {
 		}
 		session.saveOrUpdate(series);
 	}
+	
+	public ProcedureTimeExtrema getProcedureTimeExtrema(Session session, String procedure) {
+        Criteria c = getDefaultSeriesCriteria(session);
+        addProcedureToCriteria(c, procedure);
+        ProjectionList projectionList = Projections.projectionList();
+        projectionList.add(Projections.min(Series.FIRST_TIME_STAMP));
+            projectionList.add(Projections.max(Series.LAST_TIME_STAMP));
+            c.setProjection(projectionList);
+            LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}", HibernateHelper.getSqlString(c));
+            Object[] result = (Object[]) c.uniqueResult();
+        
+        ProcedureTimeExtrema pte = new ProcedureTimeExtrema();
+        if (result != null) {
+            pte.setMinTime(DateTimeHelper.makeDateTime(result[0]));
+            pte.setMaxTime(DateTimeHelper.makeDateTime(result[1]));
+        }
+        return pte;
+    }
     
     /**
      * Create series query criteria for parameter

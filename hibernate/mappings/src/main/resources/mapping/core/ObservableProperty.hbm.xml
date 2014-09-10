@@ -3,19 +3,28 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.ObservableProperty" table="observableProperty">
-        <id name="observablePropertyId" type="long">
-            <column name="observablePropertyId" />
-            <generator class="native">
-            	<param name="sequence">observablePropertyId_seq</param>
-            </generator>
-        </id>
-        <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
-        <property name="identifier" type="string">
-            <column name="identifier" not-null="true" unique-key="obsPropIdentifierUK" />
-        </property>
-        <property name="description" type="string">
-            <column name="description" />
-        </property>
-
+    	<subselect>
+    		(SELECT 
+    			@id:=@id+1 AS observablePropertyId, 
+    			'F' AS hibernateDiscriminator,
+    			column_name AS identifier,
+    			NULL AS description
+			FROM
+				(SELECT DISTINCT
+    				column_name
+    			FROM
+    				information_schema.columns
+    			WHERE
+    				table_schema = 'sea'
+    				AND
+    				data_type = 'double'
+    			ORDER BY
+    				column_name) AS t1,
+    			(SELECT @id:=0) AS t2))
+    	</subselect>
+        <id name="observablePropertyId" type="long" />
+        <property name="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
+        <property name="identifier" type="string" insert="false" update="false" />
+        <property name="description" type="string" insert="false" update="false" />
     </class>
 </hibernate-mapping>

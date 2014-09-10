@@ -3,7 +3,7 @@
 	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.Codespace" table="codespace">
-		<subselect>(SELECT 1 AS codespaceId, CAST('http://www.opengis.net/def/nil/OGC/0/unknown' AS VARCHAR) AS codespace)</subselect>
+		<subselect>(SELECT 1 AS codespaceId, 'http://www.opengis.net/def/nil/OGC/0/unknown' AS codespace)</subselect>
         <id name="codespaceId" type="long" />
         <property name="codespace" type="string" insert="false" update="false" />
     </class>

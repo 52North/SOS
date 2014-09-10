@@ -13,5 +13,6 @@
     <modules>
         <module>transformation</module>
         <module>flexible-identifier</module>
+        <module>split-and-merge</module>
     </modules>
 </project>

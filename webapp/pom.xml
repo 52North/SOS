@@ -432,7 +432,11 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>flexible-identifier</artifactId>
         </dependency>
-		
+		<!-- Split and Merge observatioons -->
+        <dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>split-and-merge</artifactId>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>

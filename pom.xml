@@ -361,6 +361,12 @@
 				<artifactId>flexible-identifier</artifactId>
 				<version>${sos.version}</version>
 	        </dependency>
+	        <!-- Split and Merge observatioons -->
+	        <dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>split-and-merge</artifactId>
+				<version>${sos.version}</version>
+	        </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>

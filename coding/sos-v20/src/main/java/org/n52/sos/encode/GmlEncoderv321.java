@@ -29,6 +29,7 @@
 package org.n52.sos.encode;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -223,12 +224,20 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
 		featureCollection.setId(element.getGmlId());
 		boolean document = checkAndPrepareHelperValues(additionalValues);
 		if (element.isSetMembers()) {
-			for (final AbstractFeature abstractFeature : element.getMembers()
-					.values()) {
+			Iterator<AbstractFeature> iterator = element.getMembers().values().iterator();
+			if (iterator.hasNext()) {
 				featureCollection.addNewFeatureMember().set(
-						createFeaturePropertyType(abstractFeature,
+						createFeaturePropertyType(iterator.next(),
 								additionalValues));
+				iterator.remove();
 			}
+//			for (final AbstractFeature abstractFeature : element.getMembers()
+//					.values()) {
+//				
+//				featureCollection.addNewFeatureMember().set(
+//						createFeaturePropertyType(abstractFeature,
+//								additionalValues));
+//			}
 		}
 		if (document) {
 			return featureCollectionDoc;

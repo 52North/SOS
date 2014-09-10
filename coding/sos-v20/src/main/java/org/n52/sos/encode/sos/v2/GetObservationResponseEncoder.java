@@ -78,6 +78,7 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
         if (encoder.shouldObservationsWithSameXBeMerged()) {
             response.mergeObservationsWithSameConstellation();
         }
+        // TODO iterate over observation collection and remove processed observation
         for (OmObservation o : response.getObservationCollection()) {
             if (o.getValue() instanceof StreamingObservation) {
                 StreamingObservation streamingObservation = (StreamingObservation)o.getValue();

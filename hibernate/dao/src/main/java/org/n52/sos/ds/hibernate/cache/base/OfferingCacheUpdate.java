@@ -38,9 +38,6 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.util.collections.CollectionHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
@@ -57,9 +54,10 @@ import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.TOffering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
-import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CacheHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -118,7 +116,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         WritableContentCache cache = getCache();
 
         for (Offering offering : getOfferingsToUpdate()){
-            try {
+//            try {
                 String offeringId = offering.getIdentifier();
                 if (shouldOfferingBeProcessed(offeringId)) {
                     String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
@@ -136,9 +134,9 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                                                                           getFeatureOfInterestTypesFromFeatureOfInterestType(tOffering.getFeatureOfInterestTypes()));
                     }
                 }
-            } catch (OwsExceptionReport ex) {
-                getErrors().add(ex);
-            }
+//            } catch (OwsExceptionReport ex) {
+//                getErrors().add(ex);
+//            }
         }
 
         //time ranges
@@ -191,18 +189,18 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
      */
     private boolean checkForSamplingGeometry() {
         try {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(getSession());
+            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
             return observationDAO.containsSamplingGeometries(getSession());
-        } catch (CodedException ce) {
-            LOGGER.error("Error while getting observation DAO class from factory!", ce);
-            getErrors().add(ce);
+        } catch (OwsExceptionReport e) {
+            LOGGER.error("Error while getting observation DAO class from factory!", e);
+            getErrors().add(e);
         }
         return false;
     }
 
     protected boolean shouldOfferingBeProcessed(String offeringIdentifier) {
         try {        
-            if (HibernateHelper.isEntitySupported(ObservationConstellation.class, getSession())) {
+            if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
                 return getOfferingObservationConstellationInfo().containsKey(offeringIdentifier);
             } else {
                 AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
@@ -213,9 +211,9 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                 LOGGER.debug("QUERY shouldOfferingBeProcessed(offering): {}", HibernateHelper.getSqlString(criteria));
                 return (Long) criteria.uniqueResult() > 0;
             }
-        } catch (CodedException ce) {
-            LOGGER.error("Error while getting observation DAO class from factory!", ce);
-            getErrors().add(ce);
+        } catch (OwsExceptionReport e) {
+            LOGGER.error("Error while getting observation DAO class from factory!", e);
+            getErrors().add(e);
         }
         return false;
     }

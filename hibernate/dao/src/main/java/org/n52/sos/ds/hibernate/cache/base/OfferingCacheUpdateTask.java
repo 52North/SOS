@@ -97,16 +97,16 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
      * Constructor. Note: never pass in Hibernate objects that have been loaded
      * by a session in a different thread
      * 
-     * @param dsOfferingId
-     *            Offering identifier
+     * @param offering
      * @param observationConstellatinInfos
      *            Observation Constellation info collection, passed in from  parent update if supported
      * @param hasSamplingGeometry
      *            Indicator to execute or not the extent query for the Spatial Filtering Profile
      */
-    public OfferingCacheUpdateTask(String dsOfferingId,
+    public OfferingCacheUpdateTask(Offering offering,
             Collection<ObservationConstellationInfo> observationConstellationInfos, boolean hasSamplingGeometry) {
-        this.offeringId = dsOfferingId;
+    	this.offering = offering;
+        this.offeringId = offering.getIdentifier();
         this.observationConstellationInfos = observationConstellationInfos;
         this.hasSamplingGeometry = hasSamplingGeometry;
     }
@@ -364,21 +364,12 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
      */
     protected void addSpatialFilteringProfileEnvelopeForOffering(String prefixedOfferingId, String offeringID,
             Session session) throws OwsExceptionReport {
-        getCache().setSpatialFilteringProfileEnvelopeForOffering(
+    	 if (hasSamplingGeometry) {
+         getCache().setSpatialFilteringProfileEnvelopeForOffering(
                 prefixedOfferingId,
                 DaoFactory.getInstance().getObservationDAO()
                         .getSpatialFilteringProfileEnvelopeForOfferingId(offeringID, session));
-        AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
-                DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
-        if (spatialFilteringProfileDAO != null) {
-            getCache().setSpatialFilteringProfileEnvelopeForOffering(prefixedOfferingId,
-                    spatialFilteringProfileDAO.getEnvelopeForOfferingId(offeringID, session));
-        } else {
-            if (hasSamplingGeometry) {
-                getCache().setSpatialFilteringProfileEnvelopeForOffering(prefixedOfferingId,
-                      DaoFactory.getInstance().getObservationDAO(session).getSpatialFilteringProfileEnvelopeForOfferingId(offeringID, session));
-            }
-        }
+    	 }
     }
 
     @Override

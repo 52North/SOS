@@ -57,7 +57,6 @@ import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.TOffering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
-import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CacheHelper;
 
@@ -118,7 +117,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         WritableContentCache cache = getCache();
 
         for (Offering offering : getOfferingsToUpdate()){
-            try {
+//            try {
                 String offeringId = offering.getIdentifier();
                 if (shouldOfferingBeProcessed(offeringId)) {
                     String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
@@ -136,9 +135,9 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                                                                           getFeatureOfInterestTypesFromFeatureOfInterestType(tOffering.getFeatureOfInterestTypes()));
                     }
                 }
-            } catch (OwsExceptionReport ex) {
-                getErrors().add(ex);
-            }
+//            } catch (OwsExceptionReport ex) {
+//                getErrors().add(ex);
+//            }
         }
 
         //time ranges
@@ -174,21 +173,38 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     @Override
     protected OfferingCacheUpdateTask[] getUpdatesToExecute() throws OwsExceptionReport {
         Collection<OfferingCacheUpdateTask> offeringUpdateTasks = Lists.newArrayList();
+        boolean hasSamplingGeometry = checkForSamplingGeometry();
         for (Offering offering : getOfferingsToUpdate()){
             if (shouldOfferingBeProcessed(offering.getIdentifier())) {
                 offeringUpdateTasks.add(new OfferingCacheUpdateTask(offering,
-                        getOfferingObservationConstellationInfo().get(offering.getIdentifier())));
+                        getOfferingObservationConstellationInfo().get(offering.getIdentifier()), hasSamplingGeometry));
             }
         }
         return offeringUpdateTasks.toArray(new OfferingCacheUpdateTask[offeringUpdateTasks.size()]);
+    }    
+    
+    /**
+     * Check if the observation table contains samplingGeometries with values.
+     * 
+     * @return <code>true</code>, if the observation table contains samplingGeometries with values
+     */
+    private boolean checkForSamplingGeometry() {
+        try {
+            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            return observationDAO.containsSamplingGeometries(getSession());
+        } catch (OwsExceptionReport e) {
+            LOGGER.error("Error while getting observation DAO class from factory!", e);
+            getErrors().add(e);
+        }
+        return false;
     }
 
-    protected boolean shouldOfferingBeProcessed(String offeringIdentifier) throws OwsExceptionReport {
-        try {
-            if (HibernateHelper.isEntitySupported(ObservationConstellation.class, getSession())) {
+    protected boolean shouldOfferingBeProcessed(String offeringIdentifier) {
+        try {        
+            if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
                 return getOfferingObservationConstellationInfo().containsKey(offeringIdentifier);
             } else {
-                AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(getSession());
+                AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
                 Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(getSession());
                 criteria.createCriteria(AbstractObservation.OFFERINGS).add(
                         Restrictions.eq(Offering.IDENTIFIER, offeringIdentifier));
@@ -196,9 +212,9 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                 LOGGER.debug("QUERY shouldOfferingBeProcessed(offering): {}", HibernateHelper.getSqlString(criteria));
                 return (Long) criteria.uniqueResult() > 0;
             }
-        } catch (CodedException ce) {
-            LOGGER.error("Error while getting observation DAO class from factory!", ce);
-            getErrors().add(ce);
+        } catch (OwsExceptionReport e) {
+            LOGGER.error("Error while getting observation DAO class from factory!", e);
+            getErrors().add(e);
         }
         return false;
     }

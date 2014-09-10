@@ -34,6 +34,7 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import net.opengis.gml.x32.BaseUnitDocument;
 import net.opengis.gml.x32.BaseUnitType;
 import net.opengis.gml.x32.CodeType;
 
@@ -42,6 +43,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.isotc211.x2005.gco.CodeListValueType;
 import org.isotc211.x2005.gco.UnitOfMeasurePropertyType;
+import org.isotc211.x2005.gmd.AbstractDQElementDocument;
 import org.isotc211.x2005.gmd.CICitationType;
 import org.isotc211.x2005.gmd.CIDateType;
 import org.isotc211.x2005.gmd.DQConformanceResultType;
@@ -67,6 +69,8 @@ import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+
+import com.google.common.collect.ImmutableMap;
 
 
 public class GmdEncoder extends AbstractXmlEncoder<Object> {
@@ -166,8 +170,8 @@ public class GmdEncoder extends AbstractXmlEncoder<Object> {
     private void encodeGmdQuantitativeResult(DQResultPropertyType xbResult, GmdQuantitativeResult gmdQuantitativeResult) {
         DQQuantitativeResultType dqQuantitativeResultType = DQQuantitativeResultType.Factory.newInstance(getXmlOptions());
         GmlBaseUnit unit = gmdQuantitativeResult.getUnit();
-        BaseUnitType xbBaseUnit = BaseUnitType.Factory.newInstance(getXmlOptions());
-
+        BaseUnitDocument baseUnitDocument = BaseUnitDocument.Factory.newInstance(getXmlOptions());
+        BaseUnitType xbBaseUnit = baseUnitDocument.addNewBaseUnit();
         CodeType xbCatalogSymbol = xbBaseUnit.addNewCatalogSymbol();
         xbCatalogSymbol.setCodeSpace(unit.getCatalogSymbol().getCodeSpace());
         xbCatalogSymbol.setStringValue(unit.getCatalogSymbol().getValue());
@@ -175,7 +179,11 @@ public class GmdEncoder extends AbstractXmlEncoder<Object> {
         xbBaseUnit.addNewUnitsSystem().setHref(unit.getUnitSystem());
         xbBaseUnit.addNewIdentifier().setCodeSpace(unit.getIdentifier());
         UnitOfMeasurePropertyType valueUnit = dqQuantitativeResultType.addNewValueUnit();
-        valueUnit.addNewUnitDefinition().set(xbBaseUnit);
+        XmlCursor c1 = valueUnit.addNewUnitDefinition().newCursor();
+        XmlCursor c2 = baseUnitDocument.getBaseUnit().newCursor();
+        c2.copyXml(c1);
+        c1.dispose();
+        c2.dispose();
         valueUnit.getUnitDefinition().substitute(QN_GML_BASE_UNIT, BaseUnitType.type);
         XmlCursor cursor = dqQuantitativeResultType.addNewValue().addNewRecord().newCursor();
         cursor.toNextToken();

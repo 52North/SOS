@@ -2,54 +2,30 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.Procedure" table="`procedure`">
-        <id name="procedureId" type="long">
-            <column name="procedureId" />
-            <generator class="native">
-            	<param name="sequence">procedureId_seq</param>
-            </generator>
-        </id>
+    <class name="org.n52.sos.ds.hibernate.entities.Procedure">
+        <!--  procedureDescriptionFormat 1 is SensorML -->
+        <subselect>
+            SELECT
+                @id:=@id+1 AS procedureId,
+                'F'        AS hibernateDiscriminator,
+                table_name AS identifier,
+                'F'        AS deleted,
+                NULL       AS description_file,
+                'F'        AS reference
+                1          AS procedureDescriptionFormat
+            FROM (
+                SELECT t.table_name
+                FROM information_schema.tables AS t
+                WHERE t.table_schema = 'sea'
+                ORDER BY t.table_name
+            ) AS t1, (SELECT @id:=0) AS t2;
+        </subselect>
+        <id name="procedureId" type="long" />
         <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
-        <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" fetch="select" lazy="no-proxy" foreign-key="procProcDescFormatFk">
-            <column name="procedureDescriptionFormatId" not-null="true" />
-        </many-to-one>
-        <property name="identifier" type="string">
-            <column name="identifier" not-null="true" unique-key="procIdentifierUK"/>
-        </property>
-        <property name="deleted" type="org.hibernate.type.TrueFalseType">
-            <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
-        </property>
-        <property name="descriptionFile" type="org.hibernate.type.StringClobType">
-            <column name="descriptionFile" />
-        </property>
-        <!-- optional properties, used for automatic sensor description creation if available -->
-        <!-- remove the comments around the property "geom" if the procedures have a geometry column -->
-        <!--
-        <property name="geom" type="org.hibernate.spatial.GeometryType">
-            <column name="geom" unique-key="procGeomUk" />
-        </property>
-        -->
-        <!-- supports types bigDecimal and string -->
-        <!-- remove the comments around the next properties as need (leave altitude if only 2d coordinates are required) -->
-        <!--  
-        <property name="longitude" type="bigDecimal">
-           <column name="longitude" unique-key="procLonLatUk" />
-        </property>
-        <property name="latitude" type="bigDecimal">
-        	<column name="latitude" unique-key="procLonLatUk" />
-        </property>
-        <property name="srid" type="integer">
-        	<column name="srid" />
-        </property> 
-        -->
-        <!--
-        <property name="altitude" type="bigDecimal">
-        	<column name="altitude" />
-        </property>
-        -->
-        <!-- for timeseries API  -->
-        <property name="reference" type="org.hibernate.type.TrueFalseType">
-        	<column name="referenceFlag" default="'F'" check="referenceFlag in ('T','F')"/>
-        </property>
+        <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" fetch="select" lazy="no-proxy" />
+        <property name="identifier" type="string" />
+        <property name="deleted" type="org.hibernate.type.TrueFalseType" />
+        <property name="descriptionFile" type="org.hibernate.type.StringClobType" />
+        <property name="reference" type="org.hibernate.type.TrueFalseType" />
     </class>
 </hibernate-mapping>

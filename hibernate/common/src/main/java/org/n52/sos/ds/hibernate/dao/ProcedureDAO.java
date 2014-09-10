@@ -63,6 +63,7 @@ import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
+import org.n52.sos.ds.hibernate.util.ProcedureTimeExtrema;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
@@ -519,30 +520,6 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
                 "QUERY getTProcedureForIdentifier(identifier, possibleProcedureDescriptionFormats, validTime): {}",
                 HibernateHelper.getSqlString(criteria));
         return (TProcedure) criteria.uniqueResult();
-    }
-
-    /**
-     * Hold min and max obs time for procedure 
-     */
-    public class ProcedureTimeExtrema {
-        private DateTime minTime;
-        private DateTime maxTime;
-
-        public DateTime getMinTime() {
-            return minTime;
-        }
-
-        public void setMinTime(DateTime minTime) {
-            this.minTime = minTime;
-        }
-
-        public DateTime getMaxTime() {
-            return maxTime;
-        }
-
-        public void setMaxTime(DateTime maxTime) {
-            this.maxTime = maxTime;
-        }
     }
 
     /**

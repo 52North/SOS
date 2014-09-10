@@ -62,6 +62,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -140,7 +141,7 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
             sosFeat.setName(getNames(spatialSamplingFeature));
         }
         sosFeat.setFeatureType(getFeatureType(spatialSamplingFeature.getType()));
-        sosFeat.setSampledFeatures(getSampledFeatures(spatialSamplingFeature.getSampledFeature()));
+        sosFeat.setSampledFeatures(getSampledFeatures(spatialSamplingFeature.getSampledFeatureArray()));
         sosFeat.setXmlDescription(getXmlDescription(spatialSamplingFeature));
         sosFeat.setGeometry(getGeometry(spatialSamplingFeature.getShape()));
         checkTypeAndGeometry(sosFeat);
@@ -175,6 +176,28 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
         return null;
     }
 
+    /**
+     *  Parse {@link FeaturePropertyType} sampledFeatures to {@link AbstractFeature} list. 
+     * @param sampledFeatureArray SampledFeatures to parse
+     * @return List with the parsed sampledFeatures
+     * @throws OwsExceptionReport If an error occurs
+     */
+    private List<AbstractFeature> getSampledFeatures(FeaturePropertyType[] sampledFeatureArray)
+            throws OwsExceptionReport {
+        final List<AbstractFeature> sampledFeatures = Lists.newArrayList();
+        for (FeaturePropertyType featurePropertyType : sampledFeatureArray) {
+            sampledFeatures.addAll(getSampledFeatures(featurePropertyType));
+        }
+        return sampledFeatures;
+    }
+
+    /**
+     * Parse {@link FeaturePropertyType} sampledFeature to {@link AbstractFeature} list. 
+     * 
+     * @param sampledFeature SampledFeature to parse
+     * @return List with the parsed sampledFeature
+     * @throws OwsExceptionReport If an error occurs
+     */
     private List<AbstractFeature> getSampledFeatures(final FeaturePropertyType sampledFeature)
             throws OwsExceptionReport {
         final List<AbstractFeature> sampledFeatures = new ArrayList<AbstractFeature>(1);

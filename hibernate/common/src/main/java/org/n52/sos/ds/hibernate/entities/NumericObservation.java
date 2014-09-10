@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 /**
  * @since 4.0.0
@@ -37,17 +36,17 @@ import java.math.BigDecimal;
  */
 public class NumericObservation extends Observation implements Serializable, org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation {
 
-    private static final long serialVersionUID = -835034606459038906L;
+    private static final long serialVersionUID = -835034606459038907L;
 
-    private BigDecimal value;
+    private Double value;
 
     @Override
-    public BigDecimal getValue() {
+    public Double getValue() {
         return this.value;
     }
 
     @Override
-    public void setValue(BigDecimal value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 

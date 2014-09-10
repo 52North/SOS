@@ -67,7 +67,7 @@ create table featureOfInterest (featureOfInterestId int8 not null, hibernateDisc
 create table featureOfInterestType (featureOfInterestTypeId int8 not null, featureOfInterestType varchar(255) not null, primary key (featureOfInterestTypeId));
 create table featureRelation (parentFeatureId int8 not null, childFeatureId int8 not null, primary key (childFeatureId, parentFeatureId));
 create table geometryValue (observationId int8 not null, value GEOMETRY, primary key (observationId));
-create table numericValue (observationId int8 not null, value numeric(19, 2), primary key (observationId));
+create table numericValue (observationId int8 not null, value double precision, primary key (observationId));
 create table observableProperty (observablePropertyId int8 not null, hibernateDiscriminator char(1) not null, identifier varchar(255) not null, description varchar(255), primary key (observablePropertyId));
 create table observation (observationId int8 not null, seriesId int8 not null, phenomenonTimeStart timestamp not null, phenomenonTimeEnd timestamp not null, resultTime timestamp not null, identifier varchar(255), codespaceId int8, description varchar(255), deleted char(1) default 'F' not null check (deleted in ('T','F')), validTimeStart timestamp, validTimeEnd timestamp, unitId int8, samplingGeometry GEOMETRY, primary key (observationId));
 create table observationConstellation (observationConstellationId int8 not null, observablePropertyId int8 not null, procedureId int8 not null, observationTypeId int8, offeringId int8 not null, deleted char(1) default 'F' not null check (deleted in ('T','F')), hiddenChild char(1) default 'F' not null check (hiddenChild in ('T','F')), primary key (observationConstellationId));
@@ -84,7 +84,7 @@ create table relatedFeatureHasRole (relatedFeatureId int8 not null, relatedFeatu
 create table relatedFeatureRole (relatedFeatureRoleId int8 not null, relatedFeatureRole varchar(255) not null, primary key (relatedFeatureRoleId));
 create table resultTemplate (resultTemplateId int8 not null, offeringId int8 not null, observablePropertyId int8 not null, procedureId int8 not null, featureOfInterestId int8 not null, identifier varchar(255) not null, resultStructure text not null, resultEncoding text not null, primary key (resultTemplateId));
 create table sensorSystem (parentSensorId int8 not null, childSensorId int8 not null, primary key (childSensorId, parentSensorId));
-create table series (seriesId int8 not null, featureOfInterestId int8 not null, observablePropertyId int8 not null, procedureId int8 not null, deleted char(1) default 'F' not null check (deleted in ('T','F')), firstTimeStamp timestamp, lastTimeStamp timestamp, firstNumericValue numeric(19, 2), lastNumericValue numeric(19, 2), unitId int8, primary key (seriesId));
+create table series (seriesId int8 not null, featureOfInterestId int8 not null, observablePropertyId int8 not null, procedureId int8 not null, deleted char(1) default 'F' not null check (deleted in ('T','F')), firstTimeStamp timestamp, lastTimeStamp timestamp, firstNumericValue double precision, lastNumericValue double precision, unitId int8, primary key (seriesId));
 create table sweDataArrayValue (observationId int8 not null, value text, primary key (observationId));
 create table textValue (observationId int8 not null, value text, primary key (observationId));
 create table unit (unitId int8 not null, unit varchar(255) not null, primary key (unitId));

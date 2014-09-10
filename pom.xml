@@ -73,7 +73,7 @@
         <sqljdbc4.version>4.0</sqljdbc4.version>
 
         <!-- 52N dependency versions -->
-        <n52.common.xml.version>1.1.5</n52.common.xml.version>
+        <n52.common.xml.version>2.0.0</n52.common.xml.version>
         <!-- Remove third party ncname resolver from SOS and use OXF instead -->
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
         <!-- managed dependencies with ${project.version} will be wrong in submodules
@@ -961,6 +961,8 @@
                 <configuration>
                     <show>private</show>
                     <nohelp>true</nohelp>
+                     <!-- see http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html -->
+                    <additionalJOption>-Xdoclint:none</additionalJOption>
                 </configuration>
                 <executions>
                     <execution>
@@ -975,6 +977,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>2.3</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>

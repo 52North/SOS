@@ -31,15 +31,15 @@
         <property name="url" type="string">
             <column name="url" unique-key="obsUrl" />
         </property>
-        <!-- supports types big_decimal and string -->
+        <!-- supports types double, big_decimal, and string -->
         <!--  
-        <property name="longitude" type="big_decimal">
+        <property name="longitude" type="double">
            <column name="longitude" unique-key="featLonLatUk" />
         </property>
-        <property name="latitude" type="big_decimal">
+        <property name="latitude" type="double">
         	<column name="latitude" unique-key="featLonLatUk" />
         </property>
-        <property name="altitude" type="big_decimal">
+        <property name="altitude" type="double">
         	<column name="altitude" />
         </property>
         <property name="srid" type="integer">

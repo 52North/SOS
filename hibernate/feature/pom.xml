@@ -38,5 +38,10 @@
             <artifactId>api</artifactId>
             <classifier>tests</classifier>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

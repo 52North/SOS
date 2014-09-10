@@ -2,15 +2,13 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" table="procedureDescriptionFormat">
-        <id name="procedureDescriptionFormatId" type="long">
-            <column name="procedureDescriptionFormatId" />
-            <generator class="native">
-            	<param name="sequence">procDescFormatId_seq</param>
-            </generator>
-        </id>
-        <property name="procedureDescriptionFormat" type="string">
-            <column name="procedureDescriptionFormat" not-null="true" unique-key="procDescFormatUK" />
-        </property>
+    <class name="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat">
+        <subselect>
+            SELECT
+                1                                       AS procedureDescriptionFormatId,
+                'http://www.opengis.net/sensorML/1.0.1' AS procedureDescriptionFormat;
+        </subselect>
+        <id name="procedureDescriptionFormatId" type="long" />
+        <property name="procedureDescriptionFormat" type="string" />
     </class>
 </hibernate-mapping>

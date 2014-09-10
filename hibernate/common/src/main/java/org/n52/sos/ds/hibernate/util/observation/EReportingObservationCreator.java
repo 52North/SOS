@@ -45,6 +45,7 @@ import org.n52.sos.ds.hibernate.entities.ereporting.EReportingNumericObservation
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingTextObservation;
+import org.n52.sos.gmd.GmdDomainConsistency;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -53,8 +54,6 @@ import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.quality.SosQuality;
-import org.n52.sos.ogc.om.quality.SosQuality.QualityType;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweDataArray;
@@ -74,14 +73,14 @@ import com.google.common.collect.Lists;
 
 public class EReportingObservationCreator implements AdditionalObservationCreator {
 
-    private EReportingObservationHelper helper = new EReportingObservationHelper();
-
     private static final Set<AdditionalObservationCreatorKey> KEYS = AdditionalObservationCreatorRepository
             .encoderKeysForElements(AqdConstants.NS_AQD, EReportingObservation.class, EReportingBlobObservation.class,
                     EReportingBooleanObservation.class, EReportingCategoryObservation.class,
                     EReportingCountObservation.class, EReportingGeometryObservation.class,
                     EReportingNumericObservation.class, EReportingSweDataArrayObservation.class,
                     EReportingTextObservation.class);
+
+    private final EReportingObservationHelper helper = new EReportingObservationHelper();
 
     @Override
     public Set<AdditionalObservationCreatorKey> getKeys() {
@@ -91,26 +90,27 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
     @Override
     public OmObservation create(OmObservation omObservation, AbstractObservation observation) {
         if (observation instanceof EReportingObservation) {
-            for (NamedValue<?> namedValue : helper.createSamplingPointParameter(((EReportingObservation) observation)
-                    .getEReportingSeries())) {
+            EReportingObservation eReportingObservation = (EReportingObservation) observation;
+            for (NamedValue<?> namedValue : helper.createSamplingPointParameter(eReportingObservation.getEReportingSeries())) {
                 omObservation.addParameter(namedValue);
             }
-            // if (omObservation.getValue() instanceof
-            // SingleObservationValue<?>) {
-            // addQualityFlags((SingleObservationValue<?>)omObservation.getValue(),
-            // (EReportingObservation)observation);
-            // }
-            omObservation.setValue(createSweDataArrayValue(omObservation, (EReportingObservation) observation));
+            omObservation.setValue(createSweDataArrayValue(omObservation, eReportingObservation));
             omObservation.getObservationConstellation().setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
         }
         return omObservation;
     }
 
-    private void addQualityFlags(SingleObservationValue<?> value, EReportingObservation observation) {
-        value.addQuality(new SosQuality(ElementType.Validation.name(), null, Integer.toString(observation
-                .getValidation()), ElementType.Validation.getDefinition(), QualityType.category));
-        value.addQuality(new SosQuality(ElementType.Verification.name(), null, Integer.toString(observation
-                .getVerification()), ElementType.Verification.getDefinition(), QualityType.category));
+    private void addQuality(EReportingObservation eReportingObservation,
+                            SingleObservationValue<?> value) {
+        if (eReportingObservation.isSetDataCapture()) {
+            value.addQuality(GmdDomainConsistency.dataCapture(eReportingObservation.getDataCapture()));
+        }
+        if (eReportingObservation.isSetTimeCoverage()) {
+            value.addQuality(GmdDomainConsistency.timeCoverage(eReportingObservation.getTimeCoverage()));
+        }
+        if (eReportingObservation.isSetUncertaintyEstimation()) {
+            value.addQuality(GmdDomainConsistency.uncertaintyEstimation(eReportingObservation.getUncertaintyEstimation()));
+        }
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -125,6 +125,7 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
         sweDataArrayValue.setValue(sweDataArray);
         SingleObservationValue observationValue = new SingleObservationValue(sweDataArrayValue);
         observationValue.setPhenomenonTime(omObservation.getPhenomenonTime());
+        addQuality(observation, observationValue);
         return observationValue;
     }
 

@@ -28,19 +28,27 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasDataCaptureFlag;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasTimeCoverageFlag;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasUncertaintyEstimation;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasValidation;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasVerification;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 
-public class EReportingObservation extends SeriesObservation implements HasEReportingSeries, HasValidation, HasVerification {
+public class EReportingObservation extends SeriesObservation
+    implements HasEReportingSeries, HasValidation, HasVerification, HasDataCaptureFlag, HasTimeCoverageFlag, HasUncertaintyEstimation {
 
     private static final long serialVersionUID = 2878044983511090422L;
-    
-    private Integer validation = new Integer(-1);
 
-    private Integer verification = new Integer(3);
-    
+    private Integer validation = -1;
+    private Integer verification = 3;
+    private Boolean timeCoverage;
+    private Boolean dataCapture;
+    private Double uncertaintyEstimation;
+
+
+    @Override
     public EReportingSeries getEReportingSeries() {
         if (hasEReportingSeries()) {
             return (EReportingSeries) getSeries();
@@ -89,5 +97,50 @@ public class EReportingObservation extends SeriesObservation implements HasERepo
     @Override
     public boolean isSetValidation() {
         return getValidation() != null;
+    }
+
+    @Override
+    public Boolean getDataCapture() {
+        return this.dataCapture;
+    }
+
+    @Override
+    public void setDataCapture(Boolean dataCapture) {
+        this.dataCapture = dataCapture;
+    }
+
+    @Override
+    public boolean isSetDataCapture() {
+        return this.dataCapture != null;
+    }
+
+    @Override
+    public Boolean getTimeCoverage() {
+        return this.timeCoverage;
+    }
+
+    @Override
+    public void setTimeCoverage(Boolean timeCoverage) {
+        this.timeCoverage = timeCoverage;
+    }
+
+    @Override
+    public boolean isSetTimeCoverage() {
+        return this.timeCoverage != null;
+    }
+
+    @Override
+    public Double getUncertaintyEstimation() {
+        return this.uncertaintyEstimation;
+    }
+
+    @Override
+    public void setUncertaintyEstimation(Double uncertaintyEstimation) {
+        this.uncertaintyEstimation = uncertaintyEstimation;
+    }
+
+    @Override
+    public boolean isSetUncertaintyEstimation() {
+        return this.uncertaintyEstimation != null;
     }
 }

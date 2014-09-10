@@ -31,65 +31,86 @@ package org.n52.sos.ds.hibernate.entities.ereporting;
 import org.n52.sos.ds.hibernate.entities.series.HibernateSeriesRelations;
 
 public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
-    
+
     interface HasEReportingSamplingPoint {
-        
+
         String SAMPLING_POINT = "samplingPoint";
-        
+
         EReportingSamplingPoint getSamplingPoint();
-        
+
         HasEReportingSamplingPoint setSamplingPoint(EReportingSamplingPoint samplingPoint);
-        
+
         boolean hasSamplingPoint();
     }
-    
+
     interface HasInspireId {
-        
+
         String INSPIRE_ID = "inspireId";
-        
+
         String getInspireId();
-        
+
         HasInspireId setInspireId(String inspireId);
-        
+
         boolean isSetInspireId();
-        
+
     }
-    
+
     interface HasEReportingSeries extends HasSeries {
-        
+
         EReportingSeries getEReportingSeries();
-        
+
        HasEReportingSeries setEReportingSeries(EReportingSeries series);
-        
+
         boolean hasEReportingSeries();
     }
 
     interface HasValidation {
-        
+
         String VALIDATION = "validation";
-        
+
         Integer getValidation();
-        
+
         HasValidation setValidation(Integer validation);
-        
+
         boolean isSetValidation();
     }
-    
+
     interface HasVerification {
-        
+
         String VERIFICATION = "verification";
-        
+
         Integer getVerification();
-        
+
         HasVerification setVerification(Integer verification);
-        
+
         boolean isSetVerification();
     }
-    
+
+    interface HasTimeCoverageFlag {
+        String TIME_COVERAGE = "timeCoverage";
+        Boolean getTimeCoverage();
+        void setTimeCoverage(Boolean timeCoverage);
+        boolean isSetTimeCoverage();
+    }
+
+    interface HasDataCaptureFlag {
+        String DATA_CAPTURE = "dataCapture";
+        Boolean getDataCapture();
+        void setDataCapture(Boolean dataCapture);
+        boolean isSetDataCapture();
+    }
+
+    interface HasUncertaintyEstimation {
+        String UNCERTAINTY_ESTIMATION = "uncertaintyEstimation";
+        Double getUncertaintyEstimation();
+        void setUncertaintyEstimation(Double uncertaintyEstimation);
+        boolean isSetUncertaintyEstimation();
+    }
+
     interface HasAssessmentType {
-        
+
         String ASSESSMENTTYPE = "assessmentType";
-        
+
         /**
          * @return the assessmentType
          */
@@ -99,8 +120,8 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
          * @param assessmentType the assessmentType to set
          */
         HasAssessmentType setAssessmentType(EReportingAssessmentType assessmentType);
-        
+
         boolean isSetAssessmentType();
-        
+
     }
 }

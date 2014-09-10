@@ -45,6 +45,15 @@
         <property name="validTimeEnd" type="timestamp">
             <column name="validTimeEnd" length="29" />
         </property>
+        <property name="timeCoverage" type="org.hibernate.type.TrueFalseType">
+            <column name="timeCoverage" check="timeCoverage in ('T','F')" length="1" />
+        </property>
+        <property name="dataCapture" type="org.hibernate.type.TrueFalseType">
+            <column name="dataCapture" check="dataCapture in ('T','F')" length="1" />
+        </property>
+        <property name="uncertaintyEstimation" type="double">
+            <column name="uncertaintyEstimation" not-null="false" />
+        </property>
         <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit" fetch="select" lazy="no-proxy" foreign-key="observationUnitFk">
             <column name="unitId" not-null="false" />
         </many-to-one>

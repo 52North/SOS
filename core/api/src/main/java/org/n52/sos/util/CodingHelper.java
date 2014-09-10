@@ -57,7 +57,7 @@ import com.google.common.collect.Maps;
  *         encodeToXml(Object o) using a Map from o.getClass().getName() ->
  *         namespaces
  * @since 4.0.0
- * 
+ *
  */
 public final class CodingHelper {
 
@@ -121,7 +121,7 @@ public final class CodingHelper {
     }
 
     public static Set<EncoderKey> encoderKeysForElements(final String namespace, final Class<?>... elements) {
-        final HashSet<EncoderKey> keys = new HashSet<EncoderKey>(elements.length);
+        final HashSet<EncoderKey> keys = new HashSet<>(elements.length);
         for (final Class<?> x : elements) {
             keys.add(new XmlEncoderKey(namespace, x));
         }

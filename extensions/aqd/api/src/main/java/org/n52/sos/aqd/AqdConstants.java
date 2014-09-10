@@ -28,34 +28,34 @@
  */
 package org.n52.sos.aqd;
 
+import java.util.Map;
+
 import javax.xml.namespace.QName;
 
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.w3c.SchemaLocation;
 
+import com.google.common.collect.ImmutableMap;
+
 public interface AqdConstants {
-	
+
 	String AQD = "AQD";
-	
-    String NS_AQD = "http://dd.eionet.europa.eu/schemaset/id2011850eu-1.0";
-    
-    String NS_AQD_PREFIX = "aqd";
 
 	String VERSION = "1.0.0";
 
     String DEFINITION_VERIFICATION = "http://dd.eionet.europa.eu/vocabularies/aq/observationverification";
-    
+
     String DEFINITION_VALIDATION = "http://dd.eionet.europa.eu/vocabularies/aq/observationvalidity";
-    
+
     String DEFINITION_PRIMARY_OBSERVATION_HOUR = "http://dd.eionet.europa.eu/vocabularyconcept/aq/primaryObservation/hour";
 
     String NAME_FIXED_OBSERVATIONS = "FixedObservations";
-    
+
+    String NS_AQD = "http://dd.eionet.europa.eu/schemaset/id2011850eu-1.0";
+    String NS_AQD_PREFIX = "aqd";
     String NS_AQD_SCHEMA = "http://dd.eionet.europa.eu/schemas/id2011850eu-1.0/AirQualityReporting.xsd";
-
     SchemaLocation NS_AQD_SCHEMA_LOCATION = new SchemaLocation(NS_AQD, NS_AQD_SCHEMA);
-
     String NS_AD = "urn:x-inspire:specification:gmlas:Addresses:3.0";
     String NS_AD_PREFIX = "ad";
     String NS_AM = "http://inspire.ec.europa.eu/schemas/am/3.0";
@@ -63,9 +63,9 @@ public interface AqdConstants {
     String NS_AU = "urn:x-inspire:specification:gmlas:AdministrativeUnits:3.0";
     String NS_AU_PREFIX = "au";
     String NS_BASE = "http://inspire.ec.europa.eu/schemas/base/3.3";
+    String NS_BASE_PREFIX = "base";
     String NS_BASE2 = "http://inspire.ec.europa.eu/schemas/base2/1.0";
     String NS_BASE2_PREFIX = "base2";
-    String NS_BASE_PREFIX = "base";
     String NS_EF = "http://inspire.ec.europa.eu/schemas/ef/3.0";
     String NS_EF_PREFIX = "ef";
     String NS_GCO = "http://www.isotc211.org/2005/gco";
@@ -74,6 +74,23 @@ public interface AqdConstants {
     String NS_GN_PREFIX = "gn";
     String NS_OMPR = "http://inspire.ec.europa.eu/schemas/ompr/2.0";
     String NS_OMPR_PREFIX = "ompr";
+    String NS_GMD= "http://www.isotc211.org/2005/gmd";
+    String NS_GMD_PREFIX = "gmd";
+
+     Map<String, String> NAMESPACE_PREFIX_MAP = ImmutableMap
+            .<String, String>builder()
+            .put(NS_AQD, NS_AQD_PREFIX)
+            .put(NS_AD, NS_AD_PREFIX)
+            .put(NS_AM, NS_AM_PREFIX)
+            .put(NS_AU, NS_AU_PREFIX)
+            .put(NS_BASE, NS_BASE_PREFIX)
+            .put(NS_BASE2, NS_BASE2_PREFIX)
+            .put(NS_EF, NS_EF_PREFIX)
+            .put(NS_GCO, NS_GCO_PREFIX)
+            .put(NS_GN, NS_GN_PREFIX)
+            .put(NS_OMPR, NS_OMPR_PREFIX)
+            .put(NS_GMD, NS_GMD_PREFIX)
+            .build();
 
     String AN_CODE_SPACE = "codeSpace";
     String AN_NIL_REASON = "nilReason";
@@ -190,36 +207,36 @@ public interface AqdConstants {
     QName QN_GN_SPELLING_OF_NAME = new QName(NS_GN, EN_SPELLING_OF_NAME, NS_GN_PREFIX);
     QName QN_GN_TEXT = new QName(NS_GN, EN_TEXT, NS_GN_PREFIX);
     QName QN_GN_TRANSLITERATION_SCHEME = new QName(NS_GN, EN_TRANSLITERATION_SCHEME, NS_GN_PREFIX);
-    
+
 	enum ElementType {
         StartTime(OmConstants.PHEN_SAMPLING_TIME, OmConstants.PHEN_UOM_ISO8601),
         EndTime(OmConstants.PHEN_SAMPLING_TIME, OmConstants.PHEN_UOM_ISO8601),
         Verification(DEFINITION_VERIFICATION),
         Validation(DEFINITION_VALIDATION),
         Pollutant(DEFINITION_PRIMARY_OBSERVATION_HOUR);
-        
+
         private final String definition;
-        
+
         private final String uom;
-        
+
         ElementType(String definition) {
             this.definition = definition;
             this.uom = null;
         }
-        
+
         ElementType(String definition, String uom) {
             this.definition = definition;
             this.uom = uom;
         }
-        
+
         public String getDefinition() {
             return definition;
         }
-        
+
         public String getUOM() {
             return uom;
         }
-        
+
         public boolean isSetUOM() {
             return StringHelper.isNotEmpty(getUOM());
         }
@@ -302,6 +319,6 @@ public interface AqdConstants {
         }
 
     }
-    
-   
+
+
 }

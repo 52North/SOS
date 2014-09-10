@@ -47,8 +47,8 @@ import org.n52.sos.ogc.sos.SosProcedureDescription;
 import com.google.common.collect.Lists;
 
 public class EReportingSeriesOmObservationCreator extends SeriesOmObservationCreator {
-    
-    
+
+
     public EReportingSeriesOmObservationCreator(EReportingSeries series, String version, Session session) {
         super(series, version, session);
     }
@@ -56,7 +56,7 @@ public class EReportingSeriesOmObservationCreator extends SeriesOmObservationCre
     public EReportingSeriesOmObservationCreator(EReportingSeries series, String version, Locale language, Session session) {
         super(series, version, language, session);
     }
-    
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public List<OmObservation> create() throws OwsExceptionReport, ConverterException {

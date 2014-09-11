@@ -6,7 +6,6 @@
     	<subselect>
     		SELECT
     			@id:=@id+1 AS observablePropertyId,
-    			'F' AS hibernateDiscriminator,
     			column_name AS identifier,
     			NULL AS description
 			FROM
@@ -17,7 +16,6 @@
     			(SELECT @id:=0) AS t2
     	</subselect>
         <id name="observablePropertyId" type="long" />
-        <property name="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
         <property name="identifier" type="string" insert="false" update="false" />
         <property name="description" type="string" insert="false" update="false" />
     </class>

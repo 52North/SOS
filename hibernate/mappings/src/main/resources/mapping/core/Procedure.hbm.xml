@@ -7,7 +7,6 @@
         <subselect>
             SELECT
                 @id:=@id+1 AS procedureId,
-                'F'        AS hibernateDiscriminator,
                 table_name AS identifier,
                 'F'        AS deleted,
                 NULL       AS description_file,
@@ -21,7 +20,6 @@
             ) AS t1, (SELECT @id:=0) AS t2;
         </subselect>
         <id name="procedureId" type="long" />
-        <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
         <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" fetch="select" lazy="no-proxy" />
         <property name="identifier" type="string" />
         <property name="deleted" type="org.hibernate.type.TrueFalseType" />

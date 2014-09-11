@@ -6,7 +6,6 @@
         <subselect>
         	SELECT
 			    @id:=@id+1 AS featureOfInterestId,
-			    'F' AS hibernateDiscriminator,
 			    1 AS featureOfInterestType,
     			table_name AS identifier,
     			1 AS codespace,
@@ -22,7 +21,6 @@
 				(SELECT @id:=0) AS t2
         </subselect>
         <id name="featureOfInterestId" type="long" />
-        <property name="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" insert="false" update="false" />
         <property name="featureOfInterestType"  type="long" insert="false" update="false" />
         <property name="identifier" type="string" insert="false" update="false" />
         <property name="codespace" type="long" insert="false" update="false" />

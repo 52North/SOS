@@ -140,9 +140,10 @@
         <property name="validTimeStart" type="timestamp" update="false" insert="false "/>
         <property name="validTimeEnd" type="timestamp" update="false" insert="false "/>
         <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit" fetch="select" lazy="no-proxy" update="false" insert="false "/>
-        <many-to-one name="offerings" fetch="select" lazy="no-proxy" >
-            <column name="offeringId" />
-        </many-to-one>
+        <set name="offerings">
+            <key column="observationId" />
+            <many-to-many  column="offeringId" entity-name="org.n52.sos.ds.hibernate.entities.Offering" />
+        </set>
         <property name="samplingGeometry" type="org.hibernate.spatial.GeometryType" update="false" insert="false "/>
 		<subclass name="org.n52.sos.ds.hibernate.entities.series.SeriesNumericObservation" extends="org.n52.sos.ds.hibernate.entities.series.SeriesObservation" discriminator-value="NUMERIC_OBSERVATION">
          	<property name="value" type="double" column="value"/>

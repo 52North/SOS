@@ -8,7 +8,6 @@
     		@id:=@id+1 AS offeringId,
 			table_name AS identifier,
     		table_name AS name,
-			'F' AS hibernateDiscriminator
 		FROM
 			(SELECT table_name
 		    FROM information_schema.tables
@@ -17,7 +16,6 @@
 			(SELECT @id:=0) AS t2;
 		</subselect>
         <id name="offeringId" type="long" />
-        <property name="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
         <property name="identifier" type="string" insert="false" update="false" />
         <property name="name" type="string" insert="false" update="false" />
     </class>

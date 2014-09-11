@@ -26,35 +26,38 @@
                        WHERE table_schema = 'sea' AND data_type = 'double'
                        ORDER BY table_name
                    ) AS combinations
-                   JOIN (SELECT
-                           @procedureId:=@procedureId+1 AS procedureId,
-                           table_name AS identifier
-                       FROM (
-                           SELECT table_name
-                           FROM information_schema.tables
-                           WHERE table_schema = 'sea'
-                           ORDER BY table_name
-                       ) AS t1, (SELECT @procedureId:=0) AS t2) AS procedure_ids
-                   on combinations.procedure = procedure_ids.identifier
-                   JOIN (SELECT
+                   JOIN
+                        (SELECT
+                            @procedureId:=@procedureId+1 AS procedureId,
+                            table_name AS identifier
+                        FROM (
+                            SELECT table_name
+                            FROM information_schema.tables
+                            WHERE table_schema = 'sea'
+                            ORDER BY table_name
+                        ) AS t1, (SELECT @procedureId:=0) AS t2) AS procedure_ids
+                    ON combinations.procedure = procedure_ids.identifier
+                    JOIN
+                        (SELECT
                            @observablePropertyId:=@observablePropertyId+1 AS observablePropertyId,
                            column_name AS identifier
-                       FROM (
+                        FROM (
                            SELECT DISTINCT column_name
                            FROM information_schema.columns
                            WHERE table_schema = 'sea' AND data_type = 'double'
                            ORDER BY column_name
-                       ) AS t1, (SELECT @observablePropertyId:=0) AS t2) AS observableProperty_ids
+                        ) AS t1, (SELECT @observablePropertyId:=0) AS t2) AS observableProperty_ids
                    ON combinations.observableProperty = observableProperty_ids.identifier
-                   JOIN (SELECT
+                   JOIN
+                        (SELECT
                            @offeringId:=@offeringId+1 AS offeringId,
                            table_name AS identifier
-                       FROM (
+                        FROM (
                            SELECT table_name
                            FROM information_schema.tables
                            WHERE table_schema = 'sea'
                            ORDER BY table_name
-                       ) AS t1, (SELECT @offeringId:=0) AS t2) AS offering_ids
+                        ) AS t1, (SELECT @offeringId:=0) AS t2) AS offering_ids
                    ON combinations.offering = offering_ids.identifier
                ORDER BY `procedure`, observableProperty
            ) AS t1, (SELECT @observationconstellationid:=0) AS t2;

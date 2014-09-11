@@ -11,7 +11,7 @@
                 table_name AS identifier,
                 'F'        AS deleted,
                 NULL       AS description_file,
-                'F'        AS reference
+                'F'        AS reference,
                 1          AS procedureDescriptionFormat
             FROM (
                 SELECT t.table_name

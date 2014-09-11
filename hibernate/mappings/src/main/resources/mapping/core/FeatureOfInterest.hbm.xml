@@ -2,9 +2,9 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" table="featureOfInterest">
+    <class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest">
         <subselect>
-        	(SELECT 
+        	SELECT
 			    @id:=@id+1 AS featureOfInterestId,
 			    'F' AS hibernateDiscriminator,
 			    1 AS featureOfInterestType,
@@ -19,10 +19,10 @@
     			FROM information_schema.tables
     			WHERE table_schema = 'sea'
     			ORDER BY table_name) AS t1,
-				(SELECT @id:=0) AS t2)
+				(SELECT @id:=0) AS t2
         </subselect>
         <id name="featureOfInterestId" type="long" />
-        <property name="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
+        <property name="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" insert="false" update="false" />
         <property name="featureOfInterestType"  type="long" insert="false" update="false" />
         <property name="identifier" type="string" insert="false" update="false" />
         <property name="codespace" type="long" insert="false" update="false" />
@@ -31,7 +31,7 @@
         <property name="descriptionXml" type="org.hibernate.type.StringClobType" insert="false" update="false" />
         <property name="url" type="string" insert="false" update="false">
         <!-- supports types double, big_decimal, and string -->
-        <!--  
+        <!--
         <property name="longitude" type="double">
            <column name="longitude" unique-key="featLonLatUk" />
         </property>
@@ -43,7 +43,7 @@
         </property>
         <property name="srid" type="integer">
         	<column name="srid" />
-        </property> 
+        </property>
         -->
     </class>
 </hibernate-mapping>

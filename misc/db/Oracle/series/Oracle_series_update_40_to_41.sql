@@ -29,8 +29,8 @@
 
 ALTER TABLE series ADD firstTimeStamp timestamp;
 ALTER TABLE series ADD lastTimeStamp timestamp;
-ALTER TABLE series ADD firstNumericValue number(19,2);
-ALTER TABLE series ADD lastNumericValue number(19,2);
+ALTER TABLE series ADD firstNumericValue DOUBLE PRECISION;
+ALTER TABLE series ADD lastNumericValue DOUBLE PRECISION;
 ALTER TABLE series ADD unitId number(19,0);
 
 alter table series add constraint seriesUnitFk foreign key (unitId) references unit;

@@ -3,39 +3,175 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.series.Series" table="series">
-        <id name="seriesId" type="long">
-            <column name="seriesId" />
-            <generator class="native">
-            	<param name="sequence">seriesId_seq</param>
-            </generator>
-        </id>
-        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" fetch="select" lazy="no-proxy" foreign-key="seriesFeatureFk">
-           	<column index="seriesFeatureIdx" name="featureOfInterestId" not-null="true" unique-key="seriesIdentity" />
-        </many-to-one>
-        <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" fetch="select" lazy="no-proxy" foreign-key="seriesObPropFk">
-            <column index="seriesObsPropIdx" name="observablePropertyId" not-null="true" unique-key="seriesIdentity"/>
-        </many-to-one>
-        <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="select" lazy="no-proxy" foreign-key="seriesProcedureFk">
-            <column index="seriesProcedureIdx" name="procedureId" not-null="true" unique-key="seriesIdentity" />
-        </many-to-one>
-        <property name="deleted" type="org.hibernate.type.TrueFalseType">
-            <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
-        </property>
+        <subselect>
+            SELECT
+                @seriesid:=@seriesid+1 AS `seriesid`,
+                `observableProperty`,
+                `featureOfInterest`,
+                `procedure`,
+                `deleted`,
+                `firstTimeStamp`,
+                `lastTimeStamp`,
+                `firstNumericValue`,
+                `lastNumericValue`,
+                `unit`
+            FROM
+                (
+                    SELECT
+                        `observableProperty` AS `observableProperty`,
+                        `featureOfInterest` AS `featureOfInterest`,
+                        `procedure` AS `procedure`,
+                        'F' AS `deleted`,
+                        minMaxObservations.minimalTime AS `firstTimeStamp`,
+                        minMaxObservations.maximalTime AS `lastTimeStamp`,
+                        minObservationValues.minimalValue AS `firstNumericValue`,
+                        maxObservationValues.maximalValue AS `lastNumericValue`,
+                        CASE observableProperty_identifier
+                            WHEN 'sea_water_temperature' THEN 1
+                            WHEN 'conductivity' THEN 2
+                            WHEN 'pressure' THEN 1
+                            WHEN 'salinity' THEN 2
+                            WHEN 'sound_velocity' THEN 1
+                            ELSE NULL
+                        END AS `unit`
+                    FROM
+
+                        (
+                            SELECT DISTINCT
+                                procedures.id as `procedure`,
+                                procedures.identifier AS procedure_identifier,
+                                observableProperties.id as `observableProperty`,
+                                observableProperties.identifier AS observableProperty_identifier,
+                                featuresOfInterest.id AS `featureOfInterest`,
+                                MIN(observations.date_instrument) as minimalTime,
+                                MAX(observations.date_instrument) as maximalTime
+                            FROM
+                                (
+                                    SELECT
+                                        `table_name` AS `procedure`,
+                                        `table_name` AS `featureOfInterest`,
+                                        `column_name` AS `observableProperty`
+                                    FROM information_schema.columns
+                                    WHERE `table_schema` = 'sea' AND `data_type` = 'double'
+                                    ORDER BY `table_name`
+                                )
+                                AS `combinations`
+
+                                JOIN (
+                                    SELECT
+                                        @procedureId:=@procedureId+1 AS `id`,
+                                        `table_name` AS `identifier`
+                                    FROM (
+                                        SELECT `table_name`
+                                        FROM information_schema.tables
+                                        WHERE `table_schema` = 'sea'
+                                        ORDER BY `table_name`
+                                    ) AS t1, (SELECT @procedureId:=0) AS t2
+                                ) AS `procedures`
+                                ON combinations.procedure = procedures.identifier
+
+                                JOIN (
+                                    SELECT
+                                        @observablePropertyId:=@observablePropertyId+1 AS `id`,
+                                        `column_name` AS `identifier`
+                                    FROM
+                                        (
+                                            SELECT DISTINCT `column_name`
+                                            FROM information_schema.columns
+                                            WHERE `table_schema` = 'sea' AND `data_type` = 'double'
+                                            ORDER BY `column_name`
+                                        ) AS t1, (SELECT @observablePropertyId:=0) AS t2
+                                ) AS `observableProperties`
+                                ON combinations.observableProperty = observableProperties.identifier
+
+                                JOIN (
+                                    SELECT
+                                        @featureOfInterestId:=@featureOfInterestId+1 AS `id`,
+                                        table_name AS identifier
+                                    FROM
+                                        (
+                                            SELECT `table_name`
+                                            FROM information_schema.tables
+                                            WHERE `table_schema` = 'sea'
+                                            ORDER BY `table_name`
+                                        ) AS t1, (SELECT @featureOfInterestId:=0) AS t2
+                                ) AS `featuresOfInterest`
+                                ON combinations.featureOfInterest = featuresOfInterest.identifier
+
+                                JOIN (
+                                        SELECT id, date_instrument, 'sea_water_temperature'  AS col, 'qualityobsea_ctd01' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd01 WHERE sea_water_temperature != -99999
+                                    UNION SELECT id, date_instrument, 'conductivity'  AS col, 'qualityobsea_ctd01' AS tab, conductivity AS value FROM qualityobsea_ctd01 WHERE conductivity != -99999
+                                    UNION SELECT id, date_instrument, 'salinity'  AS col, 'qualityobsea_ctd01' AS tab, salinity AS value FROM qualityobsea_ctd01 WHERE salinity != -99999
+                                    UNION SELECT id, date_instrument, 'pressure'  AS col, 'qualityobsea_ctd01' AS tab, pressure AS value FROM qualityobsea_ctd01 WHERE pressure != -99999
+                                    UNION SELECT id, date_instrument, 'sound_velocity'  AS col, 'qualityobsea_ctd01' AS tab, sound_velocity AS value FROM qualityobsea_ctd01 WHERE sound_velocity != -99999
+                                    UNION SELECT id, date_instrument, 'sea_water_temperature'  AS col, 'qualityobsea_ctd02' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd02 WHERE sea_water_temperature != -99999
+                                    UNION SELECT id, date_instrument, 'conductivity'  AS col, 'qualityobsea_ctd02' AS tab, conductivity AS value FROM qualityobsea_ctd02 WHERE conductivity != -99999
+                                    UNION SELECT id, date_instrument, 'salinity'  AS col, 'qualityobsea_ctd02' AS tab, salinity AS value FROM qualityobsea_ctd02 WHERE salinity != -99999
+                                    UNION SELECT id, date_instrument, 'pressure'  AS col, 'qualityobsea_ctd02' AS tab, pressure AS value FROM qualityobsea_ctd02 WHERE pressure != -99999
+                                    UNION SELECT id, date_instrument, 'sound_velocity'  AS col, 'qualityobsea_ctd02' AS tab, sound_velocity AS value FROM qualityobsea_ctd02 WHERE sound_velocity != -99999
+                                ) AS observations
+                                ON observations.col = combinations.observableProperty AND observations.tab = combinations.procedure
+
+                            GROUP BY combinations.observableProperty, combinations.featureOfInterest
+                            ORDER BY `procedure`, `observableProperty`
+
+                        ) AS minMaxObservations
+
+                        JOIN (
+                            SELECT
+                                value as minimalValue, col as col1, tab as tab1, date_instrument
+                            FROM
+                                (
+                                    SELECT id, date_instrument, 'sea_water_temperature'  AS col, 'qualityobsea_ctd01' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd01 WHERE sea_water_temperature != -99999
+                                    UNION SELECT id, date_instrument, 'conductivity'  AS col, 'qualityobsea_ctd01' AS tab, conductivity AS value FROM qualityobsea_ctd01 WHERE conductivity != -99999
+                                    UNION SELECT id, date_instrument, 'salinity'  AS col, 'qualityobsea_ctd01' AS tab, salinity AS value FROM qualityobsea_ctd01 WHERE salinity != -99999
+                                    UNION SELECT id, date_instrument, 'pressure'  AS col, 'qualityobsea_ctd01' AS tab, pressure AS value FROM qualityobsea_ctd01 WHERE pressure != -99999
+                                    UNION SELECT id, date_instrument, 'sound_velocity'  AS col, 'qualityobsea_ctd01' AS tab, sound_velocity AS value FROM qualityobsea_ctd01 WHERE sound_velocity != -99999
+                                    UNION SELECT id, date_instrument, 'sea_water_temperature'  AS col, 'qualityobsea_ctd02' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd02 WHERE sea_water_temperature != -99999
+                                    UNION SELECT id, date_instrument, 'conductivity'  AS col, 'qualityobsea_ctd02' AS tab, conductivity AS value FROM qualityobsea_ctd02 WHERE conductivity != -99999
+                                    UNION SELECT id, date_instrument, 'salinity'  AS col, 'qualityobsea_ctd02' AS tab, salinity AS value FROM qualityobsea_ctd02 WHERE salinity != -99999
+                                    UNION SELECT id, date_instrument, 'pressure'  AS col, 'qualityobsea_ctd02' AS tab, pressure AS value FROM qualityobsea_ctd02 WHERE pressure != -99999
+                                    UNION SELECT id, date_instrument, 'sound_velocity'  AS col, 'qualityobsea_ctd02' AS tab, sound_velocity AS value FROM qualityobsea_ctd02 WHERE sound_velocity != -99999
+                                ) AS obs
+                        ) AS minObservationValues
+                        ON minMaxObservations.procedure_identifier = minObservationValues.tab1
+                           AND minMaxObservations.observableProperty_identifier = minObservationValues.col1
+                           AND  minMaxObservations.minimalTime = minObservationValues.date_instrument
+
+                      JOIN (
+                            SELECT
+                                value as maximalValue, col AS col2, tab as tab2, date_instrument
+                            FROM
+                                (
+                                    SELECT id, date_instrument, 'sea_water_temperature'  AS col, 'qualityobsea_ctd01' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd01 WHERE sea_water_temperature != -99999
+                                    UNION SELECT id, date_instrument, 'conductivity'  AS col, 'qualityobsea_ctd01' AS tab, conductivity AS value FROM qualityobsea_ctd01 WHERE conductivity != -99999
+                                    UNION SELECT id, date_instrument, 'salinity'  AS col, 'qualityobsea_ctd01' AS tab, salinity AS value FROM qualityobsea_ctd01 WHERE salinity != -99999
+                                    UNION SELECT id, date_instrument, 'pressure'  AS col, 'qualityobsea_ctd01' AS tab, pressure AS value FROM qualityobsea_ctd01 WHERE pressure != -99999
+                                    UNION SELECT id, date_instrument, 'sound_velocity'  AS col, 'qualityobsea_ctd01' AS tab, sound_velocity AS value FROM qualityobsea_ctd01 WHERE sound_velocity != -99999
+                                    UNION SELECT id, date_instrument, 'sea_water_temperature'  AS col, 'qualityobsea_ctd02' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd02 WHERE sea_water_temperature != -99999
+                                    UNION SELECT id, date_instrument, 'conductivity'  AS col, 'qualityobsea_ctd02' AS tab, conductivity AS value FROM qualityobsea_ctd02 WHERE conductivity != -99999
+                                    UNION SELECT id, date_instrument, 'salinity'  AS col, 'qualityobsea_ctd02' AS tab, salinity AS value FROM qualityobsea_ctd02 WHERE salinity != -99999
+                                    UNION SELECT id, date_instrument, 'pressure'  AS col, 'qualityobsea_ctd02' AS tab, pressure AS value FROM qualityobsea_ctd02 WHERE pressure != -99999
+                                    UNION SELECT id, date_instrument, 'sound_velocity'  AS col, 'qualityobsea_ctd02' AS tab, sound_velocity AS value FROM qualityobsea_ctd02 WHERE sound_velocity != -99999
+                                ) AS obs
+                        ) AS maxObservationValues
+                        ON minMaxObservations.procedure_identifier = maxObservationValues.tab2
+                           AND minMaxObservations.observableProperty_identifier = maxObservationValues.col2
+                           AND  minMaxObservations.maximalTime = maxObservationValues.date_instrument
+                    GROUP BY `procedure`, `observableProperty`
+                    ORDER BY `procedure`, `observableProperty`
+                ) AS t1, (SELECT @seriesid:=0) AS t2;
+        </subselect>
+        <id name="seriesId" type="long" />
+        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" fetch="select" lazy="no-proxy" />
+        <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" fetch="select" lazy="no-proxy" />
+        <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="select" lazy="no-proxy" />
+        <property name="deleted" type="org.hibernate.type.TrueFalseType"/>
         <!-- values for timeseries api -->
-        <property name="firstTimeStamp" type="timestamp">
-            <column name="firstTimeStamp" length="29" />
-        </property>
-        <property name="lastTimeStamp" type="timestamp">
-            <column name="lastTimeStamp" length="29" />
-        </property>
-        <property name="firstNumericValue" type="double">
-            <column name="firstNumericValue" />
-        </property>
-        <property name="lastNumericValue" type="double">
-            <column name="lastNumericValue" />
-        </property>
-         <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit" fetch="select" lazy="no-proxy" foreign-key="seriesUnitFk">
-            <column name="unitId" not-null="false" />
-        </many-to-one>
+        <property name="firstTimeStamp" type="timestamp" update="false" insert="false"/>
+        <property name="lastTimeStamp" type="timestamp" update="false" insert="false"/>
+        <property name="firstNumericValue" type="double" update="false" insert="false"/>
+        <property name="lastNumericValue" type="double" update="false" insert="false"/>
+        <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit" fetch="select" lazy="no-proxy"  update="false" insert="false"/>
     </class>
 </hibernate-mapping>

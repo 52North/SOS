@@ -29,7 +29,7 @@
         <property name="name" type="org.hibernate.type.StringClobType" insert="false" update="false" />
         <property name="geom" type="org.hibernate.spatial.GeometryType" insert="false" update="false" />
         <property name="descriptionXml" type="org.hibernate.type.StringClobType" insert="false" update="false" />
-        <property name="url" type="string" insert="false" update="false">
+        <property name="url" type="string" insert="false" update="false" />
         <!-- supports types double, big_decimal, and string -->
         <!--
         <property name="longitude" type="double">

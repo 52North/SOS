@@ -128,7 +128,7 @@
         <property name="resultTime" type="timestamp" update="false" insert="false" />
         <property name="validTimeStart" type="timestamp" update="false" insert="false" />
         <property name="validTimeEnd" type="timestamp" update="false" insert="false" />
-        <many-to-one name="offerings" inverse="false" fetch="select" lazy="true" update="false" insert="false" >
+        <many-to-one name="offerings" fetch="select" lazy="no-proxy" update="false" insert="false" >
             <column name="offeringId" />
         </many-to-one>
         <property name="deleted" type="org.hibernate.type.TrueFalseType" update="false" insert="false" />

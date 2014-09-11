@@ -137,7 +137,7 @@
         <property name="validTimeStart" type="timestamp" update="false" insert="false"/>
         <property name="validTimeEnd" type="timestamp" update="false" insert="false"/>
         <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit" fetch="select" lazy="no-proxy" update="false" insert="false"/>
-        <many-to-one name="offerings" inverse="false" fetch="select" lazy="true" >
+        <many-to-one name="offerings" fetch="select" lazy="no-proxy" >
             <column name="offeringId" />
         </many-to-one>
         <property name="samplingGeometry" type="org.hibernate.spatial.GeometryType" update="false" insert="false"/>

@@ -27,6 +27,6 @@
 -- Public License for more details.
 --
 
-ALTER TABLE `procedure` ADD COLUMN referenceFlag char(1) default 'F';
+ALTER TABLE sos.`procedure` ADD COLUMN referenceFlag char(1) default 'F';
 
-ALTER TABLE observation ADD COLUMN samplingGeometry GEOMETRY;
+ALTER TABLE sos.observation ADD COLUMN samplingGeometry GEOMETRY;

@@ -17,18 +17,22 @@
 		</swe:Boolean>
 	</swes:extension>
 	-->
+	<!-- 
 	<swes:extension xsi:type="swe:CountPropertyType">
 		<swe:Count>
 			<swe:identifier>crs</swe:identifier>
 			<swe:value>4326</swe:value>
 		</swe:Count>
 	</swes:extension>
+	 -->
+	 <!-- 
 	<swes:extension xsi:type="swe:TextPropertyType">
 		<swe:Text>
 			<swe:identifier>language</swe:identifier>
 			<swe:value>ger</swe:value>
 		</swe:Text>
 	</swes:extension>
+	 -->
 
 	<!-- optional, multiple values possible -->
 	<sos:procedure>http://www.52north.org/test/procedure/1</sos:procedure>

@@ -1,0 +1,4 @@
+The PostgreSQL scripts uses the schema "public".
+
+If you want to create/update/drop/clear your SOS tables which are contained in another schema, 
+please use an editor and replace "public" with "mySchema".

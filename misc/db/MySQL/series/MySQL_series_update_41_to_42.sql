@@ -27,7 +27,70 @@
 -- Public License for more details.
 --
 
---update numeric columns to double
-ALTER TABLE numericValue MODIFY value DOUBLE PRECISION;
-ALTER TABLE series MODIFY firstNumericValue DOUBLE PRECISION;
-ALTER TABLE series MODIFY lastNumericValue DOUBLE PRECISION;
+SET FOREIGN_KEY_CHECKS = 0;
+-- update numeric columns to double
+ALTER TABLE sos.numericValue MODIFY value DOUBLE PRECISION;
+ALTER TABLE sos.series MODIFY firstNumericValue DOUBLE PRECISION;
+ALTER TABLE sos.series MODIFY lastNumericValue DOUBLE PRECISION;
+
+-- update observation table
+ALTER TABLE sos.observation CHANGE codespaceid codespace bigint;
+ALTER TABLE sos.observation ADD COLUMN name varchar(255);
+ALTER TABLE sos.observation ADD COLUMN codespacename bigint;
+ALTER TABLE sos.observation add constraint obsCodespaceNameFk foreign key (codespacename) references sos.codespace (codespaceId);
+
+-- update offering table
+ALTER TABLE sos.offering ADD COLUMN codespace bigint;
+ALTER TABLE sos.offering ADD COLUMN codespacename bigint;
+ALTER TABLE sos.offering ADD COLUMN description varchar(255);
+ALTER TABLE sos.offering add constraint offCodespaceIdentifierFk foreign key (codespace) references sos.codespace (codespaceId);
+ALTER TABLE sos.offering add constraint offCodespaceNameFk foreign key (codespacename) references sos.codespace (codespaceId);
+
+-- update procedure table
+ALTER TABLE sos.`procedure` ADD COLUMN codespace bigint;
+ALTER TABLE sos.`procedure` ADD COLUMN name varchar(255);
+ALTER TABLE sos.`procedure` ADD COLUMN codespacename bigint;
+ALTER TABLE sos.`procedure` ADD COLUMN description varchar(255);
+ALTER TABLE sos.`procedure` add constraint procCodespaceIdentifierFk foreign key (codespace) references sos.codespace (codespaceId);
+ALTER TABLE sos.`procedure` add constraint procCodespaceNameFk foreign key (codespacename) references sos.codespace (codespaceId);
+
+-- update observaleProperty table
+ALTER TABLE sos.observableproperty ADD COLUMN codespace bigint;
+ALTER TABLE sos.observableproperty ADD COLUMN name varchar(255);
+ALTER TABLE sos.observableproperty ADD COLUMN codespacename bigint;
+ALTER TABLE sos.observableproperty add constraint obsPropCodespaceIdentifierFk foreign key (codespace) references sos.codespace (codespaceId);
+ALTER TABLE sos.observableproperty add constraint obsPropCodespaceNameFk foreign key (codespacename) references sos.codespace (codespaceId);
+
+-- update featureOfInterest table
+ALTER TABLE sos.featureofinterest CHANGE codespaceid codespace bigint;
+ALTER TABLE sos.featureofinterest MODIFY name TYPE varchar(255);
+ALTER TABLE sos.featureofinterest ADD COLUMN codespacename bigint;
+ALTER TABLE sos.featureofinterest ADD COLUMN description varchar(255);
+ALTER TABLE sos.featureofinterest add constraint featureCodespaceNameFk foreign key (codespacename) references sos.codespace (codespaceId);
+
+-- create multiligualism tables
+-- i18n featureOfInterest
+create table sos.i18nfeatureOfInterest (id bigint not null auto_increment, objectId bigint not null, locale varchar(255) not null, name varchar(255), description varchar(255), primary key (id)) ENGINE=InnoDB;
+ALTER TABLE sos.i18nfeatureOfInterest add constraint i18nFeatureIdentity unique (objectId, locale);
+create index i18nFeatureIdx on sos.i18nfeatureOfInterest (objectId);
+ALTER TABLE sos.i18nfeatureOfInterest add constraint i18nFeatureFeatureFk foreign key (objectId) references sos.featureOfInterest (featureOfInterestId);
+
+-- i18n observableProperty
+create table sos.i18nobservableProperty (id bigint not null auto_increment, objectId bigint not null, locale varchar(255) not null, name varchar(255), description varchar(255), primary key (id)) ENGINE=InnoDB;
+ALTER TABLE sos.i18nobservableProperty add constraint i18nobsPropIdentity unique (objectId, locale);
+create index i18nObsPropIdx on sos.i18nobservableProperty (objectId);
+ALTER TABLE sos.i18nobservableProperty add constraint i18nObsPropObsPropFk foreign key (objectId) references sos.observableProperty (observablePropertyId);
+
+-- i18n offering
+create table sos.i18noffering (id bigint not null auto_increment, objectId bigint not null, locale varchar(255) not null, name varchar(255), description varchar(255), primary key (id)) ENGINE=InnoDB;
+alter table sos.i18noffering add constraint i18nOfferingIdentity unique (objectId, locale);
+create index i18nOfferingIdx on sos.i18noffering (objectId);
+alter table sos.i18noffering add constraint i18nOfferingOfferingFk foreign key (objectId) references sos.offering (offeringId);
+
+-- i18n procedure
+create table sos.i18nprocedure (id bigint not null auto_increment, objectId bigint not null, locale varchar(255) not null, name varchar(255), description varchar(255), shortname varchar(255), longname varchar(255), primary key (id)) ENGINE=InnoDB;
+alter table sos.i18nprocedure add constraint i18nProcedureIdentity unique (objectId, locale);
+create index i18nProcedureIdx on sos.i18nprocedure (objectId);
+alter table sos.i18nprocedure add constraint i18nProcedureProcedureFk foreign key (objectId) references sos.`procedure` (procedureId);
+
+SET FOREIGN_KEY_CHECKS = 1;

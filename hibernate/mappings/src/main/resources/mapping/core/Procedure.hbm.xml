@@ -4,7 +4,7 @@
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.Procedure">
         <!--  procedureDescriptionFormat 1 is SensorML -->
-        <subselect>
+        <subselect>(
             SELECT
                 @id:=@id+1 AS procedureId,
                 table_name AS identifier,
@@ -17,8 +17,8 @@
                 FROM information_schema.tables AS t
                 WHERE t.table_schema = 'sea'
                 ORDER BY t.table_name
-            ) AS t1, (SELECT @id:=0) AS t2;
-        </subselect>
+            ) AS t1, (SELECT @id:=0) AS t2
+        )</subselect>
         <id name="procedureId" type="long" />
         <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" fetch="select" lazy="no-proxy" />
         <property name="identifier" type="string" />

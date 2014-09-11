@@ -2,8 +2,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime" table="observation">
-        <subselect>
+    <class name="org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime">
+        <subselect>(
             SELECT
                 (observation.id * 10000000000) + series.seriesId AS observationId,
                 series.seriesid AS seriesId,
@@ -120,7 +120,7 @@
                         ) AS t1, (SELECT @seriesid:=0) AS t2
                 ) AS series
                 ON series.tab = observation.tab AND series.col = observation.col
-        </subselect>
+        )</subselect>
         <id name="observationId" type="long" />
         <many-to-one name="series" class="org.n52.sos.ds.hibernate.entities.series.Series" fetch="select" lazy="no-proxy" update="false" insert="false" />
          <property name="phenomenonTimeStart" type="timestamp" insert="false" update="false" />

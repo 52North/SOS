@@ -3,7 +3,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest">
-        <subselect>
+        <subselect>(
         	SELECT
 			    @id:=@id+1 AS featureOfInterestId,
 			    1 AS featureOfInterestType,
@@ -19,7 +19,7 @@
     			WHERE table_schema = 'sea'
     			ORDER BY table_name) AS t1,
 				(SELECT @id:=0) AS t2
-        </subselect>
+        )</subselect>
         <id name="featureOfInterestId" type="long" />
         <property name="featureOfInterestType"  type="long" insert="false" update="false" />
         <property name="identifier" type="string" insert="false" update="false" />

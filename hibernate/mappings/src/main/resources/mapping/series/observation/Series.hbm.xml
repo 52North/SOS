@@ -3,7 +3,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.series.Series">
-        <subselect>
+        <subselect>(
             SELECT
                 @seriesid:=@seriesid+1 AS `seriesid`,
                 `observableProperty`,
@@ -160,8 +160,8 @@
                            AND  minMaxObservations.maximalTime = maxObservationValues.date_sistema
                     GROUP BY `procedure`, `observableProperty`
                     ORDER BY `procedure`, `observableProperty`
-                ) AS t1, (SELECT @seriesid:=0) AS t2;
-        </subselect>
+                ) AS t1, (SELECT @seriesid:=0) AS t2
+        )</subselect>
         <id name="seriesId" type="long" />
         <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" fetch="select" lazy="no-proxy" />
         <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" fetch="select" lazy="no-proxy" />

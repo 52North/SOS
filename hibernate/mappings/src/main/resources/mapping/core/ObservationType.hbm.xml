@@ -2,11 +2,11 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.ObservationType" table="observationType">
-    	<subselect>
+    <class name="org.n52.sos.ds.hibernate.entities.ObservationType">
+    	<subselect>(
             SELECT 1 AS observationTypeId,
                    'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement' AS observationType
-        </subselect>
+        )</subselect>
         <id name="observationTypeId" type="long" />
 		<property name="observationType" type="string" insert="false" update="false" />
     </class>

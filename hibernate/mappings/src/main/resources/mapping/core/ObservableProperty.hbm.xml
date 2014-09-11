@@ -5,7 +5,7 @@
     <class name="org.n52.sos.ds.hibernate.entities.ObservableProperty">
     	<subselect>(
     		SELECT
-    			@id:=@id+1 AS observablePropertyId,
+    			@observablePropertyId:=@observablePropertyId+1 AS observablePropertyId,
     			column_name AS identifier,
     			NULL AS description
 			FROM
@@ -13,7 +13,7 @@
     			FROM information_schema.columns
     			WHERE table_schema = 'sea' AND data_type = 'double'
     			ORDER BY column_name) AS t1,
-    			(SELECT @id:=0) AS t2
+    			(SELECT @observablePropertyId:=0) AS t2
     	)</subselect>
         <id name="observablePropertyId" type="long" />
         <property name="identifier" type="string" insert="false" update="false" />

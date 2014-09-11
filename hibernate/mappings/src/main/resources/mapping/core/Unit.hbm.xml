@@ -5,7 +5,7 @@
     <class name="org.n52.sos.ds.hibernate.entities.Unit">
         <subselect>(
                   select 1 as unitId, "cm" as unit
-            union select 2,           "m";
+            union select 2,           "m"
         )</subselect>
         <id name="unitId" type="long" />
         <property name="unit" type="string"/>

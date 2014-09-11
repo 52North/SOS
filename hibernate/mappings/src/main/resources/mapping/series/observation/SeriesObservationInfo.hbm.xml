@@ -35,7 +35,7 @@
                 JOIN
                 (
                     SELECT
-                        @seriesid:=@seriesid+1 AS seriesid,
+                        @seriesObservationInfoSeriesId:=@seriesObservationInfoSeriesId+1 AS seriesid,
                         unitid,
                         observablePropertyid,
                         offeringId,
@@ -80,20 +80,20 @@
 
                                         JOIN (
                                             SELECT
-                                                @procedureId:=@procedureId+1 AS `id`,
+                                                @seriesObservationProcedureId:=@seriesObservationProcedureId+1 AS `id`,
                                                 table_name AS `identifier`
                                             FROM (
                                                 SELECT table_name
                                                 FROM information_schema.tables
                                                 WHERE table_schema = 'sea'
                                                 ORDER BY table_name
-                                            ) AS t1, (SELECT @procedureId:=0) AS t2
+                                            ) AS t1, (SELECT @seriesObservationProcedureId:=0) AS t2
                                         ) AS `procedures`
                                         ON combinations.procedure = procedures.identifier
 
                                         JOIN (
                                             SELECT
-                                                @observablePropertyId:=@observablePropertyId+1 AS `id`,
+                                                @seriesObservationInfoObservablePropetyId:=@seriesObservationInfoObservablePropetyId+1 AS `id`,
                                                 column_name AS `identifier`
                                             FROM
                                                 (
@@ -101,13 +101,13 @@
                                                     FROM information_schema.columns
                                                     WHERE table_schema = 'sea' AND data_type = 'double'
                                                     ORDER BY column_name
-                                                ) AS t1, (SELECT @observablePropertyId:=0) AS t2
+                                                ) AS t1, (SELECT @seriesObservationInfoObservablePropetyId:=0) AS t2
                                         ) AS `observableProperties`
                                         ON combinations.observableProperty = observableProperties.identifier
 
                                         JOIN (
                                             SELECT
-                                                @featureOfInterestId:=@featureOfInterestId+1 AS `id`,
+                                                @seriesObservationInfoFeatureOfInterestId:=@seriesObservationInfoFeatureOfInterestId+1 AS `id`,
                                                 table_name AS identifier
                                             FROM
                                                 (
@@ -115,13 +115,13 @@
                                                     FROM information_schema.tables
                                                     WHERE table_schema = 'sea'
                                                     ORDER BY table_name
-                                                ) AS t1, (SELECT @featureOfInterestId:=0) AS t2
+                                                ) AS t1, (SELECT @seriesObservationInfoFeatureOfInterestId:=0) AS t2
                                         ) AS `featuresOfInterest`
                                         ON combinations.featureOfInterest = featuresOfInterest.identifier
                                     GROUP BY combinations.`procedure`, combinations.`observableProperty`
                                     ORDER BY combinations.`procedure`, combinations.`observableProperty`
                             ) AS minMaxObservations
-                        ) AS t1, (SELECT @seriesid:=0) AS t2
+                        ) AS t1, (SELECT @seriesObservationInfoSeriesId:=0) AS t2
                 ) AS series
                 ON series.tab = observation.tab AND series.col = observation.col
         )</subselect>

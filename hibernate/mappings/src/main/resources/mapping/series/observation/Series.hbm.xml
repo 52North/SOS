@@ -5,7 +5,7 @@
     <class name="org.n52.sos.ds.hibernate.entities.series.Series">
         <subselect>(
             SELECT
-                @seriesid:=@seriesid+1 AS `seriesid`,
+                @seriesId:=@seriesId+1 AS `seriesid`,
                 `observableProperty`,
                 `featureOfInterest`,
                 `procedure`,
@@ -59,20 +59,20 @@
 
                                 JOIN (
                                     SELECT
-                                        @procedureId:=@procedureId+1 AS `id`,
+                                        @seriesProcedureId:=@seriesProcedureId+1 AS `id`,
                                         `table_name` AS `identifier`
                                     FROM (
                                         SELECT `table_name`
                                         FROM information_schema.tables
                                         WHERE `table_schema` = 'sea'
                                         ORDER BY `table_name`
-                                    ) AS t1, (SELECT @procedureId:=0) AS t2
+                                    ) AS t1, (SELECT @seriesProcedureId:=0) AS t2
                                 ) AS `procedures`
                                 ON combinations.procedure = procedures.identifier
 
                                 JOIN (
                                     SELECT
-                                        @observablePropertyId:=@observablePropertyId+1 AS `id`,
+                                        @seriesObservablePropertyId:=@seriesObservablePropertyId+1 AS `id`,
                                         `column_name` AS `identifier`
                                     FROM
                                         (
@@ -80,13 +80,13 @@
                                             FROM information_schema.columns
                                             WHERE `table_schema` = 'sea' AND `data_type` = 'double'
                                             ORDER BY `column_name`
-                                        ) AS t1, (SELECT @observablePropertyId:=0) AS t2
+                                        ) AS t1, (SELECT @seriesObservablePropertyId:=0) AS t2
                                 ) AS `observableProperties`
                                 ON combinations.observableProperty = observableProperties.identifier
 
                                 JOIN (
                                     SELECT
-                                        @featureOfInterestId:=@featureOfInterestId+1 AS `id`,
+                                        @seriesFeatureOfInterestId:=@seriesFeatureOfInterestId+1 AS `id`,
                                         table_name AS identifier
                                     FROM
                                         (
@@ -94,7 +94,7 @@
                                             FROM information_schema.tables
                                             WHERE `table_schema` = 'sea'
                                             ORDER BY `table_name`
-                                        ) AS t1, (SELECT @featureOfInterestId:=0) AS t2
+                                        ) AS t1, (SELECT @seriesFeatureOfInterestId:=0) AS t2
                                 ) AS `featuresOfInterest`
                                 ON combinations.featureOfInterest = featuresOfInterest.identifier
 
@@ -160,7 +160,7 @@
                            AND  minMaxObservations.maximalTime = maxObservationValues.date_sistema
                     GROUP BY `procedure`, `observableProperty`
                     ORDER BY `procedure`, `observableProperty`
-                ) AS t1, (SELECT @seriesid:=0) AS t2
+                ) AS t1, (SELECT @seriesId:=0) AS t2
         )</subselect>
         <id name="seriesId" type="long" />
         <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" fetch="select" lazy="no-proxy" />

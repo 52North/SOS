@@ -5,7 +5,7 @@
     <class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest">
         <subselect>(
         	SELECT
-			    @id:=@id+1 AS featureOfInterestId,
+			    @featureOfInterestId:=@featureOfInterestId+1 AS featureOfInterestId,
 			    1 AS featureOfInterestType,
     			table_name AS identifier,
     			1 AS codespace,
@@ -18,7 +18,7 @@
     			FROM information_schema.tables
     			WHERE table_schema = 'sea'
     			ORDER BY table_name) AS t1,
-				(SELECT @id:=0) AS t2
+				(SELECT @featureOfInterestId:=0) AS t2
         )</subselect>
         <id name="featureOfInterestId" type="long" />
         <property name="featureOfInterestType"  type="long" insert="false" update="false" />

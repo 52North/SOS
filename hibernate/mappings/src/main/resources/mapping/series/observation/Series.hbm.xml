@@ -43,8 +43,8 @@
                                 observableProperties.id as `observableProperty`,
                                 observableProperties.identifier AS observableProperty_identifier,
                                 featuresOfInterest.id AS `featureOfInterest`,
-                                MIN(observations.date_instrument) as minimalTime,
-                                MAX(observations.date_instrument) as maximalTime
+                                MIN(observations.date_sistema) as minimalTime,
+                                MAX(observations.date_sistema) as maximalTime
                             FROM
                                 (
                                     SELECT
@@ -99,16 +99,16 @@
                                 ON combinations.featureOfInterest = featuresOfInterest.identifier
 
                                 JOIN (
-                                        SELECT id, date_instrument, 'sea_water_temperature'  AS col, 'qualityobsea_ctd01' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd01 WHERE sea_water_temperature != -99999
-                                    UNION SELECT id, date_instrument, 'conductivity'  AS col, 'qualityobsea_ctd01' AS tab, conductivity AS value FROM qualityobsea_ctd01 WHERE conductivity != -99999
-                                    UNION SELECT id, date_instrument, 'salinity'  AS col, 'qualityobsea_ctd01' AS tab, salinity AS value FROM qualityobsea_ctd01 WHERE salinity != -99999
-                                    UNION SELECT id, date_instrument, 'pressure'  AS col, 'qualityobsea_ctd01' AS tab, pressure AS value FROM qualityobsea_ctd01 WHERE pressure != -99999
-                                    UNION SELECT id, date_instrument, 'sound_velocity'  AS col, 'qualityobsea_ctd01' AS tab, sound_velocity AS value FROM qualityobsea_ctd01 WHERE sound_velocity != -99999
-                                    UNION SELECT id, date_instrument, 'sea_water_temperature'  AS col, 'qualityobsea_ctd02' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd02 WHERE sea_water_temperature != -99999
-                                    UNION SELECT id, date_instrument, 'conductivity'  AS col, 'qualityobsea_ctd02' AS tab, conductivity AS value FROM qualityobsea_ctd02 WHERE conductivity != -99999
-                                    UNION SELECT id, date_instrument, 'salinity'  AS col, 'qualityobsea_ctd02' AS tab, salinity AS value FROM qualityobsea_ctd02 WHERE salinity != -99999
-                                    UNION SELECT id, date_instrument, 'pressure'  AS col, 'qualityobsea_ctd02' AS tab, pressure AS value FROM qualityobsea_ctd02 WHERE pressure != -99999
-                                    UNION SELECT id, date_instrument, 'sound_velocity'  AS col, 'qualityobsea_ctd02' AS tab, sound_velocity AS value FROM qualityobsea_ctd02 WHERE sound_velocity != -99999
+                                        SELECT id, date_sistema, 'sea_water_temperature'  AS col, 'qualityobsea_ctd01' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd01 WHERE sea_water_temperature != -99999
+                                    UNION SELECT id, date_sistema, 'conductivity'  AS col, 'qualityobsea_ctd01' AS tab, conductivity AS value FROM qualityobsea_ctd01 WHERE conductivity != -99999
+                                    UNION SELECT id, date_sistema, 'salinity'  AS col, 'qualityobsea_ctd01' AS tab, salinity AS value FROM qualityobsea_ctd01 WHERE salinity != -99999
+                                    UNION SELECT id, date_sistema, 'pressure'  AS col, 'qualityobsea_ctd01' AS tab, pressure AS value FROM qualityobsea_ctd01 WHERE pressure != -99999
+                                    UNION SELECT id, date_sistema, 'sound_velocity'  AS col, 'qualityobsea_ctd01' AS tab, sound_velocity AS value FROM qualityobsea_ctd01 WHERE sound_velocity != -99999
+                                    UNION SELECT id, date_sistema, 'sea_water_temperature'  AS col, 'qualityobsea_ctd02' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd02 WHERE sea_water_temperature != -99999
+                                    UNION SELECT id, date_sistema, 'conductivity'  AS col, 'qualityobsea_ctd02' AS tab, conductivity AS value FROM qualityobsea_ctd02 WHERE conductivity != -99999
+                                    UNION SELECT id, date_sistema, 'salinity'  AS col, 'qualityobsea_ctd02' AS tab, salinity AS value FROM qualityobsea_ctd02 WHERE salinity != -99999
+                                    UNION SELECT id, date_sistema, 'pressure'  AS col, 'qualityobsea_ctd02' AS tab, pressure AS value FROM qualityobsea_ctd02 WHERE pressure != -99999
+                                    UNION SELECT id, date_sistema, 'sound_velocity'  AS col, 'qualityobsea_ctd02' AS tab, sound_velocity AS value FROM qualityobsea_ctd02 WHERE sound_velocity != -99999
                                 ) AS observations
                                 ON observations.col = combinations.observableProperty AND observations.tab = combinations.procedure
 
@@ -119,45 +119,45 @@
 
                         JOIN (
                             SELECT
-                                value as minimalValue, col as col1, tab as tab1, date_instrument
+                                value as minimalValue, col as col1, tab as tab1, date_sistema
                             FROM
                                 (
-                                    SELECT id, date_instrument, 'sea_water_temperature'  AS col, 'qualityobsea_ctd01' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd01 WHERE sea_water_temperature != -99999
-                                    UNION SELECT id, date_instrument, 'conductivity'  AS col, 'qualityobsea_ctd01' AS tab, conductivity AS value FROM qualityobsea_ctd01 WHERE conductivity != -99999
-                                    UNION SELECT id, date_instrument, 'salinity'  AS col, 'qualityobsea_ctd01' AS tab, salinity AS value FROM qualityobsea_ctd01 WHERE salinity != -99999
-                                    UNION SELECT id, date_instrument, 'pressure'  AS col, 'qualityobsea_ctd01' AS tab, pressure AS value FROM qualityobsea_ctd01 WHERE pressure != -99999
-                                    UNION SELECT id, date_instrument, 'sound_velocity'  AS col, 'qualityobsea_ctd01' AS tab, sound_velocity AS value FROM qualityobsea_ctd01 WHERE sound_velocity != -99999
-                                    UNION SELECT id, date_instrument, 'sea_water_temperature'  AS col, 'qualityobsea_ctd02' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd02 WHERE sea_water_temperature != -99999
-                                    UNION SELECT id, date_instrument, 'conductivity'  AS col, 'qualityobsea_ctd02' AS tab, conductivity AS value FROM qualityobsea_ctd02 WHERE conductivity != -99999
-                                    UNION SELECT id, date_instrument, 'salinity'  AS col, 'qualityobsea_ctd02' AS tab, salinity AS value FROM qualityobsea_ctd02 WHERE salinity != -99999
-                                    UNION SELECT id, date_instrument, 'pressure'  AS col, 'qualityobsea_ctd02' AS tab, pressure AS value FROM qualityobsea_ctd02 WHERE pressure != -99999
-                                    UNION SELECT id, date_instrument, 'sound_velocity'  AS col, 'qualityobsea_ctd02' AS tab, sound_velocity AS value FROM qualityobsea_ctd02 WHERE sound_velocity != -99999
+                                    SELECT id, date_sistema, 'sea_water_temperature'  AS col, 'qualityobsea_ctd01' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd01 WHERE sea_water_temperature != -99999
+                                    UNION SELECT id, date_sistema, 'conductivity'  AS col, 'qualityobsea_ctd01' AS tab, conductivity AS value FROM qualityobsea_ctd01 WHERE conductivity != -99999
+                                    UNION SELECT id, date_sistema, 'salinity'  AS col, 'qualityobsea_ctd01' AS tab, salinity AS value FROM qualityobsea_ctd01 WHERE salinity != -99999
+                                    UNION SELECT id, date_sistema, 'pressure'  AS col, 'qualityobsea_ctd01' AS tab, pressure AS value FROM qualityobsea_ctd01 WHERE pressure != -99999
+                                    UNION SELECT id, date_sistema, 'sound_velocity'  AS col, 'qualityobsea_ctd01' AS tab, sound_velocity AS value FROM qualityobsea_ctd01 WHERE sound_velocity != -99999
+                                    UNION SELECT id, date_sistema, 'sea_water_temperature'  AS col, 'qualityobsea_ctd02' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd02 WHERE sea_water_temperature != -99999
+                                    UNION SELECT id, date_sistema, 'conductivity'  AS col, 'qualityobsea_ctd02' AS tab, conductivity AS value FROM qualityobsea_ctd02 WHERE conductivity != -99999
+                                    UNION SELECT id, date_sistema, 'salinity'  AS col, 'qualityobsea_ctd02' AS tab, salinity AS value FROM qualityobsea_ctd02 WHERE salinity != -99999
+                                    UNION SELECT id, date_sistema, 'pressure'  AS col, 'qualityobsea_ctd02' AS tab, pressure AS value FROM qualityobsea_ctd02 WHERE pressure != -99999
+                                    UNION SELECT id, date_sistema, 'sound_velocity'  AS col, 'qualityobsea_ctd02' AS tab, sound_velocity AS value FROM qualityobsea_ctd02 WHERE sound_velocity != -99999
                                 ) AS obs
                         ) AS minObservationValues
                         ON minMaxObservations.procedure_identifier = minObservationValues.tab1
                            AND minMaxObservations.observableProperty_identifier = minObservationValues.col1
-                           AND  minMaxObservations.minimalTime = minObservationValues.date_instrument
+                           AND  minMaxObservations.minimalTime = minObservationValues.date_sistema
 
                       JOIN (
                             SELECT
-                                value as maximalValue, col AS col2, tab as tab2, date_instrument
+                                value as maximalValue, col AS col2, tab as tab2, date_sistema
                             FROM
                                 (
-                                    SELECT id, date_instrument, 'sea_water_temperature'  AS col, 'qualityobsea_ctd01' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd01 WHERE sea_water_temperature != -99999
-                                    UNION SELECT id, date_instrument, 'conductivity'  AS col, 'qualityobsea_ctd01' AS tab, conductivity AS value FROM qualityobsea_ctd01 WHERE conductivity != -99999
-                                    UNION SELECT id, date_instrument, 'salinity'  AS col, 'qualityobsea_ctd01' AS tab, salinity AS value FROM qualityobsea_ctd01 WHERE salinity != -99999
-                                    UNION SELECT id, date_instrument, 'pressure'  AS col, 'qualityobsea_ctd01' AS tab, pressure AS value FROM qualityobsea_ctd01 WHERE pressure != -99999
-                                    UNION SELECT id, date_instrument, 'sound_velocity'  AS col, 'qualityobsea_ctd01' AS tab, sound_velocity AS value FROM qualityobsea_ctd01 WHERE sound_velocity != -99999
-                                    UNION SELECT id, date_instrument, 'sea_water_temperature'  AS col, 'qualityobsea_ctd02' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd02 WHERE sea_water_temperature != -99999
-                                    UNION SELECT id, date_instrument, 'conductivity'  AS col, 'qualityobsea_ctd02' AS tab, conductivity AS value FROM qualityobsea_ctd02 WHERE conductivity != -99999
-                                    UNION SELECT id, date_instrument, 'salinity'  AS col, 'qualityobsea_ctd02' AS tab, salinity AS value FROM qualityobsea_ctd02 WHERE salinity != -99999
-                                    UNION SELECT id, date_instrument, 'pressure'  AS col, 'qualityobsea_ctd02' AS tab, pressure AS value FROM qualityobsea_ctd02 WHERE pressure != -99999
-                                    UNION SELECT id, date_instrument, 'sound_velocity'  AS col, 'qualityobsea_ctd02' AS tab, sound_velocity AS value FROM qualityobsea_ctd02 WHERE sound_velocity != -99999
+                                    SELECT id, date_sistema, 'sea_water_temperature'  AS col, 'qualityobsea_ctd01' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd01 WHERE sea_water_temperature != -99999
+                                    UNION SELECT id, date_sistema, 'conductivity'  AS col, 'qualityobsea_ctd01' AS tab, conductivity AS value FROM qualityobsea_ctd01 WHERE conductivity != -99999
+                                    UNION SELECT id, date_sistema, 'salinity'  AS col, 'qualityobsea_ctd01' AS tab, salinity AS value FROM qualityobsea_ctd01 WHERE salinity != -99999
+                                    UNION SELECT id, date_sistema, 'pressure'  AS col, 'qualityobsea_ctd01' AS tab, pressure AS value FROM qualityobsea_ctd01 WHERE pressure != -99999
+                                    UNION SELECT id, date_sistema, 'sound_velocity'  AS col, 'qualityobsea_ctd01' AS tab, sound_velocity AS value FROM qualityobsea_ctd01 WHERE sound_velocity != -99999
+                                    UNION SELECT id, date_sistema, 'sea_water_temperature'  AS col, 'qualityobsea_ctd02' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd02 WHERE sea_water_temperature != -99999
+                                    UNION SELECT id, date_sistema, 'conductivity'  AS col, 'qualityobsea_ctd02' AS tab, conductivity AS value FROM qualityobsea_ctd02 WHERE conductivity != -99999
+                                    UNION SELECT id, date_sistema, 'salinity'  AS col, 'qualityobsea_ctd02' AS tab, salinity AS value FROM qualityobsea_ctd02 WHERE salinity != -99999
+                                    UNION SELECT id, date_sistema, 'pressure'  AS col, 'qualityobsea_ctd02' AS tab, pressure AS value FROM qualityobsea_ctd02 WHERE pressure != -99999
+                                    UNION SELECT id, date_sistema, 'sound_velocity'  AS col, 'qualityobsea_ctd02' AS tab, sound_velocity AS value FROM qualityobsea_ctd02 WHERE sound_velocity != -99999
                                 ) AS obs
                         ) AS maxObservationValues
                         ON minMaxObservations.procedure_identifier = maxObservationValues.tab2
                            AND minMaxObservations.observableProperty_identifier = maxObservationValues.col2
-                           AND  minMaxObservations.maximalTime = maxObservationValues.date_instrument
+                           AND  minMaxObservations.maximalTime = maxObservationValues.date_sistema
                     GROUP BY `procedure`, `observableProperty`
                     ORDER BY `procedure`, `observableProperty`
                 ) AS t1, (SELECT @seriesid:=0) AS t2;

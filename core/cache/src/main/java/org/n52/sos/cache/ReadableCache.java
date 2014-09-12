@@ -30,20 +30,24 @@ package org.n52.sos.cache;
 
 import static org.n52.sos.util.SosHelper.getHierarchy;
 
+import java.util.Locale;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+
+import org.n52.sos.i18n.LocalizedString;
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.util.CollectionHelper;
 
 /**
  * {@code ContentCache} implementation that offers a readable interface to the
  * cache. All methods return unmodifiable views of the cache.
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class ReadableCache extends AbstractContentCache {
@@ -148,6 +152,46 @@ public class ReadableCache extends AbstractContentCache {
     @Override
     public String getNameForOffering(final String offering) {
         return getNameForOfferingsMap().get(offering);
+    }
+
+
+    @Override
+    public LocalizedString getI18nNameForOffering(String offering, Locale i18n) {
+        MultilingualString map = getI18nNameForOfferingsMap().get(offering);
+        if (map != null) {
+            return map.getLocalization(i18n).orNull();
+        }
+        return null;
+    }
+
+    @Override
+    public MultilingualString getI18nNamesForOffering(String offering) {
+        return getI18nNameForOfferingsMap().get(offering);
+    }
+
+
+    @Override
+    public boolean hasI18NNamesForOffering(String offering, Locale i18n) {
+        return getI18nNameForOfferingsMap().containsKey(offering) && getI18nNamesForOffering(offering).hasLocale(i18n);
+    }
+
+    @Override
+    public LocalizedString getI18nDescriptionForOffering(String offering, Locale i18n) {
+        MultilingualString map = getI18nDescriptionForOfferingsMap().get(offering);
+        if (map != null) {
+            return map.getLocalization(i18n).orNull();
+        }
+        return null;
+    }
+
+    @Override
+    public MultilingualString getI18nDescriptionsForOffering(String offering) {
+        return getI18nDescriptionForOfferingsMap().get(offering);
+    }
+
+    @Override
+    public boolean hasI18NDescriptionForOffering(String offering, Locale i18n) {
+        return getI18nDescriptionForOfferingsMap().containsKey(offering) && getI18nDescriptionForOfferingsMap().get(offering).hasLocale(i18n);
     }
 
     @Override
@@ -483,5 +527,20 @@ public class ReadableCache extends AbstractContentCache {
     @Override
     public Set<String> getAllowedFeatureOfInterestTypesForOffering(String offering) {
         return copyOf(getAllowedFeatureOfInterestTypesForOfferingsMap().get(offering));
+    }
+
+    @Override
+    public Set<Locale> getSupportedLanguages() {
+        return copyOf(getSupportedLanguageSet());
+    }
+
+    @Override
+    public boolean hasSupportedLanguage() {
+        return CollectionHelper.isNotEmpty(getSupportedLanguageSet());
+    }
+
+    @Override
+    public boolean isLanguageSupported(final Locale language) {
+        return getSupportedLanguageSet().contains(language);
     }
 }

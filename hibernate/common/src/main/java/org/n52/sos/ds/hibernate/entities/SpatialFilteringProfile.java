@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
-
 /**
  * @since 4.0.0
  * 
@@ -40,9 +39,6 @@ public class SpatialFilteringProfile extends AbstractSpatialFilteringProfile imp
 
     private static final long serialVersionUID = 7200974625085342134L;
 
-    /**
-     * constructor
-     */
     public SpatialFilteringProfile() {
         super();
     }

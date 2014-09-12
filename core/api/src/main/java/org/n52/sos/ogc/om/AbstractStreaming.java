@@ -30,16 +30,24 @@ package org.n52.sos.ogc.om;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.ows.OWSConstants.AdditionalRequestParams;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.vividsolutions.jts.geom.Geometry;
 
 public abstract class AbstractStreaming extends AbstractObservationValue<Value<OmObservation>>{
     
     private static final long serialVersionUID = -4290319005184152231L;
+    
+    private Map<AdditionalRequestParams, Object> additionalRequestParams = Maps.newHashMap();
     
     public abstract boolean hasNextValue() throws OwsExceptionReport ;
     
@@ -85,6 +93,54 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
             observations.add(nextSingleObservation());
         } while (hasNextValue());
         return observations;
+    }
+
+    public void add(AdditionalRequestParams parameter, Object object) {
+       additionalRequestParams.put(parameter, object);
+    }
+    
+    public boolean contains(AdditionalRequestParams parameter) {
+        return additionalRequestParams.containsKey(parameter);
+    }
+    
+    public boolean isSetAdditionalRequestParams() {
+        return CollectionHelper.isNotEmpty(additionalRequestParams);
+    }
+    
+    protected Object getAdditionalRequestParams(AdditionalRequestParams parameter) {
+        return additionalRequestParams.get(parameter);
+    }
+
+    /**
+     * Check and modify observation for Spatial Filtering Profile and requested
+     * crs
+     * 
+     * @param observation
+     *            {@link OmObservation} to check
+     * @throws OwsExceptionReport
+     *             If an error occurs when modifying the {@link OmObservation}
+     */
+    @SuppressWarnings("unchecked")
+    protected void checkForModifications(OmObservation observation) throws OwsExceptionReport {
+        if (isSetAdditionalRequestParams() && contains(AdditionalRequestParams.crs)) {
+            Object additionalRequestParam = getAdditionalRequestParams(AdditionalRequestParams.crs);
+            int targetCRS = -1;
+            if (additionalRequestParam instanceof Integer) {
+                targetCRS = (Integer) additionalRequestParam;
+            } else if (additionalRequestParam instanceof String) {
+                targetCRS = Integer.parseInt((String) additionalRequestParam);
+            }
+            if (observation.isSetParameter()) {
+                for (NamedValue<?> namedValue : observation.getParameter()) {
+                    if (Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
+                        NamedValue<Geometry> spatialFilteringProfileParameter = (NamedValue<Geometry>) namedValue;
+                        spatialFilteringProfileParameter.getValue().setValue(
+                                GeometryHandler.getInstance().transform(
+                                        spatialFilteringProfileParameter.getValue().getValue(), targetCRS));
+                    }
+                }
+            }
+        }
     }
     
 }

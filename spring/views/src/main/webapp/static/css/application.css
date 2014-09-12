@@ -1,13 +1,13 @@
-body, div#footer { 
-	border-top: 0px !important; 
+body, div#footer {
+	border-top: 0px !important;
 }
-div#footer h3 { 
-	color: #ccc; 
+div#footer h3 {
+	color: #ccc;
 	font-size: 14px !important;
 	line-height: 24px;
 }
-.header-img-span { 
-	margin-top: 10px; 
+.header-img-span {
+	margin-top: 10px;
 }
 #content {
 	padding-top: 20px;
@@ -21,7 +21,7 @@ html, body, #wrap {
 	height: 100%;
 }
 body > #wrap {
-	height: auto; 
+	height: auto;
 	min-height: 100%;
 }
 #main {
@@ -45,7 +45,25 @@ div#footer {
 ul.fn_list { margin: 0px !important; }
 #f_bottom { padding-bottom: 0px !important; }
 
-[class^="icon-"], [class*=" icon-"] { 
+
+[class^="icon-"], [class*=" icon-"] {
     vertical-align: baseline !important;
-    margin-right: 5px;
+    /*margin-right: 5px;*/
+}
+
+
+.multilingual button i.icon-plus,
+.multilingual button i.icon-minus,
+.multilingual .add-on i.icon-globe {
+	margin-top: 3px;
+	margin-bottom: 3px;
+}
+.multilingual .block {
+	margin-bottom: 5px;
+}
+.multilingual .text {
+	width: 337px;
+}
+.multilingual .help-block {
+	margin-top: 10px;
 }

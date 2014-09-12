@@ -80,7 +80,7 @@ public final class KvpHelper {
     }
 
     public static List<String> checkParameterMultipleValues(String values, String name)
-            throws MissingParameterValueException, InvalidParameterValueException {
+            throws MissingParameterValueException {
         if (values.isEmpty()) {
             throw new MissingParameterValueException(name);
         }
@@ -94,7 +94,7 @@ public final class KvpHelper {
     }
 
     public static List<String> checkParameterMultipleValues(String values, Enum<?> name)
-            throws MissingParameterValueException, InvalidParameterValueException {
+            throws MissingParameterValueException {
         return checkParameterMultipleValues(values, name.name());
     }
 

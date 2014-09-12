@@ -48,6 +48,9 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
 import org.n52.sos.ds.hibernate.entities.AbstractSpatialFilteringProfile;
@@ -66,7 +69,6 @@ import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OptionNotSupportedException;
-import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -90,18 +92,18 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract Hibernate data access class for observations.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.0
- * 
+ *
  */
-public abstract class AbstractObservationDAO extends TimeCreator {
+public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescriptionDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractObservationDAO.class);
 
     /**
      * Get all observation identifiers
-     * 
+     *
      * @param session
      *            Hibernate session
      * @return Observation identifiers
@@ -110,7 +112,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Check if there are numeric observations for the offering
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -121,7 +123,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Check if there are boolean observations for the offering
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -132,7 +134,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Check if there are count observations for the offering
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -143,7 +145,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Check if there are category observations for the offering
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -154,7 +156,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Check if there are text observations for the offering
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -165,7 +167,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Check if there are blob observations for the offering
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -176,7 +178,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Check if there are geometry observations for the offering
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -187,7 +189,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Check if there are geometry observations for the offering
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -198,7 +200,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Get min phenomenon time from observations
-     * 
+     *
      * @param session
      *            Hibernate session Hibernate session
      * @return min time
@@ -207,40 +209,40 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Get max phenomenon time from observations
-     * 
+     *
      * @param session
      *            Hibernate session Hibernate session
-     * 
+     *
      * @return max time
      */
     public abstract DateTime getMaxPhenomenonTime(Session session);
 
     /**
      * Get min result time from observations
-     * 
+     *
      * @param session
      *            Hibernate session Hibernate session
-     * 
+     *
      * @return min time
      */
     public abstract DateTime getMinResultTime(Session session);
 
     /**
      * Get max phenomenon time from observations
-     * 
+     *
      * @param session
      *            Hibernate session Hibernate session
-     * 
+     *
      * @return max time
      */
     public abstract DateTime getMaxResultTime(Session session);
 
     /**
      * Get global temporal bounding box
-     * 
+     *
      * @param session
      *            Hibernate session the session
-     * 
+     *
      * @return the global getEqualRestiction bounding box over all observations,
      *         or <tt>null</tt>
      */
@@ -248,7 +250,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Get Hibernate Criteria for result model
-     * 
+     *
      * @param resultModel
      *            Result model
      * @param session
@@ -259,7 +261,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Create an observation object from SOS value
-     * 
+     *
      * @param value
      *            SOS value
      * @param session
@@ -271,7 +273,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
     /**
      * Add observation identifier (procedure, observableProperty,
      * featureOfInterest) to observation
-     * 
+     *
      * @param observationIdentifiers
      *            Observation identifiers
      * @param observation
@@ -285,7 +287,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
     /**
      * Get default Hibernate Criteria to query observations, default flag ==
      * <code>false</code>
-     * 
+     *
      * @param session
      *            Hiberante session
      * @return Default Criteria
@@ -295,7 +297,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
     /**
      * Get default Hibernate Criteria to query observation info, default flag ==
      * <code>false</code>
-     * 
+     *
      * @param session
      *            Hiberante session
      * @return Default Criteria
@@ -310,7 +312,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
     /**
      * Get Hibernate Criteria for querying observations with parameters
      * featureOfInterst and procedure
-     * 
+     *
      * @param feature
      *            FeatureOfInterest to query for
      * @param procedure
@@ -325,7 +327,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
     /**
      * Get Hibernate Criteria for querying observations with parameters
      * featureOfInterst and offering
-     * 
+     *
      * @param feature
      *            FeatureOfInterest to query for
      * @param offering
@@ -339,7 +341,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Query observation by identifier
-     * 
+     *
      * @param identifier
      *            Observation identifier (gml:identifier)
      * @param session
@@ -350,7 +352,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Get Hibernate Criteria for observation with restriction procedure
-     * 
+     *
      * @param procedure
      *            Procedure parameter
      * @param session
@@ -362,7 +364,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
     /**
      * Get Hibernate Criteria for observation with restriction
      * observableProperty
-     * 
+     *
      * @param observableProperty
      * @param session
      *            Hibernate session
@@ -372,7 +374,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Get Hibernate Criteria for observation with restriction featureOfInterest
-     * 
+     *
      * @param featureOfInterest
      * @param session
      *            Hibernate session
@@ -383,7 +385,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
     /**
      * Get Hibernate Criteria for observation with restrictions procedure and
      * observableProperty
-     * 
+     *
      * @param procedure
      * @param observableProperty
      * @param session
@@ -395,7 +397,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
     /**
      * Get Hibernate Criteria for observation with restrictions procedure,
      * observableProperty and featureOfInterest
-     * 
+     *
      * @param procedure
      * @param observableProperty
      * @param featureOfInterest
@@ -408,7 +410,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Get all observation identifiers for a procedure.
-     * 
+     *
      * @param procedureIdentifier
      * @param session
      * @return Collection of observation identifiers
@@ -419,7 +421,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
      * Get Hibernate Criteria for observation with restriction procedure Insert
      * a multi value observation for observation constellations and
      * featureOfInterest
-     * 
+     *
      * @param observationConstellations
      *            Observation constellation objects
      * @param feature
@@ -448,7 +450,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
     /**
      * Insert a single observation for observation constellations and
      * featureOfInterest without local caching for codespaces and units
-     * 
+     *
      * @param observationConstellations
      *            Observation constellation objects
      * @param feature
@@ -467,7 +469,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
     /**
      * Insert a single observation for observation constellations and
      * featureOfInterest with local caching for codespaces and units
-     * 
+     *
      * @param observationConstellations
      *            Observation constellation objects
      * @param feature
@@ -490,19 +492,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
         SingleObservationValue<?> value = (SingleObservationValue) sosObservation.getValue();
         AbstractObservation hObservation = createObservationFromValue(value.getValue(), session);
         hObservation.setDeleted(false);
-        if (sosObservation.isSetIdentifier()) {
-            hObservation.setIdentifier(sosObservation.getIdentifier().getValue());
-            if (sosObservation.getIdentifier().isSetCodeSpace()) {
-                hObservation.setCodespace(getCodespace(sosObservation.getIdentifier().getCodeSpace(), codespaceCache,
-                        session));
-            }
-        }
-        if (!hObservation.isSetCodespace()) {
-            hObservation.setCodespace(getCodespace(OGCConstants.UNKNOWN, codespaceCache, session));
-        }
-        if (sosObservation.isSetDescription()) {
-            hObservation.setDescription(sosObservation.getDescription());
-        }
+        addIdentifierNameDescription(sosObservation, hObservation, session);
         addPhenomeonTimeAndResultTimeToObservation(hObservation, sosObservation.getPhenomenonTime(),
                 sosObservation.getResultTime());
 
@@ -575,7 +565,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Add observation identifier (gml:identifier) to Hibernate Criteria
-     * 
+     *
      * @param criteria
      *            Hibernate Criteria
      * @param identifier
@@ -590,7 +580,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
     /**
      * Add offerings to observation and return the observation identifiers
      * procedure and observableProperty
-     * 
+     *
      * @param hObservation
      *            Observation to add offerings
      * @param hObservationConstellations
@@ -626,7 +616,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
     /**
      * Insert om:parameter into database. Differs between Spatial Filtering
      * Profile parameter and others.
-     * 
+     *
      * @param parameter
      *            om:Parameter to insert
      * @param observation
@@ -657,7 +647,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Check if there are observations for the offering
-     * 
+     *
      * @param clazz
      *            Observation sub class
      * @param offeringIdentifier
@@ -677,7 +667,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Get min phenomenon time from observations
-     * 
+     *
      * @param session
      *            Hibernate session Hibernate session
      * @return min time
@@ -698,10 +688,10 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Get max phenomenon time from observations
-     * 
+     *
      * @param session
      *            Hibernate session Hibernate session
-     * 
+     *
      * @return max time
      */
     @SuppressWarnings("rawtypes")
@@ -735,10 +725,10 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Get min result time from observations
-     * 
+     *
      * @param session
      *            Hibernate session Hibernate session
-     * 
+     *
      * @return min time
      */
     @SuppressWarnings("rawtypes")
@@ -757,10 +747,10 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Get max phenomenon time from observations
-     * 
+     *
      * @param session
      *            Hibernate session Hibernate session
-     * 
+     *
      * @return max time
      */
     @SuppressWarnings("rawtypes")
@@ -780,10 +770,10 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Get global temporal bounding box
-     * 
+     *
      * @param session
      *            Hibernate session the session
-     * 
+     *
      * @return the global getEqualRestiction bounding box over all observations,
      *         or <tt>null</tt>
      */
@@ -810,7 +800,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Get order for {@link SosIndeterminateTime} value
-     * 
+     *
      * @param indetTime
      *            Value to get order for
      * @return Order
@@ -826,7 +816,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Get projection for {@link SosIndeterminateTime} value
-     * 
+     *
      * @param indetTime
      *            Value to get projection for
      * @return Projection to use to determine indeterminate time extrema
@@ -843,7 +833,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
     /**
      * Get the AbstractObservation property to filter on for an
      * {@link SosIndeterminateTime}
-     * 
+     *
      * @param indetTime
      *            Value to get property for
      * @return String property to filter on
@@ -863,7 +853,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
      * for latest, min for first). Note: use this method *after* adding all
      * other applicable restrictions so that they will apply to the min/max
      * observation time determination.
-     * 
+     *
      * @param c
      *            Criteria to add the restriction to
      * @param sosIndeterminateTime
@@ -890,7 +880,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Create Hibernate Criteria for Class
-     * 
+     *
      * @param clazz
      *            Class
      * @param session
@@ -905,7 +895,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Add phenomenon and result time to observation object
-     * 
+     *
      * @param observation
      *            Observation object
      * @param phenomenonTime
@@ -923,7 +913,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Add phenomenon time to observation object
-     * 
+     *
      * @param observation
      *            Observation object
      * @param phenomenonTime
@@ -943,7 +933,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Add result time to observation object
-     * 
+     *
      * @param observation
      *            Observation object
      * @param resultTime
@@ -977,7 +967,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Add valid time to observation object
-     * 
+     *
      * @param observation
      *            Observation object
      * @param validTime
@@ -992,7 +982,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
 
     /**
      * Update observations, set deleted flag
-     * 
+     *
      * @param scroll
      *            Observations to update
      * @param deleteFlag
@@ -1045,15 +1035,16 @@ public abstract class AbstractObservationDAO extends TimeCreator {
                                 request.getSpatialFilter().getGeometry())));
             }
         }
+
     }
 
     /**
      * Inner class to carry observation identifiers (featureOfInterest,
      * observableProperty, procedure)
-     * 
+     *
      * @author Carsten Hollmann <c.hollmann@52north.org>
      * @since 4.0.0
-     * 
+     *
      */
     protected class ObservationIdentifiers {
 

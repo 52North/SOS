@@ -30,10 +30,14 @@ package org.n52.sos.service;
 
 import static org.n52.sos.util.ConfiguringSingletonServiceLoader.loadAndConfigure;
 
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.sos.binding.BindingRepository;
 import org.n52.sos.cache.ContentCache;
@@ -41,6 +45,7 @@ import org.n52.sos.cache.ContentCacheController;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.convert.ConverterRepository;
+import org.n52.sos.convert.RequestResponseModifierRepository;
 import org.n52.sos.ds.CacheFeederDAO;
 import org.n52.sos.ds.CacheFeederDAORepository;
 import org.n52.sos.ds.ConnectionProvider;
@@ -63,6 +68,7 @@ import org.n52.sos.ogc.ows.SosServiceIdentificationFactory;
 import org.n52.sos.ogc.ows.SosServiceProvider;
 import org.n52.sos.ogc.ows.SosServiceProviderFactory;
 import org.n52.sos.ogc.sos.CapabilitiesExtensionRepository;
+import org.n52.sos.ogc.swes.OfferingExtensionRepository;
 import org.n52.sos.request.operator.RequestOperatorRepository;
 import org.n52.sos.service.admin.operator.AdminServiceOperator;
 import org.n52.sos.service.admin.request.operator.AdminRequestOperatorRepository;
@@ -73,8 +79,6 @@ import org.n52.sos.tasking.Tasking;
 import org.n52.sos.util.Cleanupable;
 import org.n52.sos.util.ConfiguringSingletonServiceLoader;
 import org.n52.sos.util.Producer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
@@ -82,7 +86,7 @@ import com.google.common.collect.Sets;
 /**
  * Singleton class reads the configFile and builds the RequestOperator and DAO;
  * configures the logger.
- * 
+ *
  * @since 4.0.0
  */
 public class Configurator implements Cleanupable {
@@ -117,7 +121,7 @@ public class Configurator implements Cleanupable {
      * @param basepath
      * @return Returns an instance of the SosConfigurator. This method is used
      *         to implement the singelton pattern
-     * 
+     *
      * @throws ConfigurationException
      *             if the initialization failed
      */
@@ -182,6 +186,18 @@ public class Configurator implements Cleanupable {
             if (e.getCause() != null && e.getCause() instanceof OwsExceptionReport) {
                 throw (OwsExceptionReport) e.getCause();
             } else {
+                throw new NoApplicableCodeException().withMessage("Could not request object from %s", factory).causedBy(e);
+            }
+        }
+    }
+
+    protected static <T> T get(final Producer<T> factory, Locale language) throws OwsExceptionReport {
+        try {
+            return factory.get(language);
+        } catch (final Exception e) {
+            if (e.getCause() != null && e.getCause() instanceof OwsExceptionReport) {
+                throw (OwsExceptionReport) e.getCause();
+            } else {
                 throw new NoApplicableCodeException().withMessage("Could not request object from %s", factory);
             }
         }
@@ -222,7 +238,7 @@ public class Configurator implements Cleanupable {
 
     /**
      * private constructor due to the singelton pattern.
-     * 
+     *
      * @param connectionProviderConfig
      *            Connection provider configuration properties
      * @param basepath
@@ -307,10 +323,12 @@ public class Configurator implements Cleanupable {
         CodingRepository.getInstance();
         featureQueryHandler = loadAndConfigure(FeatureQueryHandler.class, false, getDatasourceDaoIdentificator());
         ConverterRepository.getInstance();
+        RequestResponseModifierRepository.getInstance();
         RequestOperatorRepository.getInstance();
         BindingRepository.getInstance();
         CapabilitiesExtensionRepository.getInstance();
         OwsExtendedCapabilitiesRepository.getInstance();
+        OfferingExtensionRepository.getInstance();
         adminServiceOperator = loadAndConfigure(AdminServiceOperator.class, false);
         AdminRequestOperatorRepository.getInstance();
         contentCacheController = loadAndConfigure(ContentCacheController.class, false);
@@ -328,6 +346,19 @@ public class Configurator implements Cleanupable {
      */
     public SosServiceIdentification getServiceIdentification() throws OwsExceptionReport {
         return get(serviceIdentificationFactory);
+    }
+
+    /**
+     * @return Returns the service identification for the specific language
+     *         <p/>
+     * @throws OwsExceptionReport
+     */
+    public SosServiceIdentification getServiceIdentification(Locale lanugage) throws OwsExceptionReport {
+        return get(serviceIdentificationFactory, lanugage);
+    }
+
+    public SosServiceIdentificationFactory getServiceIdentificationFactory() throws OwsExceptionReport {
+        return (SosServiceIdentificationFactory) serviceIdentificationFactory;
     }
 
     /**
@@ -362,8 +393,7 @@ public class Configurator implements Cleanupable {
 
     /**
      * @return the implemented cache feeder DAO
-     * @deprecated use {@link CacheFeederDAORepository.getCacheFeederDAO()}
-     *             instead.
+     * @deprecated use {@link CacheFeederDAORepository.getCacheFeederDAO()} instead.
      */
     @Deprecated
     public CacheFeederDAO getCacheFeederDAO() {
@@ -445,7 +475,7 @@ public class Configurator implements Cleanupable {
     /**
      * Returns the default token seperator for results.
      * <p/>
-     * 
+     *
      * @return the tokenSeperator.
      * @deprecated Use ServiceConfiguration.getInstance().getTokenSeparator()
      */
@@ -538,7 +568,7 @@ public class Configurator implements Cleanupable {
 
     /**
      * Get service URL.
-     * 
+     *
      * @return the service URL
      * @deprecated Use ServiceConfiguration.getInstance().getServiceURL()
      */

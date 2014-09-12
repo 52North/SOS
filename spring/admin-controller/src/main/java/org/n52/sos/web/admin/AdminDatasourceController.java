@@ -34,12 +34,6 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONObject;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.ds.GeneralQueryDAO;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.web.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -52,11 +46,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import org.n52.sos.ds.ConnectionProviderException;
+import org.n52.sos.ds.GeneralQueryDAO;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.util.JSONUtils;
+import org.n52.sos.web.ControllerConstants;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Maps;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 @Controller
 public class AdminDatasourceController extends AbstractDatasourceController {
@@ -89,20 +91,17 @@ public class AdminDatasourceController extends AbstractDatasourceController {
             LOG.info("Query: {}", q);
             GeneralQueryDAO dao = daoServiceLoader.iterator().next();
             GeneralQueryDAO.QueryResult rs = dao.query(q);
-
-            JSONObject j = new JSONObject();
+            ObjectNode j = JSONUtils.nodeFactory().objectNode();
             if (rs.getMessage() != null) {
                 j.put(rs.isError() ? "error" : "message", rs.getMessage());
-                return j.toString();
+                return JSONUtils.print(j);
             }
-
-            JSONArray names = new JSONArray(rs.getColumnNames());
-            JSONArray rows = new JSONArray();
+            j.putArray(ROWS).addAll(JSONUtils.toJSON(rs.getColumnNames()));
+            ArrayNode names = j.putArray(NAMES);
             for (GeneralQueryDAO.Row row : rs.getRows()) {
-                rows.put(new JSONArray(row.getValues()));
+                names.addArray().addAll(JSONUtils.toJSON(row.getValues()));
             }
-
-            return new JSONObject().put(ROWS, rows).put(NAMES, names).toString();
+            return JSONUtils.print(j);
         } catch (UnsupportedEncodingException ex) {
             LOG.error("Could not decode String", ex);
             return "Could not decode String: " + ex.getMessage();

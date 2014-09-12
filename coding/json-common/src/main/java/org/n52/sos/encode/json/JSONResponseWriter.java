@@ -31,7 +31,7 @@ package org.n52.sos.encode.json;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.n52.sos.coding.json.JSONUtils;
+import org.n52.sos.util.JSONUtils;
 import org.n52.sos.encode.AbstractResponseWriter;
 import org.n52.sos.encode.ResponseProxy;
 import org.n52.sos.util.http.MediaType;

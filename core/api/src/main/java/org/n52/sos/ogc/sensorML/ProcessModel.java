@@ -34,6 +34,8 @@ package org.n52.sos.ogc.sensorML;
  */
 public class ProcessModel extends AbstractProcess {
 
+    private static final long serialVersionUID = -5490781462864023242L;
+    
     private ProcessMethod method;
 
     public ProcessMethod getMethod() {

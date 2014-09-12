@@ -137,6 +137,11 @@ public class Series implements Serializable, HasProcedure, HasObservableProperty
         return deleted;
     }
 
+    @Override
+    public boolean getDeleted() {
+        return deleted;
+    }
+
     /**
      * @return the firstTimeStamp
      */

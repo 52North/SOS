@@ -55,7 +55,7 @@ import com.google.common.base.StandardSystemProperty;
  * Abstract XML writer class
  * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.1.0
+ * @since 4.0.2
  *
  * @param <T>
  *            concrete writer, e.g, {@link XMLStreamWriter} or
@@ -348,7 +348,7 @@ public abstract class XmlWriter<T, S> {
             rawText(s.replaceAll(XML_FRAGMENT, getReplacement(qname)));
         }
     }
-
+    
     /**
      * Write {@link SchemaLocation}s as xsi:schemaLocations attribute to stream
      * 
@@ -464,7 +464,7 @@ public abstract class XmlWriter<T, S> {
         this.outputFactory.setProperty("escapeCharacters", false);
         return this.outputFactory;
     }
-
+    
     protected void addXlinkHrefAttr(String value) throws XMLStreamException {
         attr(W3CConstants.QN_XLINK_HREF, value);
     }

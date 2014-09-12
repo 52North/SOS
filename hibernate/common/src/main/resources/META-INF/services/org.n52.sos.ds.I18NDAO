@@ -1,0 +1,4 @@
+org.n52.sos.ds.hibernate.dao.i18n.ProcedureI18NDAO
+org.n52.sos.ds.hibernate.dao.i18n.FeatureI18NDAO
+org.n52.sos.ds.hibernate.dao.i18n.ObservablePropertyI18NDAO
+org.n52.sos.ds.hibernate.dao.i18n.OfferingI18NDAO

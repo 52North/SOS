@@ -42,6 +42,8 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.google.common.collect.Sets;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
@@ -115,5 +117,17 @@ public class CollectionHelperTest {
         final Map<String, String> map = new HashMap<String, String>(1);
         map.put("key", "value");
         assertThat(CollectionHelper.isEmpty(map), is(FALSE));
+    }
+    
+    @Test
+    public void should_return_String() {
+        String empty = "()";
+        String full = "(a,b,c)";
+        Set<String> set = Sets.newLinkedHashSet();
+        assertThat(CollectionHelper.collectionToString(set), is(empty));
+        set.add("a");
+        set.add("b");
+        set.add("c");
+        assertThat(CollectionHelper.collectionToString(set), is(full));
     }
 }

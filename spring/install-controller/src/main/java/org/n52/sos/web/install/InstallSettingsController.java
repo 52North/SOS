@@ -44,7 +44,10 @@ import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.web.ControllerConstants;
 import org.n52.sos.web.install.InstallConstants.Step;
 
-
+/**
+ * @since 4.0.0
+ *
+ */
 @Controller
 @RequestMapping(ControllerConstants.Paths.INSTALL_SETTINGS)
 public class InstallSettingsController extends AbstractProcessingInstallationController {
@@ -106,8 +109,7 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
         try {
             return sm.getSettingFactory().newSettingValue(def, stringValue);
         } catch (Exception e) {
-            throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_VALIDATE_PARAMETER,
-                    def.getTitle(), stringValue));
+            throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_VALIDATE_PARAMETER, def.getTitle(), stringValue));
         }
     }
 

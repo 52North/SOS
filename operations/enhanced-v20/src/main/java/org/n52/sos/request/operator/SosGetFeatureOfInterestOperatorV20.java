@@ -109,7 +109,7 @@ public class SosGetFeatureOfInterestOperatorV20
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-
+        checkExtensions(sosRequest, exceptions);
         exceptions.throwIfNotEmpty();
     }
 
@@ -134,4 +134,5 @@ public class SosGetFeatureOfInterestOperatorV20
     public WSDLOperation getSosOperationDefinition() {
         return WSDLConstants.Operations.GET_FEATURE_OF_INTEREST;
     }
+
 }

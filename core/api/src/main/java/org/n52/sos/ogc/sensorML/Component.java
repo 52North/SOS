@@ -34,4 +34,5 @@ package org.n52.sos.ogc.sensorML;
  */
 public class Component extends AbstractComponent {
 
+    private static final long serialVersionUID = -7973466495180746194L;
 }

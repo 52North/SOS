@@ -29,16 +29,22 @@
 package org.n52.sos.ds.hibernate.util.procedure;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.cache.ContentCache;
+import org.n52.sos.ds.I18NDAO;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
+import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -51,6 +57,9 @@ import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.i18n.I18NDAORepository;
+import org.n52.sos.i18n.LocalizedString;
+import org.n52.sos.i18n.metadata.I18NProcedureMetadata;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.om.OmConstants;
@@ -64,6 +73,7 @@ import org.n52.sos.ogc.sensorML.System;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
+import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
@@ -80,17 +90,16 @@ import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.http.HTTPStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  */
 public class HibernateProcedureDescriptionGenerator {
@@ -104,31 +113,28 @@ public class HibernateProcedureDescriptionGenerator {
     public static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING =
             "getUnitForObservablePropertyProcedureOffering";
 
-    private static final String Y_AXIS = "y";
-
-    private static final String X_AXIS = "x";
-
-    private static final String Z_AXIS = "z";
-
     private static final String POSITION_NAME = "sensorPosition";
 
     private static final Joiner COMMA_JOINER = Joiner.on(",");
 
+    private Locale locale = ServiceConfiguration.getInstance().getDefaultLanguage();
+
     /**
      * Generate procedure description from Hibernate procedure entity if no
      * description (file, XML text) is available
-     * 
+     *
      * @param procedure
      *            Hibernate procedure entity
      * @param session
      *            the session
-     * 
+     *
      * @return Generated procedure description
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public SensorML generateProcedureDescription(Procedure procedure, Session session) throws OwsExceptionReport {
+    public SensorML generateProcedureDescription(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
+        this.locale = i18n;
         final SensorML sml = new SensorML();
         // 2 try to get position from entity
         if (procedure.isSpatial()) {
@@ -144,59 +150,31 @@ public class HibernateProcedureDescriptionGenerator {
 
     /**
      * Create a SensorML ProcessModel from Hibernate procedure entity
-     * 
+     *
      * @param procedure
      *            Hibernate procedure entity
-     * 
+     *
      * @return SensorML ProcessModel
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs
      */
     private ProcessModel createSmlProcessModel(Procedure procedure, Session session) throws OwsExceptionReport {
         final ProcessModel processModel = new ProcessModel();
-
         setCommonValues(procedure, processModel, session);
-        String[] observableProperties = getObservablePropertiesForProcedure(procedure.getIdentifier());
-        processModel.setMethod(createMethod(procedure, observableProperties));
-        processModel.setNames(createNames(procedure));
+        processModel.setMethod(createMethod(procedure, getObservablePropertiesForProcedure(procedure.getIdentifier())));
+//        processModel.setNames(createNames(procedure));
         return processModel;
     }
 
     /**
-     * Create a SensorML ProcessMethod for ProcessModel
-     * 
-     * @param procedure
-     *            Hibernate procedure entity
-     * @param observableProperties
-     *            Properties observed by the procedure
-     * 
-     * @return SenbsorML ProcessModel
-     */
-    private ProcessMethod createMethod(Procedure procedure, String[] observableProperties) {
-        return new ProcessMethod(createRulesDefinition(procedure, observableProperties));
-    }
-
-    /**
-     * Create a names collection for procedure description
-     * 
-     * @param procedure
-     *            Hibernate procedure entity
-     * 
-     * @return Collection with names
-     */
-    private List<CodeType> createNames(Procedure procedure) {
-        return Lists.newArrayList(new CodeType(procedure.getIdentifier()));
-    }
-
-    /**
      * Create a SensorML System from Hibernate procedure entity
-     * 
+     *
      * @param procedure
      *            Hibernate procedure entity
-     * 
+     *
      * @return SensorML System
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs
      */
@@ -208,13 +186,40 @@ public class HibernateProcedureDescriptionGenerator {
     }
 
     /**
-     * Create the rules definition for ProcessMethod
-     * 
+     * Create a SensorML ProcessMethod for ProcessModel
+     *
      * @param procedure
      *            Hibernate procedure entity
      * @param observableProperties
      *            Properties observed by the procedure
-     * 
+     *
+     * @return SenbsorML ProcessModel
+     */
+    private ProcessMethod createMethod(Procedure procedure, String[] observableProperties) {
+        return new ProcessMethod(createRulesDefinition(procedure, observableProperties));
+    }
+
+    /**
+     * Create a names collection for procedure description
+     *
+     * @param procedure
+     *            Hibernate procedure entity
+     *
+     * @return Collection with names
+     */
+    private List<CodeType> createNames(Procedure procedure) {
+        // locale
+        return Lists.newArrayList(new CodeType(procedure.getIdentifier()));
+    }
+
+    /**
+     * Create the rules definition for ProcessMethod
+     *
+     * @param procedure
+     *            Hibernate procedure entity
+     * @param observableProperties
+     *            Properties observed by the procedure
+     *
      * @return SensorML RulesDefinition
      */
     private RulesDefinition createRulesDefinition(Procedure procedure, String[] observableProperties) {
@@ -228,35 +233,83 @@ public class HibernateProcedureDescriptionGenerator {
 
     /**
      * Set common values to procedure description
-     * 
+     *
      * @param procedure
      *            Hibernate procedure entity
-     * @param abstractSensorML
+     * @param abstractProcess
      *            SensorML process
-     * 
+     * @param session
+     *            the session
+     *
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private void setCommonValues(Procedure procedure, AbstractProcess abstractSensorML, Session session)
+    private void setCommonValues(Procedure procedure, AbstractProcess abstractProcess, Session session)
             throws OwsExceptionReport {
         String identifier = procedure.getIdentifier();
         String[] observableProperties = getObservablePropertiesForProcedure(identifier);
 
-        // 1 set description
-        abstractSensorML.setDescriptions(createDescriptions(procedure, observableProperties));
+        // 1 set description, names
+        addNameAndDescription(procedure, abstractProcess);
 
         // 2 identifier
-        abstractSensorML.setIdentifier(identifier);
+        abstractProcess.setIdentifier(identifier);
 
         // 3 set identification
-        abstractSensorML.setIdentifications(createIdentifications(identifier));
+        abstractProcess.setIdentifications(createIdentifications(identifier));
 
         // 7 set inputs/outputs --> observableProperties
         if (getServiceConfig().isAddOutputsToSensorML()
                 && !"hydrology".equalsIgnoreCase(Configurator.getInstance().getProfileHandler().getActiveProfile()
                         .getIdentifier())) {
-            abstractSensorML.setInputs(createInputs(observableProperties));
-            abstractSensorML.setOutputs(createOutputs(procedure, observableProperties, session));
+            abstractProcess.setInputs(createInputs(observableProperties));
+            abstractProcess.setOutputs(createOutputs(procedure, observableProperties, session));
+        }
+    }
+
+    private void addNameAndDescription(Procedure procedure,
+                                       AbstractProcess abstractProcess)
+            throws OwsExceptionReport {
+        I18NDAO<I18NProcedureMetadata> i18nDAO = I18NDAORepository.getInstance().getDAO(I18NProcedureMetadata.class);
+        Locale requestedLocale = getLocale();
+        if (i18nDAO == null) {
+            // no locale support
+            ProcedureDAO featureDAO = new ProcedureDAO();
+            abstractProcess.addName(featureDAO.getName(procedure));
+            abstractProcess.setDescription(featureDAO.getDescription(procedure));
+        } else {
+            if (requestedLocale != null) {
+                // specific locale was requested
+                I18NProcedureMetadata i18n = i18nDAO.getMetadata(procedure.getIdentifier(), requestedLocale);
+                Optional<LocalizedString> name = i18n.getName().getLocalization(requestedLocale);
+                if (name.isPresent()) {
+                    abstractProcess.addName(name.get().asCodeType());
+                }
+                Optional<LocalizedString> description = i18n.getDescription().getLocalization(requestedLocale);
+                if (description.isPresent()) {
+                    abstractProcess.setDescription(description.get().getText());
+                }
+            } else {
+                Locale defaultLocale = ServiceConfiguration.getInstance().getDefaultLanguage();
+                final I18NProcedureMetadata i18n;
+                if (ServiceConfiguration.getInstance().isShowAllLanguageValues()) {
+                    // load all names
+                    i18n = i18nDAO.getMetadata(procedure.getIdentifier());
+                } else {
+                    // load only name in default locale
+                    i18n = i18nDAO.getMetadata(procedure.getIdentifier(), defaultLocale);
+                }
+                for (LocalizedString name : i18n.getName()) {
+                    // either all or default only
+                    abstractProcess.addName(name.asCodeType());
+                }
+                // choose always the description in the default locale
+                Optional<LocalizedString> description = i18n.getDescription()
+                        .getLocalization(defaultLocale);
+                if (description.isPresent()) {
+                    abstractProcess.setDescription(description.get().getText());
+                }
+            }
         }
     }
 
@@ -272,14 +325,14 @@ public class HibernateProcedureDescriptionGenerator {
 
     /**
      * Create SensorML output list from observableProperties
-     * 
+     *
      * @param procedure
      *            Hibernate procedure entity
      * @param observableProperties
      *            Properties observed by the procedure
-     * 
+     *
      * @return Output list
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs
      */
@@ -289,7 +342,7 @@ public class HibernateProcedureDescriptionGenerator {
             final List<SmlIo<?>> outputs = Lists.newArrayListWithExpectedSize(observableProperties.length);
             int i = 1;
             final boolean supportsObservationConstellation =
-                    HibernateHelper.isEntitySupported(ObservationConstellation.class, session);
+                    HibernateHelper.isEntitySupported(ObservationConstellation.class);
             for (String observableProperty : observableProperties) {
                 final SmlIo<?> output;
                 if (supportsObservationConstellation) {
@@ -392,7 +445,7 @@ public class HibernateProcedureDescriptionGenerator {
 
     /**
      * Logger method for class
-     * 
+     *
      * @param clazz
      *            Name of not supported class
      */
@@ -402,8 +455,8 @@ public class HibernateProcedureDescriptionGenerator {
 
     /**
      * Logger method for class
-     * 
-     * @param clazz
+     *
+     * @param observationType
      *            Name of not supported class
      */
     private void logTypeNotSupported(String observationType) {
@@ -448,17 +501,17 @@ public class HibernateProcedureDescriptionGenerator {
 
     /**
      * Create SensorML Position from Hibernate procedure entity
-     * 
+     *
      * @param procedure
      *            Hibernate procedure entity
-     * 
+     *
      * @return SensorML Position
      */
     private SmlPosition createPosition(Procedure procedure) {
         SmlPosition position = new SmlPosition();
         position.setName(POSITION_NAME);
         position.setFixed(true);
-        int srid = GeometryHandler.getInstance().getDefaultEPSG();
+        int srid = GeometryHandler.getInstance().getDefaultResponseEPSG();
         if (procedure.isSetLongLat()) {
             // 8.1 set latlong position
             position.setPosition(createCoordinatesForPosition(procedure.getLongitude(), procedure.getLatitude(),
@@ -481,21 +534,20 @@ public class HibernateProcedureDescriptionGenerator {
 
     /**
      * Create SWE Coordinates for SensorML Position
-     * 
+     *
      * @param longitude
      *            Longitude value
      * @param latitude
      *            Latitude value
      * @param altitude
      *            Altitude value
-     * 
+     *
      * @return List with SWE Coordinate
      */
-    private List<SweCoordinate<?>> createCoordinatesForPosition(
-            Object longitude, Object latitude, Object altitude) {
-        SweQuantity yq = createSweQuantity(latitude, Y_AXIS, procedureSettings().getLatLongUom());
-        SweQuantity xq = createSweQuantity(longitude, X_AXIS, procedureSettings().getLatLongUom());
-        SweQuantity zq = createSweQuantity(altitude, Z_AXIS, procedureSettings().getAltitudeUom());
+    private List<SweCoordinate<?>> createCoordinatesForPosition(Object longitude, Object latitude, Object altitude) {
+        SweQuantity yq = createSweQuantity(latitude, SweConstants.Y_AXIS, procedureSettings().getLatLongUom());
+        SweQuantity xq = createSweQuantity(longitude, SweConstants.X_AXIS, procedureSettings().getLatLongUom());
+        SweQuantity zq = createSweQuantity(altitude, SweConstants.Z_AXIS, procedureSettings().getAltitudeUom());
         // TODO add Integer: Which SweSimpleType to use?
         return Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(SweCoordinateName.northing.name(), yq),
                 new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq), new SweCoordinate<Double>(
@@ -504,14 +556,14 @@ public class HibernateProcedureDescriptionGenerator {
 
     /**
      * Create SWE Quantity for SWE coordinate
-     * 
+     *
      * @param value
      *            Value
      * @param axis
      *            Axis id
      * @param uom
      *            UnitOfMeasure
-     * 
+     *
      * @return SWE Quantity
      */
     private SweQuantity createSweQuantity(Object value, String axis, String uom) {
@@ -519,6 +571,7 @@ public class HibernateProcedureDescriptionGenerator {
     }
 
     private List<String> createDescriptions(Procedure procedure, String[] observableProperties) {
+        // locale
         String template = procedureSettings().getDescriptionTemplate();
         String identifier = procedure.getIdentifier();
         String obsProps = COMMA_JOINER.join(observableProperties);
@@ -535,18 +588,27 @@ public class HibernateProcedureDescriptionGenerator {
                 identifier);
     }
 
+
+    private Locale getLocale() {
+        return locale;
+    }
+
+    private boolean isSetLocale() {
+        return locale != null;
+    }
+
     /**
      * Get example observation for output list creation
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param observableProperty
      *            ObservableProperty identifier
      * @param session
      *            the session
-     * 
+     *
      * @return Example observation
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs.
      */

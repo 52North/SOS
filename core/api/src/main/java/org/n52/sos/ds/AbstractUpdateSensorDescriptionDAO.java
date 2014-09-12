@@ -48,8 +48,7 @@ public abstract class AbstractUpdateSensorDescriptionDAO extends AbstractOperati
     @Override
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
-        opsMeta.addPossibleValuesParameter(Sos2Constants.UpdateSensorDescriptionParams.procedure, getCache()
-                .getProcedures());
+        addProcedureParameter(opsMeta);
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
             opsMeta.addPossibleValuesParameter(Sos2Constants.UpdateSensorDescriptionParams.procedureDescriptionFormat,
                     CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(service, version));

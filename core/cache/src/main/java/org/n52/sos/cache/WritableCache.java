@@ -30,26 +30,23 @@ package org.n52.sos.cache;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.util.CollectionHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-/**
- * {@code WritableContentCache} that allows the updating of the underlying maps.
- * All basic CRUD operations are supported.
- * 
- * @author Christian Autermann <c.autermann@52north.org>
- * @since 4.0.0
- */
+
 public class WritableCache extends ReadableCache implements WritableContentCache, CacheConstants {
     private static final Logger LOG = LoggerFactory.getLogger(WritableCache.class);
 
@@ -57,10 +54,10 @@ public class WritableCache extends ReadableCache implements WritableContentCache
 
     /**
      * Creates a {@code TimePeriod} for the specified {@code ITime}.
-     * 
+     *
      * @param time
      *            the abstract time
-     * 
+     *
      * @return the period describing the abstract time
      */
     protected static TimePeriod toTimePeriod(final Time time) {
@@ -376,6 +373,23 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         LOG.trace("Setting Name of Offering {} to {}", offering, name);
         getNameForOfferingsMap().put(offering, name);
 
+    }
+
+    @Override
+    public void setI18nNameForOffering(String offering, MultilingualString name) {
+        notNullOrEmpty(OFFERING, offering);
+        notNull(NAME, name);
+        LOG.trace("Setting I18N Name of Offering {} to {}", offering, name);
+        getI18nNameForOfferingsMap().put(offering, name);
+    }
+
+    @Override
+    public void setI18nDescriptionForOffering(String offering,
+                                              MultilingualString description) {
+        notNullOrEmpty(OFFERING, offering);
+        notNull(DESCRIPTION, description);
+        LOG.trace("Setting I18N Description of Offering {} to {}", offering, description);
+        getI18nDescriptionForOfferingsMap().put(offering, description);
     }
 
     @Override
@@ -911,7 +925,7 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         LOG.trace("Setting allowedObservationTypes for offering {} to {}", offering, newValue);
         getAllowedObservationTypesForOfferingsMap().put(offering, newValue);
     }
-    
+
     @Override
     public void setAllowedFeatureOfInterestTypeForOffering(final String offering,
             final Collection<String> allowedFeatureOfInterestType) {
@@ -1288,6 +1302,19 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
+    public void clearI18nNamesForOfferings() {
+        LOG.trace("Clearing i18n names for offerings");
+        getI18nNameForOfferingsMap().clear();
+
+    }
+
+    @Override
+    public void clearI18nDescriptionsNameForOfferings() {
+        LOG.trace("Clearing i18n descriptions for offerings");
+        getI18nDescriptionForOfferingsMap().clear();
+    }
+
+    @Override
     public void clearObservablePropertiesForOfferings() {
         LOG.trace("Clearing observable properties for offerings");
         getObservablePropertiesForOfferingsMap().clear();
@@ -1508,6 +1535,33 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         noNullValues(ALLOWED_FEATURE_OF_INTEREST_TYPES, allowedFeatureOfInterestTypes);
         LOG.trace("Adding AllowedFeatureOfInterestTypes {} to Offering {}", allowedFeatureOfInterestTypes, offering);
         getAllowedFeatureOfInterestTypesForOfferingsMap().addAll(offering, allowedFeatureOfInterestTypes);
+    }
+
+    @Override
+    public void addSupportedLanguage(Locale language){
+      notNull(SUPPORTED_LANGUAGE, language);
+      LOG.trace("Adding Language {}", language);
+      getSupportedLanguageSet().add(language);
+    }
+
+    @Override
+    public void addSupportedLanguage(Collection<Locale> languages) {
+        noNullValues(SUPPORTED_LANGUAGES, languages);
+      for (final Locale language : languages) {
+          addSupportedLanguage(language);
+      }
+    }
+
+    @Override
+    public void clearSupportedLanguage() {
+        LOG.trace("Clearing supported languages");
+        getSupportedLanguageSet().clear();
+    }
+
+    @Override
+    public void removeSupportedLanguage(Locale language) {
+        LOG.trace("Removing Language {}", language);
+        getSupportedLanguageSet().remove(language);
     }
 
 }

@@ -49,6 +49,7 @@ import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.OwsExceptionCode;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.GmlMeasureType;
 import org.n52.sos.ogc.gml.ReferenceType;
@@ -253,9 +254,9 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
             NamedValue<String> namedValue = new NamedValue<String>();
             namedValue.setValue((TextValue) value);
             return namedValue;
-        } else if (value instanceof Geometry) {
+        } else if (value instanceof AbstractGeometry) {
             NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
-            namedValue.setValue(new GeometryValue((Geometry) value));
+            namedValue.setValue(new GeometryValue((AbstractGeometry)value));
             return namedValue;
         } else {
             throw new UnsupportedDecoderInputException(this, xmlObject);

@@ -38,12 +38,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Abstract Hibernate streaming value class for old observation concept
+ * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
  */
 public abstract class HibernateStreamingValue extends AbstractHibernateStreamingValue {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateStreamingValue.class);
 
     private static final long serialVersionUID = -7451818170087729427L;
@@ -53,18 +54,25 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
     protected final ValueTimeDAO valueTimeDAO = new ValueTimeDAO();
 
     protected long procedure;
-    
+
     protected long featureOfInterest;
-    
+
     protected long observableProperty;
 
     /**
+     * constructor
+     * 
      * @param request
+     *            {@link GetObservationRequest}
      * @param procedure
+     *            Datasource procedure id
      * @param observableProperty
+     *            observableProperty procedure id
      * @param featureOfInterest
+     *            featureOfInterest procedure id
      */
-    public HibernateStreamingValue(GetObservationRequest request, long procedure, long observableProperty, long featureOfInterest) {
+    public HibernateStreamingValue(GetObservationRequest request, long procedure, long observableProperty,
+            long featureOfInterest) {
         super(request);
         this.procedure = procedure;
         this.observableProperty = observableProperty;
@@ -78,13 +86,21 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
             ObservationValueTime maxTime;
             // query with temporal filter
             if (temporalFilterCriterion != null) {
-                minTime = valueTimeDAO.getMinValueFor(request, procedure, observableProperty, featureOfInterest, temporalFilterCriterion, session);
-                maxTime = valueTimeDAO.getMaxValueFor(request, procedure, observableProperty, featureOfInterest, temporalFilterCriterion, session);
+                minTime =
+                        valueTimeDAO.getMinValueFor(request, procedure, observableProperty, featureOfInterest,
+                                temporalFilterCriterion, session);
+                maxTime =
+                        valueTimeDAO.getMaxValueFor(request, procedure, observableProperty, featureOfInterest,
+                                temporalFilterCriterion, session);
             }
             // query without temporal or indeterminate filters
             else {
-                minTime = valueTimeDAO.getMinValueFor(request, procedure, observableProperty, featureOfInterest, session);
-                maxTime = valueTimeDAO.getMaxValueFor(request, procedure, observableProperty, featureOfInterest, session);
+                minTime =
+                        valueTimeDAO
+                                .getMinValueFor(request, procedure, observableProperty, featureOfInterest, session);
+                maxTime =
+                        valueTimeDAO
+                                .getMaxValueFor(request, procedure, observableProperty, featureOfInterest, session);
             }
             setPhenomenonTime(createPhenomenonTime(minTime, maxTime));
             setResultTime(createResutlTime(maxTime));
@@ -93,15 +109,14 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
             LOGGER.error("Error while querying times", owse);
         }
     }
-    
+
     @Override
     protected void queryUnit() {
         try {
             setUnit(valueDAO.getUnit(request, procedure, observableProperty, featureOfInterest, session));
-        }catch (OwsExceptionReport owse) {
+        } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying unit", owse);
         }
-        
     }
-    
+
 }

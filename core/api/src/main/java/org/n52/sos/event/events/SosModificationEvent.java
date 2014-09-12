@@ -37,7 +37,7 @@ import org.n52.sos.response.AbstractServiceResponse;
  * 
  * @since 4.0.0
  */
-public abstract class SosModificationEvent<I extends AbstractServiceRequest, O extends AbstractServiceResponse>
+public abstract class SosModificationEvent<I extends AbstractServiceRequest<?>, O extends AbstractServiceResponse>
         extends SosContentChangeEvent<I, O> {
 
     public SosModificationEvent(I request, O response) {

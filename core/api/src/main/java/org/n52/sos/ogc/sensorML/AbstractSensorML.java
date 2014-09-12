@@ -51,6 +51,7 @@ import com.google.common.collect.Iterables;
  * 
  */
 public class AbstractSensorML extends SosProcedureDescription {
+    private static final long serialVersionUID = -5715790909736521952L;
     private List<String> keywords = new ArrayList<String>(0);
     private List<SmlIdentifier> identifications = new ArrayList<SmlIdentifier>(0);
     private List<SmlClassifier> classifications = new ArrayList<SmlClassifier>(0);

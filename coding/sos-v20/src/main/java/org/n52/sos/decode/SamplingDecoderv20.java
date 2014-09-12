@@ -140,6 +140,9 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
         if (spatialSamplingFeature.getNameArray() != null) {
             sosFeat.setName(getNames(spatialSamplingFeature));
         }
+        if (spatialSamplingFeature.isSetDescription()) {
+            sosFeat.setDescription(spatialSamplingFeature.getDescription().getStringValue());
+        }
         sosFeat.setFeatureType(getFeatureType(spatialSamplingFeature.getType()));
         sosFeat.setSampledFeatures(getSampledFeatures(spatialSamplingFeature.getSampledFeatureArray()));
         sosFeat.setXmlDescription(getXmlDescription(spatialSamplingFeature));

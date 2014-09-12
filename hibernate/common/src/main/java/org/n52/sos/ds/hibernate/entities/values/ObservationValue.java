@@ -83,5 +83,4 @@ public class ObservationValue extends AbstractValue implements HasProcedure, Has
     public void setFeatureOfInterest(FeatureOfInterest featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
     }
-
 }

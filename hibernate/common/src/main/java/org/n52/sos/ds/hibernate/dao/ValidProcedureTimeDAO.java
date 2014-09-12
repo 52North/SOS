@@ -136,7 +136,7 @@ public class ValidProcedureTimeDAO {
      *            Hibernate session
      */
     public void setValidProcedureDescriptionEndTime(String procedureIdentifier, Session session) {
-        TProcedure procedure = new ProcedureDAO().getTProcedureForIdentifier(procedureIdentifier, session);
+        TProcedure procedure = new ProcedureDAO().getTProcedureForIdentifierIncludeDeleted(procedureIdentifier, session);
         Set<ValidProcedureTime> validProcedureTimes = procedure.getValidProcedureTimes();
         for (ValidProcedureTime validProcedureTime : validProcedureTimes) {
             if (validProcedureTime.getEndTime() == null) {

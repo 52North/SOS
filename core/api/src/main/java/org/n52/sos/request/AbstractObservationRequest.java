@@ -28,6 +28,7 @@
  */
 package org.n52.sos.request;
 
+import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.util.StringHelper;
 
 /**
@@ -35,7 +36,12 @@ import org.n52.sos.util.StringHelper;
  * 
  * @since 4.0.0
  */
-public abstract class AbstractObservationRequest extends AbstractServiceRequest implements ResponseFormat {
+public abstract class AbstractObservationRequest extends AbstractServiceRequest<AbstractObservationResponse> implements ResponseFormat, SrsNameRequest {
+    /**
+     * SRS name
+     */
+    private String srsName;
+    
     /**
      * Response format
      */
@@ -72,11 +78,6 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest 
         this.responseFormat = responseFormat;
     }
 
-    /**
-     * Is response format set?
-     * 
-     * @return True if response format is set 
-     */
     @Override
     public boolean isSetResponseFormat() {
         return StringHelper.isNotEmpty(getResponseFormat());
@@ -101,11 +102,6 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest 
         this.responseMode = responseMode;
     }
 
-    /**
-     * Is response mode set?
-     * 
-     * @return True if response mode is set 
-     */    
     public boolean isSetResponseMode() {
         return StringHelper.isNotEmpty(getResponseMode());
     }
@@ -128,13 +124,31 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest 
     public void setResultModel(String resultModel) {
         this.resultModel = resultModel;
     }
-
-    /**
-     * Is result model set?
-     * 
-     * @return True if result model is set 
-     */    
+    
     public boolean isSetResultModel() {
         return StringHelper.isNotEmpty(getResultModel());
-    }    
+    }
+    
+    @Override
+    public String getSrsName() {
+        return srsName;
+    }
+    
+    @Override
+    public void setSrsName(String srsName) {
+        this.srsName = srsName;
+    }
+
+    @Override
+    public boolean isSetSrsName() {
+        return StringHelper.isNotEmpty(getSrsName());
+    }
+    
+    public void copyOf(AbstractObservationRequest res) {
+        res.setResponseFormat(this.responseFormat);
+        res.setResponseMode(this.responseMode);
+        res.setResultModel(this.resultModel);
+        res.setSrsName(this.srsName);
+    }
+
 }

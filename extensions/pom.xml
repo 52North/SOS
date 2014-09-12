@@ -14,5 +14,6 @@
     <modules>
         <module>gda</module>
         <module>do</module>
+        <module>inspire</module>
     </modules>
 </project>

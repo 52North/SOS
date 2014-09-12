@@ -28,18 +28,22 @@
  */
 package org.n52.sos.ds.hibernate.cache;
 
+
 import org.n52.sos.ds.ConnectionProvider;
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.hibernate.ThreadLocalSessionFactory;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CompositeParallelAction;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
  * @author Shane StClair <shane@axiomalaska.com>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class AbstractQueueingDatasourceCacheUpdate<T extends AbstractThreadableDatasourceCacheUpdate>
@@ -47,9 +51,9 @@ public abstract class AbstractQueueingDatasourceCacheUpdate<T extends AbstractTh
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractQueueingDatasourceCacheUpdate.class);
 
     private final int threads;
-    
+
     private final String threadGroupName;
-    
+
     private final ConnectionProvider connectionProvider = Configurator.getInstance().getDataConnectionProvider();
 
     private final ThreadLocalSessionFactory sessionFactory = new ThreadLocalSessionFactory(connectionProvider);
@@ -59,13 +63,20 @@ public abstract class AbstractQueueingDatasourceCacheUpdate<T extends AbstractTh
         this.threadGroupName = threadGroupName;
     }
 
-    protected abstract T[] getUpdatesToExecute();
+    protected abstract T[] getUpdatesToExecute() throws OwsExceptionReport;
 
     @Override
     public void execute() {
-        LOGGER.debug("AbstractQueueingDatasourceCacheUpdate init");        
+        LOGGER.debug("AbstractQueueingDatasourceCacheUpdate init");
+        T[] updatesToExecute;
+        try {
+            updatesToExecute = getUpdatesToExecute();
+        } catch (OwsExceptionReport ex) {
+            getErrors().add(ex);
+            return;
+        }
         CompositeParallelAction<AbstractThreadableDatasourceCacheUpdate> compositeParallelAction =
-                new CompositeParallelAction<AbstractThreadableDatasourceCacheUpdate>(threads, threadGroupName, getUpdatesToExecute()) {
+                new CompositeParallelAction<AbstractThreadableDatasourceCacheUpdate>(threads, threadGroupName, updatesToExecute) {
             @Override
             protected void pre(AbstractThreadableDatasourceCacheUpdate action) {
                 action.setCache(getCache());
@@ -79,8 +90,8 @@ public abstract class AbstractQueueingDatasourceCacheUpdate<T extends AbstractTh
             }
         };
         //execute multiple threads
-        compositeParallelAction.execute();        
-        
+        compositeParallelAction.execute();
+
         try {
             sessionFactory.close();
         } catch (ConnectionProviderException cpe) {

@@ -197,13 +197,13 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
             throws OwsExceptionReport {
         xbSamplingFeature.setId(sampFeat.getGmlId());
         if (sampFeat.isSetIdentifier()
-                && SosHelper.checkFeatureOfInterestIdentifierForSosV2(sampFeat.getIdentifier().getValue(),
+                && SosHelper.checkFeatureOfInterestIdentifierForSosV2(sampFeat.getIdentifierCodeWithAuthority().getValue(),
                         Sos1Constants.SERVICEVERSION)) {
             xbSamplingFeature.addNewName().set(
-                    CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, sampFeat.getIdentifier()));
+                    CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, sampFeat.getIdentifierCodeWithAuthority()));
         }
 
-        if (sampFeat.isSetNames()) {
+        if (sampFeat.isSetName()) {
             for (CodeType sosName : sampFeat.getName()) {
                 xbSamplingFeature.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, sosName));
             }

@@ -75,6 +75,9 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         if (isSpatialFilteringProfileDatasource()) {
             set.add(getSpatialFilteringProfileDefiniton());
         }
+        if (isMultiLanguageDatasource()) {
+            set.add(getMulitLanguageDefiniton());
+        }
         return set;
     }
 

@@ -142,6 +142,18 @@ public class SQLScriptGenerator {
                         "/mapping/series/spatialFilteringProfile").toURI()));
             }
             break;
+        case 5:
+            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/core").toURI()));
+            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/transactional").toURI()));
+            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/i18n").toURI()));
+            if (oldConcept) {
+                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation").toURI()));
+                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/spatialFilteringProfile").toURI()));
+            } else {
+                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/series/observation").toURI()));
+                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/series/spatialFilteringProfile").toURI()));
+            }
+            break;
         default:
             throw new Exception("The entered value is invalid!");
         }
@@ -169,6 +181,7 @@ public class SQLScriptGenerator {
         printToScreen("2   Transcational");
         printToScreen("3   Spatial Filtering Profile");
         printToScreen("4   Core/Transactional/Spatial Filtering Profile");
+        printToScreen("5   Core/Transactional/Spatial Filtering Profile/Multi Language");
         printToScreen("");
         printToScreen("Enter your selection: ");
 

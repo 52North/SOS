@@ -45,12 +45,16 @@ public interface Constants {
 
     // String constants
     String EMPTY_STRING = "";
+    
+    String SPACE_STRING = " ";
 
-    String BLANK_STRING = " ";
-
+    String BLANK_STRING = SPACE_STRING;
+    
     String SEMICOLON_STRING = ";";
 
     String COLON_STRING = ":";
+    
+    String DOUBLE_COLON_STRING = COLON_STRING + COLON_STRING;
 
     String DOT_STRING = ".";
 
@@ -97,7 +101,9 @@ public interface Constants {
     String GREATER_THAN_SIGN_STRING = ">";
 
     // char constants
-    char BLANK_CHAR = ' ';
+    char SPACE_CHAR = ' ';
+    
+    char BLANK_CHAR = SPACE_CHAR;
 
     char SEMICOLON_CHAR = ';';
 
@@ -146,6 +152,10 @@ public interface Constants {
     int INT_3 = 3;
 
     int INT_4 = 4;
+
+    String URN = "urn";
+
+    String HTTP = "http";
 
     int HASH_CODE_3 = 3;
 

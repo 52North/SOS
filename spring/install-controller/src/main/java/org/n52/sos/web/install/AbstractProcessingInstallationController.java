@@ -39,24 +39,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.exception.JSONException;
+
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 @Controller
 public abstract class AbstractProcessingInstallationController extends AbstractInstallController {
 
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView get(HttpServletRequest req) throws InstallationRedirectError {
+    public ModelAndView get(HttpServletRequest req)
+            throws InstallationRedirectError,
+                   ConfigurationException, JSONException {
         return new ModelAndView(getStep().getView(), toModel(getSettings(checkPrevious(req))));
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ModelAndView post(HttpServletRequest req, HttpServletResponse resp) throws InstallationSettingsError,
-            InstallationRedirectError {
+    public ModelAndView post(HttpServletRequest req,
+                             HttpServletResponse resp)
+            throws InstallationSettingsError,
+                   InstallationRedirectError {
         HttpSession session = checkPrevious(req);
         InstallationConfiguration c = getSettings(session);
         process(getParameters(req), c);
@@ -65,7 +72,8 @@ public abstract class AbstractProcessingInstallationController extends AbstractI
         return redirect(getStep().getNext().getPath());
     }
 
-    protected abstract void process(Map<String, String> parameters, InstallationConfiguration c)
+    protected abstract void process(Map<String, String> parameters,
+                                    InstallationConfiguration c)
             throws InstallationSettingsError;
 
 }

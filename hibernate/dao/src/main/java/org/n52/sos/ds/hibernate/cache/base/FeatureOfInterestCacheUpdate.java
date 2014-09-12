@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.hibernate.internal.util.collections.CollectionHelper;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
@@ -73,9 +74,10 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
                     getCache().addParentFeatures(featureOfInterestIdentifier, parentFois);
                 }
             }
-            getCache().setGlobalEnvelope(
-                    getFeatureQueryHandler()
-                            .getEnvelopeForFeatureIDs(getCache().getFeaturesOfInterest(), getSession()));
+            FeatureQueryHandlerQueryObject queryHandler =
+                    new FeatureQueryHandlerQueryObject().setFeatureIdentifiers(getCache().getFeaturesOfInterest())
+                            .setConnection(getSession());
+            getCache().setGlobalEnvelope(getFeatureQueryHandler().getEnvelopeForFeatureIDs(queryHandler));
         } catch (final OwsExceptionReport ex) {
             getErrors().add(ex);
         }

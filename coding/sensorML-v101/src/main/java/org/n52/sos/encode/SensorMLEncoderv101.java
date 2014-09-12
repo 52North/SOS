@@ -34,7 +34,6 @@ import static org.n52.sos.util.CollectionHelper.union;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -103,6 +102,8 @@ import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -154,7 +155,7 @@ import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.Constants;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -515,17 +516,6 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
         return xbPerson;
     }
 
-    private String createDescription(final List<String> descriptions) {
-        if (descriptions != null) {
-            if (descriptions.size() == 1) {
-                return descriptions.get(0);
-            } else {
-                return Arrays.toString(descriptions.toArray(new String[descriptions.size()]));
-            }
-        }
-        return Constants.EMPTY_STRING;
-    }
-
     // TODO refactor/rename
     private void addAbstractProcessValues(final AbstractProcessType abstractProcess,
             final AbstractProcess sosAbstractProcess) throws OwsExceptionReport {
@@ -553,9 +543,12 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
         }
 
         // set description
-        if (sosAbstractProcess.isSetDescriptions() && !abstractProcess.isSetDescription()) {
-            abstractProcess.addNewDescription()
-                    .setStringValue(createDescription(sosAbstractProcess.getDescriptions()));
+        if (sosAbstractProcess.isSetDescription() && !abstractProcess.isSetDescription()) {
+            abstractProcess.addNewDescription().setStringValue(sosAbstractProcess.getDescription());
+        }
+        if (sosAbstractProcess.isSetName() && CollectionHelper.isNullOrEmpty(abstractProcess.getNameArray())) {
+            // TODO check if override existing names
+            addNamesToAbstractProcess(abstractProcess, sosAbstractProcess.getNames());
         }
         // set identification
         if (sosAbstractProcess.isSetIdentifications()) {
@@ -610,6 +603,14 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
         }
     }
 
+    private void addNamesToAbstractProcess(AbstractProcessType abstractProcess, List<CodeType> names)
+            throws OwsExceptionReport {
+        for (CodeType codeType : names) {
+            abstractProcess.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, codeType));
+        }
+    }
+
+    @SuppressWarnings("unused")
     private Contact[] mergeContacts(final Contact[] contacts, final ContactList additionalContactsList) {
         final Set<Person> mergedPersons = Sets.newHashSet();
         final Set<ResponsibleParty> mergedResponsibleParties = Sets.newHashSet();
@@ -768,7 +769,19 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
         }
         // set outputs
         if (system.isSetOutputs()) {
+            extendOutputs(system);
             xbSystem.setOutputs(createOutputs(system.getOutputs()));
+        }
+    }
+
+    private void extendOutputs(AbstractProcess abstractProcess) {
+        if (abstractProcess.isSetPhenomenon()) {
+            for (SmlIo<?> output : abstractProcess.getOutputs()) {
+                if (abstractProcess.hasPhenomenonFor(output.getIoValue().getDefinition())) {
+                    output.getIoValue().setName(
+                            abstractProcess.getPhenomenonFor(output.getIoValue().getDefinition()).getName());
+                }
+            }
         }
     }
 
@@ -780,6 +793,7 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
         }
         // set outputs
         if (sosProcessModel.isSetOutputs()) {
+            extendOutputs(sosProcessModel);
             processModel.setOutputs(createOutputs(sosProcessModel.getOutputs()));
         }
         // set method
@@ -889,7 +903,7 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
                     if (sosSMLCharacteristics.getDataRecord().isSetFields()) {
                         for (final SweField field : sosSMLCharacteristics.getDataRecord().getFields()) {
                             final AnyScalarPropertyType xbField = xbSimpleDataRecord.addNewField();
-                            xbField.setName(field.getName());
+                            xbField.setName(field.getName().getValue());
                             addSweSimpleTypeToField(xbField, field.getElement());
                         }
                     }
@@ -995,8 +1009,8 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
      */
     private Position createPosition(final SmlPosition position) throws OwsExceptionReport {
         final Position xbPosition = Position.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        if (position.getName() != null && !position.getName().isEmpty()) {
-            xbPosition.setName(position.getName());
+        if (position.isSetName()) {
+            xbPosition.setName(position.getName().getValue());
         }
         final PositionType xbSwePosition = xbPosition.addNewPosition();
         xbSwePosition.setFixed(position.isFixed());
@@ -1309,18 +1323,25 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
      *            SOS abstract process.
      */
     protected void addSpecialCapabilities(final AbstractProcess abstractProcess) {
-        if (abstractProcess.isSetFeaturesOfInterest()) {
-            final Map<String, String> valueNamePairs =
-                    createValueNamePairs(SensorMLConstants.FEATURE_OF_INTEREST_FIELD_NAME,
-                            abstractProcess.getFeaturesOfInterest());
+        if (abstractProcess.isSetFeaturesOfInterestMap()) {
+            final Set<SweText> featureSet = convertFeaturesToSet(abstractProcess.getFeaturesOfInterestMap());
             mergeCapabilities(abstractProcess, SensorMLConstants.ELEMENT_NAME_FEATURES_OF_INTEREST,
-                    SensorMLConstants.FEATURE_OF_INTEREST_FIELD_DEFINITION, valueNamePairs);
+                    SensorMLConstants.FEATURE_OF_INTEREST_FIELD_DEFINITION, SensorMLConstants.FEATURE_OF_INTEREST_FIELD_NAME, featureSet);
+
+        } else {
+            if (abstractProcess.isSetFeaturesOfInterest()) {
+                final Map<String, String> valueNamePairs =
+                        createValueNamePairs(SensorMLConstants.FEATURE_OF_INTEREST_FIELD_NAME,
+                                abstractProcess.getFeaturesOfInterest());
+                mergeCapabilities(abstractProcess, SensorMLConstants.ELEMENT_NAME_FEATURES_OF_INTEREST,
+                        SensorMLConstants.FEATURE_OF_INTEREST_FIELD_DEFINITION, valueNamePairs);
+            }
         }
 
         if (abstractProcess.isSetOfferings()) {
-            final Map<String, String> valueNamePairs = convertOfferingsToMap(abstractProcess.getOfferings());
+            final Set<SweText> offeringsSet = convertOfferingsToSet(abstractProcess.getOfferings());
             mergeCapabilities(abstractProcess, SensorMLConstants.ELEMENT_NAME_OFFERINGS,
-                    SensorMLConstants.OFFERING_FIELD_DEFINITION, valueNamePairs);
+                    SensorMLConstants.OFFERING_FIELD_DEFINITION, null, offeringsSet);
         }
 
         if (abstractProcess.isSetParentProcedures()) {
@@ -1372,6 +1393,50 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
         }
     }
 
+    private void mergeCapabilities(final AbstractProcess process, final String capabilitiesName,
+            final String definition, String fieldName, final Set<SweText> sweTextFieldSet) {
+        final Optional<SmlCapabilities> capabilities =
+                process.findCapabilities(SmlCapabilitiesPredicates.name(capabilitiesName));
+        if (capabilities.isPresent() && capabilities.get().isSetAbstractDataRecord()) {
+            final DataRecord dataRecord = capabilities.get().getDataRecord();
+            // update present capabilities
+            for (final SweField field : dataRecord.getFields()) {
+
+                // update the definition if not present
+                if (field.getDefinition() == null) {
+                    field.setDefinition(definition);
+                }
+
+                // update the name of present field
+                if (field.getElement() instanceof SweText) {
+                    final SweText sweText = (SweText) field.getElement();
+                    for (SweText sweTextField : sweTextFieldSet) {
+                        if (sweText.getValue().equals(sweTextField.getValue())) {
+                            if (sweTextField.isSetName()) {
+                                field.setName(sweTextField.getName().getValue());
+                            } else {
+                                field.setName(fieldName);
+                            }
+                            // we don't need to add it any more
+                            sweTextFieldSet.remove(sweTextField);
+                        }
+                    }
+                }
+            }
+            // add capabilities not yet present
+            final List<SweField> additionalFields = createCapabilitiesFieldsFrom(definition, fieldName, sweTextFieldSet);
+            for (final SweField field : additionalFields) {
+                dataRecord.addField(field);
+            }
+        } else {
+            if (capabilities.isPresent()) {
+                process.removeCapabilities(capabilities.get());
+            }
+            // create new capabilities
+            process.addCapabilities(createCapabilitiesFrom(capabilitiesName, definition, fieldName, sweTextFieldSet));
+        }
+    }
+
     /**
      * Convert SOS sosOfferings to map with key == identifier and value = name
      * 
@@ -1382,9 +1447,56 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
     protected Map<String, String> convertOfferingsToMap(final Set<SosOffering> offerings) {
         final Map<String, String> valueNamePairs = Maps.newHashMapWithExpectedSize(offerings.size());
         for (final SosOffering offering : offerings) {
-            valueNamePairs.put(offering.getOfferingIdentifier(), offering.getOfferingName());
+            valueNamePairs.put(offering.getIdentifier(), offering.getOfferingName());
         }
         return valueNamePairs;
+    }
+
+    /**
+     * Convert SOS sosOfferings to map with key == identifier and value = name
+     * @param featureOfInterestFieldName 
+     * 
+     * @param map
+     *            .values() SOS sosOfferings
+     * @return Set with identifier, name.
+     */
+    protected Set<SweText> convertFeaturesToSet(final Map<String, AbstractFeature> map) {
+        final Set<SweText> featureSet = Sets.newHashSetWithExpectedSize(map.values().size());
+        for (final AbstractFeature abstractFeature : map.values()) {
+            SweText sweText = new SweText();
+            sweText.setValue(abstractFeature.getIdentifier());
+            for (CodeType name : abstractFeature.getName()) {
+                sweText.addName(name);
+            }
+            if (abstractFeature.isSetDescription()) {
+                sweText.setDescription(abstractFeature.getDescription());
+            }
+            featureSet.add(sweText);
+        }
+        return featureSet;
+    }
+
+    /**
+     * Convert SOS sosOfferings to map with key == identifier and value = name
+     * 
+     * @param offerings
+     *            SOS sosOfferings
+     * @return Set with identifier, name.
+     */
+    protected Set<SweText> convertOfferingsToSet(final Set<SosOffering> offerings) {
+        final Set<SweText> offeringSet = Sets.newHashSetWithExpectedSize(offerings.size());
+        for (final SosOffering offering : offerings) {
+            SweText sweText = new SweText();
+            sweText.setValue(offering.getIdentifier());
+            for (CodeType name : offering.getName()) {
+                sweText.addName(name);
+            }
+            if (offering.isSetDescription()) {
+                sweText.setDescription(offering.getDescription());
+            }
+            offeringSet.add(sweText);
+        }
+        return offeringSet;
     }
 
     protected Map<String, String> createValueNamePairs(final String fieldName, final Set<String> values) {
@@ -1430,6 +1542,34 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
             text.setValue(value);
             final String fieldName = valueNamePairs.get(value);
             final SweField field = new SweField(fieldName, text);
+            fields.add(field);
+        }
+        return fields;
+    }
+
+    protected SmlCapabilities createCapabilitiesFrom(final String capabilitiesName, final String fieldDefinition, final String fieldName,
+            final Set<SweText> sweTextSet) {
+        final SmlCapabilities capabilities = new SmlCapabilities().setName(capabilitiesName);
+        final SweSimpleDataRecord simpleDataRecord = new SweSimpleDataRecord();
+        final List<SweField> fields = createCapabilitiesFieldsFrom(fieldDefinition, fieldName, sweTextSet);
+        return capabilities.setDataRecord(simpleDataRecord.setFields(fields));
+    }
+
+    private List<SweField> createCapabilitiesFieldsFrom(final String fieldElementDefinition, final String fieldName, final Set<SweText> sweTextSet) {
+        final List<SweField> fields = Lists.newArrayListWithExpectedSize(sweTextSet.size());
+        final List<SweText> values = Lists.newArrayList(sweTextSet);
+        Collections.sort(values);
+        for (final SweText text : values) {
+            text.setDefinition(fieldElementDefinition);
+            String name = fieldName;
+            if (Strings.isNullOrEmpty(fieldName)) {
+                if (text.isSetName() && text.getName().isSetValue()) {
+                    name = text.getName().getValue();
+                } else {
+                    name =  SensorMLConstants.DEFAULT_FIELD_NAME  + Integer.toString(values.indexOf(text));
+                }
+            }
+            final SweField field = new SweField(name, text);
             fields.add(field);
         }
         return fields;

@@ -117,7 +117,7 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
         final Collection<SwesFeatureRelationship> relatedFeatures = request.getRelatedFeatures();
         if (CollectionHelper.isNotEmpty(relatedFeatures)) {
             for (SwesFeatureRelationship relatedFeature : relatedFeatures) {
-                final String identifier = relatedFeature.getFeature().getIdentifier().getValue();
+                final String identifier = relatedFeature.getFeature().getIdentifierCodeWithAuthority().getValue();
                 for (SosOffering sosOffering : request.getAssignedOfferings()) {
                     // TODO check if check for parent offering is necessary;
                     cache.addRelatedFeatureForOffering(sosOffering.getOfferingIdentifier(), identifier);

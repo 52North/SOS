@@ -80,14 +80,14 @@
 
                                         JOIN (
                                             SELECT
-                                                @seriesObservationProcedureId:=@seriesObservationProcedureId+1 AS `id`,
+                                                @seriesObservationInfoProcedureId:=@seriesObservationInfoProcedureId+1 AS `id`,
                                                 table_name AS `identifier`
                                             FROM (
                                                 SELECT table_name
                                                 FROM information_schema.tables
                                                 WHERE table_schema = 'sea'
                                                 ORDER BY table_name
-                                            ) AS t1, (SELECT @seriesObservationProcedureId:=0) AS t2
+                                            ) AS t1, (SELECT @seriesObservationInfoProcedureId:=0) AS t2
                                         ) AS `procedures`
                                         ON combinations.procedure = procedures.identifier
 

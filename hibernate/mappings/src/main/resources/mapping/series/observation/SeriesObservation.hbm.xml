@@ -95,7 +95,7 @@
 
                                         JOIN (
                                             SELECT
-                                                @seriesObservaitonObservablePropertyId:=@seriesObservaitonObservablePropertyId+1 AS `id`,
+                                                @seriesObservationOfferingObservablePropertyId:=@seriesObservationOfferingObservablePropertyId+1 AS `id`,
                                                 column_name AS `identifier`
                                             FROM
                                                 (
@@ -103,7 +103,7 @@
                                                     FROM information_schema.columns
                                                     WHERE table_schema = 'sea' AND data_type = 'double'
                                                     ORDER BY column_name
-                                                ) AS t1, (SELECT @seriesObservaitonObservablePropertyId:=0) AS t2
+                                                ) AS t1, (SELECT @seriesObservationOfferingObservablePropertyId:=0) AS t2
                                         ) AS `observableProperties`
                                         ON combinations.observableProperty = observableProperties.identifier
 

@@ -14,13 +14,6 @@
     <modules>
         <module>gda</module>
         <module>do</module>
+        <module>inspire</module>
     </modules>
-    <profiles>
-        <profile>
-            <id>inspire</id>
-            <modules>
-                <module>inspire</module>
-            </modules>
-        </profile>
-    </profiles>
 </project>

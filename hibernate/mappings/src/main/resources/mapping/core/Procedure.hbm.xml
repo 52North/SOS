@@ -3,6 +3,14 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.Procedure">
+        <!--
+            To enable prefixes for procedure identifiers replace all occurences
+            of 'SELECT *.table_name AS identifier' with something like
+            'SELECT CONCAT('urn:procedure:..', *.table) AS identifier'.
+
+            Same procedure for observable properties but replacing column_name
+            everywhere.
+        -->
         <!--  procedureDescriptionFormat 1 is SensorML -->
         <subselect>
             SELECT

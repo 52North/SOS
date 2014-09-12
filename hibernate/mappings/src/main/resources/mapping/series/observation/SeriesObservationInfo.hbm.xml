@@ -126,7 +126,7 @@
                 ON series.tab = observation.tab AND series.col = observation.col
         )</subselect>
         <id name="observationId" type="long" />
-        <many-to-one name="series" class="org.n52.sos.ds.hibernate.entities.series.Series" fetch="select" lazy="no-proxy" column="seriesId" update="false" insert="false" />
+        <many-to-one name="series" class="org.n52.sos.ds.hibernate.entities.series.Series" fetch="select" lazy="no-proxy" update="false" insert="false" />
         <property name="phenomenonTimeStart" type="timestamp"  update="false" insert="false" />
         <property name="phenomenonTimeEnd" type="timestamp" update="false" insert="false" />
         <property name="resultTime" type="timestamp" update="false" insert="false"/>

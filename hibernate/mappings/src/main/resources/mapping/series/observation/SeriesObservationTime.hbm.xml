@@ -60,7 +60,7 @@
                                                 table_name AS `procedure`,
                                                 column_name AS `observableProperty`
                                             FROM information_schema.columns
-                                            WHERE `table_schema` = 'sea' AND `data_type` = 'double'
+                                            WHERE `table_schema` = (SELECT DATABASE()) AND `data_type` = 'double'
                                             ORDER BY `table_name`
                                         )
                                         AS `combinations`
@@ -72,7 +72,7 @@
                                             FROM (
                                                 SELECT table_name
                                                 FROM information_schema.tables
-                                                WHERE table_schema = 'sea'
+                                                WHERE table_schema = (SELECT DATABASE())
                                                 ORDER BY table_name
                                             ) AS t1, (SELECT @seriesObservationTimeProcedureId:=0) AS t2
                                         ) AS `procedures`
@@ -86,7 +86,7 @@
                                                 (
                                                     SELECT DISTINCT column_name
                                                     FROM information_schema.columns
-                                                    WHERE table_schema = 'sea' AND data_type = 'double'
+                                                    WHERE table_schema = (SELECT DATABASE()) AND data_type = 'double'
                                                     ORDER BY column_name
                                                 ) AS t1, (SELECT @seriesObservationTimeObservablePropertyId:=0) AS t2
                                         ) AS `observableProperties`
@@ -154,7 +154,7 @@
                                                 FROM
                                                     information_schema.columns
                                                 WHERE
-                                                    table_schema = 'sea'
+                                                    table_schema = (SELECT DATABASE())
                                                     AND
                                                     data_type = 'double'
                                                 ORDER BY
@@ -172,7 +172,7 @@
                                                     FROM
                                                         information_schema.tables
                                                     WHERE
-                                                        table_schema = 'sea'
+                                                        table_schema = (SELECT DATABASE())
                                                     ORDER BY
                                                         table_name
                                                 ) AS t1,
@@ -195,7 +195,7 @@
                                                         FROM
                                                             information_schema.columns
                                                         WHERE
-                                                            table_schema = 'sea'
+                                                            table_schema = (SELECT DATABASE())
                                                             AND
                                                             data_type = 'double'
                                                         ORDER BY

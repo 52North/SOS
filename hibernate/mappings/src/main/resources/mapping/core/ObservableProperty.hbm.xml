@@ -14,7 +14,7 @@
                     FROM
                         information_schema.columns
                     WHERE
-                        table_schema = 'sea'
+                        table_schema = (SELECT DATABASE())
                         AND
                         data_type = 'double'
                     ORDER BY

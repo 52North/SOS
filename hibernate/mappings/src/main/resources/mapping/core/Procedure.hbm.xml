@@ -22,7 +22,7 @@
                 FROM
                     information_schema.tables AS t
                 WHERE
-                    t.table_schema = 'sea'
+                    t.table_schema = (SELECT DATABASE())
                 ORDER BY
                     t.table_name
             ) AS t1,

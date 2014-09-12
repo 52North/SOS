@@ -24,7 +24,7 @@
                             FROM
                                 information_schema.columns
                             WHERE
-                                table_schema = 'sea'
+                                table_schema = (SELECT DATABASE())
                                 AND
                                 data_type = 'double'
                             ORDER BY
@@ -42,7 +42,7 @@
                                     FROM
                                         information_schema.tables
                                     WHERE
-                                        table_schema = 'sea'
+                                        table_schema = (SELECT DATABASE())
                                     ORDER BY
                                         table_name
                                 ) AS t1,
@@ -63,7 +63,7 @@
                                FROM
                                     information_schema.columns
                                WHERE
-                                    table_schema = 'sea'
+                                    table_schema = (SELECT DATABASE())
                                     AND
                                     data_type = 'double'
                                ORDER BY
@@ -87,7 +87,7 @@
                                 FROM
                                     information_schema.tables
                                 WHERE
-                                    table_schema = 'sea'
+                                    table_schema = (SELECT DATABASE())
                                 ORDER BY
                                     table_name
                             ) AS t1,

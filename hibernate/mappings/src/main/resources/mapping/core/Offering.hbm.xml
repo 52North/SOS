@@ -15,7 +15,7 @@
                     FROM
                         information_schema.tables
                     WHERE
-                        table_schema = 'sea'
+                        table_schema = (SELECT DATABASE())
                     ORDER BY
                         table_name
                 ) AS t1,

@@ -128,7 +128,9 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         p.put(HibernateConstants.C3P0_ACQUIRE_INCREMENT, "1");
         p.put(HibernateConstants.C3P0_TIMEOUT, "0");
         p.put(HibernateConstants.C3P0_MAX_STATEMENTS, "0");
-        p.put(HibernateConstants.JDBC_BATCH_SIZE, settings.get(BATCH_SIZE_KEY).toString());
+        if (settings.containsKey(BATCH_SIZE_KEY)) {
+            p.put(HibernateConstants.JDBC_BATCH_SIZE, settings.get(BATCH_SIZE_KEY).toString());
+        }
         p.put(HibernateConstants.CONNECTION_AUTO_RECONNECT, "true");
         p.put(HibernateConstants.CONNECTION_AUTO_RECONNECT_FOR_POOLS, "true");
         p.put(HibernateConstants.CONNECTION_TEST_ON_BORROW, "true");
@@ -159,7 +161,9 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         settings.put(PASSWORD_KEY, current.getProperty(HibernateConstants.CONNECTION_PASSWORD));
         settings.put(MIN_POOL_SIZE_KEY, current.getProperty(HibernateConstants.C3P0_MIN_SIZE));
         settings.put(MAX_POOL_SIZE_KEY, current.getProperty(HibernateConstants.C3P0_MAX_SIZE));
-        settings.put(BATCH_SIZE_KEY, current.getProperty(HibernateConstants.JDBC_BATCH_SIZE));
+        if (current.containsKey(HibernateConstants.JDBC_BATCH_SIZE)) {
+            settings.put(BATCH_SIZE_KEY, current.getProperty(HibernateConstants.JDBC_BATCH_SIZE));
+        }
         settings.put(TRANSACTIONAL_KEY, isTransactional(current));
         settings.put(SPATIAL_FILTERING_PROFILE_KEY, isSpatialFilteringProfile(current));
         settings.put(PROVIDED_JDBC_DRIVER_KEY,

@@ -4,26 +4,30 @@
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.Procedure">
         <!--  procedureDescriptionFormat 1 is SensorML -->
-        <subselect>(
+        <subselect>
             SELECT
-                @procedureId:=@procedureId+1 AS procedureId,
-                table_name AS identifier,
-                'F'        AS deleted,
-                NULL       AS description_file,
-                'F'        AS reference,
-                1          AS procedureDescriptionFormat
+                @procedureId := @procedureId + 1 AS procedureId,
+                table_name                       AS identifier
             FROM (
-                SELECT t.table_name
-                FROM information_schema.tables AS t
-                WHERE t.table_schema = 'sea'
-                ORDER BY t.table_name
-            ) AS t1, (SELECT @procedureId:=0) AS t2
-        )</subselect>
+                SELECT
+                    t.table_name
+                FROM
+                    information_schema.tables AS t
+                WHERE
+                    t.table_schema = 'sea'
+                ORDER BY
+                    t.table_name
+            ) AS t1,
+            (
+                SELECT
+                    @procedureId := 0
+            ) AS t2
+        </subselect>
         <id name="procedureId" type="long" />
-        <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" fetch="select" lazy="no-proxy" insert="false" update="false" />
+        <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" fetch="select" lazy="no-proxy" insert="false" update="false" formula="1"/>
         <property name="identifier" type="string" insert="false" update="false" />
-        <property name="deleted" type="org.hibernate.type.TrueFalseType" insert="false" update="false" />
-        <property name="descriptionFile" type="org.hibernate.type.StringClobType" insert="false" update="false" />
-        <property name="reference" type="org.hibernate.type.TrueFalseType" insert="false" update="false" />
+        <property name="deleted" type="org.hibernate.type.TrueFalseType" insert="false" update="false" formula="'F'"/>
+        <property name="descriptionFile" type="org.hibernate.type.StringClobType" insert="false" update="false" formula="NULL" />
+        <property name="reference" type="org.hibernate.type.TrueFalseType" insert="false" update="false" formula="'F'"/>
     </class>
 </hibernate-mapping>

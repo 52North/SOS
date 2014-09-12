@@ -3,10 +3,11 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterestType">
-		<subselect>(
-            SELECT 1 AS featureOfInterestTypeId,
-                   'http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint' AS featureOfInterestType
-        )</subselect>
+		<subselect>
+            SELECT
+                1                                                                            AS featureOfInterestTypeId,
+                'http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint' AS featureOfInterestType
+        </subselect>
 		<id name="featureOfInterestTypeId" type="long" />
 		<property name="featureOfInterestType" type="string" insert="false" update="false" />
     </class>

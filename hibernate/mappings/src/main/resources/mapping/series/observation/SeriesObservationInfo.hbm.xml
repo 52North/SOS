@@ -3,22 +3,14 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo">
-        <subselect>(
+        <subselect>
             SELECT
-                (observation.id * 10000000000) + series.seriesId AS observationId,
-                series.seriesid AS series,
-                observation.date_sistema AS phenomenonTimeStart,
-                observation.date_sistema AS phenomenonTimeEnd,
-                observation.date_sistema AS resultTime,
-                NULL AS validTimeStart,
-                NULL AS validTimeEnd,
-                'F' AS deleted,
-                NULL AS description,
-                NULL AS codespace,
-                NULL AS identifier,
-                series.unitid AS unit,
-                NULL AS samplingGeometry,
-                offeringId
+                (observation.id * 1e10) + series.seriesId AS observationId,
+                series.seriesid                           AS series,
+                observation.date_sistema                  AS phenomenonTimeStart,
+                observation.date_sistema                  AS phenomenonTimeEnd,
+                observation.date_sistema                  AS resultTime,
+                series.unitid                             AS unit
             FROM
                 (
                     SELECT id, date_sistema, 'sea_water_temperature'  AS col, 'qualityobsea_ctd01' AS tab FROM qualityobsea_ctd01 WHERE sea_water_temperature != -99999
@@ -35,29 +27,27 @@
                 JOIN
                 (
                     SELECT
-                        @seriesObservationInfoSeriesId:=@seriesObservationInfoSeriesId+1 AS seriesid,
+                        @seriesObservationInfoSeriesId := @seriesObservationInfoSeriesId + 1 AS seriesid,
                         unitid,
                         observablePropertyid,
-                        offeringId,
                         tab,
                         col
                     FROM
                         (
                             SELECT
-                                procedure_identifier AS tab,
+                                procedure_identifier          AS tab,
                                 observableProperty_identifier AS col,
-                                observableProperty AS observablePropertyid ,
-                                unit as unitid,
-                                offering AS offeringId
+                                observableProperty            AS observablePropertyid ,
+                                unit                          AS unitid
                             FROM
                                 (
                                     SELECT DISTINCT
-                                        procedures.id AS `procedure`,
-                                        procedures.id AS offering,
-                                        procedures.identifier AS procedure_identifier,
-                                        observableProperties.id AS `observableProperty`,
+                                        procedures.id                   AS `procedure`,
+                                        procedures.id                   AS offering,
+                                        procedures.identifier           AS procedure_identifier,
+                                        observableProperties.id         AS observableProperty,
                                         observableProperties.identifier AS observableProperty_identifier,
-                                        featuresOfInterest.id AS `featureOfInterest`,
+                                        featuresOfInterest.id           AS `featureOfInterest`,
                                         CASE observableProperties.identifier
                                             WHEN 'sea_water_temperature' THEN 1
                                             WHEN 'conductivity' THEN 2
@@ -65,7 +55,7 @@
                                             WHEN 'salinity' THEN 2
                                             WHEN 'sound_velocity' THEN 1
                                             ELSE NULL
-                                        END AS `unit`
+                                        END AS unit
                                     FROM
                                         (
                                             SELECT
@@ -124,24 +114,25 @@
                         ) AS t1, (SELECT @seriesObservationInfoSeriesId:=0) AS t2
                 ) AS series
                 ON series.tab = observation.tab AND series.col = observation.col
-        )</subselect>
+        </subselect>
         <id name="observationId" type="long" />
-        <many-to-one name="series" class="org.n52.sos.ds.hibernate.entities.series.Series" fetch="select" lazy="no-proxy" update="false" insert="false" />
         <property name="phenomenonTimeStart" type="timestamp"  update="false" insert="false" />
         <property name="phenomenonTimeEnd" type="timestamp" update="false" insert="false" />
         <property name="resultTime" type="timestamp" update="false" insert="false"/>
-        <property name="identifier" type="string" update="false" insert="false"/>
-        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" update="false" insert="false" />
-        <property name="description" type="string" update="false" insert="false"/>
-        <property name="deleted" type="org.hibernate.type.TrueFalseType" update="false" insert="false"/>
-        <property name="validTimeStart" type="timestamp" update="false" insert="false"/>
-        <property name="validTimeEnd" type="timestamp" update="false" insert="false"/>
+        <property name="identifier" type="string" update="false" insert="false" formula="NULL"/>
+        <property name="description" type="string" update="false" insert="false" formula="NULL"/>
+        <property name="deleted" type="org.hibernate.type.TrueFalseType" update="false" insert="false" formula="'F'"/>
+        <property name="validTimeStart" type="timestamp" update="false" insert="false" formula="NULL"/>
+        <property name="validTimeEnd" type="timestamp" update="false" insert="false" formula="NULL"/>
+        <property name="samplingGeometry" type="org.hibernate.spatial.GeometryType" update="false" insert="false" formula="NULL"/>
+        <many-to-one name="series" class="org.n52.sos.ds.hibernate.entities.series.Series" fetch="select" lazy="no-proxy" update="false" insert="false" />
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" update="false" insert="false" formula="1"/>
         <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit" fetch="select" lazy="no-proxy" update="false" insert="false" />
         <set name="offerings">
             <subselect>
                 SELECT
-                    (observation.id * 10000000000) + series.seriesId AS observationId,
-                    offeringId
+                    (observation.id * 1e10) + series.seriesId AS observationId,
+                                                                 offeringId
                 FROM
                     (
                         SELECT id, 'sea_water_temperature'  AS col, 'qualityobsea_ctd01' AS tab FROM qualityobsea_ctd01 WHERE sea_water_temperature != -99999
@@ -158,88 +149,131 @@
                     JOIN
                     (
                         SELECT
-                            @seriesObservationInfoOfferingSeriesId:=@seriesObservationInfoOfferingSeriesId+1 AS seriesid,
-                            offeringId,
-                            tab,
-                            col
+                            @seriesObservationOfferingSeriesId := @seriesObservationOfferingSeriesId + 1 AS seriesid,
+                                                                                                            offeringId,
+                                                                                                            tab,
+                                                                                                            col
                         FROM
                             (
                                 SELECT
-                                    procedure_identifier AS tab,
+                                    procedure_identifier          AS tab,
                                     observableProperty_identifier AS col,
-                                    observableProperty AS observablePropertyid ,
-                                    offering AS offeringId
+                                    observableProperty            AS observablePropertyid ,
+                                    offering                      AS offeringId
                                 FROM
                                     (
                                         SELECT DISTINCT
-                                            procedures.id AS `procedure`,
-                                            procedures.id AS offering,
-                                            procedures.identifier AS procedure_identifier,
-                                            observableProperties.id AS `observableProperty`,
+                                            procedures.id                   AS `procedure`,
+                                            procedures.id                   AS offering,
+                                            procedures.identifier           AS procedure_identifier,
+                                            observableProperties.id         AS observableProperty,
                                             observableProperties.identifier AS observableProperty_identifier,
-                                            featuresOfInterest.id AS `featureOfInterest`
+                                            featuresOfInterest.id           AS featureOfInterest
                                         FROM
                                             (
                                                 SELECT
-                                                    table_name AS `procedure`,
-                                                    table_name AS `featureOfInterest`,
-                                                    column_name AS `observableProperty`
-                                                FROM information_schema.columns
-                                                WHERE `table_schema` = 'sea' AND `data_type` = 'double'
-                                                ORDER BY `table_name`
+                                                    table_name  AS `procedure`,
+                                                    table_name  AS featureOfInterest,
+                                                    column_name AS observableProperty
+                                                FROM
+                                                    information_schema.columns
+                                                WHERE
+                                                    table_schema = 'sea'
+                                                    AND
+                                                    data_type = 'double'
+                                                ORDER BY
+                                                    table_name
                                             )
                                             AS `combinations`
-
-                                            JOIN (
+                                            JOIN
+                                            (
                                                 SELECT
-                                                    @seriesObservationInfoOfferingProcedureId:=@seriesObservationInfoOfferingProcedureId+1 AS `id`,
-                                                    table_name AS `identifier`
+                                                    @seriesObservationOfferingProcedureId := @seriesObservationOfferingProcedureId+1 AS id,
+                                                    table_name                                                                       AS identifier
                                                 FROM (
-                                                    SELECT table_name
-                                                    FROM information_schema.tables
-                                                    WHERE table_schema = 'sea'
-                                                    ORDER BY table_name
-                                                ) AS t1, (SELECT @seriesObservationInfoOfferingProcedureId:=0) AS t2
-                                            ) AS `procedures`
-                                            ON combinations.procedure = procedures.identifier
-
-                                            JOIN (
+                                                    SELECT
+                                                        table_name
+                                                    FROM
+                                                        information_schema.tables
+                                                    WHERE
+                                                        table_schema = 'sea'
+                                                    ORDER BY
+                                                        table_name
+                                                ) AS t1,
+                                                (
+                                                    SELECT
+                                                        @seriesObservationOfferingProcedureId := 0
+                                                ) AS t2
+                                            ) AS procedures
+                                            ON
+                                                combinations.procedure = procedures.identifier
+                                            JOIN
+                                            (
                                                 SELECT
-                                                    @seriesObservationInfoOfferingObservablePropertyId:=@seriesObservationInfoOfferingObservablePropertyId+1 AS `id`,
-                                                    column_name AS `identifier`
+                                                    @seriesObservationOfferingObservablePropertyId := @seriesObservationOfferingObservablePropertyId + 1 AS id,
+                                                    column_name                                                                                          AS identifier
                                                 FROM
                                                     (
-                                                        SELECT DISTINCT column_name
-                                                        FROM information_schema.columns
-                                                        WHERE table_schema = 'sea' AND data_type = 'double'
-                                                        ORDER BY column_name
-                                                    ) AS t1, (SELECT @seriesObservationInfoOfferingObservablePropertyId:=0) AS t2
-                                            ) AS `observableProperties`
-                                            ON combinations.observableProperty = observableProperties.identifier
-
-                                            JOIN (
+                                                        SELECT DISTINCT
+                                                            column_name
+                                                        FROM
+                                                            information_schema.columns
+                                                        WHERE
+                                                            table_schema = 'sea'
+                                                            AND
+                                                            data_type = 'double'
+                                                        ORDER BY
+                                                            column_name
+                                                    ) AS t1,
+                                                    (
+                                                        SELECT
+                                                            @seriesObservationOfferingObservablePropertyId := 0
+                                                    ) AS t2
+                                            ) AS observableProperties
+                                            ON
+                                                combinations.observableProperty = observableProperties.identifier
+                                            JOIN
+                                            (
                                                 SELECT
-                                                    @seriesObservationInfoOfferingFeatureOfInterestId:=@seriesObservationInfoOfferingFeatureOfInterestId+1 AS `id`,
-                                                    table_name AS identifier
+                                                    @seriesObservationOfferingFeatureOfInterestId := @seriesObservationOfferingFeatureOfInterestId + 1 AS id,
+                                                    table_name                                                                                         AS identifier
                                                 FROM
                                                     (
-                                                        SELECT table_name
-                                                        FROM information_schema.tables
-                                                        WHERE table_schema = 'sea'
-                                                        ORDER BY table_name
-                                                    ) AS t1, (SELECT @seriesObservationInfoOfferingFeatureOfInterestId:=0) AS t2
-                                            ) AS `featuresOfInterest`
-                                            ON combinations.featureOfInterest = featuresOfInterest.identifier
-                                        GROUP BY combinations.`procedure`, combinations.`observableProperty`
-                                        ORDER BY combinations.`procedure`, combinations.`observableProperty`
+                                                        SELECT
+                                                            table_name
+                                                        FROM
+                                                            information_schema.tables
+                                                        WHERE
+                                                            table_schema = 'sea'
+                                                        ORDER BY
+                                                            table_name
+                                                    ) AS t1,
+                                                    (
+                                                        SELECT @seriesObservationOfferingFeatureOfInterestId := 0
+                                                    ) AS t2
+                                            ) AS featuresOfInterest
+                                            ON
+                                                combinations.featureOfInterest = featuresOfInterest.identifier
+                                        GROUP BY
+                                            combinations.`procedure`,
+                                            combinations.observableProperty
+                                        ORDER BY
+                                            combinations.`procedure`,
+                                            combinations.observableProperty
                                 ) AS minMaxObservations
-                            ) AS t1, (SELECT @seriesObservationInfoOfferingSeriesId:=0) AS t2
+                            ) AS t1,
+                            (
+                                SELECT
+                                    @seriesObservationOfferingSeriesId := 0
+                            ) AS t2
                     ) AS series
-                    ON series.tab = observation.tab AND series.col = observation.col
+                    ON
+                        series.tab = observation.tab
+                        AND
+                        series.col = observation.col
             </subselect>
             <key column="observationId" />
             <many-to-many  column="offeringId" entity-name="org.n52.sos.ds.hibernate.entities.Offering" />
         </set>
-        <property name="samplingGeometry" type="org.hibernate.spatial.GeometryType" update="false" insert="false"/>
     </class>
 </hibernate-mapping>

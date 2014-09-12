@@ -3,20 +3,30 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.ObservableProperty">
-    	<subselect>(
-    		SELECT
-    			@observablePropertyId:=@observablePropertyId+1 AS observablePropertyId,
-    			column_name AS identifier,
-    			NULL AS description
-			FROM
-				(SELECT DISTINCT column_name
-    			FROM information_schema.columns
-    			WHERE table_schema = 'sea' AND data_type = 'double'
-    			ORDER BY column_name) AS t1,
-    			(SELECT @observablePropertyId:=0) AS t2
-    	)</subselect>
+    	<subselect>
+            SELECT
+                @observablePropertyId:=@observablePropertyId+1 AS observablePropertyId,
+                column_name                                    AS identifier
+            FROM
+                (
+                    SELECT DISTINCT
+                        column_name
+                    FROM
+                        information_schema.columns
+                    WHERE
+                        table_schema = 'sea'
+                        AND
+                        data_type = 'double'
+                    ORDER BY
+                        column_name
+                ) AS t1,
+                (
+                    SELECT
+                        @observablePropertyId := 0
+                ) AS t2
+        </subselect>
         <id name="observablePropertyId" type="long" />
         <property name="identifier" type="string" insert="false" update="false" />
-        <property name="description" type="string" insert="false" update="false" />
+        <property name="description" type="string" insert="false" update="false" formula="NULL"/>
     </class>
 </hibernate-mapping>

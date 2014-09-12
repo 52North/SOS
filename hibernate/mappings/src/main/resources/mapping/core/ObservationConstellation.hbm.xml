@@ -63,11 +63,11 @@
            ) AS t1, (SELECT @observationConstellationId:=0) AS t2
         )</subselect>
         <id name="observationConstellationId" type="long" />
-        <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" fetch="select" lazy="no-proxy"/>
-        <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="select" lazy="no-proxy"/>
-        <many-to-one name="observationType" class="org.n52.sos.ds.hibernate.entities.ObservationType" fetch="select" lazy="no-proxy"/>
-        <many-to-one name="offering" class="org.n52.sos.ds.hibernate.entities.Offering" fetch="select" lazy="no-proxy"/>
-        <property name="deleted" type="org.hibernate.type.TrueFalseType" />
-        <property name="hiddenChild" type="org.hibernate.type.TrueFalseType" />
+        <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" fetch="select" lazy="no-proxy" insert="false" update="false" />
+        <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="select" lazy="no-proxy" insert="false" update="false" />
+        <many-to-one name="observationType" class="org.n52.sos.ds.hibernate.entities.ObservationType" fetch="select" lazy="no-proxy" insert="false" update="false" />
+        <many-to-one name="offering" class="org.n52.sos.ds.hibernate.entities.Offering" fetch="select" lazy="no-proxy" insert="false" update="false" />
+        <property name="deleted" type="org.hibernate.type.TrueFalseType" insert="false" update="false" />
+        <property name="hiddenChild" type="org.hibernate.type.TrueFalseType" insert="false" update="false" />
     </class>
 </hibernate-mapping>

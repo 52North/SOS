@@ -20,10 +20,10 @@
             ) AS t1, (SELECT @procedureId:=0) AS t2
         )</subselect>
         <id name="procedureId" type="long" />
-        <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" fetch="select" lazy="no-proxy" />
-        <property name="identifier" type="string" />
-        <property name="deleted" type="org.hibernate.type.TrueFalseType" />
-        <property name="descriptionFile" type="org.hibernate.type.StringClobType" />
-        <property name="reference" type="org.hibernate.type.TrueFalseType" />
+        <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" fetch="select" lazy="no-proxy" insert="false" update="false" />
+        <property name="identifier" type="string" insert="false" update="false" />
+        <property name="deleted" type="org.hibernate.type.TrueFalseType" insert="false" update="false" />
+        <property name="descriptionFile" type="org.hibernate.type.StringClobType" insert="false" update="false" />
+        <property name="reference" type="org.hibernate.type.TrueFalseType" insert="false" update="false" />
     </class>
 </hibernate-mapping>

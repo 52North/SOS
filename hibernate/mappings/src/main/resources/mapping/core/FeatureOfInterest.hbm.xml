@@ -11,7 +11,7 @@
     			1 AS codespace,
     			table_name AS name,
     			NULL AS geom,
-    			NULL AS decriptionxml,
+    			NULL AS descriptionXml,
     			NULL AS url
 			FROM
 				(SELECT table_name

@@ -6,7 +6,7 @@
         <subselect>(
             SELECT
                 (observation.id * 10000000000) + series.seriesId AS observationId,
-                series.seriesid AS seriesId,
+                series.seriesid AS series,
                 observation.date_sistema AS phenomenonTimeStart,
                 observation.date_sistema AS phenomenonTimeEnd,
                 observation.date_sistema AS resultTime,

@@ -8,3 +8,4 @@ pom.xml.releaseBackup
 pom.xml.next
 release.properties
 .externalToolBuilders
+webapp/src/main/webapp/WEB-INF/datasource.properties

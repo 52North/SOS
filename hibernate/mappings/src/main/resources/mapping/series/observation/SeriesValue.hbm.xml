@@ -29,7 +29,7 @@
                 JOIN
                 (
                     SELECT
-                       @seriesValueSeriesId:=@seriesid+1 AS seriesid,
+                       @seriesValueSeriesId:=@seriesValueSeriesId+1 AS seriesid,
                         unitid,
                         observablePropertyid,
                         tab,
@@ -49,7 +49,6 @@
                                         procedures.identifier AS procedure_identifier,
                                         observableProperties.id AS `observableProperty`,
                                         observableProperties.identifier AS observableProperty_identifier,
-                                        featuresOfInterest.id AS `featureOfInterest`,
                                         CASE observableProperties.identifier
                                             WHEN 'sea_water_temperature' THEN 1
                                             WHEN 'conductivity' THEN 2
@@ -62,7 +61,6 @@
                                         (
                                             SELECT
                                                 table_name AS `procedure`,
-                                                table_name AS `featureOfInterest`,
                                                 column_name AS `observableProperty`
                                             FROM information_schema.columns
                                             WHERE `table_schema` = 'sea' AND `data_type` = 'double'
@@ -96,20 +94,6 @@
                                                 ) AS t1, (SELECT @seriesValueObservablePropertyId:=0) AS t2
                                         ) AS `observableProperties`
                                         ON combinations.observableProperty = observableProperties.identifier
-
-                                        JOIN (
-                                            SELECT
-                                                @seriesValueFeatureOfInterestId:=@seriesValueFeatureOfInterestId+1 AS `id`,
-                                                table_name AS identifier
-                                            FROM
-                                                (
-                                                    SELECT table_name
-                                                    FROM information_schema.tables
-                                                    WHERE table_schema = 'sea'
-                                                    ORDER BY table_name
-                                                ) AS t1, (SELECT @seriesValueFeatureOfInterestId:=0) AS t2
-                                        ) AS `featuresOfInterest`
-                                        ON combinations.featureOfInterest = featuresOfInterest.identifier
                                     GROUP BY combinations.`procedure`, combinations.`observableProperty`
                                     ORDER BY combinations.`procedure`, combinations.`observableProperty`
                             ) AS minMaxObservations
@@ -167,17 +151,14 @@
                                 FROM
                                     (
                                         SELECT DISTINCT
-                                            procedures.id                   AS `procedure`,
                                             procedures.id                   AS offering,
                                             procedures.identifier           AS procedure_identifier,
                                             observableProperties.id         AS observableProperty,
-                                            observableProperties.identifier AS observableProperty_identifier,
-                                            featuresOfInterest.id           AS featureOfInterest
+                                            observableProperties.identifier AS observableProperty_identifier
                                         FROM
                                             (
                                                 SELECT
                                                     table_name  AS `procedure`,
-                                                    table_name  AS featureOfInterest,
                                                     column_name AS observableProperty
                                                 FROM
                                                     information_schema.columns
@@ -188,7 +169,7 @@
                                                 ORDER BY
                                                     table_name
                                             )
-                                            AS `combinations`
+                                            AS combinations
                                             JOIN
                                             (
                                                 SELECT
@@ -236,28 +217,6 @@
                                             ) AS observableProperties
                                             ON
                                                 combinations.observableProperty = observableProperties.identifier
-                                            JOIN
-                                            (
-                                                SELECT
-                                                    @seriesObservationOfferingFeatureOfInterestId := @seriesObservationOfferingFeatureOfInterestId + 1 AS id,
-                                                    table_name                                                                                         AS identifier
-                                                FROM
-                                                    (
-                                                        SELECT
-                                                            table_name
-                                                        FROM
-                                                            information_schema.tables
-                                                        WHERE
-                                                            table_schema = 'sea'
-                                                        ORDER BY
-                                                            table_name
-                                                    ) AS t1,
-                                                    (
-                                                        SELECT @seriesObservationOfferingFeatureOfInterestId := 0
-                                                    ) AS t2
-                                            ) AS featuresOfInterest
-                                            ON
-                                                combinations.featureOfInterest = featuresOfInterest.identifier
                                         GROUP BY
                                             combinations.`procedure`,
                                             combinations.observableProperty

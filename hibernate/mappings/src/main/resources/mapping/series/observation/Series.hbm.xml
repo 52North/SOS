@@ -7,7 +7,6 @@
             SELECT
                 @seriesId:=@seriesId+1 AS seriesid,
                 observableProperty,
-                featureOfInterest,
                 `procedure`,
                 firstTimeStamp,
                 lastTimeStamp,
@@ -18,7 +17,6 @@
                 (
                     SELECT
                         observableProperty,
-                        featureOfInterest,
                         `procedure`,
                         minMaxObservations.minimalTime    AS firstTimeStamp,
                         minMaxObservations.maximalTime    AS lastTimeStamp,
@@ -39,14 +37,12 @@
                                 procedures.identifier           AS procedure_identifier,
                                 observableProperties.id         AS observableProperty,
                                 observableProperties.identifier AS observableProperty_identifier,
-                                featuresOfInterest.id           AS featureOfInterest,
                                 MIN(observations.date_sistema)  AS minimalTime,
                                 MAX(observations.date_sistema)  AS maximalTime
                             FROM
                                 (
                                     SELECT
                                         table_name  AS `procedure`,
-                                        table_name  AS featureOfInterest,
                                         column_name AS observableProperty
                                     FROM
                                         information_schema.columns
@@ -106,29 +102,6 @@
                                     combinations.observableProperty = observableProperties.identifier
                                 JOIN
                                 (
-                                    SELECT
-                                        @seriesFeatureOfInterestId:=@seriesFeatureOfInterestId+1 AS id,
-                                        table_name AS identifier
-                                    FROM
-                                        (
-                                            SELECT
-                                                table_name
-                                            FROM
-                                                information_schema.tables
-                                            WHERE
-                                                table_schema = 'sea'
-                                            ORDER BY
-                                                table_name
-                                        ) AS t1,
-                                        (
-                                            SELECT
-                                                @seriesFeatureOfInterestId := 0
-                                        ) AS t2
-                                ) AS featuresOfInterest
-                                ON
-                                    combinations.featureOfInterest = featuresOfInterest.identifier
-                                JOIN
-                                (
                                     SELECT id, date_sistema, 'sea_water_temperature'  AS col, 'qualityobsea_ctd01' AS tab, sea_water_temperature AS value FROM qualityobsea_ctd01 WHERE sea_water_temperature != -99999
                                     UNION SELECT id, date_sistema, 'conductivity'  AS col, 'qualityobsea_ctd01' AS tab, conductivity AS value FROM qualityobsea_ctd01 WHERE conductivity != -99999
                                     UNION SELECT id, date_sistema, 'salinity'  AS col, 'qualityobsea_ctd01' AS tab, salinity AS value FROM qualityobsea_ctd01 WHERE salinity != -99999
@@ -145,11 +118,11 @@
                                     AND
                                     observations.tab = combinations.procedure
                             GROUP BY
-                                combinations.observableProperty,
-                                combinations.featureOfInterest
+                                combinations.`procedure`,
+                                combinations.observableProperty
                             ORDER BY
-                                `procedure`,
-                                observableProperty
+                                combinations.`procedure`,
+                                combinations.observableProperty
                         ) AS minMaxObservations
                         JOIN
                         (
@@ -217,7 +190,7 @@
                 ) AS t2
         </subselect>
         <id name="seriesId" type="long" />
-        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" fetch="select" lazy="no-proxy" />
+        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" fetch="select" lazy="no-proxy" formula="1" />
         <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" fetch="select" lazy="no-proxy" />
         <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="select" lazy="no-proxy" />
         <property name="deleted" type="org.hibernate.type.TrueFalseType" formula="'F'"/>

@@ -4,50 +4,19 @@
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest">
         <subselect>
-            SELECT
-                @featureOfInterestId:=@featureOfInterestId+1 AS featureOfInterestId,
-                1                                            AS featureOfInterestType,
-                1                                            AS codespace,
-                table_name                                   AS name,
-                table_name                                   AS identifier
-            FROM
-                (
-                    SELECT
-                        table_name
-                    FROM
-                        information_schema.tables
-                    WHERE
-                        table_schema = 'sea'
-                    ORDER BY
-                        table_name
-                ) AS t1,
-                (
-                    SELECT
-                        @featureOfInterestId := 0
-                ) AS t2
+            SELECT 1 AS featureOfInterestId
         </subselect>
         <id name="featureOfInterestId" type="long" />
-        <many-to-one name="featureOfInterestType" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterestType" fetch="select" lazy="no-proxy" update="false" insert="false" />
-        <property name="identifier" type="string" insert="false" update="false" />
-        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" insert="false" update="false" />
-        <property name="name" type="org.hibernate.type.StringClobType" insert="false" update="false" />
+        <property name="identifier" type="string" insert="false" update="false" formula="'urn:ogc:def:object:feature:FOI_OBSEA'" />
+        <property name="name" type="string" insert="false" update="false" formula="'OBSEA'"/>
         <property name="geom" type="org.hibernate.spatial.GeometryType" insert="false" update="false" formula="NULL" />
-        <property name="descriptionXml" type="org.hibernate.type.StringClobType" insert="false" update="false" formula="NULL"/>
+        <property name="descriptionXml" type="string" insert="false" update="false" formula="NULL"/>
         <property name="url" type="string" insert="false" update="false" formula="NULL"/>
-        <!-- supports types double, big_decimal, and string -->
-        <!--
-        <property name="longitude" type="double">
-           <column name="longitude" unique-key="featLonLatUk" />
-        </property>
-        <property name="latitude" type="double">
-        	<column name="latitude" unique-key="featLonLatUk" />
-        </property>
-        <property name="altitude" type="double">
-        	<column name="altitude" />
-        </property>
-        <property name="srid" type="integer">
-        	<column name="srid" />
-        </property>
-        -->
+        <property name="longitude" type="double" update="false" insert="false" formula="1.75" />
+        <property name="latitude" type="double" update="false" insert="false" formula="41.18" />
+        <property name="altitude" type="double" update="false" insert="false" formula="NULL" />
+        <property name="srid" type="integer" update="false" insert="false" formula="4326" />
+        <many-to-one name="featureOfInterestType" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterestType" fetch="select" lazy="no-proxy" update="false" insert="false" formula="1"/>
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" insert="false" update="false" formula="1"/>
     </class>
 </hibernate-mapping>

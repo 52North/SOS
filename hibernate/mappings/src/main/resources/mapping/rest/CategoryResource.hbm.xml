@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.n52.series.api.v1.db.da.beans">
+    <class name="CategoryEntity">
+    	<subselect>
+    		SELECT
+    			@categoryId:=@categoryId+1 AS pkid,
+    			column_name 			   AS description,
+    			column_name					   AS name
+    		FROM
+    			(
+    				SELECT DISTINCT
+    					column_name
+    				FROM
+    					information_schema.columns
+    				WHERE
+    					table_schema = (SELECT DATABASE())
+    					AND
+    					data_type = 'double'
+    				ORDER BY
+    					column_name
+    			) AS t1,
+    			(
+    				SELECT
+    					@categoryId := 0
+    			) AS t2
+    	</subselect>
+        <id 	  name="pkid"        type="long" />
+        <property name="description" type="string" insert="false" update="false" />
+        <property name="name"        type="string" insert="false" update="false" />
+    </class>
+</hibernate-mapping>

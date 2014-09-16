@@ -151,7 +151,7 @@ public class OracleDatasource extends AbstractHibernateFullDBDatasource {
      * {@link Datasource#checkSchemaCreation(Map)} for testing
      */
     void doCheckSchemaCreation(String schema, Statement stmt) throws SQLException {
-        final String schemaPrefix = schema == null ? "" : "\"" + schema + "\"."; 
+        final String schemaPrefix = schema == null ? "" : "" + schema + "."; 
         final String testTable = schemaPrefix + "sos_test"; 
         final String command =
                 String.format("BEGIN\n" + "  BEGIN\n" + "    EXECUTE IMMEDIATE 'DROP TABLE %1$s';\n"

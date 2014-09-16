@@ -445,12 +445,9 @@ public class NcNameResolver {
 
         // Check first character
         char c = nonNcName.charAt(0);
-        if (c == '_' || NcNameResolver.isLetter(c)) {
-            sb.append(c);
-        } else {
+        if ( ! (c == '_' || NcNameResolver.isLetter(c))) {
             sb.append('_');
         }
-
         // Check the rest of the characters
         for (int i = 1; i < nonNcName.length(); i++) {
             char currentChar = nonNcName.charAt(i);

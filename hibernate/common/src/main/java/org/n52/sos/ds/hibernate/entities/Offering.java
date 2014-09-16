@@ -30,15 +30,14 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
-import org.hibernate.annotations.common.util.StringHelper;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
-public class Offering implements Serializable, HasIdentifier, HasName {
+public class Offering extends AbstractIdentifierNameDescriptionEntity
+        implements Serializable, HasDisabledFlag {
 
     private static final long serialVersionUID = 6512574941388917166L;
 
@@ -46,9 +45,7 @@ public class Offering implements Serializable, HasIdentifier, HasName {
 
     private long offeringId;
 
-    private String identifier;
-
-    private String name;
+    private Boolean disabled = false;
 
     public long getOfferingId() {
         return this.offeringId;
@@ -59,33 +56,19 @@ public class Offering implements Serializable, HasIdentifier, HasName {
     }
 
     @Override
-    public String getIdentifier() {
-        return this.identifier;
-    }
-
-    @Override
-    public Offering setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public Offering setDisabled(final boolean disabled) {
+        this.disabled = disabled;
         return this;
     }
-    
+
     @Override
-    public boolean isSetIdentifier() {
-        return StringHelper.isNotEmpty(getIdentifier());
+    public boolean getDisabled() {
+        return disabled;
     }
 
     @Override
-    public String getName() {
-        return this.name;
+    public boolean isDisabled() {
+        return getDisabled();
     }
 
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "Offering [identifier=" + identifier + "]";
-    }
 }

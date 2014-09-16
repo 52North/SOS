@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.entities;
 import java.io.Serializable;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasHiddenChildFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservableProperty;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationType;
@@ -42,7 +43,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
  * 
  */
 public class ObservationConstellation implements Serializable, HasProcedure, HasObservableProperty, HasOffering,
-        HasObservationType, HasHiddenChildFlag, HasDeletedFlag {
+        HasObservationType, HasHiddenChildFlag, HasDeletedFlag, HasDisabledFlag {
 
     public static final String ID = "observationConstellationId";
 
@@ -59,6 +60,8 @@ public class ObservationConstellation implements Serializable, HasProcedure, Has
     private Offering offering;
 
     private Boolean deleted = false;
+    
+    private Boolean disabled = false;
 
     private Boolean hiddenChild = false;
 
@@ -113,7 +116,7 @@ public class ObservationConstellation implements Serializable, HasProcedure, Has
         this.offering = offering;
     }
 
-    public Boolean getDeleted() {
+    public boolean getDeleted() {
         return deleted;
     }
 
@@ -126,6 +129,22 @@ public class ObservationConstellation implements Serializable, HasProcedure, Has
     @Override
     public boolean isDeleted() {
         return deleted;
+    }
+    
+    @Override
+    public HasDisabledFlag setDisabled(final boolean  disabled) {
+        this.disabled = disabled;
+        return this;
+    }
+
+    @Override
+    public boolean getDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return getDisabled();
     }
 
     @Override

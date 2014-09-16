@@ -47,6 +47,8 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.OptionNotSupportedException;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;
+import org.n52.sos.ogc.gml.CodeType;
+import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OfferingExtension;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -57,7 +59,10 @@ import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosInsertionCapabilities;
 import org.n52.sos.ogc.sos.SosObservationOffering;
+import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.response.GetCapabilitiesResponse;
+import org.n52.sos.util.CodingHelper;
 import org.n52.sos.w3c.SchemaLocation;
 import org.n52.sos.w3c.W3CConstants;
 import org.slf4j.Logger;
@@ -300,20 +305,18 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
             ContentsType xbContType) throws OwsExceptionReport {
         final ObservationOfferingType xbObsOff = ObservationOfferingType.Factory.newInstance(getXmlOptions());
         
-		if (offering.getExtensions() != null && !offering.getExtensions().isEmpty()) {
-			for (OfferingExtension extension : offering.getExtensions()) {
-				try {
-					xbObsOff.addNewExtension().set(XmlObject.Factory.parse(extension.getExtension()));
-				} catch (XmlException ex) {
-					throw new XmlDecodingException("SwesExtension", extension.getExtension(), ex);
-				}
-			}
-		}
-        
-        xbObsOff.setIdentifier(offering.getOffering());
-        if (offering.hasOfferingName()) {
-            xbObsOff.addNewName().setStringValue(offering.getOfferingName());
+	SosOffering sosOffering = offering.getOffering();
+        xbObsOff.setIdentifier(sosOffering.getIdentifier());
+        if (sosOffering.isSetName()) {
+            for (CodeType name : sosOffering.getName()) {
+                xbObsOff.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, name)); 
+            }
         }
+        if (sosOffering.isSetDescription()) {
+            xbObsOff.setDescription(sosOffering.getDescription());
+        }
+        encodeOfferingExtension(offering, xbObsOff);
+        
         for (String procedure : offering.getProcedures()) {
             xbObsOff.setProcedure(procedure);
         }
@@ -332,6 +335,24 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
          * addNewOffering.addNewAbstractOffering().set(xbObsOff); XmlHelper
          * .substituteElement(addNewOffering.getAbstractOffering(), xbObsOff);
          */
+    }
+
+    private void encodeOfferingExtension(SosObservationOffering sosOffering, ObservationOfferingType xbObsOff) throws OwsExceptionReport {
+        if (sosOffering.isSetExtensions()) {
+            for (SwesExtension<?> swesExtention : sosOffering.getExtensions().getExtensions()) {
+                if (swesExtention.getValue() instanceof OfferingExtension) {
+                    OfferingExtension extension = (OfferingExtension) swesExtention.getValue();
+                    try {
+                        xbObsOff.addNewExtension().set(XmlObject.Factory.parse(extension.getExtension()));
+                    } catch (XmlException ex) {
+                            throw new XmlDecodingException("SwesExtension", extension.getExtension(), ex);
+                    }
+                } else {
+                    xbObsOff.addNewExtension().set(CodingHelper.encodeObjectToXml(swesExtention.getNamespace(), swesExtention));
+                }
+                
+            }
+        }
     }
 
     private void encodeObservableProperties(SosObservationOffering offering, ObservationOfferingType xbObsOff) {

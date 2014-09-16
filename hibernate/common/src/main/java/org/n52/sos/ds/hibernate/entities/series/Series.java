@@ -49,8 +49,12 @@ import org.n52.sos.ds.hibernate.entities.Unit;
 public class Series implements Serializable, HasProcedure, HasObservableProperty, HasFeatureOfInterest, HasDeletedFlag, HasUnit {
 
     private static final long serialVersionUID = 7838379468605356753L;
-
+    
     public static String ID = "seriesId";
+    
+    public static String FIRST_TIME_STAMP = "firstTimeStamp";
+    
+    public static String LAST_TIME_STAMP = "lastTimeStamp";
 
     private long seriesId;
 
@@ -130,6 +134,11 @@ public class Series implements Serializable, HasProcedure, HasObservableProperty
 
     @Override
     public boolean isDeleted() {
+        return deleted;
+    }
+
+    @Override
+    public boolean getDeleted() {
         return deleted;
     }
 

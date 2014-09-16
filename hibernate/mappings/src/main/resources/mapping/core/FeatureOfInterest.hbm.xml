@@ -19,4 +19,35 @@
         <many-to-one name="featureOfInterestType" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterestType" fetch="select" lazy="no-proxy" update="false" insert="false" formula="1"/>
         <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" insert="false" update="false" formula="1"/>
     </class>
+    <sql-query name="getFeatureOfInterestIdentifiersForOffering">
+        <return-scalar column="identifier" type="string" />
+        <![CDATA[
+        	SELECT
+				'urn:ogc:def:object:feature:FOI_OBSEA' AS identifier
+			FROM (
+				SELECT
+			    	:offering AS offering
+			) AS offering
+			WHERE
+				offering.offering = :offering
+		]]>
+    </sql-query>
+    <sql-query name="getFeatureOfInterestIdentifiersForObservationConstellation">
+        <return-scalar column="identifier" type="string" />
+        <![CDATA[
+        	SELECT 'urn:ogc:def:object:feature:FOI_OBSEA' AS identifier 
+        	FROM (
+        		SELECT
+        			:offering AS offering,
+        			:procedure AS `procedure`,
+        			:observableProperty AS observableProperty
+        	) AS observationConstellation
+       		WHERE 
+	        	observationConstellation.offering = :offering
+	        	AND
+	        	observationConstellation.procedure = :procedure
+	        	AND
+	        	observationConstellation.observableProperty = :observableProperty
+       ]]>
+    </sql-query>
 </hibernate-mapping>

@@ -48,6 +48,9 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
 import org.n52.sos.ds.hibernate.entities.AbstractSpatialFilteringProfile;
@@ -66,7 +69,6 @@ import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OptionNotSupportedException;
-import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -95,7 +97,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.0.0
  *
  */
-public abstract class AbstractObservationDAO extends TimeCreator {
+public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescriptionDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractObservationDAO.class);
 
@@ -490,19 +492,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
         SingleObservationValue<?> value = (SingleObservationValue) sosObservation.getValue();
         AbstractObservation hObservation = createObservationFromValue(value.getValue(), session);
         hObservation.setDeleted(false);
-        if (sosObservation.isSetIdentifier()) {
-            hObservation.setIdentifier(sosObservation.getIdentifier().getValue());
-            if (sosObservation.getIdentifier().isSetCodeSpace()) {
-                hObservation.setCodespace(getCodespace(sosObservation.getIdentifier().getCodeSpace(), codespaceCache,
-                        session));
-            }
-        }
-        if (!hObservation.isSetCodespace()) {
-            hObservation.setCodespace(getCodespace(OGCConstants.UNKNOWN, codespaceCache, session));
-        }
-        if (sosObservation.isSetDescription()) {
-            hObservation.setDescription(sosObservation.getDescription());
-        }
+        addIdentifierNameDescription(sosObservation, hObservation, session);
         addPhenomeonTimeAndResultTimeToObservation(hObservation, sosObservation.getPhenomenonTime(),
                 sosObservation.getResultTime());
 
@@ -1045,6 +1035,7 @@ public abstract class AbstractObservationDAO extends TimeCreator {
                                 request.getSpatialFilter().getGeometry())));
             }
         }
+
     }
 
     /**
@@ -1160,4 +1151,19 @@ public abstract class AbstractObservationDAO extends TimeCreator {
     }
 
     public abstract List<Geometry> getSamplingGeometries(String feature,  Session session);
+
+    /**
+     * Check if the observation table contains samplingGeometries with values
+     * 
+     * @param session
+     *            Hibernate session
+     * @return <code>true</code>, if the observation table contains samplingGeometries with values
+     */
+    public boolean containsSamplingGeometries(Session session) {
+        Criteria criteria = getDefaultObservationInfoCriteria(session);
+        criteria.add(Restrictions.isNotNull(AbstractObservation.SAMPLING_GEOMETRY));
+        criteria.setProjection(Projections.rowCount());
+        LOGGER.debug("QUERY containsSamplingGeometries(): {}", HibernateHelper.getSqlString(criteria));
+        return (Long) criteria.uniqueResult() > 0;
+    }
 }

@@ -77,7 +77,7 @@ public class GetObservationByIdResponseEncoder extends AbstractObservationRespon
         for (OmObservation observation : oc) {
             Map<HelperValues, String> foiHelper = new EnumMap<HelperValues, String>(HelperValues.class);
             final String gmlId;
-            CodeWithAuthority foiId = observation.getObservationConstellation().getFeatureOfInterest().getIdentifier();
+            CodeWithAuthority foiId = observation.getObservationConstellation().getFeatureOfInterest().getIdentifierCodeWithAuthority();
             if (gmlID4sfIdentifier.containsKey(foiId)) {
                 gmlId = gmlID4sfIdentifier.get(foiId);
                 foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(true));

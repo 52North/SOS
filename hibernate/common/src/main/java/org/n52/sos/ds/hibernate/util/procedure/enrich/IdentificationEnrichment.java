@@ -28,11 +28,23 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
+
+
+
+
+
+import org.n52.sos.ds.I18NDAO;
+import org.n52.sos.i18n.I18NDAORepository;
+import org.n52.sos.i18n.LocalizedString;
+import org.n52.sos.i18n.metadata.I18NProcedureMetadata;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
+
+import com.google.common.base.Optional;
+import com.vividsolutions.jts.geom.MultiLineString;
 
 /**
  * TODO JavaDoc
@@ -40,15 +52,26 @@ import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
  * @author Christian Autermann <c.autermann@52north.org>
  */
 public class IdentificationEnrichment extends SensorMLEnrichment {
+
+    private I18NProcedureMetadata i18n = null;
+
     @Override
     protected void enrich(AbstractSensorML description) throws OwsExceptionReport {
         enrichUniqueId(description);
+
+        if (isSetLocale()) {
+            I18NDAO<I18NProcedureMetadata> dao
+                    = I18NDAORepository.getInstance().getDAO(I18NProcedureMetadata.class);
+            if (dao != null) {
+                i18n = dao.getMetadata(getIdentifier());
+            }
+        }
         enrichShortName(description);
         enrichLongName(description);
     }
 
     private void enrichUniqueId(AbstractSensorML description) {
-        if (!description.findIdentification(uniqueIdPredicate()).isPresent()) {
+        if (procedureSettings().isEnrichWithDiscoveryInformation() && !description.findIdentification(uniqueIdPredicate()).isPresent()) {
             description.addIdentifier(createUniqueId());
         }
     }
@@ -57,12 +80,52 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
         if (!description.findIdentification(shortNamePredicate()).isPresent()) {
             description.addIdentifier(createShortName());
         }
+        Optional<SmlIdentifier> shortName = description.findIdentification(shortNamePredicate());
+        if (isSetI18NProcedure() && shortName.isPresent()) {
+            SmlIdentifier smlIdentifier = shortName.get();
+            Optional<LocalizedString> localization
+                    = i18n.getShortName().getLocalizationOrDefault(getLocale());
+            if (localization.isPresent()) {
+                smlIdentifier.setValue(localization.get().getText());
+            }
+        }
     }
 
     private void enrichLongName(AbstractSensorML description) {
         if (!description.findIdentification(longNamePredicate()).isPresent()) {
             description.addIdentifier(createLongName());
         }
+        Optional<SmlIdentifier> longName = description.findIdentification(longNamePredicate());
+        if (isSetI18NProcedure() && longName.isPresent()) {
+            SmlIdentifier smlIdentifier = longName.get();
+            Optional<LocalizedString> localization
+                    = i18n.getLongName().getLocalizationOrDefault(getLocale());
+            if (localization.isPresent()) {
+                smlIdentifier.setValue(localization.get().getText());
+            }
+        }
+    }
+
+    private String getLongName() {
+        if (isSetI18NProcedure()) {
+            Optional<LocalizedString> longName = i18n.getLongName()
+                    .getLocalizationOrDefault(getLocale());
+            if (longName.isPresent()) {
+                return longName.get().getText();
+            }
+        }
+        return getIdentifier();
+    }
+
+    private String getShortName() {
+        if (isSetI18NProcedure()) {
+            Optional<LocalizedString> longName = i18n.getShortName()
+                    .getLocalizationOrDefault(getLocale());
+            if (longName.isPresent()) {
+                return longName.get().getText();
+            }
+        }
+        return getIdentifier();
     }
 
     private SmlIdentifier createUniqueId() {
@@ -72,20 +135,32 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
     }
 
     private SmlIdentifier createLongName() {
+        return createLongName(getLongName());
+    }
+
+    private SmlIdentifier createLongName(String longName) {
         return new SmlIdentifier(SensorMLConstants.ELEMENT_NAME_LONG_NAME,
                                  procedureSettings().getIdentifierLongNameDefinition(),
-                                 getIdentifier());
+                                 longName);
     }
 
     private SmlIdentifier createShortName() {
+        return createShortName(getShortName());
+    }
+
+    private SmlIdentifier createShortName(String shortName) {
         return new SmlIdentifier(SensorMLConstants.ELEMENT_NAME_SHORT_NAME,
                                  procedureSettings().getIdentifierShortNameDefinition(),
-                                 getIdentifier());
+                                 shortName);
+    }
+
+    private boolean isSetI18NProcedure() {
+        return i18n != null;
     }
 
     @Override
     public boolean isApplicable() {
-        return super.isApplicable() && procedureSettings().isEnrichWithDiscoveryInformation();
+        return super.isApplicable() && (procedureSettings().isEnrichWithDiscoveryInformation() || isSetLocale());
     }
 
 }

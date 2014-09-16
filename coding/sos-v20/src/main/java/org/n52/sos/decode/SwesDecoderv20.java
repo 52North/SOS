@@ -39,6 +39,7 @@ import net.opengis.gml.x32.FeaturePropertyType;
 import net.opengis.sos.x20.SosInsertionMetadataPropertyType;
 import net.opengis.sos.x20.SosInsertionMetadataType;
 import net.opengis.swes.x20.DeleteSensorDocument;
+import net.opengis.swes.x20.DeleteSensorType;
 import net.opengis.swes.x20.DescribeSensorDocument;
 import net.opengis.swes.x20.DescribeSensorType;
 import net.opengis.swes.x20.InsertSensorDocument;
@@ -93,7 +94,7 @@ import com.google.common.collect.Lists;
  * @since 4.0.0
  * 
  */
-public class SwesDecoderv20 implements Decoder<AbstractServiceCommunicationObject, XmlObject> {
+public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<AbstractServiceCommunicationObject, XmlObject> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SwesDecoderv20.class);
 
@@ -126,7 +127,7 @@ public class SwesDecoderv20 implements Decoder<AbstractServiceCommunicationObjec
     }
 
     @Override
-    public AbstractServiceRequest decode(final XmlObject xmlObject) throws OwsExceptionReport {
+    public AbstractServiceRequest<?> decode(final XmlObject xmlObject) throws OwsExceptionReport {
         LOGGER.debug("REQUESTTYPE:" + xmlObject.getClass());
         XmlHelper.validateDocument(xmlObject);
         if (xmlObject instanceof DescribeSensorDocument) {
@@ -154,7 +155,7 @@ public class SwesDecoderv20 implements Decoder<AbstractServiceCommunicationObjec
      * @throws OwsExceptionReport
      *             * if validation of the request failed
      */
-    private AbstractServiceRequest parseDescribeSensor(final DescribeSensorDocument xbDescSenDoc)
+    private AbstractServiceRequest<?> parseDescribeSensor(final DescribeSensorDocument xbDescSenDoc)
             throws OwsExceptionReport {
         final DescribeSensorRequest descSensorRequest = new DescribeSensorRequest();
         final DescribeSensorType xbDescSensor = xbDescSenDoc.getDescribeSensor();
@@ -165,10 +166,12 @@ public class SwesDecoderv20 implements Decoder<AbstractServiceCommunicationObjec
         if (xbDescSensor.isSetValidTime()) {
             descSensorRequest.setValidTime(getValidTime(xbDescSensor.getValidTime()));
         }
+     // extensions
+        descSensorRequest.setExtensions(parseExtensibleRequest(xbDescSensor));
         return descSensorRequest;
     }
 
-    private AbstractServiceRequest parseInsertSensor(final InsertSensorDocument xbInsSensDoc)
+    private AbstractServiceRequest<?> parseInsertSensor(final InsertSensorDocument xbInsSensDoc)
             throws OwsExceptionReport {
         final InsertSensorRequest request = new InsertSensorRequest();
         final InsertSensorType xbInsertSensor = xbInsSensDoc.getInsertSensor();
@@ -177,19 +180,19 @@ public class SwesDecoderv20 implements Decoder<AbstractServiceCommunicationObjec
         // format
         request.setProcedureDescriptionFormat(xbInsertSensor.getProcedureDescriptionFormat());
         // observable properties
-        if (xbInsertSensor.getObservablePropertyArray() != null
-                && xbInsertSensor.getObservablePropertyArray().length > 0) {
+        if (CollectionHelper.isNotNullOrEmpty(xbInsertSensor.getObservablePropertyArray())) {
             request.setObservableProperty(Arrays.asList(xbInsertSensor.getObservablePropertyArray()));
         }
         // related features
-        if (xbInsertSensor.getRelatedFeatureArray() != null && xbInsertSensor.getRelatedFeatureArray().length > 0) {
+        if (CollectionHelper.isNotNullOrEmpty(xbInsertSensor.getRelatedFeatureArray())) {
             request.setRelatedFeature(parseRelatedFeature(xbInsertSensor.getRelatedFeatureArray()));
         }
         // metadata
-        if (xbInsertSensor.getMetadataArray() != null && xbInsertSensor.getMetadataArray().length > 0) {
+        if (CollectionHelper.isNotNullOrEmpty(xbInsertSensor.getMetadataArray())) {
             request.setMetadata(parseMetadata(xbInsertSensor.getMetadataArray()));
         }
-
+        // extensions
+        request.setExtensions(parseExtensibleRequest(xbInsertSensor));
         try {
             final XmlObject xbProcedureDescription =
                     XmlObject.Factory.parse(getNodeFromNodeList(xbInsertSensor.getProcedureDescription().getDomNode()
@@ -224,11 +227,14 @@ public class SwesDecoderv20 implements Decoder<AbstractServiceCommunicationObjec
         return request;
     }
 
-    private AbstractServiceRequest parseDeleteSensor(final DeleteSensorDocument xbDelSenDoc) {
+    private AbstractServiceRequest<?> parseDeleteSensor(final DeleteSensorDocument xbDelSenDoc) throws OwsExceptionReport {
         final DeleteSensorRequest request = new DeleteSensorRequest();
-        request.setService(xbDelSenDoc.getDeleteSensor().getService());
-        request.setVersion(xbDelSenDoc.getDeleteSensor().getVersion());
-        request.setProcedureIdentifier(xbDelSenDoc.getDeleteSensor().getProcedure());
+        DeleteSensorType deleteSensor = xbDelSenDoc.getDeleteSensor();
+        request.setService(deleteSensor.getService());
+        request.setVersion(deleteSensor.getVersion());
+        request.setProcedureIdentifier(deleteSensor.getProcedure());
+     // extensions
+        request.setExtensions(parseExtensibleRequest(deleteSensor));
         return request;
     }
 
@@ -243,7 +249,7 @@ public class SwesDecoderv20 implements Decoder<AbstractServiceCommunicationObjec
      * @throws OwsExceptionReport
      *             * if an error occurs.
      */
-    private AbstractServiceRequest parseUpdateSensorDescription(final UpdateSensorDescriptionDocument xbUpSenDoc)
+    private AbstractServiceRequest<?> parseUpdateSensorDescription(final UpdateSensorDescriptionDocument xbUpSenDoc)
             throws OwsExceptionReport {
         final UpdateSensorRequest request = new UpdateSensorRequest();
         final UpdateSensorDescriptionType xbUpdateSensor = xbUpSenDoc.getUpdateSensorDescription();
@@ -251,7 +257,8 @@ public class SwesDecoderv20 implements Decoder<AbstractServiceCommunicationObjec
         request.setVersion(xbUpdateSensor.getVersion());
         request.setProcedureIdentifier(xbUpdateSensor.getProcedure());
         request.setProcedureDescriptionFormat(xbUpdateSensor.getProcedureDescriptionFormat());
-
+     // extensions
+        request.setExtensions(parseExtensibleRequest(xbUpdateSensor));
         for (final Description description : xbUpdateSensor.getDescriptionArray()) {
             SensorDescriptionType sensorDescription = description.getSensorDescription();
 

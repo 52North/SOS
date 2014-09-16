@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
-import org.hibernate.annotations.common.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
@@ -55,26 +54,8 @@ public abstract class SpatialEntity extends DescriptionXmlEntity implements HasG
 
     private int srid;
 
-    private String identifier;
-
     public SpatialEntity() {
         super();
-    }
-
-    @Override
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    @Override
-    public SpatialEntity setIdentifier(final String identifier) {
-        this.identifier = identifier;
-        return this;
-    }
-    
-    @Override
-    public boolean isSetIdentifier() {
-        return StringHelper.isNotEmpty(getIdentifier());
     }
 
     @Override
@@ -150,10 +131,5 @@ public abstract class SpatialEntity extends DescriptionXmlEntity implements HasG
 
     public boolean isSpatial() {
         return isSetGeometry() || (isSetLongLat() && isSetSrid());
-    }
-
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName() + " [identifier=" + identifier + "]";
     }
 }

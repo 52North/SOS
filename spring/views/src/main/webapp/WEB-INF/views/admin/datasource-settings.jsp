@@ -64,7 +64,7 @@
             </c:if>
 
         if (settings) {
-            generateSettings(settings.settings, "#settings", false);
+            generateSettings(settings.settings, {}, "#settings", false);
         } else {
             $("#save").attr("disabled", true);
             showWarning("There are no settings to change");

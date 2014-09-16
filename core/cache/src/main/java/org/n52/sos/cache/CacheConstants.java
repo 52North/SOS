@@ -45,6 +45,10 @@ public interface CacheConstants {
     String EPSG_CODE = "epsgCode";
 
     String EPSG_CODES = "epsgCodes";
+    
+    String SUPPORTED_LANGUAGE = "supportedLanguage";
+    
+    String SUPPORTED_LANGUAGES = "supportedLanguages";
 
     String FEATURE_OF_INTEREST = "featureOfInterest";
 
@@ -65,7 +69,11 @@ public interface CacheConstants {
     String RELATED_FEATURES = "relatedFeatures";
 
     String NAME = "name";
-
+    
+    String DESCRIPTION = "description";
+    
+    String I18N = "language";
+    
     String ALLOWED_OBSERVATION_TYPE = "allowedObservationType";
 
     String ALLOWED_OBSERVATION_TYPES = "allowedObservationTypes";

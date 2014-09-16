@@ -29,10 +29,17 @@
 package org.n52.sos.cache;
 
 import java.io.Serializable;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+
+import org.n52.sos.i18n.LocalizedString;
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.sos.SosEnvelope;
+
+import com.vividsolutions.jts.geom.MultiLineString;
 
 /**
  * This encapsulates relationships between the different metadata components of
@@ -40,11 +47,11 @@ import org.n52.sos.ogc.sos.SosEnvelope;
  * performance in getting this information from this cache than to query always
  * the DB for this information. (Usually the informations stored here do not
  * often change)
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public interface ContentCache extends Serializable {
@@ -60,10 +67,10 @@ public interface ContentCache extends Serializable {
 
     /**
      * Returns the maximal phenomenon time for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering identifier
-     * 
+     *
      * @return the maximal phenomenon time for or null if it is not set
      */
     DateTime getMaxPhenomenonTimeForOffering(String offering);
@@ -71,20 +78,20 @@ public interface ContentCache extends Serializable {
     /**
      * Returns the whether or not the maximal phenomenon time for the specified
      * offering is set.
-     * 
+     *
      * @param offering
      *            the offering identifier
-     * 
+     *
      * @return if the maximal phenomenon time is set
      */
     boolean hasMaxPhenomenonTimeForOffering(String offering);
 
     /**
      * Returns the maximal phenomenon time period for the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure identifier
-     * 
+     *
      * @return the maximal phenomenon time for the specified procedure or null
      *         if it is not set
      */
@@ -93,10 +100,10 @@ public interface ContentCache extends Serializable {
     /**
      * Returns the whether or not the maximal phenomenon time for the specified
      * procedure is set.
-     * 
+     *
      * @param procedure
      *            the procedure identifier
-     * 
+     *
      * @return if the maximal phenomenon time is set
      */
     boolean hasMaxPhenomenonTimeForProcedure(String procedure);
@@ -113,10 +120,10 @@ public interface ContentCache extends Serializable {
 
     /**
      * Returns the minimal phenomenon time for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering identifier
-     * 
+     *
      * @return the minimal phenomenon time for or null if it is not set
      */
     DateTime getMinPhenomenonTimeForOffering(String offering);
@@ -124,20 +131,20 @@ public interface ContentCache extends Serializable {
     /**
      * Returns the whether or not the minimal phenomenon time for the specified
      * offering is set.
-     * 
+     *
      * @param offering
      *            the offering identifier
-     * 
+     *
      * @return if the minimal phenomenon time is set
      */
     boolean hasMinPhenomenonTimeForOffering(String offering);
 
     /**
      * Returns the minimal phenomenon time period for the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure identifier
-     * 
+     *
      * @return the minimal phenomenon time for the specified procedure or null
      *         if it is not set
      */
@@ -146,10 +153,10 @@ public interface ContentCache extends Serializable {
     /**
      * Returns the whether or not the minimal phenomenon time for the specified
      * procedure is set.
-     * 
+     *
      * @param procedure
      *            the procedure identifier
-     * 
+     *
      * @return if the minimal phenomenon time is set
      */
     boolean hasMinPhenomenonTimeForProcedure(String procedure);
@@ -166,10 +173,10 @@ public interface ContentCache extends Serializable {
 
     /**
      * Returns the maximal result time for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering identifier
-     * 
+     *
      * @return the maximal result time for or null if it is not set
      */
     DateTime getMaxResultTimeForOffering(String offering);
@@ -177,10 +184,10 @@ public interface ContentCache extends Serializable {
     /**
      * Returns the whether or not the maximal result time for the specified
      * offering is set.
-     * 
+     *
      * @param offering
      *            the offering identifier
-     * 
+     *
      * @return if the maximal result time is set
      */
     boolean hasMaxResultTimeForOffering(String offering);
@@ -197,10 +204,10 @@ public interface ContentCache extends Serializable {
 
     /**
      * Returns the minimal result time for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering identifier
-     * 
+     *
      * @return the minimal result time for or null if it is not set
      */
     DateTime getMinResultTimeForOffering(String offering);
@@ -208,10 +215,10 @@ public interface ContentCache extends Serializable {
     /**
      * Returns the whether or not the minimal result time for the specified
      * offering is set.
-     * 
+     *
      * @param offering
      *            the offering identifier
-     * 
+     *
      * @return if the minimal result time is set
      */
     boolean hasMinResultTimeForOffering(String offering);
@@ -223,20 +230,20 @@ public interface ContentCache extends Serializable {
 
     /**
      * Returns the allowed observation types for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
-     * 
+     *
      * @return the allowed observation types
      */
     Set<String> getAllowedObservationTypesForOffering(String offering);
-    
+
     /**
      * Returns the allowed featureOfInterest types for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
-     * 
+     *
      * @return the allowed featureOfInterest types
      */
     Set<String> getAllowedFeatureOfInterestTypesForOffering(String offering);
@@ -245,53 +252,53 @@ public interface ContentCache extends Serializable {
      * @return all FeatureOfInterest types
      */
     Set<String> getFeatureOfInterestTypes();
-    
+
     /**
      * Checks whether the specified featureOfInterest type exists.
-     * 
+     *
      * @param featureOfInterestType
      *            the observation type
-     * 
+     *
      * @return {@code true} if it exists
      */
     boolean hasFeatureOfInterestType(String featureOfInterestType);
 
     /**
      * Get the featureOfInterest types associated with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
-     * 
+     *
      * @return the featureOfInterest types
      */
     Set<String> getFeatureOfInterestTypesForOffering(String offering);
 
     /**
      * Checks whether or not the specified feature is contained in this cache.
-     * 
+     *
      * @param featureOfInterest
      *            the feature
-     * 
+     *
      * @return {@code true} if it is contained
      */
     boolean hasFeatureOfInterest(String featureOfInterest);
 
     /**
      * Returns all FeaturesOfInterest for the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
-     * 
+     *
      * @return the features associated with the offering
      */
     Set<String> getFeaturesOfInterestForOffering(String offering);
 
     /**
      * Returns all FeaturesOfInterest for the specified SosResultTemplate.
-     * 
+     *
      * @param resultTemplate
      *            the resultTemplate
-     * 
+     *
      * @return the features associated with the resulte SosResultTemplate
      */
     Set<String> getFeaturesOfInterestForResultTemplate(String resultTemplate);
@@ -308,30 +315,30 @@ public interface ContentCache extends Serializable {
 
     /**
      * Checks whether the specified ObservableProperty is known.
-     * 
+     *
      * @param observableProperty
      *            the observable property
-     * 
+     *
      * @return {@code true} if it is contained
      */
     boolean hasObservableProperty(String observableProperty);
 
     /**
      * Get the observable properties associated with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
-     * 
+     *
      * @return the observable properties
      */
     Set<String> getObservablePropertiesForOffering(String offering);
 
     /**
      * Get the observable properties associated with the specified procedure.
-     * 
+     *
      * @param procedure
      *            the offering
-     * 
+     *
      * @return the observable properties
      */
     Set<String> getObservablePropertiesForProcedure(String procedure);
@@ -344,10 +351,10 @@ public interface ContentCache extends Serializable {
 
     /**
      * Checks whether the specified identifier exists.
-     * 
+     *
      * @param observationIdentifier
      *            the observation identifier
-     * 
+     *
      * @return {@code true} if it exists
      */
     @Deprecated
@@ -355,10 +362,10 @@ public interface ContentCache extends Serializable {
 
     /**
      * Get the observation identifiers associated with the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
-     * 
+     *
      * @return the observation identifiers
      */
     @Deprecated
@@ -371,31 +378,31 @@ public interface ContentCache extends Serializable {
 
     /**
      * Checks whether the specified observation type exists.
-     * 
+     *
      * @param observationType
      *            the observation type
-     * 
+     *
      * @return {@code true} if it exists
      */
     boolean hasObservationType(String observationType);
 
     /**
      * Get the observation types associated with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
-     * 
+     *
      * @return the observation types
      */
     Set<String> getObservationTypesForOffering(String offering);
-    
+
     /**
      * Get the observable properties associated with the specified result
      * template.
-     * 
+     *
      * @param resultTemplate
      *            the result template
-     * 
+     *
      * @return the observable properties
      */
     Set<String> getObservablePropertiesForResultTemplate(String resultTemplate);
@@ -413,30 +420,30 @@ public interface ContentCache extends Serializable {
 
     /**
      * Checks whether the specified offering exists.
-     * 
+     *
      * @param offering
      *            the offering
-     * 
+     *
      * @return {@code true} if it exists
      */
     boolean hasOffering(String offering);
 
     /**
      * Get the offerings associated with the specified observable property.
-     * 
+     *
      * @param observableProperty
      *            the observable property
-     * 
+     *
      * @return the offerings
      */
     Set<String> getOfferingsForObservableProperty(String observableProperty);
 
     /**
      * Get the offerings associated with the specified procedure.
-     * 
+     *
      * @param procedure
      *            the procedure
-     * 
+     *
      * @return the offerings
      */
     Set<String> getOfferingsForProcedure(String procedure);
@@ -453,50 +460,50 @@ public interface ContentCache extends Serializable {
 
     /**
      * Checks whether the specified procedure exists.
-     * 
+     *
      * @param procedure
      *            the procedure
-     * 
+     *
      * @return {@code true} if it exists
      */
     boolean hasProcedure(String procedure);
 
     /**
      * Get the procedures associated with the specified feature of interest.
-     * 
+     *
      * @param featureOfInterest
      *            the feature of interest
-     * 
+     *
      * @return the procedures
      */
     Set<String> getProceduresForFeatureOfInterest(String featureOfInterest);
 
     /**
      * Get the procedures associated with the specified observable property.
-     * 
+     *
      * @param observableProperty
      *            the observable property
-     * 
+     *
      * @return the procedures
      */
     Set<String> getProceduresForObservableProperty(String observableProperty);
 
     /**
      * Get the procedures associated with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
-     * 
+     *
      * @return the procedures
      */
     Set<String> getProceduresForOffering(String offering);
 
     /**
      * Get the hidden child procedures associated with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
-     * 
+     *
      * @return the hidden child procedures
      */
     Set<String> getHiddenChildProceduresForOffering(String offering);
@@ -508,20 +515,20 @@ public interface ContentCache extends Serializable {
 
     /**
      * Checks whether the specified related feature exists.
-     * 
+     *
      * @param relatedFeature
      *            the related feature
-     * 
+     *
      * @return {@code true} if it exists
      */
     boolean hasRelatedFeature(String relatedFeature);
 
     /**
      * Get the related features associated with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
-     * 
+     *
      * @return the related features
      */
     Set<String> getRelatedFeaturesForOffering(String offering);
@@ -533,40 +540,40 @@ public interface ContentCache extends Serializable {
 
     /**
      * Checks whether the specified result template exists.
-     * 
+     *
      * @param resultTemplate
      *            the result template
-     * 
+     *
      * @return {@code true} if it exists
      */
     boolean hasResultTemplate(String resultTemplate);
 
     /**
      * Get the result templates associated with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
-     * 
+     *
      * @return the result templates
      */
     Set<String> getResultTemplatesForOffering(String offering);
 
     /**
      * Get the roles associated with the specified related feature.
-     * 
+     *
      * @param relatedFeature
      *            the related feature
-     * 
+     *
      * @return the roles
      */
     Set<String> getRolesForRelatedFeature(String relatedFeature);
 
     /**
      * Get the envelope associated with the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
-     * 
+     *
      * @return the envelope
      */
     SosEnvelope getEnvelopeForOffering(String offering);
@@ -574,20 +581,20 @@ public interface ContentCache extends Serializable {
     /**
      * Get the Spatial Filtering Profile envelope associated with the specified
      * offering.
-     * 
+     *
      * @param offering
      *            the offering
-     * 
+     *
      * @return the envelope
      */
     SosEnvelope getSpatialFilteringProfileEnvelopeForOffering(String offering);
 
     /**
      * Checks whether the specified offering has a envelope.
-     * 
+     *
      * @param offering
      *            the offering
-     * 
+     *
      * @return {@code true} if it has a envelope
      */
     boolean hasEnvelopeForOffering(String offering);
@@ -595,10 +602,10 @@ public interface ContentCache extends Serializable {
     /**
      * Checks whether the specified offering has a Spatial Filtering Profile
      * envelope.
-     * 
+     *
      * @param offering
      *            the offering
-     * 
+     *
      * @return {@code true} if it has a envelope
      */
     boolean hasSpatialFilteringProfileEnvelopeForOffering(String offering);
@@ -615,20 +622,82 @@ public interface ContentCache extends Serializable {
 
     /**
      * Gets the name of the specified offering.
-     * 
+     *
      * @param offering
      *            the offering
-     * 
+     *
      * @return the name of the offering or null
      */
     String getNameForOffering(String offering);
 
     /**
-     * Get the composite phenomenons associated with the specified offering.
-     * 
+     * Get the name in the specified language of the specified offering.
+     *
      * @param offering
      *            the offering
-     * 
+     * @param i18n
+     *            the language
+     * @return the name of the offering or null
+     */
+    LocalizedString getI18nNameForOffering(String offering, Locale i18n);
+
+    /**
+     * Get all names of the specified offering.
+     *
+     * @param offering
+     *            the offering
+     * @return the names of the offering or null
+     */
+    MultilingualString getI18nNamesForOffering(String offering);
+
+    /**
+     * Check if there are I18N names for the specified offering and language.
+     *
+     * @param offering
+     *            the offering
+     * @param i18n
+     *            the language
+     * @return <code>true</code>, if there are I18N names for the
+     */
+    boolean hasI18NNamesForOffering(String offering, Locale i18n);
+
+    /**
+     * Get the description in the specified language of the specified offering.
+     *
+     * @param offering
+     *            the offering
+     * @param i18n
+     *            the language
+     * @return the description of the offering or null
+     */
+    LocalizedString getI18nDescriptionForOffering(String offering, Locale i18n);
+
+    /**
+     * Check if there is a I18N description for the specified offering and language.
+     *
+     * @param offering
+     *            the offering
+     * @param i18n
+     *            the language
+     * @return <code>true</code>, if there are I18N names for the
+     */
+    boolean hasI18NDescriptionForOffering(String offering, Locale i18n);
+
+    /**
+     * Get all descriptions of the specified offering.
+     *
+     * @param offering
+     *            the offering
+     * @return the names of the offering or null
+     */
+    MultilingualString getI18nDescriptionsForOffering(String offering);
+
+    /**
+     * Get the composite phenomenons associated with the specified offering.
+     *
+     * @param offering
+     *            the offering
+     *
      * @return the composite phenomenons
      */
     Set<String> getCompositePhenomenonsForOffering(String offering);
@@ -640,10 +709,10 @@ public interface ContentCache extends Serializable {
 
     /**
      * Get the observable properties associated with the specified procedure.
-     * 
+     *
      * @param compositePhenomenon
      *            the composite phenomenon
-     * 
+     *
      * @return the observable properties
      */
     Set<String> getObservablePropertiesForCompositePhenomenon(String compositePhenomenon);
@@ -651,14 +720,14 @@ public interface ContentCache extends Serializable {
     /**
      * Returns collection containing parent features for the passed feature,
      * optionally navigating the full hierarchy and including itself.
-     * 
+     *
      * @param featureOfInterest
      *            the feature id to find parents for
      * @param fullHierarchy
      *            whether or not to navigate the full feature hierarchy
      * @param includeSelf
      *            whether or not to include the passed feature id in the result
-     * 
+     *
      * @return a set containing the passed features id's parents (and optionally
      *         itself)
      */
@@ -667,7 +736,7 @@ public interface ContentCache extends Serializable {
     /**
      * Returns collection containing parent features for the passed features,
      * optionally navigating the full hierarchy and including itself.
-     * 
+     *
      * @param featuresOfInterest
      *            the feature id's to find parents for
      * @param fullHierarchy
@@ -676,7 +745,7 @@ public interface ContentCache extends Serializable {
      * @param includeSelves
      *            whether or not to include the passed feature id's in the
      *            result
-     * 
+     *
      * @return a set containing the passed procedure id's parents (and
      *         optionally itself)
      */
@@ -685,7 +754,7 @@ public interface ContentCache extends Serializable {
     /**
      * Returns collection containing child features for the passed feature,
      * optionally navigating the full hierarchy and including itself.
-     * 
+     *
      * @param featureOfInterest
      *            feature id to find children for
      * @param fullHierarchy
@@ -693,7 +762,7 @@ public interface ContentCache extends Serializable {
      *            direction starting from <tt>featureOfInterest</tt>
      * @param includeSelf
      *            whether or not to include the passed feature id in the result
-     * 
+     *
      * @return Collection<String> containing the passed feature id's children
      *         (and optionally itself)
      */
@@ -702,7 +771,7 @@ public interface ContentCache extends Serializable {
     /**
      * Returns collection containing parent procedures for the passed procedure,
      * optionally navigating the full hierarchy and including itself.
-     * 
+     *
      * @param procedure
      *            the procedure id to find parents for
      * @param fullHierarchy
@@ -711,7 +780,7 @@ public interface ContentCache extends Serializable {
      * @param includeSelf
      *            whether or not to include the passed procedure id in the
      *            result
-     * 
+     *
      * @return a set containing the passed procedure id's parents (and
      *         optionally itself)
      */
@@ -721,7 +790,7 @@ public interface ContentCache extends Serializable {
      * Returns collection containing parent procedures for the passed
      * procedures, optionally navigating the full hierarchy and including
      * itself.
-     * 
+     *
      * @param procedures
      *            the procedure id's to find parents for
      * @param fullHierarchy
@@ -730,7 +799,7 @@ public interface ContentCache extends Serializable {
      * @param includeSelves
      *            whether or not to include the passed procedure id in the
      *            result
-     * 
+     *
      * @return a set containing the passed procedure id's parents (and
      *         optionally itself)
      */
@@ -739,7 +808,7 @@ public interface ContentCache extends Serializable {
     /**
      * Returns collection containing child procedures for the passed procedures,
      * optionally navigating the full hierarchy and including itself.
-     * 
+     *
      * @param procedure
      *            procedure id to find children for
      * @param fullHierarchy
@@ -747,7 +816,7 @@ public interface ContentCache extends Serializable {
      * @param includeSelf
      *            whether or not to include the passed procedure id in the
      *            result
-     * 
+     *
      * @return Collection<String> containing the passed procedure id's children
      *         (and optionally itself)
      */
@@ -756,7 +825,7 @@ public interface ContentCache extends Serializable {
     /**
      * Returns collection containing child procedures for the passed procedures,
      * optionally navigating the full hierarchy and including itself.
-     * 
+     *
      * @param procedure
      *            procedure ids to find children for
      * @param fullHierarchy
@@ -764,7 +833,7 @@ public interface ContentCache extends Serializable {
      * @param includeSelves
      *            whether or not to include the passed procedure ids in the
      *            result
-     * 
+     *
      * @return Collection<String> containing the passed procedure ids' children
      *         (and optionally themselves)
      */
@@ -777,10 +846,10 @@ public interface ContentCache extends Serializable {
 
     /**
      * Checks whether the specified epsg code exists.
-     * 
+     *
      * @param epsgCode
      *            the epsg code
-     * 
+     *
      * @return {@code true} if it exists
      */
     boolean hasEpsgCode(Integer epsgCode);
@@ -788,11 +857,35 @@ public interface ContentCache extends Serializable {
     /**
      * Checks whether the specified related feature has been used as sampling
      * feature
-     * 
+     *
      * @param relatedFeatureIdentifier
      *            the relatedFeature identifier
      * @return <tt>true</tt>, if the relatedFeature is related to any feature
      *         which is part of an observation.
      */
     boolean isRelatedFeatureSampled(String relatedFeatureIdentifier);
+
+    /**
+     * Get the supported languages
+     *
+     * @return Supported languages
+     */
+    Set<Locale> getSupportedLanguages();
+
+    /**
+     * Has the service supported languages
+     *
+     * @return <code>true</code>, if there are supported languages
+     */
+    boolean hasSupportedLanguage();
+
+    /**
+     * Is the specific language supported
+     *
+     * @param language
+     *            Language to check
+     * @return <code>true</code>, if the specific lanugage is supported
+     */
+    boolean isLanguageSupported(Locale language);
+
 }

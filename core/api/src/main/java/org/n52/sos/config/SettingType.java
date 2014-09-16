@@ -31,10 +31,12 @@ package org.n52.sos.config;
 import java.io.File;
 import java.net.URI;
 
+import org.n52.sos.ogc.gml.time.TimeInstant;
+
 /**
  * Enum to describe the type of a {@code SettingDefinition} and
  * {@code SettingValue}.
- * 
+ *
  * @see SettingDefinition
  * @see SettingValue
  * @author Christian Autermann <c.autermann@52north.org>
@@ -42,6 +44,8 @@ import java.net.URI;
  */
 public enum SettingType {
     /**
+     * Type for {@link Boolean} and {@code boolean}.
+     *//**
      * Type for {@link Boolean} and {@code boolean}.
      */
     BOOLEAN,
@@ -64,5 +68,13 @@ public enum SettingType {
     /**
      * Type for {@link URI}.
      */
-    URI;
+    URI,
+    /**
+     * Type for {@link TimeInstant}.
+     */
+    TIMEINSTANT,
+    /**
+     * Type for {@link LocalizedString}.
+     */
+    MULTILINGUAL_STRING;
 }

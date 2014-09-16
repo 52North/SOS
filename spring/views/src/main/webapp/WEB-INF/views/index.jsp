@@ -73,7 +73,7 @@
 	<td style="padding:3px;">Carlos Giraldo</td><td style="padding:3px;"><a href="http://www.itg.es/" title="ITG"> Instituto Tecnol&oacute;gico de Galicia (ITG)</a></td>
 </tr>
 <tr>
-	<td style="padding:3px;">Alexander Kmoch</td><td style="padding:3px;"><a target="_blank" href="http://www.zgis.at">Z_GIS</a>,  <a target="_blank" href="http://www.uni-salzburg.at">Universit&auml;t Salzburg</a></td>
+	<td style="padding:3px;">Alexander Kmoch</td><td style="padding:3px;"><a target="_blank" href="http://www.zgis.at">Z_GIS</a>,  <a target="_blank" href="http://www.uni-salzburg.at">Universit&auml;t Salzburg</a> (Austria and Germany)</td>
 </tr>
 </table>
 
@@ -93,7 +93,7 @@
 
 <table style="background-color:white;width:100%;">
 	<tr>
-		 <td align="center" style="width:25%;"><a target="_blank" href="http://www.uni-muenster.de/Geoinformatics/en/index.html"><img alt="IfGI"  align="middle" width="200" src="static/images/contribution/logo_ifgi.png"/></a></td>
+		<td align="center" style="width:25%;"><a target="_blank" href="http://www.uni-muenster.de/Geoinformatics/en/index.html"><img alt="IfGI"  align="middle" width="200" src="static/images/contribution/logo_ifgi.png"/></a></td>
 		<td align="center" style="width:25%;"><a target="_blank" href="http://www.axiomalaska.com/"><img alt="Axiom"  align="middle" width="85" src="static/images/contribution/axiom.png" /></a></td>
 		<td align="center" style="width:25%;"><a target="_blank" href="http://geomati.co"><img alt="geomati.co"  align="middle" width="85" src="static/images/contribution/logo_geomatico_256.png" /></a></td>
 		<td align="center" style="width:25%;"><a target="_blank" href="http://www.itg.es/"><img alt="ITG"  align="middle" width="104" src="static/images/contribution/Logo_ITG_vectorizado.png" /></a></td>

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.request.operator;
 
+
 import org.n52.sos.ds.OperationDAO;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -43,7 +44,7 @@ import org.n52.sos.service.TransactionalSecurityConfiguration;
  * @param <Q>
  * @param <A>
  */
-public abstract class AbstractTransactionalRequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest, A extends AbstractServiceResponse>
+public abstract class AbstractTransactionalRequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
     public AbstractTransactionalRequestOperator(String service,
                                                 String version,
@@ -53,7 +54,7 @@ public abstract class AbstractTransactionalRequestOperator<D extends OperationDA
     }
 
     @Override
-    public AbstractServiceResponse receiveRequest(AbstractServiceRequest request)
+    public AbstractServiceResponse receiveRequest(AbstractServiceRequest<?> request)
             throws OwsExceptionReport {
         try {
             new TransactionalRequestChecker(getConfig())

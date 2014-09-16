@@ -31,6 +31,7 @@ package org.n52.sos.encode.streaming;
 import java.io.OutputStream;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -42,10 +43,15 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 import org.n52.sos.coding.CodingRepository;
+import org.n52.sos.convert.Converter;
+import org.n52.sos.convert.ConverterException;
+import org.n52.sos.convert.ConverterRepository;
 import org.n52.sos.encode.AbstractOmEncoderv20;
 import org.n52.sos.encode.Encoder;
+import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.ObservationEncoder;
+import org.n52.sos.encode.XmlEncoderKey;
 import org.n52.sos.encode.XmlStreamWriter;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
@@ -61,8 +67,10 @@ import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.Constants;
@@ -154,7 +162,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         String observationID = addGmlId(observation);
         writeNewLine();
         if (observation.isSetIdentifier()) {
-            writeIdentifier(observation.getIdentifier());
+            writeIdentifier(observation.getIdentifierCodeWithAuthority());
             writeNewLine();
         }
         if (observation.isSetDescription()) {
@@ -306,15 +314,53 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
     @SuppressWarnings("unchecked")
     protected void writeProcedure(EncodingValues encodingValues) throws XMLStreamException,
             UnsupportedEncoderInputException, OwsExceptionReport {
-        if (encodingValues.isSetEncoder() && encodingValues.getEncoder() instanceof ObservationEncoder) {
-            XmlObject xmlObject =
-                    ((ObservationEncoder<XmlObject, Object>) encodingValues.getEncoder()).encode(observation
-                            .getObservationConstellation().getProcedure(), null);
-            writeXmlObject(xmlObject, OmConstants.QN_OM_20_PROCEDURE);
-        } else {
+//        if (encodingValues.isSetEncoder() && checkEncodProcedureForEncoderKeys(encodingValues.getEncoder())) {
+//            SosProcedureDescription procedureToEncode = observation
+//                    .getObservationConstellation().getProcedure();
+//            // should the procedure be converted
+//            if (procedureToEncode.getDescriptionFormat().equals(anObject)) {
+//                Converter<SosProcedureDescription, SosProcedureDescription> converter =
+//                        ConverterRepository.getInstance().getConverter(procedureDescription.getDescriptionFormat(),
+//                                getDefaultProcedureEncodingNamspace());
+//                if (converter != null) {
+//                    try {
+//                        procedureToEncode = converter.convert(procedureDescription);
+//                    } catch (ConverterException e) {
+//                        throw new NoApplicableCodeException().causedBy(e).withMessage(
+//                                "Error while converting procedureDescription!");
+//                    }
+//                } else {
+//                    throw new NoApplicableCodeException().withMessage("No converter (%s -> %s) found!",
+//                            procedureDescription.getDescriptionFormat(), getDefaultProcedureEncodingNamspace());
+//                }
+//            } else {
+//                procedureToEncode = procedureDescription;
+//            }
+//            // encode procedure or add reference
+//            XmlObject encodedProcedure =
+//                    CodingHelper.encodeObjectToXml(procedureToEncode.getDescriptionFormat(), procedureToEncode);
+//            if (encodedProcedure != null) {
+//                writeXmlObject(encodedProcedure, OmConstants.QN_OM_20_PROCEDURE);
+//            } else {
+//                empty(OmConstants.QN_OM_20_PROCEDURE);
+//                addXlinkHrefAttr(observation.getObservationConstellation().getProcedure().getIdentifier());
+//            }
+//        } else {
             empty(OmConstants.QN_OM_20_PROCEDURE);
             addXlinkHrefAttr(observation.getObservationConstellation().getProcedure().getIdentifier());
-        }
+//        }
+        
+        
+        
+//        if (encodingValues.isSetEncoder() && encodingValues.getEncoder() instanceof ObservationEncoder) {
+//            XmlObject xmlObject =
+//                    ((ObservationEncoder<XmlObject, Object>) encodingValues.getEncoder()).encode(observation
+//                            .getObservationConstellation().getProcedure(), null);
+//            writeXmlObject(xmlObject, OmConstants.QN_OM_20_PROCEDURE);
+//        } else {
+//            empty(OmConstants.QN_OM_20_PROCEDURE);
+//            addXlinkHrefAttr(observation.getObservationConstellation().getProcedure().getIdentifier());
+//        }
     }
 
     /**
@@ -334,7 +380,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
                 start(OmConstants.QN_OM_20_PARAMETER);
                 writeNewLine();
                 XmlObject xmlObject =
-                        ((ObservationEncoder<XmlObject, Object>) encodingValues.getEncoder()).encode(namedValue, null);
+                        ((ObservationEncoder<XmlObject, Object>) encodingValues.getEncoder()).encode(namedValue);
                 writeXmlObject(xmlObject, OmConstants.QN_OM_20_NAMED_VALUE);
                 writeNewLine();
                 indent--;
@@ -387,8 +433,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
             writeXmlObject(xmlObject, OmConstants.QN_OM_20_FEATURE_OF_INTEREST);
         } else {
             empty(OmConstants.QN_OM_20_FEATURE_OF_INTEREST);
-            addXlinkHrefAttr(observation.getObservationConstellation().getFeatureOfInterest().getIdentifier()
-                    .getValue());
+            addXlinkHrefAttr(observation.getObservationConstellation().getFeatureOfInterest().getIdentifier());
         }
     }
 
@@ -587,4 +632,21 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         return observation;
     }
 
+    /**
+     * Method to check whether the procedure should be encoded
+     * 
+     * @return True or false
+     */
+    private boolean checkEncodProcedureForEncoderKeys(Encoder<?, ?> encoder) {
+        Set<EncoderKey> encoderKeyType = encoder.getEncoderKeyType();
+        for (EncoderKey encoderKey : encoderKeyType) {
+            if (encoderKey instanceof XmlEncoderKey) {
+                if (Configurator.getInstance().getProfileHandler().getActiveProfile()
+                        .isEncodeProcedureInObservation(((XmlEncoderKey) encoderKey).getNamespace())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

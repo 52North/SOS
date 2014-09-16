@@ -309,6 +309,21 @@ public final class SweHelper {
         throw new IllegalArgumentException(exceptionMsg);
     }
 
+    /**
+     * Create a {@link SweQuantity} from parameter
+     * 
+     * @param value
+     *            the {@link SweQuantity} value
+     * @param axis
+     *            the {@link SweQuantity} axis id
+     * @param uom
+     *            the {@link SweQuantity} unit of measure
+     * @return the {@link SweQuantity} from parameter
+     */
+    public static SweQuantity createSweQuantity(Object value, String axis, String uom) {
+        return new SweQuantity().setAxisID(axis).setUom(uom).setValue(JavaHelper.asDouble(value));
+    }
+
     private SweHelper() {
     }
 

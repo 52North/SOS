@@ -55,10 +55,10 @@ import com.google.common.collect.Maps;
 
 /**
  * Hibernate helper class.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.0
- * 
+ *
  */
 public final class HibernateHelper {
     /**
@@ -70,7 +70,7 @@ public final class HibernateHelper {
 
     /**
      * Get the SQL query string from Criteria.
-     * 
+     *
      * @param criteria
      *            Criteria to get SQL query string from
      * @return SQL query string from criteria
@@ -93,7 +93,7 @@ public final class HibernateHelper {
 
     /**
      * Get the SQL query string from HQL Query.
-     * 
+     *
      * @param query
      *            HQL query to convert to SQL
      * @return SQL query string from HQL
@@ -108,21 +108,30 @@ public final class HibernateHelper {
         return qt.getSQLString();
     }
 
+    /**
+     * Checks if the specified entity is supported.
+     *
+     * @param clazz   the class
+     * @param session the session
+     *
+     * @return if the entity supported
+     *
+     * @deprecated use {@link #isEntitySupported(java.lang.Class) }
+     */
+    @Deprecated
     public static boolean isEntitySupported(Class<?> clazz, Session session) {
-        if (session.getSessionFactory() != null) {
-            return session.getSessionFactory().getAllClassMetadata().keySet().contains(clazz.getName());
-        }
-        return false;
+        return isEntitySupported(clazz);
+    }
+
+    public static boolean isEntitySupported(Class<?> clazz) {
+        return HibernateMetadataCache.getInstance().isEntitySupported(clazz);
     }
 
     public static boolean isNamedQuerySupported(String namedQuery, Session session) {
         NamedQueryDefinition namedQueryDef = ((SessionImpl) session).getSessionFactory().getNamedQuery(namedQuery);
         NamedSQLQueryDefinition namedSQLQueryDef =
                 ((SessionImpl) session).getSessionFactory().getNamedSQLQuery(namedQuery);
-        if (namedQueryDef == null && namedSQLQueryDef == null) {
-            return false;
-        }
-        return true;
+        return namedQueryDef != null || namedSQLQueryDef != null;
     }
 
     public static Dialect getDialect(Session session) {
@@ -151,7 +160,7 @@ public final class HibernateHelper {
 
     /**
      * Check if the requested function is supported by the requested dialect
-     * 
+     *
      * @param dialect
      *            Dialect to check
      * @param function

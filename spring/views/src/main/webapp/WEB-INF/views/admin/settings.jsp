@@ -54,19 +54,6 @@
 </div>
 
 <form id="settings" class="form-horizontal"></form>
-<script type="text/javascript">
-    function overwriteDefaultSettings(settings) {
-    <c:if test="${not empty settings}">
-        <c:set var="search" value='"' />
-        <c:set var="replace" value='\\"' />
-        <c:forEach items="${settings}" var="entry">
-            <c:if test="${not empty entry.value}">
-                setSetting("${entry.key}","${fn:replace(entry.value, search, replace)}", settings);
-            </c:if>
-        </c:forEach>
-    </c:if>
-    }
-</script>
 
 <script type="text/javascript">
     $(function(){
@@ -110,7 +97,7 @@
                     }
                 }
             });
-            generateSettings(settings, $container, true);
+            generateSettings(settings, ${settings}, $container, true);
             $("#service_identification .control-group:first").before("<legend>Standard Settings</legend>");
             $("#service_provider .control-group:first").before("<legend>Standard Settings</legend>");
             $("#service_identification .control-group:last").before("<legend>Extended Settings</legend>");
@@ -136,8 +123,6 @@
                     $button.attr("disabled", true);
                 }
             });
-
-            overwriteDefaultSettings(settings);
 
             $(".required:first").trigger("change");
 

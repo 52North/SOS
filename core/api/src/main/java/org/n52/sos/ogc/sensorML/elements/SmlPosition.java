@@ -30,6 +30,7 @@ package org.n52.sos.ogc.sensorML.elements;
 
 import java.util.List;
 
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.ogc.swe.SweCoordinate;
@@ -71,25 +72,31 @@ public class SmlPosition extends SweAbstractDataComponent {
     public SmlPosition(final String name, final boolean fixed, final String referenceFrame,
             final List<SweCoordinate<?>> position) {
         super();
-        this.name = name;
+        setName(name);
         this.fixed = fixed;
         this.referenceFrame = referenceFrame;
         this.position = position;
     }
-
+    
     /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
+     * constructor
+     * 
      * @param name
-     *            the name to set
+     *            Position name
+     * @param fixed
+     *            is fixed
+     * @param referenceFrame
+     *            Position reference frame
+     * @param position
+     *            Position coordinates
      */
-    public void setName(final String name) {
-        this.name = name;
+    public SmlPosition(final CodeType name, final boolean fixed, final String referenceFrame,
+            final List<SweCoordinate<?>> position) {
+        super();
+        setName(name);
+        this.fixed = fixed;
+        this.referenceFrame = referenceFrame;
+        this.position = position;
     }
 
     /**

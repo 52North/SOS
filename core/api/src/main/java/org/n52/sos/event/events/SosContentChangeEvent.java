@@ -44,7 +44,7 @@ import org.n52.sos.response.AbstractServiceResponse;
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
-public abstract class SosContentChangeEvent<I extends AbstractServiceRequest, O extends AbstractServiceResponse>
+public abstract class SosContentChangeEvent<I extends AbstractServiceRequest<?>, O extends AbstractServiceResponse>
         implements SosEvent {
     private I request;
 

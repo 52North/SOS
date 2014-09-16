@@ -107,11 +107,12 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     }
 
     private void checkSettingKeys(final Collection<String> keys, final boolean changeable) {
-        final int maxCount = 13;
-        int counter = 13;
+        final int maxCount = 14;
+        int counter = 14;
         boolean spatialFilteringProfile = true;
         boolean transactional = true;
         boolean oldConcept = true;
+        boolean multiLanguage = true;
         if (!keys.contains(AbstractHibernateDatasource.SPATIAL_FILTERING_PROFILE_KEY)) {
             counter--;
             spatialFilteringProfile = false;
@@ -123,6 +124,10 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         if (!keys.contains(AbstractHibernateDatasource.OLD_CONCEPT_KEY)) {
             counter--;
             oldConcept = false;
+        }
+        if (!keys.contains(AbstractHibernateDatasource.MULTI_LANGUAGE_KEY) ){
+            counter--;
+            multiLanguage = false;
         }
         if (changeable) {
             assertEquals(9, keys.size());
@@ -149,6 +154,9 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         }
         if (oldConcept) {
             assertTrue(keys.contains(AbstractHibernateDatasource.OLD_CONCEPT_KEY));
+        }
+        if (multiLanguage) {
+            assertTrue(keys.contains(AbstractHibernateDatasource.MULTI_LANGUAGE_KEY));
         }
     }
 

@@ -46,6 +46,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
@@ -573,10 +574,11 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         String identifier = series.getFeatureOfInterest().getIdentifier();
         if (!featuresOfInterest.containsKey(identifier)) {
             ReferenceType referenceType = new ReferenceType(identifier);
+            FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
+            queryObject.addFeatureIdentifier(identifier).setConnection(session).setVersion(Sos2Constants.SERVICEVERSION);
             AbstractFeature feature =
-                    Configurator.getInstance().getFeatureQueryHandler()
-                            .getFeatureByID(identifier, session, Sos2Constants.SERVICEVERSION, -1);
-            if (feature.isSetNames() && feature.getFirstName().isSetValue()) {
+                    Configurator.getInstance().getFeatureQueryHandler().getFeatureByID(queryObject);
+            if (feature.isSetName() && feature.getFirstName().isSetValue()) {
                 referenceType.setTitle(feature.getFirstName().getValue());
             }
             featuresOfInterest.put(identifier, referenceType);
@@ -773,10 +775,14 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
             }
             if (!featuresOfInterest.containsKey(identifier)) {
                 ReferenceType referenceType = new ReferenceType(identifier);
+                FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject()
+                    .addFeatureIdentifier(identifier)
+                    .setConnection(session)
+                    .setVersion(Sos2Constants.SERVICEVERSION);
                 AbstractFeature feature =
                         Configurator.getInstance().getFeatureQueryHandler()
-                                .getFeatureByID(identifier, session, Sos2Constants.SERVICEVERSION, -1);
-                if (feature.isSetNames() && feature.getFirstName().isSetValue()) {
+                                .getFeatureByID(queryObject);
+                if (feature.isSetName() && feature.getFirstName().isSetValue()) {
                     referenceType.setTitle(feature.getFirstName().getValue());
                 }
                 featuresOfInterest.put(identifier, referenceType);

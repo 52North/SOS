@@ -115,12 +115,4 @@
         <property name="deleted" type="org.hibernate.type.TrueFalseType" insert="false" update="false"  formula="'F'"/>
         <property name="hiddenChild" type="org.hibernate.type.TrueFalseType" insert="false" update="false" formula="'F'"/>
     </class>
-    <sql-query name="getFeatureOfInterestIdentifiersForOffering">
-        <return-scalar column="identifier" type="string" />
-        <![CDATA[SELECT 'urn:ogc:def:object:feature:FOI_OBSEA' AS identifier]]>
-    </sql-query>
-    <sql-query name="getFeatureOfInterestIdentifiersForObservationConstellation">
-        <return-scalar column="identifier" type="string" />
-        <![CDATA[SELECT 'urn:ogc:def:object:feature:FOI_OBSEA' AS identifier]]>
-    </sql-query>
 </hibernate-mapping>

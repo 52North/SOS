@@ -28,10 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCodespace;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescription;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterestGetter;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservablePropertyGetter;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureGetter;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
@@ -39,56 +36,21 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 /**
  * Abstract Hibernate Observation entity class. Contains the default
  * getter/setter methods and constants for Criteria creation.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
-public abstract class AbstractObservation extends AbstractObservationTime implements HasIdentifier, HasFeatureOfInterestGetter,
-        HasObservablePropertyGetter, HasProcedureGetter, HasCodespace, HasUnit, HasDescription {
+public abstract class AbstractObservation
+        extends AbstractObservationTime
+        implements HasObservablePropertyGetter,
+                   HasProcedureGetter,
+                   HasFeatureOfInterestGetter,
+                   HasUnit {
 
     private static final long serialVersionUID = -5638600640028433573L;
 
-    private String identifier;
-
-    private Codespace codespace;
-
-    private String description;
-
     private Unit unit;
 
-    @Override
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    @Override
-    public AbstractObservation setIdentifier(final String identifier) {
-        this.identifier = identifier;
-        return this;
-    }
-
-    @Override
-    public Codespace getCodespace() {
-        return codespace;
-    }
-
-    @Override
-    public void setCodespace(final Codespace codespace) {
-        this.codespace = codespace;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public AbstractObservation setDescription(final String description) {
-        this.description = description;
-        return this;
-    }
-
-    
     @Override
     public Unit getUnit() {
         return unit;
@@ -97,21 +59,6 @@ public abstract class AbstractObservation extends AbstractObservationTime implem
     @Override
     public void setUnit(final Unit unit) {
         this.unit = unit;
-    }
-
-    @Override
-    public boolean isSetIdentifier() {
-        return getIdentifier() != null && !getIdentifier().isEmpty();
-    }
-
-    @Override
-    public boolean isSetCodespace() {
-        return getCodespace() != null && getCodespace().isSetCodespace();
-    }
-
-    @Override
-    public boolean isSetDescription() {
-        return getDescription() != null && !getDescription().isEmpty();
     }
 
     @Override

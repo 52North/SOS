@@ -52,7 +52,9 @@ import net.opengis.swe.x101.SimpleDataRecordType;
 
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
-import org.n52.sos.AbstractBeforeAfterClassTest;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.n52.sos.config.SettingsManager;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorML;
@@ -70,12 +72,13 @@ import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.collect.Lists;
 
+
 /**
  * @author Shane StClair
  * 
  * @since 4.0.0
  */
-public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassTest {
+public class SensorMLEncoderV101Test {
     private static final String TEST_ID_1 = "test-id-1";
 
     private static final String TEST_NAME_1 = "test-name-1";
@@ -83,6 +86,18 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassTest {
     private static final String TEST_ID_2 = "test-id-2";
 
     private static final String TEST_NAME_2 = "test-name-2";
+    
+    private static final String TEST_CHILD_1 = "test-id-child-1";
+    
+    @BeforeClass
+    public static void initSettingsManager() {
+        SettingsManager.getInstance();
+    }
+
+    @AfterClass
+    public static void cleanupSettingManager() {
+        SettingsManager.getInstance().cleanup();
+    }
 
     @Test
     public void should_set_identifier() throws OwsExceptionReport {
@@ -183,6 +198,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassTest {
         final System system = new System();
         sensorMl.addMember(system);
         final System childProcedure = new System();
+        childProcedure.setIdentifier(TEST_CHILD_1);
         system.addChildProcedure(childProcedure);
         childProcedure.addFeatureOfInterest(TEST_ID_1);
         final SystemType xbSystemType = encodeSystem(sensorMl);

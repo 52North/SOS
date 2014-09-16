@@ -35,6 +35,9 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.AbstractGetObservationByIdDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
@@ -46,20 +49,19 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.i18n.LocaleHelper;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.response.GetObservationByIdResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
 /**
  * Implementation of the abstract class AbstractGetObservationByIdDAO
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
 
@@ -98,7 +100,8 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
                                 HibernateObservationUtilities.getObservationIds(observations), session);
             }
             response.setObservationCollection(HibernateObservationUtilities.createSosObservationsFromObservations(
-                    observations, spatialFilteringProfile, request.getVersion(), request.getResultModel(), session));
+                    observations, spatialFilteringProfile, request.getVersion(), request.getResultModel(),
+                    LocaleHelper.fromRequest(request), session));
             return response;
 
         } catch (HibernateException he) {
@@ -112,7 +115,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
 
     /**
      * Query observations for observation identifiers
-     * 
+     *
      * @param request
      *            GetObservationById request
      * @param session
@@ -123,13 +126,12 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
      */
     @SuppressWarnings("unchecked")
     private List<AbstractObservation> queryObservation(GetObservationByIdRequest request, Session session)
-            throws CodedException {
+            throws OwsExceptionReport {
         Criteria c =
                 DaoFactory.getInstance().getObservationDAO(session)
                         .getObservationClassCriteriaForResultModel(request.getResultModel(), session);
         c.add(Restrictions.in(AbstractObservation.IDENTIFIER, request.getObservationIdentifier()));
         LOGGER.debug("QUERY queryObservation(request): {}", HibernateHelper.getSqlString(c));
         return c.list();
-
     }
 }

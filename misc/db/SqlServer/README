@@ -1,0 +1,4 @@
+The MS SQL Server scripts uses the database "sos" and schema "dbo".
+
+If you want to create/update/drop/clear your SOS tables which are contained in another database/schema, 
+please replace "sos" with your database and/or use an editor and replace  the schema "dbo" with your schema.

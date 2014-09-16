@@ -30,12 +30,6 @@ package org.n52.sos.web.admin;
 
 import java.sql.SQLException;
 
-import org.n52.sos.ds.ConnectionProvider;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.ds.hibernate.SessionFactoryProvider;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -44,9 +38,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import org.n52.sos.ds.ConnectionProvider;
+import org.n52.sos.ds.ConnectionProviderException;
+import org.n52.sos.ds.hibernate.SessionFactoryProvider;
+import org.n52.sos.service.Configurator;
+import org.n52.sos.web.AbstractController;
+import org.n52.sos.web.ControllerConstants;
+
 /**
  * @since 4.0.0
- * 
+ *
  */
 @Controller
 @RequestMapping({ ControllerConstants.Paths.ADMIN_DATABASE_UPDATE_SCRIPT })

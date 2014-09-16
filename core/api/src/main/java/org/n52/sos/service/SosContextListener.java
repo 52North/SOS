@@ -41,6 +41,7 @@ import javax.servlet.ServletContextListener;
 
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,6 +88,7 @@ public class SosContextListener implements ServletContextListener {
         }
         cleanupConfigurator();
         cleanupSettingsManager();
+        cleanupGeometryHandler();
         if (providedJdbcDriver != null) {
             cleanupDrivers(providedJdbcDriver);
         }
@@ -132,6 +134,16 @@ public class SosContextListener implements ServletContextListener {
             }
         } catch (Throwable ex) {
             LOG.error("Error while Configurator clean up", ex);
+        }
+    }
+    
+    protected void cleanupGeometryHandler() {
+        try {
+            if (GeometryHandler.getInstance() != null) {
+                GeometryHandler.getInstance().cleanup();
+            }
+        } catch (Throwable ex) {
+            LOG.error("Error while GeometryHandler clean up", ex);
         }
     }
 

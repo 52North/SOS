@@ -144,7 +144,7 @@ public class SosInsertObservationOperatorV20 extends
                     newObservation.setObservationConstellation(observationConstellation);
                     // identifier
                     if (observation.isSetIdentifier()) {
-                        final CodeWithAuthority identifier = observation.getIdentifier();
+                        final CodeWithAuthority identifier = observation.getIdentifierCodeWithAuthority();
                         identifier.setValue(identifier.getValue() + counter);
                         newObservation.setIdentifier(identifier);
                     }
@@ -290,7 +290,7 @@ public class SosInsertObservationOperatorV20 extends
         }
         exceptions.throwIfNotEmpty();
     }
-
+    
     /**
      * Check if the observation contains more than one sampling geometry
      * definitions.

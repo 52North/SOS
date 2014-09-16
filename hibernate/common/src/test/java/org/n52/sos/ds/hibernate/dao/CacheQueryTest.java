@@ -47,6 +47,9 @@ import org.joda.time.DateTime;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
@@ -58,8 +61,6 @@ import org.n52.sos.ds.hibernate.util.HibernateObservationBuilder;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @since 4.0.0
@@ -74,7 +75,7 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
     }
 
     @BeforeClass
-    public static void fillObservations() throws CodedException {
+    public static void fillObservations() throws OwsExceptionReport {
         Session session = getSession();
         Transaction transaction = null;
         try {

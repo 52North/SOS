@@ -47,6 +47,9 @@ import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
@@ -63,16 +66,16 @@ import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
+import org.n52.sos.ds.hibernate.util.ProcedureTimeExtrema;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -80,27 +83,28 @@ import com.google.common.collect.Sets;
 
 /**
  * Hibernate data access class for procedure
- * 
+ *
  * @author CarstenHollmann
  * @since 4.0.0
  */
-public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConstants {
+public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implements HibernateSqlQueryConstants {
+    //public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConstants {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureDAO.class);
 
-    private static final String SQL_QUERY_GET_PROCEDURES_FOR_ALL_FEATURES_OF_INTEREST = "getProceduresForAllFeaturesOfInterest";    
-    
+    private static final String SQL_QUERY_GET_PROCEDURES_FOR_ALL_FEATURES_OF_INTEREST = "getProceduresForAllFeaturesOfInterest";
+
     private static final String SQL_QUERY_GET_PROCEDURES_FOR_FEATURE_OF_INTEREST = "getProceduresForFeatureOfInterest";
 
     private static final String SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA = "getProcedureTimeExtrema";
-    
+
     private static final String SQL_QUERY_GET_MIN_DATE_FOR_PROCEDURE = "getMinDate4Procedure";
 
     private static final String SQL_QUERY_GET_MAX_DATE_FOR_PROCEDURE = "getMaxDate4Procedure";
 
     /**
      * Get all procedure objects
-     * 
+     *
      * @param session
      *            Hibernate session
      * @return Procedure objects
@@ -111,7 +115,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
         LOGGER.debug("QUERY getProcedureObjects(): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
-    
+
     /**
      * Get map keyed by undeleted procedure identifiers with
      * collections of parent procedures (if supported) as values
@@ -131,8 +135,8 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
         criteria.setProjection(projectionList);
         //return as List<Object[]> even if there's only one column for consistency
         criteria.setResultTransformer(NoopTransformerAdapter.INSTANCE);
-        
-        LOGGER.debug("QUERY getProcedureIdentifiers(): {}", HibernateHelper.getSqlString(criteria));        
+
+        LOGGER.debug("QUERY getProcedureIdentifiers(): {}", HibernateHelper.getSqlString(criteria));
         @SuppressWarnings("unchecked")
         List<Object[]> results = criteria.list();
         Map<String,Collection<String>> map = Maps.newHashMap();
@@ -150,10 +154,10 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
         }
         return map;
     }
-    
+
     /**
      * Get Procedure object for procedure identifier
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param session
@@ -161,19 +165,29 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
      * @return Procedure object
      */
     public Procedure getProcedureForIdentifier(final String identifier, final Session session) {
-        Criteria criteria =
-                session.createCriteria(Procedure.class).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
-        if (HibernateHelper.isEntitySupported(TProcedure.class, session)) {
-            criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME).add(
-                    Restrictions.isNull(ValidProcedureTime.END_TIME));
-        }
+        Criteria criteria = getDefaultCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
         LOGGER.debug("QUERY getProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
-        return (Procedure) criteria.uniqueResult();
+        Procedure procedure = (Procedure)criteria.uniqueResult();
+        if (procedure instanceof TProcedure && HibernateHelper.isEntitySupported(TProcedure.class, session)) {
+            criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME).add(Restrictions.isNull(ValidProcedureTime.END_TIME));
+            LOGGER.debug("QUERY getProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
+            return (Procedure)criteria.uniqueResult();
+        }
+        return procedure;
+
     }
+//
+//    private Procedure getProcedureWithLatestValidProcedureDescription(String identifier, Session session) {
+//        Criteria criteria = getDefaultCriteria(session);
+//        criteria.add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
+//        criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME).add(Restrictions.isNull(ValidProcedureTime.END_TIME));
+//        LOGGER.debug("QUERY getProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
+//        return (Procedure) criteria.uniqueResult();
+//    }
 
     /**
      * Get Procedure object for procedure identifier inclusive deleted procedure
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param session
@@ -190,7 +204,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
 
     /**
      * Get Procedure object for procedure identifier
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param session
@@ -198,15 +212,14 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
      * @return Procedure object
      */
     public Procedure getProcedureForIdentifier(final String identifier, Time time, final Session session) {
-        Criteria criteria =
-                session.createCriteria(Procedure.class).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
+        Criteria criteria = getDefaultCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
         LOGGER.debug("QUERY getProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
         return (Procedure) criteria.uniqueResult();
     }
 
     /**
      * Get Procedure objects for procedure identifiers
-     * 
+     *
      * @param identifiers
      *            Procedure identifiers
      * @param session
@@ -218,18 +231,17 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
         if (identifiers == null || identifiers.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
-        Criteria criteria =
-                session.createCriteria(Procedure.class).add(Restrictions.in(Procedure.IDENTIFIER, identifiers));
+        Criteria criteria = getDefaultCriteria(session).add(Restrictions.in(Procedure.IDENTIFIER, identifiers));
         LOGGER.debug("QUERY getProceduresForIdentifiers(identifiers): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
 
     /**
      * Get procedure identifiers for all FOIs
-     * 
+     *
      * @param session
      *            Hibernate session
-     * 
+     *
      * @return Map of foi identifier to procedure identifier collection
      * @throws CodedException
      */
@@ -262,9 +274,9 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
             }
             LOGGER.debug("QUERY getProceduresForAllFeaturesOfInterest(feature): {}", HibernateHelper.getSqlString(c));
             results = c.list();
-        }        
-        
-        Map<String,Collection<String>> foiProcMap = Maps.newHashMap();        
+        }
+
+        Map<String,Collection<String>> foiProcMap = Maps.newHashMap();
         for (Object[] result : results) {
             String foi = (String) result[0];
             String proc = (String) result[1];
@@ -274,24 +286,24 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
                 foiProcMap.put(foi, foiProcs);
             }
             foiProcs.add(proc);
-        }        
+        }
         return foiProcMap;
-    }    
-    
+    }
+
     /**
      * Get procedure identifiers for FOI
-     * 
+     *
      * @param session
      *            Hibernate session
      * @param feature
      *            FOI object
-     * 
+     *
      * @return Related procedure identifiers
      * @throws CodedException
      */
     @SuppressWarnings("unchecked")
     public List<String> getProceduresForFeatureOfInterest(final Session session, final FeatureOfInterest feature)
-            throws CodedException {
+            throws OwsExceptionReport {
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_PROCEDURES_FOR_FEATURE_OF_INTEREST, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_PROCEDURES_FOR_FEATURE_OF_INTEREST);
             namedQuery.setParameter(FEATURE, feature.getIdentifier());
@@ -301,7 +313,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
         } else {
             Criteria c = null;
             if (HibernateHelper.isEntitySupported(Series.class, session)) {
-                c = session.createCriteria(Procedure.class);
+                c = getDefaultCriteria(session);
                 c.add(Subqueries.propertyIn(Procedure.ID,
                         getDetachedCriteriaProceduresForFeatureOfInterestFromSeries(feature, session)));
                 c.setProjection(Projections.distinct(Projections.property(Procedure.IDENTIFIER)));
@@ -321,7 +333,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
 
     /**
      * Get procedure identifiers for offering identifier
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -332,7 +344,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
      */
     @SuppressWarnings("unchecked")
     public List<String> getProcedureIdentifiersForOffering(final String offeringIdentifier, final Session session)
-            throws CodedException {
+            throws OwsExceptionReport {
         final boolean obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class, session);
         Criteria c = null;
 
@@ -366,9 +378,19 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
+    private Criteria getDefaultTProcedureCriteria(Session session) {
+        return session.createCriteria(TProcedure.class).add(Restrictions.eq(Procedure.DELETED, false))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    }
+
+    private Criteria getDefaultTProcedureCriteriaIncludeDeleted(Session session) {
+        return session.createCriteria(TProcedure.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    }
+
     /**
      * Get procedure identifiers for observable property identifier
-     * 
+     *
      * @param observablePropertyIdentifier
      *            Observable property identifier
      * @param session
@@ -411,7 +433,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
 
     /**
      * Get transactional procedure object for procedure identifier
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param session
@@ -419,8 +441,22 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
      * @return Transactional procedure object
      */
     public TProcedure getTProcedureForIdentifier(final String identifier, final Session session) {
-        Criteria criteria =
-                session.createCriteria(TProcedure.class).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
+        Criteria criteria = getDefaultTProcedureCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
+        LOGGER.debug("QUERY getTProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
+        return (TProcedure) criteria.uniqueResult();
+    }
+
+    /**
+     * Get transactional procedure object for procedure identifier, include deleted
+     *
+     * @param identifier
+     *            Procedure identifier
+     * @param session
+     *            Hibernate session
+     * @return Transactional procedure object
+     */
+    public TProcedure getTProcedureForIdentifierIncludeDeleted(String identifier, Session session) {
+        Criteria criteria = getDefaultTProcedureCriteriaIncludeDeleted(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
         LOGGER.debug("QUERY getTProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
         return (TProcedure) criteria.uniqueResult();
     }
@@ -428,7 +464,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
     /**
      * Get transactional procedure object for procedure identifier and
      * procedureDescriptionFormat
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param procedureDescriptionFormat
@@ -444,7 +480,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
             Time validTime, final Session session) throws UnsupportedTimeException,
             UnsupportedValueReferenceException, UnsupportedOperatorException {
         Criteria criteria =
-                session.createCriteria(TProcedure.class).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
+                getDefaultTProcedureCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
         Criteria createValidProcedureTime = criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME);
         Criterion validTimeCriterion = QueryHelper.getValidTimeCriterion(validTime);
         if (validTime == null || validTimeCriterion == null) {
@@ -461,7 +497,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
     /**
      * Get transactional procedure object for procedure identifier and
      * procedureDescriptionFormats
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param procedureDescriptionFormats
@@ -473,7 +509,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
     public TProcedure getTProcedureForIdentifier(final String identifier, Set<String> procedureDescriptionFormats,
             final Session session) {
         Criteria criteria =
-                session.createCriteria(TProcedure.class).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
+                getDefaultTProcedureCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
         criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME).add(
                 Restrictions.in(ValidProcedureTime.PROCEDURE_DESCRIPTION_FORMAT, procedureDescriptionFormats));
         LOGGER.debug("QUERY getTProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
@@ -483,7 +519,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
     /**
      * Get procedure for identifier, possible procedureDescriptionFormats and
      * valid time
-     * 
+     *
      * @param identifier
      *            Identifier of the procedure
      * @param possibleProcedureDescriptionFormats
@@ -504,7 +540,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
             Time validTime, Session session) throws UnsupportedTimeException, UnsupportedValueReferenceException,
             UnsupportedOperatorException {
         Criteria criteria =
-                session.createCriteria(TProcedure.class).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
+                getDefaultTProcedureCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
         Criteria createValidProcedureTime = criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME);
         Criterion validTimeCriterion = QueryHelper.getValidTimeCriterion(validTime);
         if (validTime == null || validTimeCriterion == null) {
@@ -522,39 +558,15 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
     }
 
     /**
-     * Hold min and max obs time for procedure 
-     */
-    public class ProcedureTimeExtrema {
-        private DateTime minTime;
-        private DateTime maxTime;
-
-        public DateTime getMinTime() {
-            return minTime;
-        }
-
-        public void setMinTime(DateTime minTime) {
-            this.minTime = minTime;
-        }
-
-        public DateTime getMaxTime() {
-            return maxTime;
-        }
-
-        public void setMaxTime(DateTime maxTime) {
-            this.maxTime = maxTime;
-        }
-    }
-
-    /**
      * Query procedure time extrema for the provided procedure identifier
-     * 
+     *
      * @param session
      * @param procedureIdentifier
      * @return ProcedureTimeExtrema
      * @throws CodedException
      */
     public ProcedureTimeExtrema getProcedureTimeExtrema(final Session session, String procedureIdentifier)
-            throws CodedException {
+            throws OwsExceptionReport {
         Object[] result;
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA);
@@ -578,11 +590,11 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
             projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_START));
             projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_END));
             criteria.setProjection(projectionList);
-    
+
             LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}", HibernateHelper.getSqlString(criteria));
             result = (Object[]) criteria.uniqueResult();
         }
-        
+
         ProcedureTimeExtrema pte = new ProcedureTimeExtrema();
         if (result != null) {
             pte.setMinTime(DateTimeHelper.makeDateTime(result[1]));
@@ -591,11 +603,11 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
             pte.setMaxTime(DateTimeHelper.max(maxPhenStart, maxPhenEnd));
         }
         return pte;
-    }    
-    
+    }
+
     /**
      * Get min time from observations for procedure
-     * 
+     *
      * @param procedure
      *            Procedure identifier
      * @param session
@@ -603,7 +615,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
      * @return min time for procedure
      * @throws CodedException
      */
-    public DateTime getMinDate4Procedure(final String procedure, final Session session) throws CodedException {
+    public DateTime getMinDate4Procedure(final String procedure, final Session session) throws OwsExceptionReport {
         Object min = null;
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_MIN_DATE_FOR_PROCEDURE, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_MIN_DATE_FOR_PROCEDURE);
@@ -631,7 +643,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
 
     /**
      * Get max time from observations for procedure
-     * 
+     *
      * @param procedure
      *            Procedure identifier
      * @param session
@@ -639,7 +651,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
      * @return max time for procedure
      * @throws CodedException
      */
-    public DateTime getMaxDate4Procedure(final String procedure, final Session session) throws CodedException {
+    public DateTime getMaxDate4Procedure(final String procedure, final Session session) throws OwsExceptionReport {
         Object maxStart = null;
         Object maxEnd = null;
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_MAX_DATE_FOR_PROCEDURE, session)) {
@@ -689,7 +701,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
 
     /**
      * Insert and get procedure object
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param procedureDecriptionFormat
@@ -723,7 +735,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
     /**
      * Get Hibernate Detached Criteria for class Series and featureOfInterest
      * identifier
-     * 
+     *
      * @param featureOfInterest
      *            FeatureOfInterest identifier parameter
      * @param session
@@ -742,7 +754,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
     /**
      * Get Hibernate Detached Criteria for class ObservationConstellation and
      * observableProperty identifier
-     * 
+     *
      * @param observablePropertyIdentifier
      *            ObservableProperty identifier parameter
      * @param session
@@ -762,7 +774,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
     /**
      * Get Hibernate Detached Criteria for class Series and observableProperty
      * identifier
-     * 
+     *
      * @param observablePropertyIdentifier
      *            ObservableProperty identifier parameter
      * @param session
@@ -782,7 +794,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
     /**
      * Get Hibernate Detached Criteria for class ObservationConstellation and
      * offering identifier
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier parameter
      * @param session
@@ -801,7 +813,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
 
     /**
      * Add procedure identifier restriction to Hibernate Criteria for series
-     * 
+     *
      * @param criteria
      *            Hibernate Criteria for series to add restriction
      * @param procedure
@@ -815,7 +827,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
 
     /**
      * Add procedure identifier restriction to Hibernate Criteria
-     * 
+     *
      * @param criteria
      *            Hibernate Criteria to add restriction
      * @param procedure
@@ -859,7 +871,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
             //get the latest validProcedureTimes' procedureDescriptionFormats
             return new ValidProcedureTimeDAO().getTProcedureFormatMap(session);
         } else {
-            Criteria criteria = session.createCriteria(Procedure.class);            
+            Criteria criteria = session.createCriteria(Procedure.class);
             criteria.createAlias(Procedure.PROCEDURE_DESCRIPTION_FORMAT, "pdf");
             criteria.setProjection(Projections.projectionList()
                     .add(Projections.property(Procedure.IDENTIFIER))
@@ -871,7 +883,7 @@ public class ProcedureDAO extends TimeCreator implements HibernateSqlQueryConsta
             Map<String,String> procedureFormatMap = Maps.newTreeMap();
             for (Object[] result : results) {
                 String procedureIdentifier = (String) result[0];
-                String format = (String) result[1];                
+                String format = (String) result[1];
                 procedureFormatMap.put(procedureIdentifier, format);
             }
             return procedureFormatMap;

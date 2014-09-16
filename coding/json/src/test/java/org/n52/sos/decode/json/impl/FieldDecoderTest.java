@@ -380,7 +380,7 @@ public class FieldDecoderTest {
     protected SweField checkCommon(ObjectNode json, boolean withValue) throws OwsExceptionReport {
         SweField field = validateWithValueAndDecode(json, withValue);
         assertThat(field, is(notNullValue()));
-        errors.checkThat(field.getName(), is(NAME));
+        errors.checkThat(field.getName().getValue(), is(NAME));
         assertThat(field.getElement(), is(notNullValue()));
         errors.checkThat(field.getElement().getDefinition(), is(DEFINITION));
         errors.checkThat(field.getElement().getDescription(), is(DESCRIPTION));

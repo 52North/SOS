@@ -148,7 +148,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                         }
                     }
                     final Offering hOffering =
-                            offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering.getOfferingIdentifier(),
+                            offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering.getIdentifier(),
                                     assignedOffering.getOfferingName(), hRelatedFeatures, observationTypes,
                                     featureOfInterestTypes, session);
                     for (final ObservableProperty hObservableProperty : hObservableProperties) {
@@ -158,7 +158,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                 }
                 // TODO: parent and child procedures
                 response.setAssignedProcedure(assignedProcedureID);
-                response.setAssignedOffering(firstAssignedOffering.getOfferingIdentifier());
+                response.setAssignedOffering(firstAssignedOffering.getIdentifier());
             } else if (procedureDescriptionFormat == null && observationTypes != null
                     && featureOfInterestTypes != null) {
                 throw new InvalidParameterValueException(Sos2Constants.InsertSensorParams.procedureDescriptionFormat,

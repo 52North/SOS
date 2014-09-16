@@ -207,4 +207,8 @@ public class JTSHelper implements Constants {
 
     protected JTSHelper() {
     }
+
+    public static boolean isNotEmpty(Geometry geometry) {
+        return geometry != null && !geometry.isEmpty();
+    }
 }

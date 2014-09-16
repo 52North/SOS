@@ -116,12 +116,8 @@
         <many-to-one name="series" class="org.n52.sos.ds.hibernate.entities.series.Series" fetch="select" lazy="no-proxy" update="false" insert="false" />
         <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" update="false" insert="false" formula="1"/>
         <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit" fetch="select" lazy="no-proxy" update="false" insert="false" />
-        <property name="description" type="string" insert="false" update="false" formula="NULL"/>
-        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" formula="1" />
         <property name="name" type="string" formula="NULL" />
         <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" formula="1" />
-        <property name="description" type="string" formula="NULL" />
-		<property name="disabled" type="org.hibernate.type.TrueFalseType" formula="'F'" />
         <set name="offerings">
             <subselect>
                 SELECT

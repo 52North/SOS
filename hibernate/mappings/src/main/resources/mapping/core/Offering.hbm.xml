@@ -28,4 +28,181 @@
         <property name="identifier" type="string" insert="false" update="false" />
         <property name="name" type="string" insert="false" update="false" />
     </class>
+    <sql-query  name="getOfferingTimeExtrema">
+        <return-scalar column="identifier" type="string" />
+        <return-scalar column="minPhenomenonTime" type="timestamp" />
+        <return-scalar column="maxPhenomenonTimeStart" type="timestamp" />
+        <return-scalar column="maxPhenomenonTimeEnd" type="timestamp" />
+        <return-scalar column="minResultTime" type="timestamp" />
+        <return-scalar column="maxResultTime" type="timestamp" />
+        <![CDATA[
+        SELECT
+            identifier  AS identifier,
+            minimalTime AS minPhenomenonTime,
+            maximalTime AS maxPhenomenonTimeStart,
+            NULL        AS maxPhenomenonTimeEnd,
+            minimalTime AS minResultTime,
+            maximalTime AS maxResultTime
+        FROM
+        (
+            SELECT
+                'qualityobsea_ctd01' AS identifier,
+                MIN(date_sistema)    AS minimalTime,
+                MAX(date_sistema)    AS maximalTime
+            FROM
+                qualityobsea_ctd01
+            WHERE
+                sea_water_temperature != -99999
+                OR conductivity != -99999
+                OR salinity != -99999
+                OR pressure != -99999
+                OR sound_velocity != -99999
+            UNION
+            SELECT
+                'qualityobsea_ctd02' AS identifier,
+                MIN(date_sistema)    AS minimalTime,
+                MAX(date_sistema)    AS maximalTime
+            FROM
+                qualityobsea_ctd02
+            WHERE
+                sea_water_temperature != -99999
+                OR conductivity != -99999
+                OR salinity != -99999
+                OR pressure != -99999
+                OR sound_velocity != -99999
+        ) AS offerings
+        ]]>
+    </sql-query>
+    <sql-query  name="getMinDate4Offering">
+        <return-scalar column="minimalTime" type="timestamp" />
+        <![CDATA[
+        SELECT
+            minimalTime
+        FROM
+        (
+            SELECT
+                'qualityobsea_ctd01' AS identifier,
+                MIN(date_sistema)    AS minimalTime
+            FROM
+                qualityobsea_ctd01
+            WHERE
+                sea_water_temperature != -99999
+                OR conductivity != -99999
+                OR salinity != -99999
+                OR pressure != -99999
+                OR sound_velocity != -99999
+            UNION
+            SELECT
+                'qualityobsea_ctd02' AS identifier,
+                MIN(date_sistema)    AS minimalTime
+            FROM
+                qualityobsea_ctd02
+            WHERE
+                sea_water_temperature != -99999
+                OR conductivity != -99999
+                OR salinity != -99999
+                OR pressure != -99999
+                OR sound_velocity != -99999
+        ) AS offerings
+        ]]>
+    </sql-query>
+    <sql-query  name="getMaxDate4Offering">
+        <return-scalar column="maximalTime" type="timestamp" />
+        <![CDATA[
+        SELECT
+            maximalTime
+        FROM
+        (
+            SELECT
+                'qualityobsea_ctd01' AS identifier,
+                MAX(date_sistema)    AS maximalTime
+            FROM
+                qualityobsea_ctd01
+            WHERE
+                sea_water_temperature != -99999
+                OR conductivity != -99999
+                OR salinity != -99999
+                OR pressure != -99999
+                OR sound_velocity != -99999
+            UNION
+            SELECT
+                'qualityobsea_ctd02' AS identifier,
+                MAX(date_sistema)    AS maximalTime
+            FROM
+                qualityobsea_ctd02
+            WHERE
+                sea_water_temperature != -99999
+                OR conductivity != -99999
+                OR salinity != -99999
+                OR pressure != -99999
+                OR sound_velocity != -99999
+        ) AS offerings
+        ]]>
+    </sql-query>
+    <sql-query  name="getMinResultTime4Offering">
+        <return-scalar column="minimalTime" type="timestamp" />
+        <![CDATA[
+        SELECT
+            minimalTime
+        FROM
+        (
+            SELECT
+                'qualityobsea_ctd01' AS identifier,
+                MIN(date_sistema)    AS minimalTime
+            FROM
+                qualityobsea_ctd01
+            WHERE
+                sea_water_temperature != -99999
+                OR conductivity != -99999
+                OR salinity != -99999
+                OR pressure != -99999
+                OR sound_velocity != -99999
+            UNION
+            SELECT
+                'qualityobsea_ctd02' AS identifier,
+                MIN(date_sistema)    AS minimalTime
+            FROM
+                qualityobsea_ctd02
+            WHERE
+                sea_water_temperature != -99999
+                OR conductivity != -99999
+                OR salinity != -99999
+                OR pressure != -99999
+                OR sound_velocity != -99999
+        ) AS offerings
+        ]]>
+    </sql-query>
+    <sql-query  name="getMaxResultTime4Offering">
+        <return-scalar column="maximalTime" type="timestamp" />
+        <![CDATA[
+        SELECT
+            maximalTime
+        FROM
+        (
+            SELECT
+                'qualityobsea_ctd01' AS identifier,
+                MAX(date_sistema)    AS maximalTime
+            FROM
+                qualityobsea_ctd01
+            WHERE
+                sea_water_temperature != -99999
+                OR conductivity != -99999
+                OR salinity != -99999
+                OR pressure != -99999
+                OR sound_velocity != -99999
+            UNION
+            SELECT
+                'qualityobsea_ctd02' AS identifier,
+                MAX(date_sistema)    AS maximalTime
+            FROM
+                qualityobsea_ctd02
+            WHERE
+                sea_water_temperature != -99999
+                OR conductivity != -99999
+                OR salinity != -99999
+                OR pressure != -99999
+                OR sound_velocity != -99999
+        ) AS offerings
+        ]]>
+    </sql-query>
 </hibernate-mapping>

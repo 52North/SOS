@@ -86,6 +86,10 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
         boolean isSetVerification();
     }
     
+    interface EReportingValues extends HasEReportingSeries, HasValidation, HasVerification, HasUnit, GetStringValue {
+    	
+    }
+    
     interface HasAssessmentType {
         
         String ASSESSMENTTYPE = "assessmentType";

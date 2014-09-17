@@ -40,8 +40,8 @@ import org.n52.sos.encode.ProcedureDescriptionFormatKey;
 import org.n52.sos.encode.ResponseFormatKey;
 import org.n52.sos.exception.NoSuchExtensionException;
 import org.n52.sos.exception.NoSuchOfferingException;
-import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.ows.OfferingExtension;
 import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesKey;
 import org.n52.sos.ogc.ows.StaticCapabilities;
@@ -238,11 +238,6 @@ public class SettingsManagerForTesting extends AbstractSettingsManager {
         @Override
         protected SettingValue<MultilingualString> newMultiLingualStringSettingValue() {
             return new MultilingualStringValueForTestin();
-        }
-
-        @Override
-        protected SettingValue<String> newChoiceSettingValue() {
-            return new ChoiceSettingValueForTesting();
         }
     }
 

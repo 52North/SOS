@@ -103,7 +103,6 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     private Map<String, String> namespaces = Maps.newHashMap();
     
     private boolean mergeObservationValues = false;
-    
 
     /*
      * (non-Javadoc)
@@ -458,9 +457,9 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     public void setMergeObservationValues(boolean mergeObservationValues) {
         this.mergeObservationValues = mergeObservationValues;
-     }
-     
-     public boolean isSetMergeObservationValues(){
-         return mergeObservationValues;
-     }
+    }
+    
+    public boolean isMergeObservationValues() {
+        return mergeObservationValues;
+    }
 }

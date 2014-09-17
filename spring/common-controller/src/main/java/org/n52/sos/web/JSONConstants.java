@@ -95,8 +95,4 @@ public interface JSONConstants {
     String VERSION_KEY = "version";
 
     String OPERATION_KEY = "operation";
-
-    String OPTIONS_KEY = "options";
-
-    String CHOICE_TYPE = "choice";
 }

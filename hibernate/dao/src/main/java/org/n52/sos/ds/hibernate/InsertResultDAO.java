@@ -161,7 +161,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
 
             int insertion = 0;
             final int size = observations.size();
-            final AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            final AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
             LOGGER.debug("Start saving {} observations.", size);
             for (final OmObservation observation : observations) {
                 observationDAO.insertObservationSingleValue(obsConsts, resultTemplate.getFeatureOfInterest(),

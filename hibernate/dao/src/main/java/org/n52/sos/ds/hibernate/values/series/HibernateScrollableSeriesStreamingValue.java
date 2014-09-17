@@ -30,8 +30,10 @@ package org.n52.sos.ds.hibernate.values.series;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
+import org.n52.sos.ds.hibernate.dao.AbstractSpatialFilteringProfileDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
-import org.n52.sos.exception.CodedException;
+import org.n52.sos.ds.hibernate.util.observation.SpatialFilteringProfileAdder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -59,10 +61,10 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
-     * @throws CodedException 
      */
-    public HibernateScrollableSeriesStreamingValue(GetObservationRequest request, long series) throws CodedException {
+    public HibernateScrollableSeriesStreamingValue(GetObservationRequest request, long series) {
         super(request, series);
+        setSpatialFilteringProfileAdder(new SpatialFilteringProfileAdder());
     }
 
     @Override
@@ -83,15 +85,10 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
     }
 
     @Override
-	public SeriesValue nextEntity() throws OwsExceptionReport {
-		return (SeriesValue) scrollableResult.get()[0];
-	}
-
-	@Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-            SeriesValue resultObject = nextEntity();
-            TimeValuePair value = resultObject.createTimeValuePairFrom();
+            SeriesValue resultObject = (SeriesValue) scrollableResult.get()[0];
+            TimeValuePair value = createTimeValuePairFrom(resultObject);
             session.evict(resultObject);
             return value;
         } catch (final HibernateException he) {
@@ -100,13 +97,18 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @Override
     public OmObservation nextSingleObservation() throws OwsExceptionReport {
         try {
             OmObservation observation = observationTemplate.cloneTemplate();
-            SeriesValue resultObject = nextEntity();
-            resultObject.addValuesToObservation(observation, getResponseFormat());
+            SeriesValue resultObject = (SeriesValue) scrollableResult.get()[0];
+            addValuesToObservation(observation, resultObject);
+            if (resultObject.hasSamplingGeometry()) {
+                observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
+            } else {
+                addSpatialFilteringProfile(observation, resultObject.getObservationId());
+            }
             checkForModifications(observation);
             session.evict(resultObject);
             return observation;
@@ -114,6 +116,26 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
             sessionHolder.returnSession(session);
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Query and add Spatial Filtering Profile information to observation
+     * 
+     * @param observation
+     *            Observation to add Spatial Filtering Profile information
+     * @param oId
+     *            Datasource observation id
+     * @throws OwsExceptionReport
+     *             If an error occurs when querying the Spatial Filtering
+     *             Profile information or during the adding
+     */
+    private void addSpatialFilteringProfile(OmObservation observation, Long oId) throws OwsExceptionReport {
+        AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
+                DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
+        if (spatialFilteringProfileDAO != null) {
+            getSpatialFilteringProfileAdder().add(spatialFilteringProfileDAO.getSpatialFilertingProfile(oId, session),
+                    observation);
         }
     }
 

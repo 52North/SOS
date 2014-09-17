@@ -58,10 +58,5 @@ public class ObservationCountValue extends ObservationValue implements CountValu
     public boolean isSetValue() {
         return getValue() != null;
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue().toString();
-	}
 
 }

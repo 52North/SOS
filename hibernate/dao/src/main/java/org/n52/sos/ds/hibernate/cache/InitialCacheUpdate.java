@@ -32,6 +32,7 @@ import org.n52.sos.ds.hibernate.cache.base.CompositePhenomenonCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.FeatureOfInterestCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.I18NCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.ObservablePropertiesCacheUpdate;
+import org.n52.sos.ds.hibernate.cache.base.ObservationIdentifiersCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.ObservationTimeCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.OfferingCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.ProcedureCacheUpdate;

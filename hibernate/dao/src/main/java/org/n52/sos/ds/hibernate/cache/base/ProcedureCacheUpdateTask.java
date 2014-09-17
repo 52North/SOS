@@ -32,14 +32,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.series.SeriesDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.TimeExtrema;
+import org.n52.sos.ds.hibernate.util.ProcedureTimeExtrema;
 import org.n52.sos.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.slf4j.Logger;
@@ -65,10 +63,9 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
 
     protected void getProcedureInformationFromDbAndAddItToCacheMaps() throws OwsExceptionReport {
         //temporal extent
-        TimeExtrema pte = null;
-        AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
-        if (seriesDAO != null) {
-            pte = seriesDAO.getProcedureTimeExtrema(getSession(), procedureId);
+        ProcedureTimeExtrema pte = null;
+        if (HibernateHelper.isEntitySupported(Series.class, getSession())) {
+            pte = new SeriesDAO().getProcedureTimeExtrema(getSession(), procedureId);
         }
         if (pte == null || (pte != null && !pte.isSetTimes())) {
             pte = new ProcedureDAO().getProcedureTimeExtrema(getSession(), procedureId);

@@ -30,8 +30,6 @@ package org.n52.sos.ds.hibernate.entities.series;
 
 import java.io.Serializable;
 
-import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
-
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -41,7 +39,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * 
  */
 public class SeriesGeometryObservation extends SeriesObservation implements Serializable,
-        GeometryObservation {
+        org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation {
 
     private static final long serialVersionUID = -8962773936339280967L;
 
@@ -61,10 +59,5 @@ public class SeriesGeometryObservation extends SeriesObservation implements Seri
     public boolean isSetValue() {
         return value != null;
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue().toText();
-	}
 
 }

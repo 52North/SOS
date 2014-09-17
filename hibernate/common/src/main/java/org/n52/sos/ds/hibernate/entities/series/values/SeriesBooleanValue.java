@@ -58,10 +58,5 @@ public class SeriesBooleanValue extends SeriesValue implements BooleanValue {
     public boolean isSetValue() {
         return getValue();
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue().toString();
-	}
 
 }

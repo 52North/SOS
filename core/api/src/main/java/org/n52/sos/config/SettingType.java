@@ -45,6 +45,8 @@ import org.n52.sos.ogc.gml.time.TimeInstant;
 public enum SettingType {
     /**
      * Type for {@link Boolean} and {@code boolean}.
+     *//**
+     * Type for {@link Boolean} and {@code boolean}.
      */
     BOOLEAN,
     /**
@@ -74,10 +76,5 @@ public enum SettingType {
     /**
      * Type for {@link LocalizedString}.
      */
-    MULTILINGUAL_STRING,
-    /**
-     * Type for a selection.
-     */
-    CHOICE;
-
+    MULTILINGUAL_STRING;
 }

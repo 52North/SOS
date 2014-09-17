@@ -29,13 +29,13 @@
 package org.n52.sos.config;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.n52.sos.config.settings.BooleanSettingDefinition;
-import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.settings.FileSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.config.settings.MultilingualStringSettingDefinition;
@@ -43,7 +43,6 @@ import org.n52.sos.config.settings.NumericSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.config.settings.TimeInstantSettingDefinition;
 import org.n52.sos.config.settings.UriSettingDefinition;
-import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.i18n.LocaleHelper;
 import org.n52.sos.i18n.MultilingualString;
@@ -142,21 +141,6 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     }
 
     @Override
-    public SettingValue<String> newChoiceSettingValue(ChoiceSettingDefinition setting, String stringValue) {
-        return newChoiceSettingValueFromGenericDefinition(setting, stringValue);
-    }
-
-    private SettingValue<String> newChoiceSettingValueFromGenericDefinition(SettingDefinition<?, ?> setting, String stringValue) {
-        ChoiceSettingDefinition def = (ChoiceSettingDefinition) setting;
-        if (!def.hasOption(stringValue)) {
-            throw new ConfigurationException("Invalid choice value");
-        }
-       return newChoiceSettingValue().setValue(stringValue).setKey(setting.getKey());
-    }
-
-
-
-    @Override
     public SettingValue<?> newSettingValue(SettingDefinition<?, ?> setting, String value) {
         switch (setting.getType()) {
         case BOOLEAN:
@@ -175,8 +159,6 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
             return newTimeInstantSettingValueFromGenericDefinition(setting, value);
         case MULTILINGUAL_STRING:
             return newMultiLingualStringSettingValueFromGenericDefinition(setting, value);
-        case CHOICE:
-            return newChoiceSettingValueFromGenericDefinition(setting, value);
         default:
             throw new IllegalArgumentException(String.format("Type %s not supported", setting.getType()));
         }
@@ -321,12 +303,16 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
      private MultilingualString parseMultilingualString(String stringValue) {
         MultilingualString ms = new MultilingualString();
         if (!nullOrEmpty(stringValue)) {
-            JsonNode json = JSONUtils.loadString(stringValue);
-            Iterator<String> it = json.fieldNames();
-            while(it.hasNext()) {
-                String key = it.next();
-                String value = json.path(key).asText();
-                ms.addLocalization(LocaleHelper.fromString(key), value);
+            try {
+                JsonNode json = JSONUtils.loadString(stringValue);
+                Iterator<String> it = json.fieldNames();
+                while(it.hasNext()) {
+                    String key = it.next();
+                    String value = json.path(key).asText();
+                    ms.addLocalization(LocaleHelper.fromString(key), value);
+                }
+            } catch (IOException ex) {
+                throw new IllegalArgumentException(String.format("Malformed multilingual string: %s", stringValue));
             }
         }
         return ms;
@@ -346,11 +332,6 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
      * @return a implementation specific instance
      */
     protected abstract SettingValue<String> newStringSettingValue();
-
-    /**
-     * @return a implementation specific instance
-     */
-    protected abstract SettingValue<String> newChoiceSettingValue();
 
     /**
      * @return a implementation specific instance

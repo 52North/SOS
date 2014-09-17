@@ -107,7 +107,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
             response.setOutputFormat(request.getProcedureDescriptionFormat());
             session = sessionHolder.getSession();
             // check for transactional SOS.
-            if (HibernateHelper.isEntitySupported(ValidProcedureTime.class)) {
+            if (HibernateHelper.isEntitySupported(ValidProcedureTime.class, session)) {
                 response.setSensorDescriptions(getProcedureDescriptions(request, session));
             } else {
                 response.addSensorDescription(getProcedureDescription(request, session));

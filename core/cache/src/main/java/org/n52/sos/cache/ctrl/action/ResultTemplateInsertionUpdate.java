@@ -29,7 +29,6 @@
 package org.n52.sos.cache.ctrl.action;
 
 import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.util.Action;
@@ -75,10 +74,6 @@ public class ResultTemplateInsertionUpdate extends InMemoryCacheUpdate {
         for (String offering : request.getObservationTemplate().getOfferings()) {
             cache.addOffering(offering);
             cache.addResultTemplateForOffering(offering, resultTemplate);
-        }
-        AbstractFeature featureOfInterest = request.getObservationTemplate().getFeatureOfInterest();
-        if (featureOfInterest != null && featureOfInterest.isSetName()) {
-        	cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest.getIdentifier(), featureOfInterest.getFirstName().getValue());
         }
     }
 }

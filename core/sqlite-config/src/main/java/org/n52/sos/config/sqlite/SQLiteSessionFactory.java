@@ -42,12 +42,10 @@ import org.hibernate.service.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.sqlite.entities.AdminUser;
 import org.n52.sos.config.sqlite.entities.Binding;
 import org.n52.sos.config.sqlite.entities.BooleanSettingValue;
 import org.n52.sos.config.sqlite.entities.CapabilitiesExtensionImpl;
-import org.n52.sos.config.sqlite.entities.ChoiceSettingValue;
 import org.n52.sos.config.sqlite.entities.DynamicOfferingExtension;
 import org.n52.sos.config.sqlite.entities.DynamicOwsExtendedCapabilities;
 import org.n52.sos.config.sqlite.entities.FileSettingValue;
@@ -103,17 +101,17 @@ public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
 
     public static final String THREAD_LOCAL_SESSION_CONTEXT = "thread";
 
-    public static final int SQLITE_CONNECTION_POOL_SIZE = 1;
+    private static final int SQLITE_CONNECTION_POOL_SIZE = 1;
 
-    public static final String CONNECTION_URL_TEMPLATE = "jdbc:sqlite:%s.db";
+    protected static final String CONNECTION_URL_TEMPLATE = "jdbc:sqlite:%s.db";
 
     protected static final String DEFAULT_DATABASE_NAME = "configuration";
 
-    public static final String SQLITE_HIBERNATE_DIALECT = HibernateSQLiteDialect.class.getName();
+    private static final String SQLITE_HIBERNATE_DIALECT = HibernateSQLiteDialect.class.getName();
 
-    public static final String UPDATE_SCHEMA_VALUE = "update";
+    private static final String UPDATE_SCHEMA_VALUE = "update";
 
-    public static final String SQLITE_JDBC_DRIVER = "org.sqlite.JDBC";
+    private static final String SQLITE_JDBC_DRIVER = "org.sqlite.JDBC";
 
     public static final String EMPTY = "";
 
@@ -172,7 +170,6 @@ public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
                 .addAnnotatedClass(NumericSettingValue.class)
                 .addAnnotatedClass(StringSettingValue.class)
                 .addAnnotatedClass(UriSettingValue.class)
-                .addAnnotatedClass(ChoiceSettingValue.class)
                 .addAnnotatedClass(AdminUser.class)
                 .addAnnotatedClass(CapabilitiesExtensionImpl.class)
                 .addAnnotatedClass(OfferingExtensionImpl.class)

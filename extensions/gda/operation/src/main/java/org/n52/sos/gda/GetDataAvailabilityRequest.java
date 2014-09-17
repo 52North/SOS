@@ -45,13 +45,13 @@ import org.n52.sos.util.StringHelper;
  */
 public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAvailabilityResponse> {
 
-    private List<String> procedures = new LinkedList<String>();
+    private final List<String> procedures = new LinkedList<String>();
 
-    private List<String> observedProperties = new LinkedList<String>();
+    private final List<String> observedProperties = new LinkedList<String>();
 
-    private List<String> featuresOfInterest = new LinkedList<String>();
+    private final List<String> featuresOfInterest = new LinkedList<String>();
     
-    private List<String> offerings =  new LinkedList<String>();
+    private final List<String> offerings =  new LinkedList<String>();
     
     private String namspace = GetDataAvailabilityConstants.NS_GDA;
 
@@ -118,12 +118,7 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
         this.featuresOfInterest.add(featureOfInterest);
     }
     
-    public void setFeatureOfInterest(
-			List<String> featuresOfInterest) {
-		this.featuresOfInterest = featuresOfInterest;
-	}
-
-	/**
+    /**
      * Add a {@code offering} to the request.
      * 
      * @param offering
@@ -133,28 +128,15 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
         this.offerings.add(offering);
     }
 
-    public void setOffering(List<String> offerings) {
-    	this.offerings = offerings;
-	}
-
-	public boolean isSetProcedures() {
+    public boolean isSetProcedures() {
         return CollectionHelper.isNotEmpty(getProcedures());
     }
 
-    public void setProcedure(List<String> procedures) {
-		this.procedures = procedures;
-	}
-
-	public boolean isSetObservedProperties() {
+    public boolean isSetObservedProperties() {
         return CollectionHelper.isNotEmpty(getObservedProperties());
     }
 
-    public void setObservedProperty(
-			List<String> observedProperties) {
-		this.observedProperties = observedProperties;
-	}
-
-	public boolean isSetFeaturesOfInterest() {
+    public boolean isSetFeaturesOfInterest() {
         return CollectionHelper.isNotEmpty(getFeaturesOfInterest());
     }
     

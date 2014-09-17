@@ -35,62 +35,42 @@ import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionGroup;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
-import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 
 import com.google.common.collect.ImmutableSet;
 
 /**
  * SettingDefinitionProvider for I18N
- *
+ * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
- *
+ * 
  */
 public class I18NSettings implements SettingDefinitionProvider {
 
     public static final String I18N_DEFAULT_LANGUAGE = "i18n.defaultLanguage";
 
-    public static final String I18N_SHOW_ALL_LANGUAGE_VALUES
-            = "i18n.showAllLanguageValues";
+    public static final String I18N_SHOW_ALL_LANGUAGE_VALUES = "i18n.showAllLanguageValues";
 
-    public static final SettingDefinitionGroup GROUP
-            = new SettingDefinitionGroup().setTitle("I18N")
+    public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("I18N")
             .setOrder(ORDER_10).setShwoInDefaultSettings(false);
 
-    public static final StringSettingDefinition I18N_DEFAULT_LANGUAGE_DEFINITION
-            = new StringSettingDefinition()
-            .setGroup(GROUP).setOrder(ORDER_1).setKey(I18N_DEFAULT_LANGUAGE)
-            .setDefaultValue("eng")
-            .setTitle("I18N default language")
-            .setDescription("Set the I18N default language for this service");
+    public static final StringSettingDefinition I18N_DEFAULT_LANGUAGE_DEFINITION = new StringSettingDefinition()
+            .setGroup(GROUP).setOrder(ORDER_1).setKey(I18N_DEFAULT_LANGUAGE).setDefaultValue("eng")
+            .setTitle("I18N default language").setDescription("Set the I18N default language for this service");
 
-    public static final BooleanSettingDefinition SHOW_ALL_LANGUAGE_VLAUES
-            = new BooleanSettingDefinition()
-            .setGroup(GROUP)
-            .setOrder(ORDER_2)
-            .setKey(I18N_SHOW_ALL_LANGUAGE_VALUES)
-            .setDefaultValue(false)
-            .setTitle("I18N show all language values")
-            .setDescription(
-                    "Show all language specific values if no language is queried or the queried language is not supported!");
+    public static final BooleanSettingDefinition SHOW_ALL_LANGUAGE_VLAUES =
+            new BooleanSettingDefinition()
+                    .setGroup(GROUP)
+                    .setOrder(ORDER_2)
+                    .setKey(I18N_SHOW_ALL_LANGUAGE_VALUES)
+                    .setDefaultValue(false)
+                    .setTitle("I18N show all language values")
+                    .setDescription(
+                            "Show all language specific values if no language is queried or the queried language is not supported!");
 
-    public static final ChoiceSettingDefinition CHOICE
-            = new ChoiceSettingDefinition()
-            .addOption("a")
-            .addOption("b")
-            .addOption("c")
-            .addOption("d", "Das hier ist d")
-            .setDefaultValue("b")
-            .setKey("CHOICE_SETTING")
-            .setGroup(GROUP)
-            .setOrder(ORDER_3)
-            .setTitle("Choice Test settings")
-            .setDescription("This is a choice test setting.");
-
-    private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet
-            .<SettingDefinition<?, ?>>of(
-                    I18N_DEFAULT_LANGUAGE_DEFINITION, SHOW_ALL_LANGUAGE_VLAUES, CHOICE);
+    private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet.<SettingDefinition<?, ?>> of(
+            I18N_DEFAULT_LANGUAGE_DEFINITION, SHOW_ALL_LANGUAGE_VLAUES);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

@@ -33,75 +33,26 @@ import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-/**
- * Abstract streaming value class
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.1.0
- *
- * @param <S>
- *            Entity type
- */
-public abstract class StreamingValue<S> extends AbstractStreaming {
-
+public abstract class StreamingValue extends AbstractStreaming {
+    
     private static final long serialVersionUID = -884370769373807775L;
 
     private Time phenomenonTime;
-
+    
     private TimeInstant resultTime;
-
+    
     private Time validTime;
-
+    
     private String unit;
-
+    
     private boolean unitQueried = false;
-
-    protected OmObservation observationTemplate;
-
-    /**
-     * Get the next entity
-     * 
-     * @return next entity object
-     * @throws OwsExceptionReport
-     *             If an error occurs
-     */
-    public abstract S nextEntity() throws OwsExceptionReport;
-
-    /**
-     * Query times
-     */
-    protected abstract void queryTimes();
-
-    /**
-     * query unit
-     */
-    protected abstract void queryUnit();
-
-    /**
-     * Get next {@link TimeValuePair} from entity
-     * 
-     * @return Next {@link TimeValuePair}
-     * @throws OwsExceptionReport
-     *             If an error occurs
-     */
-    public abstract TimeValuePair nextValue() throws OwsExceptionReport;
-
-    /**
-     * Set the observation template which contains all metadata
-     * 
-     * @param observationTemplate
-     *            Observation template to set
-     */
-    public void setObservationTemplate(OmObservation observationTemplate) {
-        this.observationTemplate = observationTemplate;
-    }
-
+    
     @Override
     public Time getPhenomenonTime() {
         isSetPhenomenonTime();
         return phenomenonTime;
     }
-
+    
     public boolean isSetPhenomenonTime() {
         if (phenomenonTime == null) {
             queryTimes();
@@ -124,36 +75,36 @@ public abstract class StreamingValue<S> extends AbstractStreaming {
     public void setValue(Value<OmObservation> value) {
         // TODO Auto-generated method stub
     }
-
+    
     @Override
     public String getUnit() {
         isSetUnit();
         return unit;
     }
-
+    
     @Override
     public void setUnit(String unit) {
         this.unit = unit;
         unitQueried = true;
     }
-
+    
     @Override
     public boolean isSetUnit() {
         if (!unitQueried && unit == null) {
             queryUnit();
             unitQueried = true;
         }
-        return unit != null;
+        return unit != null; 
     }
 
     public TimeInstant getResultTime() {
         return resultTime;
     }
-
+    
     protected void setResultTime(TimeInstant resultTime) {
         this.resultTime = resultTime;
     }
-
+    
     public boolean isSetResultTime() {
         return getResultTime() != null;
     }
@@ -161,13 +112,19 @@ public abstract class StreamingValue<S> extends AbstractStreaming {
     public Time getValidTime() {
         return validTime;
     }
-
+    
     protected void setValidTime(Time validTime) {
         this.validTime = validTime;
     }
-
+    
     public boolean isSetValidTime() {
         return getValidTime() != null;
     }
 
+    protected abstract void queryTimes();
+    
+    protected abstract void queryUnit();
+    
+    public abstract TimeValuePair nextValue() throws OwsExceptionReport;
+    
 }

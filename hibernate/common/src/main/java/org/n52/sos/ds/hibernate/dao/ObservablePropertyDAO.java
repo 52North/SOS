@@ -97,7 +97,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     @SuppressWarnings("unchecked")
     public List<String> getObservablePropertyIdentifiersForOffering(final String offeringIdentifier,
             final Session session) throws OwsExceptionReport {
-        final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class);
+        final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class, session);
         Criteria c = null;
 
         if (flag) {
@@ -108,7 +108,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
                             session)));
             c.setProjection(Projections.distinct(Projections.property(ObservableProperty.IDENTIFIER)));
         } else {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
             c = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
                 Criteria seriesCriteria = c.createCriteria(SeriesObservationInfo.SERIES);
@@ -139,7 +139,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     @SuppressWarnings("unchecked")
     public List<String> getObservablePropertyIdentifiersForProcedure(final String procedureIdentifier,
             final Session session) {
-        final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class);
+        final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class, session);
         Criteria c = null;
         if (flag) {
             c = getDefaultCriteria(session);
@@ -149,7 +149,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
                     getDetachedCriteriaObservablePropertyForProcedureFromObservationConstellation(procedureIdentifier,
                             session)));
         } else {
-            if (HibernateHelper.isEntitySupported(Series.class)) {
+            if (HibernateHelper.isEntitySupported(Series.class, session)) {
                 c = getDefaultCriteria(session);
                 c.setProjection(Projections.distinct(Projections.property(ObservableProperty.IDENTIFIER)));
                 c.add(Subqueries.propertyIn(ObservableProperty.ID,

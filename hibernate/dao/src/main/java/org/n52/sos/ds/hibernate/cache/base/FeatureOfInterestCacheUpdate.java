@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.cache.base;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -60,20 +59,14 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
         // FIXME shouldn't the identifiers be translated using
         // CacheHelper.addPrefixAndGetFeatureIdentifier()?        
         try {
-        	FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
             Map<String,Collection<String>> foisWithParents = new FeatureOfInterestDAO()
                 .getFeatureOfInterestIdentifiersWithParents(getSession());
-            List<FeatureOfInterest> featureOfInterestObjects = featureOfInterestDAO.getFeatureOfInterestObjects(getSession());
             
             Map<String, Collection<String>> procsForAllFois = new ProcedureDAO()
                     .getProceduresForAllFeaturesOfInterest(getSession());
 
-            for (final FeatureOfInterest featureOfInterest : featureOfInterestObjects) {
-            	String featureOfInterestIdentifier = featureOfInterest.getIdentifier();
+            for (final String featureOfInterestIdentifier : foisWithParents.keySet()) {
                 getCache().addFeatureOfInterest(featureOfInterestIdentifier);
-                if (featureOfInterest.isSetName()) {
-                	getCache().addFeatureOfInterestIdentifierHumanReadableName(featureOfInterestIdentifier, featureOfInterest.getName());
-                }
                 getCache().setProceduresForFeatureOfInterest(featureOfInterestIdentifier,
                         procsForAllFois.get(featureOfInterestIdentifier));
                 Collection<String> parentFois = foisWithParents.get(featureOfInterestIdentifier);
@@ -81,7 +74,6 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
                     getCache().addParentFeatures(featureOfInterestIdentifier, parentFois);
                 }
             }
-            
             FeatureQueryHandlerQueryObject queryHandler =
                     new FeatureQueryHandlerQueryObject().setFeatureIdentifiers(getCache().getFeaturesOfInterest())
                             .setConnection(getSession());

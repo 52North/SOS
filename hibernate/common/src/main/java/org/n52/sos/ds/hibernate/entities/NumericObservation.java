@@ -54,10 +54,5 @@ public class NumericObservation extends Observation implements Serializable, org
     public boolean isSetValue() {
         return value != null;
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue().toString();
-	}
 
 }

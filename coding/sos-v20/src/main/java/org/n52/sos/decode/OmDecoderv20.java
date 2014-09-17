@@ -70,10 +70,8 @@ import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -85,7 +83,6 @@ import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.Constants;
-import org.n52.sos.w3c.xlink.W3CHrefAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -260,14 +257,6 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
         } else if (value instanceof AbstractGeometry) {
             NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
             namedValue.setValue(new GeometryValue((AbstractGeometry)value));
-            return namedValue;
-        } else if (value instanceof ReferenceType) {
-            NamedValue<ReferenceType> namedValue = new NamedValue<ReferenceType>();
-            namedValue.setValue(new ReferenceValue((ReferenceType)value));
-            return namedValue;
-        } else if (value instanceof W3CHrefAttribute) {
-            NamedValue<W3CHrefAttribute> namedValue = new NamedValue<W3CHrefAttribute>();
-            namedValue.setValue(new HrefAttributeValue((W3CHrefAttribute)value));
             return namedValue;
         } else {
             throw new UnsupportedDecoderInputException(this, xmlObject);

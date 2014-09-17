@@ -38,7 +38,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.xmlbeans.XmlObject;
-
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePosition;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -54,7 +53,7 @@ import com.google.common.base.StandardSystemProperty;
 
 /**
  * Abstract XML writer class
- *
+ * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.2
  *
@@ -78,7 +77,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Encode and write element to the {@link OutputStream}
-     *
+     * 
      * @param out
      *            OutputStream to write the encoded element
      * @throws XMLStreamException
@@ -90,7 +89,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Encode and write element to the {@link OutputStream}
-     *
+     * 
      * @param out
      *            OutputStream to write the encoded element
      * @param encodingValues
@@ -105,7 +104,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Encode and write the elementToStream to the {@link OutputStream}
-     *
+     * 
      * @param elementToStream
      *            Element to encode and write to stream
      * @param out
@@ -119,7 +118,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Encode and write the elementToStream to the {@link OutputStream}
-     *
+     * 
      * @param elementToStream
      *            Element to encode and write to stream
      * @param out
@@ -136,7 +135,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Initialize this XML stream writer
-     *
+     * 
      * @param out
      *            OutputStream to write the encoded element
      * @param encoding
@@ -151,14 +150,14 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Get the XML writer
-     *
+     * 
      * @return the writer
      */
     protected abstract T getXmlWriter();
 
     /**
      * Write attribute to stream
-     *
+     * 
      * @param name
      *            Attribute name
      * @param value
@@ -170,7 +169,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Write attribute to stream
-     *
+     * 
      * @param name
      *            Attribute name
      * @param value
@@ -182,7 +181,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Write attribute to stream
-     *
+     * 
      * @param namespace
      *            Namespace of the attribute name
      * @param localName
@@ -196,7 +195,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Write namespace to stream
-     *
+     * 
      * @param prefix
      *            Namespace prefix
      * @param namespace
@@ -208,7 +207,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Write start element to stream
-     *
+     * 
      * @param name
      *            Element name
      * @throws XMLStreamException
@@ -218,7 +217,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Write document start to stream with or without
-     *
+     * 
      * @param embedded
      *            if <code>false</code>, XML version and encoding written to
      *            stream
@@ -229,7 +228,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Write an empty element to stream
-     *
+     * 
      * @param name
      *            Element name
      * @throws XMLStreamException
@@ -239,7 +238,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Write characters to stream
-     *
+     * 
      * @param chars
      *            Characters to write
      * @throws XMLStreamException
@@ -248,19 +247,8 @@ public abstract class XmlWriter<T, S> {
     protected abstract void chars(String chars) throws XMLStreamException;
 
     /**
-     * Write characters to stream
-     *
-     * @param chars
-     *            Characters to write
-     * @param escape if the chars should be XML escaped
-     * @throws XMLStreamException
-     *             If an error occurs when writing to {@link OutputStream}
-     */
-    protected abstract void chars(String chars, boolean escape) throws XMLStreamException;
-
-    /**
      * Write the end element to new line
-     *
+     * 
      * @param name
      *            Element name
      * @throws XMLStreamException
@@ -270,7 +258,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Write end element to the same line
-     *
+     * 
      * @param name
      *            Element name
      * @throws XMLStreamException
@@ -280,7 +268,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Write the document end to stream
-     *
+     * 
      * @throws XMLStreamException
      *             If an error occurs when writing to {@link OutputStream}
      */
@@ -288,7 +276,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Finish the stream writing, flush and close
-     *
+     * 
      * @throws XMLStreamException
      *             If an error occurs when writing to {@link OutputStream}
      */
@@ -296,7 +284,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Flush written elements
-     *
+     * 
      * @throws XMLStreamException
      *             If an error occurs when writing to {@link OutputStream}
      */
@@ -304,7 +292,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Write raw text to stream an adds current indent before writing the text.
-     *
+     * 
      * @param text
      *            Text to write to stream
      * @throws XMLStreamException
@@ -312,12 +300,12 @@ public abstract class XmlWriter<T, S> {
      */
     protected void rawText(String text) throws XMLStreamException {
         writeIndent(indent);
-        chars(text, false);
+        chars(text);
     }
 
     /**
      * Create the replacement from {@link QName}
-     *
+     * 
      * @param qname
      *            {@link QName} to create replacement from
      * @return Created replacement
@@ -334,7 +322,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Write new line to stream
-     *
+     * 
      * @throws XMLStreamException
      *             If an error occurs when writing to {@link OutputStream}
      */
@@ -346,7 +334,7 @@ public abstract class XmlWriter<T, S> {
     /**
      * Write {@link XmlObject} to stream and replace xml-fragment with
      * {@link QName}
-     *
+     * 
      * @param xmlObject
      *            {@link XmlObject} to write
      * @param qname
@@ -360,10 +348,10 @@ public abstract class XmlWriter<T, S> {
             rawText(s.replaceAll(XML_FRAGMENT, getReplacement(qname)));
         }
     }
-
+    
     /**
      * Write {@link SchemaLocation}s as xsi:schemaLocations attribute to stream
-     *
+     * 
      * @param schemaLocations
      *            {@link SchemaLocation}s to write
      * @throws XMLStreamException
@@ -379,14 +367,13 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Write indent to stream
-     *
+     * 
      * @param level
      *            current level
      * @throws XMLStreamException
      *             If an error occurs when writing to {@link OutputStream}
      */
     protected void writeIndent(int level) throws XMLStreamException {
-        chars("\n");
         for (int i = 0; i < level; i++) {
             chars("  ");
         }
@@ -395,7 +382,7 @@ public abstract class XmlWriter<T, S> {
     /**
      * Initialize this XML stream writer, calls
      * {@link #init(OutputStream, String)}
-     *
+     * 
      * @param out
      *            OutputStream to write the encoded element
      * @throws XMLStreamException
@@ -408,7 +395,7 @@ public abstract class XmlWriter<T, S> {
     /**
      * Initialize this XML stream writer, calls
      * {@link #init(OutputStream, String, EncodingValues)}
-     *
+     * 
      * @param out
      *            OutputStream to write the encoded element
      * @param encodingValues
@@ -423,7 +410,7 @@ public abstract class XmlWriter<T, S> {
     /**
      * Initialize this XML stream writer, calls
      * {@link #init(OutputStream, String, EncodingValues)}
-     *
+     * 
      * @param out
      *            OutputStream to write the encoded element
      * @param encoding
@@ -437,7 +424,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Get the {@link OutputStream}
-     *
+     * 
      * @return the {@link OutputStream}
      */
     protected OutputStream getOutputStream() {
@@ -446,7 +433,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Write {@link TimeInstant} to stream
-     *
+     * 
      * @param time
      *            {@link TimeInstant} to write to stream
      * @throws XMLStreamException
@@ -458,7 +445,7 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Write {@link TimePosition} as ISO 8601 to stream
-     *
+     * 
      * @param time
      * @link TimePosition} to write as ISO 8601 to stream
      * @throws XMLStreamException
@@ -470,14 +457,14 @@ public abstract class XmlWriter<T, S> {
 
     /**
      * Get the {@link XMLOutputFactory}
-     *
+     * 
      * @return the {@link XMLOutputFactory}
      */
     protected XMLOutputFactory getXmlOutputFactory() {
         this.outputFactory.setProperty("escapeCharacters", false);
         return this.outputFactory;
     }
-
+    
     protected void addXlinkHrefAttr(String value) throws XMLStreamException {
         attr(W3CConstants.QN_XLINK_HREF, value);
     }

@@ -54,10 +54,5 @@ public class BooleanObservation extends Observation implements Serializable, org
     public void setValue(Boolean value) {
         this.value = value;
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue().toString();
-	}
 
 }

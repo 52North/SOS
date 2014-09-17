@@ -55,6 +55,7 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetObservationByIdRequest;
 
 /**
@@ -88,7 +89,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
     @Test
     public void returnEmptyCollectionIfCalledWithoutAnyParameters() throws OwsExceptionReport, ConverterException {
         List<OmObservation> resultList =
-                HibernateObservationUtilities.createSosObservationsFromObservations(null, null, null, null);
+                HibernateObservationUtilities.createSosObservationsFromObservations(null, null, null, null, null);
         assertThat("result is null", resultList, is(not(nullValue())));
         assertThat("elements in list", resultList.size(), is(0));
     }
@@ -102,7 +103,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
         // PREPARE
         Session session = getSession();
         try {
-            GetObservationByIdRequest request = new GetObservationByIdRequest();
+            AbstractServiceRequest request = new GetObservationByIdRequest();
             request.setVersion(Sos2Constants.SERVICEVERSION);
 
             ProcedureDescriptionFormat hProcedureDescriptionFormat = new ProcedureDescriptionFormat();
@@ -158,7 +159,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             // CALL
             List<OmObservation> resultList =
                     HibernateObservationUtilities.createSosObservationsFromObservations(observationsFromDataBase,
-                            request, null, session);
+                            null, request.getVersion(), null, session);
             // TEST RESULTS
             assertThat(resultList, is(notNullValue()));
             assertThat(resultList.size(), is(1));

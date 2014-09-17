@@ -103,12 +103,6 @@ public abstract class SosProcedureDescription extends AbstractFeature {
         this.descriptionFormat = descriptionFormat;
         return this;
     }
-    
-    public SosProcedureDescription setFeaturesOfInterest(Collection<String> features) {
-    	getFeaturesOfInterest().clear();
-        getFeaturesOfInterest().addAll(features);
-        return this;
-    }
 
     public SosProcedureDescription addFeaturesOfInterest(Collection<String> features) {
         getFeaturesOfInterest().addAll(features);
@@ -126,12 +120,6 @@ public abstract class SosProcedureDescription extends AbstractFeature {
 
     public boolean isSetFeaturesOfInterest() {
         return CollectionHelper.isNotEmpty(getFeaturesOfInterest());
-    }
-    
-    public SosProcedureDescription setFeaturesOfInterest(Map<String, AbstractFeature> featuresOfInterestMap) {
-    	this.featuresOfInterestMap.clear();
-    	this.featuresOfInterestMap.putAll(featuresOfInterestMap);
-        return this;
     }
     
     public SosProcedureDescription addFeaturesOfInterest(Map<String, AbstractFeature> featuresOfInterestMap) {
@@ -160,12 +148,6 @@ public abstract class SosProcedureDescription extends AbstractFeature {
         return getFeaturesOfInterestMap().get(identifier);
     }
 
-    public SosProcedureDescription setParentProcedures(Collection<String> parentProcedures) {
-    	this.parentProcedures.clear();
-        this.parentProcedures.addAll(parentProcedures);
-        return this;
-    }
-    
     public SosProcedureDescription addParentProcedures(Collection<String> parentProcedures) {
         this.parentProcedures.addAll(parentProcedures);
         return this;
@@ -239,12 +221,6 @@ public abstract class SosProcedureDescription extends AbstractFeature {
 
     public SosProcedureDescription addPhenomenon(AbstractPhenomenon phenomenon) {
         getPhenomenon().put(phenomenon.getIdentifier(), phenomenon);
-        return this;
-    }
-    
-    public SosProcedureDescription setPhenomenon(Map<String, AbstractPhenomenon> phenomenons) {
-    	getPhenomenon().clear();
-        getPhenomenon().putAll(phenomenons);
         return this;
     }
     

@@ -29,10 +29,7 @@
 package org.n52.sos.encode;
 
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -41,18 +38,18 @@ import javax.xml.stream.XMLStreamException;
 import org.n52.sos.util.Constants;
 
 import com.google.common.base.StandardSystemProperty;
-import com.google.common.xml.XmlEscapers;
 
 /**
  * Abstract {@link XmlWriter} class for {@link XMLEventWriter}
- *
+ * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.2
  *
  */
 public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
-    private final Map<String,String> prefixes = new HashMap<>();
+
     private XMLEventWriter w;
+    
     private final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 
     @Override
@@ -76,24 +73,14 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
     protected void attr(String name, String value) throws XMLStreamException {
         getXmlWriter().add(getXmlEventFactory().createAttribute(name, value));
     }
-
-    @Override
     protected void attr(String namespace, String localName, String value) throws XMLStreamException {
         attr(new QName(namespace, localName), value);
     }
 
+
     @Override
     protected void namespace(String prefix, String namespace) throws XMLStreamException {
-        String ns = prefixes.get(prefix);
-        if (ns == null) {
-            getXmlWriter().add(getXmlEventFactory().createNamespace(prefix, namespace));
-            prefixes.put(prefix, namespace);
-        } else {
-            if (!ns.equals(namespace)) {
-                throw new XMLStreamException(
-                        "Prefix <" + prefix + "> is already bound to <" + ns + ">");
-            }
-        }
+        getXmlWriter().add(getXmlEventFactory().createNamespace(prefix, namespace));
     }
 
     @Override
@@ -122,19 +109,11 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
     }
 
     @Override
-    protected void chars(String chars, boolean escape) throws XMLStreamException {
-        if (escape) {
-            chars = XmlEscapers.xmlContentEscaper().escape(chars);
-        }
-        getXmlWriter().add(getXmlEventFactory().createCharacters(chars));
-    }
-
-    @Override
     protected void end(QName name) throws XMLStreamException {
         getXmlWriter().add(
                 getXmlEventFactory().createEndElement(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart()));
     }
-
+    
     @Override
     protected void endInline(QName name) throws XMLStreamException {
         getXmlWriter().add(
@@ -146,7 +125,6 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
         getXmlWriter().add(getXmlEventFactory().createEndDocument());
     }
 
-    @Override
     protected void finish() throws XMLStreamException {
         flush();
         getXmlWriter().close();
@@ -156,7 +134,7 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
     protected void flush() throws XMLStreamException {
         getXmlWriter().flush();
     }
-
+    
     /**
      * @return
      */

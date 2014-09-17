@@ -58,10 +58,5 @@ public class ObservationBlobValue extends ObservationValue implements BlobValue 
     public boolean isSetValue() {
         return getValue() != null;
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue().toString();
-	}
 
 }

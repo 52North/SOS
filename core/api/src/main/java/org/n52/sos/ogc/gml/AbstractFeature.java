@@ -30,8 +30,6 @@ package org.n52.sos.ogc.gml;
 
 import java.io.Serializable;
 
-import org.n52.sos.util.StringHelper;
-
 /**
  * Abstract class for encoding the feature of interest. Necessary because
  * different feature types should be supported. The SOS database or another
@@ -51,9 +49,7 @@ public abstract class AbstractFeature extends AbstractGML implements Serializabl
      * serial number
      */
     private static final long serialVersionUID = -6117378246552782214L;
-    
-    private String defaultEncoding;
-    
+
     /**
      * constructor
      */
@@ -89,18 +85,6 @@ public abstract class AbstractFeature extends AbstractGML implements Serializabl
     public AbstractFeature(CodeWithAuthority featureIdentifier, String gmlId) {
         super(featureIdentifier, gmlId);
     }
-    
-    public AbstractFeature setDefaultElementEncoding(String defaultEncoding) {
-    	this.defaultEncoding = defaultEncoding;
-    	return this;
-    }
 
-    public String getDefaultElementEncoding() {
-    	return defaultEncoding;
-    }
-    
-    public boolean isSetDefaultElementEncoding() {
-    	return StringHelper.isNotEmpty(getDefaultElementEncoding());
-    }
 
 }

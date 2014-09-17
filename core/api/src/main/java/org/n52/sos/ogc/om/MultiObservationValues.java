@@ -78,9 +78,4 @@ public class MultiObservationValues<T> extends AbstractObservationValue<MultiVal
         this.phenomenonTime = phenomenonTime;
     }
 
-	@Override
-	public boolean isSetValue() {
-		return getValue() != null && getValue().isSetValue();
-	}
-
 }

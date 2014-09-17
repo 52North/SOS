@@ -226,9 +226,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
             for (String accessConstraint : sosServiceIdentification.getAccessConstraints()) {
                 serviceIdent.addAccessConstraints(accessConstraint);
             }
-            if (sosServiceIdentification.hasFees()) {
-            	serviceIdent.setFees(sosServiceIdentification.getFees());
-            }
+            serviceIdent.setFees(sosServiceIdentification.getFees());
             CodeType xbServiceType = serviceIdent.addNewServiceType();
             xbServiceType.setStringValue(sosServiceIdentification.getServiceType());
             if (sosServiceIdentification.getServiceTypeCodeSpace() != null) {

@@ -28,17 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.values.series;
 
-import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesValueDAO;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesValueTimeDAO;
-import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
+import org.n52.sos.ds.hibernate.dao.series.SeriesValueDAO;
+import org.n52.sos.ds.hibernate.dao.series.SeriesValueTimeDAO;
+import org.n52.sos.ds.hibernate.entities.series.values.SeriesValueTime;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.util.GmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,9 +50,9 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
 
     private static final long serialVersionUID = 201732114914686926L;
 
-    protected final AbstractSeriesValueDAO seriesValueDAO;
+    protected final SeriesValueDAO seriesValueDAO = new SeriesValueDAO();
 
-    protected final AbstractSeriesValueTimeDAO seriesValueTimeDAO;
+    protected final SeriesValueTimeDAO seriesValueTimeDAO = new SeriesValueTimeDAO();
 
     protected long series;
 
@@ -68,49 +63,42 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
-     * @throws CodedException
      */
-    public HibernateSeriesStreamingValue(GetObservationRequest request, long series) throws CodedException {
+    public HibernateSeriesStreamingValue(GetObservationRequest request, long series) {
         super(request);
         this.series = series;
-        this.seriesValueDAO = (AbstractSeriesValueDAO) DaoFactory.getInstance().getValueDAO();
-        this.seriesValueTimeDAO = (AbstractSeriesValueTimeDAO) DaoFactory.getInstance().getValueTimeDAO();
     }
 
     @Override
     protected void queryTimes() {
-        Session s = null;
         try {
-            s = sessionHolder.getSession();
-            ObservationTimeExtrema timeExtrema =
-                    seriesValueTimeDAO.getTimeExtremaForSeries(request, series, temporalFilterCriterion, s);
-            if (timeExtrema.isSetPhenomenonTime()) {
-                setPhenomenonTime(GmlHelper.createTime(timeExtrema.getMinPhenTime(), timeExtrema.getMaxPhenTime()));
+            SeriesValueTime minTime;
+            SeriesValueTime maxTime;
+            // query with temporal filter
+            if (temporalFilterCriterion != null) {
+                minTime = seriesValueTimeDAO.getMinSeriesValueFor(request, series, temporalFilterCriterion, session);
+                maxTime = seriesValueTimeDAO.getMaxSeriesValueFor(request, series, temporalFilterCriterion, session);
             }
-            if (timeExtrema.isSetResultTime()) {
-                setResultTime(new TimeInstant(timeExtrema.getMaxResultTime()));
+            // query without temporal or indeterminate filters
+            else {
+                minTime = seriesValueTimeDAO.getMinSeriesValueFor(request, series, session);
+                maxTime = seriesValueTimeDAO.getMaxSeriesValueFor(request, series, session);
             }
-            if (timeExtrema.isSetValidTime()) {
-                setValidTime(GmlHelper.createTime(timeExtrema.getMinValidTime(), timeExtrema.getMaxValidTime()));
-            }
+            setPhenomenonTime(createPhenomenonTime(minTime, maxTime));
+            setResultTime(createResutlTime(maxTime));
+            setValidTime(createValidTime(minTime, maxTime));
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying times", owse);
-        } finally {
-            sessionHolder.returnSession(s);
         }
     }
 
     @Override
     protected void queryUnit() {
-        Session s = null;
         try {
-           s = sessionHolder.getSession();
-            setUnit(seriesValueDAO.getUnit(request, series, s));
+            setUnit(seriesValueDAO.getUnit(request, series, session));
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying unit", owse);
-        } finally {
-            sessionHolder.returnSession(s);
         }
-    }
 
+    }
 }

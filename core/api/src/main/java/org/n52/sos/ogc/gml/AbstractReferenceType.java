@@ -30,14 +30,13 @@ package org.n52.sos.ogc.gml;
 
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.StringHelper;
-import org.n52.sos.w3c.xlink.W3CHrefAttribute;
 
 public class AbstractReferenceType {
 
     /**
      * Href
      */
-    private W3CHrefAttribute href;
+    private String href;
 
     /**
      * Title
@@ -55,10 +54,7 @@ public class AbstractReferenceType {
      * @return Href
      */
     public String getHref() {
-    	if (href != null) {
-    		return href.getHref();
-    	}
-        return null;
+        return href;
     }
 
     /**
@@ -86,7 +82,7 @@ public class AbstractReferenceType {
      *            Href to set
      */
     public void setHref(String href) {
-        this.href = new W3CHrefAttribute(href);
+        this.href = href;
     }
 
     /**
@@ -115,7 +111,7 @@ public class AbstractReferenceType {
      * @return <code>true</code>, if href is set
      */
     public boolean isSetHref() {
-        return StringHelper.isNotEmpty(getHref());
+        return StringHelper.isNotEmpty(href);
     }
 
     /**

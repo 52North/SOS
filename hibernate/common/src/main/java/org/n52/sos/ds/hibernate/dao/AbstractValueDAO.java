@@ -29,20 +29,24 @@
 package org.n52.sos.ds.hibernate.dao;
 
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
-import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.exception.ows.OptionNotSupportedException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.CollectionHelper;
 
 /**
  * Abstract DAO class for querying {@link AbstractValue}
@@ -70,12 +74,25 @@ public abstract class AbstractValueDAO extends TimeCreator {
     protected void checkAndAddSpatialFilteringProfileCriterion(Criteria c, GetObservationRequest request,
             Session session) throws OwsExceptionReport {
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
-            c.add(SpatialRestrictions.filter(
-                    AbstractObservation.SAMPLING_GEOMETRY,
-                    request.getSpatialFilter().getOperator(),
-                    GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
-                            request.getSpatialFilter().getGeometry())));
+            AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
+                    DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
+            if (spatialFilteringProfileDAO == null) {
+                throw new OptionNotSupportedException().at(Sos2Constants.GetObservationParams.spatialFilter)
+                        .withMessage("The SOS 2.0 Spatial Filtering Profile is not supported by this service!");
+            }
+            Set<Long> observationIds =
+                    spatialFilteringProfileDAO.getObservationIdsForSpatialFilter(request.getSpatialFilter(), session);
+            if (CollectionHelper.isEmpty(observationIds)) {
+                c.add(Restrictions.eq(AbstractValue.ID, Long.MIN_VALUE));
+            } else if (CollectionHelper.isNotEmpty(observationIds)) {
+                Disjunction disjunction = Restrictions.disjunction();
+                for (List<Long> list : HibernateHelper.getValidSizedLists(observationIds)) {
+                    disjunction.add(Restrictions.in(AbstractValue.ID, list));
+                }
+                c.add(disjunction);
+            }
         }
+
     }
 
     /**
@@ -141,22 +158,22 @@ public abstract class AbstractValueDAO extends TimeCreator {
         }
         return null;
     }
-
+    
     /**
      * Add chunk information to {@link Criteria}
-     * 
-     * @param c
-     *            {@link Criteria} to add information
-     * @param chunkSize
-     *            Chunk size
-     * @param currentRow
-     *            Start row
-     */
-    protected void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow) {
-        c.addOrder(Order.asc(AbstractValue.PHENOMENON_TIME_START));
-        if (chunkSize > 0) {
-            c.setMaxResults(chunkSize).setFirstResult(currentRow);
-        }
-    }
+      * 
+      * @param c
+      *            {@link Criteria} to add information
+      * @param chunkSize
+      *            Chunk size
+      * @param currentRow
+      *            Start row
+      */
+     protected void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow) {
+         c.addOrder(Order.asc(AbstractValue.PHENOMENON_TIME_START));
+         if (chunkSize > 0) {
+             c.setMaxResults(chunkSize).setFirstResult(currentRow);
+         }
+     }
 
 }

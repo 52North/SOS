@@ -70,7 +70,7 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
 
         Transaction transaction = null;
         try {
-            observationDAO = DaoFactory.getInstance().getObservationDAO();
+            observationDAO = DaoFactory.getInstance().getObservationDAO(session);
             transaction = session.beginTransaction();
             HibernateObservationBuilder b = new HibernateObservationBuilder(session);
             DateTime begin = new DateTime();

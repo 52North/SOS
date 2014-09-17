@@ -31,11 +31,6 @@ package org.n52.sos.ds.hibernate.entities.series.values;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.HibernateSeriesRelations.HasSeries;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * Implementation of {@link AbstractValue} for series concept used in streaming
@@ -48,7 +43,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 public class SeriesValue extends AbstractValue implements HasSeries {
 
     private static final long serialVersionUID = -2757686338936995366L;
-
+    
     private Series series;
 
     @Override
@@ -64,37 +59,5 @@ public class SeriesValue extends AbstractValue implements HasSeries {
     @Override
     public boolean isSetSeries() {
         return getSeries() != null;
-    }
-
-    @Override
-    public OmObservation mergeValueToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport {
-        if (!observation.isSetValue()) {
-            addValuesToObservation(observation, responseFormat);
-        } else {
-            // TODO
-            if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observation.getObservationConstellation()
-                    .getObservationType())) {
-                observation.getObservationConstellation().setObservationType(
-                        OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
-            }
-            observation.mergeWithObservation(getSingleObservationValue(getValueFrom(this)));
-        }
-        return observation;
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private SingleObservationValue getSingleObservationValue(Value<?> value) throws OwsExceptionReport {
-        return new SingleObservationValue(createPhenomenonTime(), value);
-    }
-
-    @Override
-    protected void addValueSpecificDataToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport {
-        // nothing to do
-    }
-
-    @Override
-    protected void addObservationValueToObservation(OmObservation observation, Value<?> value, String responseFormat)
-            throws OwsExceptionReport {
-        observation.setValue(getSingleObservationValue(value));
     }
 }

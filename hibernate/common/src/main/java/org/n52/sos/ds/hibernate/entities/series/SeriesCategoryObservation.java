@@ -59,10 +59,5 @@ public class SeriesCategoryObservation extends SeriesObservation implements Seri
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(value);
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
 
 }

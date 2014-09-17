@@ -33,7 +33,6 @@ import java.util.Set;
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
-import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.settings.FileSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.config.settings.MultilingualStringSettingDefinition;
@@ -57,7 +56,6 @@ public class SettingDefinitionProviderForTesting implements
     public static final String FILE_SETTING = "file_setting";
     public static final String STRING_SETTING = "string_setting";
     public static final String BOOLEAN_SETTING = "boolean_setting";
-    public static final String CHOICE_SETTING = "choice_setting";
     public static final String LOCALIZED_STRING_SETTING
             = "localized_string_setting";
 
@@ -70,7 +68,6 @@ public class SettingDefinitionProviderForTesting implements
                 new UriSettingDefinition().setKey(URI_SETTING),
                 new FileSettingDefinition().setKey(FILE_SETTING),
                 new StringSettingDefinition().setKey(STRING_SETTING),
-                new ChoiceSettingDefinition().setKey(CHOICE_SETTING),
                 new MultilingualStringSettingDefinition().setKey(LOCALIZED_STRING_SETTING));
     }
 }

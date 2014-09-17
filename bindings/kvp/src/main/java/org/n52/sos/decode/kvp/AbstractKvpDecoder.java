@@ -58,7 +58,6 @@ import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesExtensionImpl;
@@ -79,392 +78,319 @@ import org.slf4j.LoggerFactory;
  * 
  */
 @Configurable
-public abstract class AbstractKvpDecoder implements
-		Decoder<AbstractServiceRequest<?>, Map<String, String>> {
+public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceRequest<?>, Map<String, String>> {
 
-	protected static final Logger LOGGER = LoggerFactory
-			.getLogger(AbstractKvpDecoder.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractKvpDecoder.class);
 
-	protected static final int VALID_COORDINATE_SIZE = 4;
+    protected static final int VALID_COORDINATE_SIZE = 4;
 
-	private int storageEPSG;
+    private int storageEPSG;
 
-	private int storage3DEPSG;
+    private int storage3DEPSG;
 
-	private int defaultResponseEPSG;
+    private int defaultResponseEPSG;
 
-	private int defaultResponse3DEPSG;
+    private int defaultResponse3DEPSG;
 
-	@Override
-	public Set<String> getConformanceClasses() {
-		return Collections.emptySet();
-	}
+    @Override
+    public Set<String> getConformanceClasses() {
+        return Collections.emptySet();
+    }
 
-	@Override
-	public Map<ServiceConstants.SupportedTypeKey, Set<String>> getSupportedTypes() {
-		return Collections.emptyMap();
-	}
+    @Override
+    public Map<ServiceConstants.SupportedTypeKey, Set<String>> getSupportedTypes() {
+        return Collections.emptyMap();
+    }
 
-	@Deprecated
-	public int getDefaultEPSG() {
-		return getStorageEPSG();
-	}
+    @Deprecated
+    public int getDefaultEPSG() {
+        return getStorageEPSG();
+    }
 
-	@Deprecated
-	public int getDefault3DEPSG() {
-		return getStorage3DEPSG();
-	}
+    @Deprecated
+    public int getDefault3DEPSG() {
+        return getStorage3DEPSG();
+    }
 
-	public int getStorageEPSG() {
-		return storageEPSG;
-	}
+    public int getStorageEPSG() {
+        return storageEPSG;
+    }
 
-	public int getStorage3DEPSG() {
-		return storage3DEPSG;
-	}
+    public int getStorage3DEPSG() {
+        return storage3DEPSG;
+    }
 
-	public int getDefaultResponseEPSG() {
-		return defaultResponseEPSG;
-	}
+    public int getDefaultResponseEPSG() {
+        return defaultResponseEPSG;
+    }
 
-	public int getDefaultResponse3DEPSG() {
-		return defaultResponse3DEPSG;
-	}
+    public int getDefaultResponse3DEPSG() {
+        return defaultResponse3DEPSG;
+    }
 
-	@Deprecated
-	@Setting(FeatureQuerySettingsProvider.DEFAULT_EPSG)
-	public void setDefaultEpsg(final int epsgCode)
-			throws ConfigurationException {
-		setStorageEpsg(epsgCode);
-	}
+    @Deprecated
+    @Setting(FeatureQuerySettingsProvider.DEFAULT_EPSG)
+    public void setDefaultEpsg(final int epsgCode) throws ConfigurationException {
+        setStorageEpsg(epsgCode);
+    }
 
-	@Deprecated
-	@Setting(FeatureQuerySettingsProvider.DEFAULT_3D_EPSG)
-	public void setDefault3DEpsg(final int epsgCode3D)
-			throws ConfigurationException {
-		setStorage3DEpsg(epsgCode3D);
-	}
+    @Deprecated
+    @Setting(FeatureQuerySettingsProvider.DEFAULT_3D_EPSG)
+    public void setDefault3DEpsg(final int epsgCode3D) throws ConfigurationException {
+        setStorage3DEpsg(epsgCode3D);
+    }
 
-	/**
-	 * Set storage EPSG code from settings
-	 * 
-	 * @param epsgCode
-	 *            EPSG code from settings
-	 * @throws ConfigurationException
-	 *             If an error occurs
-	 */
-	@Setting(FeatureQuerySettingsProvider.STORAGE_EPSG)
-	public void setStorageEpsg(final int epsgCode)
-			throws ConfigurationException {
-		Validation.greaterZero("Storage EPSG Code", epsgCode);
-		storageEPSG = epsgCode;
-	}
+    /**
+     * Set storage EPSG code from settings
+     * 
+     * @param epsgCode
+     *            EPSG code from settings
+     * @throws ConfigurationException
+     *             If an error occurs
+     */
+    @Setting(FeatureQuerySettingsProvider.STORAGE_EPSG)
+    public void setStorageEpsg(final int epsgCode) throws ConfigurationException {
+        Validation.greaterZero("Storage EPSG Code", epsgCode);
+        storageEPSG = epsgCode;
+    }
 
-	/**
-	 * Set storage 3D EPSG code from settings
-	 * 
-	 * @param epsgCode3D
-	 *            3D EPSG code from settings
-	 * @throws ConfigurationException
-	 *             If an error occurs
-	 */
-	@Setting(FeatureQuerySettingsProvider.STORAGE_3D_EPSG)
-	public void setStorage3DEpsg(final int epsgCode3D)
-			throws ConfigurationException {
-		Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
-		storage3DEPSG = epsgCode3D;
-	}
+    /**
+     * Set storage 3D EPSG code from settings
+     * 
+     * @param epsgCode3D
+     *            3D EPSG code from settings
+     * @throws ConfigurationException
+     *             If an error occurs
+     */
+    @Setting(FeatureQuerySettingsProvider.STORAGE_3D_EPSG)
+    public void setStorage3DEpsg(final int epsgCode3D) throws ConfigurationException {
+        Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
+        storage3DEPSG = epsgCode3D;
+    }
 
-	/**
-	 * Set default response EPSG code from settings
-	 * 
-	 * @param epsgCode
-	 *            EPSG code from settings
-	 * @throws ConfigurationException
-	 *             If an error occurs
-	 */
-	@Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_EPSG)
-	public void setDefaultResponseEpsg(final int epsgCode)
-			throws ConfigurationException {
-		Validation.greaterZero("Storage EPSG Code", epsgCode);
-		defaultResponseEPSG = epsgCode;
-	}
+    /**
+     * Set default response EPSG code from settings
+     * 
+     * @param epsgCode
+     *            EPSG code from settings
+     * @throws ConfigurationException
+     *             If an error occurs
+     */
+    @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_EPSG)
+    public void setDefaultResponseEpsg(final int epsgCode) throws ConfigurationException {
+        Validation.greaterZero("Storage EPSG Code", epsgCode);
+        defaultResponseEPSG = epsgCode;
+    }
 
-	/**
-	 * Set default response 3D EPSG code from settings
-	 * 
-	 * @param epsgCode3D
-	 *            3D EPSG code from settings
-	 * @throws ConfigurationException
-	 *             If an error occurs
-	 */
-	@Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_3D_EPSG)
-	public void setDefaultResponse3DEpsg(final int epsgCode3D)
-			throws ConfigurationException {
-		Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
-		defaultResponse3DEPSG = epsgCode3D;
-	}
+    /**
+     * Set default response 3D EPSG code from settings
+     * 
+     * @param epsgCode3D
+     *            3D EPSG code from settings
+     * @throws ConfigurationException
+     *             If an error occurs
+     */
+    @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_3D_EPSG)
+    public void setDefaultResponse3DEpsg(final int epsgCode3D) throws ConfigurationException {
+        Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
+        defaultResponse3DEPSG = epsgCode3D;
+    }
 
-	protected boolean parseDefaultParameter(AbstractServiceRequest<?> request,
-			String parameterValues, String parameterName)
-			throws OwsExceptionReport {
-		// service (mandatory)
-		if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service
-				.name())) {
-			request.setService(KvpHelper.checkParameterSingleValue(
-					parameterValues, parameterName));
-			return true;
-		}
-		// version (mandatory)
-		else if (parameterName
-				.equalsIgnoreCase(OWSConstants.RequestParams.version.name())) {
-			request.setVersion(KvpHelper.checkParameterSingleValue(
-					parameterValues, parameterName));
-			return true;
-		}
-		// request (mandatory)
-		else if (parameterName
-				.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
-			KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
-			return true;
-		}
-		// language (optional)
-		else if (parameterName
-				.equalsIgnoreCase(OWSConstants.AdditionalRequestParams.language
-						.name())) {
-			request.addExtension(getLanguageExtension(KvpHelper
-					.checkParameterSingleValue(parameterValues, parameterName)));
-			return true;
-		}
-		// CRS (optional)
-		else if (parameterName
-				.equalsIgnoreCase(OWSConstants.AdditionalRequestParams.crs
-						.name())) {
-			request.addExtension(getCrsExtension(KvpHelper
-					.checkParameterSingleValue(parameterValues, parameterName)));
-			return true;
-		}
+    protected boolean parseDefaultParameter(AbstractServiceRequest<?> request, String parameterValues,
+            String parameterName) throws OwsExceptionReport {
+        // service (mandatory)
+        if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service.name())) {
+            request.setService(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+            return true;
+        }
+        // version (mandatory)
+        else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.version.name())) {
+            request.setVersion(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+            return true;
+        }
+        // request (mandatory)
+        else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
+            KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
+            return true;
+        }
+        // language (optional)
+        else if (parameterName.equalsIgnoreCase(OWSConstants.AdditionalRequestParams.language.name())) {
+            request.addExtension(getLanguageExtension(KvpHelper.checkParameterSingleValue(parameterValues,
+                    parameterName)));
+            return true;
+        }
+        // CRS (optional)
+        else if (parameterName.equalsIgnoreCase(OWSConstants.AdditionalRequestParams.crs.name())) {
+            request.addExtension(getCrsExtension(KvpHelper.checkParameterSingleValue(parameterValues, parameterName)));
+            return true;
+        }
+        return false;
+    }
 
-		else if (parameterName
-				.equalsIgnoreCase(OWSConstants.AdditionalRequestParams.returnHumanReadableIdentifier
-						.name())) {
-			request.addExtension(getReturnHumanReadableIdentifierExtension(KvpHelper
-					.checkParameterSingleValue(parameterValues, parameterName)));
-			return true;
-		}
-		return false;
-	}
+    protected SpatialFilter parseSpatialFilter(List<String> parameterValues, String parameterName)
+            throws OwsExceptionReport {
+        if (!parameterValues.isEmpty()) {
+            if (!(parameterValues instanceof RandomAccess)) {
+                parameterValues = new ArrayList<String>(parameterValues);
+            }
+            SpatialFilter spatialFilter = new SpatialFilter();
 
-	protected SpatialFilter parseSpatialFilter(List<String> parameterValues,
-			String parameterName) throws OwsExceptionReport {
-		if (!parameterValues.isEmpty()) {
-			if (!(parameterValues instanceof RandomAccess)) {
-				parameterValues = new ArrayList<String>(parameterValues);
-			}
-			SpatialFilter spatialFilter = new SpatialFilter();
+            boolean hasSrid = false;
 
-			boolean hasSrid = false;
+            spatialFilter.setValueReference(parameterValues.get(0));
 
-			spatialFilter.setValueReference(parameterValues.get(0));
+            int srid = getDefaultEPSG();
+            if (parameterValues.get(parameterValues.size() - 1).startsWith(getSrsNamePrefixSosV2())
+                    || parameterValues.get(parameterValues.size() - 1).startsWith(getSrsNamePrefix())) {
+                hasSrid = true;
+                srid = SosHelper.parseSrsName(parameterValues.get(parameterValues.size() - 1));
+            }
 
-			int srid = getDefaultEPSG();
-			if (parameterValues.get(parameterValues.size() - 1).startsWith(
-					getSrsNamePrefixSosV2())
-					|| parameterValues.get(parameterValues.size() - 1)
-							.startsWith(getSrsNamePrefix())) {
-				hasSrid = true;
-				srid = SosHelper.parseSrsName(parameterValues
-						.get(parameterValues.size() - 1));
-			}
+            List<String> coordinates;
+            if (hasSrid) {
+                coordinates = parameterValues.subList(1, parameterValues.size() - 1);
+            } else {
+                coordinates = parameterValues.subList(1, parameterValues.size());
+            }
 
-			List<String> coordinates;
-			if (hasSrid) {
-				coordinates = parameterValues.subList(1,
-						parameterValues.size() - 1);
-			} else {
-				coordinates = parameterValues
-						.subList(1, parameterValues.size());
-			}
+            if (coordinates.size() != VALID_COORDINATE_SIZE) {
+                throw new InvalidParameterValueException().at(parameterName).withMessage(
+                        "The parameter value is not valid!");
+            }
+            String lowerCorner =
+                    String.format(Locale.US, "%s %s", new BigDecimal(coordinates.get(Constants.INT_0)).toString(),
+                            new BigDecimal(coordinates.get(Constants.INT_1)).toString());
+            String upperCorner =
+                    String.format(Locale.US, "%s %s", new BigDecimal(coordinates.get(Constants.INT_2)).toString(),
+                            new BigDecimal(coordinates.get(Constants.INT_3)).toString());
+            spatialFilter.setGeometry(JTSHelper.createGeometryFromWKT(
+                    JTSHelper.createWKTPolygonFromEnvelope(lowerCorner, upperCorner), srid));
+            spatialFilter.setOperator(SpatialOperator.BBOX);
+            return spatialFilter;
+        }
+        return null;
+    }
 
-			if (coordinates.size() != VALID_COORDINATE_SIZE) {
-				throw new InvalidParameterValueException().at(parameterName)
-						.withMessage("The parameter value is not valid!");
-			}
-			String lowerCorner = String
-					.format(Locale.US, "%s %s",
-							new BigDecimal(coordinates.get(Constants.INT_0))
-									.toString(),
-							new BigDecimal(coordinates.get(Constants.INT_1))
-									.toString());
-			String upperCorner = String
-					.format(Locale.US, "%s %s",
-							new BigDecimal(coordinates.get(Constants.INT_2))
-									.toString(),
-							new BigDecimal(coordinates.get(Constants.INT_3))
-									.toString());
-			spatialFilter.setGeometry(JTSHelper.createGeometryFromWKT(JTSHelper
-					.createWKTPolygonFromEnvelope(lowerCorner, upperCorner),
-					srid));
-			spatialFilter.setOperator(SpatialOperator.BBOX);
-			return spatialFilter;
-		}
-		return null;
-	}
+    /**
+     * @param parameterValue
+     * @param parameterName
+     * @return SOS time object
+     * @throws OwsExceptionReport
+     * @throws DateTimeParseException
+     */
+    protected Time parseValidTime(String parameterValue, String parameterName) throws OwsExceptionReport,
+            DateTimeParseException {
+        return parseTime(parameterValue, parameterName);
+    }
 
-	/**
-	 * @param parameterValue
-	 * @param parameterName
-	 * @return SOS time object
-	 * @throws OwsExceptionReport
-	 * @throws DateTimeParseException
-	 */
-	protected Time parseValidTime(String parameterValue, String parameterName)
-			throws OwsExceptionReport, DateTimeParseException {
-		return parseTime(parameterValue, parameterName);
-	}
+    /**
+     * @param parameterValue
+     * @return SOS time object
+     * @throws CodedException
+     */
+    protected Time parseTime(String parameterValue, String parameterName) throws CodedException {
+        String[] times = parameterValue.split("/");
+        if (times.length == 1) {
+            TimeInstant ti = new TimeInstant();
+            if (SosIndeterminateTime.contains(times[0])) {
+                ti.setSosIndeterminateTime(SosIndeterminateTime.getEnumForString(times[0]));
+            } else {
+                DateTime instant = DateTimeHelper.parseIsoString2DateTime(times[0]);
+                ti.setValue(instant);
+                ti.setRequestedTimeLength(DateTimeHelper.getTimeLengthBeforeTimeZone(times[0]));
+            }
+            return ti;
+        } else if (times.length == 2) {
+            DateTime start = DateTimeHelper.parseIsoString2DateTime(times[0]);
+            // check if end time is a full ISO 8106 string
+            int timeLength = DateTimeHelper.getTimeLengthBeforeTimeZone(times[1]);
+            DateTime origEnd = DateTimeHelper.parseIsoString2DateTime(times[1]);
+            DateTime end = DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(origEnd, timeLength);
+            TimePeriod timePeriod = new TimePeriod(start, end);
+            return timePeriod;
+        } else {
+            throw new InvalidParameterValueException().at(parameterName).withMessage(
+                    "The parameter value is not valid!");
+        }
+    }
 
-	/**
-	 * @param parameterValue
-	 * @return SOS time object
-	 * @throws CodedException
-	 */
-	protected Time parseTime(String parameterValue, String parameterName)
-			throws CodedException {
-		String[] times = parameterValue.split("/");
-		if (times.length == 1) {
-			TimeInstant ti = new TimeInstant();
-			if (SosIndeterminateTime.contains(times[0])) {
-				ti.setSosIndeterminateTime(SosIndeterminateTime
-						.getEnumForString(times[0]));
-			} else {
-				DateTime instant = DateTimeHelper
-						.parseIsoString2DateTime(times[0]);
-				ti.setValue(instant);
-				ti.setRequestedTimeLength(DateTimeHelper
-						.getTimeLengthBeforeTimeZone(times[0]));
-			}
-			return ti;
-		} else if (times.length == 2) {
-			DateTime start = DateTimeHelper.parseIsoString2DateTime(times[0]);
-			// check if end time is a full ISO 8106 string
-			int timeLength = DateTimeHelper
-					.getTimeLengthBeforeTimeZone(times[1]);
-			DateTime origEnd = DateTimeHelper.parseIsoString2DateTime(times[1]);
-			DateTime end = DateTimeHelper
-					.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(
-							origEnd, timeLength);
-			TimePeriod timePeriod = new TimePeriod(start, end);
-			return timePeriod;
-		} else {
-			throw new InvalidParameterValueException().at(parameterName)
-					.withMessage("The parameter value is not valid!");
-		}
-	}
+    protected List<TemporalFilter> parseTemporalFilter(List<String> parameterValues, String parameterName)
+            throws OwsExceptionReport, DateTimeParseException {
+        List<TemporalFilter> filterList = new ArrayList<TemporalFilter>(1);
+        if (parameterValues.size() != 2) {
+            throw new InvalidParameterValueException().withMessage("The parameter value is not valid!");
+        }
+        filterList.add(createTemporalFilterFromValue(parameterValues.get(1), parameterValues.get(0)));
+        return filterList;
+    }
 
-	protected List<TemporalFilter> parseTemporalFilter(
-			List<String> parameterValues, String parameterName)
-			throws OwsExceptionReport, DateTimeParseException {
-		List<TemporalFilter> filterList = new ArrayList<TemporalFilter>(1);
-		if (parameterValues.size() != 2) {
-			throw new InvalidParameterValueException()
-					.withMessage("The parameter value is not valid!");
-		}
-		filterList.add(createTemporalFilterFromValue(parameterValues.get(1),
-				parameterValues.get(0)));
-		return filterList;
-	}
+    protected Map<String, String> parseNamespaces(String parameterValues) {
+        List<String> array =
+                Arrays.asList(parameterValues.replaceAll("\\),", "").replaceAll("\\)", "").split("xmlns\\("));
+        Map<String, String> namespaces = new HashMap<String, String>(array.size());
+        for (String string : array) {
+            if (string != null && !string.isEmpty()) {
+                String[] s = string.split(",");
+                namespaces.put(s[0], s[1]);
+            }
+        }
+        return namespaces;
+    }
 
-	protected Map<String, String> parseNamespaces(String parameterValues) {
-		List<String> array = Arrays
-				.asList(parameterValues.replaceAll("\\),", "")
-						.replaceAll("\\)", "").split("xmlns\\("));
-		Map<String, String> namespaces = new HashMap<String, String>(
-				array.size());
-		for (String string : array) {
-			if (string != null && !string.isEmpty()) {
-				String[] s = string.split(",");
-				namespaces.put(s[0], s[1]);
-			}
-		}
-		return namespaces;
-	}
+    private TemporalFilter createTemporalFilterFromValue(String value, String valueReference)
+            throws OwsExceptionReport, DateTimeParseException {
+        TemporalFilter temporalFilter = new TemporalFilter();
+        temporalFilter.setValueReference(valueReference);
+        String[] times = value.split("/");
 
-	private TemporalFilter createTemporalFilterFromValue(String value,
-			String valueReference) throws OwsExceptionReport,
-			DateTimeParseException {
-		TemporalFilter temporalFilter = new TemporalFilter();
-		temporalFilter.setValueReference(valueReference);
-		String[] times = value.split("/");
+        if (times.length == 1) {
+            TimeInstant ti = new TimeInstant();
+            if (SosIndeterminateTime.contains(times[0])) {
+                ti.setSosIndeterminateTime(SosIndeterminateTime.getEnumForString(times[0]));
+            } else {
+                DateTime instant = DateTimeHelper.parseIsoString2DateTime(times[0]);
+                ti.setValue(instant);
+                ti.setRequestedTimeLength(DateTimeHelper.getTimeLengthBeforeTimeZone(times[0]));
+            }
+            temporalFilter.setOperator(TimeOperator.TM_Equals);
+            temporalFilter.setTime(ti);
+        } else if (times.length == 2) {
+            DateTime start = DateTimeHelper.parseIsoString2DateTime(times[0]);
+            // check if end time is a full ISO 8106 string
+            int timeLength = DateTimeHelper.getTimeLengthBeforeTimeZone(times[1]);
+            DateTime origEnd = DateTimeHelper.parseIsoString2DateTime(times[1]);
+            DateTime end = DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(origEnd, timeLength);
+            TimePeriod tp = new TimePeriod();
+            tp.setStart(start);
+            tp.setEnd(end);
+            temporalFilter.setOperator(TimeOperator.TM_During);
+            temporalFilter.setTime(tp);
 
-		if (times.length == 1) {
-			TimeInstant ti = new TimeInstant();
-			if (SosIndeterminateTime.contains(times[0])) {
-				ti.setSosIndeterminateTime(SosIndeterminateTime
-						.getEnumForString(times[0]));
-			} else {
-				DateTime instant = DateTimeHelper
-						.parseIsoString2DateTime(times[0]);
-				ti.setValue(instant);
-				ti.setRequestedTimeLength(DateTimeHelper
-						.getTimeLengthBeforeTimeZone(times[0]));
-			}
-			temporalFilter.setOperator(TimeOperator.TM_Equals);
-			temporalFilter.setTime(ti);
-		} else if (times.length == 2) {
-			DateTime start = DateTimeHelper.parseIsoString2DateTime(times[0]);
-			// check if end time is a full ISO 8106 string
-			int timeLength = DateTimeHelper
-					.getTimeLengthBeforeTimeZone(times[1]);
-			DateTime origEnd = DateTimeHelper.parseIsoString2DateTime(times[1]);
-			DateTime end = DateTimeHelper
-					.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(
-							origEnd, timeLength);
-			TimePeriod tp = new TimePeriod();
-			tp.setStart(start);
-			tp.setEnd(end);
-			temporalFilter.setOperator(TimeOperator.TM_During);
-			temporalFilter.setTime(tp);
+        } else {
+            throw new InvalidParameterValueException().withMessage("The paramter value '%s' is invalid!", value);
+        }
+        return temporalFilter;
+    }
 
-		} else {
-			throw new InvalidParameterValueException().withMessage(
-					"The paramter value '%s' is invalid!", value);
-		}
-		return temporalFilter;
-	}
+    protected String getSrsNamePrefix() {
+        return ServiceConfiguration.getInstance().getSrsNamePrefix();
+    }
 
-	protected String getSrsNamePrefix() {
-		return ServiceConfiguration.getInstance().getSrsNamePrefix();
-	}
+    protected String getSrsNamePrefixSosV2() {
+        return ServiceConfiguration.getInstance().getSrsNamePrefixSosV2();
+    }
 
-	protected String getSrsNamePrefixSosV2() {
-		return ServiceConfiguration.getInstance().getSrsNamePrefixSosV2();
-	}
+    protected SwesExtension<SweText> getLanguageExtension(String language) {
+        return getSweTextFor(OWSConstants.AdditionalRequestParams.language.name(), language);
+    }
 
-	protected SwesExtension<SweText> getLanguageExtension(String language) {
-		return getSweTextFor(
-				OWSConstants.AdditionalRequestParams.language.name(), language);
-	}
-
-	protected SwesExtension<SweText> getCrsExtension(String crs) {
-		return getSweTextFor(OWSConstants.AdditionalRequestParams.crs.name(),
-				crs);
-	}
-
-	protected SwesExtension<SweBoolean> getReturnHumanReadableIdentifierExtension(
-			String returnHumanReadableIdentifier) {
-		SweBoolean bool = (SweBoolean) new SweBoolean()
-				.setValue(Boolean.parseBoolean(returnHumanReadableIdentifier))
-				.setIdentifier(
-						OWSConstants.AdditionalRequestParams.returnHumanReadableIdentifier
-								.name());
-		return new SwesExtensionImpl<SweBoolean>().setValue(bool);
-	}
-
-	protected SwesExtension<SweText> getSweTextFor(String identifier,
-			String value) {
-		SweText text = (SweText) new SweText().setValue(value).setIdentifier(
-				identifier);
-		return new SwesExtensionImpl<SweText>().setValue(text);
-	}
-
+    protected SwesExtension<SweText> getCrsExtension(String crs) {
+        return getSweTextFor(OWSConstants.AdditionalRequestParams.crs.name(), crs);
+    }
+    
+    protected SwesExtension<SweText> getSweTextFor(String identifier, String value) {
+        SweText text =
+                (SweText) new SweText().setValue(value).setIdentifier(identifier);
+        return new SwesExtensionImpl<SweText>().setValue(text);
+    }
 }

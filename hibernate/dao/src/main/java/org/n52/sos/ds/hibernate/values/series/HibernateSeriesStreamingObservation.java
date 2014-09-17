@@ -31,9 +31,7 @@ package org.n52.sos.ds.hibernate.values.series;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesObservationDAO;
+import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingObservation;
@@ -53,7 +51,7 @@ public class HibernateSeriesStreamingObservation extends AbstractHibernateStream
 
     private static final long serialVersionUID = 201732114914686926L;
 
-    private final AbstractSeriesObservationDAO seriesObservationDAO;
+    private final SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO();
 
     private Set<Long> seriesIDs;
 
@@ -62,17 +60,9 @@ public class HibernateSeriesStreamingObservation extends AbstractHibernateStream
      * 
      * @param request
      *            {@link GetObservationRequest}
-     * @throws OwsExceptionReport 
      */
-    public HibernateSeriesStreamingObservation(GetObservationRequest request) throws OwsExceptionReport {
+    public HibernateSeriesStreamingObservation(GetObservationRequest request) {
         super(request);
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-        if (observationDAO instanceof AbstractSeriesObservationDAO) {
-            seriesObservationDAO = (AbstractSeriesObservationDAO) observationDAO;
-        } else {
-            throw new NoApplicableCodeException().withMessage("The required '%s' implementation is no supported!",
-                    AbstractObservationDAO.class.getName());
-        }
     }
 
     @Override

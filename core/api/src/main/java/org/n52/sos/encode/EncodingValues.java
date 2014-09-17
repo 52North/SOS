@@ -212,9 +212,6 @@ public class EncodingValues {
      * @return the encodingNamespace
      */
     public String getEncodingNamespace() {
-    	if (encodingNamespace == null && hasAddtitionalValues() && getAdditionalValues().containsKey(HelperValues.ENCODE_NAMESPACE)) {
-    		setEncodingNamespace(getAdditionalValues().get(HelperValues.ENCODE_NAMESPACE));
-    	}
         return encodingNamespace;
     }
     

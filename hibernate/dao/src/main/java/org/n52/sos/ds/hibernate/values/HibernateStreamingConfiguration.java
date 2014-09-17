@@ -41,14 +41,20 @@ import org.n52.sos.config.annotation.Setting;
  */
 @Configurable
 public class HibernateStreamingConfiguration {
-
+    
+    public static int DEFAULT_CHUNK_SIZE = 10000;
+    
+    public static boolean DEFAULT_STREAMING_DATASOURCE = true;
+    
+    public static boolean DEFAULT_CHUNK_STREAMING_DATASOURCE = true; 
+    
     private static HibernateStreamingConfiguration instance;
 
-    private boolean streamingDatasource = true;
+    private boolean streamingDatasource = DEFAULT_STREAMING_DATASOURCE;
 
-    private boolean chunkDatasourceStreaming = true;
+    private boolean chunkDatasourceStreaming = DEFAULT_CHUNK_STREAMING_DATASOURCE;
 
-    private int chunkSize = 1000;
+    private int chunkSize = DEFAULT_CHUNK_SIZE;
 
     /**
      * @return Returns a singleton instance of the ServiceConfiguration.

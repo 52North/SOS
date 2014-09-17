@@ -59,7 +59,7 @@ public class HibernateStreamingSettings implements SettingDefinitionProvider {
                     .setGroup(StreamingSettings.GROUP)
                     .setOrder(ORDER_1)
                     .setKey(FORCE_DATASOURCE_STREAMING)
-                    .setDefaultValue(false)
+                    .setDefaultValue(HibernateStreamingConfiguration.DEFAULT_STREAMING_DATASOURCE)
                     .setTitle("Should this service stream datasource values (currently only GetObservation) to encoder?")
                     .setDescription(
                             "Whether the service should stream datasource values (currently only GetObservation) to encoder if it is supported by the datasource! This reduces the memory usage.");
@@ -69,7 +69,7 @@ public class HibernateStreamingSettings implements SettingDefinitionProvider {
                     .setGroup(StreamingSettings.GROUP)
                     .setOrder(ORDER_2)
                     .setKey(DATASOURCE_STREAMING_APPROACH)
-                    .setDefaultValue(true)
+                    .setDefaultValue(HibernateStreamingConfiguration.DEFAULT_CHUNK_STREAMING_DATASOURCE)
                     .setTitle(
                             "Should this service query the streaming datasource values (currently only GetObservation) as chunk of x (true) ora as scrollable values?")
                     .setDescription(
@@ -79,8 +79,8 @@ public class HibernateStreamingSettings implements SettingDefinitionProvider {
             new IntegerSettingDefinition()
                     .setGroup(StreamingSettings.GROUP)
                     .setKey(CHUNK_SIZE)
-                    .setDefaultValue(1000)
-                    .setTitle(String.format("Number of chunk size.", 1000))
+                    .setDefaultValue(HibernateStreamingConfiguration.DEFAULT_CHUNK_SIZE)
+                    .setTitle(String.format("Number of chunk size.", HibernateStreamingConfiguration.DEFAULT_CHUNK_SIZE))
                     .setDescription(
                             "Number of chunk size, only relevant if scrollable datasource streaming is set to 'true'. If define a number <= 0, the whole values are queried at once!")
                     .setOrder(ORDER_3);

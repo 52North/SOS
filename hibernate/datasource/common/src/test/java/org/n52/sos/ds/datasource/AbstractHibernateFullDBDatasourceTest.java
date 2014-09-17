@@ -120,7 +120,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
             counter--;
             concept = false;
         }
-        if (!keys.contains(AbstractHibernateDatasource.MULTI_LANGUAGE_KEY) ){
+        if (!keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY) ){
             counter--;
             multiLanguage = false;
         }
@@ -148,7 +148,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
             assertTrue(keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY));
         }
         if (multiLanguage) {
-            assertTrue(keys.contains(AbstractHibernateDatasource.MULTI_LANGUAGE_KEY));
+            assertTrue(keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY));
         }
     }
 

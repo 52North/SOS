@@ -98,13 +98,18 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
 
         return next;
     }
+    
+    @Override
+	public AbstractValue nextEntity() throws OwsExceptionReport {
+    	return (AbstractValue) valuesResult.next();
+	}
 
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
             if (hasNextValue()) {
-                AbstractValue resultObject = valuesResult.next();
-                TimeValuePair value = createTimeValuePairFrom(resultObject);
+                AbstractValue resultObject = nextEntity();
+                TimeValuePair value = resultObject.createTimeValuePairFrom();
                 session.evict(resultObject);
                 return value;
             }
@@ -121,8 +126,8 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
         try {
             if (hasNextValue()) {
                 OmObservation observation = observationTemplate.cloneTemplate();
-                AbstractValue resultObject = valuesResult.next();
-                addValuesToObservation(observation, resultObject);
+                AbstractValue resultObject = nextEntity();
+                resultObject.addValuesToObservation(observation, getResponseFormat());
                 checkForModifications(observation);
                 session.evict(resultObject);
                 return observation;

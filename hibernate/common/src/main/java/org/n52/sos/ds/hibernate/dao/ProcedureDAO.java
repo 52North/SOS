@@ -68,6 +68,7 @@ import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
+import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
@@ -561,30 +562,6 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     }
 
     /**
-     * Hold min and max obs time for procedure
-     */
-    public class ProcedureTimeExtrema {
-        private DateTime minTime;
-        private DateTime maxTime;
-
-        public DateTime getMinTime() {
-            return minTime;
-        }
-
-        public void setMinTime(DateTime minTime) {
-            this.minTime = minTime;
-        }
-
-        public DateTime getMaxTime() {
-            return maxTime;
-        }
-
-        public void setMaxTime(DateTime maxTime) {
-            this.maxTime = maxTime;
-        }
-    }
-
-    /**
      * Query procedure time extrema for the provided procedure identifier
      *
      * @param session
@@ -592,7 +569,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @return ProcedureTimeExtrema
      * @throws CodedException
      */
-    public ProcedureTimeExtrema getProcedureTimeExtrema(final Session session, String procedureIdentifier)
+    public TimeExtrema getProcedureTimeExtrema(final Session session, String procedureIdentifier)
             throws OwsExceptionReport {
         Object[] result;
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA, session)) {
@@ -622,7 +599,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             result = (Object[]) criteria.uniqueResult();
         }
 
-        ProcedureTimeExtrema pte = new ProcedureTimeExtrema();
+        TimeExtrema pte = new TimeExtrema();
         if (result != null) {
             pte.setMinTime(DateTimeHelper.makeDateTime(result[1]));
             DateTime maxPhenStart = DateTimeHelper.makeDateTime(result[2]);

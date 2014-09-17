@@ -92,12 +92,6 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
         cache.addObservablePropertyForResultTemplate(templateIdentifier, observableProperty);
         cache.addObservablePropertyForProcedure(procedure, observableProperty);
 
-        if (observation.getIdentifierCodeWithAuthority() != null) {
-            final String identifier = observation.getIdentifierCodeWithAuthority().getValue();
-            cache.addObservationIdentifier(identifier);
-            cache.addObservationIdentifierForProcedure(procedure, identifier);
-        }
-
         List<SamplingFeature> observedFeatures =
                 sosFeaturesToList(observation.getObservationConstellation().getFeatureOfInterest());
 

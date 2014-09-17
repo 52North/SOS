@@ -30,6 +30,7 @@ package org.n52.sos.util;
 
 import javax.xml.namespace.QName;
 
+import org.joda.time.DateTime;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -76,6 +77,23 @@ public final class GmlHelper {
             return GmlConstants.QN_TIME_PERIOD;
         }
         return GmlConstants.QN_ABSTRACT_TIME_32;
+    }
+    
+    /**
+     * Create {@link Time} from {@link DateTime}s
+     * 
+     * @param start
+     *            Start {@link DateTime}
+     * @param end
+     *            End {@link DateTime}
+     * @return Resulting {@link Time}
+     */
+    public static Time createTime(DateTime start, DateTime end) {
+        if (start.equals(end)) {
+            return new TimeInstant(start);
+        } else {
+            return new TimePeriod(start, end);
+        }
     }
 
     private GmlHelper() {

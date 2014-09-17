@@ -127,6 +127,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
 
         SosProcedureDescription desc = create(procedure, null, i18n, session).orNull();
         if (desc != null) {
+        	addHumanReadableName(desc, procedure);
             enrich(desc, procedure, requestedServiceVersion,
                    descriptionFormat, null, loadedProcedures, i18n, session);
             if (!requestedDescriptionFormat.equals(descriptionFormat)) {
@@ -156,6 +157,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
         String descriptionFormat = getFormat(vpt);
         Optional<SosProcedureDescription> description = create(procedure, vpt, i18n, session);
         if (description.isPresent()) {
+        	addHumanReadableName(description.get(), procedure);
             enrich(description.get(), procedure, version, descriptionFormat,
                    getValidTime(vpt), null, i18n, session);
             description.get().setDescriptionFormat(descriptionFormat);
@@ -173,7 +175,14 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
                 session);
     }
 
-    protected TimePeriod getValidTime(ValidProcedureTime validProcedureTime) {
+    private void addHumanReadableName(SosProcedureDescription desc,
+			Procedure procedure) {
+    	if (!desc.isSetHumanReadableIdentifier() && procedure.isSetName()) {
+    		desc.setHumanReadableIdentifier(procedure.getName());
+    	}
+	}
+
+	protected TimePeriod getValidTime(ValidProcedureTime validProcedureTime) {
         return new TimePeriod(validProcedureTime.getStartTime(),
                 validProcedureTime.getEndTime());
     }

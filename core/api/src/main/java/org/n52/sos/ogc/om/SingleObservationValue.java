@@ -28,11 +28,14 @@
  */
 package org.n52.sos.ogc.om;
 
-import java.util.List;
+import java.util.Set;
 
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.om.quality.SosQuality;
 import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.util.CollectionHelper;
+
+import com.google.common.collect.Sets;
 
 /**
  * Class representing a single value observation value
@@ -61,7 +64,7 @@ public class SingleObservationValue<T> extends AbstractObservationValue<Value<T>
     /**
      * Measurment quality
      */
-    private List<SosQuality> qualityList;
+    private Set<SosQuality> qualityList = Sets.newHashSet();
 
     /**
      * constructor
@@ -89,7 +92,7 @@ public class SingleObservationValue<T> extends AbstractObservationValue<Value<T>
      * @param qualityList
      *            Measurment quality
      */
-    public SingleObservationValue(Time phenomenonTime, Value<T> value, List<SosQuality> qualityList) {
+    public SingleObservationValue(Time phenomenonTime, Value<T> value, Set<SosQuality> qualityList) {
         this.phenomenonTime = phenomenonTime;
         this.value = value;
         this.qualityList = qualityList;
@@ -134,8 +137,19 @@ public class SingleObservationValue<T> extends AbstractObservationValue<Value<T>
      * @param qualityList
      *            Measurement quality to set
      */
-    public void setQualityList(List<SosQuality> qualityList) {
+    public SingleObservationValue<T> setQualityList(Set<SosQuality> qualityList) {
         this.qualityList = qualityList;
+        return this;
+    }
+    
+    public SingleObservationValue<T> addQualityList(Set<SosQuality> qualityList) {
+        this.qualityList.addAll(qualityList);
+        return this;
+    }
+    
+    public SingleObservationValue<T> addQuality(SosQuality qualityList) {
+        this.qualityList.add(qualityList);
+        return this;
     }
 
     /**
@@ -143,7 +157,16 @@ public class SingleObservationValue<T> extends AbstractObservationValue<Value<T>
      * 
      * @return Measurement quality
      */
-    public List<SosQuality> getQualityList() {
+    public Set<SosQuality> getQualityList() {
         return qualityList;
     }
+    
+    public boolean isSetQualityList() {
+        return CollectionHelper.isNotEmpty(getQualityList());
+    }
+    
+	@Override
+	public boolean isSetValue() {
+		return getValue() != null && getValue().isSetValue();
+	}
 }

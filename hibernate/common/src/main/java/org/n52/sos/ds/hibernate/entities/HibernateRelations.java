@@ -419,15 +419,23 @@ public interface HibernateRelations {
 
         void setUrl(String url);
     }
+    
+    
+	interface GetStringValue {
+		
+		 boolean isSetValue();
+		
+		String getValueAsString();
+		
+	}
 
-    interface HasValue<T> {
+    interface HasValue<T> extends GetStringValue {
         String VALUE = "value";
 
         T getValue();
 
         void setValue(T value);
 
-        boolean isSetValue();
     }
 
     interface HasOfferings {

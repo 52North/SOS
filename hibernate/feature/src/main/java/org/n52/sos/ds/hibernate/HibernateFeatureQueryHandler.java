@@ -47,15 +47,11 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ds.I18NDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ds.hibernate.dao.CodespaceDAO;
+import org.n52.sos.ds.I18NDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
@@ -84,10 +80,11 @@ import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -396,7 +393,6 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
      * @return SOS feature
      * @throws OwsExceptionReport
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected AbstractFeature createSosAbstractFeature(final FeatureOfInterest feature,
             final FeatureQueryHandlerQueryObject queryObject, Session session) throws OwsExceptionReport {
         if (feature == null) {
@@ -435,6 +431,10 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             throws OwsExceptionReport {
         I18NDAO<I18NFeatureMetadata> i18nDAO = I18NDAORepository.getInstance().getDAO(I18NFeatureMetadata.class);
         Locale requestedLocale = query.getI18N();
+        // set name as human readable identifier if set
+        if (feature.isSetName()) {
+        	samplingFeature.setHumanReadableIdentifier(feature.getName());
+        }
         if (i18nDAO == null) {
             // no i18n support
             samplingFeature.addName(featureDAO.getName(feature));
@@ -481,7 +481,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         FeatureOfInterest feature = getFeatureOfInterest(newId, samplingFeature.getGeometry(), session);
         if (feature == null) {
             feature = new TFeatureOfInterest();
-            featureOfInterestDAO.addIdentifier(samplingFeature, feature, session);
+            featureOfInterestDAO.addIdentifierNameDescription(samplingFeature, feature, session);
             processGeometryPreSave(samplingFeature, feature, session);
             if (samplingFeature.isSetXmlDescription()) {
                 feature.setDescriptionXml(samplingFeature.getXmlDescription());
@@ -547,18 +547,25 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             // GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(geom);
         } else {
             if (session != null) {
-                List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO(session).getSamplingGeometries(feature.getIdentifier(), session);
-                int srid = getDefault3DEPSG();
+                List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);
+                int srid = GeometryHandler.getInstance().getStorageEPSG();
                 if (CollectionHelper.isNotEmpty(geometries)) {
                     List<Coordinate> coordinates = Lists.newLinkedList();
                     Geometry lastGeoemtry = null;
                     for (Geometry geometry : geometries) {
                         if (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry)) {
-                        	coordinates.add(GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(geometry).getCoordinate());
+                        	coordinates.add(GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
                             lastGeoemtry = geometry;
                             if (geometry.getSRID() != srid) {
                                 srid = geometry.getSRID();
                              }
+                        }
+                        if (geometry.getSRID() != srid) {
+                           srid = geometry.getSRID();
+                        }
+                        if (!geometry.equalsTopo(lastGeoemtry)) {
+                            coordinates.add(GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
+                            lastGeoemtry = geometry;
                         }
                     }
                     Geometry geom = null;

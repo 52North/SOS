@@ -38,6 +38,7 @@ import javax.xml.soap.SOAPConstants;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlCursor.TokenType;
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.OmConstants;
@@ -55,9 +56,9 @@ import com.google.common.collect.Sets;
 
 /**
  * Utility class for 52N
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public final class N52XmlHelper implements Constants {
     public static final SchemaLocation SCHEMA_LOCATION_SOS_V1 = new SchemaLocation(Sos1Constants.NS_SOS,
@@ -116,7 +117,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * Sets the schema location to a XmlObject
-     * 
+     *
      * @param document
      *            XML document
      * @param schemaLocations
@@ -132,32 +133,27 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * Sets the schema locations to a XmlObject
-     * 
+     *
      * @param document
      *            XML document
      * @param schemaLocations
      *            List of schema locations
      */
     public static void setSchemaLocationsToDocument(XmlObject document, Collection<SchemaLocation> schemaLocations) {
-        StringBuilder schemaLocation = new StringBuilder();
-        Iterator<SchemaLocation> it = schemaLocations.iterator();
-        if (it.hasNext()) {
-            schemaLocation.append(it.next().getSchemaLocationString());
-        }
-        while (it.hasNext()) {
-            schemaLocation.append(BLANK_CHAR).append(it.next().getSchemaLocationString());
-        }
-        setSchemaLocationToDocument(document, schemaLocation.toString());
+        setSchemaLocationToDocument(document, mergeSchemaLocationsToString(schemaLocations));
     }
-    
-    public static String mergeSchemaLocationsToString(Set<SchemaLocation> schemaLocations) {
-        if (CollectionHelper.isNotEmpty(schemaLocations)) {
-            StringBuilder builder = new StringBuilder();
-            for (SchemaLocation schemaLocation : schemaLocations) {
-                builder.append(schemaLocation.getSchemaLocationString());
-                builder.append(BLANK_CHAR);
+
+    public static String mergeSchemaLocationsToString(Iterable<SchemaLocation> schemaLocations) {
+        if (schemaLocations != null) {
+            Iterator<SchemaLocation> it = schemaLocations.iterator();
+            if (it.hasNext()) {
+                StringBuilder builder = new StringBuilder();
+                builder.append(it.next().getSchemaLocationString());
+                while(it.hasNext()) {
+                    builder.append(BLANK_CHAR).append(it.next().getSchemaLocationString());
+                }
+                return builder.toString();
             }
-            return builder.substring(0, builder.toString().lastIndexOf(BLANK_STRING));
         }
         return EMPTY_STRING;
     }
@@ -179,7 +175,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * W3C XSI schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static QName getSchemaLocationQName() {
@@ -188,7 +184,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * W3C XSI schema location with prefix
-     * 
+     *
      * @return QName of schema location
      */
     public static QName getSchemaLocationQNameWithPrefix() {
@@ -197,7 +193,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * SOS 1.0.0 schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSOS100() {
@@ -206,7 +202,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * SOS 2.0 schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSOS200() {
@@ -215,7 +211,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * OM 1.0.0 schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForOM100() {
@@ -224,7 +220,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * OM 2.0 schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForOM200() {
@@ -233,7 +229,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * GML 3.1.1 schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForGML311() {
@@ -242,7 +238,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * GML 3.2.1 schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForGML321() {
@@ -251,7 +247,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * SOS OGC schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForOGC() {
@@ -260,7 +256,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * OWS 1.1.0 schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForOWS110() {
@@ -269,7 +265,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * OWS 1.1.0 schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForOWS110Exception() {
@@ -278,7 +274,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * Sampling 1.0.0 schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSA100() {
@@ -287,7 +283,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * Sampling 2.0 schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSF200() {
@@ -296,7 +292,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * SamplingSpatial 2.0 schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSAMS200() {
@@ -305,7 +301,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * SensorML 1.0.1 schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSML101() {
@@ -314,7 +310,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * SWECommon 1.0.1 schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSWE101() {
@@ -323,7 +319,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * SWECommon 2.0 schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSWE200() {
@@ -332,7 +328,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * SWECommon 2.0 schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSWES200() {
@@ -341,7 +337,7 @@ public final class N52XmlHelper implements Constants {
 
     /**
      * W3C XLINK schema location
-     * 
+     *
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForXLINK() {

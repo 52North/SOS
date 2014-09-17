@@ -54,6 +54,7 @@ import org.n52.sos.util.http.MediaTypes;
  * 
  */
 public class DescribeSensorKvpDecoderv20 extends AbstractKvpDecoder {
+	
     private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,
             Sos2Constants.SERVICEVERSION, SosConstants.Operations.DescribeSensor, MediaTypes.APPLICATION_KVP);
 
@@ -67,9 +68,6 @@ public class DescribeSensorKvpDecoderv20 extends AbstractKvpDecoder {
 
         DescribeSensorRequest request = new DescribeSensorRequest();
         CompositeOwsException exceptions = new CompositeOwsException();
-
-        boolean foundProcedure = false;
-        boolean foundProcedureDescriptionFormat = false;
 
         for (String parameterName : element.keySet()) {
             String parameterValues = element.get(parameterName);
@@ -90,13 +88,11 @@ public class DescribeSensorKvpDecoderv20 extends AbstractKvpDecoder {
 //                    else 
                         if (parameterName.equalsIgnoreCase(SosConstants.DescribeSensorParams.procedure.name())) {
                         request.setProcedure(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                        foundProcedure = true;
                     } // procedureDescriptionFormat
                     else if (parameterName.equalsIgnoreCase(Sos2Constants.DescribeSensorParams.procedureDescriptionFormat
                             .name())) {
                         request.setProcedureDescriptionFormat(KvpHelper.checkParameterSingleValue(parameterValues,
                                 parameterName));
-                        foundProcedureDescriptionFormat = true;
                     } // valid time (optional)
                     else if (parameterName.equalsIgnoreCase(Sos2Constants.DescribeSensorParams.validTime.name())) {
                         try {

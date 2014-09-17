@@ -28,7 +28,6 @@
  */
 package org.n52.sos.web.admin;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -38,7 +37,6 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
 import org.n52.sos.cache.ContentCachePersistenceStrategy;
-
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.service.Configurator;

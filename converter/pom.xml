@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>52n-sos</artifactId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
     </parent>
     <artifactId>converter</artifactId>
     <packaging>pom</packaging>
@@ -12,5 +12,7 @@
     <description>52°North SOS - Converter Modules</description>
     <modules>
         <module>transformation</module>
+        <module>flexible-identifier</module>
+        <module>split-and-merge</module>
     </modules>
 </project>

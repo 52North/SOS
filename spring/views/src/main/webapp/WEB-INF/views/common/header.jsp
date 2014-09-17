@@ -49,6 +49,7 @@
 		<script type="text/javascript" src="<c:url value="/static/js/arrays.js" />"></script>
 		<script type="text/javascript" src="<c:url value="/static/lib/jquery-1.8.2.min.js" />"></script>
 		<script type="text/javascript" src="<c:url value="/static/lib/bootstrap-2.3.1.min.js" />"></script>
+        <script type="text/javascript" src="<c:url value="/static/js/jquery.additions.js" />"></script>
 		<script type="text/javascript" src="<c:url value="/static/js/application.js" />"></script>
 		<title>52&deg;North Sensor Observation Service</title>
 
@@ -145,6 +146,13 @@
                                                                     <span class="menu-title">I18N Settings</span>
                                                                 </a>
                                                             </li>
+                                                            <c:if test="${sos:hasClass('org.n52.sos.web.admin.AdminEReportingHeaderController')}">
+                                                                <li>
+                                                                    <a href="<c:url value="/admin/ereporting" />">
+                                                                        <span class="menu-title">eReporting</span>
+                                                                    </a>
+                                                                </li>
+                                                            </c:if>
                                                         </ul>
                                                     </li>
                                                     <li>

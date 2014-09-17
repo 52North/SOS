@@ -36,16 +36,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.I18NDAO;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.cache.ProcedureFlag;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.dao.AbstractSpatialFilteringProfileDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
@@ -68,6 +64,8 @@ import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CacheHelper;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -114,18 +112,21 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     }
 
     protected void getOfferingInformationFromDbAndAddItToCacheMaps(Session session) throws OwsExceptionReport {
-        // process all offering updates here (in multiple threads) which have the potential to perform large
-        // queries that aren't able to be loaded all at once. many (but not all) of these can be avoided
+        // process all offering updates here (in multiple threads) which have
+        // the potential to perform large
+        // queries that aren't able to be loaded all at once. many (but not all)
+        // of these can be avoided
         // if ObservationConstellation is supported
 
-        // NOTE: Don't perform queries or load obecjts here unless you have to, since they are performed once per offering
+        // NOTE: Don't perform queries or load obecjts here unless you have to,
+        // since they are performed once per offering
 
         String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
 
         getCache().addOffering(offeringId);
         addOfferingNamesAndDescriptionsToCache(offeringId, session);
         // only check once, check flag in other methods
-        obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class, session);
+        obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class);
         // Procedures
         final Map<ProcedureFlag, Set<String>> procedureIdentifiers = getProcedureIdentifier(session);
         getCache().setProceduresForOffering(prefixedOfferingId, procedureIdentifiers.get(ProcedureFlag.PARENT));
@@ -147,12 +148,14 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
                 getFeatureOfInterestTypes(featureOfInterestIdentifiers, session));
 
         // Spatial Envelope
-        getCache().setEnvelopeForOffering(prefixedOfferingId, getEnvelopeForOffering(featureOfInterestIdentifiers, session));
+        getCache().setEnvelopeForOffering(prefixedOfferingId,
+                getEnvelopeForOffering(featureOfInterestIdentifiers, session));
         // Spatial Filtering Profile Spatial Envelope
         addSpatialFilteringProfileEnvelopeForOffering(prefixedOfferingId, offeringId, session);
     }
 
-    protected void addOfferingNamesAndDescriptionsToCache(String offeringId, Session session) throws OwsExceptionReport {
+    protected void addOfferingNamesAndDescriptionsToCache(String offeringId, Session session)
+            throws OwsExceptionReport {
         final MultilingualString name;
         final MultilingualString description;
 
@@ -178,12 +181,18 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             } else {
                 String offeringName = offeringId;
                 if (offeringName.startsWith("http")) {
-                    offeringName = offeringName.substring(offeringName.lastIndexOf(Constants.SLASH_CHAR) + 1, offeringName.length());
+                    offeringName =
+                            offeringName.substring(offeringName.lastIndexOf(Constants.SLASH_CHAR) + 1,
+                                    offeringName.length());
                 } else if (offeringName.startsWith("urn")) {
-                    offeringName = offeringName.substring(offeringName.lastIndexOf(Constants.COLON_CHAR) + 1, offeringName.length());
+                    offeringName =
+                            offeringName.substring(offeringName.lastIndexOf(Constants.COLON_CHAR) + 1,
+                                    offeringName.length());
                 }
                 if (offeringName.contains(Constants.NUMBER_SIGN_STRING)) {
-                    offeringName = offeringName.substring(offeringName.lastIndexOf(Constants.NUMBER_SIGN_CHAR) + 1, offeringName.length());
+                    offeringName =
+                            offeringName.substring(offeringName.lastIndexOf(Constants.NUMBER_SIGN_CHAR) + 1,
+                                    offeringName.length());
                 }
                 name.addLocalization(defaultLocale, offeringName);
             }
@@ -197,24 +206,42 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
                 description.addLocalization(locale, offering.getDescription());
             }
         }
-
+        
         getCache().setI18nDescriptionForOffering(offeringId, description);
         getCache().setI18nNameForOffering(offeringId, name);
+        addHumanReadableIdentifier(offeringId, offering, name);
     }
 
-    protected Map<ProcedureFlag, Set<String>> getProcedureIdentifier(Session session) throws OwsExceptionReport {
+    private void addHumanReadableIdentifier(String offeringId,
+			Offering offering, MultilingualString name) {
+		if (name.isEmpty()) {
+			if (offering.isSetName()) {
+				getCache().addOfferingIdentifierHumanReadableName(offeringId, offering.getName());
+			}
+		} else {
+			if (name.getDefaultLocalization().isPresent()) {
+				getCache().addOfferingIdentifierHumanReadableName(offeringId, name.getDefaultLocalization().get().getText());
+			} else {
+				getCache().addOfferingIdentifierHumanReadableName(offeringId, offeringId);
+			}
+		}
+		
+	}
+
+	protected Map<ProcedureFlag, Set<String>> getProcedureIdentifier(Session session) throws OwsExceptionReport {
         Set<String> procedures = new HashSet<String>(0);
         Set<String> hiddenChilds = new HashSet<String>(0);
         if (obsConstSupported) {
             if (CollectionHelper.isNotEmpty(observationConstellationInfos)) {
-                procedures.addAll(DatasourceCacheUpdateHelper.getAllProcedureIdentifiersFromObservationConstellationInfos(
-                        observationConstellationInfos, ProcedureFlag.PARENT));
-                hiddenChilds.addAll(DatasourceCacheUpdateHelper.getAllProcedureIdentifiersFromObservationConstellationInfos(
-                        observationConstellationInfos, ProcedureFlag.HIDDEN_CHILD));
+                procedures.addAll(DatasourceCacheUpdateHelper
+                        .getAllProcedureIdentifiersFromObservationConstellationInfos(observationConstellationInfos,
+                                ProcedureFlag.PARENT));
+                hiddenChilds.addAll(DatasourceCacheUpdateHelper
+                        .getAllProcedureIdentifiersFromObservationConstellationInfos(observationConstellationInfos,
+                                ProcedureFlag.HIDDEN_CHILD));
             }
         } else {
-            List<String> list =
-                    new ProcedureDAO().getProcedureIdentifiersForOffering(offeringId, session);
+            List<String> list = new ProcedureDAO().getProcedureIdentifiersForOffering(offeringId, session);
             for (String procedureIdentifier : list) {
                 procedures.add(CacheHelper.addPrefixOrGetProcedureIdentifier(procedureIdentifier));
             }
@@ -236,8 +263,8 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     protected Set<String> getObservablePropertyIdentifier(Session session) throws OwsExceptionReport {
         if (obsConstSupported) {
             if (CollectionHelper.isNotEmpty(observationConstellationInfos)) {
-                return DatasourceCacheUpdateHelper.getAllObservablePropertyIdentifiersFromObservationConstellationInfos(
-                        observationConstellationInfos);
+                return DatasourceCacheUpdateHelper
+                        .getAllObservablePropertyIdentifiersFromObservationConstellationInfos(observationConstellationInfos);
             } else {
                 return Sets.newHashSet();
             }
@@ -272,7 +299,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     }
 
     private Set<String> getObservationTypesFromObservations(Session session) throws OwsExceptionReport {
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
+        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
         Set<String> observationTypes = Sets.newHashSet();
         if (observationDAO.checkNumericObservationsFor(offeringId, session)) {
             observationTypes.add(OmConstants.OBS_TYPE_MEASUREMENT);
@@ -312,7 +339,6 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         return Sets.newHashSet();
     }
 
-
     protected SosEnvelope getEnvelopeForOffering(Collection<String> featureOfInterestIdentifiers, Session session)
             throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(featureOfInterestIdentifiers)) {
@@ -338,17 +364,12 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
      */
     protected void addSpatialFilteringProfileEnvelopeForOffering(String prefixedOfferingId, String offeringID,
             Session session) throws OwsExceptionReport {
-        AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
-                DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
-        if (spatialFilteringProfileDAO != null) {
-            getCache().setSpatialFilteringProfileEnvelopeForOffering(prefixedOfferingId,
-                    spatialFilteringProfileDAO.getEnvelopeForOfferingId(offeringID, session));
-        } else {
-            if (hasSamplingGeometry) {
-                getCache().setSpatialFilteringProfileEnvelopeForOffering(prefixedOfferingId,
-                      DaoFactory.getInstance().getObservationDAO(session).getSpatialFilteringProfileEnvelopeForOfferingId(offeringID, session));
-            }
-        }
+    	if (hasSamplingGeometry) {
+	        getCache().setSpatialFilteringProfileEnvelopeForOffering(
+	                prefixedOfferingId,
+	                DaoFactory.getInstance().getObservationDAO()
+	                        .getSpatialFilteringProfileEnvelopeForOfferingId(offeringID, session));
+    	}
     }
 
     @Override

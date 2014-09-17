@@ -32,10 +32,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
-import org.n52.sos.ds.hibernate.dao.AbstractSpatialFilteringProfileDAO;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
-import org.n52.sos.ds.hibernate.util.observation.SpatialFilteringProfileAdder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -101,13 +98,18 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
 
         return next;
     }
+    
+    @Override
+	public AbstractValue nextEntity() throws OwsExceptionReport {
+    	return (AbstractValue) valuesResult.next();
+	}
 
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
             if (hasNextValue()) {
-                AbstractValue resultObject = valuesResult.next();
-                TimeValuePair value = createTimeValuePairFrom(resultObject);
+                AbstractValue resultObject = nextEntity();
+                TimeValuePair value = resultObject.createTimeValuePairFrom();
                 session.evict(resultObject);
                 return value;
             }
@@ -124,11 +126,8 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
         try {
             if (hasNextValue()) {
                 OmObservation observation = observationTemplate.cloneTemplate();
-                AbstractValue resultObject = valuesResult.next();
-                addValuesToObservation(observation, resultObject);
-                if (isSetSpatialFilteringProfileAdder()) {
-                    getSpatialFilteringProfileAdder().add(resultObject.getObservationId(), observation);
-                }
+                AbstractValue resultObject = nextEntity();
+                resultObject.addValuesToObservation(observation, getResponseFormat());
                 checkForModifications(observation);
                 session.evict(resultObject);
                 return observation;
@@ -166,14 +165,6 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
                                 chunkSize, currentRow, session);
             }
             currentRow += chunkSize;
-            // get SpatialFilteringProfile values
-            AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
-                    DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
-            if (spatialFilteringProfileDAO != null) {
-                setSpatialFilteringProfileAdder(new SpatialFilteringProfileAdder(
-                        spatialFilteringProfileDAO.getSpatialFilertingProfiles(getObservationIds(valuesResult),
-                                session)));
-            }
             setObservationValuesResult(valuesResult);
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);

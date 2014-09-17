@@ -93,7 +93,7 @@ public class HibernateObservationBuilder {
 
     public AbstractObservation createObservation(String id, Date phenomenonTimeStart, Date phenomenonTimeEnd, Date resultTime,
             Date validTimeStart, Date validTimeEnd) throws OwsExceptionReport {
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
+        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
         AbstractObservation observation = observationDAO.createObservationFromValue(new BooleanValue(true), session);
         if (observationDAO instanceof SeriesObservationDAO) {
             SeriesBooleanObservation seriesBooleanObservation = (SeriesBooleanObservation)observation;

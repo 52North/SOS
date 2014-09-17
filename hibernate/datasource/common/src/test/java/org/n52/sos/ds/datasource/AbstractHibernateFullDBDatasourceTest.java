@@ -107,32 +107,27 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     }
 
     private void checkSettingKeys(final Collection<String> keys, final boolean changeable) {
-        final int maxCount = 14;
-        int counter = 14;
-        boolean spatialFilteringProfile = true;
+        final int maxCount = 13;
+        int counter = 13;
         boolean transactional = true;
-        boolean oldConcept = true;
+        boolean concept = true;
         boolean multiLanguage = true;
-        if (!keys.contains(AbstractHibernateDatasource.SPATIAL_FILTERING_PROFILE_KEY)) {
-            counter--;
-            spatialFilteringProfile = false;
-        }
         if (!keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY)) {
             counter--;
             transactional = false;
         }
-        if (!keys.contains(AbstractHibernateDatasource.OLD_CONCEPT_KEY)) {
+        if (!keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY)) {
             counter--;
-            oldConcept = false;
+            concept = false;
         }
-        if (!keys.contains(AbstractHibernateDatasource.MULTI_LANGUAGE_KEY) ){
+        if (!keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY) ){
             counter--;
             multiLanguage = false;
         }
         if (changeable) {
             assertEquals(9, keys.size());
         } else {
-            assertEquals((transactional && spatialFilteringProfile && oldConcept) ? maxCount : counter, keys.size());
+            assertEquals((transactional && concept && multiLanguage) ? maxCount : counter, keys.size());
         }
         assertTrue(keys.contains(AbstractHibernateDatasource.HOST_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.PORT_KEY));
@@ -149,14 +144,11 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         if (transactional) {
             assertTrue(keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY));
         }
-        if (spatialFilteringProfile) {
-            assertTrue(keys.contains(AbstractHibernateDatasource.SPATIAL_FILTERING_PROFILE_KEY));
-        }
-        if (oldConcept) {
-            assertTrue(keys.contains(AbstractHibernateDatasource.OLD_CONCEPT_KEY));
+        if (concept) {
+            assertTrue(keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY));
         }
         if (multiLanguage) {
-            assertTrue(keys.contains(AbstractHibernateDatasource.MULTI_LANGUAGE_KEY));
+            assertTrue(keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY));
         }
     }
 

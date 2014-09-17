@@ -209,34 +209,6 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
     }
 
     /**
-     * Set default EPSG code from settings
-     * 
-     * @param epsgCode
-     *            EPSG code from settings
-     * @throws ConfigurationException
-     *             If an error occurs
-     */
-    @Deprecated
-    @Setting(FeatureQuerySettingsProvider.DEFAULT_EPSG)
-    public void setDefaultEpsg(final int epsgCode) throws ConfigurationException {
-        setStorageEpsg(epsgCode);
-    }
-
-    /**
-     * Set default 3D EPSG code from settings
-     * 
-     * @param epsgCode3D
-     *            3D EPSG code from settings
-     * @throws ConfigurationException
-     *             If an error occurs
-     */
-    @Deprecated
-    @Setting(FeatureQuerySettingsProvider.DEFAULT_3D_EPSG)
-    public void setDefault3DEpsg(final int epsgCode3D) throws ConfigurationException {
-        setStorage3DEpsg(epsgCode3D);
-    }
-
-    /**
      * Set storage EPSG code from settings
      * 
      * @param epsgCode
@@ -424,24 +396,6 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
      */
     public boolean isSpatialDatasource() {
         return spatialDatasource;
-    }
-
-    /**
-     * Switch Geometry coordinates if necessary
-     * 
-     * @param geom
-     *            Geometry to switch coordinates
-     * @return Geometry with switched coordinates
-     * @throws OwsExceptionReport
-     *             If an error occurs
-     */
-    @Deprecated
-    public Geometry switchCoordinateAxisOrderIfNeeded(final Geometry geom) throws OwsExceptionReport {
-        if (geom != null && isNorthingFirstEpsgCode(geom.getSRID() == 0 ? getStorageEPSG() : geom.getSRID())) {
-            return JTSHelper.switchCoordinateAxisOrder(geom);
-        } else {
-            return geom;
-        }
     }
 
     /**

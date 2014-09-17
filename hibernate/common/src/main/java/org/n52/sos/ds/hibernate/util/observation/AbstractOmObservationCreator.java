@@ -32,22 +32,30 @@ import java.util.List;
 import java.util.Locale;
 
 import org.hibernate.Session;
-
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.FeatureQueryHandler;
-import org.n52.sos.ds.hibernate.entities.AbstractSpatialFilteringProfile;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
+import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
+import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -123,7 +131,66 @@ public abstract class AbstractOmObservationCreator {
         // TODO add lat/long version
         Geometry geometry = samplingGeometry;
         namedValue.setValue(new GeometryValue(GeometryHandler.getInstance()
-                .switchCoordinateAxisOrderIfNeeded(geometry)));
+                .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
         return namedValue;
     }
+    
+    
+    protected OmObservableProperty createObservableProperty(ObservableProperty observableProperty) {
+        String phenID = observableProperty.getIdentifier();
+        String description = observableProperty.getDescription();
+        OmObservableProperty omObservableProperty = new OmObservableProperty(phenID, description, null, null);
+        if (observableProperty.isSetName()) {
+        	omObservableProperty.setHumanReadableIdentifier(observableProperty.getName());
+        	omObservableProperty.setName(new CodeType(observableProperty.getName()));
+        }
+        return omObservableProperty;
+    }
+    
+    /**
+     * Get procedure object from series
+     * @param encodeProcedureInObservation 
+     *
+     * @return Procedure object
+     * @throws ConverterException
+     *             If an error occurs sensor description creation
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     */
+    protected SosProcedureDescription createProcedure(String identifier) throws ConverterException, OwsExceptionReport {
+        Procedure hProcedure = new ProcedureDAO().getProcedureForIdentifier(identifier, getSession());
+        String pdf = hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
+        if (getActiveProfile().isEncodeProcedureInObservation()) {
+            return new HibernateProcedureConverter().createSosProcedureDescription(hProcedure, pdf, getVersion(),
+                    getSession());
+        } else {
+        	SosProcedureDescriptionUnknowType sosProcedure = new SosProcedureDescriptionUnknowType(identifier, pdf, null);
+        	if (hProcedure.isSetName()) {
+        		sosProcedure.setHumanReadableIdentifier(hProcedure.getName());
+        	}
+            return sosProcedure;
+        }
+    }
+    
+    /**
+     * Get featureOfInterest object from series
+     *
+     * @return FeatureOfInerest object
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     */
+    protected AbstractFeature createFeatureOfInterest(String identifier) throws OwsExceptionReport {
+        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
+        queryObject.addFeatureIdentifier(identifier).setConnection(getSession()).setVersion(getVersion());
+        final AbstractFeature feature =
+                getFeatureQueryHandler().getFeatureByID(queryObject);
+        return feature;
+    }
+    
+    public static String checkVersion(AbstractObservationRequest request) {
+		if (request != null) {
+			return request.getVersion();
+		}
+		return null;
+	}
 }

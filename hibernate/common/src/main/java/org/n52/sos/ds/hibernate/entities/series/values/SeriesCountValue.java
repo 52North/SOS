@@ -58,5 +58,10 @@ public class SeriesCountValue extends SeriesValue implements CountValue {
     public boolean isSetValue() {
         return getValue() != null;
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
 
 }

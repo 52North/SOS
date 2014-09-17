@@ -170,6 +170,9 @@ public class SosInsertObservationOperatorV20 extends
                         newObservation.setResultTime(new TimeInstant(DateTimeHelper.parseIsoString2DateTime(block
                                 .get(resultTimeIndex))));
                     }
+                    if (observation.isSetParameter()) {
+                    	newObservation.setParameter(observation.getParameter());
+                    }
                     // value
                     final ObservationValue<?> value =
                             createObservationResultValue(observationConstellation.getObservationType(),

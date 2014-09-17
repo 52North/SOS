@@ -28,16 +28,27 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting.values;
 
+import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasValidation;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasVerification;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasValidation;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
+import org.n52.sos.ds.hibernate.util.observation.EReportingHelper;
+import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.swe.SweDataArray;
 
-public class EReportingValue extends SeriesValue implements HasEReportingSeries, HasValidation, HasVerification {
+public abstract class EReportingValue extends SeriesValue implements EReportingValues {
 
     private static final long serialVersionUID = 996063222630981539L;
-    
+
     private Integer validation;
 
     private Integer verification;
@@ -91,4 +102,82 @@ public class EReportingValue extends SeriesValue implements HasEReportingSeries,
     public boolean isSetValidation() {
         return getValidation() != null;
     }
+
+    @Override
+    public OmObservation mergeValueToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport {
+        if (checkResponseFormat(responseFormat)) {
+            if (!observation.isSetValue()) {
+                addValuesToObservation(observation, responseFormat);
+            } else {
+                checkTime(observation);
+                EReportingHelper.mergeValues((SweDataArray) observation.getValue().getValue().getValue(),
+                        EReportingHelper.createSweDataArray(observation, this));
+            }
+            if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observation.getObservationConstellation()
+                    .getObservationType())) {
+                observation.getObservationConstellation().setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+            }
+            
+        } else {
+            super.mergeValueToObservation(observation, responseFormat);
+        }
+        return observation;
+    }
+
+    private void checkTime(OmObservation observation) {
+        if (observation.isSetValue()) {
+            Time obsPhenTime = observation.getValue().getPhenomenonTime();
+            Time valuePhenTime = createPhenomenonTime();
+            if (obsPhenTime != null) {
+                TimePeriod timePeriod = null;
+                if (obsPhenTime instanceof TimePeriod) {
+                    timePeriod = (TimePeriod) obsPhenTime;
+                } else {
+                    timePeriod = new TimePeriod();
+                    timePeriod.extendToContain(obsPhenTime);
+                }
+                timePeriod.extendToContain(valuePhenTime);
+                observation.getValue().setPhenomenonTime(timePeriod);
+            } else {
+                observation.getValue().setPhenomenonTime(valuePhenTime);
+            }
+        }
+        TimeInstant rt = createResutlTime(getResultTime());
+        if (observation.getResultTime().getValue().isBefore(rt.getValue())) {
+            observation.setResultTime(rt);
+        }
+        if (isSetValidTime()) {
+            TimePeriod vt = createValidTime(getValidTimeStart(), getValidTimeEnd());
+            if (observation.isSetValidTime()) {
+                observation.getValidTime().extendToContain(vt);
+            } else {
+                observation.setValidTime(vt);
+            }
+        }
+    }
+
+    @Override
+    protected void addValueSpecificDataToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    protected void addObservationValueToObservation(OmObservation observation, Value<?> value, String responseFormat)
+            throws OwsExceptionReport {
+        if (checkResponseFormat(responseFormat)) {
+            if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observation.getObservationConstellation()
+                    .getObservationType())) {
+                observation.getObservationConstellation().setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+            }
+            observation.setValue(EReportingHelper.createSweDataArrayValue(observation, this));
+        } else {
+            super.addObservationValueToObservation(observation, value, responseFormat);
+        }
+        
+    }
+
+    private boolean checkResponseFormat(String responseFormat) {
+        return AqdConstants.NS_AQD.equals(responseFormat);
+    }
+
 }

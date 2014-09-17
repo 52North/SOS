@@ -51,4 +51,9 @@ public class EReportingCountValue extends EReportingValue implements CountValue 
         return value != null;
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
+
 }

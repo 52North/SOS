@@ -56,4 +56,9 @@ public class SweDataArrayObservation extends Observation implements Serializable
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(value);
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
 }

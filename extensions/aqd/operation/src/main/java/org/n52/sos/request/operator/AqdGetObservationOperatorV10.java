@@ -58,45 +58,44 @@ import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.SosHelper;
 
-public class AqdGetObservationOperatorV10
-		extends
-		AbstractAqdRequestOperator<AbstractGetObservationDAO, GetObservationRequest, GetObservationResponse> {
-	
+public class AqdGetObservationOperatorV10 extends
+        AbstractAqdRequestOperator<AbstractGetObservationDAO, GetObservationRequest, GetObservationResponse> {
+
     private static final TemporalFilter TEMPORAL_FILTER_LATEST = new TemporalFilter(TimeOperator.TM_Equals,
             new TimeInstant(SosIndeterminateTime.latest), OmConstants.EN_PHENOMENON_TIME);
-    
-	private static final String OPERATION_NAME = SosConstants.Operations.GetObservation
-			.name();
-	
-	private boolean blockRequestsWithoutRestriction;
 
-	public AqdGetObservationOperatorV10() {
-		super(OPERATION_NAME, GetObservationRequest.class);
-	}
+    private static final String OPERATION_NAME = SosConstants.Operations.GetObservation.name();
 
-	@Override
-	public Set<String> getConformanceClasses() {
-		return Collections.emptySet();
-	}
+    private boolean blockRequestsWithoutRestriction;
 
-	@Override
-	public GetObservationResponse receive(GetObservationRequest request)
-			throws OwsExceptionReport {
-		// TODO get FLOW from request/response
-		checkReportingHeader(ReportObligationType.E2A);
-		boolean checkForMergeObservationsInResponse = checkForMergeObservationsInResponse(request);
-		request.setMergeObservationValues(checkForMergeObservationsInResponse);
-        final GetObservationResponse response = (GetObservationResponse)changeResponseServiceVersion(getDao().getObservation((GetObservationRequest) changeRequestServiceVersion(request)));
+    public AqdGetObservationOperatorV10() {
+        super(OPERATION_NAME, GetObservationRequest.class);
+    }
+
+    @Override
+    public Set<String> getConformanceClasses() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public GetObservationResponse receive(GetObservationRequest request) throws OwsExceptionReport {
+        // TODO get FLOW from request/response
+        checkReportingHeader(ReportObligationType.E2A);
+        boolean checkForMergeObservationsInResponse = checkForMergeObservationsInResponse(request);
+        request.setMergeObservationValues(checkForMergeObservationsInResponse);
+        final GetObservationResponse response =
+                (GetObservationResponse) changeResponseServiceVersion(getDao().getObservation(
+                        (GetObservationRequest) changeRequestServiceVersion(request)));
+        changeRequestServiceVersionToAqd(request);
         setObservationResponseResponseFormatAndContentType(request, response);
         // TODO check for correct merging, add merge if swes:extension is set
         if (checkForMergeObservationsInResponse) {
-            response.mergeObservationsWithSameConstellation();
             response.setMergeObservations(true);
-        }        
+        }
         return response;
-	}
+    }
 
-	private boolean checkForMergeObservationsInResponse(GetObservationRequest request) {
+    private boolean checkForMergeObservationsInResponse(GetObservationRequest request) {
         if (getActiveProfile().isMergeValues() || isSetExtensionMergeObservationsToSweDataArray(request)) {
             return true;
         }
@@ -152,8 +151,7 @@ public class AqdGetObservationOperatorV10
             exceptions.add(owse);
         }
         try {
-            checkSpatialFilter(request.getSpatialFilter(),
-                    SosConstants.GetObservationParams.featureOfInterest.name());
+            checkSpatialFilter(request.getSpatialFilter(), SosConstants.GetObservationParams.featureOfInterest.name());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -171,15 +169,14 @@ public class AqdGetObservationOperatorV10
 
         try {
             if (request.getResponseFormat() == null) {
-            	request.setResponseFormat(AqdConstants.NS_AQD);
+                request.setResponseFormat(AqdConstants.NS_AQD);
             } else {
-                SosHelper.checkResponseFormat(request.getResponseFormat(), request.getService(),
-                        request.getVersion());
-            	if (!AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
-            		throw new InvalidResponseFormatParameterException(request.getResponseFormat());
-            	}
+                SosHelper.checkResponseFormat(request.getResponseFormat(), request.getService(), request.getVersion());
+                if (!AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
+                    throw new InvalidResponseFormatParameterException(request.getResponseFormat());
+                }
             }
-            
+
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -195,7 +192,7 @@ public class AqdGetObservationOperatorV10
                     .withMessage("The response exceeds the size limit! Please define some filtering parameters.");
         }
     }
-    
+
     private boolean isBlockRequestsWithoutRestriction() {
         return blockRequestsWithoutRestriction;
     }

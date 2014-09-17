@@ -848,4 +848,9 @@ public class CoordianteTransformator implements
 		return false;
 	}
 
+	@Override
+	public boolean isSplitter() {
+		return false;
+	}
+
 }

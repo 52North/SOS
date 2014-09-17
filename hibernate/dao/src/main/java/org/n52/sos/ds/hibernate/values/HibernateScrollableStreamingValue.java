@@ -30,7 +30,7 @@ package org.n52.sos.ds.hibernate.values;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
-import org.n52.sos.ds.hibernate.entities.values.ObservationValue;
+import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -85,10 +85,15 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     }
 
     @Override
+	public AbstractValue nextEntity() throws OwsExceptionReport {
+    	return (AbstractValue) scrollableResult.get()[0];
+	}
+
+	@Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-            ObservationValue resultObject = (ObservationValue) scrollableResult.get()[0];
-            TimeValuePair value = createTimeValuePairFrom(resultObject);
+        	AbstractValue resultObject = nextEntity();
+            TimeValuePair value = resultObject.createTimeValuePairFrom();
             session.evict(resultObject);
             return value;
         } catch (final HibernateException he) {
@@ -102,11 +107,8 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     public OmObservation nextSingleObservation() throws OwsExceptionReport {
         try {
             OmObservation observation = observationTemplate.cloneTemplate();
-            ObservationValue resultObject = (ObservationValue) scrollableResult.get()[0];
-            addValuesToObservation(observation, resultObject);
-            if (resultObject.hasSamplingGeometry()) {
-                observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
-            }
+            AbstractValue resultObject = nextEntity();
+            resultObject.addValuesToObservation(observation, getResponseFormat());
             checkForModifications(observation);
             session.evict(resultObject);
             return observation;
@@ -154,5 +156,4 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     private void setScrollableResult(ScrollableResults scrollableResult) {
         this.scrollableResult = scrollableResult;
     }
-
 }

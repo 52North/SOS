@@ -52,4 +52,9 @@ public class EReportingSweDataArrayValue extends EReportingValue implements SweD
         return StringHelper.isNotEmpty(value);
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
+
 }

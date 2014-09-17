@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.values.series;
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -58,8 +59,9 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
+     * @throws CodedException 
      */
-    public HibernateScrollableSeriesStreamingValue(GetObservationRequest request, long series) {
+    public HibernateScrollableSeriesStreamingValue(GetObservationRequest request, long series) throws CodedException {
         super(request, series);
     }
 
@@ -81,10 +83,15 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
     }
 
     @Override
+	public SeriesValue nextEntity() throws OwsExceptionReport {
+		return (SeriesValue) scrollableResult.get()[0];
+	}
+
+	@Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-            SeriesValue resultObject = (SeriesValue) scrollableResult.get()[0];
-            TimeValuePair value = createTimeValuePairFrom(resultObject);
+            SeriesValue resultObject = nextEntity();
+            TimeValuePair value = resultObject.createTimeValuePairFrom();
             session.evict(resultObject);
             return value;
         } catch (final HibernateException he) {
@@ -93,16 +100,13 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    
     @Override
     public OmObservation nextSingleObservation() throws OwsExceptionReport {
         try {
             OmObservation observation = observationTemplate.cloneTemplate();
-            SeriesValue resultObject = (SeriesValue) scrollableResult.get()[0];
-            addValuesToObservation(observation, resultObject);
-            if (resultObject.hasSamplingGeometry()) {
-                observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
-            }
+            SeriesValue resultObject = nextEntity();
+            resultObject.addValuesToObservation(observation, getResponseFormat());
             checkForModifications(observation);
             session.evict(resultObject);
             return observation;

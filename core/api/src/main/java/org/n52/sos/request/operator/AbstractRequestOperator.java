@@ -165,8 +165,16 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
 			throws OwsExceptionReport {
 		if (RequestResponseModifierRepository.getInstance()
 				.hasRequestResponseModifier(request)) {
+			List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> splitter = new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
 			for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : RequestResponseModifierRepository
 					.getInstance().getRequestResponseModifier(request)) {
+				if (modifier.isSplitter()) {
+					splitter.add(modifier);
+				} else {
+					modifier.modifyRequest(request);
+				}
+			}
+			for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : splitter) {
 				modifier.modifyRequest(request);
 			}
 		}

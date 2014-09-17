@@ -28,8 +28,14 @@
  */
 package org.n52.sos.ds.hibernate.dao.ereporting;
 
-import org.n52.sos.ds.hibernate.dao.series.SeriesValueDAO;
+import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesValueDAO;
+import org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue;
 
-public class EReportingValueDAO extends SeriesValueDAO {
+public class EReportingValueDAO extends AbstractSeriesValueDAO {
+
+	@Override
+	protected Class<?> getSeriesValueClass() {
+		return EReportingValue.class;
+	}
 
 }

@@ -51,4 +51,11 @@ public class EReportingTextObservation extends EReportingObservation implements 
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(value);
     }
+
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
+    
+    
 }

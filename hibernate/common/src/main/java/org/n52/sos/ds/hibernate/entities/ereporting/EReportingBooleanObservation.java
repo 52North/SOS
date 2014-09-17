@@ -50,4 +50,9 @@ public class EReportingBooleanObservation extends EReportingObservation implemen
     public void setValue(Boolean value) {
         this.value = value;
     }
+
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
 }

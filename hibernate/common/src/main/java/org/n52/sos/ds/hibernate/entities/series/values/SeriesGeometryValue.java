@@ -61,5 +61,10 @@ public class SeriesGeometryValue extends SeriesValue implements GeometryValue {
         return getValue() != null;
 
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue().toText();
+	}
 
 }

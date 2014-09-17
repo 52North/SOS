@@ -51,4 +51,9 @@ public class EReportingBlobValue extends EReportingValue implements BlobValue {
         return value != null;
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
+
 }

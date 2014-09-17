@@ -59,5 +59,10 @@ public class SeriesSweDataArrayValue extends SeriesValue implements SweDataArray
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(getValue());
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
 
 }

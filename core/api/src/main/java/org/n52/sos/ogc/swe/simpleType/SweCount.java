@@ -67,4 +67,11 @@ public class SweCount extends SweAbstractSimpleType<Integer> {
         return SweDataComponentType.Count;
     }
 
+	public void increaseCount() {
+		value++;
+	}
+
+	public void increaseCount(int count) {
+		value += count;
+	}
 }

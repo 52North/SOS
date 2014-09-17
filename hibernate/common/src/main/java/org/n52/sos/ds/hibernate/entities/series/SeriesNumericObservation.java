@@ -59,5 +59,10 @@ public class SeriesNumericObservation extends SeriesObservation implements Seria
     public boolean isSetValue() {
         return value != null;
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
 
 }

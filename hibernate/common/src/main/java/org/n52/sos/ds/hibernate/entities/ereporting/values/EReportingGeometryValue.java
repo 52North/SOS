@@ -53,4 +53,9 @@ public class EReportingGeometryValue extends EReportingValue implements Geometry
         return value != null;
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue().toText();
+	}
+
 }

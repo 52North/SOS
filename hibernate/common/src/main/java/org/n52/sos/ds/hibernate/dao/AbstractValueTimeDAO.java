@@ -28,7 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-
-public class AbstractValueTimeDAO extends AbstractValueDAO {
+/**
+ * Abstract valut time data access object
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.3.0
+ *
+ */
+public abstract class AbstractValueTimeDAO extends AbstractValueDAO {
 
 }

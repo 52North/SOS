@@ -427,6 +427,10 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>api-aqd-v10</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>aqd-split-and-merge</artifactId>
+		</dependency>
         <!-- flexible identifiers -->
         <dependency>
 			<groupId>${project.groupId}</groupId>

@@ -355,6 +355,11 @@
 				<artifactId>api-aqd-v10</artifactId>
 				<version>${sos.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>aqd-split-and-merge</artifactId>
+				<version>${sos.version}</version>
+			</dependency>
 	        <!-- flexible identifiers -->
 	        <dependency>
 				<groupId>${project.groupId}</groupId>

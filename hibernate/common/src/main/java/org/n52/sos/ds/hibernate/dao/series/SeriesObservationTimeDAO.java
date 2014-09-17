@@ -80,7 +80,7 @@ public class SeriesObservationTimeDAO extends AbstractObservationTimeDAO {
 	 */
 	public Criteria getMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(
 			Series series, Collection<String> offerings, Session session) {
-		Criteria criteria = createCriteriaFor(SeriesObservationTime.class,
+		Criteria criteria = createCriteriaFor(getObservationTimeClass(),
 				series, session);
 		if (CollectionHelper.isNotEmpty(offerings)) {
 			criteria.createCriteria(SeriesObservationTime.OFFERINGS).add(

@@ -28,7 +28,6 @@
  */
 package org.n52.sos.response;
 
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swes.SwesConstants.HasSwesExtension;
 import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesExtensions;
@@ -60,14 +59,6 @@ public abstract class AbstractServiceResponse extends AbstractServiceCommunicati
         return getContentType() != null;
     }
 
-    public boolean hasStreamingData() {
-        return false;
-    }
-    
-    public void mergeStreamingData() throws OwsExceptionReport {
-        // should be overridden by concrete responses
-    }
-    
     @Override
     public SwesExtensions getExtensions() {
         return extensions;

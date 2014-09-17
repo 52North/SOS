@@ -52,4 +52,9 @@ public class EReportingCategoryObservation extends EReportingObservation impleme
         return StringHelper.isNotEmpty(value);
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
+
 }

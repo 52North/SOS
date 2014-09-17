@@ -51,4 +51,9 @@ public class EReportingNumericValue extends EReportingValue implements NumericVa
         return value != null;
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
+
 }

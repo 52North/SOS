@@ -51,4 +51,9 @@ public class EReportingBooleanValue extends EReportingValue implements BooleanVa
         this.value = value;
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
+
 }

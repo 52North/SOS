@@ -52,4 +52,9 @@ public class EReportingCategoryValue extends EReportingValue implements Category
         return StringHelper.isNotEmpty(value);
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
+
 }

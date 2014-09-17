@@ -52,4 +52,11 @@ public class EReportingSweDataArrayObservation extends EReportingObservation imp
         return StringHelper.isNotEmpty(value);
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
+    
+    
+
 }

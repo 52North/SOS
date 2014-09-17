@@ -52,4 +52,9 @@ public class EReportingTextValue extends EReportingValue implements TextValue {
         return StringHelper.isNotEmpty(value);
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
+
 }

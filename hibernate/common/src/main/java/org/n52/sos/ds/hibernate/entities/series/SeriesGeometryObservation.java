@@ -61,5 +61,10 @@ public class SeriesGeometryObservation extends SeriesObservation implements Seri
     public boolean isSetValue() {
         return value != null;
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue().toText();
+	}
 
 }

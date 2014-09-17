@@ -51,4 +51,9 @@ public class EReportingNumericObservation extends EReportingObservation implemen
         return value != null;
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
+
 }

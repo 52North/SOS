@@ -413,7 +413,12 @@
 			<groupId>org.n52.sensorweb.sos</groupId>
 			<artifactId>third-party-ncname-resolver</artifactId>
         </dependency>
-
+        
+        <!-- INSPIRE -->
+		<dependency>
+            <groupId>${project.groupId}</groupId>
+        	<artifactId>inspire-code</artifactId>
+        </dependency>
 		<!-- AQD eReporting -->
 		 <dependency>
 			<groupId>${project.groupId}</groupId>
@@ -490,15 +495,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>inspire</id>
-            <dependencies>
-		        <dependency>
-		            <groupId>${project.groupId}</groupId>
-		        	<artifactId>inspire-code</artifactId>
-		        </dependency>
-            </dependencies>
         </profile>
         <profile>
             <!-- Profile for integration testing, run with: mvn -P itest clean install -->

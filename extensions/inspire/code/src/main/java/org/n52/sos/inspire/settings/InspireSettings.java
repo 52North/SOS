@@ -78,7 +78,7 @@ public class InspireSettings implements SettingDefinitionProvider {
                         .setGroup(GROUP)
                         .setOrder(ORDER_0)
                         .setKey(INSPIRE_ENABLED_KEY)
-                        .setDefaultValue(true)
+                        .setDefaultValue(false)
                         .setTitle("Enable INSPIRE extension")
                         .setDescription("Indicator to enable/disable the INSPIRE extension");
     

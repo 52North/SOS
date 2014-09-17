@@ -28,37 +28,37 @@
 --
 
 
-ALTER TABLE i18nprocedure          DROP CONSTRAINT IF EXISTS i18nprocedurecodespacefk;
-ALTER TABLE i18nfeatureofinterest  DROP CONSTRAINT IF EXISTS i18nfeaturecodespacefk;
-ALTER TABLE i18nobservableproperty DROP CONSTRAINT IF EXISTS i18nobspropcodespacefk;
-ALTER TABLE i18noffering           DROP CONSTRAINT IF EXISTS i18nofferingcodespacefk;
+ALTER TABLE public.i18nprocedure          DROP CONSTRAINT IF EXISTS i18nprocedurecodespacefk;
+ALTER TABLE public.i18nfeatureofinterest  DROP CONSTRAINT IF EXISTS i18nfeaturecodespacefk;
+ALTER TABLE public.i18nobservableproperty DROP CONSTRAINT IF EXISTS i18nobspropcodespacefk;
+ALTER TABLE public.i18noffering           DROP CONSTRAINT IF EXISTS i18nofferingcodespacefk;
 
-ALTER TABLE i18nprocedure          DROP CONSTRAINT IF EXISTS i18nprocedure_objectid_codespace_key;
-ALTER TABLE i18nfeatureofinterest  DROP CONSTRAINT IF EXISTS i18nfeatureofinterest_objectid_codespace_key;
-ALTER TABLE i18nobservableproperty DROP CONSTRAINT IF EXISTS i18nobservableproperty_objectid_codespace_key;
-ALTER TABLE i18noffering           DROP CONSTRAINT IF EXISTS i18noffering_objectid_codespace_key;
+ALTER TABLE public.i18nprocedure          DROP CONSTRAINT IF EXISTS i18nprocedure_objectid_codespace_key;
+ALTER TABLE public.i18nfeatureofinterest  DROP CONSTRAINT IF EXISTS i18nfeatureofinterest_objectid_codespace_key;
+ALTER TABLE public.i18nobservableproperty DROP CONSTRAINT IF EXISTS i18nobservableproperty_objectid_codespace_key;
+ALTER TABLE public.i18noffering           DROP CONSTRAINT IF EXISTS i18noffering_objectid_codespace_key;
 
-ALTER TABLE i18nprocedure          ADD COLUMN locale VARCHAR(255);
-ALTER TABLE i18nfeatureofinterest  ADD COLUMN locale VARCHAR(255);
-ALTER TABLE i18nobservableproperty ADD COLUMN locale VARCHAR(255);
-ALTER TABLE i18noffering           ADD COLUMN locale VARCHAR(255);
+ALTER TABLE public.i18nprocedure          ADD COLUMN locale VARCHAR(255);
+ALTER TABLE public.i18nfeatureofinterest  ADD COLUMN locale VARCHAR(255);
+ALTER TABLE public.i18nobservableproperty ADD COLUMN locale VARCHAR(255);
+ALTER TABLE public.i18noffering           ADD COLUMN locale VARCHAR(255);
 
-UPDATE i18nprocedure          AS i18n SET locale = (SELECT cs.codespace FROM codespace AS cs WHERE cs.codespaceid = i18n.codespace);
-UPDATE i18nfeatureofinterest  AS i18n SET locale = (SELECT cs.codespace FROM codespace AS cs WHERE cs.codespaceid = i18n.codespace);
-UPDATE i18nobservableproperty AS i18n SET locale = (SELECT cs.codespace FROM codespace AS cs WHERE cs.codespaceid = i18n.codespace);
-UPDATE i18noffering           AS i18n SET locale = (SELECT cs.codespace FROM codespace AS cs WHERE cs.codespaceid = i18n.codespace);
+UPDATE public.i18nprocedure          AS i18n SET locale = (SELECT cs.codespace FROM public.codespace AS cs WHERE cs.codespaceid = i18n.codespace);
+UPDATE public.i18nfeatureofinterest  AS i18n SET locale = (SELECT cs.codespace FROM public.codespace AS cs WHERE cs.codespaceid = i18n.codespace);
+UPDATE public.i18nobservableproperty AS i18n SET locale = (SELECT cs.codespace FROM public.codespace AS cs WHERE cs.codespaceid = i18n.codespace);
+UPDATE public.i18noffering           AS i18n SET locale = (SELECT cs.codespace FROM public.codespace AS cs WHERE cs.codespaceid = i18n.codespace);
 
-ALTER TABLE i18nprocedure          DROP COLUMN codespace;
-ALTER TABLE i18nfeatureofinterest  DROP COLUMN codespace;
-ALTER TABLE i18nobservableproperty DROP COLUMN codespace;
-ALTER TABLE i18noffering           DROP COLUMN codespace;
+ALTER TABLE public.i18nprocedure          DROP COLUMN codespace;
+ALTER TABLE public.i18nfeatureofinterest  DROP COLUMN codespace;
+ALTER TABLE public.i18nobservableproperty DROP COLUMN codespace;
+ALTER TABLE public.i18noffering           DROP COLUMN codespace;
 
-ALTER TABLE i18nprocedure          ALTER COLUMN locale SET NOT NULL;
-ALTER TABLE i18nfeatureofinterest  ALTER COLUMN locale SET NOT NULL;
-ALTER TABLE i18nobservableproperty ALTER COLUMN locale SET NOT NULL;
-ALTER TABLE i18noffering           ALTER COLUMN locale SET NOT NULL;
+ALTER TABLE public.i18nprocedure          ALTER COLUMN locale SET NOT NULL;
+ALTER TABLE public.i18nfeatureofinterest  ALTER COLUMN locale SET NOT NULL;
+ALTER TABLE public.i18nobservableproperty ALTER COLUMN locale SET NOT NULL;
+ALTER TABLE public.i18noffering           ALTER COLUMN locale SET NOT NULL;
 
-ALTER TABLE i18nprocedure          ADD CONSTRAINT i18nprocedure_objectid_locale_key UNIQUE(objectid, locale);
-ALTER TABLE i18nfeatureofinterest  ADD CONSTRAINT i18nfeatureofinterest_objectid_locale_key UNIQUE(objectid, locale);
-ALTER TABLE i18nobservableproperty ADD CONSTRAINT i18nobservableproperty_objectid_locale_key UNIQUE(objectid, locale);
-ALTER TABLE i18noffering           ADD CONSTRAINT i18noffering_objectid_locale_key UNIQUE(objectid, locale);
+ALTER TABLE public.i18nprocedure          ADD CONSTRAINT i18nprocedure_objectid_locale_key UNIQUE(objectid, locale);
+ALTER TABLE public.i18nfeatureofinterest  ADD CONSTRAINT i18nfeatureofinterest_objectid_locale_key UNIQUE(objectid, locale);
+ALTER TABLE public.i18nobservableproperty ADD CONSTRAINT i18nobservableproperty_objectid_locale_key UNIQUE(objectid, locale);
+ALTER TABLE public.i18noffering           ADD CONSTRAINT i18noffering_objectid_locale_key UNIQUE(objectid, locale);

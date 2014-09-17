@@ -52,16 +52,16 @@ import com.google.common.collect.Lists;
 
 /**
  * Hibernate datasource implementation for MySQL databases.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
- * 
+ *
  * @since 4.0.0
  *
  */
 public class MySQLDatasource extends AbstractHibernateFullDBDatasource {
-    
+
     private static final String DIALECT_NAME = "MySQL";
-    
+
     protected static final String MYSQL_DRIVER_CLASS = "com.mysql.jdbc.Driver";
 
     protected static final Pattern JDBC_URL_PATTERN = Pattern.compile("^jdbc:mysql://([^:]+):([0-9]+)/(.*)$");
@@ -90,6 +90,7 @@ public class MySQLDatasource extends AbstractHibernateFullDBDatasource {
      * constructor, sets default values
      */
     public MySQLDatasource() {
+        super(false);
         setUsernameDefault(USERNAME_DEFAULT_VALUE);
         setUsernameDescription(USERNAME_DESCRIPTION);
         setPasswordDefault(PASSWORD_DEFAULT_VALUE);
@@ -100,9 +101,9 @@ public class MySQLDatasource extends AbstractHibernateFullDBDatasource {
         setHostDescription(HOST_DESCRIPTION);
         setPortDefault(PORT_DEFAULT_VALUE);
         setPortDescription(PORT_DESCRIPTION);
-        setSchemaDefault(SCHEMA_DEFAULT_VALUE);
-        setSchemaDescription(SCHEMA_DESCRIPTION);
     }
+
+
 
     @Override
     public boolean checkSchemaCreation(Map<String, Object> settings) {
@@ -126,7 +127,7 @@ public class MySQLDatasource extends AbstractHibernateFullDBDatasource {
         } finally {
             close(stmt);
             close(conn);
-        }        
+        }
     }
 
     @Override
@@ -208,6 +209,6 @@ public class MySQLDatasource extends AbstractHibernateFullDBDatasource {
     @Override
     protected void validatePrerequisites(Connection arg0, DatabaseMetadata arg1, Map<String, Object> arg2) {
     }
-    
+
 
 }

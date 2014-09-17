@@ -80,21 +80,20 @@
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
         <!-- managed dependencies with ${project.version} will be wrong in submodules
         with different versions -->
-        <sos.version>4.3.0-SNAPSHOT</sos.version>
-        <do.version>4.3.0-SNAPSHOT</do.version>
-        <rest-binding.version>4.3.0-SNAPSHOT</rest-binding.version>
+        <!-- <project.version>4.2.0-SNAPSHOT</project.version>
+        <project.version>4.2.0-SNAPSHOT</project.version>
+        <project.version>4.2.0-SNAPSHOT</project.version> -->
         <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
         <org.springframework.version>3.2.6.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
         <sos.test.suite.version>1.0.0-M5</sos.test.suite.version>
-        <inspire.version>0.0.1-SNAPSHOT</inspire.version>
     </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>api</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
@@ -104,240 +103,240 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>api</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
                 <type>test-jar</type>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>sqlite-config</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>sqlite-config</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
                 <type>test-jar</type>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>admin</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>cache</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>coding-ows-v110</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>coding-json</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>coding-json-common</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>coding-json-common</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
                 <classifier>tests</classifier>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>coding-sensorML-v101</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>coding-sos-v100</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>coding-sos-v20</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>core-v100</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>core-v20</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>gc-dao</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hibernate-session-factory</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hibernate-common</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hibernate-mappings</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hibernate-h2</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hibernate-dao</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hibernate-feature</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hibernate-datasource-common</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hibernate-datasource-postgres</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hibernate-datasource-oracle</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hibernate-datasource-sqlserver</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hibernate-datasource-h2</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>hibernate-datasource-mysql</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>binding-kvp</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>binding-soap</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>binding-pox</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>binding-json</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>enhanced-v20</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>transactional-v20</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>resultHandling-v20</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>profile-xml</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>profile-coding</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
 	            <groupId>${project.groupId}</groupId>
 	            <artifactId>request-response-coordinate-transformer</artifactId>
-	             <version>${sos.version}</version>
+	             <version>${project.version}</version>
 	        </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>common-controller</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>views</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
                 <type>war</type>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>admin-controller</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>install-controller</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>client-controller</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>test</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>webapp</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
                 <type>war</type>
             </dependency>
             <!-- INSPIRE -->
             <dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>inspire-code</artifactId>
-				<version>${inspire.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 	        	<artifactId>inspire-xml</artifactId>
-				<version>${inspire.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<!-- AQD eReporting -->
 			 <dependency>
@@ -422,7 +421,7 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>api</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
                 <scope>test</scope>
                 <classifier>tests</classifier>
             </dependency>
@@ -819,22 +818,22 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>coding-wml-v20</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>gda</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>gda-operation</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>gda-hibernate</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <!-- required for common test classes -->
             <dependency>
@@ -856,37 +855,37 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>do-xml</artifactId>
-                <version>${do.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>do-core</artifactId>
-                <version>${do.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>do-hibernate</artifactId>
-                <version>${do.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>do-kvp</artifactId>
-                <version>${do.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>do-json</artifactId>
-                <version>${do.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>rest-code</artifactId>
-                <version>${rest-binding.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>rest-xml</artifactId>
-                <version>${rest-binding.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.opengeo</groupId>
@@ -933,7 +932,7 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>third-party-ncname-resolver</artifactId>
-                <version>${sos.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>xmlunit</groupId>

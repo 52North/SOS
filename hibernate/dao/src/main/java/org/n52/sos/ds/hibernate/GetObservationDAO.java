@@ -63,6 +63,7 @@ import org.n52.sos.ds.hibernate.values.HibernateStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateChunkSeriesStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateScrollableSeriesStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateSeriesStreamingValue;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
@@ -412,6 +413,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                 HibernateStreamingValue streamingValue =
                         getStreamingValue(request, oc.getProcedure().getProcedureId(), oc.getObservableProperty()
                                 .getObservablePropertyId(), featureOfInterest.getFeatureOfInterestId());
+                streamingValue.setResponseFormat(request.getResponseFormat());
                 streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
                 streamingValue.setObservationTemplate(observationTemplate);
                 observationTemplate.setValue(streamingValue);
@@ -451,6 +453,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                             .createSosObservationFromSeries(series, request.getVersion(), session);
             OmObservation observationTemplate = createSosObservationFromSeries.iterator().next();
             HibernateSeriesStreamingValue streamingValue = getSeriesStreamingValue(request, series.getSeriesId());
+            streamingValue.setResponseFormat(request.getResponseFormat());
             streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
             streamingValue.setObservationTemplate(observationTemplate);
             observationTemplate.setValue(streamingValue);
@@ -468,8 +471,9 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
      * @param seriesId
      *            Series id
      * @return Streaming observation value
+     * @throws CodedException 
      */
-    private HibernateSeriesStreamingValue getSeriesStreamingValue(GetObservationRequest request, long seriesId) {
+    private HibernateSeriesStreamingValue getSeriesStreamingValue(GetObservationRequest request, long seriesId) throws CodedException {
         if (HibernateStreamingConfiguration.getInstance().isChunkDatasourceStreaming()) {
             return new HibernateChunkSeriesStreamingValue(request, seriesId);
         } else {

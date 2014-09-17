@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import org.hibernate.Session;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingObservationDAO;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingSeriesDAO;

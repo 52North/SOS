@@ -53,9 +53,4 @@ public class BlobObservation extends Observation implements Serializable, org.n5
     public boolean isSetValue() {
         return value != null;
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue().toString();
-	}
 }

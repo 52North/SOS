@@ -148,13 +148,6 @@ public class SweDataArray extends SweAbstractDataComponent {
         }
         return values.add(blockOfTokensToAddAtTheEnd);
     }
-    
-    public boolean addAll(List<List<String>> newValues) {
-        if (values == null) {
-            values = newValues;
-        }
-        return values.addAll(newValues);
-    }
 
     @Override
     public int hashCode() {

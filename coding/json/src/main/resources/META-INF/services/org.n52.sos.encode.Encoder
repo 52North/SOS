@@ -3,6 +3,7 @@ org.n52.sos.encode.json.impl.ObservationEncoder
 org.n52.sos.encode.json.impl.OwsExceptionReportEncoder
 org.n52.sos.encode.json.impl.GetObservationResponseEncoder
 org.n52.sos.encode.json.impl.FeatureOfInterestEncoder
+org.n52.sos.encode.json.impl.TimeEncoder
 org.n52.sos.encode.json.impl.FieldEncoder
 org.n52.sos.encode.json.impl.InsertObservationResponseEncoder
 org.n52.sos.encode.json.impl.InsertResultTemplateResponseEncoder

@@ -63,7 +63,6 @@ import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.AbstractStreaming;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmCompositePhenomenon;
@@ -74,9 +73,7 @@ import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -91,7 +88,6 @@ import org.n52.sos.util.GmlHelper;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.sos.w3c.W3CConstants;
 
 import com.google.common.collect.Maps;
 
@@ -153,11 +149,6 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
      * @return Indicator
      */
     protected abstract boolean convertEncodedProcedure();
-    
-    @Override
-    public boolean forceStreaming() {
-    	return false;
-    }
 
     @Override
     public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
@@ -590,18 +581,6 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
                 return xmlString;
                 // return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20,
                 // new SweText().setValue(textValue.getValue()), helperValues);
-            } else if (value instanceof ReferenceValue) {
-                ReferenceValue referenceValue = (ReferenceValue) value;
-                if (referenceValue.isSetValue()) {
-                    return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, referenceValue.getValue(),
-                            helperValues);
-                }
-            } else if (value instanceof HrefAttributeValue) {
-                HrefAttributeValue hrefAttributeValue = (HrefAttributeValue) value;
-                if (hrefAttributeValue.isSetValue()) {
-                    return CodingHelper.encodeObjectToXml(W3CConstants.NS_XLINK, hrefAttributeValue.getValue(),
-                            helperValues);
-                }
             }
         }
         return null;

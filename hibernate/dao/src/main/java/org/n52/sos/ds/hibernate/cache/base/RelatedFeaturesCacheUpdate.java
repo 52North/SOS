@@ -53,7 +53,7 @@ public class RelatedFeaturesCacheUpdate extends AbstractThreadableDatasourceCach
         LOGGER.debug("Executing RelatedFeaturesCacheUpdate");
         startStopwatch();
         // TODO Carsten: use RelatedFeatures and query...
-        if (HibernateHelper.isEntitySupported(RelatedFeature.class)) {
+        if (HibernateHelper.isEntitySupported(RelatedFeature.class, getSession())) {
             List<RelatedFeature> relatedFeatures = new RelatedFeatureDAO().getRelatedFeatureObjects(getSession());
             for (RelatedFeature relatedFeature : relatedFeatures) {
                 Set<String> roles = new HashSet<String>(relatedFeature.getRelatedFeatureRoles().size());

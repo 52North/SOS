@@ -275,9 +275,6 @@ public class HibernateProcedureDescriptionGenerator {
         if (i18nDAO == null) {
             // no locale support
             ProcedureDAO featureDAO = new ProcedureDAO();
-            if (procedure.isSetName()) {
-            	abstractProcess.setHumanReadableIdentifier(procedure.getName());
-            }
             abstractProcess.addName(featureDAO.getName(procedure));
             abstractProcess.setDescription(featureDAO.getDescription(procedure));
         } else {
@@ -618,7 +615,7 @@ public class HibernateProcedureDescriptionGenerator {
     @VisibleForTesting
     AbstractObservation getExampleObservation(String identifier, String observableProperty, Session session)
             throws OwsExceptionReport {
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
         final Criteria c = observationDAO.getObservationCriteriaFor(identifier, observableProperty, session);
         c.setMaxResults(1);
         LOGGER.debug("QUERY getExampleObservation(identifier, observableProperty): {}",

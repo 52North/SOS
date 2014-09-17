@@ -92,25 +92,24 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
         // offerings
         for (SosOffering sosOffering : request.getAssignedOfferings()) {
             if (sosOffering.isParentOffering()) {
-                cache.addHiddenChildProcedureForOffering(sosOffering.getIdentifier(), procedure);
+                cache.addHiddenChildProcedureForOffering(sosOffering.getOfferingIdentifier(), procedure);
             } else {
-                cache.addOffering(sosOffering.getIdentifier());
-                cache.addProcedureForOffering(sosOffering.getIdentifier(), procedure);
-                if (sosOffering.isSetName()) {
-                    cache.setNameForOffering(sosOffering.getIdentifier(), sosOffering.getOfferingName());
-                    cache.addOfferingIdentifierHumanReadableName(sosOffering.getIdentifier(), sosOffering.getOfferingName());
+                cache.addOffering(sosOffering.getOfferingIdentifier());
+                cache.addProcedureForOffering(sosOffering.getOfferingIdentifier(), procedure);
+                if (sosOffering.isSetOfferingName()) {
+                    cache.setNameForOffering(sosOffering.getOfferingIdentifier(), sosOffering.getOfferingName());
                 }
             }
 
             // add offering for procedure whether it's a normal offering or
             // hidden child
-            cache.addOfferingForProcedure(procedure, sosOffering.getIdentifier());
+            cache.addOfferingForProcedure(procedure, sosOffering.getOfferingIdentifier());
 
             // allowed observation types
-            cache.addAllowedObservationTypesForOffering(sosOffering.getIdentifier(), request.getMetadata()
+            cache.addAllowedObservationTypesForOffering(sosOffering.getOfferingIdentifier(), request.getMetadata()
                     .getObservationTypes());
             // allowed featureOfInterest types
-            cache.addAllowedFeatureOfInterestTypesForOffering(sosOffering.getIdentifier(), request
+            cache.addAllowedFeatureOfInterestTypesForOffering(sosOffering.getOfferingIdentifier(), request
                     .getMetadata().getFeatureOfInterestTypes());
         }
 
@@ -121,7 +120,7 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
                 final String identifier = relatedFeature.getFeature().getIdentifierCodeWithAuthority().getValue();
                 for (SosOffering sosOffering : request.getAssignedOfferings()) {
                     // TODO check if check for parent offering is necessary;
-                    cache.addRelatedFeatureForOffering(sosOffering.getIdentifier(), identifier);
+                    cache.addRelatedFeatureForOffering(sosOffering.getOfferingIdentifier(), identifier);
                 }
                 cache.addRoleForRelatedFeature(identifier, relatedFeature.getRole());
             }
@@ -132,8 +131,8 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
             cache.addProcedureForObservableProperty(observableProperty, procedure);
             cache.addObservablePropertyForProcedure(procedure, observableProperty);
             for (SosOffering sosOffering : request.getAssignedOfferings()) {
-                cache.addOfferingForObservableProperty(observableProperty, sosOffering.getIdentifier());
-                cache.addObservablePropertyForOffering(sosOffering.getIdentifier(), observableProperty);
+                cache.addOfferingForObservableProperty(observableProperty, sosOffering.getOfferingIdentifier());
+                cache.addObservablePropertyForOffering(sosOffering.getOfferingIdentifier(), observableProperty);
             }
         }
     }

@@ -30,7 +30,7 @@ package org.n52.sos.config.sqlite;
 
 /**
  * Extension of SQLiteSettingsManager used for testing
- *
+ * 
  * @author Shane StClair
  *
  */
@@ -39,4 +39,5 @@ public class SQLiteSettingsManagerForTesting extends ExtensionEnabledSQLiteSetti
     protected SQLiteSessionFactoryForTesting createDefaultConnectionProvider() {
         return new SQLiteSessionFactoryForTesting();
     }
+	
 }

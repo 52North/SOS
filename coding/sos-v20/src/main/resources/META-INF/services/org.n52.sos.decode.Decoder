@@ -6,4 +6,3 @@ org.n52.sos.decode.SweCommonDecoderV20
 org.n52.sos.decode.OmDecoderv20
 org.n52.sos.decode.SamplingDecoderv20
 org.n52.sos.decode.SwesExtensionDecoderv20
-org.n52.sos.decode.XlinkDecoderv1999

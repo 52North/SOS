@@ -36,27 +36,23 @@ import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OWSConstants.AdditionalRequestParams;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Geometry;
 
-public abstract class AbstractStreaming extends AbstractObservationValue<Value<OmObservation>> {
-
+public abstract class AbstractStreaming extends AbstractObservationValue<Value<OmObservation>>{
+    
     private static final long serialVersionUID = -4290319005184152231L;
-
+    
     private Map<AdditionalRequestParams, Object> additionalRequestParams = Maps.newHashMap();
-
-    private String responseFormat;
-
-    public abstract boolean hasNextValue() throws OwsExceptionReport;
-
+    
+    public abstract boolean hasNextValue() throws OwsExceptionReport ;
+    
     public abstract OmObservation nextSingleObservation() throws OwsExceptionReport;
-
+    
     public List<OmObservation> mergeObservation() throws OwsExceptionReport {
         List<OmObservation> observations = getObservation();
         // TODO merge all observations with the same observationContellation
@@ -90,7 +86,7 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
         }
         return observations;
     }
-
+    
     public List<OmObservation> getObservation() throws OwsExceptionReport {
         List<OmObservation> observations = Lists.newArrayList();
         do {
@@ -100,17 +96,17 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
     }
 
     public void add(AdditionalRequestParams parameter, Object object) {
-        additionalRequestParams.put(parameter, object);
+       additionalRequestParams.put(parameter, object);
     }
-
+    
     public boolean contains(AdditionalRequestParams parameter) {
         return additionalRequestParams.containsKey(parameter);
     }
-
+    
     public boolean isSetAdditionalRequestParams() {
         return CollectionHelper.isNotEmpty(additionalRequestParams);
     }
-
+    
     protected Object getAdditionalRequestParams(AdditionalRequestParams parameter) {
         return additionalRequestParams.get(parameter);
     }
@@ -146,21 +142,5 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
             }
         }
     }
-
-    @Override
-    public boolean isSetValue() {
-        return true;
-    }
     
-    public void setResponseFormat(String responseFormat) {
-        this.responseFormat = responseFormat;
-    }
-    
-    public String getResponseFormat() {
-        if (Strings.isNullOrEmpty(responseFormat)) {
-            this.responseFormat = Configurator.getInstance().getProfileHandler().getActiveProfile().getObservationResponseFormat();
-        }
-        return responseFormat;
-    }
-
 }

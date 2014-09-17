@@ -50,7 +50,7 @@ public class ObservationTimeCacheUpdate extends AbstractThreadableDatasourceCach
         LOGGER.debug("Executing ObservationTimeCacheUpdate");
         startStopwatch();
         try {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(getSession());
             getCache().setMinPhenomenonTime(observationDAO.getMinPhenomenonTime(getSession()));
             getCache().setMaxPhenomenonTime(observationDAO.getMaxPhenomenonTime(getSession()));
             getCache().setMinResultTime(observationDAO.getMinResultTime(getSession()));

@@ -124,8 +124,6 @@ public final class JavaHelper {
             return Double.toString(bdValue.doubleValue());
         } else if (object instanceof Double) {
             return ((Double) object).toString();
-        } else if (object instanceof Integer) {
-            return ((Integer) object).toString();
         }
         // TODO why not object.toString()?
         return Constants.EMPTY_STRING;

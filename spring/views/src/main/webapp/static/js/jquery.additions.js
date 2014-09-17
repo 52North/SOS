@@ -27,121 +27,32 @@
  * Public License for more details.
  */
  (function($) {
-    $.scrollToTop = function(duration, complete) {
-        $("html,body").animate({
-            "scrollTop": 0
-        }, duration, "swing", complete);
-        return this;
-    };
-    $.fn.scrollTo = function(duration, complete) {
-        $("html,body").animate({
-            "scrollTop": this.offset().top
-        }, duration, "swing", complete);
-        return this;
-    };
-
-    $.exists = function(selector) {
-        return ($(selector).length > 0);
-    };
-
-    $.fn.slideRemove = function(opt) {
-        return this.slideUp(opt, function() {
-            $(this).remove();
-        });
-    };
-
-    $.fn.fadeRemove = function(opt) {
-        return this.fadeOut(opt, function() {
-            $(this).remove();
-        });
-    };
-
-    $.fn.verticalSlideToggle = function(speed, callback) {
-            this.animate({
-                width: "toggle",
-                paddingLeft: "toggle",
-                paddingRight: "toggle",
-                marginLeft: "toggle",
-                marginRight: "toggle"
-            }, speed, callback);
-    };
-
-    $.fn.type = function(type) {
-        return this.attr("type", type);
-    };
-
-
-    $.fn.disabled = function(opts) {
+	$.fn.disabled = function(opts) {
 		if (opts === false) {
 			$(this).removeAttr("disabled");
 		} else {
-			$(this).attr("disabled", "disabled");
+			$(this).attr("disabled", "disabled")
 		}
 		return this;
 	};
-
-    $.fn.checked = function(opts) {
-		if (opts === false) {
-			$(this).removeAttr("checked");
-		} else {
-			$(this).attr("checked", "checked");
-		}
-		return this;
-	};
-
-    $.fn.toggleAttr = function(attr, b) {
-        var c = (b === undefined);
-        return this.each(function() {
-            var $el = $(this);
-            if ((c && !$el.is("["+ attr +"]")) || (!c && b)) {
-                $el.attr(attr, attr);
-            }
-            else $el.removeAttr(attr);
-        });
-    };
-
-    $.fn.slideRight = function(speed, callback) {
-		this.animate({
-			width: "show",
-			paddingLeft: "show",
-			paddingRight: "show",
-			marginLeft: "show",
-			marginRight: "show"
-		}, speed, callback);
-    };
-
-    $.fn.verticalSlideToggle = function(speed, callback) {
-		this.animate({
-			width: "toggle",
-			paddingLeft: "toggle",
-			paddingRight: "toggle",
-			marginLeft: "toggle",
-			marginRight: "toggle"
+	$.fn.slideRight = function(speed, callback) {
+		this.animate({ 
+			width: "show", 
+			paddingLeft: "show", 
+			paddingRight: "show", 
+			marginLeft: "show", 
+			marginRight: "show" 
 		}, speed, callback);
 	};
-
-    $.fn.slideLeft = function(speed, callback) {
-		this.animate({
-			width: "hide",
-			paddingLeft: "hide",
-			paddingRight: "hide",
-			marginLeft: "hide",
-			marginRight: "hide"
+	$.fn.slideLeft = function(speed, callback) {
+		this.animate({ 
+			width: "hide", 
+			paddingLeft: "hide", 
+			paddingRight: "hide", 
+			marginLeft: "hide", 
+			marginRight: "hide" 
 		}, speed, callback);
 	};
-
-    $.fn.insertAt = function(index, element) {
-        var lastIndex = this.children().size();
-        if (index < 0) {
-            index = Math.max(0, lastIndex + 1 + index);
-        }
-        this.append(element);
-        if (index < lastIndex) {
-            this.children().eq(index).before(this.children().last());
-        }
-        return this;
-    };
-
 	$.fn.codeMirror = function(method) {
 		var methods = {
 			init: function(options) {
@@ -175,7 +86,7 @@
 				});
 				return cm;
 			}
-		};
+		}
 
 		if (methods[method]) {
 			 return methods[method].apply( this, Array.prototype.slice.call(arguments, 1));

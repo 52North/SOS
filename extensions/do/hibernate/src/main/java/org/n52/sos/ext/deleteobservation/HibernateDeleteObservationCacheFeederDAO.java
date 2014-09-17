@@ -149,7 +149,7 @@ public class HibernateDeleteObservationCacheFeederDAO extends DeleteObservationC
     @Override
     protected void prepare() throws OwsExceptionReport {
         this.session = this.sessionHolder.getSession();
-        this.observationDAO = DaoFactory.getInstance().getObservationDAO();
+        this.observationDAO = DaoFactory.getInstance().getObservationDAO(session);
     }
 
     @Override

@@ -28,19 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
-import java.util.List;
-
 import org.n52.sos.ds.hibernate.dao.ValueDAO;
 import org.n52.sos.ds.hibernate.dao.ValueTimeDAO;
-import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
 import org.n52.sos.ds.hibernate.entities.values.ObservationValueTime;
-import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 /**
  * Abstract Hibernate streaming value class for old observation concept
@@ -85,12 +79,9 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
         this.featureOfInterest = featureOfInterest;
     }
 
-	@Override
+    @Override
     protected void queryTimes() {
         try {
-        	if (session == null) {
-                session = sessionHolder.getSession();
-            }
             ObservationValueTime minTime;
             ObservationValueTime maxTime;
             // query with temporal filter

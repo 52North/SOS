@@ -36,9 +36,9 @@ import org.n52.sos.w3c.SchemaLocation;
 
 /**
  * Interface for GML constants
- *
+ * 
  * @since 4.0.0
- *
+ * 
  */
 public interface GmlConstants extends Constants {
 
@@ -63,8 +63,6 @@ public interface GmlConstants extends Constants {
             .toString();
 
     /* element names used in GML */
-
-    String AN_REMOTE_SCHEMA = "remoteSchema";
 
     String EN_DESCRIPTION = "description";
 
@@ -138,7 +136,7 @@ public interface GmlConstants extends Constants {
     String EN_LOWER_CORNER = "lowerCorner";
 
     String EN_UPPER_CORNER = "upperCorner";
-
+    
     String EN_FEATURE_MEMBER = "featureMember";
 
     String EN_IDENTIFIER = "identifier";
@@ -184,11 +182,7 @@ public interface GmlConstants extends Constants {
 
     QName QN_FEATURE_COLLECTION = new QName(NS_GML, OmConstants.EN_FEATURE_COLLECTION, NS_GML_PREFIX);
     
-    QName QN_FEATURE_COLLECTION_32 = new QName(NS_GML_32, OmConstants.EN_FEATURE_COLLECTION, NS_GML_PREFIX);
-
     QName QN_FEATURE_MEMBER = new QName(NS_GML, EN_FEATURE_MEMBER, NS_GML_PREFIX);
-
-    QName QN_FEATURE_MEMBER_32 = new QName(NS_GML_32, EN_FEATURE_MEMBER, NS_GML_PREFIX);
 
     QName QN_ABSTRACT_RING = new QName(NS_GML, EN_ABSTRACT_RING_311, NS_GML_PREFIX);
 
@@ -207,16 +201,14 @@ public interface GmlConstants extends Constants {
     QName QN_ABSTRACT_FEATURE_GML_32 = new QName(NS_GML_32, EN_ABSTRACT_FEATURE_32, NS_GML_PREFIX);
 
     QName QN_ABSTRACT_TIME_32 = new QName(NS_GML_32, EN_ABSTRACT_TIME_OBJECT_32, NS_GML_PREFIX);
-
-    QName QN_REMOTE_SCHEMA = new QName(GmlConstants.NS_GML_32, AN_REMOTE_SCHEMA, NS_GML_PREFIX);
-
+    
     /**
      * The {@code QName} for {@code gml:id}.
      */
     QName QN_ID_32 = new QName(NS_GML_32, AN_ID, NS_GML_PREFIX);
 
     QName QN_DESCRIPTION_32 = new QName(NS_GML_32, EN_DESCRIPTION, NS_GML_PREFIX);
-
+    
     QName QN_ID = new QName(NS_GML, AN_ID, NS_GML_PREFIX);
 
     QName QN_BEGIN_POSITION_32 = new QName(GmlConstants.NS_GML_32, GmlConstants.EN_BEGIN_POSITION,
@@ -226,12 +218,12 @@ public interface GmlConstants extends Constants {
      * The {@code QName} for {@code gml:endPosition}.
      */
     QName QN_END_POSITION_32 = new QName(GmlConstants.NS_GML_32, GmlConstants.EN_END_POSITION, GmlConstants.NS_GML_PREFIX);
-
+    
     /**
      * The {@code QName} for {@code gml:timePosition}.
      */
     QName QN_TIME_POSITION_32 = new QName(GmlConstants.NS_GML_32, GmlConstants.EN_TIME_POSITION, GmlConstants.NS_GML_PREFIX);
-
+    
     /**
      * The {@code QName} for {@code gml:identifier}.
      */
@@ -242,15 +234,15 @@ public interface GmlConstants extends Constants {
 
     /** Constant for result model of common observations */
     String SORT_ORDER_DESC = SortingOrder.DESC.name();
-
+    
     String VALUE_REF_GML_DESCRIPTION = "gml:description";
 
     /**
      * Enumeration of the possible values for indeterminate Time attribute of
      * eventtime in GetObservation request
-     *
+     * 
      * @since 4.0.0
-     *
+     * 
      */
     enum IndetTimeValues {
         after, before, now, unknown
@@ -258,7 +250,7 @@ public interface GmlConstants extends Constants {
 
     /**
      * enumeration of the possible sorting orders
-     *
+     * 
      * @since 4.0.0
      */
     enum SortingOrder {

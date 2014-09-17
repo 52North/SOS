@@ -28,16 +28,14 @@
  */
 package org.n52.sos.ogc.om.features;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.SortedMap;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.EmptyIterator;
-
-import com.google.common.collect.Maps;
 
 /**
  * class represents a GMl feature collection
@@ -50,7 +48,7 @@ public class FeatureCollection extends AbstractFeature implements Iterable<Abstr
     /**
      * members of this feature collection
      */
-    private SortedMap<String, AbstractFeature> members = Maps.<String, AbstractFeature>newTreeMap();
+    private Map<String, AbstractFeature> members = new HashMap<String, AbstractFeature>(0);
 
     /**
      * constructor
@@ -67,8 +65,7 @@ public class FeatureCollection extends AbstractFeature implements Iterable<Abstr
      */
     public FeatureCollection(final Map<String, AbstractFeature> members) {
         super(new CodeWithAuthority("gml:FeatureCollection"));
-        this.members.clear();
-        this.members.putAll(members);
+        this.members = members;
     }
 
     /**
@@ -90,16 +87,8 @@ public class FeatureCollection extends AbstractFeature implements Iterable<Abstr
         this.members.putAll(members);
     }
 
-    public FeatureCollection addMember(AbstractFeature member) {
-    	if (member.isSetIdentifier()) {
-    		members.put(member.getIdentifierCodeWithAuthority().getValue(), member);
-    		return this;
-    	} else if (member.isSetGmlID()) {
-    		members.put(member.getGmlId(), member);
-    		return this;
-    	}
-    	members.put(member.toString(), member);
-    	return this;
+    public void addMember(AbstractFeature member) {
+        members.put(member.getIdentifierCodeWithAuthority().getValue(), member);
     }
 
     /**

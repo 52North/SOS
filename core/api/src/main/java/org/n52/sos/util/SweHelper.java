@@ -234,7 +234,7 @@ public final class SweHelper {
      *            SosObservation with token and tuple separator
      * @return TextEncoding
      */
-    public static SweAbstractEncoding createTextEncoding(OmObservation sosObservation) {
+    private static SweAbstractEncoding createTextEncoding(OmObservation sosObservation) {
         String tupleSeparator = ServiceConfiguration.getInstance().getTupleSeparator();
         String tokenSeparator = ServiceConfiguration.getInstance().getTokenSeparator();
         if (sosObservation.isSetTupleSeparator()) {

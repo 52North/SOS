@@ -113,11 +113,7 @@ public class AbstractController {
         SortedMap<String, JsonNode> map = new TreeMap<String, JsonNode>();
         SettingDefinitionEncoder encoder = new SettingDefinitionEncoder();
         for (Entry<SettingDefinition<?, ?>, SettingValue<?>> e : settings.entrySet()) {
-        	if (e.getValue() != null) {
-        		map.put(e.getKey().getKey(), encoder.encodeValue(e.getValue()));
-        	} else {
-        		map.put(e.getKey().getKey(), encoder.encodeValue(e.getKey().getType(), e.getKey().getDefaultValue()));
-        	}
+            map.put(e.getKey().getKey(), encoder.encodeValue(e.getValue()));
         }
         ObjectNode node = JSONUtils.nodeFactory().objectNode();
         node.putAll(map);

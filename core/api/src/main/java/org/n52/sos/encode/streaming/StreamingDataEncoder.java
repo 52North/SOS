@@ -28,13 +28,19 @@
  */
 package org.n52.sos.encode.streaming;
 
+import org.n52.sos.encode.Encoder;
+
 /**
  * Generic interface for StreamingDataEncoder.
  * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
+ * @param <T>
+ *            the resulting type, the "Target"
+ * @param <S>
+ *            the input type, the "Source"
  */
-public interface StreamingDataEncoder {
+public interface StreamingDataEncoder<T,S> extends Encoder<T, S> {
 
 }

@@ -61,10 +61,5 @@ public class ObservationGeometryValue extends ObservationValue implements Geomet
         return getValue() != null;
 
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue().toText();
-	}
 
 }

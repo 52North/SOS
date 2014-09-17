@@ -191,11 +191,6 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
         }
         create(response, outputStream, encodingValues);
     }
-    
-    @Override
-    public boolean forceStreaming() {
-    	return false;
-    }
 
     private void setSchemaLocations(XmlObject document) {
         Map<String, SchemaLocation> schemaLocations = Maps.newHashMap();

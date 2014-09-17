@@ -134,7 +134,7 @@ public interface OWSConstants {
     
     /** enum with names of get request parameters for all requests */
     enum AdditionalRequestParams {
-        language, crs, returnHumanReadableIdentifier;
+        language, crs;
 
         /**
          * method checks whether the string parameter is contained in this

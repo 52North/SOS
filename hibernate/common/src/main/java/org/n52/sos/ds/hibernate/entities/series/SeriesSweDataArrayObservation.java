@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.entities.series;
 
 import java.io.Serializable;
 
-import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayObservation;
 import org.n52.sos.util.StringHelper;
 
 /**
@@ -40,7 +39,7 @@ import org.n52.sos.util.StringHelper;
  * 
  */
 public class SeriesSweDataArrayObservation extends SeriesObservation implements Serializable,
-        SweDataArrayObservation {
+        org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayObservation {
 
     private static final long serialVersionUID = 627306968328720439L;
 
@@ -60,9 +59,4 @@ public class SeriesSweDataArrayObservation extends SeriesObservation implements 
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(value);
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
 }

@@ -45,13 +45,14 @@ import org.n52.sos.ds.AbstractGetResultDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
+import org.n52.sos.ds.hibernate.dao.series.SeriesDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Observation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
+import org.n52.sos.ds.hibernate.entities.SpatialFilteringProfile;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -119,7 +120,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
                 final SosResultStructure sosResultStructure =
                         new SosResultStructure(resultTemplates.get(0).getResultStructure());
                 final List<AbstractObservation> observations;
-                if (EntitiyHelper.getInstance().isSeriesObservationSupported()) {
+                if (HibernateHelper.isEntitySupported(SeriesObservation.class, session)) {
                     observations = querySeriesObservation(request, featureIdentifier, session);
                 } else {
                     observations = queryObservation(request, featureIdentifier, session);
@@ -219,7 +220,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
         final Criteria c = createCriteriaFor(SeriesObservation.class, session);
         addSpatialFilteringProfileRestrictions(c, request, session);
 
-        List<Series> series = DaoFactory.getInstance().getSeriesDAO().getSeries(request.getObservedProperty(), featureIdentifiers, session);
+        List<Series> series = new SeriesDAO().getSeries(request.getObservedProperty(), featureIdentifiers, session);
         if (CollectionHelper.isEmpty(series)) {
             return null;
         } else {
@@ -320,11 +321,24 @@ public class GetResultDAO extends AbstractGetResultDAO {
     private void addSpatialFilteringProfileRestrictions(Criteria criteria, GetResultRequest request, Session session)
             throws OwsExceptionReport {
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
+            if (!HibernateHelper.isEntitySupported(SpatialFilteringProfile.class, session)) {
                 criteria.add(SpatialRestrictions.filter(
                         AbstractObservation.SAMPLING_GEOMETRY,
                         request.getSpatialFilter().getOperator(),
-                        GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
+                        GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(
                                 request.getSpatialFilter().getGeometry())));
+//                throw new OptionNotSupportedException().at(Sos2Constants.GetObservationParams.spatialFilter)
+//                        .withMessage("The SOS 2.0 Spatial Filtering Profile is not supported by this service!");
+            } else {
+                Set<Long> observationIds =
+                        DaoFactory.getInstance().getSpatialFilteringProfileDAO(session)
+                                .getObservationIdsForSpatialFilter(request.getSpatialFilter(), session);
+                if (observationIds != null && CollectionHelper.isEmpty(observationIds)) {
+                    criteria.add(Restrictions.eq(Observation.ID, Long.MIN_VALUE));
+                } else if (CollectionHelper.isNotEmpty(observationIds)) {
+                    criteria.add(Restrictions.in(Observation.ID, observationIds));
+                }
+            }
         }
     }
 }

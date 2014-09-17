@@ -58,10 +58,5 @@ public class SeriesNumericValue extends SeriesValue implements NumericValue {
     public boolean isSetValue() {
         return getValue() != null;
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue().toString();
-	}
 
 }

@@ -28,15 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.entities.series;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations;
-
 /**
  * Interface for series interfaces
  * 
  * @since 4.0.0
  * 
  */
-public interface HibernateSeriesRelations extends HibernateRelations {
+public interface HibernateSeriesRelations {
 
     /**
      * Interface to indicate that the implemented class has a series value

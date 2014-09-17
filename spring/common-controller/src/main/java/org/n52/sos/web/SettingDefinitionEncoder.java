@@ -34,14 +34,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionGroup;
 import org.n52.sos.config.SettingType;
 import org.n52.sos.config.SettingValue;
-import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.ds.Datasource;
 import org.n52.sos.exception.JSONException;
@@ -63,12 +61,13 @@ public class SettingDefinitionEncoder {
 
     public Map<SettingDefinitionGroup, Set<SettingDefinition>> sortByGroup(Set<SettingDefinition<?, ?>> defs) {
 
-        Map<SettingDefinitionGroup, Set<SettingDefinition>> map = new HashMap<>();
+        Map<SettingDefinitionGroup, Set<SettingDefinition>> map =
+                new HashMap<SettingDefinitionGroup, Set<SettingDefinition>>();
         for (SettingDefinition def : defs) {
             SettingDefinitionGroup group = def.hasGroup() ? def.getGroup() : Datasource.ADVANCED_GROUP;
             Set<SettingDefinition> groupDefs = map.get(group);
             if (groupDefs == null) {
-                groupDefs = new HashSet<>();
+                groupDefs = new HashSet<SettingDefinition>();
                 map.put(group, groupDefs);
             }
             groupDefs.add(def);
@@ -79,7 +78,7 @@ public class SettingDefinitionEncoder {
     public ObjectNode encode(Map<SettingDefinitionGroup, Set<SettingDefinition>> grouped) throws JSONException {
         ObjectNode json = nodeFactory.objectNode();
         ArrayNode sections = json.putArray(JSONConstants.SECTIONS_KEY);
-        List<SettingDefinitionGroup> sortedGroups = new ArrayList<>(grouped.keySet());
+        List<SettingDefinitionGroup> sortedGroups = new ArrayList<SettingDefinitionGroup>(grouped.keySet());
         Collections.sort(sortedGroups);
         for (SettingDefinitionGroup group : sortedGroups) {
             ObjectNode jgroup = sections.addObject();
@@ -92,7 +91,7 @@ public class SettingDefinitionEncoder {
 
     public ObjectNode encode(Set<SettingDefinition> settings) throws JSONException {
         ObjectNode j = nodeFactory.objectNode();
-        List<SettingDefinition> sorted = new ArrayList<>(settings);
+        List<SettingDefinition> sorted = new ArrayList<SettingDefinition>(settings);
         Collections.sort(sorted);
         for (SettingDefinition def : sorted) {
             j.put(def.getKey(), encode(def));
@@ -118,13 +117,6 @@ public class SettingDefinitionEncoder {
                 j.put(JSONConstants.MAXIMUM_EXCLUSIVE_KEY, iDef.isExclusiveMaximum());
             }
         }
-        if (def.getType() == SettingType.CHOICE && def instanceof ChoiceSettingDefinition) {
-            ChoiceSettingDefinition cDef = (ChoiceSettingDefinition) def;
-            ObjectNode options = j.putObject(JSONConstants.OPTIONS_KEY);
-            for (Entry<String, String> option : cDef.getOptions().entrySet()) {
-                options.put(option.getKey(), option.getValue());
-            }
-        }
         return j;
     }
 
@@ -143,8 +135,6 @@ public class SettingDefinitionEncoder {
             return JSONConstants.STRING_TYPE;
         case MULTILINGUAL_STRING:
             return JSONConstants.MULTILINGUAL_TYPE;
-        case CHOICE:
-            return JSONConstants.CHOICE_TYPE;
         default:
             throw new IllegalArgumentException(String.format("Unknown Type %s", def.getType()));
         }
@@ -158,7 +148,7 @@ public class SettingDefinitionEncoder {
         return encodeValue(def.getType(), def.getValue());
     }
 
-    public JsonNode encodeValue(SettingType type, Object value)
+    private JsonNode encodeValue(SettingType type, Object value)
             throws IllegalArgumentException {
         if (value == null) {
             return nodeFactory.nullNode();
@@ -168,7 +158,6 @@ public class SettingDefinitionEncoder {
                 return nodeFactory.textNode(DateTimeHelper.format((TimeInstant) value));
             case FILE:
             case URI:
-            case CHOICE:
             case STRING:
                 return nodeFactory.textNode(String.valueOf(value));
             case BOOLEAN:

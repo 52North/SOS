@@ -135,6 +135,7 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
         try {
             prepare();
             updateFeatureOfInterest();
+            updateIdentifiers();
             updateTemporalBoundingBoxes();
             updateSpatialBoundingBoxes();
         } catch (OwsExceptionReport ex) {
@@ -162,6 +163,19 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
             if (isLastForOffering(dbFeature, dbOffering)) {
                 getCache().removeFeatureOfInterestForOffering(offering, feature);
             }
+        }
+    }
+
+    /**
+     * Removes the observation identifier from the cache (if it exists).
+     */
+    @Deprecated
+    protected void updateIdentifiers() {
+        final String procedure = o.getObservationConstellation().getProcedure().getIdentifier();
+        final String identifier = o.getIdentifierCodeWithAuthority() == null ? null : o.getIdentifierCodeWithAuthority().getValue();
+        if (identifier != null) {
+            getCache().removeObservationIdentifier(identifier);
+            getCache().removeObservationIdentifierForProcedure(procedure, identifier);
         }
     }
 

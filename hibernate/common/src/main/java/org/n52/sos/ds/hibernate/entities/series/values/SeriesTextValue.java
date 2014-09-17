@@ -60,9 +60,4 @@ public class SeriesTextValue extends SeriesValue implements TextValue {
         return StringHelper.isNotEmpty(getValue());
     }
 
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
-
 }

@@ -42,7 +42,6 @@ import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -282,10 +281,6 @@ public class OmObservation extends AbstractFeature implements Serializable {
     public void setValue(final ObservationValue<?> value) {
         this.value = value;
     }
-    
-    public boolean isSetValue() {
-    	return getValue() != null && getValue().isSetValue();
-    }
 
     /**
      * Merge this observation with passed observation
@@ -294,20 +289,8 @@ public class OmObservation extends AbstractFeature implements Serializable {
      *            Observation to merge
      */
     public void mergeWithObservation(final OmObservation sosObservation) {
-        mergeValues(sosObservation.getValue());
+        mergeValues(sosObservation);
         mergeResultTimes(sosObservation);
-        setObservationTypeToSweArrayObservation();
-    }
-    
-    /**
-     * Merge this observation with passed observation
-     * 
-     * @param sosObservation
-     *            Observation to merge
-     */
-    public void mergeWithObservation(ObservationValue<?> observationValue) {
-        mergeValues(observationValue);
-//        mergeResultTimes(sosObservation);
         setObservationTypeToSweArrayObservation();
     }
 
@@ -338,25 +321,25 @@ public class OmObservation extends AbstractFeature implements Serializable {
     /**
      * Merge observation values with passed observation values
      * 
-     * @param observationValue
+     * @param sosObservation
      *            Observation to merge
      */
-    private void mergeValues(final ObservationValue<?> observationValue) {
+    private void mergeValues(final OmObservation sosObservation) {
         TVPValue tvpValue;
         if (getValue() instanceof SingleObservationValue) {
             tvpValue = convertSingleValueToMultiValue((SingleObservationValue<?>) value);
         } else {
             tvpValue = (TVPValue) ((MultiObservationValues<?>) value).getValue();
         }
-        if (observationValue instanceof SingleObservationValue) {
-            final SingleObservationValue<?> singleValue = (SingleObservationValue<?>) observationValue;
+        if (sosObservation.getValue() instanceof SingleObservationValue) {
+            final SingleObservationValue<?> singleValue = (SingleObservationValue<?>) sosObservation.getValue();
             if (!(singleValue.getValue() instanceof NilTemplateValue)) {
                 final TimeValuePair timeValuePair =
                         new TimeValuePair(singleValue.getPhenomenonTime(), singleValue.getValue());
                 tvpValue.addValue(timeValuePair);
             }
-        } else if (observationValue instanceof MultiObservationValues) {
-            final MultiObservationValues<?> multiValue = (MultiObservationValues<?>) observationValue;
+        } else if (sosObservation.getValue() instanceof MultiObservationValues) {
+            final MultiObservationValues<?> multiValue = (MultiObservationValues<?>) sosObservation.getValue();
             tvpValue.addValues(((TVPValue) multiValue.getValue()).getValue());
         }
     }
@@ -539,13 +522,4 @@ public class OmObservation extends AbstractFeature implements Serializable {
         clone.setTupleSeparator(this.getTupleSeparator());
         return clone;
     }
-    
-    @Override
-    public String getGmlId() {
-    	if (Strings.isNullOrEmpty(super.getGmlId()) && isSetObservationID()) {
-    		setGmlId("o_" + getObservationID());
-    	}
-    	return super.getGmlId();
-    }
-   
 }

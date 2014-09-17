@@ -193,7 +193,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
                 }
 
                 if (!hObservationConstellations.isEmpty()) {
-                    final AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+                    final AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
                     if (sosObservation.getValue() instanceof SingleObservationValue) {
                         observationDAO.insertObservationSingleValue(hObservationConstellations, hFeature,
                                 sosObservation, codespaceCache, unitCache, session);

@@ -30,23 +30,17 @@ package org.n52.sos.ogc.om.values;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
-import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 /**
  * Multi value representing a SweDataArray for observations
@@ -114,7 +108,6 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
     @Override
     public Time getPhenomenonTime() {
         final TimePeriod timePeriod = new TimePeriod();
-        Set<Integer> dateTokenIndizes = Sets.newHashSet();
         int dateTokenIndex = -1;
         if (getValue() != null && getValue().getElementType() != null && getValue().getEncoding() != null) {
             // get index of time token from elementtype
@@ -123,57 +116,32 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
                 final List<SweField> fields = elementType.getFields();
                 for (int i = 0; i < fields.size(); i++) {
                     final SweField sweField = fields.get(i);
-                    if (sweField.getElement() instanceof SweTime || sweField.getElement() instanceof SweTimeRange) {
-                    	if (checkFieldNameAndElementDefinition(sweField)) {
-                    		dateTokenIndizes.add(i);
-                    	}
-//                    	dateTokenIndex = i;
-//                        break;
+                    if (sweField.getElement() instanceof SweTime) {
+                        dateTokenIndex = i;
+                        break;
                     }
                 }
 
             }
-            if (CollectionHelper.isNotEmpty(dateTokenIndizes)) {
+            if (dateTokenIndex > -1) {
                 for (final List<String> block : getValue().getValues()) {
                     // check for "/" to identify time periods (Is
                     // conform with ISO8601 (see WP))
                     // datetimehelper to DateTime from joda time
-                    for (Integer index : dateTokenIndizes) {
-                    	String token = null;
-                    	try {
-	                    	token = block.get(index);
-	                    	final Time time = DateTimeHelper.parseIsoString2DateTime2Time(token);
-	                        timePeriod.extendToContain(time);
-	                    } catch (final DateTimeParseException dte) {
-	                         LOGGER.error(String.format("Could not parse ISO8601 string \"%s\"", token), dte);
-	                         // FIXME throw exception here?
-	                         continue; // try next block;
-	                     }
-					}
+                    final String token = block.get(dateTokenIndex);
+                    try {
+                        final Time time = DateTimeHelper.parseIsoString2DateTime2Time(token);
+                        timePeriod.extendToContain(time);
+                    } catch (final DateTimeParseException dte) {
+                        LOGGER.error(String.format("Could not parse ISO8601 string \"%s\"", token), dte);
+                        // FIXME throw exception here?
+                        continue; // try next block;
+                    }
                 }
-			} else {
-				final String errorMsg = "PhenomenonTime field could not be found in ElementType";
-				LOGGER.error(errorMsg);
-			}
-//                    if (dateTokenIndex > -1) {
-//                        for (final List<String> block : getValue().getValues()) {
-//                            // check for "/" to identify time periods (Is
-//                            // conform with ISO8601 (see WP))
-//                            // datetimehelper to DateTime from joda time
-//                	final String token = block.get(dateTokenIndex);
-//                    try {
-//                        final Time time = DateTimeHelper.parseIsoString2DateTime2Time(token);
-//                        timePeriod.extendToContain(time);
-//                    } catch (final DateTimeParseException dte) {
-//                        LOGGER.error(String.format("Could not parse ISO8601 string \"%s\"", token), dte);
-//                        // FIXME throw exception here?
-//                        continue; // try next block;
-//                    }
-//                   }
-//            } else {
-//                final String errorMsg = "PhenomenonTime field could not be found in ElementType";
-//                LOGGER.error(errorMsg);
-//            }
+            } else {
+                final String errorMsg = "PhenomenonTime field could not be found in ElementType";
+                LOGGER.error(errorMsg);
+            }
         } else {
             final String errorMsg =
                     String.format("Value of type \"%s\" not set correct.", SweDataArrayValue.class.getName());
@@ -182,13 +150,7 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
         return timePeriod;
     }
 
-    private boolean checkFieldNameAndElementDefinition(SweField sweField) {
-		return "StartTime".equals(sweField.getName().getValue()) || "EndTime".equals(sweField.getName().getValue())
-				|| OmConstants.PHENOMENON_TIME.equals(sweField.getElement().getDefinition());
-		
-	}
-
-	@Override
+    @Override
     public boolean isSetValue() {
         return getValue() != null && getValue().isEmpty();
     }

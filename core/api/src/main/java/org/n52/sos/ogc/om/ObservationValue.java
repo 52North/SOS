@@ -73,6 +73,4 @@ public interface ObservationValue<T extends Value<?>> extends Serializable {
      */
     void setValue(T value);
 
-	boolean isSetValue();
-
 }

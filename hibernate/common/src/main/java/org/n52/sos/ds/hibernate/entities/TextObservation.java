@@ -56,9 +56,4 @@ public class TextObservation extends Observation implements Serializable, org.n5
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(value);
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
 }

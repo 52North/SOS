@@ -32,8 +32,6 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -41,26 +39,35 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.util.Cleanupable;
 import org.n52.sos.util.GeometryHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- *
+ * 
  */
 public class SosContextListener implements ServletContextListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(SosContextListener.class);
 
     private static String path = null;
-    private static final List<Runnable> hooks = new LinkedList<>();
+
+    public static String getPath() {
+        return SosContextListener.path;
+    }
+
+    public static boolean hasPath() {
+        return SosContextListener.path != null;
+    }
+
+    public static void setPath(String path) {
+        SosContextListener.path = path;
+    }
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -79,17 +86,6 @@ public class SosContextListener implements ServletContextListener {
             providedJdbcDriver = Sets.newHashSet(
                     Configurator.getInstance().getProvidedJdbcDriver());
         }
-
-        synchronized(hooks) {
-            for (Runnable hook :hooks) {
-                try {
-                    hook.run();
-                } catch (Throwable t) {
-                    LOG.error("Error running shutdown hook", t);
-                }
-            }
-        }
-
         cleanupConfigurator();
         cleanupSettingsManager();
         cleanupGeometryHandler();
@@ -140,6 +136,7 @@ public class SosContextListener implements ServletContextListener {
             LOG.error("Error while Configurator clean up", ex);
         }
     }
+    
     protected void cleanupGeometryHandler() {
         try {
             if (GeometryHandler.getInstance() != null) {
@@ -149,6 +146,7 @@ public class SosContextListener implements ServletContextListener {
             LOG.error("Error while GeometryHandler clean up", ex);
         }
     }
+
     protected void instantiateConfigurator(ServletContext context) {
         DatabaseSettingsHandler dbsh = DatabaseSettingsHandler.getInstance(context);
         if (dbsh.exists()) {
@@ -170,37 +168,6 @@ public class SosContextListener implements ServletContextListener {
             String message = "Configurator initialization failed!";
             LOG.error(message, ce);
             throw new RuntimeException(message, ce);
-        }
-    }
-
-    public static String getPath() {
-        return SosContextListener.path;
-    }
-
-    public static void setPath(String path) {
-        SosContextListener.path = path;
-    }
-
-    public static boolean hasPath() {
-        return SosContextListener.path != null;
-    }
-
-    public static void registerShutdownHook(Runnable runnable) {
-        if (runnable != null) {
-            synchronized(hooks) {
-                hooks.add(runnable);
-            }
-        }
-    }
-
-    public static void registerShutdownHook(final Cleanupable cleanupable) {
-        if (cleanupable != null) {
-            registerShutdownHook(new Runnable() {
-                @Override
-                public void run() {
-                    cleanupable.cleanup();
-                }
-            });
         }
     }
 }

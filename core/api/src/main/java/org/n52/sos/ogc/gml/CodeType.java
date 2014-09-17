@@ -31,13 +31,11 @@ package org.n52.sos.ogc.gml;
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.StringHelper;
 
-import com.google.common.base.Objects;
-
 /**
  * Class represents a GML conform CodeType element
- *
+ * 
  * @since 4.0.0
- *
+ * 
  */
 public class CodeType {
 
@@ -49,18 +47,18 @@ public class CodeType {
     /**
      * Code space
      */
-    private String codeSpace;
+    private String codeSpace = Constants.EMPTY_STRING;
 
     /**
      * constructor
-     *
+     * 
      * @param value
      *            Value/identifier
      */
     public CodeType(final String value) {
         this.value = value;
     }
-
+    
     public CodeType(final String value, final String codespace) {
         setValue(value);
         setCodeSpace(codespace);
@@ -68,7 +66,7 @@ public class CodeType {
 
     /**
      * Get value
-     *
+     * 
      * @return Value to set
      */
     public String getValue() {
@@ -77,7 +75,7 @@ public class CodeType {
 
     /**
      * Get code space
-     *
+     * 
      * @return Code space
      */
     public String getCodeSpace() {
@@ -86,7 +84,7 @@ public class CodeType {
 
     /**
      * Set value and return this CodeType object
-     *
+     * 
      * @param value
      *            Value to set
      * @return This CodeType object
@@ -98,7 +96,7 @@ public class CodeType {
 
     /**
      * Set code space and return this CodeType object
-     *
+     * 
      * @param codeSpace
      *            Code space to set
      * @return This CodeType object
@@ -110,7 +108,7 @@ public class CodeType {
 
     /**
      * Check whether value is set
-     *
+     * 
      * @return <code>true</code>, if value is set
      */
     public boolean isSetValue() {
@@ -119,7 +117,7 @@ public class CodeType {
 
     /**
      * Check whether code space is set
-     *
+     * 
      * @return <code>true</code>, if code space is set
      */
     public boolean isSetCodeSpace() {
@@ -128,25 +126,6 @@ public class CodeType {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
-                .add("value", getValue())
-                .add("codeSpace", getCodeSpace())
-                .toString();
+        return String.format("CodeType [value=%s, codeSpace=%s]", getValue(), getCodeSpace());
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof CodeType) {
-            CodeType that = (CodeType) obj;
-            return Objects.equal(getValue(), that.getValue()) &&
-                   Objects.equal(getCodeSpace(), that.getCodeSpace());
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getValue(), getCodeSpace());
-    }
-
 }

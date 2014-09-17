@@ -59,10 +59,5 @@ public class SeriesCategoryValue extends SeriesValue implements CategoryValue {
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(getValue());
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
 
 }

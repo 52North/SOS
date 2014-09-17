@@ -59,10 +59,5 @@ public class ObservationCategoryValue extends ObservationValue implements Catego
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(getValue());
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
 
 }

@@ -129,7 +129,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
                     SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OBSERVATION_CONSTELLATION);
             return namedQuery.list();
         } else {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
             Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
                 Criteria seriesCriteria = criteria.createCriteria(SeriesObservationInfo.SERIES);
@@ -173,7 +173,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
                     SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OFFERING);
             return namedQuery.list();
         } else {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
             Criteria c = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
                 Criteria seriesCriteria = c.createCriteria(SeriesObservationInfo.SERIES);
@@ -240,7 +240,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
         projectionList.add(Projections.property(FeatureOfInterest.IDENTIFIER));
 
         //get parents if transactional profile is active
-        boolean tFoiSupported = HibernateHelper.isEntitySupported(TFeatureOfInterest.class);
+        boolean tFoiSupported = HibernateHelper.isEntitySupported(TFeatureOfInterest.class, session);
         if (tFoiSupported) {
             criteria.createAlias(TFeatureOfInterest.PARENTS, "pfoi", JoinType.LEFT_OUTER_JOIN);
             projectionList.add(Projections.property("pfoi." + FeatureOfInterest.IDENTIFIER));

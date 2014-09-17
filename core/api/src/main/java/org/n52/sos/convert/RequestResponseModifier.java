@@ -41,9 +41,5 @@ public interface RequestResponseModifier<T extends AbstractServiceRequest<?>,S e
     T modifyRequest(T request) throws OwsExceptionReport;
 
     S modifyResponse(T request, S response) throws OwsExceptionReport;
-    
-    boolean isMerger();
-    
-    boolean isSplitter();
 
 }

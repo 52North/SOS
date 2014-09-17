@@ -95,8 +95,6 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
      * file
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(OmEncoderv20.class);
-    
-    private OmV20XmlStreamWriter streamWriter;
 
     private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(OmConstants.NS_OM_2,
             OmObservation.class, NamedValue.class, SingleObservationValue.class, MultiObservationValues.class);
@@ -122,14 +120,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
                 .join(ENCODER_KEYS));
     }
 
-    private OmV20XmlStreamWriter getStreamWriter() {
-		if (streamWriter == null) {
-			streamWriter = new OmV20XmlStreamWriter();
-		}
-		return streamWriter;
-	}
-
-	@Override
+    @Override
     public Set<EncoderKey> getEncoderKeyType() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
@@ -197,7 +188,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         encodingValues.setEncoder(this);
         if (objectToEncode instanceof OmObservation) {
             try {
-                getStreamWriter().write((OmObservation)objectToEncode, outputStream, encodingValues);
+                new OmV20XmlStreamWriter().write((OmObservation)objectToEncode, outputStream, encodingValues);
             } catch (XMLStreamException xmlse) {
                 throw new NoApplicableCodeException().causedBy(xmlse).withMessage("Error while writing element to stream!");
             }

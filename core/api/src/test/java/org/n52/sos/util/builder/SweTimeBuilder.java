@@ -28,7 +28,6 @@
  */
 package org.n52.sos.util.builder;
 
-import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.swe.simpleType.SweTime;
 
 /**
@@ -43,10 +42,7 @@ public class SweTimeBuilder {
     }
 
     public SweTime build() {
-    	SweTime sweTime = new SweTime();
-    	sweTime.setDefinition(OmConstants.PHENOMENON_TIME);
-        return sweTime;
-        
+        return new SweTime();
     }
 
 }

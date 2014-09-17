@@ -30,7 +30,10 @@ package org.n52.sos.ds.hibernate.values;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
-import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
+import org.n52.sos.ds.hibernate.dao.AbstractSpatialFilteringProfileDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.entities.values.ObservationValue;
+import org.n52.sos.ds.hibernate.util.observation.SpatialFilteringProfileAdder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -65,6 +68,7 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     public HibernateScrollableStreamingValue(GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest) {
         super(request, procedure, observableProperty, featureOfInterest);
+        setSpatialFilteringProfileAdder(new SpatialFilteringProfileAdder());
     }
 
     @Override
@@ -85,15 +89,10 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     }
 
     @Override
-	public AbstractValue nextEntity() throws OwsExceptionReport {
-    	return (AbstractValue) scrollableResult.get()[0];
-	}
-
-	@Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-        	AbstractValue resultObject = nextEntity();
-            TimeValuePair value = resultObject.createTimeValuePairFrom();
+            ObservationValue resultObject = (ObservationValue) scrollableResult.get()[0];
+            TimeValuePair value = createTimeValuePairFrom(resultObject);
             session.evict(resultObject);
             return value;
         } catch (final HibernateException he) {
@@ -107,8 +106,13 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     public OmObservation nextSingleObservation() throws OwsExceptionReport {
         try {
             OmObservation observation = observationTemplate.cloneTemplate();
-            AbstractValue resultObject = nextEntity();
-            resultObject.addValuesToObservation(observation, getResponseFormat());
+            ObservationValue resultObject = (ObservationValue) scrollableResult.get()[0];
+            addValuesToObservation(observation, resultObject);
+            if (resultObject.hasSamplingGeometry()) {
+                observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
+            } else {
+                addSpatialFilteringProfile(observation, resultObject.getObservationId());
+            }
             checkForModifications(observation);
             session.evict(resultObject);
             return observation;
@@ -116,6 +120,26 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
             sessionHolder.returnSession(session);
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Query and add Spatial Filtering Profile information to observation
+     * 
+     * @param observation
+     *            Observation to add Spatial Filtering Profile information
+     * @param oId
+     *            Datasource observation id
+     * @throws OwsExceptionReport
+     *             If an error occurs when querying the Spatial Filtering
+     *             Profile information or during the adding
+     */
+    private void addSpatialFilteringProfile(OmObservation observation, Long oId) throws OwsExceptionReport {
+        AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
+                DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
+        if (spatialFilteringProfileDAO != null) {
+            getSpatialFilteringProfileAdder().add(spatialFilteringProfileDAO.getSpatialFilertingProfile(oId, session),
+                    observation);
         }
     }
 
@@ -156,4 +180,5 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     private void setScrollableResult(ScrollableResults scrollableResult) {
         this.scrollableResult = scrollableResult;
     }
+
 }

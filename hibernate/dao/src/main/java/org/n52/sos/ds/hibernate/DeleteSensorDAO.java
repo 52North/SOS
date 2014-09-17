@@ -35,13 +35,12 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.n52.sos.ds.AbstractDeleteSensorDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesObservationDAO;
+import org.n52.sos.ds.hibernate.dao.series.SeriesDAO;
+import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.series.Series;
@@ -118,16 +117,16 @@ public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
             session.saveOrUpdate(procedure);
             session.flush();
             // set deleted flag in ObservationConstellation table to true
-            if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
+            if (HibernateHelper.isEntitySupported(ObservationConstellation.class, session)) {
                 new ObservationConstellationDAO().updateObservatioConstellationSetAsDeletedForProcedure(identifier,
                         deleteFlag, session);
             }
             // set deleted flag in Series and Observation table for series concept to true
-            if (HibernateHelper.isEntitySupported(Series.class)) {
+            if (HibernateHelper.isEntitySupported(Series.class, session)) {
                 List<Series> series =
-                        DaoFactory.getInstance().getSeriesDAO().updateSeriesSetAsDeletedForProcedureAndGetSeries(identifier, deleteFlag,
+                        new SeriesDAO().updateSeriesSetAsDeletedForProcedureAndGetSeries(identifier, deleteFlag,
                                 session);
-                getSeriesObservationDAO().updateObservationSetAsDeletedForSeries(series, deleteFlag, session);
+                new SeriesObservationDAO().updateObservationSetAsDeletedForSeries(series, deleteFlag, session);
             } 
             // set deleted flag in Observation table for old concept to true
             else {
@@ -135,16 +134,6 @@ public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
             }
         } else {
             throw new NoApplicableCodeException().withMessage("The requested identifier is not contained in database");
-        }
-    }
-    
-    protected AbstractSeriesObservationDAO getSeriesObservationDAO() throws OwsExceptionReport {
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-        if (observationDAO instanceof AbstractSeriesObservationDAO) {
-            return (AbstractSeriesObservationDAO) observationDAO;
-        } else {
-            throw new NoApplicableCodeException().withMessage("The required '%s' implementation is no supported!",
-                    AbstractObservationDAO.class.getName());
         }
     }
 

@@ -45,6 +45,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.AbstractServiceRequest;
+import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.AbstractServiceResponse;
 
 public abstract class AbstractAqdRequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
@@ -69,6 +70,12 @@ public abstract class AbstractAqdRequestOperator<D extends OperationDAO, Q exten
 	protected AbstractServiceRequest<?> changeRequestServiceVersion(AbstractServiceRequest<?> request) {
 		request.setService(SosConstants.SOS);
 		request.setVersion(Sos2Constants.SERVICEVERSION);
+		return request;
+	}
+	
+	protected AbstractServiceRequest<?> changeRequestServiceVersionToAqd(AbstractServiceRequest<?> request) {
+		request.setService(AqdConstants.AQD);
+		request.setVersion(AqdConstants.VERSION);
 		return request;
 	}
 	

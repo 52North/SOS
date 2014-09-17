@@ -31,93 +31,73 @@ package org.n52.sos.converter;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.convert.RequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
-import org.n52.sos.encode.Encoder;
-import org.n52.sos.encode.ObservationEncoder;
-import org.n52.sos.ogc.om.AbstractStreaming;
-import org.n52.sos.ogc.om.MultiObservationValues;
-import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.TimeValuePair;
-import org.n52.sos.ogc.om.values.NilTemplateValue;
-import org.n52.sos.ogc.om.values.TVPValue;
-import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.response.GetObservationResponse;
-import org.n52.sos.response.InsertObservationResponse;
-import org.n52.sos.util.CodingHelper;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class AqdSplitMergeObservations implements RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
-	
-	private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
-	
-	/**
-	 * Get the keys
-	 * 
-	 * @return Set of keys
-	 */
-	private static Set<RequestResponseModifierKeyType> getKeyTypes() {
-		Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
-		keys.add(new RequestResponseModifierKeyType(AqdConstants.AQD, AqdConstants.VERSION, new GetObservationRequest()));
-		keys.add(new RequestResponseModifierKeyType(AqdConstants.AQD, AqdConstants.VERSION, new GetObservationRequest(), new GetObservationResponse()));
-		return keys;
-	}
+public class AqdSplitMergeObservations implements
+        RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
 
-	@Override
-	public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
-		return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
-	}
+    private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
-	@Override
-	public AbstractServiceRequest<?> modifyRequest(
-			AbstractServiceRequest<?> request) throws OwsExceptionReport {
-		if (request instanceof InsertObservationRequest) {
-			// TODO
-		}
-		return request;
-	}
+    /**
+     * Get the keys
+     * 
+     * @return Set of keys
+     */
+    private static Set<RequestResponseModifierKeyType> getKeyTypes() {
+        Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
+        keys.add(new RequestResponseModifierKeyType(AqdConstants.AQD, AqdConstants.VERSION,
+                new GetObservationRequest()));
+        keys.add(new RequestResponseModifierKeyType(AqdConstants.AQD, AqdConstants.VERSION,
+                new GetObservationRequest(), new GetObservationResponse()));
+        return keys;
+    }
 
-	@Override
-	public AbstractServiceResponse modifyResponse(
-			AbstractServiceRequest<?> request, AbstractServiceResponse response)
-			throws OwsExceptionReport {
-		if (response instanceof GetObservationResponse) {
-			return mergeObservations((GetObservationResponse)response);
-		}
-		return response;
-	}
+    @Override
+    public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
+        return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
+    }
 
-	private AbstractServiceResponse mergeObservations(
-			GetObservationResponse response) throws OwsExceptionReport {
-		if (response.hasStreamingData()) {
-			mergeStreamingData(response);
-		} else {
-			response.setObservationCollection(mergeObservations(response.getObservationCollection()));
-		}
-		return response;
-	}
+    @Override
+    public AbstractServiceRequest<?> modifyRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
+        if (request instanceof InsertObservationRequest) {
+            // TODO
+        }
+        return request;
+    }
 
-	private List<OmObservation> mergeObservations(List<OmObservation> observationCollection) {
-		if (observationCollection != null) {
+    @Override
+    public AbstractServiceResponse modifyResponse(AbstractServiceRequest<?> request, AbstractServiceResponse response)
+            throws OwsExceptionReport {
+        if (response instanceof GetObservationResponse) {
+            return mergeObservations((GetObservationResponse) response);
+        }
+        return response;
+    }
+
+    private AbstractServiceResponse mergeObservations(GetObservationResponse response) throws OwsExceptionReport {
+        response.setMergeObservations(true);
+        if (!response.hasStreamingData()) {
+            response.setObservationCollection(mergeObservations(response.getObservationCollection()));
+        }
+        return response;
+    }
+
+    private List<OmObservation> mergeObservations(List<OmObservation> observationCollection) {
+        if (observationCollection != null) {
             final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
             int obsIdCounter = 1;
             for (final OmObservation sosObservation : observationCollection) {
@@ -131,7 +111,6 @@ public class AqdSplitMergeObservations implements RequestResponseModifier<Abstra
                                 sosObservation.getObservationConstellation())) {
                             combinedSosObs.setResultTime(null);
                             mergeObservationValues(combinedSosObs, sosObservation);
-//                            combinedSosObs.mergeWithObservation(sosObservation);
                             combined = true;
                             break;
                         }
@@ -142,83 +121,48 @@ public class AqdSplitMergeObservations implements RequestResponseModifier<Abstra
                 }
             }
             return mergedObservations;
-		}
-		return observationCollection;
-	}
+        }
+        return observationCollection;
+    }
 
-	private void mergeObservationValues(OmObservation combinedSosObs, OmObservation sosObservation) {
-		mergeValues(combinedSosObs, sosObservation);
+    private void mergeObservationValues(OmObservation combinedSosObs, OmObservation sosObservation) {
+        mergeValues(combinedSosObs, sosObservation);
         mergeResultTimes(combinedSosObs, sosObservation);
-	}
-	
-	private void mergeValues(OmObservation combinedSosObs, OmObservation sosObservation) {
-			SweDataArray combinedValue = (SweDataArray)combinedSosObs.getValue().getValue().getValue();
-			SweDataArray value = (SweDataArray)sosObservation.getValue().getValue();
-			if (value.isSetValues()) {
-				combinedValue.addAll(value.getValues());
-			}
-//		
-//	        if (combinedSosObs.getValue() instanceof SingleObservationValue) {
-//	            tvpValue = convertSingleValueToMultiValue((SingleObservationValue<?>) combinedSosObs.getValue());
-//	        } else {
-//	            tvpValue = (TVPValue) ((MultiObservationValues<?>) combinedSosObs.getValue()).getValue();
-//	        }
-//	        if (sosObservation.getValue() instanceof SingleObservationValue) {
-//	            final SingleObservationValue<?> singleValue = (SingleObservationValue<?>) sosObservation.getValue();
-//	            if (!(singleValue.getValue() instanceof NilTemplateValue)) {
-//	                final TimeValuePair timeValuePair =
-//	                        new TimeValuePair(singleValue.getPhenomenonTime(), singleValue.getValue());
-//	                tvpValue.addValue(timeValuePair);
-//	            }
-//	        } else if (sosObservation.getValue() instanceof MultiObservationValues) {
-//	            final MultiObservationValues<?> multiValue = (MultiObservationValues<?>) sosObservation.getValue();
-//	            tvpValue.addValues(((TVPValue) multiValue.getValue()).getValue());
-//	        }
-	}
+    }
+
+    private void mergeValues(OmObservation combinedSosObs, OmObservation sosObservation) {
+        SweDataArray combinedValue = (SweDataArray) combinedSosObs.getValue().getValue().getValue();
+        SweDataArray value = (SweDataArray) sosObservation.getValue().getValue().getValue();
+        if (value.isSetValues()) {
+            combinedValue.addAll(value.getValues());
+        }
+    }
 
     /**
      * Merge result time with passed observation result time
      * 
      * @param sosObservation
      *            Observation to merge
-     * @param sosObservation2 
+     * @param sosObservation2
      */
     private void mergeResultTimes(final OmObservation combinedSosObs, OmObservation sosObservation) {
         if (combinedSosObs.isSetResultTime() && sosObservation.isSetResultTime()) {
             if (combinedSosObs.getResultTime().getValue().isBefore(sosObservation.getResultTime().getValue())) {
-            	combinedSosObs.setResultTime(sosObservation.getResultTime());
+                combinedSosObs.setResultTime(sosObservation.getResultTime());
             }
         } else if (!combinedSosObs.isSetResultTime() && sosObservation.isSetResultTime()) {
-        	combinedSosObs.setResultTime(sosObservation.getResultTime());
+            combinedSosObs.setResultTime(sosObservation.getResultTime());
         }
     }
 
-	private void mergeStreamingData(GetObservationResponse response) {
-		 List<OmObservation> observations = Lists.newArrayList();
-	        if (response.hasStreamingData()) {
-	            for (OmObservation observation : response.getObservationCollection()) {
-	                AbstractStreaming values = (AbstractStreaming) observation.getValue();
-//	                if (values.hasNextValue()) {
-//	                    if (isSetMergeObservation()) { 
-//	                        observations.addAll(values.mergeObservation());
-//	                    } else {
-//	                        observations.addAll(values.getObservation());
-//	                    }
-//	                }
-	            }
-	        }
-	        response.setObservationCollection(observations);
-		
-	}
+    @Override
+    public boolean isMerger() {
+        return true;
+    }
 
-	@Override
-	public boolean isMerger() {
-		return true;
-	}
-
-	@Override
-	public boolean isSplitter() {
-		return true;
-	}
+    @Override
+    public boolean isSplitter() {
+        return true;
+    }
 
 }

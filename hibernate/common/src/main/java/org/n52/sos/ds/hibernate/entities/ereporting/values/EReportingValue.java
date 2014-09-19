@@ -28,12 +28,15 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting.values;
 
+import org.hibernate.Session;
 import org.n52.sos.aqd.AqdConstants;
+import org.n52.sos.aqd.AqdHelper;
+import org.n52.sos.aqd.ReportObligationType;
+import org.n52.sos.ds.hibernate.dao.ereporting.EReportingQualityDAO;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingQuality;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasVerification;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasValidation;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
 import org.n52.sos.ds.hibernate.util.observation.EReportingHelper;
 import org.n52.sos.ogc.gml.time.Time;
@@ -44,14 +47,27 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swes.SwesExtensions;
+import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.util.StringHelper;
 
 public abstract class EReportingValue extends SeriesValue implements EReportingValues {
 
     private static final long serialVersionUID = 996063222630981539L;
 
-    private Integer validation;
+    private Integer validation = EReportingValues.DEFAULT_VALIDATION;
 
-    private Integer verification;
+    private Integer verification = EReportingValues.DEFAULT_VERIFICATION;
+
+    private String primaryObservation = EReportingValues.DEFAULT_PRIMARY_OBSERVATION;
+
+    private Boolean timeCoverageFlag;
+
+    private Boolean dataCaptureFlag;
+
+    private Double dataCapture;
+
+    private Double uncertaintyEstimation;
 
     public EReportingSeries getEReportingSeries() {
         if (hasEReportingSeries()) {
@@ -77,7 +93,7 @@ public abstract class EReportingValue extends SeriesValue implements EReportingV
     }
 
     @Override
-    public HasVerification setVerification(Integer verification) {
+    public EReportingValue setVerification(Integer verification) {
         this.verification = verification;
         return this;
     }
@@ -93,7 +109,7 @@ public abstract class EReportingValue extends SeriesValue implements EReportingV
     }
 
     @Override
-    public HasValidation setValidation(Integer validation) {
+    public EReportingValue setValidation(Integer validation) {
         this.validation = validation;
         return this;
     }
@@ -104,7 +120,85 @@ public abstract class EReportingValue extends SeriesValue implements EReportingV
     }
 
     @Override
-    public OmObservation mergeValueToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport {
+    public String getPrimaryObservation() {
+        return primaryObservation;
+    }
+
+    @Override
+    public EReportingValue setPrimaryObservation(String primaryObservation) {
+        this.primaryObservation = primaryObservation;
+        return this;
+    }
+
+    @Override
+    public boolean isSetPrimaryObservation() {
+        return StringHelper.isNotEmpty(getPrimaryObservation());
+    }
+
+    @Override
+    public Boolean getDataCaptureFlag() {
+        return this.dataCaptureFlag;
+    }
+
+    @Override
+    public void setDataCaptureFlag(Boolean dataCaptureFlag) {
+        this.dataCaptureFlag = dataCaptureFlag;
+    }
+
+    @Override
+    public boolean isSetDataCaptureFlag() {
+        return this.dataCaptureFlag != null;
+    }
+
+    @Override
+    public Double getDataCapture() {
+        return this.dataCapture;
+    }
+
+    @Override
+    public EReportingValue setDataCapture(Double dataCapture) {
+        this.dataCapture = dataCapture;
+        return this;
+    }
+
+    @Override
+    public boolean isSetDataCapture() {
+        return this.dataCapture != null;
+    }
+
+    @Override
+    public Boolean getTimeCoverageFlag() {
+        return this.timeCoverageFlag;
+    }
+
+    @Override
+    public void setTimeCoverageFlag(Boolean timeCoverageFlag) {
+        this.timeCoverageFlag = timeCoverageFlag;
+    }
+
+    @Override
+    public boolean isSetTimeCoverageFlag() {
+        return this.timeCoverageFlag != null;
+    }
+
+    @Override
+    public Double getUncertaintyEstimation() {
+        return this.uncertaintyEstimation;
+    }
+
+    @Override
+    public void setUncertaintyEstimation(Double uncertaintyEstimation) {
+        this.uncertaintyEstimation = uncertaintyEstimation;
+    }
+
+    @Override
+    public boolean isSetUncertaintyEstimation() {
+        return this.uncertaintyEstimation != null;
+    }
+
+    @Override
+    public OmObservation mergeValueToObservation(OmObservation observation, String responseFormat)
+            throws OwsExceptionReport {
         if (checkResponseFormat(responseFormat)) {
             if (!observation.isSetValue()) {
                 addValuesToObservation(observation, responseFormat);
@@ -115,9 +209,10 @@ public abstract class EReportingValue extends SeriesValue implements EReportingV
             }
             if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observation.getObservationConstellation()
                     .getObservationType())) {
-                observation.getObservationConstellation().setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+                observation.getObservationConstellation().setObservationType(
+                        OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
             }
-            
+
         } else {
             super.mergeValueToObservation(observation, responseFormat);
         }
@@ -157,8 +252,26 @@ public abstract class EReportingValue extends SeriesValue implements EReportingV
     }
 
     @Override
-    protected void addValueSpecificDataToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport {
-        // TODO Auto-generated method stub
+    protected void addValueSpecificDataToObservation(OmObservation observation, String responseFormat)
+            throws OwsExceptionReport {
+        // nothing to do
+    }
+
+    @Override
+    public void addValueSpecificDataToObservation(OmObservation observation, Session session, SwesExtensions extensions)
+            throws OwsExceptionReport {
+        if (AqdHelper.hasFlowExtension(extensions)) {
+            ReportObligationType flow = AqdHelper.getFlow(extensions);
+            if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E1B.equals(flow)) {
+                int year = DateTimeHelper.makeDateTime(getPhenomenonTimeStart()).getYear();
+                EReportingQuality eReportingQuality =
+                        new EReportingQualityDAO().getEReportingQuality(getSeries().getSeriesId(), year,
+                                getPrimaryObservation(), session);
+                if (eReportingQuality != null) {
+                    observation.setResultQuality(EReportingHelper.getGmdDomainConsistency(eReportingQuality));
+                }
+            }
+        }
     }
 
     @Override
@@ -167,17 +280,23 @@ public abstract class EReportingValue extends SeriesValue implements EReportingV
         if (checkResponseFormat(responseFormat)) {
             if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observation.getObservationConstellation()
                     .getObservationType())) {
-                observation.getObservationConstellation().setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+                observation.getObservationConstellation().setObservationType(
+                        OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
             }
             observation.setValue(EReportingHelper.createSweDataArrayValue(observation, this));
         } else {
             super.addObservationValueToObservation(observation, value, responseFormat);
         }
-        
+
     }
 
     private boolean checkResponseFormat(String responseFormat) {
         return AqdConstants.NS_AQD.equals(responseFormat);
+    }
+
+    @Override
+    public String getDiscriminator() {
+        return getPrimaryObservation();
     }
 
 }

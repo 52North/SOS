@@ -29,22 +29,25 @@
 package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.List;
+import java.util.Set;
 
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.aqd.AqdConstants.ElementType;
+import org.n52.sos.aqd.AqdConstants.PrimaryObservation;
 import org.n52.sos.aqd.AqdUomRepository;
 import org.n52.sos.aqd.AqdUomRepository.Uom;
+import org.n52.sos.aqd.ElementType;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingValues;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingQualityData;
 import org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue;
 import org.n52.sos.gmd.GmdDomainConsistency;
-import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.quality.OmResultQuality;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweDataArray;
@@ -61,6 +64,7 @@ import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.SweHelper;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Helper class for eReporting.
@@ -112,9 +116,10 @@ public class EReportingHelper {
     public static SweDataArray createSweDataArray(OmObservation omObservation, EReportingValues observation) {
         SweDataArray sweDataArray = new SweDataArray();
         sweDataArray.setElementCount(createElementCount(omObservation));
-        sweDataArray.setElementType(createElementType(getUnit(omObservation, observation)));
+        PrimaryObservation primaryObservation = PrimaryObservation.from(observation.getPrimaryObservation());
+        sweDataArray.setElementType(createElementType(primaryObservation, getUnit(omObservation, observation)));
         sweDataArray.setEncoding(createEncoding(omObservation));
-        sweDataArray.setValues(createValue(omObservation, observation));
+        sweDataArray.setValues(createValue(omObservation, observation, primaryObservation));
         return sweDataArray;
     }
 
@@ -152,19 +157,23 @@ public class EReportingHelper {
         return new SweCount().setValue(1);
     }
 
-    private static SweAbstractDataComponent createElementType(String unit) {
+    private static SweAbstractDataComponent createElementType(PrimaryObservation primaryObservation, String unit) {
         SweDataRecord dataRecord = new SweDataRecord();
         dataRecord.setDefinition(AqdConstants.NAME_FIXED_OBSERVATIONS);
-        dataRecord.addField(createField(ElementType.StartTime, createSweTimeSamplingTime(ElementType.StartTime)));
-        dataRecord.addField(createField(ElementType.EndTime, createSweTimeSamplingTime(ElementType.EndTime)));
-        dataRecord.addField(createField(ElementType.Verification, createSweCatagory(ElementType.Verification)));
-        dataRecord.addField(createField(ElementType.Validation, createSweCatagory(ElementType.Validation)));
-        dataRecord.addField(createField(ElementType.Pollutant, createSweQuantity(ElementType.Pollutant, unit)));
+        dataRecord.addField(createField(ElementType.START_TIME, createSweTimeSamplingTime(ElementType.START_TIME)));
+        dataRecord.addField(createField(ElementType.END_TIME, createSweTimeSamplingTime(ElementType.END_TIME)));
+        dataRecord.addField(createField(ElementType.VERIFICATION, createSweCatagory(ElementType.VERIFICATION)));
+        dataRecord.addField(createField(ElementType.VALIDATION, createSweCatagory(ElementType.VALIDATION)));
+        ElementType pollutant = ElementType.getPollutantElementType(primaryObservation, unit);
+        dataRecord.addField(createField(pollutant, createSweQuantity(pollutant, unit)));
+        if (primaryObservation.isMultyDayPrimaryObservation()) {
+            dataRecord.addField(createField(ElementType.DATA_CAPTURE, createSweQuantity(ElementType.DATA_CAPTURE)));
+        }
         return dataRecord;
     }
 
     private static SweField createField(ElementType elementType, SweAbstractDataComponent content) {
-        return new SweField(elementType.name(), content);
+        return new SweField(elementType.getName(), content);
     }
 
     private static SweAbstractDataComponent createSweTimeSamplingTime(ElementType elementType) {
@@ -179,6 +188,10 @@ public class EReportingHelper {
     private static SweAbstractDataComponent createSweCatagory(ElementType elementType) {
         return new SweCategory().setDefinition(elementType.getDefinition());
     }
+    
+    private static SweAbstractDataComponent createSweQuantity(ElementType elementType) {
+        return createSweQuantity(elementType, elementType.getUOM());
+    }
 
     private static SweAbstractDataComponent createSweQuantity(ElementType elementType, String unit) {
         SweQuantity quantity = new SweQuantity();
@@ -187,7 +200,7 @@ public class EReportingHelper {
         if (aqdUom != null) {
             quantity.setUom(aqdUom.getConceptURI());
         } else {
-            quantity.setUom(OGCConstants.UNKNOWN);
+            quantity.setUom(unit);
         }
         return quantity;
     }
@@ -196,15 +209,13 @@ public class EReportingHelper {
         return SweHelper.createTextEncoding(omObservation);
     }
 
-    private static List<List<String>> createValue(OmObservation omObservation, EReportingValues observation) {
-        List<String> value = Lists.newArrayListWithCapacity(5);
-        addTimes(value, ((AbstractObservationTime) observation).createPhenomenonTime());
-        addIntegerValue(value, observation.getVerification());
-        addIntegerValue(value, observation.getValidation());
-        addPollutant(value, observation);
-        List<List<String>> list = Lists.newArrayList();
-        list.add(value);
-        return list;
+    private static void addDoubleValue(List<String> list, Double value) {
+        if (value != null) {
+            list.add(Double.toString(value));
+        } else {
+            list.add(Constants.EMPTY_STRING);
+        }
+        
     }
 
     private static void addIntegerValue(List<String> list, Integer value) {
@@ -229,6 +240,20 @@ public class EReportingHelper {
         } else {
             value.add(Constants.EMPTY_STRING);
         }
+    }
+
+    private static List<List<String>> createValue(OmObservation omObservation, EReportingValues observation, PrimaryObservation primaryObservation) {
+        List<String> value = Lists.newArrayListWithCapacity(5);
+        addTimes(value, ((AbstractObservationTime) observation).createPhenomenonTime());
+        addIntegerValue(value, observation.getVerification());
+        addIntegerValue(value, observation.getValidation());
+        addPollutant(value, observation);
+        if (primaryObservation.isMultyDayPrimaryObservation()) {
+            addDoubleValue(value, observation.getDataCapture());
+        }
+        List<List<String>> list = Lists.newArrayList();
+        list.add(value);
+        return list;
     }
 
     private static void addTimes(List<String> value, Time time) {
@@ -261,15 +286,20 @@ public class EReportingHelper {
     }
     
     private static void addQuality(EReportingValues eReportingObservation, SingleObservationValue<?> value) {
-        if (eReportingObservation.isSetDataCapture()) {
-            value.addQuality(GmdDomainConsistency.dataCapture(eReportingObservation.getDataCapture()));
-        }
-        if (eReportingObservation.isSetTimeCoverage()) {
-            value.addQuality(GmdDomainConsistency.timeCoverage(eReportingObservation.getTimeCoverage()));
-        }
-        if (eReportingObservation.isSetUncertaintyEstimation()) {
-            value.addQuality(GmdDomainConsistency.uncertaintyEstimation(eReportingObservation.getUncertaintyEstimation()));
-        }
+        value.addQualityList(getGmdDomainConsistency(eReportingObservation));
     }
     
+    public static Set<OmResultQuality> getGmdDomainConsistency(EReportingQualityData eReportingObservation) {
+        Set<OmResultQuality> set = Sets.newHashSet();
+        if (eReportingObservation.isSetDataCaptureFlag()) {
+            set.add(GmdDomainConsistency.dataCapture(eReportingObservation.getDataCaptureFlag()));
+        }
+        if (eReportingObservation.isSetTimeCoverageFlag()) {
+            set.add(GmdDomainConsistency.timeCoverage(eReportingObservation.getTimeCoverageFlag()));
+        }
+        if (eReportingObservation.isSetUncertaintyEstimation()) {
+            set.add(GmdDomainConsistency.uncertaintyEstimation(eReportingObservation.getUncertaintyEstimation()));
+        }
+        return set;
+    }
 }

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.series.values;
 
+import org.hibernate.Session;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.HibernateSeriesRelations.HasSeries;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
@@ -36,6 +37,7 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.swes.SwesExtensions;
 
 /**
  * Implementation of {@link AbstractValue} for series concept used in streaming
@@ -93,8 +95,20 @@ public class SeriesValue extends AbstractValue implements HasSeries {
     }
 
     @Override
+    public void addValueSpecificDataToObservation(OmObservation observation, Session session, SwesExtensions swesExtensions)
+            throws OwsExceptionReport {
+        // nothing to do
+        
+    }
+
+    @Override
     protected void addObservationValueToObservation(OmObservation observation, Value<?> value, String responseFormat)
             throws OwsExceptionReport {
         observation.setValue(getSingleObservationValue(value));
+    }
+
+    @Override
+    public String getDiscriminator() {
+        return null;
     }
 }

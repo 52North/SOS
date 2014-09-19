@@ -34,12 +34,17 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.n52.sos.aqd.AqdConstants;
+import org.n52.sos.aqd.AqdHelper;
+import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.series.SeriesIdentifiers;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.OptionNotSupportedException;
 import org.n52.sos.request.GetObservationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +60,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) {
+    public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws CodedException {
         return getSeriesCriteria(request, features, session).list();
     }
 
@@ -118,6 +123,23 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
      */
     public void addEReportingSamplingPointToCriteria(Criteria c, Collection<String> samplingPoints) {
         c.createCriteria(EReportingSeries.SAMPLING_POINT).add(Restrictions.in(EReportingSamplingPoint.IDENTIFIER, samplingPoints));
+    }
+
+    @Override
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
+        ReportObligationType flow = AqdHelper.getFlow(request.getExtensions());
+        if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E2A.equals(flow)) {
+            addAssessmentType(c, AqdConstants.AssessmentType.Fixed.name());
+        } else if (ReportObligationType.E1B.equals(flow)) {
+            addAssessmentType(c, AqdConstants.AssessmentType.Model.name());
+        } else {
+            throw new OptionNotSupportedException().withMessage("The requested e-Reporting flow %s is not supported!", flow.name());
+        }
+    }
+    
+    private void addAssessmentType(Criteria c, String assessmentType) {
+        c.createCriteria(EReportingSeries.SAMPLING_POINT).createCriteria(EReportingSamplingPoint.ASSESSMENTTYPE).
+        add(Restrictions.ilike(EReportingAssessmentType.ASSESSMENT_TYPE, assessmentType));
     }
     
 }

@@ -52,7 +52,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlString;
 import org.isotc211.x2005.gmd.AbstractDQElementDocument;
-
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.convert.Converter;
 import org.n52.sos.convert.ConverterException;
@@ -66,7 +65,6 @@ import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.AbstractStreaming;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmCompositePhenomenon;
@@ -317,20 +315,26 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
         return xbObservation;
     }
 
-    private void addResultQualities(OMObservationType xbObservation,
-                                    OmObservation sosObservation)
+    private void addResultQualities(OMObservationType xbObservation, OmObservation sosObservation)
             throws OwsExceptionReport {
-        if (sosObservation.getValue() instanceof SingleObservationValue) {
-            SingleObservationValue<?> singleObservationValue
-                    = (SingleObservationValue) sosObservation.getValue();
-            for (OmResultQuality quality : singleObservationValue.getQualityList()) {
-                AbstractDQElementDocument encodedQuality = (AbstractDQElementDocument) CodingHelper.encodeObjectToXml(null, quality, ImmutableMap.of(HelperValues.DOCUMENT, "true"));
-                XmlCursor c1 = xbObservation.addNewResultQuality().addNewAbstractDQElement().newCursor();
-                XmlCursor c2 = encodedQuality.getAbstractDQElement().newCursor();
-                c2.copyXml(c1);
-                c1.dispose();
-                c2.dispose();
-            }
+        if (sosObservation.isSetResultQuality()) {
+            addResultQualities(xbObservation, sosObservation.getResultQuality());
+        } else if (sosObservation.getValue() instanceof SingleObservationValue) {
+            addResultQualities(xbObservation, ((SingleObservationValue<?>) sosObservation.getValue()).getQualityList());
+        }
+    }
+
+    private void addResultQualities(OMObservationType xbObservation, Set<OmResultQuality> resultQuality)
+            throws OwsExceptionReport {
+        for (OmResultQuality quality : resultQuality) {
+            AbstractDQElementDocument encodedQuality =
+                    (AbstractDQElementDocument) CodingHelper.encodeObjectToXml(null, quality,
+                            ImmutableMap.of(HelperValues.DOCUMENT, "true"));
+            XmlCursor c1 = xbObservation.addNewResultQuality().addNewAbstractDQElement().newCursor();
+            XmlCursor c2 = encodedQuality.getAbstractDQElement().newCursor();
+            c2.copyXml(c1);
+            c1.dispose();
+            c2.dispose();
         }
     }
 

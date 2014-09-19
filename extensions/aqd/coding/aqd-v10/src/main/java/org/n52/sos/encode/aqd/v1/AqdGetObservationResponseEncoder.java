@@ -38,13 +38,15 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
+import org.n52.sos.aqd.AqdHelper;
+import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.aqd.v1.AqdGetObservationResponseXmlStreamWriter;
 import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.inspire.aqd.EReportingHeader;
-import org.n52.sos.inspire.aqd.ReportObligationType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.AbstractStreaming;
@@ -61,8 +63,6 @@ import org.n52.sos.util.Referenceable;
 import org.n52.sos.w3c.SchemaLocation;
 
 public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder<GetObservationResponse> implements StreamingDataEncoder {
-
-    private AqdGetObservationResponseXmlStreamWriter streamWriter;
 
     public AqdGetObservationResponseEncoder() {
         super(SosConstants.Operations.GetObservation.name(), GetObservationResponse.class);
@@ -82,7 +82,7 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
     protected XmlObject create(GetObservationResponse response) throws OwsExceptionReport {
         FeatureCollection featureCollection = getFeatureCollection(response);
         // TODO get FLOW from response
-        EReportingHeader eReportingHeader = getEReportingHeader(ReportObligationType.E2A);
+        EReportingHeader eReportingHeader = getEReportingHeader(getReportObligationType(response));
         featureCollection.addMember(eReportingHeader);
         TimePeriod timePeriod = new TimePeriod();
         boolean mergeStreaming = response.hasStreamingData() && !response.isSetMergeObservation();
@@ -119,7 +119,7 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
     protected void create(GetObservationResponse response, OutputStream outputStream, EncodingValues encodingValues)
             throws OwsExceptionReport {
         FeatureCollection featureCollection = getFeatureCollection(response);
-        EReportingHeader eReportingHeader = getEReportingHeader(ReportObligationType.E2A);
+        EReportingHeader eReportingHeader = getEReportingHeader(getReportObligationType(response));
         featureCollection.addMember(eReportingHeader);
         TimePeriod timePeriod = addToFeatureCollectionAndGetTimePeriod(featureCollection, response);
         if (!timePeriod.isEmpty()) {
@@ -130,11 +130,15 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
         additionalValues.put(HelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2);
         additionalValues.put(HelperValues.DOCUMENT, null);
         try {
-            getStreamWriter().write(featureCollection, outputStream, encodingValues);
+            new AqdGetObservationResponseXmlStreamWriter().write(featureCollection, outputStream, encodingValues);
         } catch (XMLStreamException xmlse) {
             throw new NoApplicableCodeException().causedBy(xmlse)
                     .withMessage("Error while writing element to stream!");
         }
+    }
+
+    private ReportObligationType getReportObligationType(GetObservationResponse response) throws InvalidParameterValueException {
+        return AqdHelper.getFlow(response.getExtensions());
     }
 
     private TimePeriod addToFeatureCollectionAndGetTimePeriod(FeatureCollection featureCollection,
@@ -154,13 +158,6 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
         featureCollection.setGmlId("fc_" + JavaHelper.generateID(new DateTime().toString()));
 
         return featureCollection;
-    }
-
-    private AqdGetObservationResponseXmlStreamWriter getStreamWriter() {
-        if (streamWriter == null) {
-            streamWriter = new AqdGetObservationResponseXmlStreamWriter();
-        }
-        return streamWriter;
     }
 
 }

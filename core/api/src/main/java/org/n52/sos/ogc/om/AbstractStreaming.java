@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ogc.om;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,7 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
 
     public abstract OmObservation nextSingleObservation() throws OwsExceptionReport;
 
-    public List<OmObservation> mergeObservation() throws OwsExceptionReport {
+    public Collection<OmObservation> mergeObservation() throws OwsExceptionReport {
         List<OmObservation> observations = getObservation();
         // TODO merge all observations with the same observationContellation
         // FIXME Failed to set the observation type to sweArrayObservation for

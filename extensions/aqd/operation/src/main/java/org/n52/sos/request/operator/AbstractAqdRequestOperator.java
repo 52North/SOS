@@ -29,70 +29,68 @@
 package org.n52.sos.request.operator;
 
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.coding.CodingRepository;
+import org.n52.sos.aqd.AqdHelper;
+import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.ds.OperationDAO;
-import org.n52.sos.encode.Encoder;
-import org.n52.sos.encode.EncoderKey;
-import org.n52.sos.encode.OperationEncoderKey;
 import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
-import org.n52.sos.inspire.aqd.ReportObligationType;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.AbstractServiceResponse;
 
 public abstract class AbstractAqdRequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
-		extends AbstractRequestOperator<D, Q, A> {
-	public AbstractAqdRequestOperator(String operationName, Class<Q> requestType) {
-		super(AqdConstants.AQD, AqdConstants.VERSION, operationName,
-				requestType);
-	}
+        extends AbstractRequestOperator<D, Q, A> {
+    public AbstractAqdRequestOperator(String operationName, Class<Q> requestType) {
+        super(AqdConstants.AQD, AqdConstants.VERSION, operationName, requestType);
+    }
 
-	@Override
-	protected D initDAO(String service, String operationName) {
-		return super.initDAO(SosConstants.SOS, operationName);
-	}
-	
-	protected void checkExtensions(final AbstractServiceRequest<?> request,
-			final CompositeOwsException exceptions) {
-		if (request.isSetExtensions()) {
-			// currently nothing to check
-		}
-	}
-
-	protected AbstractServiceRequest<?> changeRequestServiceVersion(AbstractServiceRequest<?> request) {
-		request.setService(SosConstants.SOS);
-		request.setVersion(Sos2Constants.SERVICEVERSION);
-		return request;
-	}
-	
-	protected AbstractServiceRequest<?> changeRequestServiceVersionToAqd(AbstractServiceRequest<?> request) {
-		request.setService(AqdConstants.AQD);
-		request.setVersion(AqdConstants.VERSION);
-		return request;
-	}
-	
-	protected AbstractServiceResponse changeResponseServiceVersion(AbstractServiceResponse response) {
-		response.setService(AqdConstants.AQD);
-		response.setVersion(AqdConstants.VERSION);
-		return response;
-	}
-	
-	protected void checkReportingHeader(ReportObligationType type) throws CodedException {
-		ReportObligationRepository.getInstance().createHeader(type);
-	}
-	
     @Override
-    protected void checkServiceParameter(String service)
-    		throws OwsExceptionReport {
-    	if (service == null || service.equalsIgnoreCase("NOT_SET")) {
+    protected D initDAO(String service, String operationName) {
+        return super.initDAO(SosConstants.SOS, operationName);
+    }
+
+    protected void checkExtensions(final AbstractServiceRequest<?> request, final CompositeOwsException exceptions) {
+        if (request.isSetExtensions() && AqdHelper.hasFlowExtension(request.getExtensions())) {
+            try {
+                AqdHelper.getFlow(request.getExtensions());
+            } catch (InvalidParameterValueException e) {
+                exceptions.add(e);
+            }
+        }
+
+    }
+
+    protected AbstractServiceRequest<?> changeRequestServiceVersion(AbstractServiceRequest<?> request) {
+        request.setService(SosConstants.SOS);
+        request.setVersion(Sos2Constants.SERVICEVERSION);
+        return request;
+    }
+
+    protected AbstractServiceRequest<?> changeRequestServiceVersionToAqd(AbstractServiceRequest<?> request) {
+        request.setService(AqdConstants.AQD);
+        request.setVersion(AqdConstants.VERSION);
+        return request;
+    }
+
+    protected AbstractServiceResponse changeResponseServiceVersion(AbstractServiceResponse response) {
+        response.setService(AqdConstants.AQD);
+        response.setVersion(AqdConstants.VERSION);
+        return response;
+    }
+
+    protected void checkReportingHeader(ReportObligationType type) throws CodedException {
+        ReportObligationRepository.getInstance().createHeader(type);
+    }
+
+    @Override
+    protected void checkServiceParameter(String service) throws OwsExceptionReport {
+        if (service == null || service.equalsIgnoreCase("NOT_SET")) {
             throw new MissingServiceParameterException();
         } else if (!service.equals(AqdConstants.AQD)) {
             throw new InvalidServiceParameterException(service);

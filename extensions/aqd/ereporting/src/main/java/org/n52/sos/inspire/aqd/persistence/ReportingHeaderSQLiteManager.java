@@ -29,6 +29,7 @@
 package org.n52.sos.inspire.aqd.persistence;
 
 import org.hibernate.Session;
+import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.config.sqlite.SQLiteManager;
 import org.n52.sos.config.sqlite.SQLiteManager.ThrowingHibernateAction;
@@ -41,7 +42,6 @@ import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.json.JSONEncoderKey;
 import org.n52.sos.inspire.aqd.RelatedParty;
 import org.n52.sos.inspire.aqd.ReportObligation;
-import org.n52.sos.inspire.aqd.ReportObligationType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.Cleanupable;
 import org.n52.sos.util.JSONUtils;

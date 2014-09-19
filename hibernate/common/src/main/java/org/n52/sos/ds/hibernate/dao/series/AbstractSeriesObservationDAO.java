@@ -312,7 +312,6 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                 Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
             final Criteria c = getDefaultObservationCriteria(session)
                     .createAlias(SeriesObservation.SERIES, "s");
-            
             checkAndAddSpatialFilteringProfileCriterion(c, request, session);
             
             if (CollectionHelper.isNotEmpty(request.getProcedures())) {
@@ -655,6 +654,6 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 		 LOGGER.debug("QUERY getLastObservationFor(series): {}",
 	                HibernateHelper.getSqlString(c));
 		return (SeriesObservation)c.uniqueResult();
-	}  
+	} 
 
 }

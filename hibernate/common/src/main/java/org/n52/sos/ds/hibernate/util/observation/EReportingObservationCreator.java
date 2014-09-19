@@ -28,15 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import java.util.List;
 import java.util.Set;
 
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.aqd.AqdConstants.ElementType;
-import org.n52.sos.aqd.AqdUomRepository;
-import org.n52.sos.aqd.AqdUomRepository.Uom;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingBlobObservation;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingBooleanObservation;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingCategoryObservation;
@@ -46,31 +41,9 @@ import org.n52.sos.ds.hibernate.entities.ereporting.EReportingNumericObservation
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingTextObservation;
-import org.n52.sos.gmd.GmdDomainConsistency;
-import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.util.Constants;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.SweHelper;
-
-import com.google.common.collect.Lists;
 
 public class EReportingObservationCreator implements AdditionalObservationCreator {
 

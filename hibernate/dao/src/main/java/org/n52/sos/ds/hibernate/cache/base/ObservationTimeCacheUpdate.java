@@ -28,17 +28,18 @@
  */
 package org.n52.sos.ds.hibernate.cache.base;
 
-import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.exception.CodedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
+import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+
 /**
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class ObservationTimeCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
@@ -54,7 +55,7 @@ public class ObservationTimeCacheUpdate extends AbstractThreadableDatasourceCach
             getCache().setMaxPhenomenonTime(observationDAO.getMaxPhenomenonTime(getSession()));
             getCache().setMinResultTime(observationDAO.getMinResultTime(getSession()));
             getCache().setMaxResultTime(observationDAO.getMaxResultTime(getSession()));
-        } catch (CodedException ce) {
+        } catch (OwsExceptionReport ce) {
             getErrors().add(ce);
         }
         LOGGER.debug("Finished executing ObservationTimeCacheUpdate ({})", getStopwatchResult());

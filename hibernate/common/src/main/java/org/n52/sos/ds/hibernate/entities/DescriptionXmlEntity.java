@@ -37,7 +37,7 @@ import org.n52.sos.util.StringHelper;
  * @since 4.0.0
  * 
  */
-public abstract class DescriptionXmlEntity implements Serializable, HasDescriptionXml {
+public abstract class DescriptionXmlEntity extends AbstractIdentifierNameDescriptionEntity implements Serializable, HasDescriptionXml {
 
     private static final long serialVersionUID = 4403718095170057053L;
 

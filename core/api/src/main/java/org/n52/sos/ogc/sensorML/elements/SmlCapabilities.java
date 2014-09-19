@@ -28,7 +28,11 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.n52.sos.ogc.swe.DataRecord;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 
 /**
  * SOS internal representation of SensorML capabilities
@@ -87,11 +91,19 @@ public class SmlCapabilities {
     }
 
     public boolean isSetAbstractDataRecord() {
-        return dataRecord != null;
+        return getDataRecord() != null;
     }
 
     public boolean isSetName() {
         return name != null && !name.isEmpty();
+    }
+    
+    @SuppressWarnings("rawtypes")
+    public Set<SweAbstractSimpleType<?>> getSweAbstractSimpleTypeFromFields(Class clazz) {
+        if (isSetAbstractDataRecord()) {
+            return getDataRecord().getSweAbstractSimpleTypeFromFields(clazz);
+        }
+        return Collections.emptySet();
     }
 
 }

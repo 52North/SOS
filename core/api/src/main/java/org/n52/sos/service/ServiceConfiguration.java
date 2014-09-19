@@ -28,15 +28,31 @@
  */
 package org.n52.sos.service;
 
-import static org.n52.sos.service.MiscSettings.*;
-import static org.n52.sos.service.ServiceSettings.*;
+import static org.n52.sos.service.MiscSettings.CHARACTER_ENCODING;
+import static org.n52.sos.service.MiscSettings.DEFAULT_FEATURE_PREFIX;
+import static org.n52.sos.service.MiscSettings.DEFAULT_OBSERVABLEPROPERTY_PREFIX;
+import static org.n52.sos.service.MiscSettings.DEFAULT_OFFERING_PREFIX;
+import static org.n52.sos.service.MiscSettings.DEFAULT_PROCEDURE_PREFIX;
+import static org.n52.sos.service.MiscSettings.GML_DATE_FORMAT;
+import static org.n52.sos.service.MiscSettings.HTTP_STATUS_CODE_USE_IN_KVP_POX_BINDING;
+import static org.n52.sos.service.MiscSettings.SRS_NAME_PREFIX_SOS_V1;
+import static org.n52.sos.service.MiscSettings.SRS_NAME_PREFIX_SOS_V2;
+import static org.n52.sos.service.ServiceSettings.ADD_OUTPUTS_TO_SENSOR_ML;
+import static org.n52.sos.service.ServiceSettings.ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR;
+import static org.n52.sos.service.ServiceSettings.SENSOR_DIRECTORY;
+import static org.n52.sos.service.ServiceSettings.SERVICE_URL;
+import static org.n52.sos.service.ServiceSettings.STRICT_SPATIAL_FILTERING_PROFILE;
+import static org.n52.sos.service.ServiceSettings.USE_DEFAULT_PREFIXES;
+import static org.n52.sos.service.ServiceSettings.VALIDATE_RESPONSE;
 
 import java.net.URI;
+import java.util.Locale;
 
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.i18n.I18NSettings;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.Validation;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -45,7 +61,7 @@ import org.n52.sos.util.XmlOptionsHelper;
  * @author Christian Autermann <c.autermann@52north.org>
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 @Configurable
@@ -132,18 +148,22 @@ public class ServiceConfiguration {
 
     private boolean deregisterJdbcDriver;
 
+    private Locale defaultLanguage;
+
+    private boolean showAllLanguageValues;
+
     private int maxNumberOfReturnedTimeSeries = Integer.MAX_VALUE;
 
     private int maxNumberOfReturnedValues = Integer.MAX_VALUE;
 
     private boolean overallExtrema = true;
-    
+
     private boolean streamingEncoding = true;
-    
+
     /**
      * Returns the default token seperator for results.
      * <p/>
-     * 
+     *
      * @return the tokenSeperator.
      */
     public String getTokenSeparator() {
@@ -301,7 +321,7 @@ public class ServiceConfiguration {
 
     /**
      * Get service URL.
-     * 
+     *
      * @return the service URL
      */
     public String getServiceURL() {
@@ -363,9 +383,33 @@ public class ServiceConfiguration {
         return deregisterJdbcDriver;
     }
 
+    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
+    public void setDefaultLanguage(final String defaultLanguage) {
+        Validation.notNullOrEmpty("Default language as three character string", defaultLanguage);
+        this.defaultLanguage = new Locale(defaultLanguage);
+    }
+
+    public Locale getDefaultLanguage() {
+        return defaultLanguage;
+    }
+
+    @Setting(I18NSettings.I18N_SHOW_ALL_LANGUAGE_VALUES)
+    public void setShowAllLanguageValues(final boolean showAllLanguageValues) {
+        this.showAllLanguageValues = showAllLanguageValues;
+    }
+
+    public boolean isShowAllLanguageValues() {
+        return showAllLanguageValues;
+    }
+
+    public boolean isSetDefaultLanguage() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
     @Setting(MiscSettings.HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES)
     public void setMaxNumberOfReturnedTimeSeries(Integer value) {
-        this.maxNumberOfReturnedTimeSeries = value.intValue();
+        this.maxNumberOfReturnedTimeSeries = value;
     }
 
     public int getMaxNumberOfReturnedTimeSeries() {
@@ -374,13 +418,13 @@ public class ServiceConfiguration {
 
     @Setting(MiscSettings.HYDRO_MAX_NUMBER_OF_RETURNED_VALUES)
     public void setMaxNumberOfReturnedValues(Integer value) {
-        this.maxNumberOfReturnedValues = value.intValue();
+        this.maxNumberOfReturnedValues = value;
     }
 
     public int getMaxNumberOfReturnedValues() {
         return maxNumberOfReturnedValues;
     }
-    
+
     @Setting(MiscSettings.RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST)
     public void setOverallExtrema(boolean overallExtrema) {
         this.overallExtrema  = overallExtrema;
@@ -389,7 +433,7 @@ public class ServiceConfiguration {
     public boolean isOverallExtrema() {
         return overallExtrema;
     }
-    
+
     @Setting(StreamingSettings.FORCE_STREAMING_ENCODING)
     public void setForceStreamingEncoding(boolean streamingEncoding) {
         this.streamingEncoding  = streamingEncoding;
@@ -401,13 +445,13 @@ public class ServiceConfiguration {
     public boolean isForceStreamingEncoding() {
         return streamingEncoding;
     }
-    
+
     /*
      * Now, we return the list of returned features and not a complex encoded
      * relatedFeature => this setting is not needed at all See
      * AbstractGetFeatureOfInterestDAO:100-195 Don't forget to activate in
      * MiscSettings the relatedFeature setting
-     * 
+     *
      * @Setting(MiscSettings.RELATED_SAMPLING_FEATURE_ROLE_FOR_CHILD_FEATURES)
      * public void setRelatedSamplingFeatureRoleForChildFeatures(final String
      * relatedSamplingFeatureRoleForChildFeatures) { Validation.notNullOrEmpty(
@@ -415,7 +459,7 @@ public class ServiceConfiguration {
      * relatedSamplingFeatureRoleForChildFeatures);
      * this.relatedSamplingFeatureRoleForChildFeatures =
      * relatedSamplingFeatureRoleForChildFeatures; }
-     * 
+     *
      * public String getRelatedSamplingFeatureRoleForChildFeatures() { return
      * relatedSamplingFeatureRoleForChildFeatures; }
      */

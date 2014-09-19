@@ -33,6 +33,9 @@ package org.n52.sos.ogc.sos;
  * 
  */
 public class SosProcedureDescriptionUnknowType extends SosProcedureDescription {
+    
+    private static final long serialVersionUID = -7646913585344709063L;
+    
     public SosProcedureDescriptionUnknowType(final String identifier, final String procedureDescriptionFormat,
             final String xmlDescription) {
         setIdentifier(identifier);

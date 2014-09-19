@@ -360,8 +360,8 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         LOGGER.trace("sweField: {}, sosElement: {}", sweField, sosElement);
         final DataRecordType.Field xbField =
                 DataRecordType.Field.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        if (sweField.getName() != null) {
-            xbField.setName(NcNameResolver.fixNcName(sweField.getName()));
+        if (sweField.isSetName()) {
+            xbField.setName(NcNameResolver.fixNcName(sweField.getName().getValue()));
         }
         final AbstractDataComponentType xbDCD = xbField.addNewAbstractDataComponent();
         xbDCD.set(createAbstractDataComponent(sosElement, new EnumMap<SosConstants.HelperValues, String>(
@@ -401,7 +401,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         if (sosSimpleType instanceof SweBoolean) {
             return createBoolean((SweBoolean) sosSimpleType);
         } else if (sosSimpleType instanceof SweCategory) {
-            return createCategoy((SweCategory) sosSimpleType);
+            return createCategory((SweCategory) sosSimpleType);
         } else if (sosSimpleType instanceof SweCount) {
             return createCount((SweCount) sosSimpleType);
         } else if (sosSimpleType instanceof SweObservableProperty) {
@@ -428,7 +428,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return xbBoolean;
     }
 
-    private CategoryType createCategoy(final SweCategory sosCategory) {
+    private CategoryType createCategory(final SweCategory sosCategory) {
         final CategoryType xbCategory =
                 CategoryType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         if (sosCategory.getCodeSpace() != null) {

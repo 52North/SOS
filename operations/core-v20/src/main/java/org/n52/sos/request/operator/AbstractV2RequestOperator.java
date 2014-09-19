@@ -31,6 +31,7 @@ package org.n52.sos.request.operator;
 import java.util.Map;
 
 import org.n52.sos.ds.OperationDAO;
+import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.AbstractServiceRequest;
@@ -47,7 +48,7 @@ import org.n52.sos.response.AbstractServiceResponse;
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
-public abstract class AbstractV2RequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest, A extends AbstractServiceResponse>
+public abstract class AbstractV2RequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
         extends AbstractRequestOperator<D, Q, A> implements WSDLAwareRequestOperator {
     public AbstractV2RequestOperator(String operationName, Class<Q> requestType) {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, operationName, requestType);
@@ -61,5 +62,11 @@ public abstract class AbstractV2RequestOperator<D extends OperationDAO, Q extend
     @Override
     public Map<String, String> getAdditionalPrefixes() {
         return null;
+    }
+    
+    protected void checkExtensions(final AbstractServiceRequest<?> request, final CompositeOwsException exceptions) {
+        if (request.isSetExtensions()) {
+            // currently nothing to check
+        }
     }
 }

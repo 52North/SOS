@@ -31,6 +31,7 @@ package org.n52.sos.cache.ctrl.action;
 import java.util.List;
 
 import org.n52.sos.cache.WritableContentCache;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.Time;
@@ -40,6 +41,7 @@ import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.util.Action;
+import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,8 +108,8 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
             cache.updateResultTime(resultTime);
             cache.updatePhenomenonTimeForProcedure(procedure, phenomenonTime);
 
-            if (observation.getIdentifier() != null) {
-                final String identifier = observation.getIdentifier().getValue();
+            if (observation.getIdentifierCodeWithAuthority() != null) {
+                final String identifier = observation.getIdentifierCodeWithAuthority().getValue();
                 cache.addObservationIdentifier(identifier);
                 cache.addObservationIdentifierForProcedure(procedure, identifier);
             }
@@ -120,14 +122,14 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
             cache.updateGlobalEnvelope(envelope);
 
             for (SamplingFeature sosSamplingFeature : observedFeatures) {
-                String featureOfInterest = sosSamplingFeature.getIdentifier().getValue();
+                String featureOfInterest = sosSamplingFeature.getIdentifierCodeWithAuthority().getValue();
 
                 cache.addFeatureOfInterest(featureOfInterest);
                 cache.addProcedureForFeatureOfInterest(featureOfInterest, procedure);
                 if (sosSamplingFeature.isSetSampledFeatures()) {
                     for (AbstractFeature parentFeature : sosSamplingFeature.getSampledFeatures()) {
-                        getCache().addParentFeature(sosSamplingFeature.getIdentifier().getValue(),
-                                parentFeature.getIdentifier().getValue());
+                        getCache().addParentFeature(sosSamplingFeature.getIdentifierCodeWithAuthority().getValue(),
+                                parentFeature.getIdentifierCodeWithAuthority().getValue());
                     }
                 }
                 for (String offering : request.getOfferings()) {
@@ -145,6 +147,7 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
                 for (NamedValue<?> namedValue : observation.getParameter()) {
                     if (Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
                         if (namedValue.getValue().isSetValue()) {
+                            spatialFitleringProfileEnvelope.expandToInclude(((Geometry) namedValue.getValue().getValue()).getEnvelopeInternal());
                             spatialFitleringProfileEnvelope.expandToInclude(((Geometry) namedValue.getValue()
                                     .getValue()).getEnvelopeInternal());
                         }

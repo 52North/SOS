@@ -45,6 +45,7 @@ import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
@@ -229,7 +230,11 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
     protected AbstractFeature getSosAbstractFeature(final FeatureOfInterest featureOfInterest, final String version,
             final Session session) throws OwsExceptionReport {
         final FeatureQueryHandler featureQueryHandler = Configurator.getInstance().getFeatureQueryHandler();
-        return featureQueryHandler.getFeatureByID(featureOfInterest.getIdentifier(), session, version, -1);
+        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject()
+            .addFeatureIdentifier(featureOfInterest.getIdentifier())
+            .setConnection(session)
+            .setVersion(version);
+        return featureQueryHandler.getFeatureByID(queryObject);
     }
 
     /**

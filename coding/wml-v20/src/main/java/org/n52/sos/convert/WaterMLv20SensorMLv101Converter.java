@@ -110,7 +110,7 @@ public class WaterMLv20SensorMLv101Converter implements Converter<SosProcedureDe
                 for (final AbstractProcess member : sensorML.getMembers()) {
                     // TODO get values and add to obsProcess
                     if (member.isSetIdentifier()) {
-                        observationProcess.setIdentifier(member.getIdentifier());
+                        observationProcess.setIdentifier(member.getIdentifierCodeWithAuthority());
                     }
                     if (member instanceof System) {
                         convertSystemToObservationProcess(observationProcess, (System) member);
@@ -123,7 +123,7 @@ public class WaterMLv20SensorMLv101Converter implements Converter<SosProcedureDe
         } else {
             observationProcess.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_UNKNOWN));
         }
-        observationProcess.setIdentifier(objectToConvert.getIdentifier());
+        observationProcess.setIdentifier(objectToConvert.getIdentifierCodeWithAuthority());
         observationProcess.setDescriptionFormat(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING);
         return observationProcess;
     }
@@ -395,7 +395,7 @@ public class WaterMLv20SensorMLv101Converter implements Converter<SosProcedureDe
         if (field.getElement() instanceof SweAbstractSimpleType) {
             final NamedValue<String> namedValueProperty =
                     getNamedValuePairForSosSweAbstractSimpleType((SweAbstractSimpleType) field.getElement());
-            namedValueProperty.getName().setHref(field.getName());
+            namedValueProperty.getName().setTitle(field.getName().getValue());
             return namedValueProperty;
         }
         return null;

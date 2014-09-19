@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.dao;
 
 import org.hibernate.Session;
+
 import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.series.SeriesSpatialFilteringProfileDAO;
 import org.n52.sos.ds.hibernate.entities.Observation;
@@ -36,18 +37,18 @@ import org.n52.sos.ds.hibernate.entities.SpatialFilteringProfile;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.entities.series.SeriesSpatialFilteringProfile;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+
 
 /**
- * Hibernate data access factory
- * 
+ * Hibernate data access factory.
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.0
- * 
+ *
  */
 public class DaoFactory {
-
     /**
      * instance
      */
@@ -55,7 +56,7 @@ public class DaoFactory {
 
     /**
      * Get the DaoFactory instance
-     * 
+     *
      * @return Returns the instance of the DaoFactory.
      */
     public static synchronized DaoFactory getInstance() {
@@ -68,40 +69,76 @@ public class DaoFactory {
     /**
      * Get the currently supported Hibernate Observation data access
      * implementation
-     * 
+     *
      * @param session
-     *            Hibernate session
+     *                Hibernate session
+     *
      * @return Currently supported Hibernate Observation data access
      *         implementation
-     * @throws CodedException
-     *             If no Hibernate Observation data access is supported
+     *
+     * @throws OwsExceptionReport
+     *                        If no Hibernate Observation data access is supported
+     * @deprecated  use {@link #getObservationDAO() }
      */
-    public AbstractObservationDAO getObservationDAO(Session session) throws CodedException {
-        if (HibernateHelper.isEntitySupported(SeriesObservation.class, session)) {
+    @Deprecated
+    public AbstractObservationDAO getObservationDAO(Session session)
+            throws OwsExceptionReport {
+        return getObservationDAO();
+    }
+
+    /**
+     * Get the currently supported Hibernate Observation data access
+     * implementation
+     *
+     * @return Currently supported Hibernate Observation data access
+     *         implementation
+     *
+     * @throws OwsExceptionReport
+     *                        If no Hibernate Observation data access is supported
+     */
+    public AbstractObservationDAO getObservationDAO()
+            throws OwsExceptionReport {
+        if (HibernateHelper.isEntitySupported(SeriesObservation.class)) {
             return new SeriesObservationDAO();
-        } else if (HibernateHelper.isEntitySupported(Observation.class, session)) {
+        } else if (HibernateHelper.isEntitySupported(Observation.class)) {
             return new ObservationDAO();
         } else {
-            throw new NoApplicableCodeException().withMessage("Implemented observation DAO is missing!");
+            throw new NoApplicableCodeException()
+                    .withMessage("Implemented observation DAO is missing!");
         }
     }
 
     /**
      * Get the currently supported Hibernate SpatialFilteringProfile data access
      * implementation or null
-     * 
+     *
      * @param session
-     *            Hibernate session
+     *                Hibernate session
+     *
      * @return Currently supported Hibernate SpatialFilteringProfile data access
      *         implementation
+     * @throws org.n52.sos.ogc.ows.OwsExceptionReport
+     * @deprecated use {@link #getSpatialFilteringProfileDAO()}
      */
     @Deprecated
-    public AbstractSpatialFilteringProfileDAO<?> getSpatialFilteringProfileDAO(Session session) throws CodedException {
-        if (HibernateHelper.isEntitySupported(SeriesSpatialFilteringProfile.class, session)) {
+    public AbstractSpatialFilteringProfileDAO<?> getSpatialFilteringProfileDAO(Session session) throws OwsExceptionReport {
+        return getSpatialFilteringProfileDAO();
+    }
+    /**
+     * Get the currently supported Hibernate SpatialFilteringProfile data access
+     * implementation or null
+     *
+     * @return Currently supported Hibernate SpatialFilteringProfile data access
+     *         implementation
+     * @throws org.n52.sos.ogc.ows.OwsExceptionReport
+     */
+    public AbstractSpatialFilteringProfileDAO<?> getSpatialFilteringProfileDAO() throws OwsExceptionReport {
+        if (HibernateHelper.isEntitySupported(SeriesSpatialFilteringProfile.class)) {
             return new SeriesSpatialFilteringProfileDAO();
-        } else if (HibernateHelper.isEntitySupported(SpatialFilteringProfile.class, session)) {
+        } else if (HibernateHelper.isEntitySupported(SpatialFilteringProfile.class)) {
             return new SpatialFilteringProfileDAO();
         }
         return null;
     }
+
 }

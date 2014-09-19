@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -214,6 +215,12 @@ public final class CollectionHelper {
         s1.retainAll(list2);
         return new ArrayList<T>(s1);
     }
+    
+    public static <T> Set<T> conjunctCollectionsToSet(final Collection<T> list1, final Collection<T> list2) {
+        final HashSet<T> s1 = new HashSet<T>(list1);
+        s1.retainAll(list2);
+        return s1;
+    }
 
     public static <K, V> Map<K, V> synchronizedInitialSizeMapWithLoadFactor1(final int capacity) {
         return CollectionHelper.synchronizedMap(capacity, 1.0F);
@@ -388,7 +395,7 @@ public final class CollectionHelper {
         }
         return true;
     }
-
+    
     /**
      * Check if array is not null and not empty
      * 
@@ -409,6 +416,22 @@ public final class CollectionHelper {
      */
     public static boolean isNullOrEmpty(Object[] array) {
         return !isNotNullOrEmpty(array);
+    }
+
+    public static String collectionToString(Collection<?> collection) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(Constants.OPEN_BRACE_CHAR);
+        if (isNotEmpty(collection)) {
+            Iterator<?> iterator = collection.iterator();
+            while (iterator.hasNext()) {
+                Object object = (Object) iterator.next();
+                builder.append(object.toString());
+                builder.append(Constants.COMMA_CHAR);
+            }
+            builder.deleteCharAt(builder.lastIndexOf(Constants.COMMA_STRING));
+        }
+        builder.append(Constants.CLOSE_BRACE_CHAR);
+        return builder.toString();
     }
 
     /**

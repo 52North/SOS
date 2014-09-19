@@ -37,11 +37,13 @@ import javax.xml.stream.XMLStreamException;
 
 import org.n52.sos.util.Constants;
 
+import com.google.common.base.StandardSystemProperty;
+
 /**
  * Abstract {@link XmlWriter} class for {@link XMLEventWriter}
  * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.1.0
+ * @since 4.0.2
  *
  */
 public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
@@ -71,7 +73,6 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
     protected void attr(String name, String value) throws XMLStreamException {
         getXmlWriter().add(getXmlEventFactory().createAttribute(name, value));
     }
-    
     protected void attr(String namespace, String localName, String value) throws XMLStreamException {
         attr(new QName(namespace, localName), value);
     }

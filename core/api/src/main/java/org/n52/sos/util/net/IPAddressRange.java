@@ -68,10 +68,9 @@ public class IPAddressRange implements Predicate<IPAddress> {
         address = new IPAddress(split[0]);
         final Integer cidr = Ints.tryParse(split[1]);
         if (cidr != null) {
-            Preconditions.checkArgument(cidr.intValue() >= CIDR_MIN &&
-                                        cidr.intValue() <= CIDR_MAX,
+            Preconditions.checkArgument(cidr >= CIDR_MIN && cidr <= CIDR_MAX,
                                         "Not a valid CIDR address!");
-            mask = new IPAddress(-1 << (CIDR_MAX - cidr.intValue()));
+            mask = new IPAddress(-1 << (CIDR_MAX - cidr));
         } else {
             mask = new IPAddress(split[1]);
         }

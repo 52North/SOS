@@ -46,6 +46,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
@@ -164,7 +165,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
             return executeNamedQuery(req, session);
         }
         // check if series mapping is supported
-        else if (HibernateHelper.isEntitySupported(Series.class, session)) {
+        else if (HibernateHelper.isEntitySupported(Series.class)) {
             return querySeriesDataAvailabilities(req, session);
         } else {
             Criteria c = getDefaultObservationInfoCriteria(session);
@@ -278,28 +279,34 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         boolean supportsNamedQuery =
                 HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_DATA_AVAILABILITY_FOR_SERIES, session);
         boolean supportsSeriesObservationTime =
-                HibernateHelper.isEntitySupported(SeriesObservationTime.class, session);
+                HibernateHelper.isEntitySupported(SeriesObservationTime.class);
         SeriesObservationTimeDAO seriesObservationTimeDAO = new SeriesObservationTimeDAO();
         for (final Series series : new SeriesDAO().getSeries(request.getProcedures(), request.getObservedProperties(),
                 request.getFeaturesOfInterest(), session)) {
             TimePeriod timePeriod = null;
-            // get time information from a named query
-            if (supportsNamedQuery) {
-                timePeriod = getTimePeriodFromNamedQuery(series.getSeriesId(), seriesMinMaxTransformer, session);
+            if (!request.isSetOfferings()) {
+                // get time information from series object
+                if (series.isSetFirstLastTime()) {
+                        timePeriod = new TimePeriod(series.getFirstTimeStamp(), series.getLastTimeStamp());
+                }
+                // get time information from a named query
+                else if (timePeriod == null && supportsNamedQuery) {
+                    timePeriod = getTimePeriodFromNamedQuery(series.getSeriesId(), seriesMinMaxTransformer, session);
+                }
             }
-            // get time information from SeriesGetDataAvailability mapping if
-            // supported
-            else if (supportsSeriesObservationTime) {
+            // get time information from SeriesGetDataAvailability mapping if supported
+            if (timePeriod == null && supportsSeriesObservationTime) {
                 timePeriod =
                         getTimePeriodFromSeriesGetDataAvailability(seriesObservationTimeDAO, series, request,
                                 seriesMinMaxTransformer, session);
             }
             // get time information from SeriesObservation
-            else {
+            else if (timePeriod == null) {
                 timePeriod =
                         getTimePeriodFromSeriesObservation(seriesObservationDAO, series, request,
                                 seriesMinMaxTransformer, session);
             }
+            // create DataAvailabilities
             if (timePeriod != null && !timePeriod.isEmpty()) {
                 DataAvailability dataAvailability =
                         new DataAvailability(getProcedureReference(series, procedures), getObservedPropertyReference(
@@ -573,10 +580,11 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         String identifier = series.getFeatureOfInterest().getIdentifier();
         if (!featuresOfInterest.containsKey(identifier)) {
             ReferenceType referenceType = new ReferenceType(identifier);
+            FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
+            queryObject.addFeatureIdentifier(identifier).setConnection(session).setVersion(Sos2Constants.SERVICEVERSION);
             AbstractFeature feature =
-                    Configurator.getInstance().getFeatureQueryHandler()
-                            .getFeatureByID(identifier, session, Sos2Constants.SERVICEVERSION, -1);
-            if (feature.isSetNames() && feature.getFirstName().isSetValue()) {
+                    Configurator.getInstance().getFeatureQueryHandler().getFeatureByID(queryObject);
+            if (feature.isSetName() && feature.getFirstName().isSetValue()) {
                 referenceType.setTitle(feature.getFirstName().getValue());
             }
             featuresOfInterest.put(identifier, referenceType);
@@ -773,10 +781,14 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
             }
             if (!featuresOfInterest.containsKey(identifier)) {
                 ReferenceType referenceType = new ReferenceType(identifier);
+                FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject()
+                    .addFeatureIdentifier(identifier)
+                    .setConnection(session)
+                    .setVersion(Sos2Constants.SERVICEVERSION);
                 AbstractFeature feature =
                         Configurator.getInstance().getFeatureQueryHandler()
-                                .getFeatureByID(identifier, session, Sos2Constants.SERVICEVERSION, -1);
-                if (feature.isSetNames() && feature.getFirstName().isSetValue()) {
+                                .getFeatureByID(queryObject);
+                if (feature.isSetName() && feature.getFirstName().isSetValue()) {
                     referenceType.setTitle(feature.getFirstName().getValue());
                 }
                 featuresOfInterest.put(identifier, referenceType);

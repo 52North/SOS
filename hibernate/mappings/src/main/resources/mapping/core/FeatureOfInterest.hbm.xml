@@ -16,11 +16,17 @@
         <property name="identifier" type="string">
             <column name="identifier" unique-key="foiIdentifierUK"/>
         </property>
-        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="featureCodespaceFk">
-            <column name="codespaceId" />
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="featureCodespaceIdentifierFk">
+            <column name="codespace" />
         </many-to-one>
-        <property name="name" type="org.hibernate.type.StringClobType">
+        <property name="name" type="string">
             <column name="name" />
+        </property>
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="featureCodespaceNameFk">
+            <column name="codespaceName" />
+        </many-to-one>
+        <property name="description" type="string">
+            <column name="description" />
         </property>
         <property name="geom" type="org.hibernate.spatial.GeometryType">
             <column name="geom" />
@@ -31,15 +37,15 @@
         <property name="url" type="string">
             <column name="url" unique-key="obsUrl" />
         </property>
-        <!-- supports types big_decimal and string -->
+        <!-- supports types double, big_decimal, and string -->
         <!--  
-        <property name="longitude" type="big_decimal">
+        <property name="longitude" type="double">
            <column name="longitude" unique-key="featLonLatUk" />
         </property>
-        <property name="latitude" type="big_decimal">
+        <property name="latitude" type="double">
         	<column name="latitude" unique-key="featLonLatUk" />
         </property>
-        <property name="altitude" type="big_decimal">
+        <property name="altitude" type="double">
         	<column name="altitude" />
         </property>
         <property name="srid" type="integer">

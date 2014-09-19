@@ -147,6 +147,22 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     // protected static final String C3P0_CONNECTION_POOL =
     // "org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider";
 
+//    protected static final String USERNAME_KEY = HibernateConstants.CONNECTION_USERNAME;
+//
+//    protected static final String PASSWORD_KEY = HibernateConstants.CONNECTION_PASSWORD;
+//
+//    protected static final String C3P0_CONNECTION_POOL =
+//            "org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider";
+    protected static final String MULTI_LANGUAGE_TITLE = "Multi language support";
+
+    protected static final String MULTI_LANGUAGE_DESCRIPTION = "Should the database support multi language?";
+
+    protected static final String MULTI_LANGUAGE_KEY = "sos.language";
+
+    protected static final boolean MULTI_LANGUAGE_DEFAULT_VALUE = false;
+
+    protected static final String USERNAME_KEY = HibernateConstants.CONNECTION_USERNAME;
+
     protected static final Boolean PROVIDED_JDBC_DRIVER_DEFAULT_VALUE = false;
 
     protected static final String PROVIDED_JDBC_DRIVER_TITLE = "Provided JDBC driver";
@@ -199,62 +215,70 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     @Deprecated
     private boolean spatialFilteringProfileDatasource = true;
 
-    // /**
-    // * Create settings definition for username
-    // *
-    // * @return Username settings definition
-    // */
-    // protected StringSettingDefinition createUsernameDefinition() {
-    // return new
-    // StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
-    // .setKey(USERNAME_KEY).setTitle(USERNAME_TITLE);
-    // }
-    //
-    // /**
-    // * Create settings definition for password
-    // *
-    // * @return Password settings definition
-    // */
-    // protected StringSettingDefinition createPasswordDefinition() {
-    // return new
-    // StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_2)
-    // .setKey(PASSWORD_KEY).setTitle(PASSWORD_TITLE);
-    // }
-    //
-    // /**
-    // * Create settings definition for database name
-    // *
-    // * @return database name settings definition
-    // */
-    // protected StringSettingDefinition createDatabaseDefinition() {
-    // return new
-    // StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_3)
-    // .setKey(DATABASE_KEY).setTitle(DATABASE_TITLE).setDescription(DATABASE_DESCRIPTION)
-    // .setDefaultValue(DATABASE_DEFAULT_VALUE);
-    // }
-    //
-    // /**
-    // * Create settings definition for host
-    // *
-    // * @return Host settings definition
-    // */
-    // protected StringSettingDefinition createHostDefinition() {
-    // return new
-    // StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
-    // .setKey(HOST_KEY).setTitle(HOST_TITLE).setDescription(HOST_DESCRIPTION)
-    // .setDefaultValue(HOST_DEFAULT_VALUE);
-    // }
-    //
-    // /**
-    // * Create settings definition for port
-    // *
-    // * @return Port settings definition
-    // */
-    // protected IntegerSettingDefinition createPortDefinition() {
-    // return new
-    // IntegerSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_5)
-    // .setKey(PORT_KEY).setTitle(PORT_TITLE);
-    // }
+    private final BooleanSettingDefinition mulitLanguageDefinition = createMultiLanguageDefinition();
+
+    private boolean multiLanguageDatasource = true;
+
+    /**
+     * Create settings definition for username
+     *
+     * @return Username settings definition
+     */
+    protected StringSettingDefinition createUsernameDefinition() {
+        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
+                .setKey(USERNAME_KEY).setTitle(USERNAME_TITLE);
+    }
+//    /**
+//     * Create settings definition for username
+//     *
+//     * @return Username settings definition
+//     */
+//    protected StringSettingDefinition createUsernameDefinition() {
+//        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
+//                .setKey(USERNAME_KEY).setTitle(USERNAME_TITLE);
+//    }
+//
+//    /**
+//     * Create settings definition for password
+//     *
+//     * @return Password settings definition
+//     */
+//    protected StringSettingDefinition createPasswordDefinition() {
+//        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_2)
+//                .setKey(PASSWORD_KEY).setTitle(PASSWORD_TITLE);
+//    }
+//
+//    /**
+//     * Create settings definition for database name
+//     *
+//     * @return database name settings definition
+//     */
+//    protected StringSettingDefinition createDatabaseDefinition() {
+//        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_3)
+//                .setKey(DATABASE_KEY).setTitle(DATABASE_TITLE).setDescription(DATABASE_DESCRIPTION)
+//                .setDefaultValue(DATABASE_DEFAULT_VALUE);
+//    }
+//
+//    /**
+//     * Create settings definition for host
+//     *
+//     * @return Host settings definition
+//     */
+//    protected StringSettingDefinition createHostDefinition() {
+//        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
+//                .setKey(HOST_KEY).setTitle(HOST_TITLE).setDescription(HOST_DESCRIPTION)
+//                .setDefaultValue(HOST_DEFAULT_VALUE);
+//    }
+//
+//    /**
+//     * Create settings definition for port
+//     *
+//     * @return Port settings definition
+//     */
+//    protected IntegerSettingDefinition createPortDefinition() {
+//        return new IntegerSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_5)
+//                .setKey(PORT_KEY).setTitle(PORT_TITLE);
+//    }
 
     /**
      * Create settings definition for database schema
@@ -299,6 +323,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 .setTitle(SPATIAL_FILTERING_PROFILE_TITLE).setDescription(SPATIAL_FILTERING_PROFILE_DESCRIPTION)
                 .setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
                 .setKey(SPATIAL_FILTERING_PROFILE_KEY);
+    }
+
+    protected BooleanSettingDefinition createMultiLanguageDefinition() {
+        return new BooleanSettingDefinition().setDefaultValue(MULTI_LANGUAGE_DEFAULT_VALUE)
+                .setTitle(MULTI_LANGUAGE_TITLE).setDescription(MULTI_LANGUAGE_DESCRIPTION).setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_3).setKey(MULTI_LANGUAGE_KEY);
     }
 
     /**
@@ -372,6 +402,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             Boolean transactional = (Boolean) settings.get(this.transactionalDefiniton.getKey());
             if (transactional != null && transactional.booleanValue()) {
                 config.addDirectory(resource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH));
+            }
+        }
+        if (isMultiLanguageDatasource()) {
+            Boolean multiLanguage = (Boolean) settings.get(this.mulitLanguageDefinition.getKey());
+            if (multiLanguage != null && multiLanguage.booleanValue()) {
+                config.addDirectory(resource(HIBERNATE_MAPPING_I18N_PATH));
             }
         }
         if (isSetSchema(settings)) {
@@ -751,6 +787,13 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
             }
         }
+        if (isMultiLanguageDatasource()) {
+            Boolean t = (Boolean) settings.get(mulitLanguageDefinition.getKey());
+            if (t.booleanValue()) {
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
+                        resource(HIBERNATE_MAPPING_I18N_PATH));
+            } 
+        }
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
     }
 
@@ -831,6 +874,15 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     @Deprecated
     protected BooleanSettingDefinition getSpatialFilteringProfileDefiniton() {
         return spatialFilteringProfileDefinition;
+    }
+
+    protected boolean isMultiLanguage(Properties properties) {
+        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
+        return p == null || p.contains(HIBERNATE_MAPPING_I18N_PATH);
+    }
+
+    protected BooleanSettingDefinition getMulitLanguageDefiniton() {
+        return mulitLanguageDefinition;
     }
 
     /**
@@ -926,6 +978,21 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     @Deprecated
     public void setSpatialFilteringProfile(boolean spatialFilteringProfileDatasource) {
         this.spatialFilteringProfileDatasource = spatialFilteringProfileDatasource;
+    }
+
+    /**
+     * @return the multi language
+     */
+    public boolean isMultiLanguageDatasource() {
+        return multiLanguageDatasource;
+    }
+
+    /**
+     * @param multi
+     *            language the multi language to set
+     */
+    public void setMultiLangugage(boolean multiLanguageDatasource) {
+        this.multiLanguageDatasource = multiLanguageDatasource;
     }
 
     /**

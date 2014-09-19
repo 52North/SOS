@@ -129,6 +129,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
                         getSpatialFilteringProfileAdder().add(resultObject.getObservationId(), observation);
                     }
                 }
+                checkForModifications(observation);
                 session.evict(resultObject);
                 return observation;
             }

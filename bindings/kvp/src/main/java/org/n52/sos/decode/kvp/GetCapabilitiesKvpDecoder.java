@@ -91,49 +91,57 @@ public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder {
         GetCapabilitiesRequest request = new GetCapabilitiesRequest();
         CompositeOwsException exceptions = new CompositeOwsException();
 
-        boolean foundService = false;
         boolean isV100 = false;
 
         for (String parameterName : element.keySet()) {
             String parameterValues = element.get(parameterName);
             try {
-                // service (mandatory SOS 1.0.0, SOS 2.0 default)
-                if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service.name())) {
-                    request.setService(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                    foundService = true;
-                } // request (mandatory)
-                else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
-                    KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
-                } // acceptVersions (optional)
-                else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.AcceptVersions.name())) {
-                    List<String> acceptVersions =
-                            KvpHelper.checkParameterMultipleValues(parameterValues, parameterName);
-                    request.setAcceptVersions(acceptVersions);
-                    if (CollectionHelper.isNotEmpty(acceptVersions)
-                            && Sos1Constants.SERVICEVERSION.equals(acceptVersions.get(0))) {
-                        isV100 = true;
+                if (!parseDefaultParameter(request, parameterValues, parameterName)) {
+//                // service (mandatory SOS 1.0.0, SOS 2.0 default)
+//                if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service.name())) {
+//                    request.setService(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+//                    foundService = true;
+//                } // request (mandatory)
+//                else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
+//                    KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
+//                } // acceptVersions (optional)
+//                else 
+                  if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.AcceptVersions.name())) {
+                        List<String> acceptVersions =
+                                KvpHelper.checkParameterMultipleValues(parameterValues, parameterName);
+                        request.setAcceptVersions(acceptVersions);
+                        if (CollectionHelper.isNotEmpty(acceptVersions)
+                                && Sos1Constants.SERVICEVERSION.equals(acceptVersions.get(0))) {
+                            isV100 = true;
+                        }
+                    } // acceptFormats (optional)
+                    else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.AcceptFormats.name())) {
+                        request.setAcceptFormats(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
+                    } // updateSequence (optional)
+                    else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.updateSequence.name())) {
+                        request.setUpdateSequence(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+                    } // sections (optional)
+                    else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.Sections.name())) {
+                        request.setSections(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
+                    } // capabilitiesId (optional; non-standard)
+                    else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.CapabilitiesId.name())) {
+                         request.setCapabilitiesId(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+    //                } // language (optional)
+    //                else if (parameterName.equalsIgnoreCase(SosConstants.InspireParams.language.name())) {
+    //                    request.addExtension(getLanguageExtension(KvpHelper.checkParameterSingleValue(parameterValues, parameterName)));
+    //                } // CRS (optional) 
+    //                else if (parameterName.equalsIgnoreCase(SosConstants.InspireParams.crs.name())) {
+    //                    request.addExtension(getCrsExtension(KvpHelper.checkParameterSingleValue(parameterValues, parameterName)));
+                    } else {
+                        exceptions.add(new ParameterNotSupportedException(parameterName));
                     }
-                } // acceptFormats (optional)
-                else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.AcceptFormats.name())) {
-                    request.setAcceptFormats(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
-                } // updateSequence (optional)
-                else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.updateSequence.name())) {
-                    request.setUpdateSequence(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                } // sections (optional)
-                else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.Sections.name())) {
-                    request.setSections(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
-				} // capabilitiesId (optional; non-standard)
-				else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.CapabilitiesId.name())) {
-                    request.setCapabilitiesId(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                } else {
-                    exceptions.add(new ParameterNotSupportedException(parameterName));
                 }
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);
             }
         }
 
-        if (isV100 && !foundService) {
+        if (isV100 && !request.isSetService()) {
             exceptions.add(new MissingServiceParameterException().at(OWSConstants.RequestParams.service));
         }
 

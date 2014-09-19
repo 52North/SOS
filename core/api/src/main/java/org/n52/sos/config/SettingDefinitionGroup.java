@@ -51,6 +51,8 @@ public class SettingDefinitionGroup extends AbstractOrdered<SettingDefinitionGro
 
     private String description;
 
+    private boolean showInDefaultSetting = true;
+
     /**
      * @return the title of this group
      */
@@ -106,6 +108,28 @@ public class SettingDefinitionGroup extends AbstractOrdered<SettingDefinitionGro
     }
 
     /**
+     * Set if this settings group should be displayed in default settings
+     * 
+     * @param showInDefaultSetting
+     *            Display in default settings
+     * @return this
+     */
+    public SettingDefinitionGroup setShwoInDefaultSettings(boolean showInDefaultSetting) {
+        this.showInDefaultSetting = showInDefaultSetting;
+        return this;
+    }
+
+    /**
+     * Should this group be displayed in default settings
+     * 
+     * @return <code>true</code>, if this group should be displayed in default
+     *         settings
+     */
+    public boolean isShowInDefaultSettings() {
+        return showInDefaultSetting;
+    }
+
+    /**
      * Checks if the parameter is not null and not empty.
      * 
      * @param s
@@ -141,7 +165,8 @@ public class SettingDefinitionGroup extends AbstractOrdered<SettingDefinitionGro
 
     @Override
     public String toString() {
-        return String.format("%s[title=%s, description=%s]", getClass().getSimpleName(), getTitle(), getDescription());
+        return String.format("%s[title=%s, description=%s, showInDefaultSetting=%b]", getClass().getSimpleName(),
+                getTitle(), getDescription(), isShowInDefaultSettings());
     }
 
     @Override

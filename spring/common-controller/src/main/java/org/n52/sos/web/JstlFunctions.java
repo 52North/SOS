@@ -33,13 +33,14 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.n52.sos.service.DatabaseSettingsHandler;
+import org.n52.sos.util.JSONUtils;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class JstlFunctions {
     public static final boolean HAS_INSTALLER = hasClass("org.n52.sos.web.install.InstallIndexController");
@@ -47,6 +48,9 @@ public class JstlFunctions {
     public static final boolean HAS_CLIENT = hasClass("org.n52.sos.web.ClientController");
 
     public static final boolean HAS_ADMIN = hasClass("org.n52.sos.web.admin.AdminIndexController");
+
+    private JstlFunctions() {
+    }
 
     public static boolean configurated(ServletContext ctx) {
         return DatabaseSettingsHandler.getInstance(ctx).exists();
@@ -76,15 +80,16 @@ public class JstlFunctions {
     public static boolean viewExists(ServletContext ctx, String path) {
         return new File(ctx.getRealPath("/WEB-INF/views/" + path)).exists();
     }
-    
+
     public static boolean staticExtensionExists(ServletContext ctx, String path) {
-            return new File(ctx.getRealPath("/static/" + path)).exists();
+        return new File(ctx.getRealPath("/static/" + path)).exists();
     }
 
-    public static String mapToJson(@SuppressWarnings("rawtypes") Map map) throws JSONException {
-        return new JSONObject(map).toString(2);
-    }
-    
-    private JstlFunctions() {
+    public static String mapToJson(@SuppressWarnings("rawtypes") Map map) {
+        ObjectNode node = JSONUtils.nodeFactory().objectNode();
+        for (Object key : map.keySet()) {
+            node.put(key.toString(), String.valueOf(map.get(key)));
+        }
+        return JSONUtils.print(node);
     }
 }

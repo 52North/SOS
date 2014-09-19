@@ -74,7 +74,6 @@ import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.OMHelper;
-import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.http.MediaType;
 import org.slf4j.Logger;
@@ -189,7 +188,7 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
      * @throws OwsExceptionReport
      *             * If parsing the XmlBean failed
      */
-    private AbstractServiceRequest parseGetCapabilities(GetCapabilitiesDocument getCapsDoc) throws OwsExceptionReport {
+    private AbstractServiceRequest<?> parseGetCapabilities(GetCapabilitiesDocument getCapsDoc) throws OwsExceptionReport {
         GetCapabilitiesRequest request = new GetCapabilitiesRequest();
 
         GetCapabilities getCaps = getCapsDoc.getGetCapabilities();
@@ -247,7 +246,7 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
      * @throws OwsExceptionReport
      *             * If parsing the XmlBean failed
      */
-    private AbstractServiceRequest parseGetObservation(GetObservationDocument getObsDoc) throws OwsExceptionReport {
+    private AbstractServiceRequest<?> parseGetObservation(GetObservationDocument getObsDoc) throws OwsExceptionReport {
         GetObservationRequest getObsRequest = new GetObservationRequest();
 
         GetObservation getObs = getObsDoc.getGetObservation();
@@ -258,7 +257,7 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
         getObsRequest.setObservedProperties(Arrays.asList(getObs.getObservedPropertyArray()));
         getObsRequest.setProcedures(Arrays.asList(getObs.getProcedureArray()));
         getObsRequest.setTemporalFilters(parseTemporalFilters4GetObservation(getObs.getEventTimeArray()));
-        getObsRequest.setSrid(SosHelper.parseSrsName(getObs.getSrsName()));
+        getObsRequest.setSrsName(getObs.getSrsName());
 
         if (getObs.isSetFeatureOfInterest()) {
             FeatureOfInterest featureOfInterest = getObs.getFeatureOfInterest();
@@ -314,7 +313,7 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
      * @throws OwsExceptionReport
      *             * if validation of the request failed
      */
-    private AbstractServiceRequest parseGetFeatureOfInterest(GetFeatureOfInterestDocument getFoiDoc)
+    private AbstractServiceRequest<?> parseGetFeatureOfInterest(GetFeatureOfInterestDocument getFoiDoc)
             throws OwsExceptionReport {
 
         GetFeatureOfInterestRequest getFoiRequest = new GetFeatureOfInterestRequest();
@@ -327,7 +326,7 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
         return getFoiRequest;
     }
 
-    private AbstractServiceRequest parseGetObservationById(GetObservationByIdDocument getObsByIdDoc)
+    private AbstractServiceRequest<?> parseGetObservationById(GetObservationByIdDocument getObsByIdDoc)
             throws OwsExceptionReport {
         GetObservationByIdRequest getObsByIdRequest = new GetObservationByIdRequest();
         GetObservationById getObsById = getObsByIdDoc.getGetObservationById();

@@ -513,7 +513,7 @@ public class SensorMLDecoderV101 implements Decoder<AbstractSensorML, XmlObject>
                 abstractProcess.addCapabilities(caps);
                 // check if this capabilities is insertion metadata
                 if (SensorMLConstants.ELEMENT_NAME_OFFERINGS.equals(caps.getName())) {
-                    abstractProcess.addOfferings(SosOffering.fromMap(parseCapabilitiesMetadata(caps, xbcaps)));
+                    abstractProcess.addOfferings(SosOffering.fromSet(caps.getDataRecord().getSweAbstractSimpleTypeFromFields(SweText.class)));
                 } else if (SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES.equals(caps.getName())) {
                     abstractProcess.addParentProcedures(parseCapabilitiesMetadata(caps, xbcaps).keySet());
                 } else if (SensorMLConstants.ELEMENT_NAME_FEATURES_OF_INTEREST.equals(caps.getName())) {
@@ -547,7 +547,7 @@ public class SensorMLDecoderV101 implements Decoder<AbstractSensorML, XmlObject>
             if (sosSweField.getElement() instanceof SweText) {
                 final SweText sosSweText = (SweText) sosSweField.getElement();
                 if (sosSweText.isSetValue()) {
-                    map.put(sosSweText.getValue(), sosSweField.getName());
+                    map.put(sosSweText.getValue(), sosSweField.getName().getValue());
                 } else {
                     throw new UnsupportedDecoderInputException(this, xbCapabilities).withMessage(
                             "Removable capabilities element %s contains a field with no value",
@@ -561,7 +561,7 @@ public class SensorMLDecoderV101 implements Decoder<AbstractSensorML, XmlObject>
         }
         return map;
     }
-
+    
     /**
      * Parses the position
      * 

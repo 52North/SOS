@@ -61,6 +61,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.filter.FilterConstants.ComparisonOperator;
 import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OWSConstants;
@@ -173,7 +174,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
             ObservationOfferingType xbObservationOffering = xbObservationOfferings.addNewObservationOffering();
             // TODO check NAme or ID
-            xbObservationOffering.setId(NcNameResolver.fixNcName(offering.getOffering()));
+            xbObservationOffering.setId(NcNameResolver.fixNcName(offering.getOffering().getIdentifier()));
 
             // only if fois are contained for the offering set the values of the
             // envelope
@@ -185,7 +186,9 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
             // xbObservationOffering.addIntendedApplication("");
 
             // set gml:name to offering's id (not ncname resolved)
-            xbObservationOffering.addNewName().setStringValue(offering.getOffering());
+            for (CodeType name : offering.getOffering().getName()) {
+                xbObservationOffering.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, name)); 
+            }
 
             /*
              * // set up phenomena Collection<String> phenomenons =

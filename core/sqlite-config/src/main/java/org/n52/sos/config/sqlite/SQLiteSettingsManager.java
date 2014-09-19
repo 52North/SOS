@@ -39,6 +39,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.binding.BindingKey;
 import org.n52.sos.config.AbstractSettingValueFactory;
 import org.n52.sos.config.AbstractSettingsManager;
@@ -50,8 +53,13 @@ import org.n52.sos.config.sqlite.entities.Activatable;
 import org.n52.sos.config.sqlite.entities.AdminUser;
 import org.n52.sos.config.sqlite.entities.Binding;
 import org.n52.sos.config.sqlite.entities.BooleanSettingValue;
+import org.n52.sos.config.sqlite.entities.DynamicOfferingExtension;
+import org.n52.sos.config.sqlite.entities.DynamicOfferingExtensionKey;
+import org.n52.sos.config.sqlite.entities.DynamicOwsExtendedCapabilities;
+import org.n52.sos.config.sqlite.entities.DynamicOwsExtendedCapabilitiesKey;
 import org.n52.sos.config.sqlite.entities.FileSettingValue;
 import org.n52.sos.config.sqlite.entities.IntegerSettingValue;
+import org.n52.sos.config.sqlite.entities.MultilingualStringSettingValue;
 import org.n52.sos.config.sqlite.entities.NumericSettingValue;
 import org.n52.sos.config.sqlite.entities.ObservationEncoding;
 import org.n52.sos.config.sqlite.entities.ObservationEncodingKey;
@@ -60,15 +68,18 @@ import org.n52.sos.config.sqlite.entities.OperationKey;
 import org.n52.sos.config.sqlite.entities.ProcedureEncoding;
 import org.n52.sos.config.sqlite.entities.ProcedureEncodingKey;
 import org.n52.sos.config.sqlite.entities.StringSettingValue;
+import org.n52.sos.config.sqlite.entities.TimeInstantSettingValue;
 import org.n52.sos.config.sqlite.entities.UriSettingValue;
 import org.n52.sos.ds.ConnectionProvider;
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.encode.ProcedureDescriptionFormatKey;
 import org.n52.sos.encode.ResponseFormatKey;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.i18n.MultilingualString;
+import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesKey;
+import org.n52.sos.ogc.swes.OfferingExtensionKey;
 import org.n52.sos.request.operator.RequestOperatorKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
     private static final Logger LOG = LoggerFactory.getLogger(SQLiteSettingsManager.class);
@@ -98,7 +109,7 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
             this.connectionProvider = connectionProvider;
         }
     }
-    
+
     protected boolean isSetConnectionProvider() {
         return this.connectionProvider != null;
     }
@@ -106,7 +117,7 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
     protected ConnectionProvider createDefaultConnectionProvider() {
         return new SQLiteSessionFactory();
     }
-    
+
     protected <T> T execute(HibernateAction<T> action) throws ConnectionProviderException {
         synchronized (this) {
             Session session = null;
@@ -264,6 +275,26 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
         return isActive(Binding.class, bk.getServletPath());
     }
 
+    @Override
+    public boolean isActive(OfferingExtensionKey oek) throws ConnectionProviderException {
+        return isActive(DynamicOfferingExtension.class, new DynamicOfferingExtensionKey(oek));
+    }
+
+    @Override
+    public boolean isActive(OwsExtendedCapabilitiesKey oeck) throws ConnectionProviderException {
+        return isActive(DynamicOwsExtendedCapabilities.class, new DynamicOwsExtendedCapabilitiesKey(oeck));
+    }
+
+    @Override
+    protected void setOfferingExtensionStatus(OfferingExtensionKey oek, boolean active) throws ConnectionProviderException {
+        setActive(DynamicOfferingExtension.class, new DynamicOfferingExtension(oek), active);
+    }
+    @Override
+    protected void setOwsExtendedCapabilitiesStatus(OwsExtendedCapabilitiesKey oeck, boolean active) throws ConnectionProviderException {
+        setActive(DynamicOwsExtendedCapabilities.class, new DynamicOwsExtendedCapabilities(oeck), active);
+    }
+
+
     private static class SqliteSettingFactory extends AbstractSettingValueFactory {
         @Override
         public BooleanSettingValue newBooleanSettingValue() {
@@ -293,6 +324,16 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
         @Override
         protected SettingValue<Double> newNumericSettingValue() {
             return new NumericSettingValue();
+        }
+
+        @Override
+        protected SettingValue<TimeInstant> newTimeInstantSettingValue() {
+            return new TimeInstantSettingValue();
+        }
+
+        @Override
+        protected SettingValue<MultilingualString> newMultiLingualStringSettingValue() {
+            return new MultilingualStringSettingValue();
         }
     }
 

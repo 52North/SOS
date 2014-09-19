@@ -44,9 +44,10 @@
 									added during DescribeSensor. -->
 								<!-- Offering is generated if not specified. -->
 								<swe:SimpleDataRecord>
-									<!-- Field name is used for the offering's name -->
+									<!-- Field name or gml:name is used for the offering's name -->
 									<swe:field name="Offering for sensor 9">
 										<swe:Text definition="urn:ogc:def:identifier:OGC:offeringID">
+											<gml:name>Offering for sensor 9</gml:name>
 											<swe:value>http://www.52north.org/test/offering/9</swe:value>
 										</swe:Text>
 									</swe:field>

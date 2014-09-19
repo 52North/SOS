@@ -27,6 +27,6 @@
 -- Public License for more details.
 --
 
-ALTER TABLE procedure ADD COLUMN referenceFlag char(1) default 'F' check (referenceFlag in ('T','F'));
+ALTER TABLE public."procedure" ADD COLUMN referenceFlag char(1) default 'F' check (referenceFlag in ('T','F'));
 
-ALTER TABLE observation ADD samplingGeometry GEOMETRY;
+ALTER TABLE public.observation ADD samplingGeometry GEOMETRY;

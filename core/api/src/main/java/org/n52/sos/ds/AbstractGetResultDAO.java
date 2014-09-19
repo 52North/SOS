@@ -67,9 +67,9 @@ public abstract class AbstractGetResultDAO extends AbstractOperationDAO {
             throw new OperationNotSupportedException().at(SosConstants.Operations.GetResult).withMessage(
                     "This operation is not supported for SOS {}!", Sos1Constants.SERVICEVERSION);
         } else if (version.equals(Sos2Constants.SERVICEVERSION)) {
-            opsMeta.addPossibleValuesParameter(Sos2Constants.GetResultParams.offering, offerings);
-            opsMeta.addPossibleValuesParameter(Sos2Constants.GetResultParams.observedProperty, observableProperties);
-            opsMeta.addPossibleValuesParameter(Sos2Constants.GetResultParams.featureOfInterest, featureOfInterest);
+            addOfferingParameter(opsMeta, offerings);
+            addObservablePropertyParameter(opsMeta, observableProperties);
+            addFeatureOfInterestParameter(opsMeta, featureOfInterest);
             // TODO get the values for temporal and spatial filtering
             // set param temporalFilter
             // opsMeta.addParameterValue(Sos2Constants.GetResultParams.temporalFilter.name(),

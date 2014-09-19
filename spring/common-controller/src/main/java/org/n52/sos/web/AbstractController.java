@@ -37,17 +37,27 @@ import java.util.TreeMap;
 
 import javax.servlet.ServletContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingValue;
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.exception.JSONException;
+import org.n52.sos.i18n.MultilingualString;
+import org.n52.sos.i18n.json.I18NJsonEncoder;
+import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.service.DatabaseSettingsHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.util.JSONUtils;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 @Controller
 public class AbstractController {
@@ -98,13 +108,16 @@ public class AbstractController {
         return (sm == null) ? sm = SettingsManager.getInstance() : sm;
     }
 
-    protected Map<String, Object> toSimpleMap(Map<SettingDefinition<?, ?>, SettingValue<?>> settings)
-            throws ConfigurationException {
-        SortedMap<String, Object> simpleMap = new TreeMap<String, Object>();
+    protected ObjectNode toJSONValueMap(Map<SettingDefinition<?, ?>, SettingValue<?>> settings)
+            throws ConfigurationException, JSONException {
+        SortedMap<String, JsonNode> map = new TreeMap<String, JsonNode>();
+        SettingDefinitionEncoder encoder = new SettingDefinitionEncoder();
         for (Entry<SettingDefinition<?, ?>, SettingValue<?>> e : settings.entrySet()) {
-            simpleMap.put(e.getKey().getKey(), encodeValue(e.getValue()));
+            map.put(e.getKey().getKey(), encoder.encodeValue(e.getValue()));
         }
-        return simpleMap;
+        ObjectNode node = JSONUtils.nodeFactory().objectNode();
+        node.putAll(map);
+        return node;
     }
 
     private Object encodeValue(SettingValue<?> v) {
@@ -121,6 +134,10 @@ public class AbstractController {
             return ((File) v.getValue()).getPath();
         case URI:
             return ((URI) v.getValue()).toString();
+        case TIMEINSTANT:
+             return DateTimeHelper.format((Time)v.getValue());
+        case MULTILINGUAL_STRING:
+            return JSONUtils.print(new I18NJsonEncoder().encode((MultilingualString)v.getValue()));
         default:
             throw new IllegalArgumentException(String.format("Type %s is not supported!", v.getType()));
         }

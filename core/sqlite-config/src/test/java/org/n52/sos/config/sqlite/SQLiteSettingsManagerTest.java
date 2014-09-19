@@ -38,12 +38,14 @@ import static org.n52.sos.config.sqlite.SettingDefinitionProviderForTesting.BOOL
 import static org.n52.sos.config.sqlite.SettingDefinitionProviderForTesting.DOUBLE_SETTING;
 import static org.n52.sos.config.sqlite.SettingDefinitionProviderForTesting.FILE_SETTING;
 import static org.n52.sos.config.sqlite.SettingDefinitionProviderForTesting.INTEGER_SETTING;
+import static org.n52.sos.config.sqlite.SettingDefinitionProviderForTesting.LOCALIZED_STRING_SETTING;
 import static org.n52.sos.config.sqlite.SettingDefinitionProviderForTesting.STRING_SETTING;
 import static org.n52.sos.config.sqlite.SettingDefinitionProviderForTesting.URI_SETTING;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Locale;
 import java.util.Properties;
 
 import org.hibernate.HibernateException;
@@ -51,6 +53,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.config.AdministratorUser;
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingValue;
@@ -58,12 +63,14 @@ import org.n52.sos.config.SettingsManager;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
 import org.n52.sos.config.settings.FileSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
+import org.n52.sos.config.settings.MultilingualStringSettingDefinition;
 import org.n52.sos.config.settings.NumericSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.config.settings.UriSettingDefinition;
 import org.n52.sos.config.sqlite.entities.BooleanSettingValue;
 import org.n52.sos.config.sqlite.entities.FileSettingValue;
 import org.n52.sos.config.sqlite.entities.IntegerSettingValue;
+import org.n52.sos.config.sqlite.entities.MultilingualStringSettingValue;
 import org.n52.sos.config.sqlite.entities.NumericSettingValue;
 import org.n52.sos.config.sqlite.entities.StringSettingValue;
 import org.n52.sos.config.sqlite.entities.UriSettingValue;
@@ -72,12 +79,11 @@ import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.encode.ProcedureDescriptionFormatKey;
 import org.n52.sos.encode.ResponseFormatKey;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.operator.RequestOperatorKey;
 import org.n52.sos.service.operator.ServiceOperatorKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -271,12 +277,22 @@ public class SQLiteSettingsManagerTest {
         assertThat(settingsManager.isActive(PDFKT), is(true));
         settingsManager.setActive(PDFKT, false);
         assertThat(settingsManager.isActive(PDFKT), is(false));
-        
+
 //        assertThat(settingsManager.isActive(PROCEDURE_DESCRIPTION_FORMAT), is(true));
 //        settingsManager.setActive(PROCEDURE_DESCRIPTION_FORMAT, true);
 //        assertThat(settingsManager.isActive(PROCEDURE_DESCRIPTION_FORMAT), is(true));
 //        settingsManager.setActive(PROCEDURE_DESCRIPTION_FORMAT, false);
-//        assertThat(settingsManager.isActive(PROCEDURE_DESCRIPTION_FORMAT), is(false));
+//        assertThat(settingsManager.isActive(PROCEDUColumnRE_DESCRIPTION_FORMAT), is(false));
 
+    }
+
+    @Test
+    public void testLocalizedStringSetting() throws ConfigurationException, ConnectionProviderException {
+        final MultilingualStringSettingDefinition settingDefinition = new MultilingualStringSettingDefinition().setKey(LOCALIZED_STRING_SETTING);
+        MultilingualString l1 = new MultilingualString().addLocalization(Locale.GERMAN, "Hallo").addLocalization(Locale.ENGLISH, "Hello");
+        MultilingualString l2 = new MultilingualString().addLocalization(Locale.GERMAN, "Hallo").addLocalization(Locale.ENGLISH, "Hello").addLocalization(Locale.CHINESE, "???");
+        SettingValue<MultilingualString> settingValue = new MultilingualStringSettingValue().setKey(LOCALIZED_STRING_SETTING).setValue(l1);
+        SettingValue<MultilingualString> newSettingValue = new MultilingualStringSettingValue().setKey(LOCALIZED_STRING_SETTING).setValue(l2);
+        testSaveGetAndDelete(settingDefinition, settingValue, newSettingValue);
     }
 }

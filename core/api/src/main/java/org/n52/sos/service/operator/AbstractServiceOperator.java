@@ -53,7 +53,7 @@ public class AbstractServiceOperator implements ServiceOperator {
     }
 
     @Override
-    public AbstractServiceResponse receiveRequest(AbstractServiceRequest request) throws OwsExceptionReport {
+    public AbstractServiceResponse receiveRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         RequestOperator ro =
                 RequestOperatorRepository.getInstance().getRequestOperator(getServiceOperatorKey(),
                         request.getOperationName());

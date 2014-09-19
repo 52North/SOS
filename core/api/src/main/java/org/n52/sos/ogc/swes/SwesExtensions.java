@@ -28,11 +28,13 @@
  */
 package org.n52.sos.ogc.swes;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.sos.util.StringHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -64,19 +66,44 @@ public class SwesExtensions {
         return false;
     }
 
-    private boolean isExtensionNameEquals(final String extensionName, final SwesExtension<?> swesExtension) {
-        return extensionName.equalsIgnoreCase(swesExtension.getDefinition())
-                || (swesExtension.getValue() instanceof SweAbstractDataComponent
-                        && ((SweAbstractDataComponent) swesExtension.getValue()).isSetDefinition() && ((SweAbstractDataComponent) swesExtension
-                            .getValue()).getDefinition().equalsIgnoreCase(extensionName));
-    }
-
-    public boolean addSwesExtension(final SwesExtension<?> extension) {
-        return extensions.add(extension);
+    public boolean addSwesExtension(final Collection<SwesExtension<?>> extensions) {
+       return getExtensions().addAll(extensions);
     }
     
+    public boolean addSwesExtension(final SwesExtension<?> extensions) {
+        return getExtensions().add(extensions);
+     }
+
     public Set<SwesExtension<?>> getExtensions() {
         return extensions;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public boolean containsExtension(Enum identifier) {
+        return containsExtension(identifier.name());
+    }
+
+    public boolean containsExtension(String identifier) {
+        for (SwesExtension<?> extension : getExtensions()) {
+            if (isExtensionNameEquals(identifier, extension)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public SwesExtension<?> getExtension(Enum identifier) {
+        return getExtension(identifier.name());
+    }
+
+    public SwesExtension<?> getExtension(String identifier) {
+        for (SwesExtension<?> extension : getExtensions()) {
+            if (isExtensionNameEquals(identifier, extension)) {
+                return extension;
+            }
+        }
+        return null;
     }
 
     public boolean isEmpty() {
@@ -86,6 +113,37 @@ public class SwesExtensions {
     @Override
     public String toString() {
         return String.format("SwesExtensions [extensions=%s]", extensions);
+    }
+
+    private boolean isExtensionNameEquals(final String extensionName, final SwesExtension<?> swesExtension) {
+        return checkSwesExtensionDefinition(extensionName, swesExtension)
+                || checkSwesExtensionIdentifier(extensionName, swesExtension)
+                || checkSweExtensionValue(extensionName, swesExtension);
+    }
+
+    private boolean checkSweExtensionValue(String extensionName, SwesExtension<?> swesExtension) {
+        if (swesExtension.getValue() instanceof SweAbstractDataComponent) {
+            SweAbstractDataComponent sweAbstractDataComponent = (SweAbstractDataComponent) swesExtension.getValue();
+            return (sweAbstractDataComponent.isSetDefinition() && sweAbstractDataComponent.getDefinition()
+                    .equalsIgnoreCase(extensionName))
+                    || (sweAbstractDataComponent.isSetIdentifier() && sweAbstractDataComponent.getIdentifier()
+                            .equalsIgnoreCase(extensionName));
+        }
+        return false;
+    }
+
+    private boolean checkSwesExtensionIdentifier(String extensionName, SwesExtension<?> swesExtension) {
+        if (StringHelper.isNotEmpty(extensionName)) {
+            return swesExtension.isSetIdentifier() && swesExtension.getIdentifier().equalsIgnoreCase(extensionName);
+        }
+        return false;
+    }
+
+    private boolean checkSwesExtensionDefinition(String extensionName, SwesExtension<?> swesExtension) {
+        if (extensionName != null && swesExtension != null) {
+            return swesExtension.isSetDefinition() && swesExtension.getDefinition().equalsIgnoreCase(extensionName);
+        }
+        return false;
     }
 
 }

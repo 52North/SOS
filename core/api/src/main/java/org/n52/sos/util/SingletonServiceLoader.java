@@ -29,6 +29,7 @@
 package org.n52.sos.util;
 
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
@@ -38,10 +39,12 @@ import org.n52.sos.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.sos.exception.ConfigurationException;
+
 /**
  * Producer that loads a single instance of <code>T</code> with a
  * {@link ServiceLoader}.
- * 
+ *
  * @param <T>
  *            the type to produce
  *            <p/>
@@ -104,6 +107,12 @@ public class SingletonServiceLoader<T> implements Producer<T> {
     }
 
     @Override
+    public T get(Locale language) {
+        // No language support
+        return get();
+    }
+
+    @Override
     public final T get(String datasourceIdentifier) {
         if (implementation == null) {
             Iterator<? extends T> iter = serviceLoader.iterator();
@@ -150,7 +159,7 @@ public class SingletonServiceLoader<T> implements Producer<T> {
      * Classes extending this class may overwrite the default (empty)
      * implementation.
      * <p/>
-     * 
+     *
      * @param implementation
      *            the loaded implementation
      *            <p/>

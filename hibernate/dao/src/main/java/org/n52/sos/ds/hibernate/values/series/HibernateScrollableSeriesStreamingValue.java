@@ -109,6 +109,7 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
             } else {
                 addSpatialFilteringProfile(observation, resultObject.getObservationId());
             }
+            checkForModifications(observation);
             session.evict(resultObject);
             return observation;
         } catch (final HibernateException he) {

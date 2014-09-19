@@ -45,6 +45,7 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.StringSettingDefinition;
@@ -54,13 +55,12 @@ import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullDBDatasource {
-    
+
     protected static final String URL_INSTANCE = "instance=";
-    
+
     protected static final String URL_DATABASE_NAME = "databaseName=";
 
     protected static final String INSTANCE_KEY = "jdbc.instance";
@@ -74,7 +74,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
 
     protected static final String SQL_SERVER_DRIVER_CLASS = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
-    
+
     protected static final Pattern JDBC_URL_PATTERN = Pattern.compile("^jdbc:sqlserver://([^:]+):([0-9]+);" + URL_INSTANCE + "([^:]+);" + URL_DATABASE_NAME + "([^:]+)");
 
     protected static final String USERNAME_DESCRIPTION =
@@ -157,12 +157,13 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
         try {
             conn = openConnection(settings);
             stmt = conn.createStatement();
-            String schema = (String) settings.get(createSchemaDefinition().getKey());
-            schema = schema == null ? "" : "." + schema;
+            final String schema = (String) settings.get(createSchemaDefinition().getKey());
+            final String schemaPrefix = schema == null ? "" : "\"" + schema + "\".";
+            final String testTable = schemaPrefix + "sos_installer_test_table";
             final String command =
-                    String.format("BEGIN; " + "DROP TABLE IF EXISTS \"%1$ssos_installer_test_table\"; "
-                            + "CREATE TABLE \"%1$ssos_installer_test_table\" (id integer NOT NULL); "
-                            + "DROP TABLE \"%1$ssos_installer_test_table\"; " + "END;", schema);
+                    String.format("BEGIN; " + "IF (OBJECT_ID('%1$s') >0 ) DROP TABLE %1$s; "
+                            + "CREATE TABLE %1$s (id integer NOT NULL); "
+                            + "DROP TABLE %1$s; " + "END;", testTable);
             stmt.execute(command);
             return true;
         } catch (SQLException e) {
@@ -177,7 +178,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings) {
         checkClasspath();
     }
-    
+
     private void checkClasspath() throws ConfigurationException {
         try {
             Class.forName(SQL_SERVER_DRIVER_CLASS);
@@ -199,7 +200,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
 //                        settings.get(PORT_KEY), settings.get(INSTANCE_KEY), settings.get(DATABASE_KEY));
         return builder.toString();
     }
-    
+
     @Override
     protected String[] parseURL(String url) {
         Matcher matcher = JDBC_URL_PATTERN.matcher(url);

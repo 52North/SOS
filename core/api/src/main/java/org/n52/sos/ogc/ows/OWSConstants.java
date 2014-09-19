@@ -131,4 +131,28 @@ public interface OWSConstants {
             return false;
         }
     }
+    
+    /** enum with names of get request parameters for all requests */
+    enum AdditionalRequestParams {
+        language, crs;
+
+        /**
+         * method checks whether the string parameter is contained in this
+         * enumeration
+         * 
+         * @param s
+         *            the name which should be checked
+         * @return true if the name is contained in the enumeration
+         */
+        public static boolean contains(String s) {
+            for (Enum<?> p : values()) {
+                if (p.name().equals(s)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    
+    
 }

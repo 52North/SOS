@@ -41,16 +41,19 @@ import java.util.TreeSet;
 import javax.xml.namespace.QName;
 
 import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.ows.OfferingExtension;
+import org.n52.sos.ogc.swes.AbstractSWES;
+import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.Constants;
 import org.n52.sos.util.QNameComparator;
-import org.n52.sos.util.StringHelper;
 
 /**
  * Class which represents a ObservationOffering. Used in the SosCapabilities.
  * 
  * @since 4.0.0
  */
-public class SosObservationOffering implements Comparable<SosObservationOffering> {
+public class SosObservationOffering extends AbstractSWES implements Comparable<SosObservationOffering> {
+
+    private static final long serialVersionUID = -9094472499167970506L;
 
     /**
      * add collection to sorted set
@@ -123,12 +126,7 @@ public class SosObservationOffering implements Comparable<SosObservationOffering
     /**
      * offering identifier for this contents sub section
      */
-    private String offering;
-
-    /**
-     * name of the offering
-     */
-    private String offeringName;
+    private SosOffering offering;
 
     /**
      * area observed by this offering
@@ -211,13 +209,31 @@ public class SosObservationOffering implements Comparable<SosObservationOffering
      */
     private final SortedSet<String> procedureDescriptionFormats = new TreeSet<String>();
 	
-	private Collection<OfferingExtension> extensions;
-
     /**
      * @return Offering identifier
      */
-    public String getOffering() {
+    /**
+     * @return
+     */
+    public SosOffering getOffering() {
         return offering;
+    }
+    
+    /**
+     * @param offering
+     *            Offering identifier
+     */
+    public void setOffering(SosOffering offering) {
+        this.offering = offering;
+        if (!isSetIdentifier() && offering.isSetIdentifier()) {
+            this.setIdentifier(offering.getIdentifier());
+        }
+        if (!isSetName() && offering.isSetName()) {
+            this.setName(offering.getName());
+        }
+        if (!isSetDescription() && offering.isSetDescription()) {
+            this.setDescription(offering.getDescription());
+        }
     }
 
     /**
@@ -225,30 +241,9 @@ public class SosObservationOffering implements Comparable<SosObservationOffering
      *            Offering identifier
      */
     public void setOffering(String offering) {
-        this.offering = offering;
+        setOffering(new SosOffering(offering, Constants.EMPTY_STRING));
     }
-
-    /**
-     * @return Offering name
-     */
-    public String getOfferingName() {
-        return offeringName;
-    }
-
-    /**
-     * @return <code>true</code>, if offering name is set
-     */
-    public boolean hasOfferingName() {
-        return StringHelper.isNotEmpty(getOfferingName());
-    }
-
-    /**
-     * @param offeringName
-     */
-    public void setOfferingName(String offeringName) {
-        this.offeringName = offeringName;
-    }
-
+    
     /**
      * @return Sorted observableProperties set
      */
@@ -483,18 +478,6 @@ public class SosObservationOffering implements Comparable<SosObservationOffering
     public SortedSet<String> getProcedureDescriptionFormats() {
         return Collections.unmodifiableSortedSet(this.procedureDescriptionFormats);
     }
-	
-	public void setExtensions(Collection<OfferingExtension> extensions) {
-        this.extensions = extensions;
-    }
-
-    public Collection<OfferingExtension> getExtensions() {
-        if (this.extensions == null) {
-            return Collections.emptyList();
-        } else {
-            return Collections.unmodifiableCollection(this.extensions);
-        }
-    }
 
     @Override
     public int compareTo(SosObservationOffering o) {
@@ -514,7 +497,7 @@ public class SosObservationOffering implements Comparable<SosObservationOffering
     }
 
     public boolean isEmpty() {
-        return !isSetOffering() && !isSetOfferingName() && !isSetObservedArea() && !isSetObservableProperties()
+        return !isSetOffering() && !isSetObservedArea() && !isSetObservableProperties()
                 && !isSetCompositePhenomena() && !isSetPhens4CompPhens() && !isSetPhenomenonTime()
                 && !isSetResultTime() && !isSetFeatureOfInterest() && !isSetRelatedFeature() && !isSetProcedures()
                 && !isSetresultModels() && !isSetObservationTypes() && !isSetFeatureOfInterestTypes()
@@ -527,75 +510,71 @@ public class SosObservationOffering implements Comparable<SosObservationOffering
     }
 
     public boolean isSetOffering() {
-        return offering != null && !offering.isEmpty();
-    }
-
-    public boolean isSetOfferingName() {
-        return offeringName != null && !offeringName.isEmpty();
+        return getOffering() != null;
     }
 
     public boolean isSetObservedArea() {
-        return observedArea != null && observedArea.isSetEnvelope();
+        return getObservedArea() != null && getObservedArea().isSetEnvelope();
     }
 
     public boolean isSetObservableProperties() {
-        return observableProperties != null && !observableProperties.isEmpty();
+        return CollectionHelper.isNotEmpty(getObservableProperties());
     }
 
     public boolean isSetCompositePhenomena() {
-        return compositePhenomena != null && !compositePhenomena.isEmpty();
+        return CollectionHelper.isNotEmpty(getCompositePhenomena());
     }
 
     public boolean isSetPhens4CompPhens() {
-        return phens4CompPhens != null && !phens4CompPhens.isEmpty();
+        return CollectionHelper.isNotEmpty(getPhens4CompPhens());
     }
 
     public boolean isSetPhenomenonTime() {
-        return phenomenonTime != null;
+        return getPhenomenonTime() != null;
     }
 
     public boolean isSetResultTime() {
-        return resultTime != null;
+        return getResultTime() != null;
     }
 
     public boolean isSetFeatureOfInterest() {
-        return featureOfInterest != null && !featureOfInterest.isEmpty();
+        return  CollectionHelper.isNotEmpty(getFeatureOfInterest());
     }
 
     public boolean isSetRelatedFeature() {
-        return relatedFeatures != null && !relatedFeatures.isEmpty();
+        return  CollectionHelper.isNotEmpty(getRelatedFeatures());
     }
 
     public boolean isSetProcedures() {
-        return procedures != null && !procedures.isEmpty();
+        return  CollectionHelper.isNotEmpty(getProcedures());
     }
 
     public boolean isSetresultModels() {
-        return resultModels != null && !resultModels.isEmpty();
+        return  CollectionHelper.isNotEmpty(getResultModels());
     }
 
     public boolean isSetObservationTypes() {
-        return observationTypes != null && !observationTypes.isEmpty();
+        return  CollectionHelper.isNotEmpty(getObservationTypes());
     }
 
     public boolean isSetFeatureOfInterestTypes() {
-        return featureOfInterestTypes != null && !featureOfInterestTypes.isEmpty();
+        return  CollectionHelper.isNotEmpty(getFeatureOfInterestTypes());
     }
 
     private boolean isSetObservationResultTypes() {
-        return observationResultTypes != null && !observationResultTypes.isEmpty();
+        return  CollectionHelper.isNotEmpty(getObservationResultTypes());
     }
 
     public boolean isSetResponseFormats() {
-        return responseFormats != null && !responseFormats.isEmpty();
+        return  CollectionHelper.isNotEmpty(getResponseFormats());
     }
 
     private boolean isSetResponseModes() {
-        return responseModes != null && !responseModes.isEmpty();
+        return  CollectionHelper.isNotEmpty(getResponseModes());
     }
 
     public boolean isSetProcedureDescriptionFormats() {
-        return procedureDescriptionFormats != null && !procedureDescriptionFormats.isEmpty();
+        return  CollectionHelper.isNotEmpty(getProcedureDescriptionFormats());
     }
 
     @Override

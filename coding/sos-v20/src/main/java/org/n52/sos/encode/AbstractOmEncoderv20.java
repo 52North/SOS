@@ -228,9 +228,9 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
         if (sosObservation.isSetIdentifier()) {
             Encoder<?, CodeWithAuthority> encoder =
                     CodingRepository.getInstance().getEncoder(
-                            CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, sosObservation.getIdentifier()));
+                            CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, sosObservation.getIdentifierCodeWithAuthority()));
             if (encoder != null) {
-                XmlObject xmlObject = (XmlObject) encoder.encode(sosObservation.getIdentifier());
+                XmlObject xmlObject = (XmlObject) encoder.encode(sosObservation.getIdentifierCodeWithAuthority());
                 xbObservation.addNewIdentifier().set(xmlObject);
             } else {
                 throw new NoApplicableCodeException()
@@ -561,7 +561,7 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
             } else if (value instanceof GeometryValue) {
                 GeometryValue geometryValue = (GeometryValue) value;
                 if (geometryValue.getValue() != null) {
-                    return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, geometryValue.getValue(),
+                    return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, geometryValue,
                             helperValues);
                 }
             } else if (value instanceof QuantityValue) {

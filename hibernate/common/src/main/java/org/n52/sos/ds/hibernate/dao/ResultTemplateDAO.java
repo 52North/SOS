@@ -131,7 +131,7 @@ public class ResultTemplateDAO {
             final Session session) {
         return getResultTemplateObject(observationConstellation.getOffering().getIdentifier(),
                 observationConstellation.getObservableProperty().getIdentifier(),
-                Lists.newArrayList(sosAbstractFeature.getIdentifier().getValue()), session);
+                Lists.newArrayList(sosAbstractFeature.getIdentifierCodeWithAuthority().getValue()), session);
     }
 
     /**

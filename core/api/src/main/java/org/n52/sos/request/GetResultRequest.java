@@ -33,8 +33,10 @@ import java.util.Map;
 
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.response.GetResultResponse;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
@@ -42,7 +44,7 @@ import org.n52.sos.util.StringHelper;
  * @since 4.0.0
  * 
  */
-public class GetResultRequest extends AbstractServiceRequest implements SpatialFeatureQueryRequest {
+public class GetResultRequest extends AbstractServiceRequest<GetResultResponse> implements SpatialFeatureQueryRequest {
 
     private final String operationName = SosConstants.Operations.GetResult.name();
 
@@ -189,6 +191,11 @@ public class GetResultRequest extends AbstractServiceRequest implements SpatialF
         return isSetSpatialFilter()
                 && getSpatialFilter().getValueReference().equals(
                         Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE);
+    }
+
+    @Override
+    public GetResultResponse getResponse() throws OwsExceptionReport {
+        return (GetResultResponse) new GetResultResponse().set(this);
     }
 
 }

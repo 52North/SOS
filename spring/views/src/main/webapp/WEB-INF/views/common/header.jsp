@@ -116,6 +116,11 @@
                                                                 </a>
                                                             </li>
                                                             <li>
+                                                                <a href="<c:url value="/admin/extensions" />">
+                                                                    <span class="menu-title">Extensions</span>
+                                                                </a>
+                                                            </li>
+                                                            <li>
                                                                 <a href="<c:url value="/admin/datasource/settings" />">
                                                                     <span class="menu-title">Datasource</span>
                                                                 </a>
@@ -133,6 +138,11 @@
                                                             <li>
                                                                 <a href="<c:url value="/admin/observableProperties" />">
                                                                     <span class="menu-title">Observable Properties</span>
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="<c:url value="/admin/i18n" />">
+                                                                    <span class="menu-title">I18N Settings</span>
                                                                 </a>
                                                             </li>
                                                         </ul>

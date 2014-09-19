@@ -260,4 +260,5 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
     protected Class<?> getTextObservationClass() {
         return SeriesTextObservation.class;
     }
+
 }

@@ -48,7 +48,7 @@ import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     private AbstractHibernateFullDBDatasource ds;
@@ -107,28 +107,10 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     }
 
     private void checkSettingKeys(final Collection<String> keys, final boolean changeable) {
-        final int maxCount = 13;
-        int counter = 13;
-        boolean transactional = true;
-        boolean concept = true;
-        boolean multiLanguage = true;
-        if (!keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY)) {
-            counter--;
-            transactional = false;
-        }
-        if (!keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY)) {
-            counter--;
-            concept = false;
-        }
-        if (!keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY) ){
-            counter--;
-            multiLanguage = false;
-        }
-        if (changeable) {
-            assertEquals(9, keys.size());
-        } else {
-            assertEquals((transactional && concept && multiLanguage) ? maxCount : counter, keys.size());
-        }
+        boolean transactional = keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY);
+        boolean concept = keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY);
+        boolean multiLanguage = keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY);
+
         assertTrue(keys.contains(AbstractHibernateDatasource.HOST_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.PORT_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.DATABASE_KEY));
@@ -138,17 +120,20 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         assertTrue(keys.contains(AbstractHibernateDatasource.MIN_POOL_SIZE_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.MAX_POOL_SIZE_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.BATCH_SIZE_KEY));
-        if (!changeable) {
-            assertTrue(keys.contains(AbstractHibernateDatasource.PROVIDED_JDBC_DRIVER_KEY));
-        }
-        if (transactional) {
-            assertTrue(keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY));
-        }
-        if (concept) {
-            assertTrue(keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY));
-        }
-        if (multiLanguage) {
-            assertTrue(keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY));
+        assertTrue(changeable || keys.contains(AbstractHibernateDatasource.PROVIDED_JDBC_DRIVER_KEY));
+        assertTrue(!transactional || keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY));
+        assertTrue(!concept || keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY));
+        assertTrue(!multiLanguage || keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY));
+
+        if (changeable) {
+            assertEquals(9, keys.size());
+        } else {
+            final int maxCount = 13;
+            int counter = maxCount;
+            if (!transactional) { counter--; }
+            if (!concept) { counter--; }
+            if (!multiLanguage){ counter--; }
+            assertEquals(counter, keys.size());
         }
     }
 

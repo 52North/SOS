@@ -81,9 +81,9 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Utility class for SOS
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class SosHelper implements Constants {
 
@@ -93,7 +93,7 @@ public class SosHelper implements Constants {
 
     private static final int KILO_BYTE = 1024;
 
-    private static final int KILO_BYTES_256 = 262144;
+    private static final int KILO_BYTES_256 = 256 * KILO_BYTE;
 
     protected static Configuration getConfiguration() {
         return config;
@@ -136,9 +136,9 @@ public class SosHelper implements Constants {
 
     /**
      * Creates a HTTP-Get request for FeatureOfInterst without identifier
-     * 
+     *
      * @deprecated use {@link #createFoiGetUrl(String, String, String, String)}
-     * 
+     *
      * @param version
      *            SOS version
      * @param serviceURL
@@ -171,7 +171,7 @@ public class SosHelper implements Constants {
     /**
      * Creates a HTTP-Get URL from FOI identifier and service URL for SOS
      * version
-     * 
+     *
      * @param foiId
      *            FeatureOfInterst identifier
      * @param version
@@ -202,7 +202,7 @@ public class SosHelper implements Constants {
 
     /**
      * creates a HTTP-GET string for DescribeSensor.
-     * 
+     *
      * @param version
      *            the version of the request
      * @param serviceURL
@@ -211,7 +211,7 @@ public class SosHelper implements Constants {
      *            The procedureId for the DescribeSensor request
      * @param procedureDescriptionFormat
      *            The procedureDescriptionFormat for the DescribeSensor request
-     * 
+     *
      * @param urlPattern
      *            the url pattern (e.g. /kvp)
      * @return Get-URL as String
@@ -256,7 +256,7 @@ public class SosHelper implements Constants {
         url.append(getVersionParam(version));
         return url.toString();
     }
-    
+
     public static String addKVPOfferingParameterToRequest(String request, String offering) {
         if (StringHelper.isNotEmpty(offering)) {
             final StringBuilder url = new StringBuilder(request);
@@ -283,7 +283,7 @@ public class SosHelper implements Constants {
         }
         return request;
     }
-    
+
     public static String getGetCapabilitiesKVPRequest() {
         final StringBuilder url = new StringBuilder();
         // service URL
@@ -297,15 +297,15 @@ public class SosHelper implements Constants {
     }
 
     /**
-     * 
+     *
      * Parse the srsName to integer value
-     * 
+     *
      * @param srsName
      *            the srsName to parse
      * @return srsName integer value
      * @throws OwsExceptionReport
      *             If the srsName can not be parsed
-     * 
+     *
      */
     public static int parseSrsName(final String srsName) throws OwsExceptionReport {
         int srid = -1;
@@ -331,30 +331,29 @@ public class SosHelper implements Constants {
 
     /**
      * Checks the free memory size.
-     * 
+     *
      * @throws OwsExceptionReport
      *             If no free memory size.
      */
     public static void checkFreeMemory() throws OwsExceptionReport {
-        long freeMem;
+        Runtime runtime = Runtime.getRuntime();
         // check remaining free memory on heap if too small, throw exception to
         // avoid an OutOfMemoryError
-        freeMem = Runtime.getRuntime().freeMemory();
+        long freeMem = runtime.freeMemory();
         LOGGER.debug("Remaining Heap Size: " + (freeMem / KILO_BYTE) + "KB");
-        if ((Runtime.getRuntime().totalMemory() == Runtime.getRuntime().maxMemory()) && (freeMem < KILO_BYTES_256)) {
+        if ((runtime.totalMemory() == runtime.maxMemory()) && (freeMem < KILO_BYTES_256)) {
             // accords to 256 kB create service exception
             throw new ResponseExceedsSizeLimitException().withMessage(
                     "The observation response is to big for the maximal heap size of %d Byte of the "
                             + "virtual machine! Please either refine your getObservation request to reduce the "
                             + "number of observations in the response or ask the administrator of this SOS to "
-                            + "increase the maximum heap size of the virtual machine!", Runtime.getRuntime()
-                            .maxMemory());
+                            + "increase the maximum heap size of the virtual machine!", runtime.maxMemory());
         }
     }
 
     /**
      * Returns an Envelope that contains the Geometry
-     * 
+     *
      * @param envelope
      *            Current envelope
      * @param geometry
@@ -373,13 +372,13 @@ public class SosHelper implements Constants {
 
     /**
      * Parses the HTTP-Post body with a parameter
-     * 
+     *
      * @param paramNames
      *            Parameter names
      * @param parameterMap
      *            Parameter map
      * @return Value of the parameter
-     * 
+     *
      * @throws OwsExceptionReport
      *             * If the parameter is not supported by this SOS.
      */
@@ -408,7 +407,7 @@ public class SosHelper implements Constants {
 
     /**
      * Checks if the FOI identifier was generated by SOS
-     * 
+     *
      * @param featureOfInterestIdentifier
      *            FOI identifier from database
      * @param version
@@ -423,7 +422,7 @@ public class SosHelper implements Constants {
 
     /**
      * get collection of hierarchy values for a key
-     * 
+     *
      * @param hierarchy
      *            map to example
      * @param key
@@ -461,7 +460,7 @@ public class SosHelper implements Constants {
 
     /**
      * get collection of hierarchy values for a set of keys
-     * 
+     *
      * @param hierarchy
      *            map to example
      * @param keys
@@ -470,7 +469,7 @@ public class SosHelper implements Constants {
      *            whether to traverse down the full hierarchy
      * @param includeStartKeys
      *            whether to include the passed keys in the result collection
-     * 
+     *
      * @return collection of the full hierarchy
      */
     // FIXME move to ReadableCache
@@ -488,12 +487,12 @@ public class SosHelper implements Constants {
      * result format is set, true is returned. If not and the value is text/xml;
      * subtype="OM" false is returned. If neither zip nor OM is set, a
      * ServiceException with InvalidParameterValue as its code is thrown.
-     * 
+     *
      * @param responseFormat
      *            String containing the value of the result format parameter
      * @param service
      * @param version
-     * 
+     *
      * @throws OwsExceptionReport
      *             * if the parameter value is incorrect
      */
@@ -512,7 +511,7 @@ public class SosHelper implements Constants {
 
     /**
      * checks whether the value of procedureDescriptionFormat parameter is valid
-     * 
+     *
      * @param procedureDescriptionFormat
      *            the procedureDecriptionFormat parameter which should be
      *            checked
@@ -531,7 +530,7 @@ public class SosHelper implements Constants {
 
     /**
      * checks whether the value of outputFormat parameter is valid
-     * 
+     *
      * @param checkOutputFormat
      *            the outputFormat parameter which should be checked
      * @param service
@@ -549,7 +548,7 @@ public class SosHelper implements Constants {
 
     /**
      * checks whether the value of procedure format parameter is valid
-     * 
+     *
      * @param format
      *            the procedure format parameter which should be checked
      * @param serviceOperatorKey
@@ -574,7 +573,7 @@ public class SosHelper implements Constants {
 
     /**
      * Get valid FOI identifiers for SOS 2.0
-     * 
+     *
      * @param featureIDs
      *            FOI identifiers to test
      * @param version
@@ -598,7 +597,7 @@ public class SosHelper implements Constants {
      * Creates the minimum and maximum values of this envelope in the default
      * EPSG.
      * <p/>
-     * 
+     *
      * @param envelope
      *            the envelope
      *            <p/>
@@ -615,7 +614,7 @@ public class SosHelper implements Constants {
      * Creates the minimum and maximum values of this envelope in the default
      * EPSG as list.
      * <p/>
-     * 
+     *
      * @param envelope
      *            the envelope
      *            <p/>
@@ -731,7 +730,7 @@ public class SosHelper implements Constants {
     /**
      * Class to encapsulate all calls to the {@link Configurator}. Can be
      * overwritten by tests.
-     * 
+     *
      * @see SosHelper#setConfiguration(org.n52.sos.util.SosHelper.Configuration)
      */
     protected static class Configuration {

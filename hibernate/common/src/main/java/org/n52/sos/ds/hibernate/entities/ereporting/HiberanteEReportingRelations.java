@@ -28,83 +28,151 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
+import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.ds.hibernate.entities.series.HibernateSeriesRelations;
 
 public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
-    
+
     interface HasEReportingSamplingPoint {
-        
+
         String SAMPLING_POINT = "samplingPoint";
-        
+
         EReportingSamplingPoint getSamplingPoint();
-        
+
         HasEReportingSamplingPoint setSamplingPoint(EReportingSamplingPoint samplingPoint);
-        
+
         boolean hasSamplingPoint();
     }
-    
+
     interface HasInspireId {
-        
+
         String INSPIRE_ID = "inspireId";
-        
+
         String getInspireId();
-        
+
         HasInspireId setInspireId(String inspireId);
-        
+
         boolean isSetInspireId();
-        
+
     }
-    
+
     interface HasEReportingSeries extends HasSeries {
-        
+
         EReportingSeries getEReportingSeries();
-        
-       HasEReportingSeries setEReportingSeries(EReportingSeries series);
-        
+
+        HasEReportingSeries setEReportingSeries(EReportingSeries series);
+
         boolean hasEReportingSeries();
     }
 
     interface HasValidation {
         
+        Integer DEFAULT_VALIDATION = -1;
+
         String VALIDATION = "validation";
-        
+
         Integer getValidation();
-        
+
         HasValidation setValidation(Integer validation);
-        
+
         boolean isSetValidation();
     }
-    
+
     interface HasVerification {
         
+        Integer DEFAULT_VERIFICATION = 3;
+
         String VERIFICATION = "verification";
-        
+
         Integer getVerification();
-        
+
         HasVerification setVerification(Integer verification);
-        
+
         boolean isSetVerification();
     }
     
-    interface EReportingValues extends HasEReportingSeries, HasValidation, HasVerification, HasUnit, GetStringValue {
-    	
+    interface HasPrimaryObservation {
+        
+        String DEFAULT_PRIMARY_OBSERVATION = AqdConstants.VAR;
+        
+        String PRIMARY_OBSERVATION = "primaryObservation";
+
+        String getPrimaryObservation();
+
+        HasPrimaryObservation setPrimaryObservation(String primaryObservation);
+
+        boolean isSetPrimaryObservation();
     }
     
+
+    interface HasTimeCoverageFlag {
+        String TIME_COVERAGE_FLAG = "timeCoverageFlag";
+
+        Boolean getTimeCoverageFlag();
+
+        void setTimeCoverageFlag(Boolean timeCoverageFlag);
+
+        boolean isSetTimeCoverageFlag();
+    }
+
+    interface HasDataCaptureFlag {
+        String DATA_CAPTURE_FLAG = "dataCaptureFlag";
+
+        Boolean getDataCaptureFlag();
+
+        void setDataCaptureFlag(Boolean dataCaptureFlag);
+
+        boolean isSetDataCaptureFlag();
+    }
+    
+    interface HasDataCapture {
+        
+        String DATA_CAPTURE = "dataCapture";
+
+        Double getDataCapture();
+
+        HasDataCapture setDataCapture(Double dataCapture);
+
+        boolean isSetDataCapture();
+    }
+
+    interface HasUncertaintyEstimation {
+        String UNCERTAINTY_ESTIMATION = "uncertaintyEstimation";
+
+        Double getUncertaintyEstimation();
+
+        void setUncertaintyEstimation(Double uncertaintyEstimation);
+
+        boolean isSetUncertaintyEstimation();
+    }
+    
+    interface EReportingQualityData extends HasTimeCoverageFlag, HasDataCaptureFlag, HasUncertaintyEstimation {
+
+    }
+
+    interface EReportingValues extends HasEReportingSeries, HasValidation, HasVerification, HasPrimaryObservation, HasDataCapture,
+    EReportingQualityData, HasUnit, GetStringValue {
+
+        String getPrimaryObservation();
+
+    }
+
     interface HasAssessmentType {
-        
+
         String ASSESSMENTTYPE = "assessmentType";
-        
+
         /**
          * @return the assessmentType
          */
         EReportingAssessmentType getAssessmentType();
 
         /**
-         * @param assessmentType the assessmentType to set
+         * @param assessmentType
+         *            the assessmentType to set
          */
         HasAssessmentType setAssessmentType(EReportingAssessmentType assessmentType);
-        
+
         boolean isSetAssessmentType();
-        
+
     }
 }

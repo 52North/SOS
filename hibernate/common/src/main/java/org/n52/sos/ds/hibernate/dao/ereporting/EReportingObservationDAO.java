@@ -181,7 +181,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
         }
         return observationIdentifiers;
     }
-
+    
     private AqdSamplingPoint addSamplingPointParameterValuesToAqdSamplingPoint(AqdSamplingPoint samplingPoint,
             Value<?> value) {
         if (value instanceof ReferenceValue) {

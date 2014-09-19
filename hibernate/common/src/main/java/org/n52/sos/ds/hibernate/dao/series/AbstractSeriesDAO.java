@@ -72,8 +72,9 @@ public abstract class AbstractSeriesDAO {
      * @param session
      *            Hibernate session
      * @return Series that fit
+     * @throws CodedException 
      */
-    public abstract List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session);
+    public abstract List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws CodedException;
     
     /**
      * Query series for observedProiperty and featuresOfInterest
@@ -136,6 +137,8 @@ public abstract class AbstractSeriesDAO {
      */
     public abstract Series getOrInsertSeries(SeriesIdentifiers identifiers, final Session session) throws CodedException; 
     
+    protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException;
+
     protected Series getOrInsert(SeriesIdentifiers identifiers, final Session session) throws CodedException {
         Criteria criteria = getDefaultAllSeriesCriteria(session);
         identifiers.addIdentifierRestrictionsToCritera(criteria);
@@ -167,9 +170,10 @@ public abstract class AbstractSeriesDAO {
         }
     }
 
-    public Criteria getSeriesCriteria(GetObservationRequest request, Collection<String> features, Session session) {
+    public Criteria getSeriesCriteria(GetObservationRequest request, Collection<String> features, Session session) throws CodedException {
         final Criteria c =
                 createCriteriaFor(request.getProcedures(), request.getObservedProperties(), features, session);
+        addSpecificRestrictions(c, request);
         LOGGER.debug("QUERY getSeries(request, features): {}", HibernateHelper.getSqlString(c));
         return c;
     }

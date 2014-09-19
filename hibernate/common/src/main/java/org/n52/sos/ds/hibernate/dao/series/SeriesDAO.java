@@ -32,31 +32,10 @@ import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.joda.time.DateTime;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.ObservationInfo;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.exception.CodedException;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.ProcedureTimeExtrema;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +51,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) {
+    public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws CodedException {
         return getSeriesCriteria(request, features, session).list();
     }
 
@@ -102,6 +81,11 @@ public class SeriesDAO extends AbstractSeriesDAO {
     @Override
     protected Class <?>getSeriesClass() {
         return Series.class;
+    }
+
+    @Override
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) {
+        // nothing to add
     }
 
 }

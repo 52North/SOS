@@ -26,33 +26,35 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.inspire.aqd;
+package org.n52.sos.gmd;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public enum ReportObligationType {
-//    B("B", "Information on zones and agglomerations"),
-//    C("C", "Information on the assessment regime"),
-//    D("D", "Information on the assessment methods"),
-//    E1A("E1a", "Primary validated assessment data - measurements"),
-//    E1B("E1b", "Primary validated assessment data - modelled"),
-    E2A("E2a", "Primary up-to-date assessment data - measurements");
-    private final String title;
-    private final String description;
+public class GmdCitation {
 
-    private ReportObligationType(String title, String description) {
+    private static final GmdCitation EC_50_2008
+            = new GmdCitation("EC/50/2008", new GmdCitationDate(GmdDateType.publication(), "2008"));
+    private final String title;
+    private final GmdCitationDate date;
+
+    public GmdCitation(String title, GmdCitationDate date) {
         this.title = title;
-        this.description = description;
+        this.date = date;
     }
 
     public String getTitle() {
-        return this.title;
+        return title;
     }
 
-    public String getDescription() {
-        return description;
+    public GmdCitationDate getDate() {
+        return date;
     }
+
+    public static GmdCitation airQualityDirectiveEC502008() {
+        return EC_50_2008;
+    }
+
 }

@@ -30,7 +30,7 @@ package org.n52.sos.ds.hibernate.values;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
@@ -44,11 +44,14 @@ import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.GmlHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Abstract class for Hibernate streaming values
@@ -58,6 +61,8 @@ import com.google.common.collect.Lists;
  *
  */
 public abstract class AbstractHibernateStreamingValue extends StreamingValue<AbstractValue> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHibernateStreamingValue.class);
 
     private static final long serialVersionUID = -8355955808723620476L;
 
@@ -70,14 +75,40 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
     protected Criterion temporalFilterCriterion;
 
     @Override
-    public List<OmObservation> mergeObservation() throws OwsExceptionReport {
-        OmObservation observation = observationTemplate.cloneTemplate();
+    public Collection<OmObservation> mergeObservation() throws OwsExceptionReport {
+
+        Map<String, OmObservation> observations = Maps.newHashMap();
         while (hasNextValue()) {
             AbstractValue nextEntity = nextEntity();
+            OmObservation observation = null;
+            if (observations.containsKey(nextEntity.getDiscriminator())) {
+                observation = observations.get(nextEntity.getDiscriminator());
+            } else {
+                observation = observationTemplate.cloneTemplate();
+                addSpecificValuesToObservation(observation, nextEntity, request.getExtensions());
+                observations.put(nextEntity.getDiscriminator(), observation);
+            }
             nextEntity.mergeValueToObservation(observation, getResponseFormat());
             sessionHolder.getSession().evict(nextEntity);
         }
-        return Lists.newArrayList(observation);
+        return observations.values();
+    }
+
+    private void addSpecificValuesToObservation(OmObservation observation, AbstractValue value, SwesExtensions swesExtensions) {
+        boolean newSession = false;
+        try {
+            if (session == null) {
+                session = sessionHolder.getSession();
+                newSession = true;
+            }
+            value.addValueSpecificDataToObservation(observation, session, swesExtensions);
+        } catch (OwsExceptionReport owse) {
+            LOGGER.error("Error while querying times", owse);
+        } finally {
+            if (newSession) {
+                sessionHolder.returnSession(session);
+            }
+        }
     }
 
     /**

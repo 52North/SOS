@@ -33,19 +33,26 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.joda.time.DateTime;
 import org.n52.sos.aqd.AqdConstants;
+import org.n52.sos.aqd.AqdHelper;
+import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.AbstractGetObservationDAO;
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
+import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.sos.inspire.aqd.ReportObligationType;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -56,7 +63,10 @@ import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.SosHelper;
+
+import com.google.common.collect.Lists;
 
 public class AqdGetObservationOperatorV10 extends
         AbstractAqdRequestOperator<AbstractGetObservationDAO, GetObservationRequest, GetObservationResponse> {
@@ -79,14 +89,16 @@ public class AqdGetObservationOperatorV10 extends
 
     @Override
     public GetObservationResponse receive(GetObservationRequest request) throws OwsExceptionReport {
-        // TODO get FLOW from request/response
-        checkReportingHeader(ReportObligationType.E2A);
+        ReportObligationType flow = AqdHelper.getFlow(request.getExtensions());
+        checkReportingHeader(flow);
+        checkRequestForFlowAndTemporalFilter(request, flow);
         boolean checkForMergeObservationsInResponse = checkForMergeObservationsInResponse(request);
         request.setMergeObservationValues(checkForMergeObservationsInResponse);
         final GetObservationResponse response =
                 (GetObservationResponse) changeResponseServiceVersion(getDao().getObservation(
                         (GetObservationRequest) changeRequestServiceVersion(request)));
         changeRequestServiceVersionToAqd(request);
+        response.setExtensions(request.getExtensions());
         setObservationResponseResponseFormatAndContentType(request, response);
         // TODO check for correct merging, add merge if swes:extension is set
         if (checkForMergeObservationsInResponse) {
@@ -100,6 +112,45 @@ public class AqdGetObservationOperatorV10 extends
             return true;
         }
         return false;
+    }
+
+    private void checkRequestForFlowAndTemporalFilter(GetObservationRequest request, ReportObligationType flow) throws CodedException {
+        try {
+            if (!request.isSetTemporalFilter()) {
+                DateTime start = null;
+                DateTime end = null;
+                DateTime dateTime = new DateTime();
+                if (ReportObligationType.E2A.equals(flow)) {
+                    String timeString;
+                    timeString = DateTimeHelper.formatDateTime2YearMonthDayDateStringYMD(dateTime.minusDays(1));
+                    start = DateTimeHelper.parseIsoString2DateTime(timeString);
+                    int timeLength = DateTimeHelper.getTimeLengthBeforeTimeZone(timeString);
+                    DateTime origEnd = DateTimeHelper.parseIsoString2DateTime(timeString);
+                    end = DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(origEnd, timeLength);
+                } else if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E1B.equals(flow)) {
+                    String year = Integer.toString(dateTime.minusYears(1).getYear());
+                    start = DateTimeHelper.parseIsoString2DateTime(year);
+                    int timeLength = DateTimeHelper.getTimeLengthBeforeTimeZone(year);
+                    end =
+                            DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(
+                                    DateTimeHelper.parseIsoString2DateTime(year), timeLength);
+                }
+                if (start != null && end != null) {
+                    request.setTemporalFilters(getTemporalFilter(new TimePeriod(start.minusMillis(1), end
+                            .plusMillis(2))));
+                }
+            }
+        } catch (DateTimeFormatException | DateTimeParseException e) {
+            throw new NoApplicableCodeException()
+                    .causedBy(e)
+                    .withMessage(
+                            "The request does not contain a temporal filter and the temporal filter creation for the flow fails!");
+        }
+    }
+
+    private List<TemporalFilter> getTemporalFilter(TimePeriod tp) {
+        TemporalFilter tf = new TemporalFilter(TimeOperator.TM_During, tp, "phenomenonTime");
+        return Lists.newArrayList(tf);
     }
 
     private boolean isSetExtensionMergeObservationsToSweDataArray(final GetObservationRequest request) {

@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.entities.values;
 import java.util.Date;
 
 import org.apache.xmlbeans.XmlObject;
+import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
@@ -60,6 +61,7 @@ import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.OMHelper;
@@ -101,7 +103,11 @@ public abstract class AbstractValue extends AbstractObservationTime implements H
     
     protected abstract void addValueSpecificDataToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport;
     
+    public abstract void addValueSpecificDataToObservation(OmObservation observation, Session session, SwesExtensions swesExtensions) throws OwsExceptionReport;
+    
     protected abstract void addObservationValueToObservation(OmObservation observation, Value<?> value, String responseFormat) throws OwsExceptionReport;
+    
+    public abstract String getDiscriminator();
     
     /**
      * Create a {@link TimeValuePair} from {@link AbstractValue}

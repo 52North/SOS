@@ -11,10 +11,11 @@
 	
 	<!-- optional -->
 	<!--
-	<swes:extension>
-		<swe:Boolean definition="MergeObservationsIntoDataArray">
-			<swe:value>true</swe:value>
-		</swe:Boolean>
+    <swes:extension xsi:type="swe:TextPropertyType">
+		<swe:Text>
+			<swe:identifier>flow</swe:identifier>
+			<swe:value>e1a</swe:value>
+		</swe:Text>
 	</swes:extension>
 	
 	<swes:extension xsi:type="swe:CountPropertyType">

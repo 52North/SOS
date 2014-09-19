@@ -29,7 +29,7 @@
 package org.n52.sos.encode.streaming.aqd.v1;
 
 import java.io.OutputStream;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
@@ -139,11 +139,10 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
         namespace(OmConstants.NS_OM_PREFIX, OmConstants.NS_OM_2);
         namespace(GmlConstants.NS_GML_PREFIX, GmlConstants.NS_GML_32);
         addGmlId(featureCollection.getGmlId());
-        writeNewLine();
         for (AbstractFeature abstractFeature : featureCollection.getMembers().values()) {
             if (abstractFeature instanceof OmObservation
                     && ((OmObservation) abstractFeature).getValue() instanceof AbstractStreaming) {
-                List<OmObservation> mergeObservation =
+                Collection<OmObservation> mergeObservation =
                         ((AbstractStreaming) ((OmObservation) abstractFeature).getValue()).mergeObservation();
                 for (OmObservation omObservation : mergeObservation) {
                     writeMember(omObservation, getEncoder(abstractFeature, encodingValues.getAdditionalValues()),
@@ -166,16 +165,15 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
     private void writeMember(AbstractFeature abstractFeature, Encoder<XmlObject, AbstractFeature> encoder,
             EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
         start(GmlConstants.QN_FEATURE_MEMBER_32);
-        writeNewLine();
-        if (encoder instanceof StreamingEncoder<?, ?>) {
-            ((StreamingEncoder<XmlObject, AbstractFeature>) encoder).encode(abstractFeature, getOutputStream(),
-                    encodingValues.setAsDocument(true).setEmbedded(true).setIndent(indent));
-        } else {
+//        chars("");
+//        if (encoder instanceof StreamingEncoder<?, ?>) {
+//            ((StreamingEncoder<XmlObject, AbstractFeature>) encoder).encode(abstractFeature, getOutputStream(),
+//                    encodingValues.setAsDocument(true).setEmbedded(true).setIndent(indent));
+//        } else {
             rawText((encoder.encode(abstractFeature, encodingValues.getAdditionalValues())).xmlText(XmlOptionsHelper
                     .getInstance().getXmlOptions()));
-        }
+//        }
         indent--;
-        writeNewLine();
         end(GmlConstants.QN_FEATURE_MEMBER_32);
         indent++;
     }

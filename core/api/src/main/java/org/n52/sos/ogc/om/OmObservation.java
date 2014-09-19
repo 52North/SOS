@@ -31,11 +31,13 @@ package org.n52.sos.ogc.om;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.quality.OmResultQuality;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.TVPValue;
@@ -95,6 +97,11 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /** separator of value tuples, which are contained in the resulte element */
     private String tupleSeparator;
+    
+    /**
+     * Measurment quality
+     */
+    private Set<OmResultQuality> qualityList = Sets.newHashSet();
 
     /**
      * constructor
@@ -546,6 +553,40 @@ public class OmObservation extends AbstractFeature implements Serializable {
     		setGmlId("o_" + getObservationID());
     	}
     	return super.getGmlId();
+    }
+
+    /**
+     * Set result quality
+     * 
+     * @param qualityList
+     *            Result quality to set
+     */
+    public OmObservation setResultQuality(Set<OmResultQuality> qualityList) {
+        this.qualityList = qualityList;
+        return this;
+    }
+    
+    public OmObservation addResultQuality(Set<OmResultQuality> qualityList) {
+        this.qualityList.addAll(qualityList);
+        return this;
+    }
+    
+    public OmObservation addResultQuality(OmResultQuality qualityList) {
+        this.qualityList.add(qualityList);
+        return this;
+    }
+
+    /**
+     * Get result quality
+     * 
+     * @return Result quality
+     */
+    public Set<OmResultQuality> getResultQuality() {
+        return qualityList;
+    }
+    
+    public boolean isSetResultQuality() {
+        return CollectionHelper.isNotEmpty(getResultQuality());
     }
    
 }

@@ -28,88 +28,83 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingValues;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasPrimaryObservation;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingQualityData;
 import org.n52.sos.util.StringHelper;
 
-public abstract class EReportingObservation extends SeriesObservation
-    implements EReportingValues {
-
-    private static final long serialVersionUID = 2878044983511090422L;
-
-    private Integer validation = EReportingValues.DEFAULT_VALIDATION;
-
-    private Integer verification = EReportingValues.DEFAULT_VERIFICATION;
-
-    private String primaryObservation = EReportingValues.DEFAULT_PRIMARY_OBSERVATION;
-
+public class EReportingQuality implements HasPrimaryObservation, EReportingQualityData {
+    
+    public static final String YEAR = "year";
+    
+    public static final String SERIES = "series";
+    
+    public static final String PRIMARY_OBSERVATION = "primaryObservation";
+    
+    private long id;
+    
+    private int year;
+    
+    private long series;
+    
+    private String primaryObservation;
+    
     private Boolean timeCoverageFlag;
 
     private Boolean dataCaptureFlag;
     
-    private Double dataCapture;
+    private Double uncertaintyEstimation; 
+    
+    
 
-    private Double uncertaintyEstimation;
-
-    @Override
-    public EReportingSeries getEReportingSeries() {
-        if (hasEReportingSeries()) {
-            return (EReportingSeries) getSeries();
-        }
-        return null;
+    /**
+     * @return the id
+     */
+    public long getId() {
+        return id;
     }
 
-    @Override
-    public HasEReportingSeries setEReportingSeries(EReportingSeries series) {
-        setSeries(series);
-        return this;
+    /**
+     * @param id the id to set
+     */
+    public void setId(long id) {
+        this.id = id;
     }
 
-    @Override
-    public boolean hasEReportingSeries() {
-        return getSeries() != null && getSeries() instanceof EReportingSeries;
+    /**
+     * @return the year
+     */
+    public int getYear() {
+        return year;
     }
 
-    @Override
-    public Integer getVerification() {
-        return verification;
+    /**
+     * @param year the year to set
+     */
+    public void setYear(int year) {
+        this.year = year;
     }
 
-    @Override
-    public EReportingObservation setVerification(Integer verification) {
-        this.verification = verification;
-        return this;
+    /**
+     * @return the series
+     */
+    public long getSeries() {
+        return series;
     }
 
-    @Override
-    public boolean isSetVerification() {
-        return getVerification() != null;
-    }
-
-    @Override
-    public Integer getValidation() {
-        return validation;
-    }
-
-    @Override
-    public EReportingObservation setValidation(Integer validation) {
-        this.validation = validation;
-        return this;
-    }
-
-    @Override
-    public boolean isSetValidation() {
-        return getValidation() != null;
+    /**
+     * @param series the series to set
+     */
+    public void setSeries(long series) {
+        this.series = series;
     }
 
     @Override
     public String getPrimaryObservation() {
         return primaryObservation;
     }
-
+    
     @Override
-    public EReportingObservation setPrimaryObservation(String primaryObservation) {
+    public EReportingQuality setPrimaryObservation(String primaryObservation) {
         this.primaryObservation = primaryObservation;
         return this;
     }
@@ -134,22 +129,6 @@ public abstract class EReportingObservation extends SeriesObservation
         return this.dataCaptureFlag != null;
     }
     
-    @Override
-    public Double getDataCapture() {
-        return this.dataCapture;
-    }
-
-    @Override
-    public EReportingObservation setDataCapture(Double dataCapture) {
-        this.dataCapture = dataCapture;
-        return this;
-    }
-
-    @Override
-    public boolean isSetDataCapture() {
-        return this.dataCapture != null;
-    }
-
     @Override
     public Boolean getTimeCoverageFlag() {
         return this.timeCoverageFlag;

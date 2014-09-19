@@ -115,7 +115,7 @@ This project includes:
   JBoss Logging 3 under Apache License, version 2.0
   JBoss Logging I18n Annotations under Public Domain
   JCL 1.1.1 implemented over SLF4J under MIT License
-  jgridshift:jgridshift under GNU Lesser General Public License, version 2.0 (LGPLv2)
+  jgridshift under GNU Lesser General Public License, version 2.0 (LGPLv2)
   Joda-Time under Apache 2
   JOpt Simple under The MIT License
   jsp-api under CDDL 1.1 or GPL2 w/ CPE

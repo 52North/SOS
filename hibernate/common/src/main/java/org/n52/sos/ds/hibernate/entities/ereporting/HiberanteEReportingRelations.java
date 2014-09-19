@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
+import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.ds.hibernate.entities.series.HibernateSeriesRelations;
 
 public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
@@ -65,6 +66,8 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
     }
 
     interface HasValidation {
+        
+        Integer DEFAULT_VALIDATION = -1;
 
         String VALIDATION = "validation";
 
@@ -76,6 +79,8 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
     }
 
     interface HasVerification {
+        
+        Integer DEFAULT_VERIFICATION = 3;
 
         String VERIFICATION = "verification";
 
@@ -85,23 +90,48 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
 
         boolean isSetVerification();
     }
+    
+    interface HasPrimaryObservation {
+        
+        String DEFAULT_PRIMARY_OBSERVATION = AqdConstants.VAR;
+        
+        String PRIMARY_OBSERVATION = "primaryObservation";
+
+        String getPrimaryObservation();
+
+        HasPrimaryObservation setPrimaryObservation(String primaryObservation);
+
+        boolean isSetPrimaryObservation();
+    }
+    
 
     interface HasTimeCoverageFlag {
-        String TIME_COVERAGE = "timeCoverage";
+        String TIME_COVERAGE_FLAG = "timeCoverageFlag";
 
-        Boolean getTimeCoverage();
+        Boolean getTimeCoverageFlag();
 
-        void setTimeCoverage(Boolean timeCoverage);
+        void setTimeCoverageFlag(Boolean timeCoverageFlag);
 
-        boolean isSetTimeCoverage();
+        boolean isSetTimeCoverageFlag();
     }
 
     interface HasDataCaptureFlag {
+        String DATA_CAPTURE_FLAG = "dataCaptureFlag";
+
+        Boolean getDataCaptureFlag();
+
+        void setDataCaptureFlag(Boolean dataCaptureFlag);
+
+        boolean isSetDataCaptureFlag();
+    }
+    
+    interface HasDataCapture {
+        
         String DATA_CAPTURE = "dataCapture";
 
-        Boolean getDataCapture();
+        Double getDataCapture();
 
-        void setDataCapture(Boolean dataCapture);
+        HasDataCapture setDataCapture(Double dataCapture);
 
         boolean isSetDataCapture();
     }
@@ -115,9 +145,15 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
 
         boolean isSetUncertaintyEstimation();
     }
+    
+    interface EReportingQualityData extends HasTimeCoverageFlag, HasDataCaptureFlag, HasUncertaintyEstimation {
 
-    interface EReportingValues extends HasEReportingSeries, HasValidation, HasVerification, HasTimeCoverageFlag,
-            HasDataCaptureFlag, HasUncertaintyEstimation, HasUnit, GetStringValue {
+    }
+
+    interface EReportingValues extends HasEReportingSeries, HasValidation, HasVerification, HasPrimaryObservation, HasDataCapture,
+    EReportingQualityData, HasUnit, GetStringValue {
+
+        String getPrimaryObservation();
 
     }
 

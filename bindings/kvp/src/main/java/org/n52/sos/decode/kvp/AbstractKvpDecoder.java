@@ -205,6 +205,12 @@ public abstract class AbstractKvpDecoder implements
 		defaultResponse3DEPSG = epsgCode3D;
 	}
 
+	protected  boolean parseExtensionParameter(AbstractServiceRequest<?> request,
+                String parameterValues, String parameterName)
+                throws OwsExceptionReport {
+	    return false;
+	}
+	
 	protected boolean parseDefaultParameter(AbstractServiceRequest<?> request,
 			String parameterValues, String parameterName)
 			throws OwsExceptionReport {
@@ -251,6 +257,8 @@ public abstract class AbstractKvpDecoder implements
 			request.addExtension(getReturnHumanReadableIdentifierExtension(KvpHelper
 					.checkParameterSingleValue(parameterValues, parameterName)));
 			return true;
+		} else {
+		    parseExtensionParameter(request, parameterValues, parameterName);
 		}
 		return false;
 	}

@@ -35,7 +35,12 @@ import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.decode.DecoderKey;
 import org.n52.sos.decode.OperationDecoderKey;
 import org.n52.sos.decode.kvp.v2.GetObservationKvpDecoderv20;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.ogc.swes.SwesExtension;
+import org.n52.sos.request.AbstractServiceRequest;
+import org.n52.sos.util.KvpHelper;
 import org.n52.sos.util.http.MediaTypes;
 
 public class AqdGetObservationKvpDecoder extends GetObservationKvpDecoderv20 {
@@ -47,5 +52,22 @@ public class AqdGetObservationKvpDecoder extends GetObservationKvpDecoderv20 {
     @Override
     public Set<DecoderKey> getDecoderKeyTypes() {
         return Collections.singleton(KVP_DECODER_KEY_TYPE);
+    }
+    
+    @Override
+    protected boolean parseExtensionParameter(AbstractServiceRequest<?> request, String parameterValues,
+        String parameterName) throws OwsExceptionReport {
+        if (parameterName
+                .equalsIgnoreCase(AqdConstants.EXTENSION_FLOW)) {
+            request.addExtension(getFlowExtension(KvpHelper
+                    .checkParameterSingleValue(parameterValues, parameterName)));
+            return true;
+        } else {
+            return super.parseExtensionParameter(request, parameterValues, parameterName);
+        }
+    }
+
+    private SwesExtension<SweText> getFlowExtension(String value) {
+        return getSweTextFor(AqdConstants.EXTENSION_FLOW, value);
     }
 }

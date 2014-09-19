@@ -59,6 +59,21 @@
         <property name="verification" type="int">
             <column name="verification" not-null="true" default="3"/>
         </property>
+        <property name="primaryObservation" type="string">
+            <column name="primaryObservation" not-null="true" default="var"/>
+        </property>
+        <property name="timeCoverageFlag" type="org.hibernate.type.TrueFalseType">
+            <column name="timeCoverageFlag" check="timeCoverageFlag in ('T','F')" length="1" />
+        </property>
+        <property name="dataCaptureFlag" type="org.hibernate.type.TrueFalseType">
+            <column name="dataCaptureFlag" check="dataCaptureFlag in ('T','F')" length="1" />
+        </property>
+        <property name="dataCapture" type="double">
+            <column name="dataCapture" not-null="false" />
+        </property>
+        <property name="uncertaintyEstimation" type="double">
+            <column name="uncertaintyEstimation" not-null="false" />
+        </property>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingBlobValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="blobValue">
         	<key column="observationId" foreign-key="observationBlobValueFk" />
          	<property name="value" type="blob" />

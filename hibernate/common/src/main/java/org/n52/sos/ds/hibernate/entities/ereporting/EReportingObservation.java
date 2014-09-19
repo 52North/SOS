@@ -30,21 +30,27 @@ package org.n52.sos.ds.hibernate.entities.ereporting;
 
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasValidation;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasVerification;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
+import org.n52.sos.util.StringHelper;
 
 public abstract class EReportingObservation extends SeriesObservation
     implements EReportingValues {
 
     private static final long serialVersionUID = 2878044983511090422L;
 
-    private Integer validation = -1;
-    private Integer verification = 3;
-    private Boolean timeCoverage;
-    private Boolean dataCapture;
-    private Double uncertaintyEstimation;
+    private Integer validation = EReportingValues.DEFAULT_VALIDATION;
 
+    private Integer verification = EReportingValues.DEFAULT_VERIFICATION;
+
+    private String primaryObservation = EReportingValues.DEFAULT_PRIMARY_OBSERVATION;
+
+    private Boolean timeCoverageFlag;
+
+    private Boolean dataCaptureFlag;
+    
+    private Double dataCapture;
+
+    private Double uncertaintyEstimation;
 
     @Override
     public EReportingSeries getEReportingSeries() {
@@ -71,7 +77,7 @@ public abstract class EReportingObservation extends SeriesObservation
     }
 
     @Override
-    public HasVerification setVerification(Integer verification) {
+    public EReportingObservation setVerification(Integer verification) {
         this.verification = verification;
         return this;
     }
@@ -87,7 +93,7 @@ public abstract class EReportingObservation extends SeriesObservation
     }
 
     @Override
-    public HasValidation setValidation(Integer validation) {
+    public EReportingObservation setValidation(Integer validation) {
         this.validation = validation;
         return this;
     }
@@ -98,13 +104,45 @@ public abstract class EReportingObservation extends SeriesObservation
     }
 
     @Override
-    public Boolean getDataCapture() {
+    public String getPrimaryObservation() {
+        return primaryObservation;
+    }
+
+    @Override
+    public EReportingObservation setPrimaryObservation(String primaryObservation) {
+        this.primaryObservation = primaryObservation;
+        return this;
+    }
+
+    @Override
+    public boolean isSetPrimaryObservation() {
+        return StringHelper.isNotEmpty(getPrimaryObservation());
+    }
+
+    @Override
+    public Boolean getDataCaptureFlag() {
+        return this.dataCaptureFlag;
+    }
+
+    @Override
+    public void setDataCaptureFlag(Boolean dataCaptureFlag) {
+        this.dataCaptureFlag = dataCaptureFlag;
+    }
+
+    @Override
+    public boolean isSetDataCaptureFlag() {
+        return this.dataCaptureFlag != null;
+    }
+    
+    @Override
+    public Double getDataCapture() {
         return this.dataCapture;
     }
 
     @Override
-    public void setDataCapture(Boolean dataCapture) {
+    public EReportingObservation setDataCapture(Double dataCapture) {
         this.dataCapture = dataCapture;
+        return this;
     }
 
     @Override
@@ -113,18 +151,18 @@ public abstract class EReportingObservation extends SeriesObservation
     }
 
     @Override
-    public Boolean getTimeCoverage() {
-        return this.timeCoverage;
+    public Boolean getTimeCoverageFlag() {
+        return this.timeCoverageFlag;
     }
 
     @Override
-    public void setTimeCoverage(Boolean timeCoverage) {
-        this.timeCoverage = timeCoverage;
+    public void setTimeCoverageFlag(Boolean timeCoverageFlag) {
+        this.timeCoverageFlag = timeCoverageFlag;
     }
 
     @Override
-    public boolean isSetTimeCoverage() {
-        return this.timeCoverage != null;
+    public boolean isSetTimeCoverageFlag() {
+        return this.timeCoverageFlag != null;
     }
 
     @Override
@@ -141,4 +179,5 @@ public abstract class EReportingObservation extends SeriesObservation
     public boolean isSetUncertaintyEstimation() {
         return this.uncertaintyEstimation != null;
     }
+
 }

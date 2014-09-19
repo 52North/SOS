@@ -227,4 +227,8 @@ public class Series implements Serializable, HasProcedure, HasObservableProperty
     public boolean isSetUnit() {
         return getUnit() != null && getUnit().isSetUnit();
     }
+
+    public boolean isSetFirstLastTime() {
+        return isSetFirstTimeStamp() && isSetLastTimeStamp();
+    }
 }

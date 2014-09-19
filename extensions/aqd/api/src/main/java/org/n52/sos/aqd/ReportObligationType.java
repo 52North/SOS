@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.inspire.aqd;
+package org.n52.sos.aqd;
 
 /**
  * TODO JavaDoc
@@ -37,8 +37,8 @@ public enum ReportObligationType {
 //    B("B", "Information on zones and agglomerations"),
 //    C("C", "Information on the assessment regime"),
 //    D("D", "Information on the assessment methods"),
-//    E1A("E1a", "Primary validated assessment data - measurements"),
-//    E1B("E1b", "Primary validated assessment data - modelled"),
+    E1A("E1a", "Primary validated assessment data - measurements"),
+    E1B("E1b", "Primary validated assessment data - modelled"),
     E2A("E2a", "Primary up-to-date assessment data - measurements");
     private final String title;
     private final String description;
@@ -54,5 +54,14 @@ public enum ReportObligationType {
 
     public String getDescription() {
         return description;
+    }
+    
+    public static ReportObligationType from(String v) {
+        for (ReportObligationType rot : ReportObligationType.values()) {
+            if (rot.getTitle().equalsIgnoreCase(v)) {
+                return rot;
+            }
+        }
+        throw new IllegalArgumentException(v);
     }
 }

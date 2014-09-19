@@ -60,4 +60,9 @@ public class SeriesSweDataArrayObservation extends SeriesObservation implements 
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(value);
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
 }

@@ -28,16 +28,14 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasDataCaptureFlag;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasTimeCoverageFlag;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasUncertaintyEstimation;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasValidation;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasVerification;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 
-public class EReportingObservation extends SeriesObservation
-    implements HasEReportingSeries, HasValidation, HasVerification, HasDataCaptureFlag, HasTimeCoverageFlag, HasUncertaintyEstimation {
+public abstract class EReportingObservation extends SeriesObservation
+    implements EReportingValues {
 
     private static final long serialVersionUID = 2878044983511090422L;
 

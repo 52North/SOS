@@ -109,7 +109,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     private void checkSettingKeys(final Collection<String> keys, final boolean changeable) {
         boolean transactional = keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY);
         boolean concept = keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY);
-        boolean multiLanguage = keys.contains(AbstractHibernateDatasource.MULTI_LANGUAGE_KEY);
+        boolean multiLanguage = keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY);
 
         assertTrue(keys.contains(AbstractHibernateDatasource.HOST_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.PORT_KEY));
@@ -123,7 +123,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         assertTrue(changeable || keys.contains(AbstractHibernateDatasource.PROVIDED_JDBC_DRIVER_KEY));
         assertTrue(!transactional || keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY));
         assertTrue(!concept || keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY));
-        assertTrue(!multiLanguage || keys.contains(AbstractHibernateDatasource.MULTI_LANGUAGE_KEY));
+        assertTrue(!multiLanguage || keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY));
 
         if (changeable) {
             assertEquals(9, keys.size());

@@ -59,7 +59,7 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
 
         EReportingSeries getEReportingSeries();
 
-       HasEReportingSeries setEReportingSeries(EReportingSeries series);
+        HasEReportingSeries setEReportingSeries(EReportingSeries series);
 
         boolean hasEReportingSeries();
     }
@@ -88,23 +88,37 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
 
     interface HasTimeCoverageFlag {
         String TIME_COVERAGE = "timeCoverage";
+
         Boolean getTimeCoverage();
+
         void setTimeCoverage(Boolean timeCoverage);
+
         boolean isSetTimeCoverage();
     }
 
     interface HasDataCaptureFlag {
         String DATA_CAPTURE = "dataCapture";
+
         Boolean getDataCapture();
+
         void setDataCapture(Boolean dataCapture);
+
         boolean isSetDataCapture();
     }
 
     interface HasUncertaintyEstimation {
         String UNCERTAINTY_ESTIMATION = "uncertaintyEstimation";
+
         Double getUncertaintyEstimation();
+
         void setUncertaintyEstimation(Double uncertaintyEstimation);
+
         boolean isSetUncertaintyEstimation();
+    }
+
+    interface EReportingValues extends HasEReportingSeries, HasValidation, HasVerification, HasTimeCoverageFlag,
+            HasDataCaptureFlag, HasUncertaintyEstimation, HasUnit, GetStringValue {
+
     }
 
     interface HasAssessmentType {
@@ -117,7 +131,8 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
         EReportingAssessmentType getAssessmentType();
 
         /**
-         * @param assessmentType the assessmentType to set
+         * @param assessmentType
+         *            the assessmentType to set
          */
         HasAssessmentType setAssessmentType(EReportingAssessmentType assessmentType);
 

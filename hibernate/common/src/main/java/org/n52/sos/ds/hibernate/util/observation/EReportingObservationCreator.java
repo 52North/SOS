@@ -36,6 +36,7 @@ import org.n52.sos.aqd.AqdConstants.ElementType;
 import org.n52.sos.aqd.AqdUomRepository;
 import org.n52.sos.aqd.AqdUomRepository.Uom;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingBlobObservation;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingBooleanObservation;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingCategoryObservation;
@@ -94,127 +95,10 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
             for (NamedValue<?> namedValue : helper.createSamplingPointParameter(eReportingObservation.getEReportingSeries())) {
                 omObservation.addParameter(namedValue);
             }
-            omObservation.setValue(createSweDataArrayValue(omObservation, eReportingObservation));
+            omObservation.setValue(EReportingHelper.createSweDataArrayValue(omObservation, eReportingObservation));
             omObservation.getObservationConstellation().setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
         }
         return omObservation;
-    }
-
-    private void addQuality(EReportingObservation eReportingObservation,
-                            SingleObservationValue<?> value) {
-        if (eReportingObservation.isSetDataCapture()) {
-            value.addQuality(GmdDomainConsistency.dataCapture(eReportingObservation.getDataCapture()));
-        }
-        if (eReportingObservation.isSetTimeCoverage()) {
-            value.addQuality(GmdDomainConsistency.timeCoverage(eReportingObservation.getTimeCoverage()));
-        }
-        if (eReportingObservation.isSetUncertaintyEstimation()) {
-            value.addQuality(GmdDomainConsistency.uncertaintyEstimation(eReportingObservation.getUncertaintyEstimation()));
-        }
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private SingleObservationValue<?> createSweDataArrayValue(OmObservation omObservation,
-            EReportingObservation observation) {
-        SweDataArray sweDataArray = new SweDataArray();
-        sweDataArray.setElementCount(createElementCount(omObservation));
-        sweDataArray.setElementType(createElementType(omObservation.getValue().getValue().getUnit()));
-        sweDataArray.setEncoding(createEncoding(omObservation));
-        sweDataArray.setValues(createValue(omObservation, observation));
-        SweDataArrayValue sweDataArrayValue = new SweDataArrayValue();
-        sweDataArrayValue.setValue(sweDataArray);
-        SingleObservationValue observationValue = new SingleObservationValue(sweDataArrayValue);
-        observationValue.setPhenomenonTime(omObservation.getPhenomenonTime());
-        addQuality(observation, observationValue);
-        return observationValue;
-    }
-
-    private SweCount createElementCount(OmObservation omObservation) {
-        return new SweCount().setValue(1);
-    }
-
-    private SweAbstractDataComponent createElementType(String unit) {
-        SweDataRecord dataRecord = new SweDataRecord();
-        dataRecord.setDefinition(AqdConstants.NAME_FIXED_OBSERVATIONS);
-        dataRecord.addField(createField(ElementType.StartTime, createSweTimeSamplingTime(ElementType.StartTime)));
-        dataRecord.addField(createField(ElementType.EndTime, createSweTimeSamplingTime(ElementType.EndTime)));
-        dataRecord.addField(createField(ElementType.Verification, createSweCatagory(ElementType.Verification)));
-        dataRecord.addField(createField(ElementType.Validation, createSweCatagory(ElementType.Validation)));
-        dataRecord.addField(createField(ElementType.Pollutant, createSweQuantity(ElementType.Pollutant, unit)));
-        return dataRecord;
-    }
-
-    private SweField createField(ElementType elementType, SweAbstractDataComponent content) {
-        return new SweField(elementType.name(), content);
-    }
-
-    private SweAbstractDataComponent createSweTimeSamplingTime(ElementType elementType) {
-        SweTime time = new SweTime();
-        time.setDefinition(elementType.getDefinition());
-        if (elementType.isSetUOM()) {
-            time.setUom(elementType.getUOM());
-        }
-        return time;
-    }
-
-    private SweAbstractDataComponent createSweCatagory(ElementType elementType) {
-        return new SweCategory().setDefinition(elementType.getDefinition());
-    }
-
-    private SweAbstractDataComponent createSweQuantity(ElementType elementType, String unit) {
-        SweQuantity quantity = new SweQuantity();
-        quantity.setDefinition(elementType.getDefinition());
-        Uom aqdUom = AqdUomRepository.getAqdUom(unit);
-        if (aqdUom != null) {
-            quantity.setUom(aqdUom.getConceptURI());
-        } else {
-            quantity.setUom(OGCConstants.UNKNOWN);
-        }
-        return quantity;
-    }
-
-    private SweAbstractEncoding createEncoding(OmObservation omObservation) {
-        return SweHelper.createTextEncoding(omObservation);
-    }
-
-    private List<List<String>> createValue(OmObservation omObservation, EReportingObservation observation) {
-        List<String> value = Lists.newArrayListWithCapacity(5);
-        addTimes(value, omObservation.getPhenomenonTime());
-        addIntegerValue(value, observation.getVerification());
-        addIntegerValue(value, observation.getValidation());
-        addPollutant(value, omObservation);
-        List<List<String>> list = Lists.newArrayList();
-        list.add(value);
-        return list;
-    }
-
-    private void addIntegerValue(List<String> list, Integer value) {
-        if (value != null) {
-            list.add(Integer.toString(value));
-        } else {
-            list.add(Constants.EMPTY_STRING);
-        }
-    }
-
-    private void addPollutant(List<String> value, OmObservation omObservation) {
-        if (omObservation.getValue() instanceof SingleObservationValue<?>) {
-            value.add(JavaHelper.asString(omObservation.getValue().getValue().getValue()));
-        } else {
-            value.add(Constants.EMPTY_STRING);
-        }
-    }
-
-    private void addTimes(List<String> value, Time time) {
-        if (time instanceof TimeInstant) {
-            value.add(DateTimeHelper.formatDateTime2IsoString(((TimeInstant) time).getValue()));
-            value.add(DateTimeHelper.formatDateTime2IsoString(((TimeInstant) time).getValue()));
-        } else if (time instanceof TimePeriod) {
-            value.add(DateTimeHelper.formatDateTime2IsoString(((TimePeriod) time).getStart()));
-            value.add(DateTimeHelper.formatDateTime2IsoString(((TimePeriod) time).getEnd()));
-        } else {
-            value.add(Constants.EMPTY_STRING);
-            value.add(Constants.EMPTY_STRING);
-        }
     }
 
 }

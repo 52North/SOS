@@ -59,5 +59,10 @@ public class ObservationTextValue extends ObservationValue implements TextValue 
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(getValue());
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
 
 }

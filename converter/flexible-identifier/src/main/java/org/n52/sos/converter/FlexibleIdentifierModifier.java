@@ -793,4 +793,9 @@ public class FlexibleIdentifierModifier
 	public boolean isMerger() {
 		return false;
 	}
+
+	@Override
+	public boolean isSplitter() {
+		return false;
+	}
 }

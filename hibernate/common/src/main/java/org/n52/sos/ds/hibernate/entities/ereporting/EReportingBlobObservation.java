@@ -53,4 +53,9 @@ public class EReportingBlobObservation extends EReportingObservation implements 
         return value != null;
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
+
 }

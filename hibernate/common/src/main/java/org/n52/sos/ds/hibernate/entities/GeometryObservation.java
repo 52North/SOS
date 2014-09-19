@@ -56,5 +56,10 @@ public class GeometryObservation extends Observation implements Serializable, or
     public boolean isSetValue() {
         return value != null;
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue().toText();
+	}
 
 }

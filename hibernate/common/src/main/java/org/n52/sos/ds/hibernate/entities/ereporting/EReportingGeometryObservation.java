@@ -53,4 +53,9 @@ public class EReportingGeometryObservation extends EReportingObservation impleme
         return value != null;
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue().toText();
+	}
+
 }

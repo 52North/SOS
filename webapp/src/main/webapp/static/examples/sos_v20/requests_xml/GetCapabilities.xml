@@ -12,16 +12,20 @@
 		<ows:Section>FilterCapabilities</ows:Section>
 		<ows:Section>Contents</ows:Section>
 	</ows:Sections>
+	<!-- 
 	<sos:extension xsi:type="swe:CountPropertyType">
 		<swe:Count>
 			<swe:identifier>crs</swe:identifier>
 			<swe:value>4326</swe:value>
 		</swe:Count>
 	</sos:extension>
+	-->
+	<!-- 
 	<sos:extension xsi:type="swe:TextPropertyType">
 		<swe:Text>
 			<swe:identifier>language</swe:identifier>
 			<swe:value>ger</swe:value>
 		</swe:Text>
 	</sos:extension>
+	-->
 </sos:GetCapabilities>

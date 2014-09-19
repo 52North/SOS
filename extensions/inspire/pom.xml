@@ -8,7 +8,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>inspire</artifactId>
-     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>52°North SOS - SOS 2.0 Inspire extension</name>
     <description>52°North Sensor Observation Service Inspire extension module</description>

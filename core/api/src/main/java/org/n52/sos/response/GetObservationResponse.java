@@ -28,7 +28,6 @@
  */
 package org.n52.sos.response;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.n52.sos.ogc.om.AbstractStreaming;
@@ -42,42 +41,8 @@ import com.google.common.collect.Lists;
  * @since 4.0.0
  * 
  */
-public class GetObservationResponse extends AbstractObservationResponse {
+public class GetObservationResponse extends AbstractObservationResponse implements StreamingDataResponse{
     
-    private boolean mergeObservation = false;
-    
-    public void mergeObservationsWithSameConstellation() {
-        // TODO merge all observations with the same observationContellation
-        // FIXME Failed to set the observation type to sweArrayObservation for
-        // the merged Observations
-        // (proc, obsProp, foi)
-        if (getObservationCollection() != null) {
-            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
-            int obsIdCounter = 1;
-            for (final OmObservation sosObservation : getObservationCollection()) {
-                if (mergedObservations.isEmpty()) {
-                    sosObservation.setObservationID(Integer.toString(obsIdCounter++));
-                    mergedObservations.add(sosObservation);
-                } else {
-                    boolean combined = false;
-                    for (final OmObservation combinedSosObs : mergedObservations) {
-                        if (combinedSosObs.getObservationConstellation().equals(
-                                sosObservation.getObservationConstellation())) {
-                            combinedSosObs.setResultTime(null);
-                            combinedSosObs.mergeWithObservation(sosObservation);
-                            combined = true;
-                            break;
-                        }
-                    }
-                    if (!combined) {
-                        mergedObservations.add(sosObservation);
-                    }
-                }
-            }
-            setObservationCollection(mergedObservations);
-        }
-    }
-
     /*
      * TODO uncomment when WaterML support is activated public
      * Collection<SosObservation> mergeObservations(boolean
@@ -104,23 +69,16 @@ public class GetObservationResponse extends AbstractObservationResponse {
     public String getOperationName() {
         return SosConstants.Operations.GetObservation.name();
     }
-
-    public void setMergeObservations(boolean mergeObservation) {
-       this.mergeObservation = mergeObservation;
-    }
-    
-    public boolean isSetMergeObservation(){
-        return mergeObservation;
-    }
     
     @Override
     public boolean hasStreamingData() {
-        if (getObservationCollection().iterator().hasNext()) {
-            return getObservationCollection().iterator().next().getValue() instanceof AbstractStreaming;
+        OmObservation observation = getFirstObservation();
+        if (observation != null) {
+            return observation.getValue() instanceof AbstractStreaming;
         }
         return false;
     }
-    
+
     @Override
     public void mergeStreamingData() throws OwsExceptionReport {
         List<OmObservation> observations = Lists.newArrayList();

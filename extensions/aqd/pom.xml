@@ -16,5 +16,6 @@
         <module>operation</module>
         <module>coding</module>
         <module>ereporting</module>
+        <module>split-and-merge</module>
     </modules>
 </project>

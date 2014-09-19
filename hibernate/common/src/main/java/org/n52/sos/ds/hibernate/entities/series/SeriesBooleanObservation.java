@@ -57,5 +57,10 @@ public class SeriesBooleanObservation extends SeriesObservation implements Seria
     public void setValue(Boolean value) {
         this.value = value;
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
 
 }

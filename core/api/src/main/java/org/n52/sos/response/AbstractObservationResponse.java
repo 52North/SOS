@@ -48,10 +48,21 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
     private String responseFormat;
 
     private String resultModel;
-   
+
+    private boolean mergeObservation = false;
+
     public List<OmObservation> getObservationCollection() {
         return Collections.unmodifiableList(observationCollection);
     }
+    
+    protected OmObservation getFirstObservation() {
+        if (observationCollection != null && observationCollection.iterator().hasNext()) {
+            return observationCollection.iterator().next();
+        }
+        return null;
+    }
+
+   
 
     public void setObservationCollection(final List<OmObservation> observationCollection) {
         this.observationCollection = observationCollection;
@@ -66,10 +77,10 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
     public void setResponseFormat(final String responseFormat) {
         this.responseFormat = responseFormat;
     }
-    
+
     @Override
     public boolean isSetResponseFormat() {
-    	return StringHelper.isNotEmpty(getResponseFormat());
+        return StringHelper.isNotEmpty(getResponseFormat());
     }
 
     public void setResultModel(final String resultModel) {
@@ -83,5 +94,23 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
     public boolean isSetResultModel() {
         return resultModel != null;
     }
-  
+
+    @Deprecated
+    public void setMergeObservationValues(boolean mergeObservationValues) {
+        setMergeObservations(mergeObservationValues);
+    }
+
+    @Deprecated
+    public boolean isMergeObservationValues() {
+        return isSetMergeObservation();
+    }
+
+    public void setMergeObservations(boolean mergeObservation) {
+        this.mergeObservation = mergeObservation;
+    }
+
+    public boolean isSetMergeObservation() {
+        return mergeObservation;
+    }
+
 }

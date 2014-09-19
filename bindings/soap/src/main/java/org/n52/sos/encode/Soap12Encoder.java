@@ -102,6 +102,11 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implem
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
                 Joiner.on(", ").join(getEncoderKeyType()));
     }
+    
+    @Override
+    public boolean forceStreaming() {
+    	return false;
+    }
 
     @SuppressWarnings("unchecked")
     @Override

@@ -26,11 +26,38 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.dao.series;
+package org.n52.sos.ds.hibernate.util;
 
-import org.n52.sos.ds.hibernate.dao.AbstractValueDAO;
+import org.joda.time.DateTime;
 
+/**
+ * Hold min and max obs time 
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.3.0
+ *
+ */
+public class TimeExtrema {
+    private DateTime minTime;
+    private DateTime maxTime;
 
-public class AbstractValueTimeDAO extends AbstractValueDAO {
+    public DateTime getMinTime() {
+        return minTime;
+    }
 
+    public void setMinTime(DateTime minTime) {
+        this.minTime = minTime;
+    }
+
+    public DateTime getMaxTime() {
+        return maxTime;
+    }
+
+    public void setMaxTime(DateTime maxTime) {
+        this.maxTime = maxTime;
+    }
+    
+    public boolean isSetTimes() {
+        return getMinTime() != null && getMaxTime() != null;
+    }
 }

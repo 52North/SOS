@@ -541,6 +541,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
     public OmObservation cloneTemplate() {
         OmObservation clone = new OmObservation();
         clone.setObservationConstellation(this.getObservationConstellation());
+        clone.setParameter(this.getParameter());
         clone.setResultType(this.getResultType());
         clone.setTokenSeparator(this.getTokenSeparator());
         clone.setTupleSeparator(this.getTupleSeparator());

@@ -29,7 +29,8 @@
 
 
 ALTER TABLE observation ADD COLUMN uncertaintyEstimation FLOAT8;
-ALTER TABLE observation ADD COLUMN dataCapture character(1);
-ALTER TABLE observation ADD COLUMN timeCoverage character(1);
-ALTER TABLE observation ADD CONSTRAINT "observation_timecoverage_check" CHECK (timeCoverage = ANY(ARRAY['T'::bpchar, 'F'::bpchar]));
-ALTER TABLE observation ADD CONSTRAINT "observation_datacapture_check" CHECK (dataCapture = ANY(ARRAY['T'::bpchar, 'F'::bpchar]));
+ALTER TABLE observation ADD COLUMN dataCaptureFlag character(1);
+ALTER TABLE observation ADD COLUMN dataCaptureg FLOAT8;
+ALTER TABLE observation ADD COLUMN timeCoverageFlag character(1);
+ALTER TABLE observation ADD CONSTRAINT "observation_timecoverage_flag_check" CHECK (timeCoverageFlag = ANY(ARRAY['T'::bpchar, 'F'::bpchar]));
+ALTER TABLE observation ADD CONSTRAINT "observation_datacapture_flag_check" CHECK (dataCaptureFlag = ANY(ARRAY['T'::bpchar, 'F'::bpchar]));

@@ -3,6 +3,46 @@
 		{
 			"param":{
 				"service":"AQD",
+				"request":"GetCapabilities"
+			},
+			"service":"AQD",
+			"version":"1.0.0",
+			"binding": "application/x-kvp",
+			"operation":"GetCapabilities",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"request":"static/examples/aqd_v10/requests_soap/GetCapabilities.xml",
+			"service":"AQD",
+			"version":"1.0.0",
+			"binding": "application/soap+xml",
+			"operation":"GetCapabilities",
+			"title":"GetCapabilities (SOAP 1.2)",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/aqd_v10/requests_xml/GetCapabilities.xml",
+			"service":"AQD",
+			"version":"1.0.0",
+			"binding": "application/xml",
+			"operation":"GetCapabilities",
+			"title":"GetCapabilities",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
+			"param":{
+				"service":"AQD",
 				"version":"1.0.0",
 				"request":"GetObservation"
 			},

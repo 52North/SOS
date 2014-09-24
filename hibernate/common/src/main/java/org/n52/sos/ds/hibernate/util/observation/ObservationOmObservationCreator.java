@@ -203,7 +203,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             if (hObservation.hasSamplingGeometry()) {
                 sosObservation.addParameter(createSpatialFilteringProfileParameter(hObservation.getSamplingGeometry()));
             }
-            checkFoAdditionalObservationCreator(hObservation, sosObservation);
+            checkForAdditionalObservationCreator(hObservation, sosObservation);
             // TODO check for ScrollableResult vs
             // setFetchSize/setMaxResult
             // + setFirstResult
@@ -213,7 +213,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return sosObservation;
     }
 
-    private void checkFoAdditionalObservationCreator(AbstractObservation hObservation, OmObservation sosObservation) {
+    private void checkForAdditionalObservationCreator(AbstractObservation hObservation, OmObservation sosObservation) {
         AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass());
         if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
             AdditionalObservationCreator creator = AdditionalObservationCreatorRepository.getInstance().get(key);

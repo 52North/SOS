@@ -66,6 +66,7 @@ import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.i18n.I18NDAORepository;
 import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.i18n.metadata.I18NFeatureMetadata;
+import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
@@ -494,10 +495,12 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                 Set<FeatureOfInterest> parents =
                         Sets.newHashSetWithExpectedSize(samplingFeature.getSampledFeatures().size());
                 for (AbstractFeature sampledFeature : samplingFeature.getSampledFeatures()) {
-                    if (sampledFeature instanceof SamplingFeature) {
-                        parents.add(insertFeatureOfInterest((SamplingFeature) sampledFeature, session));
-                    } else {
-                        parents.add(insertFeatureOfInterest(new SamplingFeature(sampledFeature.getIdentifierCodeWithAuthority()), session));
+                    if (!OGCConstants.UNKNOWN.equals(sampledFeature.getIdentifierCodeWithAuthority().getValue())) {
+                        if (sampledFeature instanceof SamplingFeature) {
+                            parents.add(insertFeatureOfInterest((SamplingFeature) sampledFeature, session));
+                        } else {
+                            parents.add(insertFeatureOfInterest(new SamplingFeature(sampledFeature.getIdentifierCodeWithAuthority()), session));
+                        }
                     }
                 }
                 ((TFeatureOfInterest) feature).setParents(parents);

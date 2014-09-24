@@ -44,6 +44,7 @@ import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.factory.AbstractAuthorityFactory;
+import org.geotools.referencing.factory.DeferredAuthorityFactory;
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
@@ -153,11 +154,16 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
     
     @Override
     public void cleanup() {
-        if (getCrsAuthorityFactory() != null && getCrsAuthorityFactory() instanceof AbstractAuthorityFactory) {
-            try {
-                ((AbstractAuthorityFactory)getCrsAuthorityFactory()).dispose();
-            } catch (FactoryException fe) {
-                LOGGER.error("Error while GeometryHandler clean up", fe);
+        if (getCrsAuthorityFactory() != null) {
+            if (getCrsAuthorityFactory() instanceof DeferredAuthorityFactory) {
+                DeferredAuthorityFactory.exit();
+            }
+            if (getCrsAuthorityFactory() instanceof AbstractAuthorityFactory) {
+                try {
+                    ((AbstractAuthorityFactory)getCrsAuthorityFactory()).dispose();
+                } catch (FactoryException fe) {
+                    LOGGER.error("Error while GeometryHandler clean up", fe);
+                }
             }
         }
     }

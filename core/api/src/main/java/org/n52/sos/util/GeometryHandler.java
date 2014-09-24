@@ -168,16 +168,6 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
         }
     }
 
-    @Deprecated
-    public int getDefaultEPSG() {
-        return getStorageEPSG();
-    }
-
-    @Deprecated
-    public int getDefault3DEPSG() {
-        return getStorage3DEPSG();
-    }
-
     /**
      * Get configured storage EPSG code
      * 

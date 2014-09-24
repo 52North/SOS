@@ -40,6 +40,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
@@ -52,6 +53,7 @@ import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.AbstractStreaming;
 import org.n52.sos.ogc.om.OmConstants;
@@ -137,6 +139,7 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
         EReportingHeader eReportingHeader = getEReportingHeader(getReportObligationType(response));
         featureCollection.addMember(eReportingHeader);
         TimePeriod timePeriod = new TimePeriod();
+        TimeInstant resultTime = new TimeInstant(new DateTime(DateTimeZone.UTC));
         boolean mergeStreaming = response.hasStreamingData() && !response.isSetMergeObservation();
         for (OmObservation observation : response.getObservationCollection()) {
             if (mergeStreaming) {
@@ -144,17 +147,20 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
                 if (value instanceof StreamingValue) {
                     for (OmObservation omObservation : value.mergeObservation()) {
                         timePeriod.extendToContain(omObservation.getPhenomenonTime());
+                        omObservation.setResultTime(resultTime);
                         featureCollection.addMember(omObservation);
                     }
                 } else {
                     while (value.hasNextValue()) {
                         OmObservation nextSingleObservation = value.nextSingleObservation();
                         timePeriod.extendToContain(nextSingleObservation.getPhenomenonTime());
+                        nextSingleObservation.setResultTime(resultTime);
                         featureCollection.addMember(nextSingleObservation);
                     }
                 }
             } else {
                 timePeriod.extendToContain(observation.getPhenomenonTime());
+                observation.setResultTime(resultTime);
                 featureCollection.addMember(observation);
             }
         }

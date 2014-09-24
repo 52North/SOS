@@ -35,14 +35,16 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.xmlbeans.XmlObject;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.XmlStreamWriter;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
-import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.GmlConstants;
+import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.om.AbstractStreaming;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
@@ -139,12 +141,14 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
         namespace(OmConstants.NS_OM_PREFIX, OmConstants.NS_OM_2);
         namespace(GmlConstants.NS_GML_PREFIX, GmlConstants.NS_GML_32);
         addGmlId(featureCollection.getGmlId());
+        TimeInstant resultTime = new TimeInstant(new DateTime(DateTimeZone.UTC));
         for (AbstractFeature abstractFeature : featureCollection.getMembers().values()) {
             if (abstractFeature instanceof OmObservation
                     && ((OmObservation) abstractFeature).getValue() instanceof AbstractStreaming) {
                 Collection<OmObservation> mergeObservation =
                         ((AbstractStreaming) ((OmObservation) abstractFeature).getValue()).mergeObservation();
                 for (OmObservation omObservation : mergeObservation) {
+                    omObservation.setResultTime(resultTime);
                     writeMember(omObservation, getEncoder(abstractFeature, encodingValues.getAdditionalValues()),
                             encodingValues);
                 }

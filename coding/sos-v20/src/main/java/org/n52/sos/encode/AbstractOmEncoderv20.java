@@ -52,6 +52,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlString;
 import org.isotc211.x2005.gmd.AbstractDQElementDocument;
+import org.isotc211.x2005.gmd.DQElementPropertyType;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.convert.Converter;
 import org.n52.sos.convert.ConverterException;
@@ -93,6 +94,7 @@ import org.n52.sos.util.Constants;
 import org.n52.sos.util.GmlHelper;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
+import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.W3CConstants;
 
@@ -330,11 +332,9 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
             AbstractDQElementDocument encodedQuality =
                     (AbstractDQElementDocument) CodingHelper.encodeObjectToXml(null, quality,
                             ImmutableMap.of(HelperValues.DOCUMENT, "true"));
-            XmlCursor c1 = xbObservation.addNewResultQuality().addNewAbstractDQElement().newCursor();
-            XmlCursor c2 = encodedQuality.getAbstractDQElement().newCursor();
-            c2.copyXml(c1);
-            c1.dispose();
-            c2.dispose();
+            DQElementPropertyType addNewResultQuality = xbObservation.addNewResultQuality();
+            addNewResultQuality.setAbstractDQElement(encodedQuality.getAbstractDQElement());
+            XmlHelper.substituteElement(addNewResultQuality.getAbstractDQElement(), encodedQuality.getAbstractDQElement());
         }
     }
 

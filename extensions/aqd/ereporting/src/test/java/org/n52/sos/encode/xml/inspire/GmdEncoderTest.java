@@ -40,8 +40,6 @@ import org.isotc211.x2005.gmd.DQDomainConsistencyType;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.w3c.dom.Node;
-
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.gmd.GmdConformanceResult;
 import org.n52.sos.gmd.GmdDomainConsistency;
@@ -50,7 +48,9 @@ import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.NamespaceContextBuilder;
+import org.n52.sos.util.XmlHelper;
 import org.n52.sos.w3c.W3CConstants;
+import org.w3c.dom.Node;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -84,6 +84,16 @@ public class GmdEncoderTest {
         errors.checkThat(encoder.encode(qr, DOCUMENT_TYPE), is(instanceOf(DQDomainConsistencyDocument.class)));
         errors.checkThat(encoder.encode(qr, PROPERTY_TYPE), is(instanceOf(DQDomainConsistencyPropertyType.class)));
         errors.checkThat(encoder.encode(qr, TYPE), is(instanceOf(DQDomainConsistencyType.class)));
+    }
+    
+    @Test
+    public void checkValidity() throws OwsExceptionReport {
+        errors.checkThat(XmlHelper.validateDocument(encoder.encode(GmdDomainConsistency.dataCapture(GmlConstants.NilReason.unknown), DOCUMENT_TYPE)), is(true));
+        errors.checkThat(XmlHelper.validateDocument(encoder.encode(GmdDomainConsistency.dataCapture(true), DOCUMENT_TYPE)), is(true));
+        errors.checkThat(XmlHelper.validateDocument(encoder.encode(GmdDomainConsistency.timeCoverage(GmlConstants.NilReason.unknown), DOCUMENT_TYPE)), is(true));
+        errors.checkThat(XmlHelper.validateDocument(encoder.encode(GmdDomainConsistency.timeCoverage(true), DOCUMENT_TYPE)), is(true));
+        errors.checkThat(XmlHelper.validateDocument(encoder.encode(GmdDomainConsistency.uncertaintyEstimation(5), DOCUMENT_TYPE)), is(true));
+        errors.checkThat(XmlHelper.validateDocument(encoder.encode(GmdDomainConsistency.uncertaintyEstimation(GmlConstants.NilReason.unknown), DOCUMENT_TYPE)), is(true));
     }
 
     @Test

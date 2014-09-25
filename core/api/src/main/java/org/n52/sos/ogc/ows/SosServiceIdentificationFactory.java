@@ -117,13 +117,13 @@ public class SosServiceIdentificationFactory extends LazyThreadSafeProducer<SosS
     public void setAbstract(Object description) throws ConfigurationException {
         Validation.notNull("Service Identification Abstract", description);
         if (description instanceof MultilingualString) {
-            this.abstrakt = (MultilingualString) title;
+            this.abstrakt = (MultilingualString) description;
         } else if (description instanceof String) {
             Locale locale = LocaleHelper.fromString(I18NSettings.I18N_DEFAULT_LANGUAGE_DEFINITION.getDefaultValue());
             this.abstrakt = new MultilingualString().addLocalization(locale, (String)description);
         } else {
             throw new ConfigurationException(
-                    String.format("%s is not supported as title!", description.getClass().getName()));
+                    String.format("%s is not supported as abstract!", description.getClass().getName()));
         }
         setRecreate();
     }

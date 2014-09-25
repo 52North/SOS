@@ -41,6 +41,7 @@ import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingQualityData;
 import org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue;
 import org.n52.sos.gmd.GmdDomainConsistency;
+import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
@@ -48,6 +49,7 @@ import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.quality.OmResultQuality;
+import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweDataArray;
@@ -286,19 +288,26 @@ public class EReportingHelper {
     }
     
     private static void addQuality(EReportingValues eReportingObservation, SingleObservationValue<?> value) {
-        value.addQualityList(getGmdDomainConsistency(eReportingObservation));
+        value.addQualityList(getGmdDomainConsistency(eReportingObservation, false));
     }
     
-    public static Set<OmResultQuality> getGmdDomainConsistency(EReportingQualityData eReportingObservation) {
+    public static Set<OmResultQuality> getGmdDomainConsistency(EReportingQualityData eReportingObservation, boolean force) {
         Set<OmResultQuality> set = Sets.newHashSet();
         if (eReportingObservation.isSetDataCaptureFlag()) {
             set.add(GmdDomainConsistency.dataCapture(eReportingObservation.getDataCaptureFlag()));
+        } else if (force) {
+            set.add(GmdDomainConsistency.dataCapture(GmlConstants.NilReason.unknown));
         }
         if (eReportingObservation.isSetTimeCoverageFlag()) {
             set.add(GmdDomainConsistency.timeCoverage(eReportingObservation.getTimeCoverageFlag()));
         }
+        else if (force) {
+            set.add(GmdDomainConsistency.timeCoverage(GmlConstants.NilReason.unknown));
+        }
         if (eReportingObservation.isSetUncertaintyEstimation()) {
             set.add(GmdDomainConsistency.uncertaintyEstimation(eReportingObservation.getUncertaintyEstimation()));
+        } else if (force) {
+            set.add(GmdDomainConsistency.uncertaintyEstimation(GmlConstants.NilReason.unknown));
         }
         return set;
     }

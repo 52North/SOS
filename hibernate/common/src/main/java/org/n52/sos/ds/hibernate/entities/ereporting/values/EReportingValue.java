@@ -268,7 +268,9 @@ public abstract class EReportingValue extends SeriesValue implements EReportingV
                         new EReportingQualityDAO().getEReportingQuality(getSeries().getSeriesId(), year,
                                 getPrimaryObservation(), session);
                 if (eReportingQuality != null) {
-                    observation.setResultQuality(EReportingHelper.getGmdDomainConsistency(eReportingQuality));
+                    observation.setResultQuality(EReportingHelper.getGmdDomainConsistency(eReportingQuality, true));
+                } else {
+                    observation.setResultQuality(EReportingHelper.getGmdDomainConsistency(new EReportingQuality(), true));
                 }
             }
         }

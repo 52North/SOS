@@ -34,7 +34,6 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import net.opengis.gml.x32.BaseUnitDocument;
 import net.opengis.gml.x32.BaseUnitType;
 import net.opengis.gml.x32.CodeType;
 
@@ -43,7 +42,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.isotc211.x2005.gco.CodeListValueType;
 import org.isotc211.x2005.gco.UnitOfMeasurePropertyType;
-import org.isotc211.x2005.gmd.AbstractDQElementDocument;
 import org.isotc211.x2005.gmd.CICitationType;
 import org.isotc211.x2005.gmd.CIDateType;
 import org.isotc211.x2005.gmd.DQConformanceResultType;
@@ -52,7 +50,6 @@ import org.isotc211.x2005.gmd.DQDomainConsistencyPropertyType;
 import org.isotc211.x2005.gmd.DQDomainConsistencyType;
 import org.isotc211.x2005.gmd.DQQuantitativeResultType;
 import org.isotc211.x2005.gmd.DQResultPropertyType;
-
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.encode.AbstractXmlEncoder;
 import org.n52.sos.encode.EncoderKey;
@@ -68,12 +65,17 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
-
-import com.google.common.collect.ImmutableMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class GmdEncoder extends AbstractXmlEncoder<Object> {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(GmdEncoder.class);
+    
+    @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = CollectionHelper.union(
             CodingHelper.encoderKeysForElements(null,
                                     GmdQuantitativeResult.class,
@@ -107,23 +109,28 @@ public class GmdEncoder extends AbstractXmlEncoder<Object> {
                             Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
         if (objectToEncode instanceof GmdDomainConsistency){
+            XmlObject encodedObject = null;
             if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
                 DQDomainConsistencyDocument document= DQDomainConsistencyDocument.Factory.newInstance(getXmlOptions());
                 DQResultPropertyType addNewResult = document.addNewDQDomainConsistency().addNewResult();
                  encodeGmdDomainConsistency(addNewResult, (GmdDomainConsistency) objectToEncode);
-                return document;
+                 encodedObject = document;
             } else if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
                 DQDomainConsistencyPropertyType propertyType
                         = DQDomainConsistencyPropertyType.Factory.newInstance(getXmlOptions());
                 DQResultPropertyType addNewResult = propertyType.addNewDQDomainConsistency().addNewResult();
                 encodeGmdDomainConsistency(addNewResult, (GmdDomainConsistency) objectToEncode);
-                return propertyType;
+                encodedObject = propertyType;
             } else {
                 DQDomainConsistencyType type = DQDomainConsistencyType.Factory.newInstance(getXmlOptions());
                 DQResultPropertyType addNewResult = type.addNewResult();
                 encodeGmdDomainConsistency(addNewResult, (GmdDomainConsistency) objectToEncode);
-                return type;
+                encodedObject = type;
             }
+            if (LOGGER.isDebugEnabled() && encodedObject != null) {
+                XmlHelper.validateDocument(encodedObject);
+            }
+            return encodedObject;
         } else {
             throw new UnsupportedEncoderInputException(this, objectToEncode);
         }
@@ -141,8 +148,12 @@ public class GmdEncoder extends AbstractXmlEncoder<Object> {
 
     private void encodeGmdConformanceResult(DQResultPropertyType xbResult,
                                             GmdConformanceResult gmdConformanceResult) {
-        DQConformanceResultType dqConformanceResultType = DQConformanceResultType.Factory.newInstance(getXmlOptions());
-        dqConformanceResultType.addNewPass().setBoolean(gmdConformanceResult.isPass());
+        DQConformanceResultType dqConformanceResultType = (DQConformanceResultType)xbResult.addNewAbstractDQResult().substitute(QN_GMD_CONFORMANCE_RESULT, DQConformanceResultType.type); 
+        if (gmdConformanceResult.isSetPassNilReason()) {
+            dqConformanceResultType.addNewPass().setNilReason(gmdConformanceResult.getPassNilReason().name());
+        } else {
+            dqConformanceResultType.addNewPass().setBoolean(gmdConformanceResult.isPass());
+        }
         dqConformanceResultType.addNewExplanation().setCharacterString(gmdConformanceResult.getSpecification().getExplanation());
         CICitationType xbCitation = dqConformanceResultType.addNewSpecification().addNewCICitation();
         xbCitation.addNewTitle().setCharacterString(gmdConformanceResult.getSpecification().getCitation().getTitle());
@@ -161,41 +172,31 @@ public class GmdEncoder extends AbstractXmlEncoder<Object> {
         newCursor.beginElement(QN_GCO_DATE);
         newCursor.insertChars(gmdCitationDate.getDate());
         newCursor.dispose();
-
-        xbResult.addNewAbstractDQResult().set(dqConformanceResultType);
-        xbResult.getAbstractDQResult()
-                .substitute(QN_GMD_CONFORMANCE_RESULT, DQConformanceResultType.type);
     }
 
     private void encodeGmdQuantitativeResult(DQResultPropertyType xbResult, GmdQuantitativeResult gmdQuantitativeResult) {
-        DQQuantitativeResultType dqQuantitativeResultType = DQQuantitativeResultType.Factory.newInstance(getXmlOptions());
+        DQQuantitativeResultType dqQuantitativeResultType = (DQQuantitativeResultType)xbResult.addNewAbstractDQResult().substitute(QN_GMD_QUANTITATIVE_RESULT, DQQuantitativeResultType.type);
         GmlBaseUnit unit = gmdQuantitativeResult.getUnit();
-        BaseUnitDocument baseUnitDocument = BaseUnitDocument.Factory.newInstance(getXmlOptions());
-        BaseUnitType xbBaseUnit = baseUnitDocument.addNewBaseUnit();
+        UnitOfMeasurePropertyType valueUnit = dqQuantitativeResultType.addNewValueUnit();
+        BaseUnitType xbBaseUnit = (BaseUnitType)valueUnit.addNewUnitDefinition().substitute(QN_GML_BASE_UNIT, BaseUnitType.type);
         CodeType xbCatalogSymbol = xbBaseUnit.addNewCatalogSymbol();
         xbCatalogSymbol.setCodeSpace(unit.getCatalogSymbol().getCodeSpace());
         xbCatalogSymbol.setStringValue(unit.getCatalogSymbol().getValue());
         xbBaseUnit.setId(unit.getId());
         xbBaseUnit.addNewUnitsSystem().setHref(unit.getUnitSystem());
         xbBaseUnit.addNewIdentifier().setCodeSpace(unit.getIdentifier());
-        UnitOfMeasurePropertyType valueUnit = dqQuantitativeResultType.addNewValueUnit();
-        XmlCursor c1 = valueUnit.addNewUnitDefinition().newCursor();
-        XmlCursor c2 = baseUnitDocument.getBaseUnit().newCursor();
-        c2.copyXml(c1);
-        c1.dispose();
-        c2.dispose();
-        valueUnit.getUnitDefinition().substitute(QN_GML_BASE_UNIT, BaseUnitType.type);
-        XmlCursor cursor = dqQuantitativeResultType.addNewValue().addNewRecord().newCursor();
-        cursor.toNextToken();
-        cursor.insertChars(gmdQuantitativeResult.getValue());
-        cursor.dispose();
-
-        xbResult.addNewAbstractDQResult().set(dqQuantitativeResultType);
-        xbResult.getAbstractDQResult()
-                .substitute(QN_GMD_QUANTITATIVE_RESULT, DQQuantitativeResultType.type);
+        if (gmdQuantitativeResult.isSetValueNilReason()) {
+            dqQuantitativeResultType.addNewValue().setNilReason(gmdQuantitativeResult.getValueNilReason().name());
+        } else {
+            XmlCursor cursor = dqQuantitativeResultType.addNewValue().addNewRecord().newCursor();
+            cursor.toNextToken();
+            cursor.insertChars(gmdQuantitativeResult.getValue());
+            cursor.dispose();
+        }
     }
 
     private static XmlOptions getXmlOptions() {
         return XmlOptionsHelper.getInstance().getXmlOptions();
     }
+    
 }

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.gmd;
 
+import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.quality.OmResultQuality;
 
 public abstract class GmdDomainConsistency implements OmResultQuality {
@@ -35,14 +36,26 @@ public abstract class GmdDomainConsistency implements OmResultQuality {
     public static GmdConformanceResult dataCapture(boolean pass) {
         return new GmdConformanceResult(pass, GmdSpecification.dataCapture());
     }
+    
+    public static OmResultQuality dataCapture(GmlConstants.NilReason nilReason) {
+        return new GmdConformanceResult(nilReason, GmdSpecification.dataCapture());
+    }
 
     public static GmdConformanceResult timeCoverage(boolean pass) {
         return new GmdConformanceResult(pass, GmdSpecification.timeCoverage());
+    }
+    
+    public static GmdConformanceResult timeCoverage(GmlConstants.NilReason nilReason) {
+        return new GmdConformanceResult(nilReason, GmdSpecification.timeCoverage());
     }
 
     public static GmdQuantitativeResult uncertaintyEstimation(double value) {
         return new GmdQuantitativeResult(GmlBaseUnit.uncertaintyEstimation(),
                                          Double.toString(value));
+    }
+
+    public static GmdQuantitativeResult uncertaintyEstimation(GmlConstants.NilReason nilReason) {
+        return new GmdQuantitativeResult(GmlBaseUnit.uncertaintyEstimation(), nilReason);
     }
 
 }

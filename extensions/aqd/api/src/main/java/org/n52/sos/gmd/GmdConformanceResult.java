@@ -28,6 +28,8 @@
  */
 package org.n52.sos.gmd;
 
+import org.n52.sos.ogc.gml.GmlConstants.NilReason;
+
 /**
  * TODO JavaDoc
  *
@@ -36,15 +38,31 @@ package org.n52.sos.gmd;
 public class GmdConformanceResult extends GmdDomainConsistency {
 
     private final boolean pass;
+    private final NilReason passNilReason;
     private final GmdSpecification specification;
 
     public GmdConformanceResult(boolean pass, GmdSpecification specification) {
         this.pass = pass;
+        this.passNilReason = null;
+        this.specification = specification;
+    }
+
+    public GmdConformanceResult(NilReason passNilReason, GmdSpecification specification) {
+        this.pass = false;
+        this.passNilReason = passNilReason;
         this.specification = specification;
     }
 
     public boolean isPass() {
         return pass;
+    }
+    
+    public NilReason getPassNilReason() {
+        return passNilReason;
+    }
+    
+    public boolean isSetPassNilReason() {
+        return getPassNilReason() != null;
     }
 
     public GmdSpecification getSpecification() {

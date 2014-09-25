@@ -28,6 +28,8 @@
  */
 package org.n52.sos.gmd;
 
+import org.n52.sos.ogc.gml.GmlConstants.NilReason;
+
 /**
  * TODO JavaDoc
  *
@@ -37,10 +39,18 @@ public class GmdQuantitativeResult extends GmdDomainConsistency {
 
     private final GmlBaseUnit unit;
     private final String value;
+    private final NilReason valueNilReason;
 
     public GmdQuantitativeResult(GmlBaseUnit unit, String value) {
         this.unit = unit;
         this.value = value;
+        this.valueNilReason = null;
+    }
+    
+    public GmdQuantitativeResult(GmlBaseUnit unit, NilReason valueNilReason) {
+        this.unit = unit;
+        this.value = null;
+        this.valueNilReason = valueNilReason;
     }
 
     public GmlBaseUnit getUnit() {
@@ -49,6 +59,14 @@ public class GmdQuantitativeResult extends GmdDomainConsistency {
 
     public String getValue() {
         return value;
+    }
+
+    public boolean isSetValueNilReason() {
+        return getValueNilReason() != null;
+    }
+
+    public NilReason getValueNilReason() {
+        return valueNilReason;
     }
 
 }

@@ -382,7 +382,11 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
         encodeNillableCodeType(AqdConstants.QN_GN_NAME_STATUS, v.getNameStatus());
         encodeNillableString(AqdConstants.QN_GN_SOURCE_OF_NAME, v.getSourceOfName());
         encodeNillablePronunciation(AqdConstants.QN_GN_PRONUNCIATION, v.getPronunciation());
-        encodeNillableSpelling(AqdConstants.QN_GN_SPELLING, v.getSpelling());
+        for (Spelling value : v.getSpelling()) {
+            start(AqdConstants.QN_GN_SPELLING);
+            encodeSpellingOfName(value);
+            end(AqdConstants.QN_GN_SPELLING);
+        }
         encodeNillableCodeType(AqdConstants.QN_GN_GRAMMATICAL_GENDER, v.getGrammaticalGender());
         encodeNillableCodeType(AqdConstants.QN_GN_GRAMMATICAL_NUMBER, v.getGrammaticalNumber());
         end(AqdConstants.QN_GN_GEOGRAPHICAL_NAME);

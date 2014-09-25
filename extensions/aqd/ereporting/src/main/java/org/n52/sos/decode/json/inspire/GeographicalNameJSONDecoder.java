@@ -65,7 +65,7 @@ public class GeographicalNameJSONDecoder  extends AbstractJSONDecoder<Geographic
                 .path(AQDJSONConstants.SOURCE_OF_NAME)));
         geographicalName.setPronunciation(decodeJsonToNillable(node
                 .path(AQDJSONConstants.PRONUNCIATION), Pronunciation.class));
-        geographicalName.setSpelling(decodeJsonToNillable(node
+        geographicalName.addSpelling(decodeJsonToObject(node
                 .path(AQDJSONConstants.SPELLING), Spelling.class));
         return geographicalName;
     }

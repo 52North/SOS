@@ -264,5 +264,22 @@ public interface GmlConstants extends Constants {
     enum SortingOrder {
         ASC, DESC
     }
+    
+    
+    /**
+     * inapplicable there is no value
+     * missing the correct value is not readily available to the sender of this data. Furthermore, a correct value may not exist
+     * template the value will be available later
+     * unknown the correct value is not known to, and not computable by, the sender of this data. However, a correct value probably exists
+     * withheld the value is not divulged
+     * Not supported: other:text other brief explanation, where text is a string of two or more characters with no included spaces
+     * 
+     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @since
+     *
+     */
+    enum NilReason {
+        inapplicable, missing, template, unknown, withheld;
+    }
 
 }

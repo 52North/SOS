@@ -44,25 +44,25 @@ import org.slf4j.LoggerFactory;
 
 @Configurable
 public class FlexibleIdentifierHelper {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(FlexibleIdentifierHelper.class);
-	
-	public static final String RETURN_HUMAN_READABLE_IDENTIFIER = "returnHumanReadableIdentifier";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FlexibleIdentifierHelper.class);
+
+    public static final String RETURN_HUMAN_READABLE_IDENTIFIER = "returnHumanReadableIdentifier";
 
     private static FlexibleIdentifierHelper instance;
 
     private static ReentrantLock creationLock = new ReentrantLock();
-    
+
     private boolean returnHumanReadableIdentifier = false;
-    
+
     private boolean includeOffering = true;
-    
+
     private boolean includeProcedure = true;
-    
+
     private boolean includeObservableProperty = true;
-    
+
     private boolean includeFeatureOfInterest = true;
-    
+
     /**
      * Private constructor
      */
@@ -89,70 +89,73 @@ public class FlexibleIdentifierHelper {
         }
         return instance;
     }
-    
+
     @Setting(FlexibleIdentifierSettings.RETURN_HUMAN_READABLE_IDENTIFIER_KEY)
-    public void setReturnHumanReadableIdentifier(final boolean returnHumanReadableIdentifier) throws ConfigurationException {
-    	this.returnHumanReadableIdentifier = returnHumanReadableIdentifier;
+    public void setReturnHumanReadableIdentifier(final boolean returnHumanReadableIdentifier)
+            throws ConfigurationException {
+        this.returnHumanReadableIdentifier = returnHumanReadableIdentifier;
     }
-    
+
     public boolean isSetReturnHumanReadableIdentifier() {
-    	return returnHumanReadableIdentifier;
+        return returnHumanReadableIdentifier;
     }
-    
+
     @Setting(FlexibleIdentifierSettings.INCLUDE_OFFERING_KEY)
     public void setIncludeOffering(final boolean includeOffering) throws ConfigurationException {
-    	this.includeOffering = includeOffering;
+        this.includeOffering = includeOffering;
     }
-    
+
     public boolean isSetIncludeOffering() {
-    	return includeOffering;
+        return includeOffering;
     }
-    
+
     @Setting(FlexibleIdentifierSettings.INCLUDE_PROCEDURE_KEY)
     public void setIncludeProcedure(final boolean includeProcedure) throws ConfigurationException {
-    	this.includeProcedure = includeProcedure;
+        this.includeProcedure = includeProcedure;
     }
-    
+
     public boolean isSetIncludeProcedure() {
-    	return includeProcedure;
+        return includeProcedure;
     }
-    
+
     @Setting(FlexibleIdentifierSettings.INCLUDE_OBSERVABLE_PROPERTY_KEY)
     public void setIncludeObservableProperty(final boolean includeObservableProperty) throws ConfigurationException {
-    	this.includeObservableProperty = includeObservableProperty;
+        this.includeObservableProperty = includeObservableProperty;
     }
-    
+
     public boolean isSetIncludeObservableProperty() {
-    	return includeObservableProperty;
+        return includeObservableProperty;
     }
-    
+
     @Setting(FlexibleIdentifierSettings.INCLUDE_FEATURE_OF_INTEREST_KEY)
     public void setIncludeFeatureOfInterest(final boolean includeFeatureOfInterest) throws ConfigurationException {
-    	this.includeFeatureOfInterest = includeFeatureOfInterest;
+        this.includeFeatureOfInterest = includeFeatureOfInterest;
     }
-    
+
     public boolean isSetIncludeFeatureOfInterest() {
-    	return includeFeatureOfInterest;
+        return includeFeatureOfInterest;
     }
-    
-    public boolean checkIsReturnHumanReadableIdentifierFlagExtensionSet(SwesExtensions swesExtensions) throws InvalidParameterValueException {
-		if (swesExtensions != null && swesExtensions.containsExtension(RETURN_HUMAN_READABLE_IDENTIFIER)) {
-			SwesExtension<?> extension = swesExtensions.getExtension(RETURN_HUMAN_READABLE_IDENTIFIER);
-			if (extension.getValue() instanceof SweBoolean) {
-				return true;
-			} else {
-				throw new InvalidParameterValueException(RETURN_HUMAN_READABLE_IDENTIFIER, JavaHelper.asString(extension.getValue()));
-						
-			}
-		}
-		return false;
-	}
-    
-	public boolean checkForReturnHumanReadableIdentifierFlagExtension(SwesExtensions swesExtensions) throws InvalidParameterValueException {
-		if (checkIsReturnHumanReadableIdentifierFlagExtensionSet(swesExtensions)) {
-			return ((SweBoolean)swesExtensions.getExtension(RETURN_HUMAN_READABLE_IDENTIFIER).getValue()).getValue();
-		}
-		return false;
-	}
+
+    public boolean checkIsReturnHumanReadableIdentifierFlagExtensionSet(SwesExtensions swesExtensions)
+            throws InvalidParameterValueException {
+        if (swesExtensions != null && swesExtensions.containsExtension(RETURN_HUMAN_READABLE_IDENTIFIER)) {
+            SwesExtension<?> extension = swesExtensions.getExtension(RETURN_HUMAN_READABLE_IDENTIFIER);
+            if (extension.getValue() instanceof SweBoolean) {
+                return true;
+            } else {
+                throw new InvalidParameterValueException(RETURN_HUMAN_READABLE_IDENTIFIER,
+                        JavaHelper.asString(extension.getValue()));
+            }
+        }
+        return false;
+    }
+
+    public boolean checkForReturnHumanReadableIdentifierFlagExtension(SwesExtensions swesExtensions)
+            throws InvalidParameterValueException {
+        if (checkIsReturnHumanReadableIdentifierFlagExtensionSet(swesExtensions)) {
+            return ((SweBoolean) swesExtensions.getExtension(RETURN_HUMAN_READABLE_IDENTIFIER).getValue()).getValue();
+        }
+        return false;
+    }
 
 }

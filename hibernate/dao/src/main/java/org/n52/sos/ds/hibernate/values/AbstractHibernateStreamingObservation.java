@@ -125,7 +125,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
             } else if (resultObject instanceof Series) {
                 observation =
                         HibernateObservationUtilities
-                                .createSosObservationFromSeries((Series) resultObject, request.getVersion(), session)
+                                .createSosObservationFromSeries((Series) resultObject, request, session)
                                 .iterator().next();
             } else {
                 throw new NoApplicableCodeException().withMessage("The object {} is not supported", resultObject

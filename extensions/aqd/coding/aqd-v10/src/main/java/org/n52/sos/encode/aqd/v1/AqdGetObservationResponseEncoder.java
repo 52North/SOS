@@ -94,20 +94,26 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
                 AbstractStreaming value = (AbstractStreaming) observation.getValue();
                 if (value instanceof StreamingValue) {
                     for (OmObservation omObservation : value.mergeObservation()) {
-                        timePeriod.extendToContain(omObservation.getPhenomenonTime());
+                        if (omObservation.isSetPhenomenonTime()) {
+                            timePeriod.extendToContain(omObservation.getPhenomenonTime());
+                        }
                         omObservation.setResultTime(resultTime);
                         featureCollection.addMember(omObservation);
                     }
                 } else {
                     while (value.hasNextValue()) {
                         OmObservation nextSingleObservation = value.nextSingleObservation();
-                        timePeriod.extendToContain(nextSingleObservation.getPhenomenonTime());
+                        if (nextSingleObservation.isSetPhenomenonTime()) {
+                            timePeriod.extendToContain(nextSingleObservation.getPhenomenonTime());
+                        }
                         nextSingleObservation.setResultTime(resultTime);
                         featureCollection.addMember(nextSingleObservation);
                     }
                 }
             } else {
-                timePeriod.extendToContain(observation.getPhenomenonTime());
+                if (observation.isSetPhenomenonTime()) {
+                    timePeriod.extendToContain(observation.getPhenomenonTime());
+                }
                 observation.setResultTime(resultTime);
                 featureCollection.addMember(observation);
             }
@@ -153,7 +159,9 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
         TimePeriod timePeriod = new TimePeriod();
         int counter = 1;
         for (OmObservation observation : response.getObservationCollection()) {
-            timePeriod.extendToContain(observation.getPhenomenonTime());
+            if (observation.isSetPhenomenonTime()) {
+                timePeriod.extendToContain(observation.getPhenomenonTime());
+            }
             observation.setGmlId("o_" + counter++);
             observation.setResultTime(resultTime);
             featureCollection.addMember(observation);

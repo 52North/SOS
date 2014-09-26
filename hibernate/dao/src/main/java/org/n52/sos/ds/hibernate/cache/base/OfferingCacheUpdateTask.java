@@ -92,7 +92,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     private boolean obsConstSupported;
 
     private boolean hasSamplingGeometry;
-    
+
     /**
      * Constructor. Note: never pass in Hibernate objects that have been loaded
      * by a session in a different thread
@@ -100,11 +100,14 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
      * @param offering
      *            Offering identifier
      * @param observationConstellationInfos
-     *            Observation Constellation info collection, passed in from  parent update if supported
+     *            Observation Constellation info collection, passed in from
+     *            parent update if supported
      * @param hasSamplingGeometry
-     *            Indicator to execute or not the extent query for the Spatial Filtering Profile
+     *            Indicator to execute or not the extent query for the Spatial
+     *            Filtering Profile
      */
-    public OfferingCacheUpdateTask(Offering offering, Collection<ObservationConstellationInfo> observationConstellationInfos, boolean hasSamplingGeometry) {
+    public OfferingCacheUpdateTask(Offering offering,
+            Collection<ObservationConstellationInfo> observationConstellationInfos, boolean hasSamplingGeometry) {
         this.offering = offering;
         this.offeringId = offering.getIdentifier();
         this.observationConstellationInfos = observationConstellationInfos;
@@ -206,29 +209,29 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
                 description.addLocalization(locale, offering.getDescription());
             }
         }
-        
+
         getCache().setI18nDescriptionForOffering(offeringId, description);
         getCache().setI18nNameForOffering(offeringId, name);
         addHumanReadableIdentifier(offeringId, offering, name);
     }
 
-    private void addHumanReadableIdentifier(String offeringId,
-			Offering offering, MultilingualString name) {
-		if (name.isEmpty()) {
-			if (offering.isSetName()) {
-				getCache().addOfferingIdentifierHumanReadableName(offeringId, offering.getName());
-			}
-		} else {
-			if (name.getDefaultLocalization().isPresent()) {
-				getCache().addOfferingIdentifierHumanReadableName(offeringId, name.getDefaultLocalization().get().getText());
-			} else {
-				getCache().addOfferingIdentifierHumanReadableName(offeringId, offeringId);
-			}
-		}
-		
-	}
+    private void addHumanReadableIdentifier(String offeringId, Offering offering, MultilingualString name) {
+        if (offering.isSetName()) {
+            getCache().addOfferingIdentifierHumanReadableName(offeringId, offering.getName());
+        } else {
+            if (!name.isEmpty()) {
+                if (name.getDefaultLocalization().isPresent()) {
+                    getCache().addOfferingIdentifierHumanReadableName(offeringId,
+                            name.getDefaultLocalization().get().getText());
+                } else {
+                    getCache().addOfferingIdentifierHumanReadableName(offeringId, offeringId);
+                }
+            }
+        }
 
-	protected Map<ProcedureFlag, Set<String>> getProcedureIdentifier(Session session) throws OwsExceptionReport {
+    }
+
+    protected Map<ProcedureFlag, Set<String>> getProcedureIdentifier(Session session) throws OwsExceptionReport {
         Set<String> procedures = new HashSet<String>(0);
         Set<String> hiddenChilds = new HashSet<String>(0);
         if (obsConstSupported) {
@@ -364,12 +367,12 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
      */
     protected void addSpatialFilteringProfileEnvelopeForOffering(String prefixedOfferingId, String offeringID,
             Session session) throws OwsExceptionReport {
-    	if (hasSamplingGeometry) {
-	        getCache().setSpatialFilteringProfileEnvelopeForOffering(
-	                prefixedOfferingId,
-	                DaoFactory.getInstance().getObservationDAO()
-	                        .getSpatialFilteringProfileEnvelopeForOfferingId(offeringID, session));
-    	}
+        if (hasSamplingGeometry) {
+            getCache().setSpatialFilteringProfileEnvelopeForOffering(
+                    prefixedOfferingId,
+                    DaoFactory.getInstance().getObservationDAO()
+                            .getSpatialFilteringProfileEnvelopeForOfferingId(offeringID, session));
+        }
     }
 
     @Override

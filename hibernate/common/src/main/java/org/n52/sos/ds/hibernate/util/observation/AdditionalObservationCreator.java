@@ -40,7 +40,7 @@ public interface AdditionalObservationCreator<T extends Series> {
     
     OmObservation create(OmObservation omObservation, AbstractObservation observation);
     
-    OmObservation create(OmObservation omObservation, T observation);
+    OmObservation create(OmObservation omObservation, T series);
 
     OmObservation add(OmObservation sosObservation, AbstractObservation hObservation);
 

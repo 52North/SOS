@@ -34,12 +34,8 @@ import java.util.Locale;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.n52.sos.convert.ConverterException;
-import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureDescriptionGenerator;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -50,7 +46,7 @@ import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,15 +67,15 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
     protected final List<String> featureIds;
 
     public ObservationConstellationOmObservationCreator(ObservationConstellation observationConstellation,
-            List<String> featureOfInterestIdentifiers, String version, Session session) {
-        super(version, session);
+            List<String> featureOfInterestIdentifiers, AbstractObservationRequest request, Session session) {
+        super(request, session);
         this.oc = observationConstellation;
         this.featureIds = featureOfInterestIdentifiers;
     }
 
     public ObservationConstellationOmObservationCreator(ObservationConstellation observationConstellation,
-            List<String> featureOfInterestIdentifiers, String version, Locale language, Session session) {
-        super(version, language, session);
+            List<String> featureOfInterestIdentifiers, AbstractObservationRequest request, Locale language, Session session) {
+        super(request, language, session);
         this.oc = observationConstellation;
         this.featureIds = featureOfInterestIdentifiers;
     }

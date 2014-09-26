@@ -71,7 +71,6 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.StringHelper;
@@ -110,7 +109,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     
     public ObservationOmObservationCreator(Collection<AbstractObservation> observations,
             AbstractObservationRequest request, Locale language, Session session) {
-    	super(checkVersion(request), session);
+    	super(request, session);
         this.request = request;
         if (observations == null) {
             this.observations = Collections.emptyList();
@@ -121,7 +120,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     
     public ObservationOmObservationCreator(Collection<AbstractObservation> observations, AbstractObservationRequest request,
             Session session) {
-    	super(checkVersion(request), session);
+    	super(request, session);
         this.request = request;
         if (observations == null) {
             this.observations = Collections.emptyList();
@@ -138,13 +137,6 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return request.getResultModel();
     }
     
-    private String getResponseFormat() {
-        if (request.isSetResponseFormat()) {
-            return request.getResponseFormat();
-        }
-        return Configurator.getInstance().getProfileHandler().getActiveProfile().getObservationResponseFormat();
-    }
-
     private SosProcedureDescription getProcedure(String procedureId) {
         return procedures.get(procedureId);
     }
@@ -211,14 +203,6 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         getSession().evict(hObservation);
         LOGGER.trace("Creating Observation done.");
         return sosObservation;
-    }
-
-    private void checkForAdditionalObservationCreator(AbstractObservation hObservation, OmObservation sosObservation) {
-        AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass());
-        if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
-            AdditionalObservationCreator creator = AdditionalObservationCreatorRepository.getInstance().get(key);
-            creator.create(sosObservation, hObservation);
-        }
     }
 
     private void checkOrSetObservablePropertyUnit(AbstractPhenomenon phen, String unit) {

@@ -260,7 +260,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                 final List<String> featureIds =
                         HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features, session);
                 for (OmObservation omObservation : HibernateObservationUtilities.createSosObservationFromObservationConstellation(oc,
-                        featureIds, request.getVersion(), LocaleHelper.fromRequest(request), session)) {
+                        featureIds, request, LocaleHelper.fromRequest(request), session)) {
                     if (!timeSeries.contains(omObservation.getObservationConstellation())) {
                         result.add(omObservation);
                         timeSeries.add(omObservation.getObservationConstellation());
@@ -363,7 +363,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             metadataObservationsCount = seriesToCheckMap.size();
             for (Series series : seriesToCheckMap.values()) {
                 result.addAll(HibernateObservationUtilities.createSosObservationFromSeries(series,
-                        request.getVersion(), LocaleHelper.fromRequest(request), session));
+                        request, LocaleHelper.fromRequest(request), session));
             }
         }
         HibernateGetObservationHelper
@@ -405,7 +405,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             final List<String> featureIds =
                     HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features, session);
             for (OmObservation observationTemplate : HibernateObservationUtilities
-                    .createSosObservationFromObservationConstellation(oc, featureIds, request.getVersion(), session)) {
+                    .createSosObservationFromObservationConstellation(oc, featureIds, request, session)) {
                 FeatureOfInterest featureOfInterest =
                         new FeatureOfInterestDAO().getFeatureOfInterest(observationTemplate
                                 .getObservationConstellation().getFeatureOfInterest().getIdentifier(),
@@ -450,7 +450,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         for (Series series : DaoFactory.getInstance().getSeriesDAO().getSeries(request, features, session)) {
             Collection<? extends OmObservation> createSosObservationFromSeries =
                     HibernateObservationUtilities
-                            .createSosObservationFromSeries(series, request.getVersion(), session);
+                            .createSosObservationFromSeries(series, request, session);
             OmObservation observationTemplate = createSosObservationFromSeries.iterator().next();
             HibernateSeriesStreamingValue streamingValue = getSeriesStreamingValue(request, series.getSeriesId());
             streamingValue.setResponseFormat(request.getResponseFormat());

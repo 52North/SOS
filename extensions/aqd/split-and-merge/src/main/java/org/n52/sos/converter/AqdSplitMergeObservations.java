@@ -107,8 +107,7 @@ public class AqdSplitMergeObservations implements
                 } else {
                     boolean combined = false;
                     for (final OmObservation combinedSosObs : mergedObservations) {
-                        if (combinedSosObs.getObservationConstellation().equals(
-                                sosObservation.getObservationConstellation())) {
+                        if (combinedSosObs.checkForMerge(sosObservation)) {
                             combinedSosObs.setResultTime(null);
                             mergeObservationValues(combinedSosObs, sosObservation);
                             combined = true;

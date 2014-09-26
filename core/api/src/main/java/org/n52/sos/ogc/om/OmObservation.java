@@ -97,11 +97,13 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /** separator of value tuples, which are contained in the resulte element */
     private String tupleSeparator;
-    
+
     /**
      * Measurment quality
      */
     private Set<OmResultQuality> qualityList = Sets.newHashSet();
+
+    private String additionalMergeIndicator;
 
     /**
      * constructor
@@ -155,6 +157,10 @@ public class OmObservation extends AbstractFeature implements Serializable {
      */
     public Time getPhenomenonTime() {
         return value.getPhenomenonTime();
+    }
+    
+    public boolean isSetPhenomenonTime() {
+        return getPhenomenonTime() != null && !getPhenomenonTime().isEmpty();
     }
 
     /**
@@ -289,9 +295,9 @@ public class OmObservation extends AbstractFeature implements Serializable {
     public void setValue(final ObservationValue<?> value) {
         this.value = value;
     }
-    
+
     public boolean isSetValue() {
-    	return getValue() != null && getValue().isSetValue();
+        return getValue() != null && getValue().isSetValue();
     }
 
     /**
@@ -305,7 +311,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
         mergeResultTimes(sosObservation);
         setObservationTypeToSweArrayObservation();
     }
-    
+
     /**
      * Merge this observation with passed observation
      * 
@@ -314,7 +320,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
      */
     public void mergeWithObservation(ObservationValue<?> observationValue) {
         mergeValues(observationValue);
-//        mergeResultTimes(sosObservation);
+        // mergeResultTimes(sosObservation);
         setObservationTypeToSweArrayObservation();
     }
 
@@ -537,7 +543,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
                 && namedValue.getName().getHref().equals(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY)
                 && namedValue.getValue() instanceof GeometryValue;
     }
-    
+
     public OmObservation cloneTemplate() {
         OmObservation clone = new OmObservation();
         clone.setObservationConstellation(this.getObservationConstellation());
@@ -547,13 +553,13 @@ public class OmObservation extends AbstractFeature implements Serializable {
         clone.setTupleSeparator(this.getTupleSeparator());
         return clone;
     }
-    
+
     @Override
     public String getGmlId() {
-    	if (Strings.isNullOrEmpty(super.getGmlId()) && isSetObservationID()) {
-    		setGmlId("o_" + getObservationID());
-    	}
-    	return super.getGmlId();
+        if (Strings.isNullOrEmpty(super.getGmlId()) && isSetObservationID()) {
+            setGmlId("o_" + getObservationID());
+        }
+        return super.getGmlId();
     }
 
     /**
@@ -566,12 +572,12 @@ public class OmObservation extends AbstractFeature implements Serializable {
         this.qualityList = qualityList;
         return this;
     }
-    
+
     public OmObservation addResultQuality(Set<OmResultQuality> qualityList) {
         this.qualityList.addAll(qualityList);
         return this;
     }
-    
+
     public OmObservation addResultQuality(OmResultQuality qualityList) {
         this.qualityList.add(qualityList);
         return this;
@@ -585,9 +591,33 @@ public class OmObservation extends AbstractFeature implements Serializable {
     public Set<OmResultQuality> getResultQuality() {
         return qualityList;
     }
-    
+
     public boolean isSetResultQuality() {
         return CollectionHelper.isNotEmpty(getResultQuality());
     }
-   
+
+    public OmObservation setAdditionalMergeIndicator(String additionalMergeIndicator) {
+        this.additionalMergeIndicator = additionalMergeIndicator;
+        return this;
+    }
+
+    public String getAdditionalMergeIndicator() {
+        return additionalMergeIndicator;
+    }
+
+    public boolean isSetAdditionalMergeIndicator() {
+        return StringHelper.isNotEmpty(getAdditionalMergeIndicator());
+    }
+
+    public boolean checkForMerge(OmObservation observation) {
+        boolean merge = true;
+        if (isSetAdditionalMergeIndicator() && observation.isSetAdditionalMergeIndicator()) {
+            merge = getAdditionalMergeIndicator().equals(observation.getAdditionalMergeIndicator());
+        } else if ((isSetAdditionalMergeIndicator() && !observation.isSetAdditionalMergeIndicator())
+                || (!isSetAdditionalMergeIndicator() && observation.isSetAdditionalMergeIndicator())) {
+            merge = false;
+        }
+        return getObservationConstellation().equals(observation.getObservationConstellation()) && merge;
+    }
+
 }

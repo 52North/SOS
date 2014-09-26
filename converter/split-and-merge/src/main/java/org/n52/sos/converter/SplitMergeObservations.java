@@ -139,8 +139,7 @@ public class SplitMergeObservations implements
                 } else {
                     boolean combined = false;
                     for (final OmObservation combinedSosObs : mergedObservations) {
-                        if (combinedSosObs.getObservationConstellation().equals(
-                                sosObservation.getObservationConstellation())) {
+                        if (combinedSosObs.checkForMerge(sosObservation)) {
                             combinedSosObs.setResultTime(null);
                             combinedSosObs.mergeWithObservation(sosObservation);
                             combined = true;

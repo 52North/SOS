@@ -410,7 +410,7 @@ public interface WritableContentCache extends ContentCache {
     
     void addProcedureIdentifierHumanReadableName(String identifier, String humanReadableName);
     
-	void addOfferingIdentifierHumanReadableName(String identifier, String humanReadableName);
+    void addOfferingIdentifierHumanReadableName(String identifier, String humanReadableName);
 
     /**
      * Dissociate the specified allowed observation type with the specified

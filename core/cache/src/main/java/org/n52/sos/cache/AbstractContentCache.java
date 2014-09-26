@@ -40,7 +40,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-
 import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.sos.SosEnvelope;
@@ -49,6 +48,9 @@ import org.n52.sos.util.Constants;
 import org.n52.sos.util.SetMultiMap;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -120,6 +122,42 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     protected static <K, V> Map<K, V> newSynchronizedMap() {
         return newSynchronizedMap(null);
     }
+    
+    
+    /**
+     * Creates a new empty synchronized {@link BiMap}.
+     *
+     * @param <K>
+     *            the key type
+     * @param <V>
+     *            the value type
+     *
+     * @return the synchronized map
+     */
+    protected static <K, V> BiMap<K, V> newSynchronizedBiMap() {
+        return newSynchronizedBiMap(null);
+    }
+    
+    /**
+     * Creates a new synchronized map from the specified map.
+     *
+     * @param <K>
+     *            the key type
+     * @param <V>
+     *            the value type
+     * @param map
+     *            the map
+     *
+     * @return the synchronized map
+     */
+    protected static <K, V> BiMap<K, V> newSynchronizedBiMap(BiMap<K, V> map) {
+        if (map == null) {
+            return Maps.synchronizedBiMap(HashBiMap.<K, V>create());
+        } else {
+            return Maps.synchronizedBiMap(map);
+        }
+    }
+    
 
     /**
      * Creates a new empty synchronized set.
@@ -388,21 +426,21 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     private Set<Locale> supportedLanguages = newSynchronizedSet();
     
-    private Map<String, String> featureOfInterestIdentifierForHumanReadableName = newSynchronizedMap();
+    private BiMap<String, String> featureOfInterestIdentifierHumanReadableName = newSynchronizedBiMap();
     
-    private Map<String, String> featureOfInterestHumanReadableNameForIdentifier = newSynchronizedMap();
+//    private Map<String, String> featureOfInterestHumanReadableNameForIdentifier = newSynchronizedMap();
     
-    private Map<String, String> observablePropertyIdentifierForHumanReadableName = newSynchronizedMap();
+    private BiMap<String, String> observablePropertyIdentifierHumanReadableName = newSynchronizedBiMap();
     
-    private Map<String, String> observablePropertyHumanReadableNameForIdentifier = newSynchronizedMap();
+//    private Map<String, String> observablePropertyHumanReadableNameForIdentifier = newSynchronizedMap();
     
-    private Map<String, String> procedureIdentifierForHumanReadableName = newSynchronizedMap();
+    private BiMap<String, String> procedureIdentifierHumanReadableName = newSynchronizedBiMap();
     
-    private Map<String, String> procedureHumanReadableNameForIdentifier = newSynchronizedMap();
+//    private Map<String, String> procedureHumanReadableNameForIdentifier = newSynchronizedMap();
     
-    private Map<String, String> offeringIdentifierForHumanReadableName = newSynchronizedMap();
+    private BiMap<String, String> offeringIdentifierHumanReadableName = newSynchronizedBiMap();
     
-    private Map<String, String> offeringHumanReadableNameForIdentifier = newSynchronizedMap();
+//    private Map<String, String> offeringHumanReadableNameForIdentifier = newSynchronizedMap();
     
     /**
      * @return the relating offering -> max phenomenon time
@@ -721,35 +759,35 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     }
     
     protected Map<String, String> getFeatureOfInterestIdentifierForHumanReadableName() {
-    	return featureOfInterestIdentifierForHumanReadableName;
+    	return featureOfInterestIdentifierHumanReadableName.inverse();
     }
     
     protected Map<String, String> getFeatureOfInterestHumanReadableNameForIdentifier() {
-    	return featureOfInterestHumanReadableNameForIdentifier;
+    	return featureOfInterestIdentifierHumanReadableName;
     }
     
     protected Map<String, String> getObservablePropertyIdentifierForHumanReadableName() {
-    	return observablePropertyIdentifierForHumanReadableName;
+    	return observablePropertyIdentifierHumanReadableName.inverse();
     }
     
     protected Map<String, String> getObservablePropertyHumanReadableNameForIdentifier() {
-    	return observablePropertyHumanReadableNameForIdentifier;
+    	return observablePropertyIdentifierHumanReadableName;
     }
     
     protected Map<String, String> getProcedureIdentifierForHumanReadableName() {
-    	return procedureIdentifierForHumanReadableName;
+    	return procedureIdentifierHumanReadableName.inverse();
     }
     
     protected Map<String, String> getProcedureHumanReadableNameForIdentifier() {
-    	return procedureHumanReadableNameForIdentifier;
+    	return procedureIdentifierHumanReadableName;
     }
     
     protected Map<String, String> getOfferingIdentifierForHumanReadableName() {
-    	return offeringIdentifierForHumanReadableName;
+    	return offeringIdentifierHumanReadableName;
     }
     
     protected Map<String, String> getOfferingHumanReadableNameForIdentifier() {
-    	return offeringHumanReadableNameForIdentifier;
+    	return offeringIdentifierHumanReadableName.inverse();
     }
 
     /**
@@ -780,10 +818,9 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                 relatedFeaturesForOfferings, resultTemplatesForOfferings, rolesForRelatedFeatures,
                 envelopeForOfferings, nameForOfferings, i18nNameForOfferings, i18nDescriptionForOfferings, epsgCodes, featuresOfInterest,
                 procedures, resultTemplates, offerings, globalEnvelope, globalResultTimeEnvelope,
-                globalPhenomenonTimeEnvelope, supportedLanguages, featureOfInterestHumanReadableNameForIdentifier, 
-                featureOfInterestIdentifierForHumanReadableName, observablePropertyHumanReadableNameForIdentifier, 
-                observablePropertyIdentifierForHumanReadableName, procedureHumanReadableNameForIdentifier, procedureIdentifierForHumanReadableName,
-                offeringHumanReadableNameForIdentifier, offeringIdentifierForHumanReadableName);
+                globalPhenomenonTimeEnvelope, supportedLanguages, featureOfInterestIdentifierHumanReadableName, 
+                observablePropertyIdentifierHumanReadableName, procedureIdentifierHumanReadableName,
+                offeringIdentifierHumanReadableName);
     }
 
     @Override
@@ -846,14 +883,10 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                     && Objects.equal(this.globalResultTimeEnvelope, other.getGlobalResultTimeEnvelope())
                     && Objects.equal(this.offerings, other.getOfferingsSet())
                     && Objects.equal(this.supportedLanguages, other.getSupportedLanguages())
-                    && Objects.equal(this.featureOfInterestHumanReadableNameForIdentifier, other.getFeatureOfInterestHumanReadableNameForIdentifier())
-                    && Objects.equal(this.featureOfInterestIdentifierForHumanReadableName, other.getFeatureOfInterestIdentifierForHumanReadableName())
-                    && Objects.equal(this.observablePropertyHumanReadableNameForIdentifier, other.getObservablePropertyHumanReadableNameForIdentifier())
-                    && Objects.equal(this.observablePropertyIdentifierForHumanReadableName, other.getObservablePropertyIdentifierForHumanReadableName())
-                    && Objects.equal(this.procedureHumanReadableNameForIdentifier, other.getProcedureHumanReadableNameForIdentifier())
-                    && Objects.equal(this.procedureIdentifierForHumanReadableName, other.getProcedureIdentifierForHumanReadableName())
-                    && Objects.equal(this.offeringHumanReadableNameForIdentifier, other.getOfferingHumanReadableNameForIdentifier())
-                    && Objects.equal(this.offeringIdentifierForHumanReadableName, other.getOfferingIdentifierForHumanReadableName());
+                    && Objects.equal(this.getFeatureOfInterestIdentifierForHumanReadableName(), other.getFeatureOfInterestIdentifierForHumanReadableName())
+                    && Objects.equal(this.getObservablePropertyIdentifierForHumanReadableName(), other.getObservablePropertyIdentifierForHumanReadableName())
+                    && Objects.equal(this.getProcedureIdentifierForHumanReadableName(), other.getProcedureIdentifierForHumanReadableName())
+                    && Objects.equal(this.getOfferingIdentifierForHumanReadableName(), other.getOfferingIdentifierForHumanReadableName());
         }
         return false;
     }

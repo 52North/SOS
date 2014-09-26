@@ -38,6 +38,7 @@ import org.n52.sos.util.AbstractConfiguringServiceLoaderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("rawtypes")
 public class AdditionalObservationCreatorRepository extends AbstractConfiguringServiceLoaderRepository<AdditionalObservationCreator> {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(AdditionalObservationCreatorRepository.class);
@@ -53,8 +54,8 @@ public class AdditionalObservationCreatorRepository extends AbstractConfiguringS
         return LazyHolder.INSTANCE;
     }
     
-    private final Map<AdditionalObservationCreatorKey, AdditionalObservationCreator> additionalObservationCreator =
-            new HashMap<AdditionalObservationCreatorKey, AdditionalObservationCreator>(0);
+    private final Map<AdditionalObservationCreatorKey, AdditionalObservationCreator<?>> additionalObservationCreator =
+            new HashMap<AdditionalObservationCreatorKey, AdditionalObservationCreator<?>>(0);
 
     /**
      * private constructor for singleton
@@ -71,7 +72,7 @@ public class AdditionalObservationCreatorRepository extends AbstractConfiguringS
     protected void processConfiguredImplementations(Set<AdditionalObservationCreator> additionalObservationCreators)
             throws ConfigurationException {
         this.additionalObservationCreator.clear();
-        for (final AdditionalObservationCreator aoc : additionalObservationCreators) {
+        for (final AdditionalObservationCreator<?> aoc : additionalObservationCreators) {
             for (AdditionalObservationCreatorKey key : aoc.getKeys()) {
                 LOGGER.debug("Registered AdditionalObservationCreator for {}", key);
                 this.additionalObservationCreator.put(key, aoc);

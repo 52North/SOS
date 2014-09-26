@@ -310,21 +310,24 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      */
     protected Criteria getSeriesObservationCriteriaFor(GetObservationRequest request, Collection<String> features,
                 Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
+            String seriesAlias = "s";
+            String seriesAliasPrefix = seriesAlias + ".";
             final Criteria c = getDefaultObservationCriteria(session)
-                    .createAlias(SeriesObservation.SERIES, "s");
+                    .createAlias(SeriesObservation.SERIES, seriesAlias);
             checkAndAddSpatialFilteringProfileCriterion(c, request, session);
+            addSpecificRestrictions(c, request);
             
             if (CollectionHelper.isNotEmpty(request.getProcedures())) {
-                c.createCriteria("s." + Series.PROCEDURE).add(Restrictions.in(Procedure.IDENTIFIER, request.getProcedures()));
+                c.createCriteria(seriesAliasPrefix + Series.PROCEDURE).add(Restrictions.in(Procedure.IDENTIFIER, request.getProcedures()));
             }
             
             if (CollectionHelper.isNotEmpty(request.getObservedProperties())) {
-                c.createCriteria("s." + Series.OBSERVABLE_PROPERTY).add(Restrictions.in(ObservableProperty.IDENTIFIER,
+                c.createCriteria(seriesAliasPrefix + Series.OBSERVABLE_PROPERTY).add(Restrictions.in(ObservableProperty.IDENTIFIER,
                         request.getObservedProperties()));
             }
             
             if (CollectionHelper.isNotEmpty(features)) {
-                c.createCriteria("s." + Series.FEATURE_OF_INTEREST).add(Restrictions.in(FeatureOfInterest.IDENTIFIER, features));
+                c.createCriteria(seriesAliasPrefix + Series.FEATURE_OF_INTEREST).add(Restrictions.in(FeatureOfInterest.IDENTIFIER, features));
             }
             
             if (CollectionHelper.isNotEmpty(request.getOfferings())) {
@@ -573,6 +576,8 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     
     
     public abstract List<SeriesObservation> getSeriesObservationsFor(Series series, GetObservationRequest request, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport;
+    
+    protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException;
     
     protected Criteria getSeriesObservationCriteriaFor(Series series, GetObservationRequest request,
             SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {

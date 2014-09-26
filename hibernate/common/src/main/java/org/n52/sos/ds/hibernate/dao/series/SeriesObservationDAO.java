@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.dao.series;
 import java.util.Collection;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.n52.sos.ds.hibernate.entities.series.Series;
@@ -45,6 +46,7 @@ import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime;
 import org.n52.sos.ds.hibernate.entities.series.SeriesSweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.series.SeriesTextObservation;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
@@ -204,6 +206,11 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
             SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
         return getSeriesObservationCriteriaFor(series, request, sosIndeterminateTime, session).list();
 
+    }
+
+    @Override
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
+       // nothing to add
     }
 
     @Override

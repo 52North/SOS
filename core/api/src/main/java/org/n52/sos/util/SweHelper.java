@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.OmConstants;
@@ -53,6 +54,7 @@ import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
@@ -60,6 +62,7 @@ import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.ogc.swe.simpleType.SweTime;
+import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.service.ServiceConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,7 +126,7 @@ public final class SweHelper {
             if (singleValue.getValue() instanceof SweDataArrayValue) {
                 return (SweDataArray) singleValue.getValue().getValue();
             } else {
-                dataArray.setElementType(createElementType(singleValue.getValue(), observablePropertyIdentifier));
+                dataArray.setElementType(createElementType(singleValue, observablePropertyIdentifier));
                 dataArrayValue.addBlock(createBlock(dataArray.getElementType(), sosObservation.getPhenomenonTime(),
                         observablePropertyIdentifier, singleValue.getValue()));
             }
@@ -135,7 +138,7 @@ public final class SweHelper {
                 TVPValue tvpValues = (TVPValue) multiValue.getValue();
                 for (TimeValuePair timeValuePair : tvpValues.getValue()) {
                     if (!dataArray.isSetElementTyp()) {
-                        dataArray.setElementType(createElementType(timeValuePair.getValue(),
+                        dataArray.setElementType(createElementType(timeValuePair,
                                 observablePropertyIdentifier));
                     }
                     List<String> newBlock =
@@ -159,7 +162,7 @@ public final class SweHelper {
             if (singleValue.getValue() instanceof SweDataArrayValue) {
                 return (SweDataArray) singleValue.getValue().getValue();
             } else {
-                dataArray.setElementType(createElementType(singleValue.getValue(), observablePropertyIdentifier));
+                dataArray.setElementType(createElementType(singleValue, observablePropertyIdentifier));
                 dataArrayValue.addBlock(createBlock(dataArray.getElementType(), observationValue.getPhenomenonTime(),
                         observablePropertyIdentifier, singleValue.getValue()));
             }
@@ -171,7 +174,7 @@ public final class SweHelper {
                 TVPValue tvpValues = (TVPValue) multiValue.getValue();
                 for (TimeValuePair timeValuePair : tvpValues.getValue()) {
                     if (!dataArray.isSetElementTyp()) {
-                        dataArray.setElementType(createElementType(timeValuePair.getValue(),
+                        dataArray.setElementType(createElementType(timeValuePair,
                                 observablePropertyIdentifier));
                     }
                     List<String> newBlock =
@@ -184,15 +187,27 @@ public final class SweHelper {
         return dataArray;
     }
 
-    private static SweAbstractDataComponent createElementType(Value<?> iValue, String name) {
+    private static SweAbstractDataComponent createElementType(TimeValuePair tvp, String name) {
         SweDataRecord dataRecord = new SweDataRecord();
-        dataRecord.addField(getPhenomenonTimeField());
-        dataRecord.addField(getFieldForValue(iValue, name));
+        dataRecord.addField(getPhenomenonTimeField(tvp.getTime()));
+        dataRecord.addField(getFieldForValue(tvp.getValue(), name));
         return dataRecord;
     }
 
-    private static SweField getPhenomenonTimeField() {
-        SweTime time = new SweTime();
+    private static SweAbstractDataComponent createElementType(SingleObservationValue<?> sov, String name) {
+        SweDataRecord dataRecord = new SweDataRecord();
+        dataRecord.addField(getPhenomenonTimeField(sov.getPhenomenonTime()));
+        dataRecord.addField(getFieldForValue(sov.getValue(), name));
+        return dataRecord;
+    }
+
+    private static SweField getPhenomenonTimeField(Time sosTime) {
+        SweAbstractUomType<?> time = null;
+        if (sosTime instanceof TimePeriod) {
+            time = new SweTimeRange();
+        } else {
+            time = new SweTime();
+        }
         time.setDefinition(OmConstants.PHENOMENON_TIME);
         time.setUom(OmConstants.PHEN_UOM_ISO8601);
         return new SweField(OmConstants.PHENOMENON_TIME_NAME, time);
@@ -290,7 +305,7 @@ public final class SweHelper {
             List<String> block = new ArrayList<String>(elementTypeRecord.getFields().size());
             for (SweField sweField : elementTypeRecord.getFields()) {
                 if (!(value instanceof NilTemplateValue)) {
-                    if (sweField.getElement() instanceof SweTime) {
+                    if (sweField.getElement() instanceof SweTime || sweField.getElement() instanceof SweTimeRange) {
                         block.add(DateTimeHelper.format(phenomenonTime));
                     } else if (sweField.getElement() instanceof SweAbstractDataComponent
                             && sweField.getElement().getDefinition().equals(phenID)) {

@@ -65,12 +65,14 @@ public class ReportingHeaderSQLiteSessionFactory extends AbstractSessionFactoryP
             put(SQLiteSessionFactory.HIBERNATE_CONNECTION_DRIVER_CLASS, SQLiteSessionFactory.SQLITE_JDBC_DRIVER);
             put(SQLiteSessionFactory.HIBERNATE_CONNECTION_USERNAME, SQLiteSessionFactory.EMPTY);
             put(SQLiteSessionFactory.HIBERNATE_CONNECTION_PASSWORD, SQLiteSessionFactory.EMPTY);
-            put(SQLiteSessionFactory.HIBERNATE_CONNECTION_POOL_SIZE, String.valueOf(SQLiteSessionFactory.SQLITE_CONNECTION_POOL_SIZE));
-            put(SQLiteSessionFactory.HIBERNATE_CONNECTION_RELEASE_MODE, SQLiteSessionFactory.RELEASE_MODE_AFTER_TRANSACTION);
-            put(SQLiteSessionFactory.HIBERNATE_CURRENT_SESSION_CONTEXT, SQLiteSessionFactory.THREAD_LOCAL_SESSION_CONTEXT);
+            put(SQLiteSessionFactory.HIBERNATE_CONNECTION_POOL_SIZE,
+                    String.valueOf(SQLiteSessionFactory.SQLITE_CONNECTION_POOL_SIZE));
+            put(SQLiteSessionFactory.HIBERNATE_CONNECTION_RELEASE_MODE,
+                    SQLiteSessionFactory.RELEASE_MODE_AFTER_TRANSACTION);
+            put(SQLiteSessionFactory.HIBERNATE_CURRENT_SESSION_CONTEXT,
+                    SQLiteSessionFactory.THREAD_LOCAL_SESSION_CONTEXT);
         }
     };
-
 
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -106,14 +108,13 @@ public class ReportingHeaderSQLiteSessionFactory extends AbstractSessionFactoryP
     }
 
     private SessionFactory createSessionFactory(Properties properties) {
-        Configuration cfg = new Configuration()
-                .addAnnotatedClass(JSONFragment.class);
+        Configuration cfg = new Configuration().addAnnotatedClass(JSONFragment.class);
         if (properties != null) {
             cfg.mergeProperties(properties);
         }
         cfg.mergeProperties(defaultProperties);
-        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                .applySettings(cfg.getProperties()).build();
+        ServiceRegistry serviceRegistry =
+                new StandardServiceRegistryBuilder().applySettings(cfg.getProperties()).build();
         return cfg.buildSessionFactory(serviceRegistry);
     }
 
@@ -143,5 +144,18 @@ public class ReportingHeaderSQLiteSessionFactory extends AbstractSessionFactoryP
     @Override
     public String getConnectionProviderIdentifier() {
         return "SQLiteHibernateReportingHeader";
+    }
+    
+    @Override
+    public void cleanup() {
+        try {
+            Session session = getConnection();
+            if (session.isOpen()) {
+                session.disconnect();
+            }
+        } catch (ConnectionProviderException cpe) {
+           LOG.error("Error while closing connection!", cpe);
+        }
+        super.cleanup();
     }
 }

@@ -1113,7 +1113,7 @@ function GeographicalNameController(options) {
             },
             value: options.value.pronunciation
         }),
-        spelling: new NillableController({
+        spelling: new ListController({
             div: $("<div>").appendTo(this.$controls),
             menu: this.menu,
             delegate: SpellingController,

@@ -40,6 +40,7 @@ import net.opengis.swe.x20.AbstractDataComponentDocument;
 import net.opengis.swe.x20.AbstractDataComponentType;
 import net.opengis.swe.x20.AbstractEncodingType;
 import net.opengis.swe.x20.AnyScalarPropertyType;
+import net.opengis.swe.x20.BooleanPropertyType;
 import net.opengis.swe.x20.BooleanType;
 import net.opengis.swe.x20.CategoryType;
 import net.opengis.swe.x20.CountPropertyType;
@@ -113,7 +114,7 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
             DataArrayPropertyType.class, DataArrayDocument.class, DataArrayType.class, DataRecordDocument.class,
             DataRecordType.class, CountType.class, QuantityType.class, TextType.class, Coordinate[].class,
             AnyScalarPropertyType[].class, TextEncodingDocument.class, TextEncodingType.class,
-            AbstractDataComponentDocument.class, AbstractDataComponentType.class, TextPropertyType.class, CountPropertyType.class);
+            AbstractDataComponentDocument.class, AbstractDataComponentType.class, TextPropertyType.class, CountPropertyType.class, BooleanPropertyType.class);
 
     public SweCommonDecoderV20() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -165,6 +166,8 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
             return parseAbstractDataComponent(((TextPropertyType)element).getText());
         } else if (element instanceof CountPropertyType) {
             return parseAbstractDataComponent(((CountPropertyType)element).getCount());
+        } else if (element instanceof BooleanPropertyType) {
+            return parseAbstractDataComponent(((BooleanPropertyType)element).getBoolean());
         } else {
             throw new UnsupportedDecoderInputException(this, element);
         }

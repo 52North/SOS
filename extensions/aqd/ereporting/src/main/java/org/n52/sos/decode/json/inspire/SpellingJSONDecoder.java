@@ -47,7 +47,7 @@ public class SpellingJSONDecoder extends AbstractJSONDecoder<Spelling> {
                 .path(AQDJSONConstants.SCRIPT)));
         spelling.setText(node.path(AQDJSONConstants.TEXT).textValue());
         spelling.setTransliterationScheme(parseNillableString(node
-                .path(AQDJSONConstants.SCRIPT)));
+                .path(AQDJSONConstants.TRANSLITERATION_SCHEME)));
         return spelling;
     }
 

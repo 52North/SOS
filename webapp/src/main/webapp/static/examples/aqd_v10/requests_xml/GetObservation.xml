@@ -17,13 +17,16 @@
 			<swe:value>e1a</swe:value>
 		</swe:Text>
 	</swes:extension>
-	
+	-->
+	<!--
 	<swes:extension xsi:type="swe:CountPropertyType">
 		<swe:Count>
 			<swe:identifier>crs</swe:identifier>
 			<swe:value>4326</swe:value>
 		</swe:Count>
 	</swes:extension>
+	-->
+	<!--
 	<swes:extension xsi:type="swe:TextPropertyType">
 		<swe:Text>
 			<swe:identifier>language</swe:identifier>
@@ -55,7 +58,8 @@
 		</fes:During>
 	</sos:temporalFilter>
 	
-	<!-- optional
+	<!-- optional -->
+	<!--
 	<sos:temporalFilter>
 		<fes:TEquals>
 			<fes:ValueReference>phenomenonTime</fes:ValueReference>
@@ -64,7 +68,8 @@
 			</gml:TimeInstant>
 		</fes:TEquals>
 	</sos:temporalFilter>
-	
+	-->
+	<!--
 	<sos:temporalFilter>
 		<fes:TEquals>
 			<fes:ValueReference>phenomenonTime</fes:ValueReference>
@@ -73,7 +78,8 @@
 			</gml:TimeInstant>
 		</fes:TEquals>
 	</sos:temporalFilter>
-	
+	-->
+	<!--
 	<sos:temporalFilter>
 		<fes:TEquals>
 			<fes:ValueReference>phenomenonTime</fes:ValueReference>
@@ -82,7 +88,8 @@
 			</gml:TimeInstant>
 		</fes:TEquals>
 	</sos:temporalFilter>
-	
+	-->
+	<!--
 	<sos:temporalFilter>
 		<fes:During>
 			<fes:ValueReference>resultTime</fes:ValueReference>
@@ -92,7 +99,8 @@
 			</gml:TimePeriod>
 		</fes:During>
 	</sos:temporalFilter>
-	
+	-->
+	<!--
 	<sos:temporalFilter>
 		<fes:TEquals>
 			<fes:ValueReference>resultTime</fes:ValueReference>

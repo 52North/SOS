@@ -211,29 +211,6 @@ public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
     public void returnConnection(Object connection) {
     }
 
-//    @Override
-//    public void cleanup() {
-//        lock.lock();
-//        try {
-//            if (this.sessionFactory != null) {
-//                try {
-//                    if (SessionFactoryImpl.class.isInstance(this.sessionFactory)
-//                            && Stoppable.class.isInstance(((SessionFactoryImpl) this.sessionFactory)
-//                                    .getConnectionProvider())) {
-//                        ((Stoppable) ((SessionFactoryImpl) this.sessionFactory).getConnectionProvider()).stop();
-//                    }
-//                    this.sessionFactory.close();
-//                    LOG.info("Connection provider closed successfully!");
-//                } catch (HibernateException he) {
-//                    LOG.error("Error while closing connection provider!", he);
-//                }
-//            }
-//        } finally {
-//            this.sessionFactory = null;
-//            lock.unlock();
-//        }
-//    }
-
     @Override
     public void initialize(Properties properties) throws ConfigurationException {
         lock.lock();

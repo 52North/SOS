@@ -133,9 +133,9 @@
 			</snapshots>
 		</repository>
 		<repository>
-			<id>opengeo</id>
-			<name>OpenGeo repository</name>
-			<url>http://repo.opengeo.org</url>
+			<id>boundless</id>
+			<name>Boundless repository</name>
+			<url>http://repo.boundlessgeo.com/main</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>

@@ -35,6 +35,7 @@
         <module>spring</module>
         <module>third-party</module>
         <module>webapp</module>
+        <module>webapp-bundle</module>
     </modules>
     <licenses>
         <license>
@@ -963,6 +964,11 @@
 			<dependency>
 				<groupId>org.geotools</groupId>
 				<artifactId>gt-api</artifactId>
+				<version>9.5</version>
+			</dependency>
+			<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>gt-main</artifactId>
 				<version>9.5</version>
 			</dependency>
 			<dependency>

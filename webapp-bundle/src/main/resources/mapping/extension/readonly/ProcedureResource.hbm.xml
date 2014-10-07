@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.n52.series.api.v1.db.da.beans">
+	<class name="ProcedureEntity" table="`procedure`">
+		<id name="pkid" type="long">
+			<column name="procedureid" />
+			<generator class="assigned" />
+		</id>
+		<property name="name" column="name" type="string" />
+		<property name="description" formula="description" type="string" />
+		<property name="reference" column="referenceflag" type="org.hibernate.type.TrueFalseType" />
+		<property name="canonicalId" column="identifier" type="string" insert="false" update="false"/>
+	</class>
+
+</hibernate-mapping>

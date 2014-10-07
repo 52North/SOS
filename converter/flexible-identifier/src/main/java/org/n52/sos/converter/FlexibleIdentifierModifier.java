@@ -301,12 +301,14 @@ public class FlexibleIdentifierModifier implements
         }
         if (capabilities.isSetContents()) {
             for (SosObservationOffering observationOffering : capabilities.getContents()) {
-                checkAndChangOfferingIdentifier(observationOffering.getOffering());
-                observationOffering.setFeatureOfInterest(checkFeatureOfInterestIdentifier(observationOffering
-                        .getFeatureOfInterest()));
-                observationOffering.setProcedures(checkProcedureIdentifier(observationOffering.getProcedures()));
-                observationOffering.setObservableProperties(checkObservablePropertyIdentifier(observationOffering
-                        .getObservableProperties()));
+                if (!observationOffering.isEmpty()) {
+                    checkAndChangOfferingIdentifier(observationOffering.getOffering());
+                    observationOffering.setFeatureOfInterest(checkFeatureOfInterestIdentifier(observationOffering
+                            .getFeatureOfInterest()));
+                    observationOffering.setProcedures(checkProcedureIdentifier(observationOffering.getProcedures()));
+                    observationOffering.setObservableProperties(checkObservablePropertyIdentifier(observationOffering
+                            .getObservableProperties()));
+                }
             }
         }
         return response;
@@ -713,7 +715,7 @@ public class FlexibleIdentifierModifier implements
     }
 
     private void checkAndChangOfferingIdentifier(SosOffering offering) {
-        if (getFlexibleIdentifierHelper().isSetIncludeOffering()) {
+        if (offering != null && getFlexibleIdentifierHelper().isSetIncludeOffering()) {
             if (!offering.isSetHumanReadableIdentifier()) {
                 offering.setHumanReadableIdentifier(checkOfferingIdentifier(offering.getIdentifier()));
             }

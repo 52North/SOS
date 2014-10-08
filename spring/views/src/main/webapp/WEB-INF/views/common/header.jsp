@@ -185,6 +185,20 @@
 											</a>
 										</li>
 									</sec:authorize>
+									<c:if test="${sos:staticExtensionExists(pageContext.servletContext, 'api-doc/index.html')}">
+                                        <li>
+                                            <a id="rest-menuitem" class="menu-item4" target="_blank" href="<c:url value="/static/api-doc" />">
+                                                <span class="menu-title">SWC REST-API</span>
+                                            </a>
+                                        </li>
+                                    </c:if>
+                                    <c:if test="${sos:staticExtensionExists(pageContext.servletContext, 'jsClient/index.html')}">
+                                        <li>
+                                            <a id="jsclient-menuitem" class="menu-item5" target="_blank" href="<c:url value="/static/jsClient" />">
+                                                <span class="menu-title">Sensor Web JS Client</span>
+                                            </a>
+                                        </li>
+                                    </c:if>
 								</ul>
 							</div>
 						</div>

@@ -564,6 +564,26 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         return (TProcedure) criteria.uniqueResult();
     }
 
+    public TimeExtrema getProcedureTimeExtremaFromNamedQuery(Session session, String procedureIdentifier) {
+        Object[] result = null;
+        if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA, session)) {
+            Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA);
+            namedQuery.setParameter(PROCEDURE, procedureIdentifier);
+            LOGGER.debug("QUERY getProcedureTimeExtrema(procedure) with NamedQuery: {}",
+                    SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA);
+            result = (Object[]) namedQuery.uniqueResult();
+        }
+        
+        TimeExtrema pte = new TimeExtrema();
+        if (result != null) {
+            pte.setMinTime(DateTimeHelper.makeDateTime(result[1]));
+            DateTime maxPhenStart = DateTimeHelper.makeDateTime(result[2]);
+            DateTime maxPhenEnd = DateTimeHelper.makeDateTime(result[3]);
+            pte.setMaxTime(DateTimeHelper.max(maxPhenStart, maxPhenEnd));
+        }
+        return pte;
+    }
+    
     /**
      * Query procedure time extrema for the provided procedure identifier
      *
@@ -575,32 +595,28 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     public TimeExtrema getProcedureTimeExtrema(final Session session, String procedureIdentifier)
             throws OwsExceptionReport {
         Object[] result;
-        if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA, session)) {
-            Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA);
-            namedQuery.setParameter(PROCEDURE, procedureIdentifier);
-            LOGGER.debug("QUERY getProcedureTimeExtrema(procedure) with NamedQuery: {}",
-                    SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA);
-            result = (Object[]) namedQuery.uniqueResult();
-        } else {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-            Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(session);
-            if (observationDAO instanceof AbstractSeriesObservationDAO) {
-                criteria.createAlias(SeriesObservationInfo.SERIES, "s");
-                criteria.createAlias("s." + Series.PROCEDURE, "p");
-            } else {
-                criteria.createAlias(ObservationInfo.PROCEDURE, "p");
-            }
-            criteria.add(Restrictions.eq("p." + Procedure.IDENTIFIER, procedureIdentifier));
-            ProjectionList projectionList = Projections.projectionList();
-            projectionList.add(Projections.groupProperty("p." + Procedure.IDENTIFIER));
-            projectionList.add(Projections.min(AbstractObservation.PHENOMENON_TIME_START));
-            projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_START));
-            projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_END));
-            criteria.setProjection(projectionList);
-
-            LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}", HibernateHelper.getSqlString(criteria));
-            result = (Object[]) criteria.uniqueResult();
+        TimeExtrema te = getProcedureTimeExtremaFromNamedQuery(session, procedureIdentifier);
+        if (te != null && te.isSetTimes()) {
+            return te;
         }
+        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+        Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(session);
+        if (observationDAO instanceof AbstractSeriesObservationDAO) {
+            criteria.createAlias(SeriesObservationInfo.SERIES, "s");
+            criteria.createAlias("s." + Series.PROCEDURE, "p");
+        } else {
+            criteria.createAlias(ObservationInfo.PROCEDURE, "p");
+        }
+        criteria.add(Restrictions.eq("p." + Procedure.IDENTIFIER, procedureIdentifier));
+        ProjectionList projectionList = Projections.projectionList();
+        projectionList.add(Projections.groupProperty("p." + Procedure.IDENTIFIER));
+        projectionList.add(Projections.min(AbstractObservation.PHENOMENON_TIME_START));
+        projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_START));
+        projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_END));
+        criteria.setProjection(projectionList);
+
+        LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}", HibernateHelper.getSqlString(criteria));
+        result = (Object[]) criteria.uniqueResult();
 
         TimeExtrema pte = new TimeExtrema();
         if (result != null) {

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.converter;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -57,6 +58,8 @@ import org.n52.sos.ogc.ows.OwsParameterValue;
 import org.n52.sos.ogc.ows.OwsParameterValuePossibleValues;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
+import org.n52.sos.ogc.sensorML.ProcessMethod;
+import org.n52.sos.ogc.sensorML.ProcessModel;
 import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
@@ -95,7 +98,9 @@ import org.n52.sos.response.GetResultTemplateResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.Constants;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -497,6 +502,27 @@ public class FlexibleIdentifierModifier implements
         if (procedure.isSetOutputs()) {
             for (SmlIo<?> output : procedure.getOutputs()) {
                 checkAbstractDataComponentForObservableProperty(output.getIoValue());
+            }
+        }
+        checkProcessMethod(procedure);
+    }
+
+    private void checkProcessMethod(AbstractProcess procedure) {
+        if (procedure instanceof ProcessModel && ((ProcessModel)procedure).isSetMethod()) {
+            ProcessMethod method = ((ProcessModel)procedure).getMethod();
+            if (method.isSetRulesDefinition() && method.getRulesDefinition().isSetDescription()) {
+                String[] split = method.getRulesDefinition().getDescription().split(Constants.INVERTED_COMMA_STRING);
+                if (split.length == 5) {
+                    StringBuilder builder = new StringBuilder();
+                    builder.append(split[0]).append(Constants.INVERTED_COMMA_CHAR);
+                    builder.append(checkProcedureIdentifier(split[1])).append(Constants.INVERTED_COMMA_CHAR);
+                    builder.append(split[2]).append(Constants.INVERTED_COMMA_CHAR);
+                    Collection<String> obsProps = checkObservablePropertyIdentifier(Sets.newTreeSet(Arrays.asList(split[3].split(Constants.COMMA_STRING))));
+                    builder.append(Joiner.on(Constants.COMMA_STRING).join(obsProps));
+                    builder.append(Constants.INVERTED_COMMA_CHAR);
+                    builder.append(split[4]);
+                    method.getRulesDefinition().setDescription(builder.toString());
+                }
             }
         }
     }

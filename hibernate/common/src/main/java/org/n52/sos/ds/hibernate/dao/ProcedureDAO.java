@@ -563,17 +563,26 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                 HibernateHelper.getSqlString(criteria));
         return (TProcedure) criteria.uniqueResult();
     }
+    
+    public boolean isProcedureTimeExtremaNamedQuerySupported(Session session) {
+        return HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA, session);
+    }
 
     public TimeExtrema getProcedureTimeExtremaFromNamedQuery(Session session, String procedureIdentifier) {
         Object[] result = null;
-        if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA, session)) {
+        if (isProcedureTimeExtremaNamedQuerySupported(session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA);
             namedQuery.setParameter(PROCEDURE, procedureIdentifier);
             LOGGER.debug("QUERY getProcedureTimeExtrema(procedure) with NamedQuery: {}",
                     SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA);
             result = (Object[]) namedQuery.uniqueResult();
         }
+        return parseProcedureTimeExtremaResult(result);
         
+       
+    }
+    
+    private TimeExtrema parseProcedureTimeExtremaResult(Object[] result) {
         TimeExtrema pte = new TimeExtrema();
         if (result != null) {
             pte.setMinTime(DateTimeHelper.makeDateTime(result[1]));
@@ -583,7 +592,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         }
         return pte;
     }
-    
+
     /**
      * Query procedure time extrema for the provided procedure identifier
      *
@@ -595,9 +604,8 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     public TimeExtrema getProcedureTimeExtrema(final Session session, String procedureIdentifier)
             throws OwsExceptionReport {
         Object[] result;
-        TimeExtrema te = getProcedureTimeExtremaFromNamedQuery(session, procedureIdentifier);
-        if (te != null && te.isSetTimes()) {
-            return te;
+        if (isProcedureTimeExtremaNamedQuerySupported(session)) {
+            return getProcedureTimeExtremaFromNamedQuery(session, procedureIdentifier);
         }
         AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
         Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(session);
@@ -617,15 +625,8 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
         LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}", HibernateHelper.getSqlString(criteria));
         result = (Object[]) criteria.uniqueResult();
-
-        TimeExtrema pte = new TimeExtrema();
-        if (result != null) {
-            pte.setMinTime(DateTimeHelper.makeDateTime(result[1]));
-            DateTime maxPhenStart = DateTimeHelper.makeDateTime(result[2]);
-            DateTime maxPhenEnd = DateTimeHelper.makeDateTime(result[3]);
-            pte.setMaxTime(DateTimeHelper.max(maxPhenStart, maxPhenEnd));
-        }
-        return pte;
+        
+        return parseProcedureTimeExtremaResult(result);
     }
 
     /**

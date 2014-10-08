@@ -2,69 +2,109 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.Procedure" table="`procedure`">
-        <id name="procedureId" type="long">
-            <column name="procedureId" />
-            <generator class="native">
-            	<param name="sequence">procedureId_seq</param>
-            </generator>
-        </id>
-        <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
-        <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" fetch="select" lazy="no-proxy" foreign-key="procProcDescFormatFk">
-            <column name="procedureDescriptionFormatId" not-null="true" />
-        </many-to-one>
-        <property name="identifier" type="string">
-            <column name="identifier" not-null="true" unique-key="procIdentifierUK"/>
-        </property>
-        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="procCodespaceIdentifierFk">
-            <column name="codespace" />
+	<class name="org.n52.sos.ds.hibernate.entities.Procedure" table="SPProcess">
+		<id name="procedureId" type="long">
+			<column name="Id" />
+			<generator class="assigned">
+			</generator>
+		</id>
+		<discriminator formula="(SELECT DISTINCT 'F')" type="org.hibernate.type.TrueFalseType" />
+		<many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat"
+				fetch="join" foreign-key="procProcDescFormatFk">
+			<formula>1</formula>
+		</many-to-one>
+		<property name="identifier" type="string" insert="false" update="false">
+			<column name="inspireId" not-null="true" unique="true" />
+		</property>
+		<many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="procCodespaceIdentifierFk">
+            <formula>1</formula>
         </many-to-one>
         <property name="name" type="string">
-            <column name="name" />
+            <column name="inspireId" />
         </property>
         <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="procCodespaceNameFk">
-            <column name="codespaceName" />
+            <formula>1</formula>
         </many-to-one>
         <property name="description" type="string">
-            <column name="description" />
+            <formula>null</formula>
         </property>
-        <property name="deleted" type="org.hibernate.type.TrueFalseType">
-            <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
-        </property>
-        <property name="disabled" type="org.hibernate.type.TrueFalseType">
-            <column name="disabled" not-null="true" default="'F'" check="disabled in ('T','F')"/>
-        </property>
-        <property name="descriptionFile" type="org.hibernate.type.StringClobType">
-            <column name="descriptionFile" />
-        </property>
-        <!-- optional properties, used for automatic sensor description creation if available -->
-        <!-- remove the comments around the property "geom" if the procedures have a geometry column -->
-        <!--
-        <property name="geom" type="org.hibernate.spatial.GeometryType">
-            <column name="geom" unique-key="procGeomUk" />
-        </property>
-        -->
-        <!-- supports types bigDecimal and string -->
-        <!-- remove the comments around the next properties as need (leave altitude if only 2d coordinates are required) -->
-        <!--  
-        <property name="longitude" type="bigDecimal">
-           <column name="longitude" unique-key="procLonLatUk" />
-        </property>
-        <property name="latitude" type="bigDecimal">
-        	<column name="latitude" unique-key="procLonLatUk" />
-        </property>
-        <property name="srid" type="integer">
-        	<column name="srid" />
-        </property> 
-        -->
-        <!--
-        <property name="altitude" type="bigDecimal">
-        	<column name="altitude" />
-        </property>
-        -->
-        <!-- for timeseries API  -->
-        <property name="reference" type="org.hibernate.type.TrueFalseType">
-        	<column name="referenceFlag" default="'F'" check="referenceFlag in ('T','F')"/>
-        </property>
-    </class>
+		<property name="deleted" type="org.hibernate.type.TrueFalseType" >
+			<formula>'F'</formula>
+		</property>
+		<property name="descriptionFile" type="org.hibernate.type.StringClobType">
+			<formula>''</formula>
+		</property>
+	</class>
+
+	<sql-query name="getMinDate4Procedure">
+		<return-scalar column="min" type="timestamp" />
+		SELECT MIN(r.startTime) AS min
+		FROM AQD.dbo.Result r
+		inner join AQD.dbo.Observation o on r.observationId=o.Id
+		inner join AQD.dbo.Pollutant poll on o.pollutantId=poll.Id
+		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
+		WHERE pro.inspireId = :procedure
+	</sql-query>
+
+	<sql-query name="getMaxDate4Procedure">
+		<return-scalar column="max" type="timestamp" />
+		SELECT MAX(r.endTime) AS max
+		FROM AQD.dbo.Result r
+		inner join AQD.dbo.Observation o on r.observationId=o.Id
+		inner join AQD.dbo.Pollutant poll on o.pollutantId=poll.Id
+		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
+		WHERE pro.inspireId = :procedure
+	</sql-query>
+	
+	<sql-query name="getProceduresForFeatureOfInterest">
+		<return-scalar column="procedure" type="string"/>
+		SELECT DISTINCT pro.inspireId as [procedure]
+		FROM AQD.dbo.SPProcess pro
+		inner join AQD.dbo.Observation o on o.processId=pro.id
+		inner join AQD.dbo.SamplingPoint sp on o.samplingPointId=sp.Id
+		inner join AQD.dbo.Station sta on sp.stationId=sta.id
+		WHERE sta.inspireId = :feature
+	</sql-query>
+	
+	<sql-query name="getDataAvailabilityForProcedures">
+		SELECT pro.inspireId, poll.URI, sta.inspireId, MIN(r.startTime) as min , MAX(r.endTime) as max 
+		FROM AQD.dbo.Result r
+		inner join AQD.dbo.Observation o on r.observationId=o.Id
+		inner join AQD.dbo.Pollutant poll on o.pollutantId=poll.Id
+		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
+		inner join AQD.dbo.SamplingPoint sp on o.samplingPointId=sp.Id
+		inner join AQD.dbo.Station sta on sp.stationId=sta.Id
+		WHERE pro.inspireId IN (:procedures) GROUP BY pro.inspireId, poll.URI, sta.inspireId
+	</sql-query>
+	
+	
+	<sql-query name="getProcedureTimeExtrema">
+	   <return-scalar column="procedure" type="string" />
+	   <return-scalar column="minPhenStart" type="timestamp" />
+	   <return-scalar column="maxPhenStart" type="timestamp" />
+	   <return-scalar column="maxPhenEnd" type="timestamp" />
+		SELECT pro.inspireId as [procedure],
+		MIN(r.startTime) as minPhenStart,
+		MAX(r.startTime) as maxPhenStart,
+		MAX(r.endTime) as maxPhenEnd
+		FROM AQD.dbo.Result r
+		inner join AQD.dbo.Observation o on r.observationId=o.Id
+		inner join AQD.dbo.Pollutant poll on o.pollutantId=poll.Id
+		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
+		inner join AQD.dbo.SamplingPoint sp on o.samplingPointId=sp.Id
+		inner join AQD.dbo.Station sta on sp.stationId=sta.Id
+		WHERE pro.inspireId = :procedure
+		GROUP BY pro.inspireId
+	</sql-query>
+	
+    <sql-query name="getUnitForObservablePropertyProcedure">
+		<return-scalar column="unit" type="string"/>
+		SELECT DISTINCT r.unit as unit
+		FROM AQD.dbo.Result r
+		inner join AQD.dbo.Observation o on r.observationId = o.id
+		inner join AQD.dbo.Pollutant phen on o.pollutantId=phen.Id
+		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
+		WHERE phen.URI = :observableProperty AND pro.inspireId = :procedure
+	</sql-query>
+	
 </hibernate-mapping>

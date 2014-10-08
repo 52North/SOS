@@ -2,43 +2,58 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries" table="series">
+    <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries" table="Observation">
         <id name="seriesId" type="long">
-            <column name="seriesId" />
+            <column name="Id" />
             <generator class="native">
             	<param name="sequence">seriesId_seq</param>
             </generator>
         </id>
+        <!-- 
+			The User Guide defines the AQD_Sample (inlet) as featureOfInterest.
+			But the DB-Dump does not contain data in the inlet table.
+	 	-->
         <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" fetch="select" lazy="no-proxy" foreign-key="seriesFeatureFk">
-           	<column index="seriesFeatureIdx" name="featureOfInterestId" not-null="true" unique-key="seriesIdentity" />
+           	<formula>(SELECT DISTINCT sta.Id FROM AQD.dbo.Station sta, AQD.dbo.SamplingPoint spo, AQD.dbo.Observation o where sta.Id = spo.stationId AND spo.Id = o.samplingPointId AND o.Id = Id)</formula>
+           	<!-- <column index="seriesFeatureIdx" name="feature_of_interest_pkid" not-null="true" unique-key="seriesIdentity" /> -->
         </many-to-one>
         <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" fetch="select" lazy="no-proxy" foreign-key="seriesObPropFk">
-            <column index="seriesObsPropIdx" name="observablePropertyId" not-null="true" unique-key="seriesIdentity"/>
+            <column index="seriesObsPropIdx" name="pollutantId" not-null="true" unique-key="seriesIdentity"/>
         </many-to-one>
         <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="select" lazy="no-proxy" foreign-key="seriesProcedureFk">
-            <column index="seriesProcedureIdx" name="procedureId" not-null="true" unique-key="seriesIdentity" />
+            <column index="seriesProcedureIdx" name="processId" not-null="true" unique-key="seriesIdentity" />
         </many-to-one>
         <many-to-one name="samplingPoint" class="org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint" fetch="select" lazy="no-proxy" foreign-key="seriesSampPointFk">
             <column index="seriesSampPointIdx" name="samplingPointId" not-null="true" unique-key="seriesIdentity" />
         </many-to-one>
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
-            <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
+            <formula>'F'</formula>
         </property>
         <!-- values for timeseries api -->
         <property name="firstTimeStamp" type="timestamp">
-            <column name="firstTimeStamp" length="29" />
+            <formula>null</formula>
         </property>
         <property name="lastTimeStamp" type="timestamp">
-            <column name="lastTimeStamp" length="29" />
+           <formula>null</formula>
         </property>
-        <property name="firstNumericValue" type="double">
-            <column name="firstNumericValue" />
+        <property name="firstNumericValue" type="big_decimal">
+            <formula>null</formula>
         </property>
-        <property name="lastNumericValue" type="double">
-            <column name="lastNumericValue" />
+        <property name="lastNumericValue" type="big_decimal">
+            <formula>null</formula>
         </property>
          <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit" fetch="select" lazy="no-proxy" foreign-key="seriesUnitFk">
-            <column name="unitId" not-null="false" />
+            <formula>null</formula>
         </many-to-one>
     </class>
+	
+	<sql-query name="getUnitForObservablePropertyProcedureSeries">
+		<return-scalar column="unit" type="string"/>
+		SELECT DISTINCT r.unit
+		FROM AQD.dbo.Result r
+		inner join AQD.dbo.Observation o on r.observationId=o.Id
+		inner join AQD.dbo.Pollutant poll on o.pollutantId=poll.Id
+		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
+		WHERE poll.URI = :observableProperty AND pro.inspireId = :procedure
+	</sql-query>
 </hibernate-mapping>

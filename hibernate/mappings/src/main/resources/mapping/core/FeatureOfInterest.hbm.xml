@@ -2,66 +2,99 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" table="featureOfInterest">
-        <id name="featureOfInterestId" type="long">
-            <column name="featureOfInterestId" />
-            <generator class="native">
-            	<param name="sequence">featureOfInterestId_seq</param>
-            </generator>
-        </id>
-        <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
-        <many-to-one name="featureOfInterestType" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterestType" fetch="select" lazy="no-proxy" foreign-key="featureFeatureTypeFk">
-            <column name="featureOfInterestTypeId" not-null="true" />
+	<!-- 
+		The User Guide defines the AQD_Sample (inlet) as featureOfInterest.
+		But the DB-Dump does not contain data in the inlet table.
+	 -->
+	<class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest"
+		table="Station">
+		<id name="featureOfInterestId" type="long">
+			<column name="Id" />
+			<generator class="assigned">
+			</generator>
+		</id>
+		<discriminator formula="(SELECT DISTINCT 'F')"
+			type="org.hibernate.type.TrueFalseType" />
+		<many-to-one name="featureOfInterestType"
+			class="org.n52.sos.ds.hibernate.entities.FeatureOfInterestType"
+			fetch="join" foreign-key="featureFeatureTypeFk">
+			<formula>1</formula>
+		</many-to-one>
+		<property name="identifier" type="string">
+			<column name="inspireId" unique="true" />
+		</property>
+		<many-to-one name="codespace"
+			class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select"
+			foreign-key="featureCodespaceFk">
+			<formula>1</formula>
+		</many-to-one>
+		<property name="name" type="org.hibernate.type.StringClobType">
+			<column name="name" />
+		</property>
+		<many-to-one name="codespaceName" 
+			class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" 
+			foreign-key="featureCodespaceNameFk">
+            <formula>1</formula>
         </many-to-one>
-        <property name="identifier" type="string">
-            <column name="identifier" unique-key="foiIdentifierUK"/>
+		  <property name="description" type="string">
+            <formula>null</formula>
         </property>
-        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="featureCodespaceIdentifierFk">
-            <column name="codespace" />
-        </many-to-one>
-        <property name="name" type="string">
-            <column name="name" />
-        </property>
-        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="featureCodespaceNameFk">
-            <column name="codespaceName" />
-        </many-to-one>
-        <property name="description" type="string">
-            <column name="description" />
-        </property>
-        <property name="geom" type="org.hibernate.spatial.GeometryType">
-            <column name="geom" />
-        </property>
-        <property name="descriptionXml" type="org.hibernate.type.StringClobType">
-            <column name="descriptionXml" />
-        </property>
-        <property name="url" type="string">
-            <column name="url" unique-key="obsUrl" />
-        </property>
-        <!-- supports types double, big_decimal, and string -->
-        <!--  
-        <property name="longitude" type="double">
-           <column name="longitude" unique-key="featLonLatUk" />
-        </property>
-        <property name="latitude" type="double">
-        	<column name="latitude" unique-key="featLonLatUk" />
-        </property>
-        <property name="altitude" type="double">
-        	<column name="altitude" />
-        </property>
-        <property name="srid" type="integer">
-        	<column name="srid" />
-        </property> 
-        -->
-    </class>
-    
-    <sql-query name="getEpsgPostgis">
-    	<return-scalar column="srid" type="int"/>
-    	SELECT srid FROM spatial_ref_sys
-    </sql-query>
-    
-   	<sql-query name="transformGeometryPostgis">
-    	<return-scalar column="geom" type="org.hibernate.spatial.GeometryType"/>
-    	SELECT ST_Transform(:geometry, :srid) as geom
-    </sql-query>
-    
+	<!-- <property name="geom" type="org.hibernate.spatial.GeometryType"> <column 
+		name="geom" /> </property> -->
+		<property name="longitude" type="big_decimal">
+			<column name="longitude" />
+		</property>
+		<property name="latitude" type="big_decimal">
+			<column name="latitude" />
+		</property>
+		<property name="altitude" type="big_decimal">
+			<column name="altitude" />
+		</property>
+		<property name="srid" type="integer">
+			<formula>4326</formula>
+		</property> 
+		<property name="descriptionXml" type="org.hibernate.type.StringClobType">
+			<formula>''</formula>
+		</property>
+		<property name="url" type="string">
+			<formula>''</formula>
+		</property>
+	</class>
+
+
+	<sql-query name="getFeatureOfInterestIdentifiersForOffering">
+		<return-scalar column="features" type="string" />
+		SELECT DISTINCT sta.inspireId as features 
+		FROM AQD.dbo.Station sta
+		inner join AQD.dbo.SamplingPoint sp on sp.stationId=sta.Id
+		inner join AQD.dbo.Observation o on o.samplingPointId=sp.Id
+		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
+		WHERE pro.inspireId = :offering
+	</sql-query>
+
+
+	<sql-query name="getFeatureOfInterestIdentifiersForObservationConstellation">
+		<return-scalar column="features" type="string" />
+		SELECT DISTINCT sta.inspireId as features 
+		FROM AQD.dbo.Station sta
+		inner join AQD.dbo.SamplingPoint sp on sp.stationId=sta.Id
+		inner join AQD.dbo.Observation o on o.samplingPointId=sp.Id
+		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
+		inner join AQD.dbo.Pollutant poll on o.pollutantId=poll.Id
+		WHERE pro.inspireId= :procedure
+		AND poll.URI = :observableProperty
+		AND pro.inspireId = :offering
+	</sql-query>
+	
+	<sql-query name="getFeatureForProcedure">
+		<return-scalar column="features" type="string" />
+		SELECT DISTINCT sta.inspireId as features 
+		FROM AQD.dbo.Station sta
+		inner join AQD.dbo.SamplingPoint sp on sp.stationId=sta.Id
+		inner join AQD.dbo.Observation o on o.samplingPointId=sp.Id
+		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
+		WHERE pro.inspireId in (:procedures)
+	</sql-query>
+	
+
 </hibernate-mapping>

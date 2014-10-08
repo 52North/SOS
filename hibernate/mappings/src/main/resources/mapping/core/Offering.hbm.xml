@@ -2,31 +2,85 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.Offering" table="offering">
-        <id name="offeringId" type="long">
-            <column name="offeringId" />
-            <generator class="native">
-            	<param name="sequence">offeringId_seq</param>
-            </generator>
-        </id>
-        <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
-        <property name="identifier" type="string">
-            <column name="identifier" not-null="true" unique-key="offIdentifierUK"/>
-        </property>
-        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="offCodespaceIdentifierFk">
-            <column name="codespace" />
+	<class name="org.n52.sos.ds.hibernate.entities.Offering" table="SPProcess">
+		<id name="offeringId" type="long">
+			<column name="Id" />
+			<generator class="assigned">
+			</generator>
+		</id>
+		<discriminator formula="(SELECT DISTINCT 'F')"
+			type="org.hibernate.type.TrueFalseType" />
+		<property name="identifier" type="string" insert="false" update="false">
+			<column name="inspireId" not-null="true" unique="true" />
+			<!-- <formula>(SELECT 'Zeitreihen_' || p.procedure_id FROM sensorweb2ways.procedure p WHERE p.pkid = pkid)</formula> -->
+		</property>
+		<many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="procCodespaceIdentifierFk">
+            <formula>1</formula>
         </many-to-one>
-        <property name="name" type="string">
-            <column name="name" />
-        </property>
-        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="offCodespaceNameFk">
-            <column name="codespaceName" />
+		<property name="name" type="string" not-null="false">
+			<column name="inspireId" not-null="true" unique="true" />
+			<!-- <formula>(SELECT 'Zeitreihen für Prozedur ' || p.procedure_id FROM sensorweb2ways.procedure p WHERE p.pkid = pkid)</formula> -->
+	    </property>
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="procCodespaceNameFk">
+            <formula>1</formula>
         </many-to-one>
         <property name="description" type="string">
-            <column name="description" />
+            <formula>null</formula>
         </property>
-        <property name="disabled" type="org.hibernate.type.TrueFalseType">
-            <column name="disabled" not-null="true" default="'F'" check="disabled in ('T','F')"/>
-        </property>
-    </class>
+	</class>
+
+	<sql-query name="getMinDate4Offering">
+		<return-scalar column="min" type="timestamp" />
+		SELECT MIN(r.startTime) AS min
+		FROM AQD.dbo.Result r
+		inner join AQD.dbo.Observation o on r.observationId=o.Id
+		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
+		WHERE pro.inspireId = :offering
+	</sql-query>
+
+	<sql-query name="getMaxDate4Offering">
+		<return-scalar column="max" type="timestamp" />
+		SELECT MAX(r.endTime) AS max
+		FROM AQD.dbo.Result r
+		inner join AQD.dbo.Observation o on r.observationId=o.Id
+		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
+		WHERE pro.inspireId = :offering
+	</sql-query>
+
+	<sql-query name="getMinResultTime4Offering">
+		<return-scalar column="min" type="timestamp" />
+		SELECT MIN(r.startTime) AS min
+		FROM AQD.dbo.Result r
+		inner join AQD.dbo.Observation o on r.observationId=o.Id
+		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
+		WHERE pro.inspireId = :offering
+	</sql-query>
+
+	<sql-query name="getMaxResultTime4Offering">
+		<return-scalar column="max" type="timestamp" />
+		SELECT MAX(r.endTime) AS max
+		FROM AQD.dbo.Result r
+		inner join AQD.dbo.Observation o on r.observationId=o.Id
+		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
+		WHERE pro.inspireId = :offering
+	</sql-query>
+	
+	<sql-query name="getAllOfferingTimeExtrema">
+	   <return-scalar column="off" type="string" />
+	   <return-scalar column="minPhenStart" type="timestamp" />
+	   <return-scalar column="maxPhenStart" type="timestamp" />
+	   <return-scalar column="maxPhenEnd" type="timestamp" />
+	   <return-scalar column="minRes" type="timestamp" />
+	   <return-scalar column="maxRes" type="timestamp" />
+		SELECT pro.inspireId as [off],
+		MIN(r.startTime) as minPhenStart,
+		MAX(r.startTime) as maxPhenStart,
+		MAX(r.endTime) as maxPhenEnd,
+        MIN(r.startTime) as minRes,
+        MAX(r.endTime) as maxRes
+        FROM AQD.dbo.Result r
+		inner join AQD.dbo.Observation o on r.observationId=o.Id
+		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
+        GROUP BY pro.inspireId
+	</sql-query>
 </hibernate-mapping>

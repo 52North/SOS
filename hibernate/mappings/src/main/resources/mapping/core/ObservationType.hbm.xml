@@ -3,14 +3,8 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.ObservationType" table="observationType">
-        <id name="observationTypeId" type="long">
-            <column name="observationTypeId" />
-            <generator class="native">
-            	<param name="sequence">observationTypeId_seq</param>
-            </generator>
-        </id>
-        <property name="observationType" type="string">
-            <column name="observationType" not-null="true" unique-key="observationTypeUK"/>
-        </property>
+    	<subselect>(SELECT 1 AS observationTypeId, CAST('http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement' AS VARCHAR(100)) AS observationType)</subselect>
+        <id name="observationTypeId" type="long" />
+		<property name="observationType" type="string" insert="false" update="false" />
     </class>
 </hibernate-mapping>

@@ -2,15 +2,14 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.Unit" table="unit">
+    <class name="org.n52.sos.ds.hibernate.entities.Unit" table="Result">
         <id name="unitId" type="long">
-            <column name="unitId" />
-            <generator class="native" >
-            	<param name="sequence">unitId_seq</param>
+            <column name="Id" />
+            <generator class="assigned" >
             </generator>
         </id>
         <property name="unit" type="string">
-            <column name="unit" not-null="true" unique-key="unitUK"/>
+            <column name="unit" not-null="true" unique="true" />
         </property>
     </class>
 </hibernate-mapping>

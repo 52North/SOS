@@ -4,14 +4,8 @@
 <!-- Generated 10.07.2012 15:18:27 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.Codespace" table="codespace">
-        <id name="codespaceId" type="long">
-            <column name="codespaceId" />
-            <generator class="native">
-            	<param name="sequence">codespaceId_seq</param>
-            </generator>
-        </id>
-        <property name="codespace" type="string">
-            <column name="codespace" not-null="true" unique-key="codespaceUK"/>
-        </property>
+		<subselect>(SELECT 1 AS codespaceId, CAST('http://www.opengis.net/def/nil/OGC/0/unknown' AS VARCHAR(100)) AS codespace)</subselect>
+        <id name="codespaceId" type="long" />
+        <property name="codespace" type="string" insert="false" update="false" />
     </class>
 </hibernate-mapping>

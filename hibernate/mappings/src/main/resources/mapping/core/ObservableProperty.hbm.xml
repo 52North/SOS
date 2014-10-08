@@ -2,31 +2,35 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.ObservableProperty" table="observableProperty">
+    <class name="org.n52.sos.ds.hibernate.entities.ObservableProperty" table="Pollutant">
         <id name="observablePropertyId" type="long">
-            <column name="observablePropertyId" />
-            <generator class="native">
-            	<param name="sequence">observablePropertyId_seq</param>
+            <column name="Id" />
+            <generator class="assigned">
             </generator>
         </id>
-        <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
+        <discriminator formula="(SELECT DISTINCT 'F')" type="org.hibernate.type.TrueFalseType"/>
         <property name="identifier" type="string">
-            <column name="identifier" not-null="true" unique-key="obsPropIdentifierUK" />
+            <column name="URI" not-null="true" unique="true" />
         </property>
-        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="obsPropCodespaceIdentifierFk">
-            <column name="codespace" />
-        </many-to-one>
-        <property name="name" type="string">
-            <column name="name" />
+		<many-to-one name="codespace"
+			class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select"
+			foreign-key="featureCodespaceFk">
+			<formula>1</formula>
+		</many-to-one>
+		<property name="name" type="string">
+            <column name="notation" />
         </property>
-        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="obsPropCodespaceNameFk">
-            <column name="codespaceName" />
-        </many-to-one>
+        <many-to-one name="codespaceName"
+			class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select"
+			foreign-key="featureCodespaceFk">
+			<formula>1</formula>
+		</many-to-one>
         <property name="description" type="string">
-            <column name="description" />
+            <column name="label" />
         </property>
 		<property name="disabled" type="org.hibernate.type.TrueFalseType">
-            <column name="disabled" not-null="true" default="'F'" check="disabled in ('T','F')"/>
+            <formula>'F'</formula>
         </property>
     </class>
+    
 </hibernate-mapping>

@@ -57,7 +57,7 @@
             </many-to-many>
         </set>
         <property name="samplingGeometry" type="org.hibernate.spatial.GeometryType">
-            <column name="samplingGeometry" />
+            <column name="samplingGeometry" index="samplingGeomidx"/>
         </property>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.series.values.SeriesBlobValue" extends="org.n52.sos.ds.hibernate.entities.series.values.SeriesValue" table="blobValue">
         	<key column="observationId" foreign-key="observationBlobValueFk" />
@@ -81,7 +81,7 @@
         </joined-subclass>
 		<joined-subclass name="org.n52.sos.ds.hibernate.entities.series.values.SeriesNumericValue" extends="org.n52.sos.ds.hibernate.entities.series.values.SeriesValue" table="numericValue">
         	<key column="observationId" foreign-key="observationNumericValueFk" />
-         	<property name="value" type="double" />
+         	<property name="value" type="big_decimal" />
         </joined-subclass>
 		<joined-subclass name="org.n52.sos.ds.hibernate.entities.series.values.SeriesTextValue" extends="org.n52.sos.ds.hibernate.entities.series.values.SeriesValue" table="textValue">
         	<key column="observationId" foreign-key="observationTextValueFk" />

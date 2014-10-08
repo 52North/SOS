@@ -2,27 +2,25 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint" table="samplingPoint">
+    <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint" table="SamplingPoint">
         <id name="samplingPointId" type="long">
-            <column name="samplingPointId" />
-            <generator class="native">
-            	<param name="sequence">samplingPointId_seq</param>
-            </generator>
+            <column name="Id" />
+            <generator class="assigned" />
         </id>
        <property name="identifier" type="string">
-            <column name="identifier" not-null="true" unique-key="sampFeatIdentifierUK"/>
+            <column name="inspireId" not-null="true" unique-key="sampFeatIdentifierUK"/>
         </property>
         <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="sampFeatCodespaceIdFk">
-            <column name="codespace" />
+           <formula>null</formula>
         </many-to-one>
         <property name="name" type="string">
-            <column name="name" />
+           <formula>null</formula>
         </property>
         <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="sampFeatCodespaceNameFk">
-            <column name="codespaceName" />
+           <formula>null</formula>
         </many-to-one>
         <property name="description" type="string">
-            <column name="description" />
+            <formula>null</formula>
         </property>
         <many-to-one name="assessmentType" class="org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType" fetch="join" foreign-key="sampPointAssessTypeIdFk">
             <column name="assessmentType" />

@@ -2,30 +2,29 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.ObservationConstellation" table="observationConstellation" >
+    <class name="org.n52.sos.ds.hibernate.entities.ObservationConstellation" table="Observation" >
         <id name="observationConstellationId" type="long">
-            <column name="observationConstellationId" />
-            <generator class="native">
-            	<param name="sequence">observationConstellationId_seq</param>
+            <column name="Id" />
+            <generator class="assigned">
             </generator>
         </id>
-        <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" fetch="select" lazy="no-proxy" foreign-key="obsConstObsPropFk" unique-key="obsnConstellationIdentity">
-            <column index="obsConstObsPropIdx" name="observablePropertyId" not-null="true" />
+        <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" fetch="join" foreign-key="obsConstObsPropFk" unique-key="obsnConstellationIdentity" insert="false" update="false">
+            <column index="obsConstObsPropIdx" name="pollutantid" not-null="true" />
         </many-to-one>
-        <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="select" lazy="no-proxy" foreign-key="obsnConstProcedureFk" unique-key="obsnConstellationIdentity">
-            <column index="obsConstProcedureIdx" name="procedureId" not-null="true" />
+        <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="join" foreign-key="obsnConstProcedureFk" unique-key="obsnConstellationIdentity" insert="false" update="false">
+            <column index="obsConstProcedureIdx" name="processid" not-null="true" />
         </many-to-one>
-        <many-to-one name="observationType" class="org.n52.sos.ds.hibernate.entities.ObservationType" fetch="select" lazy="no-proxy" foreign-key="obsConstObservationIypeFk" >
-            <column name="observationTypeId" />
+        <many-to-one name="observationType" class="org.n52.sos.ds.hibernate.entities.ObservationType" fetch="select" foreign-key="obsConstObservationIypeFk" insert="false" update="false">
+            <formula>1</formula>
         </many-to-one>
-        <many-to-one name="offering" class="org.n52.sos.ds.hibernate.entities.Offering" fetch="select" lazy="no-proxy" foreign-key="obsConstOfferingFk" unique-key="obsnConstellationIdentity">
-            <column index="obsConstOfferingIdx" name="offeringId" not-null="true" />
+        <many-to-one name="offering" class="org.n52.sos.ds.hibernate.entities.Offering" fetch="select" foreign-key="obsConstOfferingFk" unique-key="obsnConstellationIdentity" insert="false" update="false">
+            <column index="obsConstOfferingIdx" name="processid" not-null="true" />
         </many-to-one>
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
-            <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
+            <formula>'F'</formula>
         </property>
         <property name="hiddenChild" type="org.hibernate.type.TrueFalseType">
-            <column name="hiddenChild" not-null="true" default="'F'" check="hiddenChild in ('T','F')"/>
+            <formula>'F'</formula>
         </property>
     </class>
 </hibernate-mapping>

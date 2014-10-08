@@ -2,11 +2,24 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservationInfo" table="observation">
-        <id name="observationId" type="long">
-            <column name="observationId" />
-            <generator class="native">
-            	<param name="sequence">observationId_seq</param>
+    <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservationInfo" table="Result">
+	<subselect>SELECT
+		r.Id AS observationId,
+		'NUMERIC_OBSERVATION' as discriminator,
+		r.observationId AS series,
+		r.startTime AS phenomenonTimeStart,
+		r.endTime AS phenomenonTimeEnd,
+		r.endTime AS resultTime,
+		r.Id AS unitId,
+		o.processId AS offeringId
+		FROM
+		AQD.dbo.Observation o inner join
+		AQD.dbo.Result r
+		on o.Id=r.observationId
+		WHERE o.Id=r.observationId</subselect>
+         <id name="observationId" type="long">
+            <column name="observationid" />
+            <generator class="assigned">
             </generator>
         </id>
         <many-to-one name="series" class="org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries" fetch="select" lazy="no-proxy" foreign-key="observationSeriesFk">
@@ -22,42 +35,41 @@
             <column index="obsResultTimeIdx" name="resultTime" length="29" not-null="true" unique-key="observationIdentity"/>
         </property>
         <property name="identifier" type="string">
-            <column name="identifier" unique-key="obsIdentifierUK"/>
+            <formula>null</formula>
         </property>
         <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="obsCodespaceIdentifierFk">
-            <column name="codespace" />
+           <formula>null</formula>
         </many-to-one>
         <property name="name" type="string">
-            <column name="name" />
+            <formula>null</formula>
         </property>
         <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="obsCodespaceNameFk">
-            <column name="codespaceName" />
+           <formula>null</formula>
         </many-to-one>
         <property name="description" type="string">
-            <column name="description" />
+            <formula>null</formula>
         </property>
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
-            <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
+            <formula>'F'</formula>
         </property>
         <property name="validTimeStart" type="timestamp">
-            <column name="validTimeStart" length="29" />
+            <formula>null</formula>
         </property>
         <property name="validTimeEnd" type="timestamp">
-            <column name="validTimeEnd" length="29" />
+            <formula>null</formula>
         </property>
         <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit" fetch="select" lazy="no-proxy" foreign-key="observationUnitFk">
             <column name="unitId" not-null="false" />
         </many-to-one>
-        <set name="offerings" table="observationHasOffering" inverse="false" fetch="select" lazy="false" >
-            <key>
-                <column name="observationId" not-null="true" index="obshasoffobservationidx" />
-            </key>
-            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Offering" foreign-key="observationOfferingFk">
-                <column name="offeringId" not-null="true" index="obshasoffofferingidx" />
-            </many-to-many>
-        </set>
+        <many-to-one name="offerings" class="org.n52.sos.ds.hibernate.entities.Offering" fetch="select" lazy="no-proxy" foreign-key="obshasoffobservationidx">
+            <column name="offeringId" not-null="true" />
+        </many-to-one>
         <property name="samplingGeometry" type="org.hibernate.spatial.GeometryType">
-            <column name="samplingGeometry" index="samplingGeomidx"/>
+             <formula>null</formula>
         </property>
     </class>
+	
+	<sql-query name="getDataAvailabilityForSeries">
+		SELECT min(r.startTime) as min, max(r.endTime) as max from AQD.dbo.Result r where r.observationId=:series
+	</sql-query>
 </hibernate-mapping>

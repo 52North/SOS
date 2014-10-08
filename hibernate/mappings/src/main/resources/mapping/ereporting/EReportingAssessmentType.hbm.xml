@@ -5,7 +5,7 @@
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType" table="assessmenttype">
         <id name="assessmentType" type="string">
-            <column name="assessmentType" />
+            <column name="code" />
             <generator class="assigned" />
         </id>
         <property name="uri" type="string">

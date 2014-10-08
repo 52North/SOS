@@ -46,4 +46,8 @@ public class ProcessModel extends AbstractProcess {
         this.method = method;
         return this;
     }
+    
+    public boolean isSetMethod() {
+        return getMethod() != null;
+    }
 }

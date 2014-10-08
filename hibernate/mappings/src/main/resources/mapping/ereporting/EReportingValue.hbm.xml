@@ -6,7 +6,7 @@
 		<subselect>SELECT
 		r.Id AS observationId,
 		'NUMERIC_VALUE' as discriminator,
-		r.observationId AS series,
+		r.observationId AS seriesId,
 		r.startTime AS phenomenonTimeStart,
 		r.endTime AS phenomenonTimeEnd,
 		r.endTime AS resultTime,

@@ -6,7 +6,7 @@
 	<subselect>SELECT
 		r.Id AS observationId,
 		'NUMERIC_OBSERVATION' as discriminator,
-		r.observationId AS series,
+		r.observationId AS seriesId,
 		r.startTime AS phenomenonTimeStart,
 		r.endTime AS phenomenonTimeEnd,
 		r.endTime AS resultTime,
@@ -30,7 +30,7 @@
         </id>
         <discriminator column="discriminator" type="string"/>
         <many-to-one name="series" class="org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries" fetch="select" lazy="no-proxy" foreign-key="observationSeriesFk">
-           	<column index="obsSeriesIdx" name="series" not-null="true" unique-key="seriesIdentity" />
+           	<column index="obsSeriesIdx" name="seriesId" not-null="true" unique-key="seriesIdentity" />
         </many-to-one>
          <property name="phenomenonTimeStart" type="timestamp" insert="false" update="false">
             <column index="obsPhenTimeStartIdx" name="phenomenonTimeStart" length="29" not-null="true" unique-key="observationIdentity"/>

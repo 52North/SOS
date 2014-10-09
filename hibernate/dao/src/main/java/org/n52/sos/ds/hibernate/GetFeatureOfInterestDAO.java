@@ -367,6 +367,9 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     @SuppressWarnings("unchecked")
     private List<String> queryFeatureIdentifiersForParameterForSeries(GetFeatureOfInterestRequest req, Session session) {
         final Criteria c = session.createCriteria(FeatureOfInterest.class);
+        if (req.isSetFeatureOfInterestIdentifiers()) {
+            c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, req.getFeatureIdentifiers()));
+        }
         c.add(Subqueries.propertyIn(FeatureOfInterest.ID,
                 getDetachedCriteriaForSeriesWithProcedureObservableProperty(req, session)));
         c.setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
@@ -419,6 +422,9 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     private Criteria getCriteriaForFeatureIdentifiersOfParameterFromSeriesObservations(
             GetFeatureOfInterestRequest req, Session session) throws OwsExceptionReport {
         final Criteria c = session.createCriteria(FeatureOfInterest.class);
+        if (req.isSetFeatureOfInterestIdentifiers()) {
+            c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, req.getFeatureIdentifiers()));
+        }
         c.add(Subqueries.propertyIn(FeatureOfInterest.ID,
                 getDetachedCriteriaForFeautreOfInterestForSeries(req, session)));
         c.setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));

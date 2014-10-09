@@ -96,26 +96,26 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
                     for (OmObservation omObservation : value.mergeObservation()) {
                         if (omObservation.isSetPhenomenonTime()) {
                             timePeriod.extendToContain(omObservation.getPhenomenonTime());
+                            omObservation.setResultTime(resultTime);
+                            featureCollection.addMember(omObservation);
                         }
-                        omObservation.setResultTime(resultTime);
-                        featureCollection.addMember(omObservation);
                     }
                 } else {
                     while (value.hasNextValue()) {
                         OmObservation nextSingleObservation = value.nextSingleObservation();
                         if (nextSingleObservation.isSetPhenomenonTime()) {
                             timePeriod.extendToContain(nextSingleObservation.getPhenomenonTime());
+                            nextSingleObservation.setResultTime(resultTime);
+                            featureCollection.addMember(nextSingleObservation);
                         }
-                        nextSingleObservation.setResultTime(resultTime);
-                        featureCollection.addMember(nextSingleObservation);
                     }
                 }
             } else {
                 if (observation.isSetPhenomenonTime()) {
                     timePeriod.extendToContain(observation.getPhenomenonTime());
+                    observation.setResultTime(resultTime);
+                    featureCollection.addMember(observation);
                 }
-                observation.setResultTime(resultTime);
-                featureCollection.addMember(observation);
             }
         }
         if (!timePeriod.isEmpty()) {
@@ -161,10 +161,10 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
         for (OmObservation observation : response.getObservationCollection()) {
             if (observation.isSetPhenomenonTime()) {
                 timePeriod.extendToContain(observation.getPhenomenonTime());
+                observation.setGmlId("o_" + counter++);
+                observation.setResultTime(resultTime);
+                featureCollection.addMember(observation);
             }
-            observation.setGmlId("o_" + counter++);
-            observation.setResultTime(resultTime);
-            featureCollection.addMember(observation);
         }
         return timePeriod;
     }

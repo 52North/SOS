@@ -119,7 +119,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     @SuppressWarnings("unchecked")
     public List<Offering> getOfferingObjectsForCacheUpdate(final Collection<String> identifiers, final Session session) {
     	 Class<?> clazz = Offering.class;
-    	 if (HibernateHelper.isEntitySupported(TOffering.class, session)) {
+    	 if (HibernateHelper.isEntitySupported(TOffering.class)) {
     		 clazz = TOffering.class;
     	 }
     	 Criteria criteria = session.createCriteria(clazz);
@@ -175,7 +175,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      */
     @SuppressWarnings("unchecked")
     public List<String> getOfferingIdentifiersForProcedure(final String procedureIdentifier, final Session session) throws OwsExceptionReport {
-        final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class, session);
+        final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class);
         Criteria c = null;
         if (flag) {
             c = session.createCriteria(Offering.class);
@@ -622,7 +622,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @return Allowed FeatureOfInterestTypes
      */
     public List<String> getAllowedFeatureOfInterestTypes(String offeringIdentifier, Session session) {
-        if (HibernateHelper.isEntitySupported(TOffering.class, session)) {
+        if (HibernateHelper.isEntitySupported(TOffering.class)) {
             Criteria criteria =
                     session.createCriteria(TOffering.class).add(Restrictions.eq(Offering.IDENTIFIER, offeringIdentifier));
             LOGGER.debug("QUERY getAllowedFeatureOfInterestTypes(offering): {}",

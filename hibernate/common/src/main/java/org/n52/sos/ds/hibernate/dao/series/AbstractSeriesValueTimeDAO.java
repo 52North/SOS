@@ -214,8 +214,12 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
         projectionList.add(Projections.min(AbstractObservationTime.PHENOMENON_TIME_START));
         projectionList.add(Projections.max(AbstractObservationTime.PHENOMENON_TIME_END));
         projectionList.add(Projections.max(AbstractObservationTime.RESULT_TIME));
-        projectionList.add(Projections.min(AbstractObservationTime.VALID_TIME_START));
-        projectionList.add(Projections.max(AbstractObservationTime.VALID_TIME_END));
+        if (HibernateHelper.isColumnSupported(getSeriesValueTimeClass(), AbstractObservationTime.VALID_TIME_START)
+                && HibernateHelper
+                        .isColumnSupported(getSeriesValueTimeClass(), AbstractObservationTime.VALID_TIME_END)) {
+            projectionList.add(Projections.min(AbstractObservationTime.VALID_TIME_START));
+            projectionList.add(Projections.max(AbstractObservationTime.VALID_TIME_END));
+        }
         c.setProjection(projectionList);
     }
 
@@ -225,8 +229,10 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             ote.setMinPhenTime(DateTimeHelper.makeDateTime(result[0]));
             ote.setMaxPhenTime(DateTimeHelper.makeDateTime(result[1]));
             ote.setMaxResultTime(DateTimeHelper.makeDateTime(result[2]));
-            ote.setMinValidTime(DateTimeHelper.makeDateTime(result[3]));
-            ote.setMaxValidTime(DateTimeHelper.makeDateTime(result[4]));
+            if (result.length == 5) {
+                ote.setMinValidTime(DateTimeHelper.makeDateTime(result[3]));
+                ote.setMaxValidTime(DateTimeHelper.makeDateTime(result[4]));
+            }
         }
         return ote;
     }

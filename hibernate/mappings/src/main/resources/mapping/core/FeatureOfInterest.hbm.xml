@@ -5,9 +5,10 @@
 	<!-- 
 		The User Guide defines the AQD_Sample (inlet) as featureOfInterest.
 		But the DB-Dump does not contain data in the inlet table.
+		<formula>(SELECT DISTINCT sta.Id FROM AQD.dbo.Station sta, AQD.dbo.SamplingPoint spo, AQD.dbo.Observation o where sta.Id = spo.stationId AND spo.Id = o.samplingPointId AND o.Id = Id)</formula>
 	 -->
 	<class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest"
-		table="Station">
+		table="Inlet">
 		<id name="featureOfInterestId" type="long">
 			<column name="Id" />
 			<generator class="assigned">
@@ -29,7 +30,14 @@
 			<formula>1</formula>
 		</many-to-one>
 		<property name="name" type="org.hibernate.type.StringClobType">
-			<column name="name" />
+			<!-- <column name="name" /> -->
+			<formula>(SELECT DISTINCT sta.name
+						FROM AQD.dbo.Inlet i
+						inner join AQD.dbo.Observation o on i.Id=o.inletId
+						inner join AQD.dbo.SamplingPoint sp on sp.Id=o.samplingPointId
+						inner join AQD.dbo.Station sta on sta.Id=sp.stationId
+						WHERE i.id = id)
+			</formula>
 		</property>
 		<many-to-one name="codespaceName" 
 			class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" 
@@ -41,14 +49,35 @@
         </property>
 	<!-- <property name="geom" type="org.hibernate.spatial.GeometryType"> <column 
 		name="geom" /> </property> -->
-		<property name="longitude" type="big_decimal">
-			<column name="longitude" />
+		<property name="longitude" type="double">
+			<!-- <column name="longitude" /> -->
+			<formula>(SELECT DISTINCT sta.longitude
+						FROM AQD.dbo.Inlet i
+						inner join AQD.dbo.Observation o on i.Id=o.inletId
+						inner join AQD.dbo.SamplingPoint sp on sp.Id=o.samplingPointId
+						inner join AQD.dbo.Station sta on sta.Id=sp.stationId
+						WHERE i.id = id)
+			</formula>
 		</property>
-		<property name="latitude" type="big_decimal">
-			<column name="latitude" />
+		<property name="latitude" type="double">
+			<!-- <column name="latitude" /> -->
+			<formula>(SELECT DISTINCT sta.latitude
+						FROM AQD.dbo.Inlet i
+						inner join AQD.dbo.Observation o on i.Id=o.inletId
+						inner join AQD.dbo.SamplingPoint sp on sp.Id=o.samplingPointId
+						inner join AQD.dbo.Station sta on sta.Id=sp.stationId
+						WHERE i.id = id)
+			</formula>
 		</property>
-		<property name="altitude" type="big_decimal">
-			<column name="altitude" />
+		<property name="altitude" type="double">
+			<!-- <column name="altitude" /> -->
+			<formula>(SELECT DISTINCT sta.altitude
+						FROM AQD.dbo.Inlet i
+						inner join AQD.dbo.Observation o on i.Id=o.inletId
+						inner join AQD.dbo.SamplingPoint sp on sp.Id=o.samplingPointId
+						inner join AQD.dbo.Station sta on sta.Id=sp.stationId
+						WHERE i.id = id)
+			</formula>
 		</property>
 		<property name="srid" type="integer">
 			<formula>4326</formula>
@@ -64,10 +93,9 @@
 
 	<sql-query name="getFeatureOfInterestIdentifiersForOffering">
 		<return-scalar column="features" type="string" />
-		SELECT DISTINCT sta.inspireId as features 
-		FROM AQD.dbo.Station sta
-		inner join AQD.dbo.SamplingPoint sp on sp.stationId=sta.Id
-		inner join AQD.dbo.Observation o on o.samplingPointId=sp.Id
+		SELECT DISTINCT i.inspireId as features 
+		FROM AQD.dbo.Inlet i
+		inner join AQD.dbo.Observation o on o.inletId=i.Id
 		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
 		WHERE pro.inspireId = :offering
 	</sql-query>
@@ -75,10 +103,9 @@
 
 	<sql-query name="getFeatureOfInterestIdentifiersForObservationConstellation">
 		<return-scalar column="features" type="string" />
-		SELECT DISTINCT sta.inspireId as features 
-		FROM AQD.dbo.Station sta
-		inner join AQD.dbo.SamplingPoint sp on sp.stationId=sta.Id
-		inner join AQD.dbo.Observation o on o.samplingPointId=sp.Id
+		SELECT DISTINCT i.inspireId as features 
+		FROM AQD.dbo.Inlet i
+		inner join AQD.dbo.Observation o on o.inletId=i.Id
 		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
 		inner join AQD.dbo.Pollutant poll on o.pollutantId=poll.Id
 		WHERE pro.inspireId= :procedure
@@ -88,9 +115,9 @@
 	
 	<sql-query name="getFeatureForProcedure">
 		<return-scalar column="features" type="string" />
-		SELECT DISTINCT sta.inspireId as features 
-		FROM AQD.dbo.Station sta
-		inner join AQD.dbo.SamplingPoint sp on sp.stationId=sta.Id
+		SELECT DISTINCT i.inspireId as features 
+		FROM AQD.dbo.Inlet i
+		inner join AQD.dbo.Observation o on o.inletId=i.Id
 		inner join AQD.dbo.Observation o on o.samplingPointId=sp.Id
 		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
 		WHERE pro.inspireId in (:procedures)

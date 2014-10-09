@@ -61,20 +61,18 @@
 		SELECT DISTINCT pro.inspireId as [procedure]
 		FROM AQD.dbo.SPProcess pro
 		inner join AQD.dbo.Observation o on o.processId=pro.id
-		inner join AQD.dbo.SamplingPoint sp on o.samplingPointId=sp.Id
-		inner join AQD.dbo.Station sta on sp.stationId=sta.id
-		WHERE sta.inspireId = :feature
+		inner join AQD.dbo.Inlet i on o.inletId=i.Id
+		WHERE i.inspireId = :feature
 	</sql-query>
 	
 	<sql-query name="getDataAvailabilityForProcedures">
-		SELECT pro.inspireId, poll.URI, sta.inspireId, MIN(r.startTime) as min , MAX(r.endTime) as max 
+		SELECT pro.inspireId as pro, poll.URI as poll, i.inspireId as foi, MIN(r.startTime) as min , MAX(r.endTime) as max 
 		FROM AQD.dbo.Result r
 		inner join AQD.dbo.Observation o on r.observationId=o.Id
 		inner join AQD.dbo.Pollutant poll on o.pollutantId=poll.Id
 		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
-		inner join AQD.dbo.SamplingPoint sp on o.samplingPointId=sp.Id
-		inner join AQD.dbo.Station sta on sp.stationId=sta.Id
-		WHERE pro.inspireId IN (:procedures) GROUP BY pro.inspireId, poll.URI, sta.inspireId
+		inner join AQD.dbo.Inlet i on o.inletId=i.Id
+		WHERE pro.inspireId IN (:procedures) GROUP BY pro.inspireId, poll.URI, i.inspireId
 	</sql-query>
 	
 	
@@ -91,8 +89,6 @@
 		inner join AQD.dbo.Observation o on r.observationId=o.Id
 		inner join AQD.dbo.Pollutant poll on o.pollutantId=poll.Id
 		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
-		inner join AQD.dbo.SamplingPoint sp on o.samplingPointId=sp.Id
-		inner join AQD.dbo.Station sta on sp.stationId=sta.Id
 		WHERE pro.inspireId = :procedure
 		GROUP BY pro.inspireId
 	</sql-query>

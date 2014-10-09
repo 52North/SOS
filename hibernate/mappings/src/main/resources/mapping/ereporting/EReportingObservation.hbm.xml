@@ -83,7 +83,7 @@
 			<column name="verification" not-null="true" default="3"/>
         </property>
         <property name="primaryObservation" type="string">
-            <formula>hour</formula>
+             <formula>'hour'</formula>
         </property>
         <property name="timeCoverageFlag" type="org.hibernate.type.TrueFalseType">
             <formula>null</formula>
@@ -98,7 +98,7 @@
             <column name="uncertaintyEstimation" not-null="false" />
         </property>
 		<subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingNumericObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" discriminator-value="NUMERIC_OBSERVATION">
-			<property name="value" type="big_decimal" column="numericvalue" />
+			<property name="value" type="double" column="numericvalue" />
         </subclass>
     </class>
 </hibernate-mapping>

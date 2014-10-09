@@ -14,8 +14,7 @@
 			But the DB-Dump does not contain data in the inlet table.
 	 	-->
         <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" fetch="select" lazy="no-proxy" foreign-key="seriesFeatureFk">
-           	<formula>(SELECT DISTINCT sta.Id FROM AQD.dbo.Station sta, AQD.dbo.SamplingPoint spo, AQD.dbo.Observation o where sta.Id = spo.stationId AND spo.Id = o.samplingPointId AND o.Id = Id)</formula>
-           	<!-- <column index="seriesFeatureIdx" name="feature_of_interest_pkid" not-null="true" unique-key="seriesIdentity" /> -->
+           	<column index="seriesFeatureIdx" name="inletId" not-null="true" unique-key="seriesIdentity" />
         </many-to-one>
         <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" fetch="select" lazy="no-proxy" foreign-key="seriesObPropFk">
             <column index="seriesObsPropIdx" name="pollutantId" not-null="true" unique-key="seriesIdentity"/>

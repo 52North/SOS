@@ -90,11 +90,10 @@
 		inner join AQD.dbo.Observation o on r.observationId=o.Id
 		inner join AQD.dbo.Pollutant poll on o.pollutantId=poll.Id
 		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
-		inner join AQD.dbo.SamplingPoint sp on o.samplingPointId=sp.Id
-		inner join AQD.dbo.Station sta on sp.stationId=sta.Id
+		inner join AQD.dbo.Inlet i on o.inletId=i.Id
 		WHERE pro.inspireId = :procedure 
 		AND poll.URI = :observableProperty
-		AND sta.inspireId = :feature
+		AND i.inspireId = :feature
 		AND pro.inspireId = :offering
     </sql-query>
 </hibernate-mapping>

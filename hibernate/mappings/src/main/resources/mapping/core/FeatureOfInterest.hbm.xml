@@ -118,7 +118,6 @@
 		SELECT DISTINCT i.inspireId as features 
 		FROM AQD.dbo.Inlet i
 		inner join AQD.dbo.Observation o on o.inletId=i.Id
-		inner join AQD.dbo.Observation o on o.samplingPointId=sp.Id
 		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
 		WHERE pro.inspireId in (:procedures)
 	</sql-query>

@@ -33,6 +33,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
+import net.opengis.gml.FeaturePropertyType;
 import net.opengis.sampling.x10.SamplingCurveDocument;
 import net.opengis.sampling.x10.SamplingCurveType;
 import net.opengis.sampling.x10.SamplingFeatureCollectionDocument;
@@ -213,7 +214,12 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
         // TODO: CHECK
         if (sampFeat.getSampledFeatures() != null && !sampFeat.getSampledFeatures().isEmpty()) {
             for (AbstractFeature sampledFeature : sampFeat.getSampledFeatures()) {
-                xbSamplingFeature.addNewSampledFeature().set(createFeature(sampledFeature));
+                FeaturePropertyType sp = xbSamplingFeature.addNewSampledFeature();
+                sp.setHref(sampledFeature.getIdentifier());
+                if (sampFeat.isSetName() && sampFeat.getFirstName().isSetValue()) {
+                    sp.setTitle(sampFeat.getFirstName().getValue());
+                }
+//                xbSamplingFeature.addNewSampledFeature().set(createFeature(sampledFeature));
             }
         } else {
             xbSamplingFeature.addNewSampledFeature().setHref(GmlConstants.NIL_UNKNOWN);

@@ -52,8 +52,11 @@ import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.Constants;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.W3CConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * XML stream writer implementation for AQD eResporting
@@ -65,6 +68,8 @@ import org.n52.sos.w3c.W3CConstants;
 public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<FeatureCollection> implements
         StreamingDataEncoder {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AqdGetObservationResponseXmlStreamWriter.class);
+    
     private FeatureCollection featureCollection;
 
     /**
@@ -130,6 +135,7 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
             end();
             finish();
         } catch (XMLStreamException xmlse) {
+            LOGGER.error("Error while streaming AQD e-Reporting observation response", xmlse);
             throw new NoApplicableCodeException().causedBy(xmlse);
         }
     }

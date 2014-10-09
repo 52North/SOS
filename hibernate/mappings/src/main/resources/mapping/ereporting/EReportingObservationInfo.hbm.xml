@@ -52,12 +52,6 @@
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
             <formula>'F'</formula>
         </property>
-        <property name="validTimeStart" type="timestamp">
-            <formula>null</formula>
-        </property>
-        <property name="validTimeEnd" type="timestamp">
-            <formula>null</formula>
-        </property>
         <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit" fetch="select" lazy="no-proxy" foreign-key="observationUnitFk">
             <column name="unitId" not-null="false" />
         </many-to-one>

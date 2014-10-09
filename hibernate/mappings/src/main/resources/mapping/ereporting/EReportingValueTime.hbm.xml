@@ -36,12 +36,6 @@
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
             <formula>'F'</formula>
         </property>
-        <property name="validTimeStart" type="timestamp">
-            <formula>null</formula>
-        </property>
-        <property name="validTimeEnd" type="timestamp">
-            <formula>null</formula>
-        </property>
         <many-to-one name="offerings" class="org.n52.sos.ds.hibernate.entities.Offering" fetch="select" lazy="no-proxy" foreign-key="obshasoffobservationidx">
             <column name="offeringId" not-null="true" />
         </many-to-one>

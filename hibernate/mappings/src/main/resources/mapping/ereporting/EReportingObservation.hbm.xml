@@ -56,12 +56,6 @@
         <property name="description" type="string">
             <formula>''</formula>
         </property>
-		<property name="validTimeStart" type="timestamp">
-            <formula>null</formula>
-        </property>
-        <property name="validTimeEnd" type="timestamp">
-            <formula>null</formula>
-        </property>
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
            <formula>'F'</formula>
         </property>

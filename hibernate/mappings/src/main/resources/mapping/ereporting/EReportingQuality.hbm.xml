@@ -3,8 +3,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingQuality" table="ereportingQuality">
-    	<subselect>SELECT
-		null AS observationId</subselect>
+    	<subselect>SELECT null AS id</subselect>
         <id name="id" type="long">
         </id>
         <property name="series" type="long">

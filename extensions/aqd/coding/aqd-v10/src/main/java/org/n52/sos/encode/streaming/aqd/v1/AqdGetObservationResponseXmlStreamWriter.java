@@ -135,7 +135,7 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
             end();
             finish();
         } catch (XMLStreamException xmlse) {
-            LOGGER.error("Error while streaming AQD e-Reporting observation response", xmlse);
+            LOGGER.error("Error while streaming AQD e-Reporting observations!", xmlse);
             throw new NoApplicableCodeException().causedBy(xmlse);
         }
     }

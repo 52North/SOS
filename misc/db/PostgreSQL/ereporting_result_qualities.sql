@@ -27,10 +27,10 @@
 -- Public License for more details.
 --
 
-ALTER TABLE public.observation ADD COLUMN primaryObservation varchar(255);
+ALTER TABLE public.observation ADD COLUMN primaryobservation varchar(255);
 -- hour or var, ...
-UPDATE public.observation SET primaryObservation = 'hour';
-ALTER TABLE public.observation ALTER COLUMN primaryObservation SET NOT NULL;
+UPDATE public.observation SET primaryobservation = 'hour';
+ALTER TABLE public.observation ALTER COLUMN primaryobservation SET NOT NULL;
 
 ALTER TABLE public.observation ADD COLUMN uncertaintyEstimation FLOAT8;
 ALTER TABLE public.observation ADD COLUMN dataCaptureFlag character(1);

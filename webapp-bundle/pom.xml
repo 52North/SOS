@@ -15,7 +15,6 @@
 		<timeseries.api.version>1.2.2</timeseries.api.version>
 	</properties>
 	<build>
-		<!-- <outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory> -->
 		<finalName>${conf.sos.name}</finalName>
 		<plugins>
 			<plugin>
@@ -37,13 +36,6 @@
 									<outputDirectory>${project.build.directory}/${project.build.finalName}/static</outputDirectory>
 									<overWrite>false</overWrite>
 								</artifactItem>
-								<!-- <artifactItem>
-									<groupId>org.n52.sensorweb</groupId>
-									<artifactId>timeseries-series-dao</artifactId>
-									<includes>**/*.hbm.xml</includes>
-									<outputDirectory>${project.build.outputDirectory}/mapping/extension/readonly</outputDirectory>
-									<overWrite>false</overWrite>
-								</artifactItem> -->
 							</artifactItems>
 							<overWriteReleases>false</overWriteReleases>
 						</configuration>
@@ -55,12 +47,6 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
 					<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-					<!-- <webResources> <resource> <directory>src/main/webapp</directory> 
-						<filtering>true</filtering> </resource> <resource> <directory>src/main/resources</directory> 
-						<filtering>true</filtering> <targetPath>WEB-INF/classes</targetPath> </resource> 
-						<resource> <directory>../misc/db</directory> <filtering>false</filtering> 
-						<targetPath>sql</targetPath> <includes> <include>**/*.sql</include> </includes> 
-						</resource> </webResources> -->
 					<overlays>
 						<overlay>
 							<groupId>${project.groupId}</groupId>

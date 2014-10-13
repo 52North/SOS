@@ -31,6 +31,8 @@ package org.n52.sos.encode.streaming.aqd.v1;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -69,8 +71,14 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
         StreamingDataEncoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AqdGetObservationResponseXmlStreamWriter.class);
-    
+
+    private static final long TIMER_PERIOD = 250;
+
     private FeatureCollection featureCollection;
+
+    private Timer timer = new Timer(String.format("empty-string-write-task-for-%s", getClass().getSimpleName()), true);
+
+    private TimerTask timerTask = null;
 
     /**
      * constructor
@@ -137,6 +145,8 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
         } catch (XMLStreamException xmlse) {
             LOGGER.error("Error while streaming AQD e-Reporting observations!", xmlse);
             throw new NoApplicableCodeException().causedBy(xmlse);
+        } finally {
+            cleanup();
         }
     }
 
@@ -149,10 +159,17 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
         addGmlId(featureCollection.getGmlId());
         TimeInstant resultTime = new TimeInstant(new DateTime(DateTimeZone.UTC));
         for (AbstractFeature abstractFeature : featureCollection.getMembers().values()) {
+            long start = System.currentTimeMillis();
             if (abstractFeature instanceof OmObservation
                     && ((OmObservation) abstractFeature).getValue() instanceof AbstractStreaming) {
+                // start the timer task to write blank strings to avoid
+                // connection closing
+                startTimer();
                 Collection<OmObservation> mergeObservation =
                         ((AbstractStreaming) ((OmObservation) abstractFeature).getValue()).mergeObservation();
+                LOGGER.debug("Observation processing requires {} ms", (System.currentTimeMillis() - start));
+                // stop the timer task
+                stopTimer();
                 for (OmObservation omObservation : mergeObservation) {
                     omObservation.setResultTime(resultTime);
                     writeMember(omObservation, getEncoder(abstractFeature, encodingValues.getAdditionalValues()),
@@ -162,6 +179,7 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
                 writeMember(abstractFeature, getEncoder(abstractFeature, encodingValues.getAdditionalValues()),
                         encodingValues);
             }
+            LOGGER.debug("Writing member requires {} ms", (System.currentTimeMillis() - start));
         }
         indent--;
         end(GmlConstants.QN_FEATURE_COLLECTION_32);
@@ -175,14 +193,15 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
     private void writeMember(AbstractFeature abstractFeature, Encoder<XmlObject, AbstractFeature> encoder,
             EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
         start(GmlConstants.QN_FEATURE_MEMBER_32);
-//        chars("");
-//        if (encoder instanceof StreamingEncoder<?, ?>) {
-//            ((StreamingEncoder<XmlObject, AbstractFeature>) encoder).encode(abstractFeature, getOutputStream(),
-//                    encodingValues.setAsDocument(true).setEmbedded(true).setIndent(indent));
-//        } else {
-            rawText((encoder.encode(abstractFeature, encodingValues.getAdditionalValues())).xmlText(XmlOptionsHelper
-                    .getInstance().getXmlOptions()));
-//        }
+        // chars("");
+        // if (encoder instanceof StreamingEncoder<?, ?>) {
+        // ((StreamingEncoder<XmlObject, AbstractFeature>)
+        // encoder).encode(abstractFeature, getOutputStream(),
+        // encodingValues.setAsDocument(true).setEmbedded(true).setIndent(indent));
+        // } else {
+        rawText((encoder.encode(abstractFeature, encodingValues.getAdditionalValues())).xmlText(XmlOptionsHelper
+                .getInstance().getXmlOptions()));
+        // }
         indent--;
         end(GmlConstants.QN_FEATURE_MEMBER_32);
         indent++;
@@ -196,6 +215,70 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
             return CodingHelper.getEncoder(additionalValues.get(HelperValues.ENCODE_NAMESPACE), feature);
         }
         return null;
+    }
+
+    /**
+     * Initializ a new {@link WriteTimerTask}
+     */
+    private void initTimer() {
+        timerTask = new WriteTimerTask();
+    }
+
+    /**
+     * Schedule the {@link WriteTimerTask}
+     */
+    private void startTimer() {
+        if (timerTask == null) {
+            initTimer();
+        }
+        timer.schedule(timerTask, TIMER_PERIOD, TIMER_PERIOD);
+        LOGGER.debug("Timer started!");
+    }
+
+    /**
+     * Cancel the {@link WriteTimerTask} and set to <code>null</code>
+     */
+    private void stopTimer() {
+        if (this.timerTask != null) {
+            this.timerTask.cancel();
+            this.timerTask = null;
+            LOGGER.debug("Timer task {} canceled", WriteTimerTask.class.getSimpleName());
+        }
+    }
+
+    /**
+     * Cleanup the {@link Timer} and {@link TimerTask} to avoid conncetion
+     * timeout after 1000 ms Stops the {@link WriteTimerTask}, Cancel
+     * {@link Timer} and set to <code>null</code>.
+     */
+    private void cleanup() {
+        stopTimer();
+        timerTask = null;
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    /**
+     * {@link TimerTask} to write blank strings to the {@link OutputStream} to
+     * avoid conncetion timeout after 1000 ms
+     * 
+     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @since 4.3.0
+     *
+     */
+    private class WriteTimerTask extends TimerTask {
+        @Override
+        public void run() {
+            try {
+                chars(Constants.BLANK_STRING);
+                flush();
+            } catch (XMLStreamException xmlse) {
+                cleanup();
+                LOGGER.error("Error while writing empty string by timer task!", xmlse);
+            }
+        }
     }
 
 }

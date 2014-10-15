@@ -5,6 +5,21 @@ RELEASE NOTES
  in Observation&Measurement), information about the sensor itself (encoded in a 
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
+ 
+ Release 52n-sos-4.1.1
+==================================
+
+ --- New features ---
+ 
+ --- Changes ---
+  
+ --- Fixed bugs ---
+ 
+     * Issue with OpenGeo repository
+     * GetFeatureOfInterest request with featureOfInterest identifier and procedure/observableProperty identifier
+       ignores the featureOfInterest identifier
+     * Performance issue for first/latest GetObservation with series concept
+
 
 Release 52n-sos-4.1
 ==================================

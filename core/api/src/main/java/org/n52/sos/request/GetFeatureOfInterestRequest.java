@@ -213,7 +213,7 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
         return !isSetObservableProperties() && !isSetProcedures() && !isSetTemporalFilters();
     }
 
-    public boolean hasParameter() {
+    public boolean hasNoParameter() {
         return !isSetObservableProperties() && !isSetProcedures() && !isSetTemporalFilters() && !isSetFeatureOfInterestIdentifiers();
     }
 

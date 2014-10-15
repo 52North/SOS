@@ -93,7 +93,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     private static final String SQL_QUERY_GET_FEATURE_FOR_IDENTIFIER_PROCEDURE = "getFeatureForIdentifierProcedure";
 
     private static final String SQL_QUERY_GET_FEATURE_FOR_IDENTIFIER_OBSERVED_PROPERTY =
-            "getFeatureForIdentifieObservableProperty";
+            "getFeatureForIdentifierObservableProperty";
 
     private static final String SQL_QUERY_GET_FEATURE_FOR_IDENTIFIER_PROCEDURE_OBSERVED_PROPERTY =
             "getFeatureForIdentifierProcedureObservableProperty";
@@ -275,7 +275,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     @SuppressWarnings("unchecked")
     private List<String> queryFeatureIdentifiersForParameter(final GetFeatureOfInterestRequest req,
             final Session session) throws OwsExceptionReport {
-        if (req.hasParameter()) {
+        if (req.hasNoParameter()) {
             return new FeatureOfInterestDAO().getFeatureOfInterestIdentifiers(session);
         }
         if (req.containsOnlyFeatureParameter() && req.isSetFeatureOfInterestIdentifiers()) {

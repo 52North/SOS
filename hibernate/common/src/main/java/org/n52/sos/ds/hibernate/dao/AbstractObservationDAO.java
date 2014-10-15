@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.dao;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,6 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
-import org.n52.sos.ds.hibernate.entities.AbstractSpatialFilteringProfile;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
@@ -864,7 +864,26 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         // get extrema indeterminate time
         c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
         Timestamp indeterminateExtremaTime = (Timestamp) c.uniqueResult();
+        return addIndeterminateTimeRestriction(c, sosIndeterminateTime, indeterminateExtremaTime);
+    }
 
+    /**
+     * Add an indeterminate time restriction to a criteria. This allows for
+     * multiple results if more than one observation has the extrema time (max
+     * for latest, min for first). Note: use this method *after* adding all
+     * other applicable restrictions so that they will apply to the min/max
+     * observation time determination.
+     * 
+     * @param c
+     *            Criteria to add the restriction to
+     * @param sosIndeterminateTime
+     *            Indeterminate time restriction to add
+     * @param indeterminateExtremaTime
+     *            Indeterminate time extrema
+     * @return Modified criteria
+     */
+    protected Criteria addIndeterminateTimeRestriction(Criteria c, SosIndeterminateTime sosIndeterminateTime,
+            Date indeterminateExtremaTime) {
         // reset criteria
         // see http://stackoverflow.com/a/1472958/193435
         c.setProjection(null);
@@ -1153,7 +1172,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         return null;
     }
 
-    public abstract List<Geometry> getSamplingGeometries(String feature,  Session session);
+    public abstract List<Geometry> getSamplingGeometries(String feature, Session session);
 
     /**
      * Check if the observation table contains samplingGeometries with values

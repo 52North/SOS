@@ -557,18 +557,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
             while (iter.hasNext()) {
                 Table table = iter.next();
-                // check if table is a physical table, tables is a table and if
-                // table is contained in the defined schema
-                // if (table.isPhysicalTable() &&
-                // metadata.isTable(table.getName())
-                // && metadata.getTableMetadata(table.getName(), schema,
-                // catalog, false) != null) {
-                // return true;
-                // }
                 if (table.isPhysicalTable()
                         && metadata.isTable(table.getQuotedName())
-                        && metadata.getTableMetadata(table.getName(), table.getSchema(), table.getCatalog(),
-                                table.isQuoted()) != null) {
+                        && metadata.getTableMetadata(table.getName(), schema, catalog, table.isQuoted()) != null) {
                     return true;
                 }
             }

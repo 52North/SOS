@@ -585,9 +585,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (metaData != null) {
             ResultSet rs = metaData.getSchemas();
             while (rs.next()) {
-                if (StringHelper.isNotEmpty(rs.getString("TABLE_SCHEM")) && rs.getString("TABLE_SCHEM").equals(schema)) {
+                if (StringHelper.isNotEmpty(rs.getString("TABLE_SCHEM")) && rs.getString("TABLE_SCHEM").equalsIgnoreCase(schema)) {
                     return rs.getString("TABLE_SCHEM");
                 }
+            }
+            if (StringHelper.isNotEmpty(schema)) {
+                throw new ConfigurationException(String.format("Requested schema (%s) is not contained in the database!", schema));
             }
         }
         return null;

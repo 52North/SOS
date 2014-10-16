@@ -144,6 +144,8 @@ public interface GmlConstants extends Constants {
     /* attribute names in GML */
 
     String AN_ID = "id";
+    
+    String AN_INDETERMINATE_POSITION = "indeterminatePosition";
 
     /* QNames for elements */
 
@@ -228,6 +230,8 @@ public interface GmlConstants extends Constants {
      * The {@code QName} for {@code gml:identifier}.
      */
     QName QN_IDENTIFIER_32 = new QName(NS_GML_32, EN_IDENTIFIER, NS_GML_PREFIX);
+
+    QName QN_INDETERMINATE_POSITION_32 = new QName(NS_GML_32, AN_INDETERMINATE_POSITION, NS_GML_PREFIX);
 
     /** string constant for ascending sorting order */
     String SORT_ORDER_ASC = SortingOrder.ASC.name();

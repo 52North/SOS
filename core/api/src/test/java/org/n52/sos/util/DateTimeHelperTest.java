@@ -31,6 +31,8 @@ package org.n52.sos.util;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Test;
 
 public class DateTimeHelperTest {
@@ -48,6 +50,17 @@ public class DateTimeHelperTest {
         assertThat(DateTimeHelper.getTimeLengthBeforeTimeZone(testTimePositiveTimeZone), is(TIME_LENGTH));
         assertThat(DateTimeHelper.getTimeLengthBeforeTimeZone(testTimeNegativeTimeZone), is(TIME_LENGTH));
         assertThat(DateTimeHelper.getTimeLengthBeforeTimeZone(testTimeZTimeZone), is(TIME_LENGTH));
+    }
+    
+    @Test
+    public void testMakeDateTime() {
+        long current = System.currentTimeMillis();
+        DateTime currentDateTime = new DateTime(current, DateTimeZone.UTC);
+        assertThat(currentDateTime.equals(DateTimeHelper.makeDateTime(currentDateTime)), is(true));
+        assertThat(currentDateTime.equals(DateTimeHelper.makeDateTime(new java.util.Date(current))), is(true));
+        assertThat(currentDateTime.equals(DateTimeHelper.makeDateTime(new java.sql.Date(current))), is(true));
+        assertThat(currentDateTime.equals(DateTimeHelper.makeDateTime(new java.sql.Timestamp(current))), is(true));
+        assertThat(currentDateTime.equals(DateTimeHelper.makeDateTime(new java.sql.Time(current))), is(true));
     }
 
 }

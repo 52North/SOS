@@ -149,16 +149,18 @@ public class SosGetDataAvailabilityStreamWriter {
     }
 
     protected void wirteDataAvailabilityMember(DataAvailability da) throws XMLStreamException, DateTimeFormatException {
-        start(GetDataAvailabilityConstants.SOS_DATA_AVAILABILITY_MEMBER);
-        attr(GmlConstants.QN_ID_32, DATA_AVAILABILITY_PREFIX + dataAvailabilityCount++);
-        writeFeatureOfInterest(da);
-        writeProcedure(da);
-        writeObservedProperty(da);
-        writePhenomenonTime(da);
-        if (da.isSetCount()) {
-            writeValueCount(da.getCount());
+        if (da != null) {
+            start(GetDataAvailabilityConstants.SOS_DATA_AVAILABILITY_MEMBER);
+            attr(GmlConstants.QN_ID_32, DATA_AVAILABILITY_PREFIX + dataAvailabilityCount++);
+            writeFeatureOfInterest(da);
+            writeProcedure(da);
+            writeObservedProperty(da);
+            writePhenomenonTime(da);
+            if (da.isSetCount()) {
+                writeValueCount(da.getCount());
+            }
+            end(GetDataAvailabilityConstants.SOS_DATA_AVAILABILITY_MEMBER);
         }
-        end(GetDataAvailabilityConstants.SOS_DATA_AVAILABILITY_MEMBER);
     }
 
     protected void writePhenomenonTime(DataAvailability da) throws DateTimeFormatException, XMLStreamException {

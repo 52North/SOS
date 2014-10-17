@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,7 +44,6 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.ResultTransformer;
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.HibernateDatasourceConstants;
@@ -138,7 +136,9 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
             response.setVersion(req.getVersion());
             response.setNamespace(req.getNamespace());
             for (Object o : dataAvailabilityValues) {
-                response.addDataAvailability((DataAvailability) o);
+                if (o != null) {
+                    response.addDataAvailability((DataAvailability) o);
+                }
             }
             return response;
         } catch (HibernateException he) {
@@ -290,14 +290,15 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
             if (!request.isSetOfferings()) {
                 // get time information from series object
                 if (series.isSetFirstLastTime()) {
-                        timePeriod = new TimePeriod(series.getFirstTimeStamp(), series.getLastTimeStamp());
+                    timePeriod = new TimePeriod(series.getFirstTimeStamp(), series.getLastTimeStamp());
                 }
                 // get time information from a named query
                 else if (timePeriod == null && supportsNamedQuery) {
                     timePeriod = getTimePeriodFromNamedQuery(series.getSeriesId(), seriesMinMaxTransformer, session);
                 }
             }
-            // get time information from SeriesGetDataAvailability mapping if supported
+            // get time information from SeriesGetDataAvailability mapping if
+            // supported
             if (timePeriod == null && supportsSeriesObservationTime) {
                 SeriesObservationTimeDAO seriesObservationTimeDAO =
                         (SeriesObservationTimeDAO) DaoFactory.getInstance().getObservationTimeDAO();
@@ -444,8 +445,9 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
      * @return Count of available observations
      */
     private Long getCountFor(Series series, GetDataAvailabilityRequest request, Session session) {
-        Criteria criteria = session.createCriteria(SeriesObservationInfo.class)
-        		.add(Restrictions.eq(AbstractObservation.DELETED, false));
+        Criteria criteria =
+                session.createCriteria(SeriesObservationInfo.class).add(
+                        Restrictions.eq(AbstractObservation.DELETED, false));
         criteria.add(Restrictions.eq(SeriesObservationInfo.SERIES, series));
         if (request.isSetOfferings()) {
             criteria.createCriteria(SeriesObservationTime.OFFERINGS).add(
@@ -698,42 +700,44 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
             Map<String, ReferenceType> procedures = new HashMap<String, ReferenceType>();
             Map<String, ReferenceType> observableProperties = new HashMap<String, ReferenceType>();
             Map<String, ReferenceType> featuresOfInterest = new HashMap<String, ReferenceType>();
-            try {
-                ReferenceType procedure = null;
-                ReferenceType observableProperty = null;
-                ReferenceType featureOfInterest = null;
-                TimePeriod timePeriod = null;
-                long valueCount = -1;
-                if (tuple.length == 5 || tuple.length == 6) {
-                    procedure = getProcedureReferenceType(tuple[0], procedures);
-                    observableProperty = getObservablePropertyReferenceType(tuple[1], observableProperties);
-                    featureOfInterest = getFeatureOfInterestReferenceType(tuple[2], featuresOfInterest);
-                    timePeriod =
-                            new TimePeriod(new DateTime(((Timestamp) tuple[3]).getTime(), DateTimeZone.UTC),
-                                    new DateTime(((Timestamp) tuple[4]).getTime(), DateTimeZone.UTC));
-                    if (tuple.length == 6) {
-                        valueCount = (Long) tuple[5];
+            if (tuple != null) {
+                try {
+                    ReferenceType procedure = null;
+                    ReferenceType observableProperty = null;
+                    ReferenceType featureOfInterest = null;
+                    TimePeriod timePeriod = null;
+                    long valueCount = -1;
+                    if (tuple.length == 5 || tuple.length == 6) {
+                        procedure = getProcedureReferenceType(tuple[0], procedures);
+                        observableProperty = getObservablePropertyReferenceType(tuple[1], observableProperties);
+                        featureOfInterest = getFeatureOfInterestReferenceType(tuple[2], featuresOfInterest);
+                        timePeriod = new TimePeriod(tuple[3], tuple[4]);
+                        if (tuple.length == 6) {
+                            valueCount = (Long) tuple[5];
+                        }
+                    } else if (tuple.length == 8 || tuple.length == 9) {
+                        procedure = getProcedureReferenceType(tuple[0], procedures);
+                        addTitleToReferenceType(tuple[1], procedure);
+                        observableProperty = getObservablePropertyReferenceType(tuple[2], observableProperties);
+                        addTitleToReferenceType(tuple[3], observableProperty);
+                        featureOfInterest = getFeatureOfInterestReferenceType(tuple[4], featuresOfInterest);
+                        addTitleToReferenceType(tuple[5], featureOfInterest);
+                        timePeriod = new TimePeriod(tuple[6], tuple[7]);
+                        if (tuple.length == 9) {
+                            valueCount = (Long) tuple[8];
+                        }
                     }
-                } else if (tuple.length == 8 || tuple.length == 9) {
-                    procedure = getProcedureReferenceType(tuple[0], procedures);
-                    addTitleToReferenceType(tuple[1], procedure);
-                    observableProperty = getObservablePropertyReferenceType(tuple[2], observableProperties);
-                    addTitleToReferenceType(tuple[3], observableProperty);
-                    featureOfInterest = getFeatureOfInterestReferenceType(tuple[4], featuresOfInterest);
-                    addTitleToReferenceType(tuple[5], featureOfInterest);
-                    timePeriod =
-                            new TimePeriod(new DateTime(((Timestamp) tuple[6]).getTime()), new DateTime(
-                                    ((Timestamp) tuple[7]).getTime()));
-                    if (tuple.length == 9) {
-                        valueCount = (Long) tuple[8];
+                    if (timePeriod != null && !timePeriod.isEmpty()) {
+                        return new DataAvailability(procedure, observableProperty, featureOfInterest, timePeriod,
+                                valueCount);
                     }
+                } catch (OwsExceptionReport e) {
+                    LOGGER.error("Error while querying GetDataAvailability", e);
                 }
-                return new DataAvailability(procedure, observableProperty, featureOfInterest, timePeriod, valueCount);
-            } catch (OwsExceptionReport e) {
-                LOGGER.error("Error while querying GetDataAvailability", e);
             }
             return null;
         }
+
 
         private ReferenceType getProcedureReferenceType(Object procedure, Map<String, ReferenceType> procedures)
                 throws OwsExceptionReport {
@@ -828,9 +832,8 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
 
         @Override
         public TimePeriod transformTuple(Object[] tuple, String[] aliases) {
-            if (tuple != null && tuple[0] != null && tuple[1] != null) {
-                return new TimePeriod(new DateTime(((Timestamp) tuple[0]).getTime(), DateTimeZone.UTC), new DateTime(
-                        ((Timestamp) tuple[1]).getTime(), DateTimeZone.UTC));
+            if (tuple != null) {
+                return new TimePeriod(tuple[0], tuple[1]);
             }
             return null;
         }

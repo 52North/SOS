@@ -371,7 +371,7 @@ public class HibernateGetObservationHelper {
     public static boolean checkEncoderForMergeObservationValues(String responseFormat) {
         Encoder<XmlObject, OmObservation> encoder =
                 CodingRepository.getInstance().getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
-        if (encoder == null && encoder instanceof ObservationEncoder) {
+        if (encoder != null && encoder instanceof ObservationEncoder) {
             return ((ObservationEncoder<?, OmObservation>) encoder).shouldObservationsWithSameXBeMerged();
         }
         return false;

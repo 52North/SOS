@@ -510,18 +510,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
             while (iter.hasNext()) {
                 Table table = iter.next();
-                // check if table is a physical table, tables is a table and if
-                // table is contained in the defined schema
-                // if (table.isPhysicalTable() &&
-                // metadata.isTable(table.getName())
-                // && metadata.getTableMetadata(table.getName(), schema,
-                // catalog, false) != null) {
-                // return true;
-                // }
                 if (table.isPhysicalTable()
                         && metadata.isTable(table.getQuotedName())
-                        && metadata.getTableMetadata(table.getName(), table.getSchema(), table.getCatalog(),
-                                table.isQuoted()) != null) {
+                        && metadata.getTableMetadata(table.getName(), schema, catalog, table.isQuoted()) != null) {
                     return true;
                 }
             }
@@ -538,9 +529,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (metaData != null) {
             ResultSet rs = metaData.getSchemas();
             while (rs.next()) {
-                if (StringHelper.isNotEmpty(rs.getString("TABLE_SCHEM")) && rs.getString("TABLE_SCHEM").equals(schema)) {
+                if (StringHelper.isNotEmpty(rs.getString("TABLE_SCHEM")) && rs.getString("TABLE_SCHEM").equalsIgnoreCase(schema)) {
                     return rs.getString("TABLE_SCHEM");
                 }
+            }
+            if (StringHelper.isNotEmpty(schema)) {
+                throw new ConfigurationException(String.format("Requested schema (%s) is not contained in the database!", schema));
             }
         }
         return null;

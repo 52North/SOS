@@ -131,7 +131,7 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
             Collection<String> features, Session session) throws OwsExceptionReport {
         return getSeriesObservationsFor(request, features, null, null, session);
     }
-    
+
     /**
      * Query series observations for GetObservation request, features, and a
      * filter criterion (typically a temporal filter)
@@ -152,7 +152,7 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
             Collection<String> features, Criterion filterCriterion, Session session) throws OwsExceptionReport {
         return getSeriesObservationsFor(request, features, filterCriterion, null, session);
     }
-    
+
     /**
      * Query series observations for GetObservation request, features, and an
      * indeterminate time (first/latest)
@@ -199,8 +199,8 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
             Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
         return getSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session).list();
     }
-    
-    
+
+
     @SuppressWarnings("unchecked")
     public List<SeriesObservation> getSeriesObservationsFor(Series series, GetObservationRequest request,
             SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {

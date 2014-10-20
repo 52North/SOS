@@ -33,7 +33,7 @@
 									<groupId>org.n52.sensorweb</groupId>
 									<artifactId>timeseries-web</artifactId>
 									<includes>api-doc/**</includes>
-									<outputDirectory>${project.build.directory}/${project.build.finalName}/static</outputDirectory>
+									<outputDirectory>${project.build.directory}/${project.build.finalName}/static/doc</outputDirectory>
 									<overWrite>false</overWrite>
 								</artifactItem>
 							</artifactItems>

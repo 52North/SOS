@@ -77,13 +77,36 @@
                                     <c:if test="${sos:hasClient()}">
                                         <li>
                                             <a id="client-menuitem" class="menu-item1" href="<c:url value="/client" />">
-                                                <span class="menu-title">Test Client</span>
+                                                <span class="menu-title">Client</span>
                                             </a>
+                                            <ul>
+                                             	<c:if test="${sos:staticExtensionExists(pageContext.servletContext, 'client/jsClient/index.html')}">
+			                                        <li>
+			                                            <a id="jsclient-menuitem" target="_blank" href="<c:url value="/static/client/jsClient" />">
+			                                                <span class="menu-title">Sensor Web JS Client</span>
+			                                            </a>
+			                                        </li>
+		                                    	</c:if>
+                                   			 </ul>
                                         </li>
                                     </c:if>
+                                        <li>
+                                            <a id="documentation-menuitem" class="menu-item2" href="<c:url value="/documentation" />">
+                                                <span class="menu-title">Documentation</span>
+                                            </a>
+                                            <ul>
+                                            	<c:if test="${sos:documentExtensionExists(pageContext.servletContext, 'api-doc/index.html')}">
+			                                        <li>
+			                                            <a id="rest-menuitem" target="_blank" href="<c:url value="/static/doc/api-doc" />">
+			                                                <span class="menu-title">Sensor Web Client REST-API</span>
+			                                            </a>
+			                                        </li>
+			                                    </c:if>
+                                             </ul>
+                                        </li>
                                     <c:if test="${sos:hasAdministrator()}">
                                         <li>
-                                            <a id="admin-menuitem" class="menu-item2" href="<c:url value="/admin/index" />">
+                                            <a id="admin-menuitem" class="menu-item3" href="<c:url value="/admin/index" />">
                                                 <span class="menu-title">Admin</span>
                                             </a>
                                             <sec:authorize access="hasRole('ROLE_ADMIN')">
@@ -185,20 +208,6 @@
 											</a>
 										</li>
 									</sec:authorize>
-									<c:if test="${sos:staticExtensionExists(pageContext.servletContext, 'api-doc/index.html')}">
-                                        <li>
-                                            <a id="rest-menuitem" class="menu-item4" target="_blank" href="<c:url value="/static/api-doc" />">
-                                                <span class="menu-title">SWC REST-API</span>
-                                            </a>
-                                        </li>
-                                    </c:if>
-                                    <c:if test="${sos:staticExtensionExists(pageContext.servletContext, 'jsClient/index.html')}">
-                                        <li>
-                                            <a id="jsclient-menuitem" class="menu-item5" target="_blank" href="<c:url value="/static/jsClient" />">
-                                                <span class="menu-title">Sensor Web JS Client</span>
-                                            </a>
-                                        </li>
-                                    </c:if>
 								</ul>
 							</div>
 						</div>

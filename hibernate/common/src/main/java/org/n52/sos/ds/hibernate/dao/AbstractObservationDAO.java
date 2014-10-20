@@ -1165,7 +1165,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 criteria.setProjection(SpatialProjections.extent(AbstractObservationTime.SAMPLING_GEOMETRY));
                 criteria.createCriteria(AbstractObservation.OFFERINGS).add(
                         Restrictions.eq(Offering.IDENTIFIER, offeringID));
-                LOGGER.debug("QUERY getEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
+                LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
                 Geometry geom = (Geometry) criteria.uniqueResult();
                 geom = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(geom);
                 if (geom != null) {
@@ -1177,7 +1177,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 criteria.setProjection(SpatialProjections.extent(AbstractObservationTime.SAMPLING_GEOMETRY));
                 criteria.createCriteria(AbstractObservation.OFFERINGS).add(
                         Restrictions.eq(Offering.IDENTIFIER, offeringID));
-                LOGGER.debug("QUERY getEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
+                LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
                 @SuppressWarnings("unchecked")
                 final List<AbstractObservationTime> observationTimes = criteria.list();
                 if (CollectionHelper.isNotEmpty(observationTimes)) {

@@ -34,5 +34,6 @@
 		inner join AQD.dbo.Pollutant poll on o.pollutantId=poll.Id
 		inner join AQD.dbo.SPProcess pro on o.processId=pro.Id
 		WHERE poll.URI = :observableProperty AND pro.inspireId = :procedure
+		AND r.unit IS NOT NULL 
 	</sql-query>
 </hibernate-mapping>

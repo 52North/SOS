@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>spring</artifactId>
-        <version>4.1.2-SNAPSHOT</version>
+        <version>4.1.2</version>
     </parent>
     <artifactId>admin-controller</artifactId>
     <name>52°North SOS - Web Admin Controller</name>

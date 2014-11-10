@@ -27,7 +27,7 @@ additionally enables integration tests.
 
 ## Distributions
 
-Here xou can find some information that relates to the distributions of the 52°North SOS.
+Here you can find some information that relates to the distributions of the 52°North SOS.
 
 ### Download
 

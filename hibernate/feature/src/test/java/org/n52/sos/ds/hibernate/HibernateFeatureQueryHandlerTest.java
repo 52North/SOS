@@ -28,12 +28,6 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.assertThat;
 import static org.n52.sos.util.ReverseOf.reverseOf;
 import static org.n52.sos.util.JTSHelperForTesting.*;
 
@@ -63,7 +57,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
  * 
  * @since 4.0.0
  */
-public class HibernateFeatureQueryHandlerTest extends HibernateFeatureQueryHandler {
+public class HibernateFeatureQueryHandlerTest extends HibernateTestCase {
 
     @Before
     public void setUp() throws ConfigurationException {
@@ -81,7 +75,7 @@ public class HibernateFeatureQueryHandlerTest extends HibernateFeatureQueryHandl
         final String type = SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_POINT;
         FeatureOfInterest feature = create(1, id, null, "name", "url", createFeatureOfInterestType(1, type));
         String version = Sos2Constants.SERVICEVERSION;
-        AbstractFeature result = createSosAbstractFeature(feature, version, null);
+        AbstractFeature result = new HibernateFeatureQueryHandler().createSosAbstractFeature(feature, version, null);
         final AbstractFeature expectedResult =
                 SamplingFeatureBuilder.aSamplingFeature().setFeatureType(type).setIdentifier(id).build();
         assertThat(expectedResult, is(result));
@@ -124,7 +118,7 @@ public class HibernateFeatureQueryHandlerTest extends HibernateFeatureQueryHandl
         GeometryFactory factory = JTSHelper.getGeometryFactoryForSRID(Constants.EPSG_WGS84);
         Geometry geometry = factory.createPoint(randomCoordinate());
         FeatureOfInterest feature = create(1, "id", geometry, "name", "url", createFeatureOfInterestType(1, "type"));
-        AbstractFeature sosFeature = createSosAbstractFeature(feature, Sos2Constants.SERVICEVERSION, null);
+        AbstractFeature sosFeature = new HibernateFeatureQueryHandler().createSosAbstractFeature(feature, Sos2Constants.SERVICEVERSION, null);
 
         assertThat(GeometryHandler.getInstance().isAxisOrderSwitchRequired(Constants.EPSG_WGS84), is(true));
         assertThat(sosFeature, is(notNullValue()));
@@ -159,7 +153,7 @@ public class HibernateFeatureQueryHandlerTest extends HibernateFeatureQueryHandl
         assertThat(GeometryHandler.getInstance().isAxisOrderSwitchRequired(2181), is(false));
 
         FeatureOfInterest feature = create(1, "id", geometry, "name", "url", createFeatureOfInterestType(1, "type"));
-        AbstractFeature sosFeature = createSosAbstractFeature(feature, Sos2Constants.SERVICEVERSION, null);
+        AbstractFeature sosFeature = new HibernateFeatureQueryHandler().createSosAbstractFeature(feature, Sos2Constants.SERVICEVERSION, null);
 
         assertThat(GeometryHandler.getInstance().isAxisOrderSwitchRequired(Constants.EPSG_WGS84), is(true));
         assertThat(sosFeature, is(notNullValue()));
@@ -178,6 +172,6 @@ public class HibernateFeatureQueryHandlerTest extends HibernateFeatureQueryHandl
         String url = "http://example.com/wfs?service=WFS&version=1.1.0&request=GetFeature&typeName=waterdata:sampling&featureid=foi1";
         SamplingFeature ssf = new SamplingFeature(null);
         ssf.setUrl(url);
-        assertThat(insertFeature(ssf, null), is(url));
+        assertThat(new HibernateFeatureQueryHandler().insertFeature(ssf, null), is(url));
     }
 }

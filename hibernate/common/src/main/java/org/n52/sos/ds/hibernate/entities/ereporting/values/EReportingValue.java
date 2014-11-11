@@ -260,8 +260,8 @@ public abstract class EReportingValue extends SeriesValue implements EReportingV
     @Override
     public void addValueSpecificDataToObservation(OmObservation observation, Session session, SwesExtensions extensions)
             throws OwsExceptionReport {
-        if (AqdHelper.hasFlowExtension(extensions)) {
-            ReportObligationType flow = AqdHelper.getFlow(extensions);
+        if (AqdHelper.getInstance().hasFlowExtension(extensions)) {
+            ReportObligationType flow = AqdHelper.getInstance().getFlow(extensions);
             if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E1B.equals(flow)) {
                 int year = DateTimeHelper.makeDateTime(getPhenomenonTimeStart()).getYear();
                 EReportingQuality eReportingQuality =

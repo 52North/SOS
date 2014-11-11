@@ -35,6 +35,7 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.aqd.AqdConstants;
+import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.encode.AbstractResponseEncoder;
@@ -79,6 +80,10 @@ public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceRespon
 
     protected Profile getActiveProfile() {
         return Configurator.getInstance().getProfileHandler().getActiveProfile();
+    }
+    
+    protected AqdHelper getAqdHelper() {
+        return AqdHelper.getInstance();
     }
 
     protected XmlObject encodeGml(Object o) throws OwsExceptionReport {

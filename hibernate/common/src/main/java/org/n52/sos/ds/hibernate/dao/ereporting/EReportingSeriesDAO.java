@@ -128,7 +128,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     @Override
     protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
         if (request.isSetResponseFormat() && AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
-            ReportObligationType flow = AqdHelper.getFlow(request.getExtensions());
+            ReportObligationType flow = AqdHelper.getInstance().getFlow(request.getExtensions());
             if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E2A.equals(flow)) {
                 addAssessmentType(c, AqdConstants.AssessmentType.Fixed.name());
             } else if (ReportObligationType.E1B.equals(flow)) {

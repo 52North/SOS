@@ -82,7 +82,7 @@ public class ElementType {
         return StringHelper.isNotEmpty(getUOM());
     }
     
-    public static ElementType getPollutantElementType(PrimaryObservation primaryObs, String uom)  {
-        return new ElementType("Pollutant", primaryObs, uom);
+    public static ElementType getValueElementType(PrimaryObservation primaryObs, String uom)  {
+        return new ElementType("Value", primaryObs, uom);
     }
 }

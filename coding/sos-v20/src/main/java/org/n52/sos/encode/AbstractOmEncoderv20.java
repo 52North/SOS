@@ -45,7 +45,6 @@ import net.opengis.om.x20.OMProcessPropertyType;
 import net.opengis.om.x20.TimeObjectPropertyType;
 
 import org.apache.xmlbeans.XmlBoolean;
-import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlDouble;
 import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
@@ -221,15 +220,16 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
             throws OwsExceptionReport {
         OMObservationType xbObservation =
                 OMObservationType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        // set a unique gml:id
-        xbObservation.setId("o_" + JavaHelper.generateID(Double.toString(System.currentTimeMillis() * Math.random())));
-        String observationID;
-        if (sosObservation.isSetObservationID()) {
-            observationID = sosObservation.getObservationID();
-        } else {
-            observationID = xbObservation.getId().replace("o_", "");
-            sosObservation.setObservationID(observationID);
+        if (!sosObservation.isSetObservationID()) {
+            sosObservation.setObservationID(JavaHelper.generateID(Double.toString(System.currentTimeMillis() * Math.random())));
         }
+        String observationID = sosObservation.getObservationID();
+        if (!sosObservation.isSetGmlID()) {
+            sosObservation.setGmlId("o_" + observationID);
+        }
+        // set a unique gml:id
+        xbObservation.setId(sosObservation.getGmlId());
+        
         // set observation identifier if available
         if (sosObservation.isSetIdentifier()) {
             Encoder<?, CodeWithAuthority> encoder =

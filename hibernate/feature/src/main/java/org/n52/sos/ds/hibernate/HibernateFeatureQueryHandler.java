@@ -552,11 +552,11 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             if (session != null) {
                 List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);
                 int srid = GeometryHandler.getInstance().getStorageEPSG();
-                if (CollectionHelper.isNotEmpty(geometries)) {
+                if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(geometries)) {
                     List<Coordinate> coordinates = Lists.newLinkedList();
                     Geometry lastGeoemtry = null;
                     for (Geometry geometry : geometries) {
-                        if (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry)) {
+                        if (geometry != null && (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry))) {
                         	coordinates.add(GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
                             lastGeoemtry = geometry;
                             if (geometry.getSRID() != srid) {

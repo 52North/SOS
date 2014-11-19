@@ -298,16 +298,12 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
 
     @Override
     protected void checkAndChangeFeatureOfInterestIdentifier(AbstractFeature abstractFeature) {
-        if (getEReportingPrefixedIdentifierHelper().isSetFeatureOfInterestPrefix()) {
             checkAndChangeIdentifierOfAbstractFeature(abstractFeature);
-        }
     }
     
     private void checkAndChangeIdentifierOfAbstractFeature(AbstractFeature abstractFeature) {
-        if (getEReportingPrefixedIdentifierHelper().isSetFeatureOfInterestPrefix()) {
-            abstractFeature.setIdentifier(checkFeatureOfInterestIdentifier(abstractFeature
+        abstractFeature.setIdentifier(checkFeatureOfInterestIdentifier(abstractFeature
                     .getIdentifier()));
-        }
         if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetXmlDescription()) {
             ((SamplingFeature) abstractFeature).setXmlDescription(null);
         }
@@ -316,22 +312,18 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
 
     @Override
     protected void checkAndChangeProcedureIdentifier(AbstractFeature abstractFeature) {
-        if (getEReportingPrefixedIdentifierHelper().isSetProcedurePrefix()) {
-                abstractFeature.setIdentifier(checkProcedureIdentifier(abstractFeature.getIdentifier()));
-        }
+         abstractFeature.setIdentifier(checkProcedureIdentifier(abstractFeature.getIdentifier()));
     }
 
     @Override
     protected void checkAndChangeObservablePropertyIdentifier(AbstractFeature abstractFeature) {
-        if (getEReportingPrefixedIdentifierHelper().isSetObservablePropertyPrefix()) {
                 abstractFeature.setIdentifier(checkObservablePropertyIdentifier(abstractFeature
                         .getIdentifier()));
-        }
     }
 
     @Override
     protected void checkAndChangOfferingIdentifier(SosOffering offering) {
-        if (offering != null && getEReportingPrefixedIdentifierHelper().isSetOfferingPrefix()) {
+        if (offering != null) {
             offering.setIdentifier(checkOfferingIdentifier(offering.getIdentifier()));
         }
     }

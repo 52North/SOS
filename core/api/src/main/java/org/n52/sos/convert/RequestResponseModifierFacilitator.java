@@ -28,20 +28,39 @@
  */
 package org.n52.sos.convert;
 
-import java.util.Set;
-
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.response.AbstractServiceResponse;
-
-public interface RequestResponseModifier<T extends AbstractServiceRequest<?>,S extends AbstractServiceResponse> {
+public class RequestResponseModifierFacilitator {
     
-    Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes();
+    private boolean merger = false;
     
-    T modifyRequest(T request) throws OwsExceptionReport;
-
-    S modifyResponse(T request, S response) throws OwsExceptionReport;
+    private boolean splitter = false;
     
-    RequestResponseModifierFacilitator getFacilitator();
+    private boolean adderRemover = false;
+    
+    public RequestResponseModifierFacilitator setMerger(boolean merger) {
+        this.merger = merger;
+        return this;
+    }
+    
+    public boolean isMerger() {
+        return merger;
+    }
+    
+    public RequestResponseModifierFacilitator setSplitter(boolean splitter) {
+        this.splitter = splitter;
+        return this;
+    }
+    
+    public boolean isSplitter() {
+        return splitter;
+    }
+    
+    public RequestResponseModifierFacilitator setAdderRemover(boolean adderRemover) {
+        this.adderRemover = adderRemover;
+        return this;
+    }
+    
+    public boolean isAdderRemover() {
+        return adderRemover;
+    }
     
 }

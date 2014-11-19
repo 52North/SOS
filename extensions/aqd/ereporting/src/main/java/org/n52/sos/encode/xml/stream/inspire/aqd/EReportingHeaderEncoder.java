@@ -30,6 +30,7 @@ package org.n52.sos.encode.xml.stream.inspire.aqd;
 
 import java.io.OutputStream;
 import java.util.Collections;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -49,6 +50,7 @@ import org.n52.sos.inspire.aqd.InspireID;
 import org.n52.sos.inspire.aqd.Pronunciation;
 import org.n52.sos.inspire.aqd.RelatedParty;
 import org.n52.sos.inspire.aqd.Spelling;
+import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
@@ -119,7 +121,9 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
         encodeInpireID(h.getInspireID());
         encodeReportingAuthority(h.getReportingAuthority());
         encodeReportingPeriod(h.getReportingPeriod());
-
+        if (h.isSetContent()) {
+            encodeContent(h.getContent());
+        }
         end(AqdConstants.QN_AQD_REPORTING_HEADER);
     }
 
@@ -189,6 +193,18 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
             encodeNillableReference(AqdConstants.QN_BASE2_ROLE, role);
         }
         end(AqdConstants.QN_BASE2_RELATED_PARTY);
+    }
+
+    private void encodeContent(List<Referenceable<AbstractFeature>> content) throws XMLStreamException {
+        for (Referenceable<AbstractFeature> v : content) {
+            if (v.isReference()) {
+                empty(AqdConstants.QN_AQD_CONTENT);
+                encodeReferenceAttr(v.getReference());
+            } else {
+                empty(AqdConstants.QN_AQD_CONTENT);
+                attr(W3CConstants.QN_XLINK_HREF, v.getInstance().get().getIdentifier());
+            }
+        }
     }
 
     private void encodeReferenceAttr(Reference v)
@@ -493,4 +509,5 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
                    DateTimeFormatException {
         chars(DateTimeHelper.formatDateTime2String(time, format));
     }
+    
 }

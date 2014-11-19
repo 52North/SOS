@@ -103,7 +103,6 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
 
     private final Class<Q> requestType;
 
-    
     public AbstractRequestOperator(String service, String version, String operationName, Class<Q> requestType) {
         this.operationName = operationName;
         this.requestOperatorKeyType = new RequestOperatorKey(service, version, operationName);
@@ -111,15 +110,15 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         this.dao = initDAO(service, operationName);
         LOGGER.info("{} initialized successfully!", getClass().getSimpleName());
     }
-    
+
     @SuppressWarnings("unchecked")
     protected D initDAO(String service, String operationName) {
-    	 D dao = (D) OperationDAORepository.getInstance().getOperationDAO(service, operationName);
-         if (dao == null) {
-             throw new NullPointerException(String.format("OperationDAO for Operation %s has no implementation!",
-                     operationName));
-         }
-         return dao;
+        D dao = (D) OperationDAORepository.getInstance().getOperationDAO(service, operationName);
+        if (dao == null) {
+            throw new NullPointerException(String.format("OperationDAO for Operation %s has no implementation!",
+                    operationName));
+        }
+        return dao;
     }
 
     protected D getDao() {
@@ -161,47 +160,76 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         }
     }
 
-	private void checkForModifierAndProcess(AbstractServiceRequest<?> request)
-			throws OwsExceptionReport {
-		if (RequestResponseModifierRepository.getInstance()
-				.hasRequestResponseModifier(request)) {
-			List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> splitter = new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
-			for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : RequestResponseModifierRepository
-					.getInstance().getRequestResponseModifier(request)) {
-				if (modifier.isSplitter()) {
-					splitter.add(modifier);
-				} else {
-					modifier.modifyRequest(request);
-				}
-			}
-			for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : splitter) {
-				modifier.modifyRequest(request);
-			}
-		}
-	}
+    private void checkForModifierAndProcess(AbstractServiceRequest<?> request) throws OwsExceptionReport {
+        if (RequestResponseModifierRepository.getInstance().hasRequestResponseModifier(request)) {
+            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> splitter =
+                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
+            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> remover =
+                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
+            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> defaultMofifier =
+                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
+            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : RequestResponseModifierRepository
+                    .getInstance().getRequestResponseModifier(request)) {
+                if (modifier.getFacilitator().isSplitter()) {
+                    splitter.add(modifier);
+                } else if (modifier.getFacilitator().isAdderRemover()) {
+                    remover.add( modifier);
+                } else {
+                    defaultMofifier.add(modifier);
+                }
+            }
+            // execute adder/remover
+            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : remover) {
+                modifier.modifyRequest(request);
+            }
+            // execute default
+            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : defaultMofifier) {
+                modifier.modifyRequest(request);
+            }
+            // execute splitter
+            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : splitter) {
+                modifier.modifyRequest(request);
+            }
+        }
+    }
 
-	private AbstractServiceResponse checkForModifierAndProcess(
-			AbstractServiceRequest<?> request, AbstractServiceResponse response)
-			throws OwsExceptionReport {
-		if (RequestResponseModifierRepository.getInstance()
-				.hasRequestResponseModifier(request, response)) {
-			List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> nonMerger = new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
-			for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : RequestResponseModifierRepository
-					.getInstance()
-					.getRequestResponseModifier(request, response)) {
-				if (modifier.isMerger()) {
-					modifier.modifyResponse(request, response);
-				} else {
-					nonMerger.add(modifier);
-				}
-			}
-			for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : nonMerger) {
-				modifier.modifyResponse(request, response);
-			}
-			return response;
-		}
-		return response;
-	}
+    private AbstractServiceResponse checkForModifierAndProcess(AbstractServiceRequest<?> request,
+            AbstractServiceResponse response) throws OwsExceptionReport {
+        if (RequestResponseModifierRepository.getInstance().hasRequestResponseModifier(request, response)) {
+            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> defaultMofifier =
+                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
+            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> remover =
+                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
+            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> merger =
+                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
+            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : RequestResponseModifierRepository
+                    .getInstance().getRequestResponseModifier(request, response)) {
+                if (modifier.getFacilitator().isMerger()) {
+                    merger.add(modifier);
+                } else if (modifier.getFacilitator().isAdderRemover()) {
+                    remover.add(modifier);
+                } else {
+                    defaultMofifier.add(modifier);
+                }
+
+            }
+            // execute merger
+            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : merger) {
+                modifier.modifyResponse(request, response);
+            }
+            // execute default
+            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : defaultMofifier) {
+                modifier.modifyResponse(request, response);
+            }
+
+            // execute adder/remover
+            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : remover) {
+                modifier.modifyResponse(request, response);
+            }
+            return response;
+        }
+        return response;
+    }
 
     protected abstract A receive(Q request) throws OwsExceptionReport;
 
@@ -357,8 +385,9 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
             throws OwsExceptionReport {
         if (observationID == null || observationID.isEmpty()) {
             throw new MissingParameterValueException(parameterName);
-//        } else if (!getCache().hasObservationIdentifier(observationID)) {
-//            throw new InvalidParameterValueException(parameterName, observationID);
+            // } else if (!getCache().hasObservationIdentifier(observationID)) {
+            // throw new InvalidParameterValueException(parameterName,
+            // observationID);
         }
     }
 
@@ -439,7 +468,8 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         checkObservedProperty(observedProperty, parameterName.name());
     }
 
-    protected void checkOfferings(final Collection<String> offerings, final String parameterName) throws OwsExceptionReport {
+    protected void checkOfferings(final Collection<String> offerings, final String parameterName)
+            throws OwsExceptionReport {
         if (offerings != null) {
             final CompositeOwsException exceptions = new CompositeOwsException();
             for (final String offering : offerings) {
@@ -558,7 +588,8 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
     protected void setObservationResponseResponseFormatAndContentType(AbstractObservationRequest obsRequest,
             AbstractObservationResponse obsResponse) {
         if (obsRequest.isSetResponseFormat()) {
-            // don't normalize response format with MediaType parsing here, that's the job of the v1 decoders
+            // don't normalize response format with MediaType parsing here,
+            // that's the job of the v1 decoders
             obsResponse.setResponseFormat(obsRequest.getResponseFormat());
         }
     }
@@ -567,28 +598,35 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         return extensions != null && extensions.containsExtension(OWSConstants.AdditionalRequestParams.language);
     }
 
-//    protected void checkLanguageExtension(SwesExtensions extensions) throws OwsExceptionReport {
-//        checkLanguageExtension(extensions, ServiceConfiguration.getInstance().getSupportedLanguages());
-//    }
-//
-//    protected void checkLanguageExtension(SwesExtensions extensions, Set<String> supportedLanguages)
-//            throws OwsExceptionReport {
-//        if (hasLanguageExtension(extensions)) {
-//            SwesExtension<?> extension = extensions.getExtension(SosConstants.InspireParams.language);
-//            String value = Constants.EMPTY_STRING;
-//            if (extension.getValue() instanceof String) {
-//                value = (String) extension.getValue();
-//            } else if (extension.getValue() instanceof SweText) {
-//                value = ((SweText) extension.getValue()).getValue();
-//            } else {
-//                throw new MissingParameterValueException(SosConstants.InspireParams.language)
-//                        .withMessage("The language extension value should be of type 'swe:TextPropertytype'");
-//            }
-//            if (!supportedLanguages.contains(value)) {
-//                throw new InvalidParameterValueException(SosConstants.InspireParams.language, value);
-//            }
-//        }
-//    }
+    // protected void checkLanguageExtension(SwesExtensions extensions) throws
+    // OwsExceptionReport {
+    // checkLanguageExtension(extensions,
+    // ServiceConfiguration.getInstance().getSupportedLanguages());
+    // }
+    //
+    // protected void checkLanguageExtension(SwesExtensions extensions,
+    // Set<String> supportedLanguages)
+    // throws OwsExceptionReport {
+    // if (hasLanguageExtension(extensions)) {
+    // SwesExtension<?> extension =
+    // extensions.getExtension(SosConstants.InspireParams.language);
+    // String value = Constants.EMPTY_STRING;
+    // if (extension.getValue() instanceof String) {
+    // value = (String) extension.getValue();
+    // } else if (extension.getValue() instanceof SweText) {
+    // value = ((SweText) extension.getValue()).getValue();
+    // } else {
+    // throw new
+    // MissingParameterValueException(SosConstants.InspireParams.language)
+    // .withMessage("The language extension value should be of type 'swe:TextPropertytype'");
+    // }
+    // if (!supportedLanguages.contains(value)) {
+    // throw new
+    // InvalidParameterValueException(SosConstants.InspireParams.language,
+    // value);
+    // }
+    // }
+    // }
 
     private boolean checkFeatureValueReference(String valueReference) {
         return "sams:shape".equals(valueReference)

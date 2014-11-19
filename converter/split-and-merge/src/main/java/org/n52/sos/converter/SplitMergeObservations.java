@@ -36,6 +36,7 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.convert.RequestResponseModifier;
+import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
 import org.n52.sos.encode.ObservationEncoder;
 import org.n52.sos.ogc.om.OmObservation;
@@ -196,13 +197,9 @@ public class SplitMergeObservations implements
     }
 
     @Override
-    public boolean isMerger() {
-        return true;
-    }
-
-    @Override
-    public boolean isSplitter() {
-        return true;
+    public RequestResponseModifierFacilitator getFacilitator() {
+        // TODO Auto-generated method stub
+        return new RequestResponseModifierFacilitator().setMerger(true).setSplitter(true);
     }
 
 }

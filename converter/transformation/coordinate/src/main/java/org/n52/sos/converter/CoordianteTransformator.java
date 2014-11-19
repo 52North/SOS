@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.sos.convert.RequestResponseModifier;
+import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
@@ -843,14 +844,9 @@ public class CoordianteTransformator implements
         return ServiceConfiguration.getInstance();
     }
 
-	@Override
-	public boolean isMerger() {
-		return false;
-	}
-
-	@Override
-	public boolean isSplitter() {
-		return false;
-	}
+    @Override
+    public RequestResponseModifierFacilitator getFacilitator() {
+        return new RequestResponseModifierFacilitator();
+    }
 
 }

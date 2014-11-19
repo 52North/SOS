@@ -439,7 +439,19 @@
         <!-- flexible identifiers -->
         <dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>abstract-identifier</artifactId>
+        </dependency>
+        <dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>flexible-identifier</artifactId>
+        </dependency>
+        <dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>prefixed-identifier</artifactId>
+        </dependency>
+        <dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>ereporting-identifier</artifactId>
         </dependency>
 		<!-- Split and Merge observatioons -->
         <dependency>

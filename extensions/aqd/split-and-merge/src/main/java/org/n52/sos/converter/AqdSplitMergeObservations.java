@@ -35,6 +35,7 @@ import java.util.Set;
 
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.convert.RequestResponseModifier;
+import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -153,15 +154,10 @@ public class AqdSplitMergeObservations implements
             combinedSosObs.setResultTime(sosObservation.getResultTime());
         }
     }
-
+    
     @Override
-    public boolean isMerger() {
-        return true;
-    }
-
-    @Override
-    public boolean isSplitter() {
-        return true;
+    public RequestResponseModifierFacilitator getFacilitator() {
+        return new RequestResponseModifierFacilitator().setMerger(true).setSplitter(true);
     }
 
 }

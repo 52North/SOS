@@ -363,7 +363,22 @@
 	        <!-- flexible identifiers -->
 	        <dependency>
 				<groupId>${project.groupId}</groupId>
+				<artifactId>abstract-identifier</artifactId>
+				<version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+				<groupId>${project.groupId}</groupId>
 				<artifactId>flexible-identifier</artifactId>
+				<version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>prefixed-identifier</artifactId>
+				<version>${project.version}</version>
+	        </dependency>
+	         <dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>ereporting-identifier</artifactId>
 				<version>${project.version}</version>
 	        </dependency>
 	        <!-- Split and Merge observatioons -->

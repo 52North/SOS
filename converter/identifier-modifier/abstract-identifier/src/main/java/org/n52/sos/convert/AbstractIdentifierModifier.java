@@ -26,11 +26,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.converter;
+package org.n52.sos.convert;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,8 +38,6 @@ import java.util.SortedSet;
 
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.convert.RequestResponseModifier;
-import org.n52.sos.convert.RequestResponseModifierKeyType;
-import org.n52.sos.converter.util.FlexibleIdentifierHelper;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.gda.GetDataAvailabilityResponse;
@@ -51,7 +48,6 @@ import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
 import org.n52.sos.ogc.ows.OwsParameterValue;
@@ -66,7 +62,6 @@ import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
 import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosObservationOffering;
@@ -80,9 +75,7 @@ import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.ogc.swe.simpleType.SweTime;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.request.GetCapabilitiesRequest;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
-import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.GetResultRequest;
 import org.n52.sos.request.GetResultTemplateRequest;
@@ -91,9 +84,6 @@ import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.response.GetCapabilitiesResponse;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
-import org.n52.sos.response.GetObservationByIdResponse;
-import org.n52.sos.response.GetObservationResponse;
-import org.n52.sos.response.GetResultResponse;
 import org.n52.sos.response.GetResultTemplateResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
@@ -106,60 +96,35 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-/**
- * Modifier for flexible identifier.
- * 
- * If the requests contain flexible identifier, the identifier would be replaced
- * with the default identifier.
- * 
- * If the global setting for flexible identifier is enabled or the request
- * contains the flexible identifier flag, the identifiers in the responses would
- * be replaced with the flexible identifier.
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.3.0
- *
- */
-public class FlexibleIdentifierModifier implements
-        RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+public abstract class AbstractIdentifierModifier implements RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+    
+    
+    protected abstract  boolean checkForFlag(AbstractServiceRequest<?> request, AbstractServiceResponse response) throws InvalidParameterValueException;
+    
+    protected abstract String checkOfferingParameterValue(String parameterValue);
+    
+    protected abstract String checkFeatureOfInterestParameterValue(String parameterValue);
+    
+    protected abstract String checkProcedureParameterValue(String parameterValue);
+    
+    protected abstract String checkObservablePropertyParameterValue(String parameterValue);
+    
+    protected abstract String checkFeatureOfInterestIdentifier(String identifier);
 
-    private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
+    protected abstract String checkObservablePropertyIdentifier(String identifier);
+    
+    protected abstract String checkProcedureIdentifier(String identifier);
 
-    /**
-     * Get the keys
-     * 
-     * @return Set of keys
-     */
-    private static Set<RequestResponseModifierKeyType> getKeyTypes() {
-        Set<String> services = Sets.newHashSet(SosConstants.SOS);
-        Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
-        Map<AbstractServiceRequest<?>, AbstractServiceResponse> requestResponseMap = Maps.newHashMap();
-        requestResponseMap.put(new GetCapabilitiesRequest(), new GetCapabilitiesResponse());
-        requestResponseMap.put(new GetObservationRequest(), new GetObservationResponse());
-        requestResponseMap.put(new GetObservationByIdRequest(), new GetObservationByIdResponse());
-        requestResponseMap.put(new GetFeatureOfInterestRequest(), new GetFeatureOfInterestResponse());
-        requestResponseMap.put(new DescribeSensorRequest(), new DescribeSensorResponse());
-        requestResponseMap.put(new GetDataAvailabilityRequest(), new GetDataAvailabilityResponse());
-        requestResponseMap.put(new GetResultTemplateRequest(), new GetResultTemplateResponse());
-        requestResponseMap.put(new GetResultRequest(), new GetResultResponse());
-        Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
-        for (String service : services) {
-            for (String version : versions) {
-                for (AbstractServiceRequest<?> request : requestResponseMap.keySet()) {
-                    keys.add(new RequestResponseModifierKeyType(service, version, request));
-                    keys.add(new RequestResponseModifierKeyType(service, version, request, requestResponseMap
-                            .get(request)));
-                }
-            }
-        }
-        return keys;
-    }
+    protected abstract String checkOfferingIdentifier(String identifier);
+    
+    protected abstract void checkAndChangeFeatureOfInterestIdentifier(AbstractFeature abstractFeature);
 
-    @Override
-    public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
-        return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
-    }
+    protected abstract void checkAndChangeProcedureIdentifier(AbstractFeature abstractFeature);
 
+    protected abstract void checkAndChangeObservablePropertyIdentifier(AbstractFeature abstractFeature);
+
+    protected abstract void checkAndChangOfferingIdentifier(SosOffering offering);
+    
     @Override
     public AbstractServiceRequest<?> modifyRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         if (request instanceof GetObservationRequest) {
@@ -178,7 +143,7 @@ public class FlexibleIdentifierModifier implements
         return request;
     }
 
-    private AbstractServiceRequest<?> changeGetObservationRequestParameterValues(GetObservationRequest request) {
+    protected AbstractServiceRequest<?> changeGetObservationRequestParameterValues(GetObservationRequest request) {
         if (request.isSetOffering()) {
             request.setOfferings(checkOfferingParameterValues(request.getOfferings()));
         }
@@ -194,7 +159,7 @@ public class FlexibleIdentifierModifier implements
         return request;
     }
 
-    private AbstractServiceRequest<?> changeGetFeatureOfInterestRequestParameterValues(
+    protected AbstractServiceRequest<?> changeGetFeatureOfInterestRequestParameterValues(
             GetFeatureOfInterestRequest request) {
         if (request.isSetFeatureOfInterestIdentifiers()) {
             request.setFeatureIdentifiers(checkFeatureOfInterestParameterValues(request.getFeatureIdentifiers()));
@@ -208,12 +173,12 @@ public class FlexibleIdentifierModifier implements
         return request;
     }
 
-    private AbstractServiceRequest<?> changeDescribeSensorRequestParameterValues(DescribeSensorRequest request) {
+    protected AbstractServiceRequest<?> changeDescribeSensorRequestParameterValues(DescribeSensorRequest request) {
         request.setProcedure(checkProcedureParameterValue(request.getProcedure()));
         return request;
     }
 
-    private AbstractServiceRequest<?> changeGetDataAvailabilityRequestParameterValues(
+    protected AbstractServiceRequest<?> changeGetDataAvailabilityRequestParameterValues(
             GetDataAvailabilityRequest request) {
         if (request.isSetOfferings()) {
             request.setOffering(checkOfferingParameterValues(request.getOfferings()));
@@ -230,7 +195,7 @@ public class FlexibleIdentifierModifier implements
         return request;
     }
 
-    private AbstractServiceRequest<?> changeGetResultTemplateRequestParameterValues(GetResultTemplateRequest request) {
+    protected AbstractServiceRequest<?> changeGetResultTemplateRequestParameterValues(GetResultTemplateRequest request) {
         if (request.isSetOffering()) {
             request.setOffering(checkOfferingParameterValue(request.getOffering()));
         }
@@ -240,7 +205,7 @@ public class FlexibleIdentifierModifier implements
         return request;
     }
 
-    private AbstractServiceRequest<?> changeGetResultRequestParameterValues(GetResultRequest request) {
+    protected AbstractServiceRequest<?> changeGetResultRequestParameterValues(GetResultRequest request) {
         if (request.isSetOffering()) {
             request.setOffering(checkOfferingParameterValue(request.getOffering()));
         }
@@ -252,11 +217,11 @@ public class FlexibleIdentifierModifier implements
         }
         return request;
     }
-
+    
     @Override
     public AbstractServiceResponse modifyResponse(AbstractServiceRequest<?> request, AbstractServiceResponse response)
             throws OwsExceptionReport {
-        if (checkForReturnHumanReadableIdentifier(request, response)) {
+        if (checkForFlag(request, response)) {
             if (response instanceof GetCapabilitiesResponse) {
                 return changeGetCapabilitiesResponseIdentifier((GetCapabilitiesResponse) response);
             } else if (response instanceof AbstractObservationResponse) {
@@ -274,7 +239,7 @@ public class FlexibleIdentifierModifier implements
         return response;
     }
 
-    private GetCapabilitiesResponse changeGetCapabilitiesResponseIdentifier(GetCapabilitiesResponse response) {
+    protected GetCapabilitiesResponse changeGetCapabilitiesResponseIdentifier(GetCapabilitiesResponse response) {
         SosCapabilities capabilities = response.getCapabilities();
         if (capabilities.isSetOperationsMetadata() && capabilities.getOperationsMetadata().isSetOperations()) {
             for (OwsOperation operation : capabilities.getOperationsMetadata().getOperations()) {
@@ -319,7 +284,7 @@ public class FlexibleIdentifierModifier implements
         return response;
     }
 
-    private void checkOwsParameterValues(List<OwsParameterValue> list, String name) {
+    protected void checkOwsParameterValues(List<OwsParameterValue> list, String name) {
         // List<OwsParameterValue> checkedList =
         // Lists.newArrayListWithCapacity(list.size());
         for (OwsParameterValue owsParameterValue : list) {
@@ -345,14 +310,14 @@ public class FlexibleIdentifierModifier implements
         }
     }
 
-    private AbstractServiceResponse changeDescribeSensorResponseIdentifier(DescribeSensorResponse response) {
+    protected AbstractServiceResponse changeDescribeSensorResponseIdentifier(DescribeSensorResponse response) {
         for (SosProcedureDescription procedure : response.getProcedureDescriptions()) {
             checkAndChangeProcedure(procedure);
         }
         return response;
     }
 
-    private AbstractServiceResponse changeAbstractObservationResponseIdentifier(AbstractObservationResponse response) {
+    protected AbstractServiceResponse changeAbstractObservationResponseIdentifier(AbstractObservationResponse response) {
         for (OmObservation omObservation : response.getObservationCollection()) {
             OmObservationConstellation observationConstellation = omObservation.getObservationConstellation();
             checkAndChangeFeatureOfInterestIdentifier(observationConstellation.getFeatureOfInterest());
@@ -365,7 +330,7 @@ public class FlexibleIdentifierModifier implements
         return response;
     }
 
-    private AbstractServiceResponse changeGetFeatureOfInterestResponseIdentifier(GetFeatureOfInterestResponse response) {
+    protected AbstractServiceResponse changeGetFeatureOfInterestResponseIdentifier(GetFeatureOfInterestResponse response) {
         if (response.getAbstractFeature() instanceof FeatureCollection) {
             FeatureCollection featureCollection = (FeatureCollection) response.getAbstractFeature();
             // TODO check if new map with new identifier should be created
@@ -378,7 +343,7 @@ public class FlexibleIdentifierModifier implements
         return response;
     }
 
-    private AbstractServiceResponse changeGetResultTemplateResponseIdentifier(GetResultTemplateResponse response)
+    protected AbstractServiceResponse changeGetResultTemplateResponseIdentifier(GetResultTemplateResponse response)
             throws OwsExceptionReport {
         SweAbstractDataComponent resultStructure = response.getResultStructure().getResultStructure();
         SweDataRecord dataRecord = null;
@@ -403,7 +368,7 @@ public class FlexibleIdentifierModifier implements
         return response;
     }
 
-    private AbstractServiceResponse changeGetDataAvailabilityResponseIdentifier(GetDataAvailabilityResponse response) {
+    protected AbstractServiceResponse changeGetDataAvailabilityResponseIdentifier(GetDataAvailabilityResponse response) {
         for (DataAvailability dataAvailability : response.getDataAvailabilities()) {
             dataAvailability.getFeatureOfInterest().setHref(
                     checkFeatureOfInterestIdentifier(dataAvailability.getFeatureOfInterest().getHref()));
@@ -414,19 +379,7 @@ public class FlexibleIdentifierModifier implements
         }
         return response;
     }
-
-    private boolean checkForReturnHumanReadableIdentifier(AbstractServiceRequest<?> request,
-            AbstractServiceResponse response) throws InvalidParameterValueException {
-        if (getFlexibleIdentifierHelper()
-                .checkIsReturnHumanReadableIdentifierFlagExtensionSet(request.getExtensions())
-                || getFlexibleIdentifierHelper().checkIsReturnHumanReadableIdentifierFlagExtensionSet(
-                        response.getExtensions())) {
-            return checkResponseForReturnHumanReadableIdentifierFlag(response)
-                    || checkRequestForReturnHumanReadableIdentifierFlag(request);
-        }
-        return FlexibleIdentifierHelper.getInstance().isSetReturnHumanReadableIdentifier();
-    }
-
+    
     private void checkAndChangeProcedure(SosProcedureDescription procedure) {
         checkAndChangeProcedureIdentifier(procedure);
         if (procedure.isSetFeaturesOfInterest()) {
@@ -594,19 +547,7 @@ public class FlexibleIdentifierModifier implements
         return definition.startsWith(OGCConstants.URN_UNIQUE_IDENTIFIER_START)
                 && definition.contains(OGCConstants.URN_UNIQUE_IDENTIFIER_END);
     }
-
-    private boolean checkResponseForReturnHumanReadableIdentifierFlag(AbstractServiceResponse response)
-            throws InvalidParameterValueException {
-        return getFlexibleIdentifierHelper().checkForReturnHumanReadableIdentifierFlagExtension(
-                response.getExtensions());
-    }
-
-    private boolean checkRequestForReturnHumanReadableIdentifierFlag(AbstractServiceRequest<?> request)
-            throws InvalidParameterValueException {
-        return getFlexibleIdentifierHelper().checkForReturnHumanReadableIdentifierFlagExtension(
-                request.getExtensions());
-    }
-
+    
     private List<String> checkOfferingParameterValues(Collection<String> requestedParameterValues) {
         List<String> checkedParameterValues = Lists.newArrayListWithCapacity(requestedParameterValues.size());
         for (String parameterValue : requestedParameterValues) {
@@ -614,11 +555,7 @@ public class FlexibleIdentifierModifier implements
         }
         return checkedParameterValues;
     }
-
-    private String checkOfferingParameterValue(String parameterValue) {
-        return getCache().getOfferingIdentifierForHumanReadableName(parameterValue);
-    }
-
+    
     private List<String> checkFeatureOfInterestParameterValues(Collection<String> requestedParameterValues) {
         List<String> checkedParameterValues = Lists.newArrayListWithCapacity(requestedParameterValues.size());
         for (String parameterValue : requestedParameterValues) {
@@ -626,11 +563,7 @@ public class FlexibleIdentifierModifier implements
         }
         return checkedParameterValues;
     }
-
-    private String checkFeatureOfInterestParameterValue(String parameterValue) {
-        return getCache().getFeatureOfInterestIdentifierForHumanReadableName(parameterValue);
-    }
-
+    
     private List<String> checkObservablePropertyParameterValues(Collection<String> requestedParameterValues) {
         List<String> checkedParameterValues = Lists.newArrayListWithCapacity(requestedParameterValues.size());
         for (String parameterValue : requestedParameterValues) {
@@ -638,11 +571,7 @@ public class FlexibleIdentifierModifier implements
         }
         return checkedParameterValues;
     }
-
-    private String checkObservablePropertyParameterValue(String parameterValue) {
-        return getCache().getObservablePropertyIdentifierForHumanReadableName(parameterValue);
-    }
-
+    
     private List<String> checkProcedureParameterValues(Collection<String> requestedParameterValues) {
         List<String> checkedParameterValues = Lists.newArrayListWithCapacity(requestedParameterValues.size());
         for (String parameterValue : requestedParameterValues) {
@@ -650,11 +579,7 @@ public class FlexibleIdentifierModifier implements
         }
         return checkedParameterValues;
     }
-
-    private String checkProcedureParameterValue(String parameterValue) {
-        return getCache().getProcedureIdentifierForHumanReadableName(parameterValue);
-    }
-
+    
     private Collection<String> checkFeatureOfInterestIdentifier(Collection<String> identifiers) {
         List<String> checkedIdentifiers = Lists.newArrayListWithCapacity(identifiers.size());
         for (String identifier : identifiers) {
@@ -662,14 +587,7 @@ public class FlexibleIdentifierModifier implements
         }
         return checkedIdentifiers;
     }
-
-    private String checkFeatureOfInterestIdentifier(String identifier) {
-        if (getFlexibleIdentifierHelper().isSetIncludeFeatureOfInterest()) {
-            return getCache().getFeatureOfInterestHumanReadableNameForIdentifier(identifier);
-        }
-        return identifier;
-    }
-
+    
     private Collection<String> checkObservablePropertyIdentifier(SortedSet<String> identifiers) {
         List<String> checkedIdentifiers = Lists.newArrayListWithCapacity(identifiers.size());
         for (String identifier : identifiers) {
@@ -677,14 +595,7 @@ public class FlexibleIdentifierModifier implements
         }
         return checkedIdentifiers;
     }
-
-    private String checkObservablePropertyIdentifier(String identifier) {
-        if (getFlexibleIdentifierHelper().isSetIncludeObservableProperty()) {
-            return getCache().getObservablePropertyHumanReadableNameForIdentifier(identifier);
-        }
-        return identifier;
-    }
-
+    
     private Collection<String> checkProcedureIdentifier(Set<String> identifiers) {
         List<String> checkedIdentifiers = Lists.newArrayListWithCapacity(identifiers.size());
         for (String identifier : identifiers) {
@@ -701,70 +612,6 @@ public class FlexibleIdentifierModifier implements
         return checkedIdentifiers;
     }
 
-    private String checkProcedureIdentifier(String identifier) {
-        if (getFlexibleIdentifierHelper().isSetIncludeProcedure()) {
-            return getCache().getProcedureHumanReadableNameForIdentifier(identifier);
-        }
-        return identifier;
-    }
-
-    private String checkOfferingIdentifier(String identifier) {
-        if (getFlexibleIdentifierHelper().isSetIncludeOffering()) {
-            return getCache().getOfferingHumanReadableNameForIdentifier(identifier);
-        }
-        return identifier;
-    }
-
-    private void checkAndChangeFeatureOfInterestIdentifier(AbstractFeature abstractFeature) {
-        if (getFlexibleIdentifierHelper().isSetIncludeFeatureOfInterest()) {
-            checkAndChangeIdentifierOfAbstractFeature(abstractFeature);
-        }
-    }
-
-    private void checkAndChangeProcedureIdentifier(AbstractFeature abstractFeature) {
-        if (getFlexibleIdentifierHelper().isSetIncludeProcedure()) {
-            if (!abstractFeature.isSetHumanReadableIdentifier()) {
-                abstractFeature.setHumanReadableIdentifier(checkProcedureIdentifier(abstractFeature.getIdentifier()));
-            }
-            abstractFeature.setHumanReadableIdentifierAsIdentifier();
-        }
-    }
-
-    private void checkAndChangeObservablePropertyIdentifier(AbstractFeature abstractFeature) {
-        if (getFlexibleIdentifierHelper().isSetIncludeObservableProperty()) {
-            if (!abstractFeature.isSetHumanReadableIdentifier()) {
-                abstractFeature.setHumanReadableIdentifier(checkObservablePropertyIdentifier(abstractFeature
-                        .getIdentifier()));
-            }
-            abstractFeature.setHumanReadableIdentifierAsIdentifier();
-        }
-    }
-
-    private void checkAndChangOfferingIdentifier(SosOffering offering) {
-        if (offering != null && getFlexibleIdentifierHelper().isSetIncludeOffering()) {
-            if (!offering.isSetHumanReadableIdentifier()) {
-                offering.setHumanReadableIdentifier(checkOfferingIdentifier(offering.getIdentifier()));
-            }
-            offering.setHumanReadableIdentifierAsIdentifier();
-        }
-    }
-
-    private void checkAndChangeIdentifierOfAbstractFeature(AbstractFeature abstractFeature) {
-        if (!abstractFeature.isSetHumanReadableIdentifier()) {
-            abstractFeature.setHumanReadableIdentifier(checkFeatureOfInterestIdentifier(abstractFeature
-                    .getIdentifier()));
-        }
-        abstractFeature.setHumanReadableIdentifierAsIdentifier();
-        if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetXmlDescription()) {
-            ((SamplingFeature) abstractFeature).setXmlDescription(null);
-        }
-
-    }
-
-    protected FlexibleIdentifierHelper getFlexibleIdentifierHelper() {
-        return FlexibleIdentifierHelper.getInstance();
-    }
-
     protected Profile getActiveProfile() {
         return Configurator.getInstance().getProfileHandler().getActiveProfile();
     }
@@ -772,14 +619,10 @@ public class FlexibleIdentifierModifier implements
     protected ContentCache getCache() {
         return Configurator.getInstance().getCache();
     }
-
+    
     @Override
-    public boolean isMerger() {
-        return false;
+    public RequestResponseModifierFacilitator getFacilitator() {
+        return new RequestResponseModifierFacilitator().setAdderRemover(true);
     }
-
-    @Override
-    public boolean isSplitter() {
-        return false;
-    }
+    
 }

@@ -28,25 +28,56 @@
  */
 package org.n52.sos.aqd;
 
+import org.n52.sos.config.SettingsManager;
+import org.n52.sos.config.annotation.Configurable;
+import org.n52.sos.config.annotation.Setting;
+import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
+import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.CodeWithAuthority;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesExtensions;
+import org.n52.sos.settings.EReportingSetting;
+import org.n52.sos.util.Constants;
+import org.n52.sos.util.StringHelper;
 
+@Configurable
 public class AqdHelper {
+    
+    private static AqdHelper instance;
+    
+    private String namespace;
+    
+    private String observationPrefix;
+    
+    /**
+     * @return Returns a singleton instance of the AqdHelper.
+     */
+    public static synchronized AqdHelper getInstance() {
+        if (instance == null) {
+            instance = new AqdHelper();
+            SettingsManager.getInstance().configure(instance);
+        }
+        return instance;
+    }
 
     private AqdHelper() {
 
     }
 
-    public static boolean hasFlowExtension(SwesExtensions extensions) {
+    public boolean hasFlowExtension(SwesExtensions extensions) {
         if (extensions != null) {
             return extensions.containsExtension(AqdConstants.EXTENSION_FLOW);
         }
         return false;
     }
 
-    public static ReportObligationType getFlow(SwesExtensions extensions) throws InvalidParameterValueException {
+    public ReportObligationType getFlow(SwesExtensions extensions) throws InvalidParameterValueException {
         if (hasFlowExtension(extensions)) {
             SwesExtension<?> extension = extensions.getExtension(AqdConstants.EXTENSION_FLOW);
             if (extension.getValue() instanceof SweText) {
@@ -59,5 +90,66 @@ public class AqdHelper {
             }
         }
         return ReportObligationType.E2A;
+    }
+    
+    @Setting(EReportingSetting.EREPORTING_NAMESPACE)
+    public void setEReportingNamespace(final String namespace) throws ConfigurationException {
+        this.namespace = namespace;
+    }
+
+    public String getEReportingNamespace() {
+        return namespace;
+    }
+    
+    public boolean isSetEReportingNamespace() {
+        return StringHelper.isNotEmpty(getEReportingNamespace());
+    }
+    
+    @Setting(EReportingSetting.EREPORTING_OBSERVATION_PREFIX)
+    public void setEReportingObservationPrefix(final String observationPrefix) throws ConfigurationException {
+        this.observationPrefix = observationPrefix;
+    }
+
+    public String getEReportingObservationPrefix() {
+        return observationPrefix;
+    }
+    
+    public boolean isSetEReportingObservationPrefix() {
+        return StringHelper.isNotEmpty(getEReportingObservationPrefix());
+    }
+    
+    public void processObservation(OmObservation observation, TimePeriod timePeriod, TimeInstant resultTime,
+            FeatureCollection featureCollection, AbstractEReportingHeader eReportingHeader, int counter) {
+        if (observation.isSetPhenomenonTime()) {
+            // generate gml:id
+            observation.setGmlId(getObservationId(counter));
+            // add xlink:href to eReportingHeader.content
+            eReportingHeader.addContent((AbstractFeature)new OmObservation().setIdentifier(new CodeWithAuthority(getObservationXlink(observation.getGmlId()))));
+            timePeriod.extendToContain(observation.getPhenomenonTime());
+            observation.setResultTime(resultTime);
+            featureCollection.addMember(observation);
+        }
+    }
+
+    public String getObservationXlink(String gmlId) {
+        StringBuilder id = new StringBuilder();
+        if (isSetEReportingNamespace()) {
+            id.append(getEReportingNamespace());
+            if (!getEReportingNamespace().endsWith(Constants.SLASH_STRING)) {
+                id.append(Constants.SLASH_STRING);
+            }
+        } else {
+            id.append(Constants.NUMBER_SIGN_STRING);
+        }
+        id.append(gmlId);
+        return id.toString();
+       
+    }
+
+    public String getObservationId(int counter) {
+        if (isSetEReportingObservationPrefix()) {
+            return getEReportingObservationPrefix() + Integer.toString(counter);
+        }
+        return "o_" + Integer.toString(counter++);
     }
 }

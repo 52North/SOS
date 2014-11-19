@@ -4,13 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.n52.sensorweb.sos</groupId>
-		<artifactId>converter</artifactId>
+		<artifactId>aqd</artifactId>
 		  <version>4.3.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>flexible-identifier</artifactId>
+	<artifactId>ereporting-identifier</artifactId>
 	<packaging>jar</packaging>
-	<name>52°North SOS - Flexible identifier convert module</name>
-	<description>52°North SOS - Module to support flexible identifiers in requests and responses</description>
+	<name>52°North SOS - eReporting Prefixed identifier convert module</name>
+	<description>52°North SOS - Module to support eReporting prefixed identifiers in requests and responses</description>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -19,6 +19,14 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>gda-operation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>abstract-identifier</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>api-aqd-v10</artifactId>
 		</dependency>
 	</dependencies>
 </project>

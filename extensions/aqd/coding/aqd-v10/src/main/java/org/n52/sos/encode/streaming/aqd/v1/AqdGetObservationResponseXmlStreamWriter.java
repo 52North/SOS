@@ -170,7 +170,16 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
                 LOGGER.debug("Observation processing requires {} ms", (System.currentTimeMillis() - start));
                 // stop the timer task
                 stopTimer();
+                int count = 0;
                 for (OmObservation omObservation : mergeObservation) {
+                    if (abstractFeature.isSetGmlID()) {
+                        if (count == 0) {
+                            omObservation.setGmlId(abstractFeature.getGmlId());
+                        } else {
+                            omObservation.setGmlId(abstractFeature.getGmlId() + "_" + count);
+                        }
+                        count++;
+                    }
                     omObservation.setResultTime(resultTime);
                     writeMember(omObservation, getEncoder(abstractFeature, encodingValues.getAdditionalValues()),
                             encodingValues);

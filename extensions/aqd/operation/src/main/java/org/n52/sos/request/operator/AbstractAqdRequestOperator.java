@@ -56,9 +56,9 @@ public abstract class AbstractAqdRequestOperator<D extends OperationDAO, Q exten
     }
 
     protected void checkExtensions(final AbstractServiceRequest<?> request, final CompositeOwsException exceptions) {
-        if (request.isSetExtensions() && AqdHelper.hasFlowExtension(request.getExtensions())) {
+        if (request.isSetExtensions() && AqdHelper.getInstance().hasFlowExtension(request.getExtensions())) {
             try {
-                AqdHelper.getFlow(request.getExtensions());
+                AqdHelper.getInstance().getFlow(request.getExtensions());
             } catch (InvalidParameterValueException e) {
                 exceptions.add(e);
             }

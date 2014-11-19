@@ -32,16 +32,18 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.n52.sos.aqd.AbstractEReportingHeader;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Nillable;
 import org.n52.sos.util.Referenceable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-public class EReportingHeader extends AbstractFeature {
+public class EReportingHeader extends AbstractEReportingHeader {
 
 	private static final long serialVersionUID = -552875135737898115L;
 	private InspireID inspireID;
@@ -108,6 +110,10 @@ public class EReportingHeader extends AbstractFeature {
 
     public List<Referenceable<AbstractFeature>> getContent() {
         return Collections.unmodifiableList(content);
+    }
+
+    public boolean isSetContent() {
+        return CollectionHelper.isNotEmpty(content);
     }
 
     public EReportingHeader addContent(Referenceable<AbstractFeature> content) {

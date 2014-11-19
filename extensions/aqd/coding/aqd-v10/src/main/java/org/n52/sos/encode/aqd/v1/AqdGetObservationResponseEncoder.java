@@ -39,7 +39,6 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
@@ -64,7 +63,8 @@ import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.Referenceable;
 import org.n52.sos.w3c.SchemaLocation;
 
-public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder<GetObservationResponse> implements StreamingDataEncoder {
+public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder<GetObservationResponse> implements
+        StreamingDataEncoder {
 
     public AqdGetObservationResponseEncoder() {
         super(SosConstants.Operations.GetObservation.name(), GetObservationResponse.class);
@@ -89,33 +89,24 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
         TimePeriod timePeriod = new TimePeriod();
         boolean mergeStreaming = response.hasStreamingData() && !response.isSetMergeObservation();
         TimeInstant resultTime = new TimeInstant(new DateTime(DateTimeZone.UTC));
+        int counter = 1;
         for (OmObservation observation : response.getObservationCollection()) {
             if (mergeStreaming) {
                 AbstractStreaming value = (AbstractStreaming) observation.getValue();
                 if (value instanceof StreamingValue) {
                     for (OmObservation omObservation : value.mergeObservation()) {
-                        if (omObservation.isSetPhenomenonTime()) {
-                            timePeriod.extendToContain(omObservation.getPhenomenonTime());
-                            omObservation.setResultTime(resultTime);
-                            featureCollection.addMember(omObservation);
-                        }
+                        getAqdHelper().processObservation(omObservation, timePeriod, resultTime, featureCollection,
+                                eReportingHeader, counter++);
                     }
                 } else {
                     while (value.hasNextValue()) {
-                        OmObservation nextSingleObservation = value.nextSingleObservation();
-                        if (nextSingleObservation.isSetPhenomenonTime()) {
-                            timePeriod.extendToContain(nextSingleObservation.getPhenomenonTime());
-                            nextSingleObservation.setResultTime(resultTime);
-                            featureCollection.addMember(nextSingleObservation);
-                        }
+                        getAqdHelper().processObservation(value.nextSingleObservation(), timePeriod, resultTime,
+                                featureCollection, eReportingHeader, counter++);
                     }
                 }
             } else {
-                if (observation.isSetPhenomenonTime()) {
-                    timePeriod.extendToContain(observation.getPhenomenonTime());
-                    observation.setResultTime(resultTime);
-                    featureCollection.addMember(observation);
-                }
+                getAqdHelper().processObservation(observation, timePeriod, resultTime, featureCollection,
+                        eReportingHeader, counter++);
             }
         }
         if (!timePeriod.isEmpty()) {
@@ -133,7 +124,7 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
         FeatureCollection featureCollection = getFeatureCollection(response);
         EReportingHeader eReportingHeader = getEReportingHeader(getReportObligationType(response));
         featureCollection.addMember(eReportingHeader);
-        TimePeriod timePeriod = addToFeatureCollectionAndGetTimePeriod(featureCollection, response);
+        TimePeriod timePeriod = addToFeatureCollectionAndGetTimePeriod(featureCollection, response, eReportingHeader);
         if (!timePeriod.isEmpty()) {
             eReportingHeader.setReportingPeriod(Referenceable.of((Time) timePeriod));
         }
@@ -149,22 +140,20 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
         }
     }
 
-    private ReportObligationType getReportObligationType(GetObservationResponse response) throws InvalidParameterValueException {
-        return AqdHelper.getFlow(response.getExtensions());
+    private ReportObligationType getReportObligationType(GetObservationResponse response)
+            throws InvalidParameterValueException {
+        return getAqdHelper().getFlow(response.getExtensions());
     }
 
     private TimePeriod addToFeatureCollectionAndGetTimePeriod(FeatureCollection featureCollection,
-            GetObservationResponse response) {
+            GetObservationResponse response, EReportingHeader eReportingHeader) {
         TimeInstant resultTime = new TimeInstant(new DateTime(DateTimeZone.UTC));
         TimePeriod timePeriod = new TimePeriod();
         int counter = 1;
         for (OmObservation observation : response.getObservationCollection()) {
-            if (observation.isSetPhenomenonTime()) {
-                timePeriod.extendToContain(observation.getPhenomenonTime());
-                observation.setGmlId("o_" + counter++);
-                observation.setResultTime(resultTime);
-                featureCollection.addMember(observation);
-            }
+            getAqdHelper().processObservation(observation, timePeriod, resultTime, featureCollection,
+                    eReportingHeader, counter++);
+
         }
         return timePeriod;
     }

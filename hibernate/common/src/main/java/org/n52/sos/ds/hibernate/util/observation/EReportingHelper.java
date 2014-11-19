@@ -165,8 +165,8 @@ public class EReportingHelper {
         dataRecord.addField(createField(ElementType.END_TIME, createSweTimeSamplingTime(ElementType.END_TIME)));
         dataRecord.addField(createField(ElementType.VERIFICATION, createSweCatagory(ElementType.VERIFICATION)));
         dataRecord.addField(createField(ElementType.VALIDATION, createSweCatagory(ElementType.VALIDATION)));
-        ElementType pollutant = ElementType.getPollutantElementType(primaryObservation, unit);
-        dataRecord.addField(createField(pollutant, createSweQuantity(pollutant, unit)));
+        ElementType value = ElementType.getValueElementType(primaryObservation, unit);
+        dataRecord.addField(createField(value, createSweQuantity(value, unit)));
         if (primaryObservation.isMultyDayPrimaryObservation()) {
             dataRecord.addField(createField(ElementType.DATA_CAPTURE, createSweQuantity(ElementType.DATA_CAPTURE)));
         }
@@ -227,7 +227,7 @@ public class EReportingHelper {
         }
     }
 
-    private static void addPollutant(List<String> value, OmObservation omObservation) {
+    private static void addValue(List<String> value, OmObservation omObservation) {
         if (omObservation.getValue() instanceof SingleObservationValue<?>) {
             value.add(JavaHelper.asString(omObservation.getValue().getValue().getValue()));
         } else {
@@ -235,7 +235,7 @@ public class EReportingHelper {
         }
     }
 
-    private static void addPollutant(List<String> value, EReportingValues observation) {
+    private static void addValue(List<String> value, EReportingValues observation) {
         if (observation.isSetValue()) {
             value.add(observation.getValueAsString());
         } else {
@@ -248,7 +248,7 @@ public class EReportingHelper {
         addTimes(value, ((AbstractObservationTime) observation).createPhenomenonTime());
         addIntegerValue(value, observation.getVerification());
         addIntegerValue(value, observation.getValidation());
-        addPollutant(value, observation);
+        addValue(value, observation);
         if (primaryObservation.isMultyDayPrimaryObservation()) {
             addDoubleValue(value, observation.getDataCapture());
         }

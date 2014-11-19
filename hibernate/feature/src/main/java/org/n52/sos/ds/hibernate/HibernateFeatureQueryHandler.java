@@ -537,7 +537,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                 epsg = feature.getSrid();
             }
             final String wktString =
-                    GeometryHandler.getInstance().getWktString(feature.getLongitude(), feature.getLatitude());
+                    GeometryHandler.getInstance().getWktString(feature.getLongitude(), feature.getLatitude(), epsg);
             final Geometry geom = JTSHelper.createGeometryFromWKT(wktString, epsg);
             if (feature.isSetAltitude()) {
                 geom.getCoordinate().z = GeometryHandler.getInstance().getValueAsDouble(feature.getAltitude());

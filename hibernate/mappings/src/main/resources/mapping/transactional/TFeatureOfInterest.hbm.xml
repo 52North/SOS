@@ -4,11 +4,16 @@
 <hibernate-mapping>
 	<subclass name="org.n52.sos.ds.hibernate.entities.TFeatureOfInterest" extends="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" discriminator-value="true">
         <set name="childs" table="featureRelation" inverse="false" fetch="select">
+        	<comment>Relation table to store feature hierarchies. E.g. define a parent in a query and all childs are also contained in the response. Mapping file: mapping/transactional/TFeatureOfInterest.hbm.xml</comment>
             <key>
-                <column name="parentFeatureId" not-null="true" />
+                <column name="parentFeatureId" not-null="true">
+	            	<comment>Foreign Key (FK) to the related parent featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
+	            </column>
             </key>
             <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.TFeatureOfInterest" foreign-key="featureOfInterestChildFk">
-                <column name="childFeatureId" not-null="true" />
+                <column name="childFeatureId" not-null="true">
+	            	<comment>Foreign Key (FK) to the related child featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
+	            </column>
             </many-to-many>
         </set>
         <set name="parents" table="featureRelation" inverse="false" fetch="select">

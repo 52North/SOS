@@ -64,8 +64,8 @@ public class EReportingObservationHelper {
             NamedValue<ReferenceType> namedValue = new NamedValue<ReferenceType>();
             namedValue.setName(new ReferenceType(ProcessParameter.SamplingPoint.getConceptURI()));
             ReferenceValue value = createReferenceValue(samplingPoint.getIdentifier());
-            value.getValue().setTitle(samplingPoint.getName());
-            namedValue.setValue(createReferenceValue(samplingPoint.getIdentifier()));
+//            value.getValue().setTitle(samplingPoint.getName());
+            namedValue.setValue(value);
             return namedValue;
         }
         NamedValue<W3CHrefAttribute> namedValue = new NamedValue<W3CHrefAttribute>();

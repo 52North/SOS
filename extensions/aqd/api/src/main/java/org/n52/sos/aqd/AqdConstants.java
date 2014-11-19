@@ -419,7 +419,8 @@ public interface AqdConstants {
         ObjectiveEstimation("objective-estimation"), 
         PrimaryObservationTime("primaryObsTime"), 
         SamplingPoint("SamplingPoint"), 
-        MonitoringStation("Station"), 
+        MonitoringStation("Station"),
+        Network("Network"),
         VerificationSamplingPoints("VER-SP"), 
         VerificationSamplingPointsOther("VER-SPother");
 

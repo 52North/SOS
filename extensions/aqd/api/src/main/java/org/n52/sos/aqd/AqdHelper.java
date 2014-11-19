@@ -56,7 +56,7 @@ public class AqdHelper {
     private String observationPrefix;
     
     /**
-     * @return Returns a singleton instance of the ServiceConfiguration.
+     * @return Returns a singleton instance of the AqdHelper.
      */
     public static synchronized AqdHelper getInstance() {
         if (instance == null) {

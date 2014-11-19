@@ -17,5 +17,6 @@
         <module>coding</module>
         <module>ereporting</module>
         <module>split-and-merge</module>
+        <module>ereporting-identifier</module>
     </modules>
 </project>

@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.n52.sensorweb.sos</groupId>
-		<artifactId>converter</artifactId>
+		<artifactId>identifier-modifier</artifactId>
 		  <version>4.3.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>flexible-identifier</artifactId>
@@ -19,6 +19,10 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>gda-operation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>abstract-identifier</artifactId>
 		</dependency>
 	</dependencies>
 </project>

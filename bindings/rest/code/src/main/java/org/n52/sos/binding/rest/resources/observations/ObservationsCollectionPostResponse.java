@@ -33,7 +33,7 @@ import net.opengis.om.x20.OMObservationType;
 import org.n52.sos.binding.rest.requests.RestResponse;
 
 /**
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
+ * @author <a href="mailto:ydamigos@iccs.gr">Yannis Damigos</a>
  *
  */
 public class ObservationsCollectionPostResponse implements RestResponse {

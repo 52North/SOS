@@ -49,6 +49,17 @@ No printer friendly documentation exist for this release. Instead, refer to the 
 
 No printer friendly installation guide exist for this release. Instead, refer to the [wiki documentation][5].
 
+## Contributing
+
+You are interesting in contributing the 52°North SOS and you want to pull your changes to the 52N repository to make it available to all?
+
+In that case we need your official permission and for this purpose we have a so called contributors license agreement (CLA) in place. With this agreement you grant us the rights to use and publish your code under an open source license.
+
+A link to the contributors license agreement and further explanations are available here: 
+
+    http://52north.org/about/licensing/cla-guidelines
+
+
 ## Support and Contact
 
 You can get support in the community mailing list and forums:

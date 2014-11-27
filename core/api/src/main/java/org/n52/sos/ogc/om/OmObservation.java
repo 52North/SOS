@@ -97,6 +97,9 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /** separator of value tuples, which are contained in the resulte element */
     private String tupleSeparator;
+    
+    /** separator of decimal values, which are contained in the resulte element */
+    private String decimalSeparator;
 
     /**
      * Measurment quality
@@ -276,6 +279,25 @@ public class OmObservation extends AbstractFeature implements Serializable {
     public void setTupleSeparator(final String tupleSeparator) {
         this.tupleSeparator = tupleSeparator;
     }
+    
+    /**
+     * Get decimal separator
+     * 
+     * @return the decimalSeparator
+     */
+    public String getDecimalSeparator() {
+        return decimalSeparator;
+    }
+
+    /**
+     * Set decimal separator
+     * 
+     * @param decimalSeparator
+     *            the decimalSeparator to set
+     */
+    public void setDecimalSeparator(final String decimalSeparator) {
+        this.decimalSeparator = decimalSeparator;
+    }
 
     /**
      * Get observation values
@@ -419,6 +441,15 @@ public class OmObservation extends AbstractFeature implements Serializable {
     public boolean isSetTokenSeparator() {
         return StringHelper.isNotEmpty(getTokenSeparator());
     }
+    
+    /**
+     * Check whether decimal separator is set
+     * 
+     * @return <code>true</code>, if decimal separator is set
+     */
+    public boolean isSetDecimalSeparator() {
+        return StringHelper.isNotEmpty(getDecimalSeparator());
+    }
 
     /**
      * Check whether result time is set
@@ -551,6 +582,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
         clone.setResultType(this.getResultType());
         clone.setTokenSeparator(this.getTokenSeparator());
         clone.setTupleSeparator(this.getTupleSeparator());
+        clone.setDecimalSeparator(this.getDecimalSeparator());
         return clone;
     }
 

@@ -42,9 +42,9 @@ public class ElementType {
 
     public static ElementType VERIFICATION = new ElementType("Verification", AqdConstants.DEFINITION_VERIFICATION);
 
-    public static ElementType VALIDATION = new ElementType("Validation", AqdConstants.DEFINITION_VALIDATION);
+    public static ElementType VALIDITY = new ElementType("Validity", AqdConstants.DEFINITION_VALIDITY);
     
-    public static  ElementType DATA_CAPTURE = new ElementType("DataCapture", AqdConstants.DEFINITION_VALIDATION, AqdConstants.DEFINITION_UOM_STATISTICS_PERCENTAGE);
+    public static ElementType DATA_CAPTURE = new ElementType("DataCapture", AqdConstants.DEFINITION_DATA_CAPTURE, AqdConstants.DEFINITION_UOM_STATISTICS_PERCENTAGE);
     
     private final String name;
 

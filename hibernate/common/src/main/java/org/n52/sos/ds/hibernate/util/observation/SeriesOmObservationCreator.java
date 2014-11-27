@@ -104,6 +104,7 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
             sosObservation.setNoDataValue(getNoDataValue());
             sosObservation.setTokenSeparator(getTokenSeparator());
             sosObservation.setTupleSeparator(getTupleSeparator());
+            sosObservation.setDecimalSeparator(getDecimalSeparator());
             sosObservation.setObservationConstellation(obsConst);
             checkForAdditionalObservationCreator(series, sosObservation);
             final NilTemplateValue value = new NilTemplateValue();

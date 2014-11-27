@@ -31,6 +31,7 @@ package org.n52.sos.encode.streaming.aqd.v1;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -39,11 +40,13 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.XmlStreamWriter;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -51,14 +54,19 @@ import org.n52.sos.ogc.om.AbstractStreaming;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.FeatureCollection;
+import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.w3c.SchemaLocation;
 import org.n52.sos.w3c.W3CConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 /**
  * XML stream writer implementation for AQD eResporting
@@ -73,6 +81,8 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
     private static final Logger LOGGER = LoggerFactory.getLogger(AqdGetObservationResponseXmlStreamWriter.class);
 
     private static final long TIMER_PERIOD = 250;
+    
+    private static final String NS_SWE_CHECK = "xmlns:ns=\"http://www.opengis.net/swe/2.0\"";
 
     private FeatureCollection featureCollection;
 
@@ -153,9 +163,8 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
     private void writeFeatureCollectionDoc(EncodingValues encodingValues) throws XMLStreamException,
             OwsExceptionReport {
         start(GmlConstants.QN_FEATURE_COLLECTION_32);
-        namespace(W3CConstants.NS_XLINK_PREFIX, W3CConstants.NS_XLINK);
-        namespace(OmConstants.NS_OM_PREFIX, OmConstants.NS_OM_2);
-        namespace(GmlConstants.NS_GML_PREFIX, GmlConstants.NS_GML_32);
+        addNamespaces();
+        addSchemaLocations();
         addGmlId(featureCollection.getGmlId());
         TimeInstant resultTime = new TimeInstant(new DateTime(DateTimeZone.UTC));
         for (AbstractFeature abstractFeature : featureCollection.getMembers().values()) {
@@ -168,8 +177,6 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
                 Collection<OmObservation> mergeObservation =
                         ((AbstractStreaming) ((OmObservation) abstractFeature).getValue()).mergeObservation();
                 LOGGER.debug("Observation processing requires {} ms", (System.currentTimeMillis() - start));
-                // stop the timer task
-                stopTimer();
                 int count = 0;
                 for (OmObservation omObservation : mergeObservation) {
                     if (abstractFeature.isSetGmlID()) {
@@ -181,8 +188,11 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
                         count++;
                     }
                     omObservation.setResultTime(resultTime);
-                    writeMember(omObservation, getEncoder(abstractFeature, encodingValues.getAdditionalValues()),
+                    String xmlTextObservation = prepareObservation(omObservation, getEncoder(abstractFeature, encodingValues.getAdditionalValues()),
                             encodingValues);
+                    // stop the timer task
+                    stopTimer();
+                    writeMember(xmlTextObservation);
                 }
             } else {
                 writeMember(abstractFeature, getEncoder(abstractFeature, encodingValues.getAdditionalValues()),
@@ -194,28 +204,98 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
         end(GmlConstants.QN_FEATURE_COLLECTION_32);
     }
 
+    private void addNamespaces() throws XMLStreamException {
+        // W3C
+        namespace(W3CConstants.NS_XLINK_PREFIX, W3CConstants.NS_XLINK);
+        // xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        namespace("xsd", "http://www.w3.org/2001/XMLSchema");
+
+        // OGC
+        // xmlns:om="http://www.opengis.net/om/2.0"
+        namespace(OmConstants.NS_OM_PREFIX, OmConstants.NS_OM_2);
+        // xmlns:gml="http://www.opengis.net/gml/3.2
+        namespace(GmlConstants.NS_GML_PREFIX, GmlConstants.NS_GML_32);
+        // xmlns:swe="http://www.opengis.net/swe/2.0"
+        namespace(SweConstants.NS_SWE_PREFIX, SweConstants.NS_SWE_20);
+        // xmlns:sams="http://www.opengis.net/samplingSpatial/2.0"
+        namespace(SfConstants.NS_SAMS_PREFIX, SfConstants.NS_SAMS);
+        // xmlns:sam="http://www.opengis.net/sampling/2.0"
+        namespace("sam", SfConstants.NS_SF);
+
+        // ISO
+        // xmlns:gmd="http://www.isotc211.org/2005/gmd"
+        namespace(AqdConstants.NS_GMD_PREFIX, AqdConstants.NS_GMD);
+        // xmlns:gco="http://www.isotc211.org/2005/gco"
+        namespace(AqdConstants.NS_GCO_PREFIX, AqdConstants.NS_GCO);
+
+        // AQD e-Reporting
+        // xmlns:aqd="http://dd.eionet.europa.eu/schemaset/id2011850eu-1.0"
+        namespace(AqdConstants.NS_AQD_PREFIX, AqdConstants.NS_AQD);
+        // xmlns:am="http://inspire.ec.europa.eu/schemas/am/3.0"
+        namespace(AqdConstants.NS_AM_PREFIX, AqdConstants.NS_AM);
+        // xmlns:base="http://inspire.ec.europa.eu/schemas/base/3.3"
+        namespace(AqdConstants.NS_BASE_PREFIX, AqdConstants.NS_BASE);
+        // xmlns:base2="http://inspire.ec.europa.eu/schemas/base2/1.0"
+        namespace(AqdConstants.NS_BASE2_PREFIX, AqdConstants.NS_BASE2);
+        // xmlns:ompr="http://inspire.ec.europa.eu/schemas/ompr/2.0"
+        namespace(AqdConstants.NS_OMPR_PREFIX, AqdConstants.NS_OMPR);
+        // xmlns:ef="http://inspire.ec.europa.eu/schemas/ef/3.0"
+        namespace(AqdConstants.NS_EF_PREFIX, AqdConstants.NS_EF);
+        // xmlns:gn="urn:x-inspire:specification:gmlas:GeographicalNames:3.0"
+        namespace(AqdConstants.NS_GN_PREFIX, AqdConstants.NS_GN);
+        // xmlns:ad="urn:x-inspire:specification:gmlas:Addresses:3.0"
+        namespace(AqdConstants.NS_AD_PREFIX, AqdConstants.NS_AD);
+    }
+
+    private void addSchemaLocations() throws XMLStreamException {
+        Set<SchemaLocation> schemaLocations = Sets.newHashSet();
+        schemaLocations.add(AqdConstants.NS_AQD_SCHEMA_LOCATION);
+        schemaLocations.add(GmlConstants.GML_32_SCHEMAL_LOCATION);
+        schemaLocations.add(OmConstants.OM_20_SCHEMA_LOCATION);
+        schemaLocations.add(SweConstants.SWE_20_SCHEMA_LOCATION);
+        schemaLocation(schemaLocations);
+        
+    }
+
     private String addGmlId(String gmlId) throws XMLStreamException {
         attr(GmlConstants.QN_ID_32, gmlId);
         return gmlId;
     }
 
+    private String prepareObservation(OmObservation omObservation, Encoder<XmlObject, AbstractFeature> encoder,
+            EncodingValues encodingValues) throws UnsupportedEncoderInputException, OwsExceptionReport, XMLStreamException {
+        
+        String xmlText = (encoder.encode(omObservation, encodingValues.getAdditionalValues())).xmlText(XmlOptionsHelper
+                .getInstance().getXmlOptions());
+        // TODO check for better solutions
+        xmlText = xmlText.replace("ns:DataArrayPropertyType", "swe:DataArrayPropertyType");
+        xmlText = xmlText.replace(":ns=", ":swe=");
+        xmlText = xmlText.replace("<ns:", "<swe:");
+        xmlText = xmlText.replace("</ns:", "</swe:");
+        return xmlText;
+    }
+
     private void writeMember(AbstractFeature abstractFeature, Encoder<XmlObject, AbstractFeature> encoder,
             EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
-        start(GmlConstants.QN_FEATURE_MEMBER_32);
         // chars("");
         // if (encoder instanceof StreamingEncoder<?, ?>) {
         // ((StreamingEncoder<XmlObject, AbstractFeature>)
         // encoder).encode(abstractFeature, getOutputStream(),
         // encodingValues.setAsDocument(true).setEmbedded(true).setIndent(indent));
         // } else {
-        rawText((encoder.encode(abstractFeature, encodingValues.getAdditionalValues())).xmlText(XmlOptionsHelper
+        writeMember((encoder.encode(abstractFeature, encodingValues.getAdditionalValues())).xmlText(XmlOptionsHelper
                 .getInstance().getXmlOptions()));
         // }
+    }
+    
+    private void writeMember(String memberContent) throws XMLStreamException, OwsExceptionReport {
+        start(GmlConstants.QN_FEATURE_MEMBER_32);
+        rawText(memberContent);
         indent--;
         end(GmlConstants.QN_FEATURE_MEMBER_32);
         indent++;
     }
-
+    
     private Encoder<XmlObject, AbstractFeature> getEncoder(AbstractFeature feature,
             Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
         if (feature instanceof AbstractFeature && feature.isSetDefaultElementEncoding()) {

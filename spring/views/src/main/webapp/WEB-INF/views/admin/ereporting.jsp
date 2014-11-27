@@ -1353,7 +1353,7 @@ ReportingHeaderController.prototype._onSave = function() {
                     showSuccess("eReportingHeader settings saved &hellip;");
                     break;
                 case "error":
-                    showError("Save failed: " + xhr.status + " " + xhr.statusText);
+                    showError("Save failed: " + xhr.status + " " + xhr.statusText + "; Message: " + xhr.responseText);
                     break;
                 case "timeout":
                     showError("Request timed out &hellip;");

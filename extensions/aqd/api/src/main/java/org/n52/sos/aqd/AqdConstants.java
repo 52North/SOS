@@ -46,7 +46,7 @@ public interface AqdConstants {
 
     String DEFINITION_VERIFICATION = "http://dd.eionet.europa.eu/vocabularies/aq/observationverification";
 
-    String DEFINITION_VALIDATION = "http://dd.eionet.europa.eu/vocabularies/aq/observationvalidity";
+    String DEFINITION_VALIDITY = "http://dd.eionet.europa.eu/vocabularies/aq/observationvalidity";
     
     String DEFINITION_DATA_CAPTURE = "http://dd.eionet.europa.eu/vocabulary/aq/primaryObservation/dc";
     

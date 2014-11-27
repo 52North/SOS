@@ -97,10 +97,10 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
                       EncodingValues encodingValues)
             throws XMLStreamException, OwsExceptionReport {
         this.init(out, encodingValues);
-        this.encodeReportingHeader(elementToStream);
+        this.encodeReportingHeader(elementToStream, encodingValues);
     }
 
-    private void encodeReportingHeader(EReportingHeader h)
+    private void encodeReportingHeader(EReportingHeader h, EncodingValues encodingValues)
             throws XMLStreamException, DateTimeFormatException {
 
         start(AqdConstants.QN_AQD_REPORTING_HEADER);
@@ -113,7 +113,9 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
         namespace(GmlConstants.NS_GML_PREFIX, GmlConstants.NS_GML_32);
         namespace(W3CConstants.NS_XLINK_PREFIX, W3CConstants.NS_XLINK);
         namespace(W3CConstants.NS_XSI_PREFIX, W3CConstants.NS_XSI);
-        schemaLocation(Collections.singleton(AqdConstants.NS_AQD_SCHEMA_LOCATION));
+        if (encodingValues.isAddSchemaLocation()) {
+            schemaLocation(Collections.singleton(AqdConstants.NS_AQD_SCHEMA_LOCATION));
+        }
 
         attr(GmlConstants.QN_ID_32, getGMLId(h));
 

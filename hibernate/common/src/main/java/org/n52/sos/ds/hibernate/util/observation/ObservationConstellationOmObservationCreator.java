@@ -96,6 +96,7 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
                 sosObservation.setNoDataValue(getNoDataValue());
                 sosObservation.setTokenSeparator(getTokenSeparator());
                 sosObservation.setTupleSeparator(getTupleSeparator());
+                sosObservation.setDecimalSeparator(getDecimalSeparator());
                 sosObservation.setObservationConstellation(obsConst);
                 final NilTemplateValue value = new NilTemplateValue();
                 value.setUnit(obsProp.getUnit());

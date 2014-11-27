@@ -164,7 +164,7 @@ public class EReportingHelper {
         dataRecord.addField(createField(ElementType.START_TIME, createSweTimeSamplingTime(ElementType.START_TIME)));
         dataRecord.addField(createField(ElementType.END_TIME, createSweTimeSamplingTime(ElementType.END_TIME)));
         dataRecord.addField(createField(ElementType.VERIFICATION, createSweCatagory(ElementType.VERIFICATION)));
-        dataRecord.addField(createField(ElementType.VALIDATION, createSweCatagory(ElementType.VALIDATION)));
+        dataRecord.addField(createField(ElementType.VALIDITY, createSweCatagory(ElementType.VALIDITY)));
         ElementType value = ElementType.getValueElementType(primaryObservation, unit);
         dataRecord.addField(createField(value, createSweQuantity(value, unit)));
         if (primaryObservation.isMultyDayPrimaryObservation()) {
@@ -235,9 +235,14 @@ public class EReportingHelper {
         }
     }
 
-    private static void addValue(List<String> value, EReportingValues observation) {
+    private static void addValue(List<String> value, EReportingValues observation, OmObservation omObservation) {
         if (observation.isSetValue()) {
-            value.add(observation.getValueAsString());
+            // TODO check if this is the best solution
+            if (omObservation.isSetDecimalSeparator() && omObservation.getDecimalSeparator() != ".") {
+                value.add(observation.getValueAsString().replace(".", omObservation.getDecimalSeparator()));
+            } else {
+                value.add(observation.getValueAsString());
+            }
         } else {
             value.add(Constants.EMPTY_STRING);
         }
@@ -248,7 +253,7 @@ public class EReportingHelper {
         addTimes(value, ((AbstractObservationTime) observation).createPhenomenonTime());
         addIntegerValue(value, observation.getVerification());
         addIntegerValue(value, observation.getValidation());
-        addValue(value, observation);
+        addValue(value, observation, omObservation);
         if (primaryObservation.isMultyDayPrimaryObservation()) {
             addDoubleValue(value, observation.getDataCapture());
         }
@@ -310,4 +315,5 @@ public class EReportingHelper {
         }
         return set;
     }
+
 }

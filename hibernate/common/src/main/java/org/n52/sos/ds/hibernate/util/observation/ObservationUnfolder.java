@@ -213,6 +213,7 @@ public class ObservationUnfolder {
         }
         newObservation.setTokenSeparator(multiObservation.getTokenSeparator());
         newObservation.setTupleSeparator(multiObservation.getTupleSeparator());
+        newObservation.setDecimalSeparator(multiObservation.getDecimalSeparator());
         newObservation.setResultType(multiObservation.getResultType());
         newObservation.setValue(value);
         return newObservation;

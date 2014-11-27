@@ -252,13 +252,17 @@ public final class SweHelper {
     public static SweAbstractEncoding createTextEncoding(OmObservation sosObservation) {
         String tupleSeparator = ServiceConfiguration.getInstance().getTupleSeparator();
         String tokenSeparator = ServiceConfiguration.getInstance().getTokenSeparator();
+        String decimalSeparator = null;
         if (sosObservation.isSetTupleSeparator()) {
             tupleSeparator = sosObservation.getTupleSeparator();
         }
         if (sosObservation.isSetTokenSeparator()) {
             tokenSeparator = sosObservation.getTokenSeparator();
         }
-        return createTextEncoding(tupleSeparator, tokenSeparator);
+        if (sosObservation.isSetDecimalSeparator()) {
+            decimalSeparator = sosObservation.getDecimalSeparator();
+        }
+        return createTextEncoding(tupleSeparator, tokenSeparator, decimalSeparator);
     }
 
     /**
@@ -273,13 +277,17 @@ public final class SweHelper {
     private static SweAbstractEncoding createTextEncoding(AbstractObservationValue<?> observationValue) {
         String tupleSeparator = ServiceConfiguration.getInstance().getTupleSeparator();
         String tokenSeparator = ServiceConfiguration.getInstance().getTokenSeparator();
+        String decimalSeparator = null;
         if (observationValue.isSetTupleSeparator()) {
             tupleSeparator = observationValue.getTupleSeparator();
         }
         if (observationValue.isSetTokenSeparator()) {
             tokenSeparator = observationValue.getTokenSeparator();
         }
-        return createTextEncoding(tupleSeparator, tokenSeparator);
+        if (observationValue.isSetDecimalSeparator()) {
+            decimalSeparator = observationValue.getDecimalSeparator();
+        }
+        return createTextEncoding(tupleSeparator, tokenSeparator, decimalSeparator);
     }
 
     /**
@@ -289,12 +297,17 @@ public final class SweHelper {
      *            Token separator
      * @param tokenSeparator
      *            Tuple separator
+     * @param decimalSeparator
+     *            Decimal separator
      * @return TextEncoding
      */
-    private static SweAbstractEncoding createTextEncoding(String tupleSeparator, String tokenSeparator) {
+    private static SweAbstractEncoding createTextEncoding(String tupleSeparator, String tokenSeparator, String decimalSeparator) {
         SweTextEncoding sosTextEncoding = new SweTextEncoding();
         sosTextEncoding.setBlockSeparator(tupleSeparator);
         sosTextEncoding.setTokenSeparator(tokenSeparator);
+        if (StringHelper.isNotEmpty(decimalSeparator)) {
+            sosTextEncoding.setDecimalSeparator(decimalSeparator);
+        }
         return sosTextEncoding;
     }
 

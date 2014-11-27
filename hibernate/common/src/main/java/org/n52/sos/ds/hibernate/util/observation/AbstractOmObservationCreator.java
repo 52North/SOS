@@ -40,7 +40,6 @@ import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeType;
@@ -103,6 +102,10 @@ public abstract class AbstractOmObservationCreator {
 
     protected String getTupleSeparator() {
         return ServiceConfiguration.getInstance().getTupleSeparator();
+    }
+    
+    protected String getDecimalSeparator() {
+        return ServiceConfiguration.getInstance().getDecimalSeparator();
     }
 
     protected String getNoDataValue() {

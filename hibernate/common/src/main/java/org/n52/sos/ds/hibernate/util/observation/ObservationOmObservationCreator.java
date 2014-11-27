@@ -269,6 +269,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         o.setNoDataValue(getActiveProfile().getResponseNoDataPlaceholder());
         o.setTokenSeparator(getTokenSeparator());
         o.setTupleSeparator(getTupleSeparator());
+        o.setDecimalSeparator(getDecimalSeparator());
         o.setObservationConstellation(oc);
         o.setResultTime(new TimeInstant(new DateTime(ho.getResultTime(), DateTimeZone.UTC)));
         o.setValue(new SingleObservationValue(getPhenomenonTime(ho), value));

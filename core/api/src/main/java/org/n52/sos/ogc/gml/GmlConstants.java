@@ -279,7 +279,8 @@ public interface GmlConstants extends Constants {
      * Not supported: other:text other brief explanation, where text is a string of two or more characters with no included spaces
      * 
      * @author Carsten Hollmann <c.hollmann@52north.org>
-     * @since
+     * 
+     * @since 4.3.0
      *
      */
     enum NilReason {

@@ -50,12 +50,12 @@ public abstract class GmdDomainConsistency implements OmResultQuality {
     }
 
     public static GmdQuantitativeResult uncertaintyEstimation(double value) {
-        return new GmdQuantitativeResult(GmlBaseUnit.uncertaintyEstimation(),
+        return new GmdQuantitativeResult( GmlBaseUnit.uncertaintyEstimation().unifyId(value),
                                          Double.toString(value));
     }
 
     public static GmdQuantitativeResult uncertaintyEstimation(GmlConstants.NilReason nilReason) {
-        return new GmdQuantitativeResult(GmlBaseUnit.uncertaintyEstimation(), nilReason);
+        return new GmdQuantitativeResult(GmlBaseUnit.uncertaintyEstimation().unifyId(nilReason), nilReason);
     }
 
 }

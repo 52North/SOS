@@ -29,6 +29,8 @@
 package org.n52.sos.gmd;
 
 import org.n52.sos.ogc.gml.CodeType;
+import org.n52.sos.util.Constants;
+import org.n52.sos.util.JavaHelper;
 
 /**
  * TODO JavaDoc
@@ -36,10 +38,8 @@ import org.n52.sos.ogc.gml.CodeType;
  * @author Christian Autermann
  */
 public class GmlBaseUnit {
-
-    private static final GmlBaseUnit UNCERTAINTY_ESTIMATION
-            = new GmlBaseUnit("PercentageUnit", "http://dd.eionet.europa.eu/vocabularies/aq/resultquality/uncertaintyestimation/", new CodeType("%", "http://www.opengis.net/def/uom/UCUM/"), "http://www.opengis.net/def/uom/UCUM/");
-    private final String id;
+            
+    private String id;
     private final String identifier;
     private final CodeType catalogSymbol;
     private final String unitSystem;
@@ -55,6 +55,11 @@ public class GmlBaseUnit {
     public String getId() {
         return id;
     }
+    
+    public GmlBaseUnit unifyId(Object object) {
+        id = id + Constants.UNDERSCORE_STRING + JavaHelper.generateID(object.toString());
+        return this;
+    }
 
     public String getIdentifier() {
         return identifier;
@@ -69,7 +74,7 @@ public class GmlBaseUnit {
     }
 
     public static GmlBaseUnit uncertaintyEstimation() {
-        return UNCERTAINTY_ESTIMATION;
+        return new GmlBaseUnit("PercentageUnit", "http://dd.eionet.europa.eu/vocabularies/aq/resultquality/uncertaintyestimation/", new CodeType("%", "http://www.opengis.net/def/uom/UCUM/"), "http://www.opengis.net/def/uom/UCUM/");
     }
 
 }

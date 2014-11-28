@@ -241,9 +241,8 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
                     parameterValues, parameterName)));
             return true;
         } else {
-            parseExtensionParameter(request, parameterValues, parameterName);
+            return parseExtensionParameter(request, parameterValues, parameterName);
         }
-        return false;
     }
 
     /**

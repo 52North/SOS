@@ -9,7 +9,7 @@
 		r.observationId AS seriesId,
 		r.startTime AS phenomenonTimeStart,
 		r.endTime AS phenomenonTimeEnd,
-		r.endTime AS resultTime,
+		r.resultTime AS resultTime,
 		r.Id AS unitId,
 		o.processId AS offeringId
 		FROM

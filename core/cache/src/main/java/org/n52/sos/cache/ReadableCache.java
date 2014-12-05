@@ -34,7 +34,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-
 import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.sos.SosEnvelope;
@@ -542,5 +541,15 @@ public class ReadableCache extends AbstractContentCache {
     @Override
     public boolean isLanguageSupported(final Locale language) {
         return getSupportedLanguageSet().contains(language);
+    }
+    
+    @Override
+    public Set<String> getRequstableProcedureDescriptionFormat() {
+        return getRequestableProcedureDescriptionFormats();
+    }
+    
+    @Override
+    public boolean hasRequstableProcedureDescriptionFormat(String format) {
+        return getRequestableProcedureDescriptionFormats().contains(format);
     }
 }

@@ -1563,5 +1563,11 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         LOG.trace("Removing Language {}", language);
         getSupportedLanguageSet().remove(language);
     }
+    
+    @Override
+    public void setRequestableProcedureDescriptionFormat(Collection<String> formats) {
+        LOG.trace("Adding requestable procedureDescriptionFormat");
+        getRequestableProcedureDescriptionFormats().addAll(formats);
+    }
 
 }

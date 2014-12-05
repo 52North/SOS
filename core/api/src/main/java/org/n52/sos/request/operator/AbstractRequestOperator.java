@@ -566,5 +566,13 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
     private boolean checkSpatialFilteringProfileValueReference(String valueReference) {
         return Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE.equals(valueReference);
     }
+    
+    protected boolean checkOnlyRequestableProcedureDescriptionFromats(String format,  Enum<?> parameter) throws MissingParameterValueException {
+        if (Strings.isNullOrEmpty(format)) {
+            throw new MissingParameterValueException(parameter);
+        } else {
+            return getCache().hasRequstableProcedureDescriptionFormat(format);
+        }
+    }
 
 }

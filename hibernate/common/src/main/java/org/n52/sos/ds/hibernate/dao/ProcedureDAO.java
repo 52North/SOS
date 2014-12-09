@@ -171,7 +171,10 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         if (procedure instanceof TProcedure && HibernateHelper.isEntitySupported(TProcedure.class, session)) {
             criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME).add(Restrictions.isNull(ValidProcedureTime.END_TIME));
             LOGGER.debug("QUERY getProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
-            return (Procedure)criteria.uniqueResult();
+            Procedure proc = (Procedure)criteria.uniqueResult();
+            if (proc != null) {
+                return proc;
+            }
         }
         return procedure;
 

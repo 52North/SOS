@@ -6,6 +6,29 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
  
+  Changes since last Release
+==================================
+
+ --- New features ---
+ 
+ --- Changes ---
+  
+ --- Fixed bugs ---
+ 
+ 
+  Release 52n-sos-4.1.2
+==================================
+
+ --- New features ---
+ 
+ --- Changes ---
+  
+ --- Fixed bugs ---
+ 
+     * NullPointerException when Features Of Interest have no geometries
+       * https://github.com/52North/SOS/issues/149  
+ 
+ 
  Release 52n-sos-4.1.1
 ==================================
 

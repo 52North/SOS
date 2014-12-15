@@ -91,6 +91,14 @@ public interface HibernateRelations {
 
         boolean isDeleted();
     }
+    
+    interface HasPublishedFlag {
+        String PUBLISHED = "published";
+
+        HasPublishedFlag setPublished(boolean published);
+
+        boolean isPublished();
+    }
 
     interface HasFeatureOfInterestType {
         String FEATURE_OF_INTEREST_TYPE = "featureOfInterestType";

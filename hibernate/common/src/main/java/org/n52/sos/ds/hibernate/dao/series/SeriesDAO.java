@@ -34,7 +34,6 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
@@ -175,6 +174,7 @@ public class SeriesDAO {
             series.setProcedure(procedure);
             series.setFeatureOfInterest(feature);
             series.setDeleted(false);
+            series.setPublished(true);
             session.save(series);
             session.flush();
             session.refresh(series);
@@ -331,6 +331,7 @@ public class SeriesDAO {
      */
     public Criteria getDefaultSeriesCriteria(Session session) {
         return session.createCriteria(Series.class).add(Restrictions.eq(Series.DELETED, false))
+                .add(Restrictions.eq(Series.PUBLISHED, true))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 

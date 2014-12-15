@@ -134,6 +134,7 @@ public class SeriesObservationDAO extends AbstractObservationDAO {
     private Criteria createCriteriaFor(Class<?> clazz, Series series, Session session) {
         final Criteria criteria = getDefaultObservationCriteria(clazz, session);
         criteria.createCriteria(SeriesObservation.SERIES).add(Restrictions.eq(Series.ID, series.getSeriesId()));
+        createSeriesAliasAndRestrictions(criteria);
         return criteria;
     }
 
@@ -428,23 +429,24 @@ public class SeriesObservationDAO extends AbstractObservationDAO {
             Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session)
             throws OwsExceptionReport {
         final Criteria c =
-                getDefaultObservationCriteria(SeriesObservation.class, session).createAlias(SeriesObservation.SERIES,
-                        "s");
+                getDefaultObservationCriteria(SeriesObservation.class, session);
+        
+        String seriesAlias = createSeriesAliasAndRestrictions(c);
 
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
 
         if (CollectionHelper.isNotEmpty(request.getProcedures())) {
-            c.createCriteria("s." + Series.PROCEDURE).add(
+            c.createCriteria(seriesAlias + Series.PROCEDURE).add(
                     Restrictions.in(Procedure.IDENTIFIER, request.getProcedures()));
         }
 
         if (CollectionHelper.isNotEmpty(request.getObservedProperties())) {
-            c.createCriteria("s." + Series.OBSERVABLE_PROPERTY).add(
+            c.createCriteria(seriesAlias + Series.OBSERVABLE_PROPERTY).add(
                     Restrictions.in(ObservableProperty.IDENTIFIER, request.getObservedProperties()));
         }
 
         if (CollectionHelper.isNotEmpty(features)) {
-            c.createCriteria("s." + Series.FEATURE_OF_INTEREST).add(
+            c.createCriteria(seriesAlias + Series.FEATURE_OF_INTEREST).add(
                     Restrictions.in(FeatureOfInterest.IDENTIFIER, features));
         }
 
@@ -464,6 +466,15 @@ public class SeriesObservationDAO extends AbstractObservationDAO {
         }
         LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c;
+    }
+
+    private String createSeriesAliasAndRestrictions(Criteria c) {
+        String alias = "s";
+        String aliasWithDot = alias + ".";
+        c.createAlias(SeriesObservation.SERIES, alias);
+        c.add(Restrictions.eq(aliasWithDot + Series.DELETED, false));
+        c.add(Restrictions.eq(aliasWithDot + Series.PUBLISHED, true));
+        return aliasWithDot;
     }
 
     @SuppressWarnings("unchecked")

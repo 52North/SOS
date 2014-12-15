@@ -21,6 +21,9 @@
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
             <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
         </property>
+        <property name="published" type="org.hibernate.type.TrueFalseType">
+            <column name="published" not-null="true" default="'T'" check="published in ('T','F')"/>
+        </property>
         <!-- values for timeseries api -->
         <property name="firstTimeStamp" type="timestamp">
             <column name="firstTimeStamp" length="29" />

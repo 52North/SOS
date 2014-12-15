@@ -36,6 +36,7 @@ import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
 import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -65,6 +66,9 @@ public class DescribeSensorResponseEncoder extends AbstractSosResponseEncoder<De
     }
 
     private String toString(SosProcedureDescription desc, String format) throws OwsExceptionReport {
+        if (desc instanceof SosProcedureDescriptionUnknowType && desc.isSetSensorDescriptionXmlString()) {
+           return desc.getSensorDescriptionXmlString();
+        }
         XmlOptions options = XmlOptionsHelper.getInstance().getXmlOptions();
         return CodingHelper.encodeObjectToXml(format, desc).xmlText(options);
     }

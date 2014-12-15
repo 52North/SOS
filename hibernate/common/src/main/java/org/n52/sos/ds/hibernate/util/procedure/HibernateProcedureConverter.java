@@ -33,7 +33,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.hibernate.Session;
-
 import org.n52.sos.convert.Converter;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.convert.ConverterRepository;
@@ -44,6 +43,7 @@ import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.procedure.create.DescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.create.FileDescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.create.GeneratedDescriptionCreationStrategy;
+import org.n52.sos.ds.hibernate.util.procedure.create.LinkedDescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.create.ValidProcedureTimeDescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.create.XmlStringDescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.enrich.ProcedureDescriptionEnrichments;
@@ -241,6 +241,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
 
     protected ArrayList<DescriptionCreationStrategy> getCreationStrategies(ValidProcedureTime vpt) {
         return Lists.newArrayList(new ValidProcedureTimeDescriptionCreationStrategy(vpt),
+                                  new LinkedDescriptionCreationStrategy(),
                                   new XmlStringDescriptionCreationStrategy(),
                                   new FileDescriptionCreationStrategy(),
                                   new GeneratedDescriptionCreationStrategy());

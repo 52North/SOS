@@ -215,7 +215,7 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
                 }
 
             } else {
-                xbSampFeature.addNewSampledFeature().setHref(GmlConstants.NIL_UNKNOWN);
+                xbSampFeature.addNewSampledFeature().setHref(OGCConstants.UNKNOWN);
             }
 
             if (sampFeat.isSetParameter()) {

@@ -902,6 +902,7 @@ public class SeriesObservationDAO extends AbstractObservationDAO {
         return getSpatialFilteringProfileEnvelopeForOfferingId(SeriesObservationTime.class, offeringID, session);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Geometry> getSamplingGeometries(String feature, Session session) {
         Criteria criteria =

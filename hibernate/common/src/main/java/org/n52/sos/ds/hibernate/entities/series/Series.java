@@ -32,11 +32,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservableProperty;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.*;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;

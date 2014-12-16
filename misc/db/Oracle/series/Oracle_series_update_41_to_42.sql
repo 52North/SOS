@@ -27,10 +27,18 @@
 -- Public License for more details.
 --
 
+-- Can also be required in exiting SOS 4.2.0-SNAPSHOT versions
+
 -- update numeric columns to double
 ALTER TABLE NUMERICVALUE MODIFY VALUE DOUBLE PRECISION;
 ALTER TABLE SERIES MODIFY FIRSTNUMERICVALUE DOUBLE PRECISION;
 ALTER TABLE SERIES MODIFY LASTNUMERICVALUE DOUBLE PRECISION;
+
+-- add published flag to series table
+ALTER TABLE SERIES ADD PUBLISHED char(1 char) default 'T' check (PUBLISHED in ('T','F'));
+ALTER TABLE SERIES MODIFY (PUBLISHED  NOT NULL);
+
+-- Required to update from SOS 4.1 to 4.2
 
 -- update OBSERVATION table
 ALTER TABLE OBSERVATION RENAME COLUMN CODESPACEID TO CODESPACE;

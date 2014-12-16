@@ -28,10 +28,18 @@
 --
 
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- Can also be required in exiting SOS 4.2.0-SNAPSHOT versions
+
 -- update numeric columns to double
 ALTER TABLE sos.numericValue MODIFY value DOUBLE PRECISION;
 ALTER TABLE sos.series MODIFY firstNumericValue DOUBLE PRECISION;
 ALTER TABLE sos.series MODIFY lastNumericValue DOUBLE PRECISION;
+
+-- add published flag to series table
+ALTER TABLE sos.series ADD COLUMN published char(1) default 'T' not null;
+
+-- Required to update from SOS 4.1 to 4.2
 
 -- update observation table
 ALTER TABLE sos.observation CHANGE codespaceid codespace bigint;

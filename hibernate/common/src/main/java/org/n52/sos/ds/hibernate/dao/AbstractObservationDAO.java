@@ -1145,8 +1145,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             } else {
                 final Envelope envelope = new Envelope();
                 Criteria criteria = session.createCriteria(clazz);
-                Criteria createCriteria = criteria.createCriteria(AbstractObservationTime.SAMPLING_GEOMETRY);
-                createCriteria.createCriteria(AbstractObservation.OFFERINGS).add(
+                criteria.createCriteria(AbstractObservation.OFFERINGS).add(
                         Restrictions.eq(Offering.IDENTIFIER, offeringID));
                 LOGGER.debug("QUERY getEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
                 @SuppressWarnings("unchecked")

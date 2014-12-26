@@ -65,6 +65,10 @@ public class EReportingSetting implements SettingDefinitionProvider {
     
     public static final String EREPORTING_NETWORK_PREFIX_KEY = "eReporting.network.prefix";
     
+    public static final String EREPORTING_VALIDITY_FLAGS = "eReporting.flags.validity";
+    
+    public static final String EREPORTING_VERIFICATION_FLAGS = "eReporting.flags.verification";
+    
     public static final SettingDefinitionGroup GROUP = 
             new SettingDefinitionGroup()
             .setTitle("eReporting")
@@ -169,6 +173,26 @@ public class EReportingSetting implements SettingDefinitionProvider {
                 .setOptional(true)
                 .setTitle("AQD e-Reporting observation prefix")
                 .setDescription("AQD e-Reporting observation prefix used for observation gml:id, e.g. 'OBS.' for AQD e-Reporting");
+    
+    public static final StringSettingDefinition EREPORTING_VALIDITY_FLAGS_DEFINITION =
+            new StringSettingDefinition()
+                .setGroup(GROUP)
+                .setOrder(ORDER_11)
+                .setKey(EREPORTING_VALIDITY_FLAGS)
+                .setDefaultValue("1,2,3")
+                .setOptional(true)
+                .setTitle("Validity flag for validated data (E1 flows)")
+                .setDescription("Comma separated list of validity flags (int) that indentify validated data. Conjunction (AND) with verification flags!");
+    
+    public static final StringSettingDefinition EREPORTING_VERIFICATION_FLAGS_DEFINITION =
+            new StringSettingDefinition()
+                .setGroup(GROUP)
+                .setOrder(ORDER_12)
+                .setKey(EREPORTING_VERIFICATION_FLAGS)
+                .setDefaultValue("1")
+                .setOptional(true)
+                .setTitle("Verification flag for validated data (E1 flows)")
+                .setDescription("Comma separated list of verificatio flags (int) that indentify validated data. Conjunction (AND) with validity flags!");
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
@@ -180,7 +204,9 @@ public class EReportingSetting implements SettingDefinitionProvider {
                 EREPORTING_SAMPLING_POINT_PREFIX_DEFINITION,
 //                EREPORTING_STATION_PREFIX_DEFINITION,
 //                EREPORTING_NETWORK_PREFIX_DEFINITION,
-                EREPORTING_OBSERVATION_PREFIX_DEFINITION);
+                EREPORTING_OBSERVATION_PREFIX_DEFINITION,
+                EREPORTING_VALIDITY_FLAGS_DEFINITION,
+                EREPORTING_VERIFICATION_FLAGS_DEFINITION);
     }
 
 }

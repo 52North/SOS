@@ -28,12 +28,19 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.*;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime;
+import org.n52.sos.util.StringHelper;
 
-public class EReportingObservationTime extends SeriesObservationTime implements HasEReportingSeries {
+public class EReportingObservationTime extends SeriesObservationTime implements EReportingValuesTime {
 
     private static final long serialVersionUID = -5055301771550925701L;
+    
+    private Integer validation = EReportingValues.DEFAULT_VALIDATION;
+
+    private Integer verification = EReportingValues.DEFAULT_VERIFICATION;
+
+    private String primaryObservation = EReportingValues.DEFAULT_PRIMARY_OBSERVATION;
 
     public EReportingSeries getEReportingSeries() {
         if (hasEReportingSeries()) {
@@ -52,4 +59,53 @@ public class EReportingObservationTime extends SeriesObservationTime implements 
     public boolean hasEReportingSeries() {
         return getSeries() != null && getSeries() instanceof EReportingSeries;
     }
+    
+    @Override
+    public Integer getVerification() {
+        return verification;
+    }
+
+    @Override
+    public EReportingObservationTime setVerification(Integer verification) {
+        this.verification = verification;
+        return this;
+    }
+
+    @Override
+    public boolean isSetVerification() {
+        return getVerification() != null;
+    }
+
+    @Override
+    public Integer getValidation() {
+        return validation;
+    }
+
+    @Override
+    public EReportingObservationTime setValidation(Integer validation) {
+        this.validation = validation;
+        return this;
+    }
+
+    @Override
+    public boolean isSetValidation() {
+        return getValidation() != null;
+    }
+
+    @Override
+    public String getPrimaryObservation() {
+        return primaryObservation;
+    }
+
+    @Override
+    public EReportingObservationTime setPrimaryObservation(String primaryObservation) {
+        this.primaryObservation = primaryObservation;
+        return this;
+    }
+
+    @Override
+    public boolean isSetPrimaryObservation() {
+        return StringHelper.isNotEmpty(getPrimaryObservation());
+    }
+    
 }

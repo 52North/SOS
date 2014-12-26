@@ -28,6 +28,8 @@
  */
 package org.n52.sos.aqd;
 
+import java.util.Set;
+
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
@@ -43,7 +45,9 @@ import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.settings.EReportingSetting;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
+import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
 
 @Configurable
@@ -54,6 +58,10 @@ public class AqdHelper {
     private String namespace;
     
     private String observationPrefix;
+    
+    private Set<Integer> validityFlags;
+    
+    private Set<Integer> verificationFlags;
     
     /**
      * @return Returns a singleton instance of the AqdHelper.
@@ -152,4 +160,43 @@ public class AqdHelper {
         }
         return "o_" + Integer.toString(counter++);
     }
+
+    /**
+     * @return the validityFlags
+     */
+    public Set<Integer> getValidityFlags() {
+        return validityFlags;
+    }
+
+    /**
+     * @param validityFlags the validityFlags to set
+     */
+    @Setting(EReportingSetting.EREPORTING_VALIDITY_FLAGS)
+    public void setValidityFlags(String validityFlags) {
+        this.validityFlags = JavaHelper.getIntegerSetFromString(validityFlags);
+    }
+    
+    public boolean isSetValidityFlags() {
+        return CollectionHelper.isNotEmpty(getValidityFlags());
+    }
+
+    /**
+     * @return the verificationFlags
+     */
+    public Set<Integer> getVerificationFlags() {
+        return verificationFlags;
+    }
+
+    /**
+     * @param verificationFlags the verificationFlags to set
+     */
+    @Setting(EReportingSetting.EREPORTING_VERIFICATION_FLAGS)
+    public void setVerificationFlags(String verificationFlags) {
+        this.verificationFlags = JavaHelper.getIntegerSetFromString(verificationFlags);
+    }
+    
+    public boolean isSetVerificationFlags() {
+        return CollectionHelper.isNotEmpty(getVerificationFlags());
+    }
+    
 }

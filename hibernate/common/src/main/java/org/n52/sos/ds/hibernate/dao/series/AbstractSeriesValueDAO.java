@@ -193,6 +193,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
             logArgs += ", filterCriterion";
             c.add(temporalFilterCriterion);
         }
+        addSpecificRestrictions(c, request);
         LOGGER.debug("QUERY getStreamingSeriesValuesFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c.setReadOnly(true);
     }

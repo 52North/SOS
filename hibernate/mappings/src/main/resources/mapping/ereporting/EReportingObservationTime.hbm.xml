@@ -41,5 +41,14 @@
         <property name="samplingGeometry" type="org.hibernate.spatial.GeometryType">
             <column name="samplingGeometry" index="samplingGeomidx"/>
         </property>
+                <property name="validation" type="int">
+            <column name="validation" not-null="true" default="-1"/>
+        </property>
+        <property name="verification" type="int">
+            <column name="verification" not-null="true" default="3"/>
+        </property>
+        <property name="primaryObservation" type="string">
+            <column name="primaryObservation" not-null="true" default="var"/>
+        </property>
     </class>
 </hibernate-mapping>

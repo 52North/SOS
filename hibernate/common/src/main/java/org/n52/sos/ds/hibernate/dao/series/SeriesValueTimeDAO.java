@@ -28,7 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.dao.series;
 
+import org.hibernate.Criteria;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValueTime;
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.request.GetObservationRequest;
 
 /**
  * Implementation of {@link AbstractSeriesValueTimeDAO} for series concept to
@@ -43,6 +46,11 @@ public class SeriesValueTimeDAO extends AbstractSeriesValueTimeDAO {
     @Override
     protected Class<?> getSeriesValueTimeClass() {
         return SeriesValueTime.class;
+    }
+    
+    @Override
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
+        // nothing  to add
     }
 
 }

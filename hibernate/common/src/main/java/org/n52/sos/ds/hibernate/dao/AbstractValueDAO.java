@@ -39,6 +39,7 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
@@ -158,5 +159,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
             c.setMaxResults(chunkSize).setFirstResult(currentRow);
         }
     }
+    
+    protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException;
 
 }

@@ -150,8 +150,14 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
 
     }
 
-    interface EReportingValues extends HasEReportingSeries, HasValidation, HasVerification, HasPrimaryObservation, HasDataCapture,
+    interface EReportingValues extends EReportingValuesTime, HasDataCapture,
     EReportingQualityData, HasUnit, GetStringValue {
+
+        String getPrimaryObservation();
+
+    }
+    
+    interface EReportingValuesTime extends HasEReportingSeries, HasValidation, HasVerification, HasPrimaryObservation {
 
         String getPrimaryObservation();
 

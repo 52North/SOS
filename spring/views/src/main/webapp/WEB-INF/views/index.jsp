@@ -75,6 +75,12 @@
 <tr>
 	<td style="padding:3px;">Alexander Kmoch</td><td style="padding:3px;"><a target="_blank" href="http://www.zgis.at">Z_GIS</a>,  <a target="_blank" href="http://www.uni-salzburg.at">Universit&auml;t Salzburg</a> (Austria and Germany)</td>
 </tr>
+<tr>
+	<td style="padding:3px;">Carl Schroedl</td><td style="padding:3px;">Center for Integrated Data Analytics (<a target="_blank" href="http://cida.usgs.gov">CIDA</a>), <a target="_blank" href="http://www.usgs.gov">USGS</a></td>
+</tr>
+<tr>
+	<td style="padding:3px;">Jordan Walker</td><td style="padding:3px;">Center for Integrated Data Analytics (<a target="_blank" href="http://cida.usgs.gov">CIDA</a>), <a target="_blank" href="http://www.usgs.gov">USGS</a></td>
+</tr>
 </table>
 
 <br/>

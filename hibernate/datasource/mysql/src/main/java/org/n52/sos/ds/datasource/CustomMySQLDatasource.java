@@ -28,19 +28,18 @@
  */
 package org.n52.sos.ds.datasource;
 
-/**
- * Hibernate datasource implementation for MySQL databases.
- *
- * @author Carsten Hollmann <c.hollmann@52north.org>
- *
- * @since 4.0.0
- *
- */
-public class MySQLDatasource extends AbstractMySQLDatasource {
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Set;
 
-    protected static final String DIALECT_NAME = "MySQL/MariaDB";
+import org.n52.sos.config.SettingDefinition;
 
-    public MySQLDatasource() {
+import com.google.common.collect.ImmutableSet;
+
+public class CustomMySQLDatasource extends AbstractMySQLDatasource {
+    private static final String DIALECT_NAME = "MySQL/MariaDB Custom Mapping";
+
+    public CustomMySQLDatasource() {
         super(false);
         setUsernameDefault(USERNAME_DEFAULT_VALUE);
         setUsernameDescription(USERNAME_DESCRIPTION);
@@ -52,10 +51,37 @@ public class MySQLDatasource extends AbstractMySQLDatasource {
         setHostDescription(HOST_DESCRIPTION);
         setPortDefault(PORT_DEFAULT_VALUE);
         setPortDescription(PORT_DESCRIPTION);
+        super.setTransactional(false);
+    }
+
+    @Override
+    public boolean needsSchema() {
+        return false;
     }
 
     @Override
     public String getDialectName() {
         return DIALECT_NAME;
     }
+
+    @Override
+    public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties current) {
+        return filter(super.getChangableSettingDefinitions(current), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
+    }
+
+    @Override
+    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
+        return filter(super.getSettingDefinitions(), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
+    }
+
+    private Set<SettingDefinition<?,?>> filter(Set<SettingDefinition<?,?>> definitions, Set<String> keysToExclude) {
+        Iterator<SettingDefinition<?, ?>> iterator = definitions.iterator();
+        while(iterator.hasNext()) {
+            if (keysToExclude.contains(iterator.next().getKey())) {
+                iterator.remove();
+            }
+        }
+        return definitions;
+    }
+
 }

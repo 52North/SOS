@@ -37,6 +37,11 @@
             	<comment>Flag to indicate that this series is deleted or not. Set if the related procedure is deleted via DeleteSensor operation (OGC SWES 2.0 - DeleteSensor operation)</comment>
             </column>
         </property>
+        <property name="published" type="org.hibernate.type.TrueFalseType">
+            <column name="published" not-null="true" default="'T'" check="published in ('T','F')">
+            	<comment>Flag to indicate that this series is published or not. A not published series is not contained in GetObservation and GetDataAvailability responses</comment>
+            </column>
+        </property>
         <!-- values for timeseries api -->
         <property name="firstTimeStamp" type="timestamp">
             <column name="firstTimeStamp" length="29">

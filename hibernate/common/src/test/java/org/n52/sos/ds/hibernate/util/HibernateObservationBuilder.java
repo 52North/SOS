@@ -267,6 +267,7 @@ public class HibernateObservationBuilder {
             series.setProcedure(getProcedure());
             series.setFeatureOfInterest(getFeatureOfInterest());
             series.setDeleted(false);
+            series.setPublished(true);
             session.save(series);
             session.flush();
             session.refresh(series);

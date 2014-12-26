@@ -526,6 +526,16 @@ public class ReadableCache extends AbstractContentCache {
     }
     
     @Override
+    public Set<String> getRequstableProcedureDescriptionFormat() {
+        return getRequestableProcedureDescriptionFormats();
+    }
+    
+    @Override
+    public boolean hasRequstableProcedureDescriptionFormat(String format) {
+        return getRequestableProcedureDescriptionFormats().contains(format);
+    }
+    
+    @Override
     public String getFeatureOfInterestIdentifierForHumanReadableName(String humanReadableName) {
     	if (getFeatureOfInterestIdentifierForHumanReadableName().containsKey(humanReadableName)) {
     		return getFeatureOfInterestIdentifierForHumanReadableName().get(humanReadableName);

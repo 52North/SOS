@@ -277,6 +277,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             logArgs += ", sosIndeterminateTime";
             addIndeterminateTimeRestriction(c, sosIndeterminateTime);
         }
+        addSpecificRestrictions(c, request);
         LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c;
     }

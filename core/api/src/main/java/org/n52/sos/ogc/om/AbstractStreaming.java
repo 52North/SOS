@@ -33,11 +33,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OWSConstants.AdditionalRequestParams;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
 
@@ -53,10 +56,15 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
     private Map<AdditionalRequestParams, Object> additionalRequestParams = Maps.newHashMap();
 
     private String responseFormat;
+    
+    private int maxNumberOfValues = Integer.MIN_VALUE;
+    
+    private int currentNumberOfValues = 0;
 
     public abstract boolean hasNextValue() throws OwsExceptionReport;
 
     public abstract OmObservation nextSingleObservation() throws OwsExceptionReport;
+    
 
     public Collection<OmObservation> mergeObservation() throws OwsExceptionReport {
         List<OmObservation> observations = getObservation();
@@ -161,6 +169,37 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
             this.responseFormat = Configurator.getInstance().getProfileHandler().getActiveProfile().getObservationResponseFormat();
         }
         return responseFormat;
+    }
+
+    /**
+     * @return the maxNumberOfValues
+     */
+    public int getMaxNumberOfValues() {
+        return maxNumberOfValues;
+    }
+
+    /**
+     * @param maxNumberOfValues the maxNumberOfValues to set
+     */
+    public void setMaxNumberOfValues(int maxNumberOfValues) {
+        this.maxNumberOfValues = maxNumberOfValues;
+    }
+    
+    /**
+     * Check if the max number of returned values is exceeded
+     *
+     * @param size
+     *            Max number count
+     * @throws CodedException
+     *             If the size limit is exceeded
+     */
+    protected void checkMaxNumberOfReturnedValues(int size) throws CodedException {
+        if (ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues() > 0) {
+            currentNumberOfValues += size;
+            if (currentNumberOfValues > getMaxNumberOfValues()) {
+                throw new ResponseExceedsSizeLimitException().at("maxNumberOfReturnedValues");
+            }
+        }
     }
 
 }

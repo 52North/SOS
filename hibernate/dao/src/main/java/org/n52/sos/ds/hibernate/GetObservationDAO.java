@@ -400,8 +400,11 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             return result;
         }
         Criterion temporalFilterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
-        for (ObservationConstellation oc : HibernateGetObservationHelper.getAndCheckObservationConstellationSize(
-                request, session)) {
+        List<ObservationConstellation> observations = HibernateGetObservationHelper.getAndCheckObservationConstellationSize(
+                request, session);
+        HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(observations.size());
+        int maxNumberOfValuesPerSeries = HibernateGetObservationHelper.getMaxNumberOfValuesPerSeries(observations.size());
+        for (ObservationConstellation oc : observations) {
             final List<String> featureIds =
                     HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features, session);
             for (OmObservation observationTemplate : HibernateObservationUtilities
@@ -416,6 +419,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                 streamingValue.setResponseFormat(request.getResponseFormat());
                 streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
                 streamingValue.setObservationTemplate(observationTemplate);
+                streamingValue.setMaxNumberOfValues(maxNumberOfValuesPerSeries);
                 observationTemplate.setValue(streamingValue);
                 result.add(observationTemplate);
             }
@@ -447,7 +451,10 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             return result;
         }
         Criterion temporalFilterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
-        for (Series series : DaoFactory.getInstance().getSeriesDAO().getSeries(request, features, session)) {
+        List<Series> serieses = DaoFactory.getInstance().getSeriesDAO().getSeries(request, features, session);
+        HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(serieses.size());
+        int maxNumberOfValuesPerSeries = HibernateGetObservationHelper.getMaxNumberOfValuesPerSeries(serieses.size());
+        for (Series series : serieses) {
             Collection<? extends OmObservation> createSosObservationFromSeries =
                     HibernateObservationUtilities
                             .createSosObservationFromSeries(series, request, session);
@@ -456,6 +463,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             streamingValue.setResponseFormat(request.getResponseFormat());
             streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
             streamingValue.setObservationTemplate(observationTemplate);
+            streamingValue.setMaxNumberOfValues(maxNumberOfValuesPerSeries);
             observationTemplate.setValue(streamingValue);
             result.add(observationTemplate);
         }

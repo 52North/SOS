@@ -63,7 +63,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     private boolean noChunk = false;
 
     private int currentResultSize = 0;
-
+    
     /**
      * constructor
      * 
@@ -95,6 +95,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         if (!next) {
             sessionHolder.returnSession(session);
         }
+        
 
         return next;
     }
@@ -164,6 +165,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
                         seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize, currentRow, session);
             }
             currentRow += chunkSize;
+            checkMaxNumberOfReturnedValues(seriesValuesResult.size());
             setSeriesValuesResult(seriesValuesResult);
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);

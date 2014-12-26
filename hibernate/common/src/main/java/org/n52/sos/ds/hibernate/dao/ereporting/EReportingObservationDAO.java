@@ -157,6 +157,8 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
                 throw new OptionNotSupportedException().withMessage("The requested e-Reporting flow %s is not supported!",
                         flow.name());
             }
+         // add quality restrictions
+            EReportingDaoHelper.addValidityAndVerificationRestrictions(c, request);
         }
     }
 

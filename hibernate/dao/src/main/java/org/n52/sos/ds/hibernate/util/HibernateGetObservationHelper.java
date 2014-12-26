@@ -159,6 +159,13 @@ public class HibernateGetObservationHelper {
         }
     }
 
+    public static int getMaxNumberOfValuesPerSeries(int size) {
+        if (ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues() > 0) {
+            return ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues() / size;
+        }
+        return ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues();
+    }
+
     public static List<String> getAndCheckFeatureOfInterest(final ObservationConstellation observationConstellation,
             final Set<String> featureIdentifier, final Session session) throws OwsExceptionReport {
         final List<String> featuresForConstellation =

@@ -28,13 +28,20 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
+import java.util.List;
+import java.util.Set;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 /**
  * Hibernate data access class for procedure description format
@@ -86,5 +93,13 @@ public class ProcedureDescriptionFormatDAO {
             session.flush();
         }
         return hProcedureDescriptionFormat;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getProcedureDescriptionFormat(Session session) {
+        Criteria c = session.createCriteria(ProcedureDescriptionFormat.class);
+        c.setProjection(Projections.distinct(Projections.property(ProcedureDescriptionFormat.PROCEDURE_DESCRIPTION_FORMAT)));
+        c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return c.list();
     }
 }

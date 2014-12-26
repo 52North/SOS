@@ -1590,6 +1590,14 @@ public interface WritableContentCache extends ContentCache {
      */
     void removeSupportedLanguage(Locale language);
     
+    /**
+     * Set the specified requestable procedureDescriptionFormat.
+     *
+     * @param formats
+     *            the new formats
+     */
+    void setRequestableProcedureDescriptionFormat(Collection<String> formats);
+    
     void clearFeatureOfInterestIdentifierHumanReadableNameMaps();
     
     void clearObservablePropertyIdentifierHumanReadableNameMaps();

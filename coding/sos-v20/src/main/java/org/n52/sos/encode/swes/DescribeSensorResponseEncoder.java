@@ -39,10 +39,12 @@ import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
 import org.n52.sos.ogc.swes.SwesConstants;
 import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.GmlHelper;
+import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.SchemaLocation;
 
@@ -68,8 +70,7 @@ public class DescribeSensorResponseEncoder extends AbstractSwesResponseEncoder<D
         dsr.setProcedureDescriptionFormat(response.getOutputFormat());
         for (SosProcedureDescription sosProcedureDescription : response.getProcedureDescriptions()) {
             SensorDescriptionType sensorDescription = dsr.addNewDescription().addNewSensorDescription();
-            XmlObject xmlObject = CodingHelper.encodeObjectToXml(response.getOutputFormat(), sosProcedureDescription);
-            sensorDescription.addNewData().set(xmlObject);
+            sensorDescription.addNewData().set(getSensorDescription(response, sosProcedureDescription ));
             if (sosProcedureDescription.isSetValidTime()) {
                 XmlObject xmlObjectValidtime =
                         CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sosProcedureDescription.getValidTime());
@@ -83,6 +84,13 @@ public class DescribeSensorResponseEncoder extends AbstractSwesResponseEncoder<D
             }
         }
         return doc;
+    }
+
+    private XmlObject getSensorDescription(DescribeSensorResponse response, SosProcedureDescription sosProcedureDescription) throws OwsExceptionReport {
+        if (sosProcedureDescription instanceof SosProcedureDescriptionUnknowType && sosProcedureDescription.isSetSensorDescriptionXmlString()) {
+            return  XmlHelper.parseXmlString(sosProcedureDescription.getSensorDescriptionXmlString());
+        } 
+        return CodingHelper.encodeObjectToXml(response.getOutputFormat(), sosProcedureDescription);
     }
 
     @Override

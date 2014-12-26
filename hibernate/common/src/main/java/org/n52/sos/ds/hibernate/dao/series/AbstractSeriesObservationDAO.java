@@ -310,10 +310,9 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      */
     protected Criteria getSeriesObservationCriteriaFor(GetObservationRequest request, Collection<String> features,
                 Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
-            String seriesAlias = "s";
-            String seriesAliasPrefix = seriesAlias + ".";
-            final Criteria c = getDefaultObservationCriteria(session)
-                    .createAlias(SeriesObservation.SERIES, seriesAlias);
+            
+            final Criteria c = getDefaultObservationCriteria(session);
+            String seriesAliasPrefix = createSeriesAliasAndRestrictions(c);
             checkAndAddSpatialFilteringProfileCriterion(c, request, session);
             addSpecificRestrictions(c, request);
             
@@ -345,6 +344,16 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             }
             LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
             return c;
+    }
+    
+    
+    private String createSeriesAliasAndRestrictions(Criteria c) {
+        String alias = "s";
+        String aliasWithDot = alias + ".";
+        c.createAlias(SeriesObservation.SERIES, alias);
+        c.add(Restrictions.eq(aliasWithDot + Series.DELETED, false));
+        c.add(Restrictions.eq(aliasWithDot + Series.PUBLISHED, true));
+        return aliasWithDot;
     }
     
     /**

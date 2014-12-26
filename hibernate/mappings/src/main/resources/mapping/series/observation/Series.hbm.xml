@@ -24,6 +24,35 @@
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
             <formula>'F'</formula>
         </property>
+        <property name="published" type="org.hibernate.type.TrueFalseType">
+            <formula>'T'</formula>
+        </property>
+        <!-- values for timeseries api -->
+        <property name="firstTimeStamp" type="timestamp">
+            <column name="firstTimeStamp" length="29">
+            	<comment>The time stamp of the first (temporal) observation associated to this series</comment>
+            </column>
+        </property>
+        <property name="lastTimeStamp" type="timestamp">
+            <column name="lastTimeStamp" length="29">
+            	<comment>The time stamp of the last (temporal) observation associated to this series</comment>
+            </column>
+        </property>
+        <property name="firstNumericValue" type="double">
+            <column name="firstNumericValue">
+            	<comment>The value of the first (temporal) observation associated to this series</comment>
+            </column>
+        </property>
+        <property name="lastNumericValue" type="double">
+            <column name="lastNumericValue">
+            	<comment>The value of the last (temporal) observation associated to this series</comment>
+            </column>
+        </property>
+         <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit" fetch="select" lazy="no-proxy" foreign-key="seriesUnitFk">
+            <column name="unitId" not-null="false">
+            	<comment>Foreign Key (FK) to the related unit of the first/last numeric values . Contains "unit".unitid</comment>
+            </column>
+        </many-to-one>
     </class>
     
     <sql-query name="getUnitForObservablePropertyProcedureSeries">

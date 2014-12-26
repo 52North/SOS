@@ -28,6 +28,9 @@
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
             <formula>'F'</formula>
         </property>
+        <property name="published" type="org.hibernate.type.TrueFalseType">
+            <formula>'T'</formula>
+        </property>
         <!-- values for timeseries api -->
         <property name="firstTimeStamp" type="timestamp">
             <formula>null</formula>

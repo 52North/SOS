@@ -28,10 +28,20 @@
 --
 
 use sos
+
+-- Can also be required in exiting SOS 4.2.0-SNAPSHOT versions
+
 --update numeric columns to double
 ALTER TABLE dbo.numericvalue ALTER COLUMN value double precision;
 ALTER TABLE dbo.series ALTER COLUMN firstNumericValue double precision;
 ALTER TABLE dbo.series ALTER COLUMN lastNumericValue double precision;
+
+-- add published flag to series table
+ALTER TABLE dbo.series ADD published char(1) default 'F'check (published in ('T','F'));
+UPDATE dbo.series SET dbo.series.published = 'T';
+ALTER TABLE dbo.series ALTER COLUMN published char(1) NOT NULL;
+
+-- Required to update from SOS 4.1 to 4.2
 
 -- update observation table
 GO

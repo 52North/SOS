@@ -426,6 +426,9 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     private Set<Locale> supportedLanguages = newSynchronizedSet();
     
+    private Set<String> requestableProcedureDescriptionFormats  = newSynchronizedSet();
+
+    
     private BiMap<String, String> featureOfInterestIdentifierHumanReadableName = newSynchronizedBiMap();
     
 //    private Map<String, String> featureOfInterestHumanReadableNameForIdentifier = newSynchronizedMap();
@@ -758,6 +761,10 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
         return this.supportedLanguages;
     }
     
+    protected Set<String> getRequestableProcedureDescriptionFormats() {
+        return this.requestableProcedureDescriptionFormats;
+    }
+    
     protected Map<String, String> getFeatureOfInterestIdentifierForHumanReadableName() {
     	return featureOfInterestIdentifierHumanReadableName.inverse();
     }
@@ -818,9 +825,9 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                 relatedFeaturesForOfferings, resultTemplatesForOfferings, rolesForRelatedFeatures,
                 envelopeForOfferings, nameForOfferings, i18nNameForOfferings, i18nDescriptionForOfferings, epsgCodes, featuresOfInterest,
                 procedures, resultTemplates, offerings, globalEnvelope, globalResultTimeEnvelope,
-                globalPhenomenonTimeEnvelope, supportedLanguages, featureOfInterestIdentifierHumanReadableName, 
-                observablePropertyIdentifierHumanReadableName, procedureIdentifierHumanReadableName,
-                offeringIdentifierHumanReadableName);
+                globalPhenomenonTimeEnvelope, supportedLanguages, requestableProcedureDescriptionFormats,
+                featureOfInterestIdentifierHumanReadableName, observablePropertyIdentifierHumanReadableName,
+				procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName);
     }
 
     @Override
@@ -883,6 +890,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                     && Objects.equal(this.globalResultTimeEnvelope, other.getGlobalResultTimeEnvelope())
                     && Objects.equal(this.offerings, other.getOfferingsSet())
                     && Objects.equal(this.supportedLanguages, other.getSupportedLanguages())
+                    && Objects.equal(this.requestableProcedureDescriptionFormats, other.getRequestableProcedureDescriptionFormats())
                     && Objects.equal(this.getFeatureOfInterestIdentifierForHumanReadableName(), other.getFeatureOfInterestIdentifierForHumanReadableName())
                     && Objects.equal(this.getObservablePropertyIdentifierForHumanReadableName(), other.getObservablePropertyIdentifierForHumanReadableName())
                     && Objects.equal(this.getProcedureIdentifierForHumanReadableName(), other.getProcedureIdentifierForHumanReadableName())

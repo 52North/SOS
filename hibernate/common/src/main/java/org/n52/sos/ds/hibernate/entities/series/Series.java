@@ -32,11 +32,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservableProperty;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.*;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
@@ -46,7 +42,7 @@ import org.n52.sos.ds.hibernate.entities.Unit;
  * @since 4.0.0
  * 
  */
-public class Series implements Serializable, HasProcedure, HasObservableProperty, HasFeatureOfInterest, HasDeletedFlag, HasUnit {
+public class Series implements Serializable, HasProcedure, HasObservableProperty, HasFeatureOfInterest, HasDeletedFlag, HasPublishedFlag, HasUnit {
 
     private static final long serialVersionUID = 7838379468605356753L;
     
@@ -65,6 +61,8 @@ public class Series implements Serializable, HasProcedure, HasObservableProperty
     private Procedure procedure;
 
     private Boolean deleted = false;
+    
+    private Boolean published = true;
 
     // the following values are used by the timeseries api
     private Date firstTimeStamp;
@@ -136,10 +134,21 @@ public class Series implements Serializable, HasProcedure, HasObservableProperty
     public boolean isDeleted() {
         return deleted;
     }
+    
+    @Override
+    public Series setPublished(final boolean published) {
+        this.published = published;
+        return this;
+    }
 
     @Override
     public boolean getDeleted() {
         return deleted;
+    }
+
+    @Override
+    public boolean isPublished() {
+        return published;
     }
 
     /**

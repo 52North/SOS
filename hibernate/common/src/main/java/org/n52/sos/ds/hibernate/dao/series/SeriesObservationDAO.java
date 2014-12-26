@@ -200,7 +200,6 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
         return getSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session).list();
     }
 
-
     @SuppressWarnings("unchecked")
     public List<SeriesObservation> getSeriesObservationsFor(Series series, GetObservationRequest request,
             SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {

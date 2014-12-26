@@ -149,6 +149,7 @@ public abstract class AbstractSeriesDAO {
             series = getSeriesImpl();
             identifiers.addValuesToSeries(series);
             series.setDeleted(false);
+            series.setPublished(true);
             session.save(series);
             session.flush();
             session.refresh(series);
@@ -329,7 +330,9 @@ public abstract class AbstractSeriesDAO {
      * @return Default criteria
      */
     public Criteria getDefaultSeriesCriteria(Session session) {
-        return session.createCriteria(getSeriesClass()).add(Restrictions.eq(Series.DELETED, false))
+        return session.createCriteria(getSeriesClass())
+                .add(Restrictions.eq(Series.DELETED, false))
+                .add(Restrictions.eq(Series.PUBLISHED, true))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 

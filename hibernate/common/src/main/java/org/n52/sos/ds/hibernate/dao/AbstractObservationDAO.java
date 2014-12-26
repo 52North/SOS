@@ -1174,7 +1174,6 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             } else {
                 final Envelope envelope = new Envelope();
                 Criteria criteria = getDefaultObservationInfoCriteria(session);
-                criteria.setProjection(SpatialProjections.extent(AbstractObservationTime.SAMPLING_GEOMETRY));
                 criteria.createCriteria(AbstractObservation.OFFERINGS).add(
                         Restrictions.eq(Offering.IDENTIFIER, offeringID));
                 LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));

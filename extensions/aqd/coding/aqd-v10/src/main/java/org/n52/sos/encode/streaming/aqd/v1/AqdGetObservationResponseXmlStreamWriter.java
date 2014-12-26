@@ -55,6 +55,7 @@ import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.om.features.SfConstants;
+import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.ogc.swe.SweConstants;
@@ -81,8 +82,6 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
     private static final Logger LOGGER = LoggerFactory.getLogger(AqdGetObservationResponseXmlStreamWriter.class);
 
     private static final long TIMER_PERIOD = 250;
-    
-    private static final String NS_SWE_CHECK = "xmlns:ns=\"http://www.opengis.net/swe/2.0\"";
 
     private FeatureCollection featureCollection;
 
@@ -155,6 +154,8 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
         } catch (XMLStreamException xmlse) {
             LOGGER.error("Error while streaming AQD e-Reporting observations!", xmlse);
             throw new NoApplicableCodeException().causedBy(xmlse);
+        } catch (OwsExceptionReport owse) {
+            rawText(CodingHelper.getEncoder(OWSConstants.NS_OWS, owse).encode(owse).xmlText());
         } finally {
             cleanup();
         }

@@ -133,6 +133,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
             }
             checkForModifications(observation);
             session.evict(resultObject);
+            checkMaxNumberOfReturnedValues(1);
             return observation;
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);

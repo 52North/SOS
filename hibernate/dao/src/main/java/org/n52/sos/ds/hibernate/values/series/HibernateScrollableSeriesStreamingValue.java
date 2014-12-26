@@ -83,11 +83,12 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
     }
 
     @Override
-	public SeriesValue nextEntity() throws OwsExceptionReport {
-		return (SeriesValue) scrollableResult.get()[0];
-	}
+    public SeriesValue nextEntity() throws OwsExceptionReport {
+        checkMaxNumberOfReturnedValues(1);
+        return (SeriesValue) scrollableResult.get()[0];
+    }
 
-	@Override
+    @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
             SeriesValue resultObject = nextEntity();

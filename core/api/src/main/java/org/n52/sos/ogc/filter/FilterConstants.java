@@ -86,14 +86,98 @@ public interface FilterConstants {
      * Enumeration for temporal operators
      */
     enum TimeOperator {
-        TM_Before, TM_After, TM_Begins, TM_Ends, TM_EndedBy, TM_BegunBy, TM_During, TM_Equals, TM_Contains, TM_Overlaps, TM_Meets, TM_MetBy, TM_OverlappedBy
+        TM_Before, TM_After, TM_Begins, TM_Ends, TM_EndedBy, TM_BegunBy, TM_During, TM_Equals, TM_Contains, TM_Overlaps, TM_Meets, TM_MetBy, TM_OverlappedBy;
+        
+        public static TimeOperator from(String s) {
+            for (TimeOperator to : TimeOperator.values()) {
+                if (to.name().equalsIgnoreCase(s)) {
+                    return to;
+                }
+            }
+            throw new IllegalArgumentException(s);
+        }
+        
+        public static TimeOperator from(TimeOperator2 to2) {
+            switch (to2) {
+            case After:
+                return TimeOperator.TM_After;
+             case Before:
+                 return TimeOperator.TM_Before;
+             case Begins:
+                 return TimeOperator.TM_Begins;
+             case BegunBy:
+                 return TimeOperator.TM_BegunBy;
+             case During:
+                 return TimeOperator.TM_During;
+             case EndedBy:
+                 return TimeOperator.TM_EndedBy;
+             case Ends:
+                 return TimeOperator.TM_Ends;
+             case Meets:
+                 return TimeOperator.TM_Meets;
+             case MetBy:
+                 return TimeOperator.TM_MetBy;
+             case OverlappedBy:
+                 return TimeOperator.TM_OverlappedBy;
+             case TContains:
+                 return TimeOperator.TM_Contains;
+             case TEquals:
+                 return TimeOperator.TM_Equals;
+             case TOverlaps:
+                 return TimeOperator.TM_Overlaps;
+            default:
+                throw new IllegalArgumentException(to2.name());
+            }
+        }
     }
 
     /**
      * Enumeration for FES 2.0 temporal operators
      */
     enum TimeOperator2 {
-        Before, After, Begins, Ends, EndedBy, BegunBy, During, TEquals, TContains, TOverlaps, Meets, MetBy, OverlappedBy
+        Before, After, Begins, Ends, EndedBy, BegunBy, During, TEquals, TContains, TOverlaps, Meets, MetBy, OverlappedBy;
+        
+        public static TimeOperator2 from(String s) {
+            for (TimeOperator2 to : TimeOperator2.values()) {
+                if (to.name().equalsIgnoreCase(s)) {
+                    return to;
+                }
+            }
+            throw new IllegalArgumentException(s);
+        }
+        
+        public static TimeOperator2 from(TimeOperator to) {
+            switch (to) {
+            case TM_After:
+                return TimeOperator2.After;
+             case TM_Before:
+                 return TimeOperator2.Before;
+             case TM_Begins:
+                 return TimeOperator2.Begins;
+             case TM_BegunBy:
+                 return TimeOperator2.BegunBy;
+             case TM_During:
+                 return TimeOperator2.During;
+             case TM_EndedBy:
+                 return TimeOperator2.EndedBy;
+             case TM_Ends:
+                 return TimeOperator2.Ends;
+             case TM_Meets:
+                 return TimeOperator2.Meets;
+             case TM_MetBy:
+                 return TimeOperator2.MetBy;
+             case TM_OverlappedBy:
+                 return TimeOperator2.OverlappedBy;
+             case TM_Contains:
+                 return TimeOperator2.TContains;
+             case TM_Equals:
+                 return TimeOperator2.TEquals;
+             case TM_Overlaps:
+                 return TimeOperator2.TOverlaps;
+            default:
+                throw new IllegalArgumentException(to.name());
+            }
+        }
     }
 
     /**

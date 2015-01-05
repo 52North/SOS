@@ -28,6 +28,13 @@
  */
 package org.n52.sos.ef;
 
+/**
+ * Class represents an AbstractMonitoringFeature
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.3.0
+ *
+ */
 public abstract class EfAbstractMonitoringFeature extends EfAbstractMonitoringObject {
 
     private static final long serialVersionUID = -514744454407794343L;

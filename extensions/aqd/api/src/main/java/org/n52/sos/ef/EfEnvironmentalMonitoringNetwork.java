@@ -28,21 +28,15 @@
  */
 package org.n52.sos.ef;
 
-import org.n52.sos.ogc.gml.AbstractFeature;
-
-
 /**
- * Class represents an AbstractMonitoringObject
+ * Class represents an EnvironmentalMonitoringNetwork
  * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.3.0
  *
  */
-public abstract class EfAbstractMonitoringObject extends AbstractFeature {
+public class EfEnvironmentalMonitoringNetwork extends EfAbstractMonitoringFeature {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -1741709013086970962L;
+    private static final long serialVersionUID = 4350575166113005997L;
 
 }

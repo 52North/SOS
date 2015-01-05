@@ -30,16 +30,30 @@ package org.n52.sos.ds.hibernate.entities.ereporting;
 
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasAssessmentType;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasNetwork;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasStation;
 
-public class EReportingSamplingPoint extends AbstractIdentifierNameDescriptionEntity implements HasAssessmentType {
+/**
+ * Entity for AQD e-Reporting SamplingPoint
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.3.0
+ *
+ */
+public class EReportingSamplingPoint extends AbstractIdentifierNameDescriptionEntity implements HasAssessmentType,
+        HasStation, HasNetwork {
 
     private static final long serialVersionUID = -3572902805340991523L;
-    
+
     public static final String ID = "samplingPointId";
-    
+
     private Long samplingPointId;
-    
+
     private EReportingAssessmentType assessmentType;
+
+    private EReportingStation station;
+
+    private EReportingNetwork network;
 
     /**
      * @return the samplingPointId
@@ -49,7 +63,8 @@ public class EReportingSamplingPoint extends AbstractIdentifierNameDescriptionEn
     }
 
     /**
-     * @param samplingPointId the samplingPointId to set
+     * @param samplingPointId
+     *            the samplingPointId to set
      */
     public EReportingSamplingPoint setSamplingPointId(Long samplingPointId) {
         this.samplingPointId = samplingPointId;
@@ -64,9 +79,41 @@ public class EReportingSamplingPoint extends AbstractIdentifierNameDescriptionEn
         this.assessmentType = assessmentType;
         return this;
     }
-    
+
     public boolean isSetAssessmentType() {
         return getAssessmentType() != null && getAssessmentType().isSetAssessmentType();
     }
-    
+
+    @Override
+    public EReportingNetwork getNetwork() {
+        return network;
+    }
+
+    @Override
+    public HasNetwork setNetwork(EReportingNetwork network) {
+        this.network = network;
+        return this;
+    }
+
+    @Override
+    public boolean isSetNetwork() {
+        return getNetwork() != null;
+    }
+
+    @Override
+    public EReportingStation getStation() {
+        return station;
+    }
+
+    @Override
+    public HasStation setStation(EReportingStation station) {
+        this.station = station;
+        return this;
+    }
+
+    @Override
+    public boolean isSetStation() {
+        return getStation() != null;
+    }
+
 }

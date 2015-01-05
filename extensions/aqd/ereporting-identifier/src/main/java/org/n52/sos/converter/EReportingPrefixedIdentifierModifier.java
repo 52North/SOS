@@ -134,8 +134,8 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
 
     private void checkOmParameterForEReporting(Collection<NamedValue<?>> parameter) {
         for (NamedValue<?> namedValue : parameter) {
-            checkOmParameterFor(namedValue, ProcessParameter.SamplingPoint);
-            // TODO station, network
+            ProcessParameter processParameter = ProcessParameter.fromOrUnknown(namedValue.getName().getHref());
+            checkOmParameterFor(namedValue, processParameter);
         }
     }
 
@@ -174,9 +174,9 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     
     private String checkOmParameterForMonitoringStation(NamedValue<?> namedValue, String identifier) {
         if (ProcessParameter.MonitoringStation.getConceptURI().equals(namedValue.getName().getHref())) {
-//            if (getEReportingPrefixedIdentifierHelper().isSetStationPrefix()) {
-//                return checkNamespacePrefix(getEReportingPrefixedIdentifierHelper().getStationPrefix() + identifier);
-//            }
+            if (getEReportingPrefixedIdentifierHelper().isSetStationPrefix()) {
+                return checkNamespacePrefix(getEReportingPrefixedIdentifierHelper().getStationPrefix() + identifier);
+            }
             return checkNamespacePrefix(identifier);
         }
         return identifier;
@@ -184,9 +184,9 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
 
     private String checkOmParameterForNetwork(NamedValue<?> namedValue, String identifier) {
         if (ProcessParameter.Network.getConceptURI().equals(namedValue.getName().getHref())) {
-//            if (getEReportingPrefixedIdentifierHelper().isSetNetworkPrefix()) {
-//                return checkNamespacePrefix(getEReportingPrefixedIdentifierHelper().getNetworkPrefix() + identifier);
-//            }
+            if (getEReportingPrefixedIdentifierHelper().isSetNetworkPrefix()) {
+                return checkNamespacePrefix(getEReportingPrefixedIdentifierHelper().getNetworkPrefix() + identifier);
+            }
             return checkNamespacePrefix(identifier);
         }
         return identifier;

@@ -83,7 +83,7 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
 
     @Override
     public OmObservation create(OmObservation omObservation, EReportingSeries series) {
-        for (NamedValue<?> namedValue : helper.createSamplingPointParameter(series)) {
+        for (NamedValue<?> namedValue : helper.createOmParameterForEReporting(series)) {
             omObservation.addParameter(namedValue);
         }
         return omObservation;

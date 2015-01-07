@@ -279,6 +279,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>binding-json</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>binding-exi</artifactId>
+        </dependency>
 
         <!-- REST BINDING -->
 

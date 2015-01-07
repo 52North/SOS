@@ -16,6 +16,8 @@ This project includes:
   52°North SOS - Converter Modules under GPLv2
   52°North SOS - Coordinate transformation module under GPLv2
   52°North SOS - Core Modules under GPLv2
+  52°North SOS - EXI Coding under GPLv2
+  52°North SOS - EXI Efficient XML Interchange Binding under GPLv2
   52°North SOS - Extension Delete Observation under GPLv2
   52°North SOS - Extension Delete Observation - Hibernate DAO under GPLv2
   52°North SOS - Extension Delete Observation - JSON under GPLv2
@@ -89,6 +91,7 @@ This project includes:
   CORS Filter under The Apache Software License, Version 2.0
   dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
   EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
+  EXIficient under GNU General Public License (GPL), Version 2.0
   FindBugs-jsr305 under The Apache Software License, Version 2.0
   GeoDB Core under BSD style, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
@@ -189,6 +192,7 @@ This project includes:
   W3C SOAP specification recommondation (v1.2 part 1) under The Apache Software License, Version 2.0
   W3C WS-Addressing specification schemas (v1.0) under The Apache Software License, Version 2.0
   W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0
+  Xerces2 Java Parser under The Apache Software License, Version 2.0
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0
   XmlBeans under The Apache Software License, Version 2.0
   XmlBeansXPath under The Apache Software License, Version 2.0

@@ -936,6 +936,22 @@
 				<artifactId>reflections</artifactId>
 				<version>0.9.9-RC1</version>
 			</dependency>
+			<!-- EXI - Efficient XML Interchange -->
+			<dependency>
+				<groupId>com.siemens.ct.exi</groupId>
+				<artifactId>exificient</artifactId>
+				<version>0.9.3</version>
+			</dependency>
+			<dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>binding-exi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-exi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>

@@ -19,5 +19,6 @@
 		<module>wml-v20</module>
 		<module>json</module>
 		<module>json-common</module>
+		<module>exi</module>
     </modules>
 </project>

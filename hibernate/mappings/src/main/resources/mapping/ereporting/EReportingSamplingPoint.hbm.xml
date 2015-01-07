@@ -25,5 +25,15 @@
         <many-to-one name="assessmentType" class="org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType" fetch="join" foreign-key="sampPointAssessTypeIdFk">
             <column name="assessmentType" />
         </many-to-one>
+		<many-to-one name="station" class="org.n52.sos.ds.hibernate.entities.ereporting.EReportingStation" fetch="select" lazy="no-proxy" foreign-key="sampPointStationFk">
+            <column name="station">
+            	<comment>Relation/foreign key to the station table. Describes the type of the station. Contains "station".stationId</comment>
+            </column>
+        </many-to-one>
+		<many-to-one name="network" class="org.n52.sos.ds.hibernate.entities.ereporting.EReportingNetwork" fetch="select" lazy="no-proxy" foreign-key="sampPointNetworkFk">
+            <column name="network">
+            	<comment>Relation/foreign key to the network table. Describes the type of the network. Contains "network".networkId</comment>
+            </column>
+        </many-to-one>
     </class>
 </hibernate-mapping>

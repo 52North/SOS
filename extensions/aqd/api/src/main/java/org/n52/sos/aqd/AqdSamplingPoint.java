@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,16 +31,27 @@ package org.n52.sos.aqd;
 import org.n52.sos.aqd.AqdConstants.AssessmentType;
 import org.n52.sos.ef.EfEnvironmentalMonitoringFacility;
 
+/**
+ * Class represents an AQD_SamplingPoint
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.3.0
+ *
+ */
 public class AqdSamplingPoint extends EfEnvironmentalMonitoringFacility {
  
     private static final long serialVersionUID = -5679922725853829576L;
+    
+    private AssessmentType assessmentType;
+    
+    private AqdStation station;
+    
+    private AqdNetwork network;
     
     public AqdSamplingPoint() {
     	setDefaultElementEncoding(AqdConstants.NS_AQD);
     }
     
-    private AssessmentType assessmentType;
-
     /**
      * @return the assessmentType
      */
@@ -53,6 +64,48 @@ public class AqdSamplingPoint extends EfEnvironmentalMonitoringFacility {
      */
     public void setAssessmentType(AssessmentType assessmentType) {
         this.assessmentType = assessmentType;
+    }
+
+    /**
+     * @return the station
+     */
+    public AqdStation getStation() {
+        return station;
+    }
+
+    /**
+     * @param station the station to set
+     */
+    public void setStation(AqdStation station) {
+        this.station = station;
+    }
+    
+    /**
+     * @return <code>true</code>, if {@link AqdStation} is not null
+     */
+    public boolean isSetStation() {
+        return getStation() != null;
+    }
+
+    /**
+     * @return the network
+     */
+    public AqdNetwork getNetwork() {
+        return network;
+    }
+
+    /**
+     * @param network the network to set
+     */
+    public void setNetwork(AqdNetwork network) {
+        this.network = network;
+    }
+    
+    /**
+     * @return <code>true</code>, if {@link AqdNetwork} is not null
+     */
+    public boolean isSetNetwork() {
+        return getNetwork() != null;
     }
     
 

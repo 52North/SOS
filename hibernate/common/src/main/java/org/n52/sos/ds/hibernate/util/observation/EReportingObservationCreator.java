@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -83,7 +83,7 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
 
     @Override
     public OmObservation create(OmObservation omObservation, EReportingSeries series) {
-        for (NamedValue<?> namedValue : helper.createSamplingPointParameter(series)) {
+        for (NamedValue<?> namedValue : helper.createOmParameterForEReporting(series)) {
             omObservation.addParameter(namedValue);
         }
         return omObservation;

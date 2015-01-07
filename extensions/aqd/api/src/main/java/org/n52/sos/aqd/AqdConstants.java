@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,6 +33,7 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import org.n52.sos.aqd.AqdConstants.ProcessParameter;
 import org.n52.sos.w3c.SchemaLocation;
 
 import com.google.common.collect.ImmutableMap;
@@ -422,7 +423,8 @@ public interface AqdConstants {
         MonitoringStation("Station"),
         Network("Network"),
         VerificationSamplingPoints("VER-SP"), 
-        VerificationSamplingPointsOther("VER-SPother");
+        VerificationSamplingPointsOther("VER-SPother"),
+        Unknown("Unknown");
 
         private static final String baseURI = "http://dd.eionet.europa.eu/vocabulary/aq/processparameter/";
 
@@ -441,6 +443,24 @@ public interface AqdConstants {
 
         public String getConceptURI() {
             return conceptURI;
+        }
+        
+        public static ProcessParameter from(String v) {
+            for (ProcessParameter p : ProcessParameter.values()) {
+                if (p.getConceptURI().equals(v) || p.getId().equals(v)) {
+                    return p;
+                }
+            }
+            throw new IllegalArgumentException(v);
+        }
+
+        public static ProcessParameter fromOrUnknown(String v) {
+            for (ProcessParameter p : ProcessParameter.values()) {
+                if (p.getConceptURI().equals(v) || p.getId().equals(v)) {
+                    return p;
+                }
+            }
+            return Unknown;
         }
 
     }

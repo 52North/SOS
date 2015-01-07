@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -202,8 +202,8 @@ public class EReportingSetting implements SettingDefinitionProvider {
 //                EREPORTING_OBSERVABLE_PROPERTY_PREFIX_DEFINITION,
                 EREPORTING_FEATURE_OF_INTEREST_PREFIX_DEFINITION,
                 EREPORTING_SAMPLING_POINT_PREFIX_DEFINITION,
-//                EREPORTING_STATION_PREFIX_DEFINITION,
-//                EREPORTING_NETWORK_PREFIX_DEFINITION,
+                EREPORTING_STATION_PREFIX_DEFINITION,
+                EREPORTING_NETWORK_PREFIX_DEFINITION,
                 EREPORTING_OBSERVATION_PREFIX_DEFINITION,
                 EREPORTING_VALIDITY_FLAGS_DEFINITION,
                 EREPORTING_VERIFICATION_FLAGS_DEFINITION);

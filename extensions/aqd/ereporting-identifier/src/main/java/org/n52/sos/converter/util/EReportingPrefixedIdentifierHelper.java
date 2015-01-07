@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -198,14 +198,14 @@ public class EReportingPrefixedIdentifierHelper {
         return stationPrefix;
     }
 
-//    /**
-//     * @param stationPrefix
-//     *            the stationPrefix to set
-//     */
-//    @Setting(EReportingSetting.EREPORTING_STATION_PREFIX_KEY)
-//    public void setStationPrefix(String stationPrefix) {
-//        this.stationPrefix = stationPrefix;
-//    }
+    /**
+     * @param stationPrefix
+     *            the stationPrefix to set
+     */
+    @Setting(EReportingSetting.EREPORTING_STATION_PREFIX_KEY)
+    public void setStationPrefix(String stationPrefix) {
+        this.stationPrefix = stationPrefix;
+    }
 
     public boolean isSetStationPrefix() {
         return StringHelper.isNotEmpty(getStationPrefix());
@@ -218,14 +218,14 @@ public class EReportingPrefixedIdentifierHelper {
         return networkPrefix;
     }
 
-//    /**
-//     * @param networkPrefix
-//     *            the networkPrefix to set
-//     */
-//    @Setting(EReportingSetting.EREPORTING_NETWORK_PREFIX_KEY)
-//    public void setNetworkPrefix(String networkPrefix) {
-//        this.networkPrefix = networkPrefix;
-//    }
+    /**
+     * @param networkPrefix
+     *            the networkPrefix to set
+     */
+    @Setting(EReportingSetting.EREPORTING_NETWORK_PREFIX_KEY)
+    public void setNetworkPrefix(String networkPrefix) {
+        this.networkPrefix = networkPrefix;
+    }
 
     public boolean isSetNetworkPrefix() {
         return StringHelper.isNotEmpty(getNetworkPrefix());

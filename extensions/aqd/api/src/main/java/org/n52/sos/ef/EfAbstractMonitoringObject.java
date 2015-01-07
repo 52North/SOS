@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,6 +30,14 @@ package org.n52.sos.ef;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
 
+
+/**
+ * Class represents an AbstractMonitoringObject
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.3.0
+ *
+ */
 public abstract class EfAbstractMonitoringObject extends AbstractFeature {
 
     /**

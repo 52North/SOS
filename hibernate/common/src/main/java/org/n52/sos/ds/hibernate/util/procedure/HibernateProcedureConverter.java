@@ -129,7 +129,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
         if (desc != null) {
             enrich(desc, procedure, requestedServiceVersion,
                    descriptionFormat, null, loadedProcedures, i18n, session);
-            if (!requestedDescriptionFormat.equals(descriptionFormat)) {
+            if (!checkOutputFormatWithDescriptionFormat(procedure, requestedDescriptionFormat, descriptionFormat)) {
                 desc = convert(descriptionFormat, requestedDescriptionFormat, desc);
             }
             desc.setDescriptionFormat(requestedDescriptionFormat);
@@ -194,7 +194,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      * @throws OwsExceptionReport If procedureDescriptionFormats are invalid
      */
     @VisibleForTesting
-    void checkOutputFormatWithDescriptionFormat(
+    boolean checkOutputFormatWithDescriptionFormat(
             Procedure procedure,
             String requested,
             String descriptionFormat) throws OwsExceptionReport {
@@ -209,6 +209,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
                                  descriptionFormat, procedure.getIdentifier())
                     .setStatus(HTTPStatus.BAD_REQUEST);
         }
+        return true;
     }
 
     private boolean isSensorMLFormat(String pdf) {

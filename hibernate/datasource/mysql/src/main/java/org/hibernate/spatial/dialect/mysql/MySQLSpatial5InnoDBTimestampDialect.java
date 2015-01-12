@@ -26,41 +26,44 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.datasource;
+package org.hibernate.spatial.dialect.mysql;
+
+import java.sql.Types;
+
+import org.hibernate.HibernateException;
+import org.hibernate.dialect.Dialect;
 
 /**
- * Hibernate datasource implementation for MySQL databases and customized Hibernate mappings.
- *
+ * Hibernate Spatial {@link Dialect} for MySQL that registers Types.TIMESTAMP to
+ * timestampt instead of datetime.
+ * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
- *
  * @since 4.3.0
  *
  */
-public class CustomMySQLDatasource extends MySQLCoreDatasource {
-    private static final String DIALECT_NAME = "MySQL/MariaDB Custom Mapping";
+public class MySQLSpatial5InnoDBTimestampDialect extends MySQLSpatial5InnoDBDialect {
 
-    public CustomMySQLDatasource() {
-        setUsernameDefault(USERNAME_DEFAULT_VALUE);
-        setUsernameDescription(USERNAME_DESCRIPTION);
-        setPasswordDefault(PASSWORD_DEFAULT_VALUE);
-        setPasswordDescription(PASSWORD_DESCRIPTION);
-        setDatabaseDefault(DATABASE_DEFAULT_VALUE);
-        setDatabaseDescription(DATABASE_DESCRIPTION);
-        setHostDefault(HOST_DEFAULT_VALUE);
-        setHostDescription(HOST_DESCRIPTION);
-        setPortDefault(PORT_DEFAULT_VALUE);
-        setPortDescription(PORT_DESCRIPTION);
-        super.setTransactional(false);
+    private static final long serialVersionUID = 4518550802945449263L;
+
+    public MySQLSpatial5InnoDBTimestampDialect() {
+        super();
+        registerColumnType( Types.TIMESTAMP, "timestamp" );
     }
-
+    
     @Override
-    public boolean needsSchema() {
-        return false;
+    public String getTypeName(int code, long length, int precision, int scale) throws HibernateException {
+        if (Types.TIMESTAMP == code ) {
+            return "timestamp";
+        }
+        return super.getTypeName(code, length, precision, scale);
     }
-
+    
     @Override
-    public String getDialectName() {
-        return DIALECT_NAME;
+    public String getTypeName(int code) throws HibernateException {
+        if (Types.TIMESTAMP == code ) {
+            return "timestamp";
+        }
+        return super.getTypeName(code);
     }
 
 }

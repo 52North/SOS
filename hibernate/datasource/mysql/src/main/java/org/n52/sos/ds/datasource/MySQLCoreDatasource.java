@@ -28,18 +28,28 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Set;
+
+import org.n52.sos.config.SettingDefinition;
+
+import com.google.common.collect.ImmutableSet;
+
 /**
- * Hibernate datasource implementation for MySQL databases and customized Hibernate mappings.
+ * Hibernate datasource implementation for MySQL databases without transactional mapping.
  *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  *
  * @since 4.3.0
  *
  */
-public class CustomMySQLDatasource extends MySQLCoreDatasource {
-    private static final String DIALECT_NAME = "MySQL/MariaDB Custom Mapping";
+public class MySQLCoreDatasource extends AbstractMySQLDatasource {
 
-    public CustomMySQLDatasource() {
+    protected static final String DIALECT_NAME = "MySQL/MariaDB Core Mapping";
+
+    public MySQLCoreDatasource() {
+        super(false);
         setUsernameDefault(USERNAME_DEFAULT_VALUE);
         setUsernameDescription(USERNAME_DESCRIPTION);
         setPasswordDefault(PASSWORD_DEFAULT_VALUE);
@@ -54,13 +64,27 @@ public class CustomMySQLDatasource extends MySQLCoreDatasource {
     }
 
     @Override
-    public boolean needsSchema() {
-        return false;
-    }
-
-    @Override
     public String getDialectName() {
         return DIALECT_NAME;
     }
 
+    @Override
+    public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties current) {
+        return filter(super.getChangableSettingDefinitions(current), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
+    }
+
+    @Override
+    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
+        return filter(super.getSettingDefinitions(), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
+    }
+
+    private Set<SettingDefinition<?,?>> filter(Set<SettingDefinition<?,?>> definitions, Set<String> keysToExclude) {
+        Iterator<SettingDefinition<?, ?>> iterator = definitions.iterator();
+        while(iterator.hasNext()) {
+            if (keysToExclude.contains(iterator.next().getKey())) {
+                iterator.remove();
+            }
+        }
+        return definitions;
+    }
 }

@@ -29,12 +29,12 @@
         </property>
         <!-- values for timeseries api -->
         <property name="firstTimeStamp" type="timestamp">
-            <column name="firstTimeStamp" length="29">
+            <column name="firstTimeStamp" not-null="false" length="29">
             	<comment>The time stamp of the first (temporal) observation associated to this series</comment>
             </column>
         </property>
         <property name="lastTimeStamp" type="timestamp">
-            <column name="lastTimeStamp" length="29">
+            <column name="lastTimeStamp" not-null="false" length="29">
             	<comment>The time stamp of the last (temporal) observation associated to this series</comment>
             </column>
         </property>

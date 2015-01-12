@@ -42,9 +42,8 @@ import java.util.regex.Pattern;
 
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
-import org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBDialect;
+import org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBTimestampDialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.exception.ConfigurationException;
 
@@ -156,7 +155,7 @@ public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDat
 
     @Override
     protected Dialect createDialect() {
-        return new MySQLSpatial5InnoDBDialect();
+        return new MySQLSpatial5InnoDBTimestampDialect();
     }
 
     @Override

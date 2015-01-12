@@ -10,7 +10,9 @@
 		r.startTime AS phenomenonTimeStart,
 		r.endTime AS phenomenonTimeEnd,
 		r.resultTime AS resultTime,
-		o.processId AS offeringId
+		o.processId AS offeringId,
+		r.verification AS verification,
+		r.validity AS validation
 		FROM
 		AQD.dbo.Observation o inner join
 		AQD.dbo.Result r
@@ -49,7 +51,7 @@
             <column name="verification" not-null="true" default="3"/>
         </property>
         <property name="primaryObservation" type="string">
-            <column name="primaryObservation" not-null="true" default="var"/>
+            <formula>'hour'</formula>
         </property>
     </class>
 </hibernate-mapping>

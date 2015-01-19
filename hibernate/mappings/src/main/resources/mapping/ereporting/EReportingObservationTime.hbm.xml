@@ -48,7 +48,7 @@
             <column name="verification" not-null="true" default="3"/>
         </property>
         <property name="primaryObservation" type="string">
-            <column name="primaryObservation" not-null="true" default="var"/>
+            <column name="primaryObservation" not-null="true" default="'var'"/>
         </property>
     </class>
 </hibernate-mapping>

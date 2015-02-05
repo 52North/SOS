@@ -38,6 +38,7 @@ import java.util.TimerTask;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.xmlbeans.XmlObject;
+import org.hibernate.HibernateException;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.aqd.AqdConstants;

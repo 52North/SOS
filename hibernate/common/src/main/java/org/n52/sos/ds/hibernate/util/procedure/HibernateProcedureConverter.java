@@ -313,7 +313,10 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
             Converter<SosProcedureDescription, Object> converter =
                     ConverterRepository.getInstance()
                     .getConverter(fromFormat, toFormat);
-            return converter.convert(description);
+            if (converter != null) {
+                return converter.convert(description);
+            }
+            throw new ConverterException(String.format("No converter available to convert from '%s' to '%s'", fromFormat, toFormat));
         } catch (ConverterException ce) {
             throw new NoApplicableCodeException().causedBy(ce)
                     .withMessage("Error while processing data for DescribeSensor document!");

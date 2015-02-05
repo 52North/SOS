@@ -381,6 +381,7 @@ public class ObservationDAO extends AbstractObservationDAO {
     public List<Geometry> getSamplingGeometries(String feature, Session session) {
         Criteria criteria = getDefaultObservationInfoCriteria(session);
         criteria.createCriteria(AbstractObservation.FEATURE_OF_INTEREST).add(eq(FeatureOfInterest.IDENTIFIER, feature));
+        criteria.add(Restrictions.isNotNull(AbstractObservationTime.SAMPLING_GEOMETRY));
         criteria.addOrder(Order.asc(AbstractObservationTime.PHENOMENON_TIME_START));
         criteria.setProjection(Projections.property(AbstractObservationTime.SAMPLING_GEOMETRY));
         return criteria.list();

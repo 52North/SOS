@@ -1410,6 +1410,7 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
                 // update the name of present field
                 if (field.getElement() instanceof SweText) {
                     final SweText sweText = (SweText) field.getElement();
+                    Set<SweText> fieldsToRemove = Sets.newHashSet();
                     for (SweText sweTextField : sweTextFieldSet) {
                         if (sweText.getValue().equals(sweTextField.getValue())) {
                             if (sweTextField.isSetName()) {
@@ -1418,7 +1419,12 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
                                 field.setName(fieldName);
                             }
                             // we don't need to add it any more
-                            sweTextFieldSet.remove(sweTextField);
+                            fieldsToRemove.add(sweTextField);
+                        }
+                    }
+                    if (CollectionHelper.isNotEmpty(fieldsToRemove)) {
+                        for (SweText st : fieldsToRemove) {
+                            sweTextFieldSet.remove(st);
                         }
                     }
                 }

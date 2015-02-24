@@ -6,6 +6,18 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
  
+  Release 52n-sos-4.1.5
+==================================
+
+ --- New features ---
+ 
+ --- Changes ---
+  
+ --- Fixed bugs ---
+ 
+     * Internal error when requesting DescribeSensor with procedureDescriptionFormat = http://www.opengis.net/waterml/2.0/observationProcess
+       * The procedureDescriptionFormat was not set in the sensor description before the SensorML 1.0.1 to WML 2.0 converter is called 
+         which leads to an error in the converter. 
  
   Release 52n-sos-4.1.2
 ==================================

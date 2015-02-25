@@ -29,6 +29,9 @@
 		<property name="numberOfDecimals" 
 			formula="3" 
 			type="int" />
+		<property name="published" 
+			column="published" 
+			type="org.hibernate.type.TrueFalseType" />
 		<component name="firstValue"
 			class="org.n52.series.api.v1.db.da.beans.ObservationEntity">
 			<property name="seriesPkid" 

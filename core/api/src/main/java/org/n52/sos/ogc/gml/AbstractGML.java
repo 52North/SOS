@@ -122,7 +122,10 @@ public abstract class AbstractGML implements Serializable{
      * @return Identifier of this abstract feature
      */
     public String getIdentifier() {
-        return getIdentifierCodeWithAuthority().getValue();
+        if (isSetIdentifier()) {
+            return getIdentifierCodeWithAuthority().getValue();
+        }
+        return null;
     }
 
     /**

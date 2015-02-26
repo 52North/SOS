@@ -227,4 +227,21 @@ public abstract class SweAbstractDataComponent {
 
     public abstract SweDataComponentType getDataComponentType();
 
+    /**
+     * Copies all values from this {@link SweAbstractDataComponent} to the
+     * passed
+     * 
+     * @param copy
+     *            {@link SweAbstractDataComponent} to copy values to
+     * @return 
+     */
+    public SweAbstractDataComponent copyValueTo(SweAbstractDataComponent copy) {
+        copy.setDefinition(definition);
+        copy.setDescription(description);
+        copy.setIdentifier(identifier);
+        copy.setLabel(label);
+        copy.setName(names);
+        return copy;
+    }
+
 }

@@ -323,4 +323,11 @@ public abstract class AbstractGML implements Serializable{
     public boolean isReferenced() {
         return isSetGmlID() && gmlId.startsWith(Constants.NUMBER_SIGN_STRING);
     }
+    
+    public void copyTo(AbstractGML copyOf) {
+        copyOf.setDescription(getDescription());
+        copyOf.setGmlId(getGmlId());
+        copyOf.setIdentifier(getIdentifierCodeWithAuthority());
+        copyOf.setName(getName());
+    }
 }

@@ -244,4 +244,43 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     public AbstractPhenomenon getPhenomenonFor(String identifer) {
         return getPhenomenon().get(identifer);
     }
+    
+    
+    /**
+     * Copies all values from this object to the copyOf object except XML description and description format
+     * @param copyOf {@link SosProcedureDescription} to copy values to
+     */
+    public void copyTo(SosProcedureDescription copyOf) {
+        super.copyTo(copyOf);
+        copyOf.setValidTime(getValidTime());
+        copyOf.setFeatureOfInterest(getFeaturesOfInterest());
+        copyOf.setFeatureOfInterestMap(getFeaturesOfInterestMap());
+        copyOf.setOffetrings(getOfferings());
+        copyOf.setParentProcedures(getParentProcedures());
+        copyOf.setChildProcedures(getChildProcedures());
+    }
+    
+    public boolean isSetFeatures() {
+        return isSetFeaturesOfInterest() || isSetFeaturesOfInterestMap();
+    }
+
+    private void setFeatureOfInterest(Set<String> featuresOfInterest) {
+        this.featuresOfInterest.addAll(featuresOfInterest);
+    }
+
+    private void setFeatureOfInterestMap(Map<String, AbstractFeature> featuresOfInterestMap) {
+        this.featuresOfInterestMap.putAll(featuresOfInterestMap);
+    }
+
+    private void setOffetrings(Set<SosOffering> offerings) {
+        this.offerings.addAll(offerings);
+    }
+
+    private void setParentProcedures(Set<String> parentProcedures) {
+        this.parentProcedures.addAll(parentProcedures);
+    }
+
+    private void setChildProcedures(Set<SosProcedureDescription> childProcedures) {
+        this.childProcedures.addAll(childProcedures);
+    }
 }

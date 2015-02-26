@@ -32,9 +32,6 @@ import static java.util.Collections.singletonMap;
 import static org.n52.sos.util.CodingHelper.encoderKeysForElements;
 import static org.n52.sos.util.CollectionHelper.union;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -95,14 +92,10 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.custommonkey.xmlunit.Diff;
-import org.n52.sos.binding.BindingConstants;
-import org.n52.sos.binding.BindingRepository;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
@@ -122,7 +115,6 @@ import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
 import org.n52.sos.ogc.sensorML.System;
 import org.n52.sos.ogc.sensorML.elements.AbstractSmlDocumentation;
 import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
-import org.n52.sos.ogc.sensorML.elements.SmlCapabilitiesPredicates;
 import org.n52.sos.ogc.sensorML.elements.SmlCharacteristics;
 import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
@@ -137,10 +129,8 @@ import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
-import org.n52.sos.ogc.swe.DataRecord;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.ogc.swe.SweConstants.SweAggregateType;
@@ -150,13 +140,9 @@ import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.SweSimpleDataRecord;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
-import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.util.http.HTTPStatus;
@@ -164,22 +150,19 @@ import org.n52.sos.util.http.MediaType;
 import org.n52.sos.w3c.SchemaLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
  * 
  */
-public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements ProcedureEncoder<XmlObject, Object> {
+public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorMLEncoderv101.class);
 
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = singletonMap(
@@ -195,7 +178,7 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
                                     ImmutableSet.of(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
                             .put(Sos1Constants.SERVICEVERSION,
                                     ImmutableSet.of(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE)).build());
-
+    
     @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = union(
             encoderKeysForElements(SensorMLConstants.NS_SML, SosProcedureDescription.class, AbstractSensorML.class),
@@ -677,25 +660,6 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
             if (isIdentical(person, xmlOptions, anotherPerson)) {
                 return true;
             }
-        }
-        return false;
-    }
-
-    private boolean isIdentical(final XmlObject xmlObject, final XmlOptions xmlOptions,
-            final XmlObject anotherXmlObject) {
-        try {
-            final Diff diff = new Diff(xmlObject.xmlText(xmlOptions), anotherXmlObject.xmlText(xmlOptions));
-            if (diff.similar()) {
-                return true;
-            }
-        } catch (final SAXException e) {
-            // TODO Auto-generated catch block generated on 05.12.2013 around
-            // 09:56:52
-            LOGGER.error("Exception thrown: {}", e.getMessage(), e);
-        } catch (final IOException e) {
-            // TODO Auto-generated catch block generated on 05.12.2013 around
-            // 09:56:52
-            LOGGER.error("Exception thrown: {}", e.getMessage(), e);
         }
         return false;
     }
@@ -1310,367 +1274,5 @@ public class SensorMLEncoderv101 extends AbstractXmlEncoder<Object> implements P
         return SensorMLConstants.ABSTRACT_PROCESS_QNAME;
     }
 
-    /**
-     * Add special capabilities to abstract process:
-     * <ul>
-     * <li>featureOfInterest,</li>
-     * <li>sosOfferings,</li>
-     * <li>parentProcedures</li>
-     * </ul>
-     * but only, if available.
-     * 
-     * @param abstractProcess
-     *            SOS abstract process.
-     */
-    protected void addSpecialCapabilities(final AbstractProcess abstractProcess) {
-        if (abstractProcess.isSetFeaturesOfInterestMap()) {
-            final Set<SweText> featureSet = convertFeaturesToSet(abstractProcess.getFeaturesOfInterestMap());
-            mergeCapabilities(abstractProcess, SensorMLConstants.ELEMENT_NAME_FEATURES_OF_INTEREST,
-                    SensorMLConstants.FEATURE_OF_INTEREST_FIELD_DEFINITION, SensorMLConstants.FEATURE_OF_INTEREST_FIELD_NAME, featureSet);
-
-        } else {
-            if (abstractProcess.isSetFeaturesOfInterest()) {
-                final Map<String, String> valueNamePairs =
-                        createValueNamePairs(SensorMLConstants.FEATURE_OF_INTEREST_FIELD_NAME,
-                                abstractProcess.getFeaturesOfInterest());
-                mergeCapabilities(abstractProcess, SensorMLConstants.ELEMENT_NAME_FEATURES_OF_INTEREST,
-                        SensorMLConstants.FEATURE_OF_INTEREST_FIELD_DEFINITION, valueNamePairs);
-            }
-        }
-
-        if (abstractProcess.isSetOfferings()) {
-            final Set<SweText> offeringsSet = convertOfferingsToSet(abstractProcess.getOfferings());
-            mergeCapabilities(abstractProcess, SensorMLConstants.ELEMENT_NAME_OFFERINGS,
-                    SensorMLConstants.OFFERING_FIELD_DEFINITION, null, offeringsSet);
-        }
-
-        if (abstractProcess.isSetParentProcedures()) {
-            final Map<String, String> valueNamePairs =
-                    createValueNamePairs(SensorMLConstants.PARENT_PROCEDURE_FIELD_NAME,
-                            abstractProcess.getParentProcedures());
-            mergeCapabilities(abstractProcess, SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES,
-                    SensorMLConstants.PARENT_PROCEDURE_FIELD_DEFINITION, valueNamePairs);
-        }
-    }
-
-    private void mergeCapabilities(final AbstractProcess process, final String capabilitiesName,
-            final String definition, final Map<String, String> valueNamePairs) {
-        final Optional<SmlCapabilities> capabilities =
-                process.findCapabilities(SmlCapabilitiesPredicates.name(capabilitiesName));
-
-        if (capabilities.isPresent() && capabilities.get().isSetAbstractDataRecord()) {
-            final DataRecord dataRecord = capabilities.get().getDataRecord();
-            // update present capabilities
-            for (final SweField field : dataRecord.getFields()) {
-
-                // update the definition if not present
-                if (field.getDefinition() == null) {
-                    field.setDefinition(definition);
-                }
-
-                // update the name of present field
-                if (field.getElement() instanceof SweText) {
-                    final SweText sweText = (SweText) field.getElement();
-                    final String value = sweText.getValue();
-                    if (valueNamePairs.containsKey(value)) {
-                        field.setName(valueNamePairs.get(value));
-                        // we don't need to add it any more
-                        valueNamePairs.remove(value);
-                    }
-                }
-            }
-            // add capabilities not yet present
-            final List<SweField> additionalFields = createCapabilitiesFieldsFrom(definition, valueNamePairs);
-            for (final SweField field : additionalFields) {
-                dataRecord.addField(field);
-            }
-        } else {
-            if (capabilities.isPresent()) {
-                process.removeCapabilities(capabilities.get());
-            }
-            // create new capabilities
-            process.addCapabilities(createCapabilitiesFrom(capabilitiesName, definition, valueNamePairs));
-        }
-    }
-
-    private void mergeCapabilities(final AbstractProcess process, final String capabilitiesName,
-            final String definition, String fieldName, final Set<SweText> sweTextFieldSet) {
-        final Optional<SmlCapabilities> capabilities =
-                process.findCapabilities(SmlCapabilitiesPredicates.name(capabilitiesName));
-        if (capabilities.isPresent() && capabilities.get().isSetAbstractDataRecord()) {
-            final DataRecord dataRecord = capabilities.get().getDataRecord();
-            // update present capabilities
-            for (final SweField field : dataRecord.getFields()) {
-
-                // update the definition if not present
-                if (field.getDefinition() == null) {
-                    field.setDefinition(definition);
-                }
-
-                // update the name of present field
-                if (field.getElement() instanceof SweText) {
-                    final SweText sweText = (SweText) field.getElement();
-                    Set<SweText> fieldsToRemove = Sets.newHashSet();
-                    for (SweText sweTextField : sweTextFieldSet) {
-                        if (sweText.getValue().equals(sweTextField.getValue())) {
-                            if (sweTextField.isSetName()) {
-                                field.setName(sweTextField.getName().getValue());
-                            } else {
-                                field.setName(fieldName);
-                            }
-                            // we don't need to add it any more
-                            fieldsToRemove.add(sweTextField);
-                        }
-                    }
-                    if (CollectionHelper.isNotEmpty(fieldsToRemove)) {
-                        for (SweText st : fieldsToRemove) {
-                            sweTextFieldSet.remove(st);
-                        }
-                    }
-                }
-            }
-            // add capabilities not yet present
-            final List<SweField> additionalFields = createCapabilitiesFieldsFrom(definition, fieldName, sweTextFieldSet);
-            for (final SweField field : additionalFields) {
-                dataRecord.addField(field);
-            }
-        } else {
-            if (capabilities.isPresent()) {
-                process.removeCapabilities(capabilities.get());
-            }
-            // create new capabilities
-            process.addCapabilities(createCapabilitiesFrom(capabilitiesName, definition, fieldName, sweTextFieldSet));
-        }
-    }
-
-    /**
-     * Convert SOS sosOfferings to map with key == identifier and value = name
-     * 
-     * @param offerings
-     *            SOS sosOfferings
-     * @return Map with identifier, name.
-     */
-    protected Map<String, String> convertOfferingsToMap(final Set<SosOffering> offerings) {
-        final Map<String, String> valueNamePairs = Maps.newHashMapWithExpectedSize(offerings.size());
-        for (final SosOffering offering : offerings) {
-            valueNamePairs.put(offering.getIdentifier(), offering.getOfferingName());
-        }
-        return valueNamePairs;
-    }
-
-    /**
-     * Convert SOS sosOfferings to map with key == identifier and value = name
-     * @param featureOfInterestFieldName 
-     * 
-     * @param map
-     *            .values() SOS sosOfferings
-     * @return Set with identifier, name.
-     */
-    protected Set<SweText> convertFeaturesToSet(final Map<String, AbstractFeature> map) {
-        final Set<SweText> featureSet = Sets.newHashSetWithExpectedSize(map.values().size());
-        for (final AbstractFeature abstractFeature : map.values()) {
-            SweText sweText = new SweText();
-            sweText.setValue(abstractFeature.getIdentifier());
-            for (CodeType name : abstractFeature.getName()) {
-                sweText.addName(name);
-            }
-            if (abstractFeature.isSetDescription()) {
-                sweText.setDescription(abstractFeature.getDescription());
-            }
-            featureSet.add(sweText);
-        }
-        return featureSet;
-    }
-
-    /**
-     * Convert SOS sosOfferings to map with key == identifier and value = name
-     * 
-     * @param offerings
-     *            SOS sosOfferings
-     * @return Set with identifier, name.
-     */
-    protected Set<SweText> convertOfferingsToSet(final Set<SosOffering> offerings) {
-        final Set<SweText> offeringSet = Sets.newHashSetWithExpectedSize(offerings.size());
-        for (final SosOffering offering : offerings) {
-            SweText sweText = new SweText();
-            sweText.setValue(offering.getIdentifier());
-            for (CodeType name : offering.getName()) {
-                sweText.addName(name);
-            }
-            if (offering.isSetDescription()) {
-                sweText.setDescription(offering.getDescription());
-            }
-            offeringSet.add(sweText);
-        }
-        return offeringSet;
-    }
-
-    protected Map<String, String> createValueNamePairs(final String fieldName, final Set<String> values) {
-        final Map<String, String> valueNamePairs = Maps.newHashMapWithExpectedSize(values.size());
-        if (values.size() == 1) {
-            valueNamePairs.put(values.iterator().next(), fieldName);
-        } else {
-            int counter = 1;
-            for (final String value : values) {
-                valueNamePairs.put(value, fieldName + (counter++));
-            }
-        }
-        return valueNamePairs;
-    }
-
-    /**
-     * Creates a SOS capability object form data
-     * 
-     * @param capabilitiesName
-     *            Element name
-     * @param fieldDefinition
-     *            Field definition
-     * @param valueNamePairs
-     *            Value map
-     * @return SOS capability
-     */
-    protected SmlCapabilities createCapabilitiesFrom(final String capabilitiesName, final String fieldDefinition,
-            final Map<String, String> valueNamePairs) {
-        final SmlCapabilities capabilities = new SmlCapabilities().setName(capabilitiesName);
-        final SweSimpleDataRecord simpleDataRecord = new SweSimpleDataRecord();
-        final List<SweField> fields = createCapabilitiesFieldsFrom(fieldDefinition, valueNamePairs);
-        return capabilities.setDataRecord(simpleDataRecord.setFields(fields));
-    }
-
-    private List<SweField> createCapabilitiesFieldsFrom(final String fieldDefinition,
-            final Map<String, String> valueNamePairs) {
-        final List<SweField> fields = Lists.newArrayListWithExpectedSize(valueNamePairs.size());
-        final List<String> values = Lists.newArrayList(valueNamePairs.keySet());
-        Collections.sort(values);
-        for (final String value : values) {
-            final SweText text = new SweText();
-            text.setDefinition(fieldDefinition);
-            text.setValue(value);
-            final String fieldName = valueNamePairs.get(value);
-            final SweField field = new SweField(fieldName, text);
-            fields.add(field);
-        }
-        return fields;
-    }
-
-    protected SmlCapabilities createCapabilitiesFrom(final String capabilitiesName, final String fieldDefinition, final String fieldName,
-            final Set<SweText> sweTextSet) {
-        final SmlCapabilities capabilities = new SmlCapabilities().setName(capabilitiesName);
-        final SweSimpleDataRecord simpleDataRecord = new SweSimpleDataRecord();
-        final List<SweField> fields = createCapabilitiesFieldsFrom(fieldDefinition, fieldName, sweTextSet);
-        return capabilities.setDataRecord(simpleDataRecord.setFields(fields));
-    }
-
-    private List<SweField> createCapabilitiesFieldsFrom(final String fieldElementDefinition, final String fieldName, final Set<SweText> sweTextSet) {
-        final List<SweField> fields = Lists.newArrayListWithExpectedSize(sweTextSet.size());
-        final List<SweText> values = Lists.newArrayList(sweTextSet);
-        Collections.sort(values);
-        for (final SweText text : values) {
-            text.setDefinition(fieldElementDefinition);
-            String name = fieldName;
-            if (Strings.isNullOrEmpty(fieldName)) {
-                if (text.isSetName() && text.getName().isSetValue()) {
-                    name = text.getName().getValue();
-                } else {
-                    name =  SensorMLConstants.DEFAULT_FIELD_NAME  + Integer.toString(values.indexOf(text));
-                }
-            }
-            final SweField field = new SweField(name, text);
-            fields.add(field);
-        }
-        return fields;
-    }
-
-    /**
-     * Create SOS component list from child SOS procedure descriptions
-     * 
-     * @param childProcedures
-     *            Chile procedure descriptions
-     * @return SOS component list
-     * @throws CodedException
-     *             If an error occurs
-     */
-    protected List<SmlComponent> createComponentsForChildProcedures(final Set<SosProcedureDescription> childProcedures)
-            throws CodedException {
-        final List<SmlComponent> smlComponents = Lists.newLinkedList();
-        int childCount = 0;
-        for (final SosProcedureDescription childProcedure : childProcedures) {
-            childCount++;
-            final SmlComponent component = new SmlComponent("component" + childCount);
-            component.setTitle(childProcedure.getIdentifier());
-
-            if (ServiceConfiguration.getInstance().isEncodeFullChildrenInDescribeSensor()
-                    && childProcedure instanceof AbstractSensorML) {
-                component.setProcess((AbstractSensorML) childProcedure);
-            } else {
-                try {
-                    if (BindingRepository.getInstance().isBindingSupported(BindingConstants.KVP_BINDING_ENDPOINT)) {
-                        final String version =
-                                ServiceOperatorRepository.getInstance().getSupportedVersions(SosConstants.SOS)
-                                        .contains(Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
-                                        : Sos1Constants.SERVICEVERSION;
-
-                        component.setHref(SosHelper.getDescribeSensorUrl(version, ServiceConfiguration.getInstance()
-                                .getServiceURL(), childProcedure.getIdentifier(),
-                                BindingConstants.KVP_BINDING_ENDPOINT, childProcedure.getDescriptionFormat()));
-                    } else {
-                        component.setHref(childProcedure.getIdentifier());
-                    }
-                } catch (final UnsupportedEncodingException uee) {
-                    throw new NoApplicableCodeException().withMessage("Error while encoding DescribeSensor URL")
-                            .causedBy(uee);
-                }
-            }
-            smlComponents.add(component);
-        }
-        return smlComponents;
-    }
-
-    /**
-     * Get the output values from childs
-     * 
-     * @param smlComponents
-     *            SOS component list
-     * @return Child outputs
-     */
-    protected Collection<? extends SmlIo<?>> getOutputsFromChilds(final List<SmlComponent> smlComponents) {
-        final Set<SmlIo<?>> outputs = Sets.newHashSet();
-        for (final SmlComponent sosSMLComponent : smlComponents) {
-            if (sosSMLComponent.isSetProcess()) {
-                if (sosSMLComponent.getProcess() instanceof SensorML) {
-                    final SensorML sensorML = (SensorML) sosSMLComponent.getProcess();
-                    if (sensorML.isSetMembers()) {
-                        for (final AbstractProcess abstractProcess : sensorML.getMembers()) {
-                            if (abstractProcess.isSetOutputs()) {
-                                outputs.addAll(abstractProcess.getOutputs());
-                            }
-                        }
-                    }
-                } else if (sosSMLComponent.getProcess() instanceof AbstractProcess) {
-                    final AbstractProcess abstractProcess = (AbstractProcess) sosSMLComponent.getProcess();
-                    if (abstractProcess.isSetOutputs()) {
-                        outputs.addAll(abstractProcess.getOutputs());
-                    }
-                }
-            }
-        }
-        return outputs;
-    }
-
-    /**
-     * Get featureOfInterests from components
-     * 
-     * @param smlComponents
-     *            SOS component list
-     * @return Child featureOfInterests
-     */
-    protected Collection<String> getFeaturesFromChild(final List<SmlComponent> smlComponents) {
-        final Set<String> features = Sets.newHashSet();
-        for (final SmlComponent sosSMLComponent : smlComponents) {
-            if (sosSMLComponent.isSetProcess() && sosSMLComponent.getProcess().isSetFeaturesOfInterest()) {
-                features.addAll(sosSMLComponent.getProcess().getFeaturesOfInterest());
-            }
-        }
-        return features;
-    }
+   
 }

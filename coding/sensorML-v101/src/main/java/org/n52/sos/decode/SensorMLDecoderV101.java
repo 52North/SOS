@@ -164,6 +164,12 @@ public class SensorMLDecoderV101 implements Decoder<AbstractSensorML, XmlObject>
     }
 
     @Override
+    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
+        return Collections.singletonMap(SupportedTypeKey.ProcedureDescriptionFormat,
+                SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS);
+    }
+
+    @Override
     public AbstractSensorML decode(final XmlObject element) throws OwsExceptionReport {
         if (element instanceof SensorMLDocument) {
             return parseSensorML((SensorMLDocument) element);
@@ -176,12 +182,6 @@ public class SensorMLDecoderV101 implements Decoder<AbstractSensorML, XmlObject>
         } else {
             throw new UnsupportedDecoderInputException(this, element);
         }
-    }
-
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.singletonMap(SupportedTypeKey.ProcedureDescriptionFormat,
-                SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS);
     }
 
     private SensorML parseSensorML(final SensorMLDocument xbSensorML) throws OwsExceptionReport {
@@ -509,7 +509,8 @@ public class SensorMLDecoderV101 implements Decoder<AbstractSensorML, XmlObject>
             final Object o = CodingHelper.decodeXmlElement(xbcaps.getAbstractDataRecord());
             if (o instanceof DataRecord) {
                 final DataRecord record = (DataRecord) o;
-                final SmlCapabilities caps = new SmlCapabilities().setDataRecord(record).setName(xbcaps.getName());
+                final SmlCapabilities caps = new SmlCapabilities();
+                caps.setDataRecord(record).setName(xbcaps.getName());
                 abstractProcess.addCapabilities(caps);
                 // check if this capabilities is insertion metadata
                 if (SensorMLConstants.ELEMENT_NAME_OFFERINGS.equals(caps.getName())) {

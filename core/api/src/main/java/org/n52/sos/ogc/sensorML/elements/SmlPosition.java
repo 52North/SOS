@@ -32,8 +32,13 @@ import java.util.List;
 
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.ogc.swe.SweCoordinate;
+import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.StringHelper;
+
+import com.google.common.collect.Sets.SetView;
 
 /**
  * SOS internal representation of SensorML position
@@ -49,6 +54,8 @@ public class SmlPosition extends SweAbstractDataComponent {
     private String referenceFrame;
 
     private List<SweCoordinate<?>> position;
+    
+    private SweVector vector;
 
     /**
      * default constructor
@@ -132,11 +139,21 @@ public class SmlPosition extends SweAbstractDataComponent {
         this.referenceFrame = referenceFrame;
         return this;
     }
+    
+    public boolean isSetReferenceFrame() {
+        return StringHelper.isNotEmpty(getReferenceFrame());
+    }
 
     /**
      * @return the position
      */
     public List<SweCoordinate<?>> getPosition() {
+        if (!isSetPosition() && isSetVector()) {
+            setPosition(vector.getCoordinates());
+            if (vector.isSetReferenceFrame() && !isSetReferenceFrame()) {
+                setReferenceFrame(vector.getReferenceFrame());
+            }
+        }
         return position;
     }
 
@@ -148,6 +165,27 @@ public class SmlPosition extends SweAbstractDataComponent {
     public SmlPosition setPosition(final List<SweCoordinate<?>> position) {
         this.position = position;
         return this;
+    }
+    
+    private boolean isSetPosition() {
+        return CollectionHelper.isNotEmpty(position);
+    }
+    
+    public SweVector getVector() {
+        if (!isSetVector() && isSetPosition()) {
+            SweVector vector = (SweVector)copyValueTo(new SweVector(getPosition()));
+            vector.setReferenceFrame(getReferenceFrame());
+            setVector(vector);
+        }
+        return vector;
+    }
+
+    public void setVector(SweVector vector) {
+       this.vector = vector;
+    }
+    
+    private boolean isSetVector() {
+        return vector != null;
     }
 
     @Override

@@ -28,27 +28,20 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
-import java.util.Collections;
-import java.util.Set;
-
 import org.n52.sos.ogc.swe.DataRecord;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 
 /**
  * SOS internal representation of SensorML capabilities
  * 
  * @since 4.0.0
  */
-public class SmlCapabilities {
-
-    private String name;
-    private DataRecord dataRecord;
+public class SmlCapabilities extends AbstractSmlDataComponentContainer<SmlCapabilities> {
 
     /**
      * default constructor
      */
     public SmlCapabilities() {
-        this(null, null);
+       super();
     }
 
     /**
@@ -60,50 +53,8 @@ public class SmlCapabilities {
      *            DataRecord
      */
     public SmlCapabilities(String name, DataRecord dataRecord) {
-        this.name = name;
-        this.dataRecord = dataRecord;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public SmlCapabilities setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    /**
-     * @return the dataRecord
-     */
-    public DataRecord getDataRecord() {
-        return dataRecord;
-    }
-
-    /**
-     * @param dataRecord
-     *            the dataRecord to set
-     * @return this
-     */
-    public SmlCapabilities setDataRecord(DataRecord dataRecord) {
-        this.dataRecord = dataRecord;
-        return this;
-    }
-
-    public boolean isSetAbstractDataRecord() {
-        return getDataRecord() != null;
-    }
-
-    public boolean isSetName() {
-        return name != null && !name.isEmpty();
-    }
-    
-    @SuppressWarnings("rawtypes")
-    public Set<SweAbstractSimpleType<?>> getSweAbstractSimpleTypeFromFields(Class clazz) {
-        if (isSetAbstractDataRecord()) {
-            return getDataRecord().getSweAbstractSimpleTypeFromFields(clazz);
-        }
-        return Collections.emptySet();
+        super(dataRecord);
+        setName(name);
     }
 
 }

@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ogc.sensorML;
 
+import org.n52.sos.Role;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
@@ -35,13 +37,21 @@ package org.n52.sos.ogc.sensorML;
  * @since 4.0.0
  */
 public abstract class SmlContact {
-    private String role;
-
+    private Role role;
+    
     public String getRole() {
+        return role.getValue();
+    }
+    
+    public Role getRoleObject() {
         return role;
     }
 
     public void setRole(String role) {
+        this.role = new Role(role);
+    }
+    
+    public void setRole(Role role) {
         this.role = role;
     }
 }

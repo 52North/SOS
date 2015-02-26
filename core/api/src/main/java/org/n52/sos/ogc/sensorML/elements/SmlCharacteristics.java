@@ -28,18 +28,17 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
+import java.util.Set;
+
 import org.n52.sos.ogc.swe.DataRecord;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 
 /**
  * SOS internal representation of SensorML characteristics
  * 
  * @since 4.0.0
  */
-public class SmlCharacteristics {
-
-    private String typeDefinition;
-
-    private DataRecord dataRecord;
+public class SmlCharacteristics extends AbstractSmlDataComponentContainer<SmlCharacteristics> {
 
     /**
      * default constructor
@@ -55,46 +54,17 @@ public class SmlCharacteristics {
      *            dataRecord
      */
     public SmlCharacteristics(DataRecord dataRecord) {
-        super();
-        this.dataRecord = dataRecord;
+        super(dataRecord);
     }
 
     /**
-     * @return the typeDefinition
+     * constructor
+     * 
+     * @param abstractDataComponents
+     *            Data components to add
      */
-    public String getTypeDefinition() {
-        return typeDefinition;
-    }
-
-    /**
-     * @param typeDefinition
-     *            the typeDefinition to set
-     */
-    public void setTypeDefinition(String typeDefinition) {
-        this.typeDefinition = typeDefinition;
-    }
-
-    /**
-     * @return the dataRecord
-     */
-    public DataRecord getDataRecord() {
-        return dataRecord;
-    }
-
-    /**
-     * @param dataRecord
-     *            the dataRecord to set
-     */
-    public void setDataRecord(DataRecord dataRecord) {
-        this.dataRecord = dataRecord;
-    }
-
-    public boolean isSetAbstractDataRecord() {
-        return dataRecord != null;
-    }
-
-    public boolean isSetTypeDefinition() {
-        return typeDefinition != null && !typeDefinition.isEmpty();
+    public SmlCharacteristics(Set<SweAbstractDataComponent> abstractDataComponents) {
+        super(abstractDataComponents);
     }
 
 }

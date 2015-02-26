@@ -29,6 +29,7 @@
 package org.n52.sos.ogc.sensorML;
 
 import org.n52.sos.ogc.gml.AbstractReferenceType;
+import org.n52.sos.ogc.sensorML.v20.AbstractAlgorithm;
 
 import com.google.common.base.Strings;
 
@@ -43,6 +44,8 @@ import com.google.common.base.Strings;
 public class ProcessMethod extends AbstractReferenceType {
 
     private RulesDefinition rulesDefinition;
+    
+    private AbstractAlgorithm algorithm; 
     
     public ProcessMethod(final String href) {
         if (Strings.isNullOrEmpty(href)) {

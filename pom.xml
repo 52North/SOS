@@ -145,7 +145,17 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>coding-sensorML</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>coding-sensorML-v101</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-sensorML-v20</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -1436,7 +1446,7 @@
                                 <id>check-license</id>
                                 <phase>initialize</phase>
                                 <goals>
-                                    <goal>check</goal>
+                                    <goal>generate</goal>
                                 </goals>
                             </execution>
                         </executions>

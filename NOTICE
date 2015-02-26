@@ -9,6 +9,7 @@ This project includes:
   52°North Aggregated Third Party modules under GPLv2
   52°North Sensor Observation Service under GPLv2
   52°North SOS - 2.0 XML Request Coding under GPLv2
+  52°North SOS - Abstract SensorML Coding Module under GPLv2
   52°North SOS - Administrator Service Operator under GPLv2
   52°North SOS - Binding Modules under GPLv2
   52°North SOS - Cache under GPLv2
@@ -56,6 +57,7 @@ This project includes:
   52°North SOS - Profile Module under GPLv2
   52°North SOS - Profile XmlBeans Module under GPLv2
   52°North SOS - SensorML 101 Request Coding under GPLv2
+  52°North SOS - SensorML 20 Request Coding under GPLv2
   52°North SOS - SOAP Binding under GPLv2
   52°North SOS - SOS 1.0.0 Core Profile Operator under GPLv2
   52°North SOS - SOS 1.0.0 XML Request Coding under GPLv2
@@ -92,6 +94,8 @@ This project includes:
   EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
   FindBugs-jsr305 under The Apache Software License, Version 2.0
   GeoDB Core under BSD style, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
+  Geographic COmmon (GCO) schema (version 2012-07-13) under The Apache Software License, Version 2.0
+  Geographic MetaData (GMD) schema (version 2012-07-13) under The Apache Software License, Version 2.0
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   H2 Database Engine under The H2 License, Version 1.0
   Hamcrest All under New BSD License
@@ -149,6 +153,8 @@ This project includes:
   OGC Sampling schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC Sampling schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC SensorML schema (spec. v1.0.1) under The Apache Software License, Version 2.0
+  OGC SensorML schema (spec. v2.0.0) under The Apache Software License, Version 2.0
+  OGC SOS GetDataAvailability schema 1.0 (OGC Best Practice 14-004r1) under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC SWECommon schema (spec. v1.0.1) under The Apache Software License, Version 2.0

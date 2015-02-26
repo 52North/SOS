@@ -47,13 +47,13 @@ import org.n52.sos.ds.hibernate.util.procedure.create.LinkedDescriptionCreationS
 import org.n52.sos.ds.hibernate.util.procedure.create.ValidProcedureTimeDescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.create.XmlStringDescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.enrich.ProcedureDescriptionEnrichments;
+import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorRepository;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
 import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.util.http.HTTPStatus;
@@ -63,76 +63,80 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 /**
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike HinderkJ&uuml;rrens</a>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike
+ *         HinderkJ&uuml;rrens</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  *
  * @since 4.0.0
  *
- * TODO - apply description enrichment to all types of procedures
- * (creates, file, or database) - use setting switches for code flow
+ *        TODO - apply description enrichment to all types of procedures
+ *        (creates, file, or database) - use setting switches for code flow
  */
 public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
+
     /**
      * Create procedure description from file, single XML text or generate
      *
-     * @param procedure                  Hibernate procedure entity
-     * @param requestedDescriptionFormat Requested procedure descriptionFormat
-     * @param requestedServiceVersion    Requested SOS version
-     * @param session                    Hibernate session
+     * @param procedure
+     *            Hibernate procedure entity
+     * @param requestedDescriptionFormat
+     *            Requested procedure descriptionFormat
+     * @param requestedServiceVersion
+     *            Requested SOS version
+     * @param session
+     *            Hibernate session
      *
      * @return created SosProcedureDescription
      *
-     * @throws OwsExceptionReport If an error occurs
+     * @throws OwsExceptionReport
+     *             If an error occurs
      */
-    public SosProcedureDescription createSosProcedureDescription(
-            Procedure procedure, String requestedDescriptionFormat,
-            String requestedServiceVersion, Session session) throws OwsExceptionReport {
+    public SosProcedureDescription createSosProcedureDescription(Procedure procedure,
+            String requestedDescriptionFormat, String requestedServiceVersion, Session session)
+            throws OwsExceptionReport {
         // child hierarchy procedures haven't been queried yet, pass null
-        return createSosProcedureDescription(procedure,
-                                             requestedDescriptionFormat,
-                                             requestedServiceVersion,
-                                             null,
-                                             session);
+        return createSosProcedureDescription(procedure, requestedDescriptionFormat, requestedServiceVersion, null,
+                session);
     }
 
     /**
      * Create procedure description from file, single XML text or generate
      *
-     * @param procedure                  Hibernate procedure entity
-     * @param requestedDescriptionFormat Requested procedure descriptionFormat
-     * @param requestedServiceVersion    Requested SOS version
-     * @param loadedProcedures           Loaded procedure hierarchy (passed to
-     *                                   recursive requests to avoid multiple
-     *                                   queries)
-     * @param session                    Hibernate session
+     * @param procedure
+     *            Hibernate procedure entity
+     * @param requestedDescriptionFormat
+     *            Requested procedure descriptionFormat
+     * @param requestedServiceVersion
+     *            Requested SOS version
+     * @param loadedProcedures
+     *            Loaded procedure hierarchy (passed to recursive requests to
+     *            avoid multiple queries)
+     * @param session
+     *            Hibernate session
      *
      * @return created SosProcedureDescription
      *
-     * @throws OwsExceptionReport If an error occurs
+     * @throws OwsExceptionReport
+     *             If an error occurs
      */
-    public SosProcedureDescription createSosProcedureDescription(
-            Procedure procedure,
+    public SosProcedureDescription createSosProcedureDescription(Procedure procedure,
             String requestedDescriptionFormat, String requestedServiceVersion,
-            Map<String, Procedure> loadedProcedures, Locale i18n, Session session) throws
-            OwsExceptionReport {
+            Map<String, Procedure> loadedProcedures, Locale i18n, Session session) throws OwsExceptionReport {
         if (procedure == null) {
-            throw new NoApplicableCodeException()
-                    .causedBy(new IllegalArgumentException("Parameter 'procedure' should not be null!"))
-                    .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
+            throw new NoApplicableCodeException().causedBy(
+                    new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
+                    HTTPStatus.INTERNAL_SERVER_ERROR);
         }
-        final String descriptionFormat = getFormat(procedure);
-        checkOutputFormatWithDescriptionFormat(procedure, requestedDescriptionFormat, descriptionFormat);
-
-        SosProcedureDescription desc = create(procedure, null, i18n, session).orNull();
+        checkOutputFormatWithDescriptionFormat(procedure, requestedDescriptionFormat, getFormat(procedure));
+        SosProcedureDescription desc = create(procedure, requestedDescriptionFormat, null, i18n, session).orNull();
         if (desc != null) {
-            enrich(desc, procedure, requestedServiceVersion,
-                   descriptionFormat, null, loadedProcedures, i18n, session);
-            if (!requestedDescriptionFormat.equals(descriptionFormat)) {
-                desc = convert(descriptionFormat, requestedDescriptionFormat, desc);
+            enrich(desc, procedure, requestedServiceVersion, requestedDescriptionFormat, null, loadedProcedures, i18n, session);
+            if (!requestedDescriptionFormat.equals(desc.getDescriptionFormat())) {
+                desc = convert(desc.getDescriptionFormat(), requestedDescriptionFormat, desc);
+                desc.setDescriptionFormat(requestedDescriptionFormat);
             }
-            desc.setDescriptionFormat(requestedDescriptionFormat);
         }
         return desc;
     }
@@ -141,90 +145,103 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      * Create procedure description from XML text stored in ValidProcedureTime
      * table
      *
-     * @param procedure          Hibernate procedure entity
-     * @param vpt Hibernate ValidProcedureTime entity
-     * @param version            Requested SOS version
-     * @param session            Hibernate session
+     * @param procedure
+     *            Hibernate procedure entity
+     * @param vpt
+     *            Hibernate ValidProcedureTime entity
+     * @param version
+     *            Requested SOS version
+     * @param session
+     *            Hibernate session
      *
      * @return created SosProcedureDescription
      *
-     * @throws OwsExceptionReport If an error occurs
+     * @throws OwsExceptionReport
+     *             If an error occurs
      */
-    public SosProcedureDescription createSosProcedureDescriptionFromValidProcedureTime(
-            Procedure procedure, ValidProcedureTime vpt, String version, Locale i18n, Session session)
-            throws OwsExceptionReport {
+    public SosProcedureDescription createSosProcedureDescriptionFromValidProcedureTime(Procedure procedure,
+            ValidProcedureTime vpt, String version, Locale i18n, Session session) throws OwsExceptionReport {
         String descriptionFormat = getFormat(vpt);
-        Optional<SosProcedureDescription> description = create(procedure, vpt, i18n, session);
+        Optional<SosProcedureDescription> description = create(procedure, descriptionFormat, vpt, i18n, session);
         if (description.isPresent()) {
-            enrich(description.get(), procedure, version, descriptionFormat,
-                   getValidTime(vpt), null, i18n, session);
+            enrich(description.get(), procedure, version, descriptionFormat, getValidTime(vpt), null, i18n, session);
             description.get().setDescriptionFormat(descriptionFormat);
         }
         return description.orNull();
     }
 
     public SosProcedureDescription createSosProcedureDescription(Procedure procedure,
-            String requestedDescriptionFormat, String requestedServiceVersion, Locale i18n, Session session) throws OwsExceptionReport {
-        return createSosProcedureDescription(procedure,
-                requestedDescriptionFormat,
-                requestedServiceVersion,
-                null,
-                i18n,
-                session);
+            String requestedDescriptionFormat, String requestedServiceVersion, Locale i18n, Session session)
+            throws OwsExceptionReport {
+        return createSosProcedureDescription(procedure, requestedDescriptionFormat, requestedServiceVersion, null,
+                i18n, session);
     }
 
     protected TimePeriod getValidTime(ValidProcedureTime validProcedureTime) {
-        return new TimePeriod(validProcedureTime.getStartTime(),
-                validProcedureTime.getEndTime());
+        return new TimePeriod(validProcedureTime.getStartTime(), validProcedureTime.getEndTime());
     }
 
     private String getFormat(HasProcedureDescriptionFormat hpdf) {
-        return hpdf.getProcedureDescriptionFormat()
-                .getProcedureDescriptionFormat();
+        return hpdf.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
     }
 
     /**
      * Checks the requested procedureDescriptionFormat with the datasource
      * procedureDescriptionFormat.
      *
-     * @param procedure         the procedure
-     * @param requested         requested procedureDescriptionFormat
-     * @param descriptionFormat Data source procedureDescriptionFormat
+     * @param procedure
+     *            the procedure
+     * @param requested
+     *            requested procedureDescriptionFormat
+     * @param descriptionFormat
+     *            Data source procedureDescriptionFormat
      *
-     * @throws OwsExceptionReport If procedureDescriptionFormats are invalid
+     * @throws OwsExceptionReport
+     *             If procedureDescriptionFormats are invalid
      */
     @VisibleForTesting
-    void checkOutputFormatWithDescriptionFormat(
-            Procedure procedure,
-            String requested,
-            String descriptionFormat) throws OwsExceptionReport {
+    boolean checkOutputFormatWithDescriptionFormat(Procedure procedure, String requested, String descriptionFormat)
+            throws OwsExceptionReport {
+        if (procedure.isSetDescriptionXml()) {
+            // if (!requested.equalsIgnoreCase(descriptionFormat) &&
+            // !(isSensorMLFormat(descriptionFormat) &&
+            // isSensorMLFormat(requested)) &&
+            // !existConverter(descriptionFormat, requested)) {
+            // throw new InvalidParameterValueException()
+            // .at(SosConstants.DescribeSensorParams.procedure)
+            // .withMessage("The value of the output format is wrong and has to be %s for procedure %s",
+            // descriptionFormat, procedure.getIdentifier())
+            // .setStatus(HTTPStatus.BAD_REQUEST);
+            // }
+            if (requested.equalsIgnoreCase(descriptionFormat) || existConverter(descriptionFormat, requested)) {
+                return true;
+            }
 
-        if (!requested.equalsIgnoreCase(descriptionFormat) &&
-            !(isSensorMLFormat(descriptionFormat) &&
-              isSensorMLFormat(requested)) &&
-            !existConverter(descriptionFormat, requested)) {
-            throw new InvalidParameterValueException()
-                    .at(SosConstants.DescribeSensorParams.procedure)
-                    .withMessage("The value of the output format is wrong and has to be %s for procedure %s",
-                                 descriptionFormat, procedure.getIdentifier())
-                    .setStatus(HTTPStatus.BAD_REQUEST);
+        } else {
+            if (existsGenerator(requested)) {
+                return true;
+            }
         }
-    }
-
-    private boolean isSensorMLFormat(String pdf) {
-        return SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE.equalsIgnoreCase(pdf) ||
-               SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL.equalsIgnoreCase(pdf);
-
+        throw new InvalidParameterValueException()
+                .at(SosConstants.DescribeSensorParams.procedure)
+                .withMessage("The value of the output format is wrong and has to be %s for procedure %s",
+                        descriptionFormat, procedure.getIdentifier()).setStatus(HTTPStatus.BAD_REQUEST);
     }
 
     private boolean existConverter(String from, String to) {
         return ConverterRepository.getInstance().hasConverter(from, to);
     }
+    
+    private boolean existsGenerator(String descriptionFormat) {
+        return HibernateProcedureDescriptionGeneratorRepository.getInstance()
+                .hasHibernateProcedureDescriptionGeneratorFactory(descriptionFormat);
+    }
 
-    private Optional<SosProcedureDescription> create(Procedure procedure, ValidProcedureTime vpt, Locale i18n, Session session) throws OwsExceptionReport {
+    private Optional<SosProcedureDescription> create(Procedure procedure, String descriptionFormat,
+            ValidProcedureTime vpt, Locale i18n, Session session) throws OwsExceptionReport {
         Optional<DescriptionCreationStrategy> strategy = getCreationStrategy(procedure, vpt);
         if (strategy.isPresent()) {
-            return Optional.fromNullable(strategy.get().create(procedure, i18n, session));
+            return Optional.fromNullable(strategy.get().create(procedure, descriptionFormat, i18n, session));
         } else {
             return Optional.absent();
         }
@@ -241,41 +258,39 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
 
     protected ArrayList<DescriptionCreationStrategy> getCreationStrategies(ValidProcedureTime vpt) {
         return Lists.newArrayList(new ValidProcedureTimeDescriptionCreationStrategy(vpt),
-                                  new LinkedDescriptionCreationStrategy(),
-                                  new XmlStringDescriptionCreationStrategy(),
-                                  new FileDescriptionCreationStrategy(),
-                                  new GeneratedDescriptionCreationStrategy());
+                new LinkedDescriptionCreationStrategy(), new XmlStringDescriptionCreationStrategy(),
+                new FileDescriptionCreationStrategy(), new GeneratedDescriptionCreationStrategy());
     }
 
     /**
      * Enrich the procedure description.
      *
-     * @param desc      the description
-     * @param procedure the procedure
-     * @param version   the version
-     * @param format    the format
-     * @param cache     the procedure cache
-     * @param language  the language
-     * @param session   the session
+     * @param desc
+     *            the description
+     * @param procedure
+     *            the procedure
+     * @param version
+     *            the version
+     * @param format
+     *            the format
+     * @param cache
+     *            the procedure cache
+     * @param language
+     *            the language
+     * @param session
+     *            the session
      *
      * @see HibernateProcedureEnrichment
-     * @throws OwsExceptionReport if the enrichment fails
+     * @throws OwsExceptionReport
+     *             if the enrichment fails
      */
-    private void enrich(SosProcedureDescription desc, Procedure procedure,
-                String version, String format, TimePeriod validTime,
-                Map<String, Procedure> cache, Locale language,
-                Session session) throws OwsExceptionReport {
-        ProcedureDescriptionEnrichments enrichments
-            = ProcedureDescriptionEnrichments.create()
-            .setIdentifier(procedure.getIdentifier())
-            .setVersion(version)
-            .setDescription(desc)
-            .setProcedureDescriptionFormat(format)
-            .setSession(session)
-            .setValidTime(validTime)
-            .setProcedureCache(cache)
-            .setConverter(this)
-            .setLanguage(language);
+    private void enrich(SosProcedureDescription desc, Procedure procedure, String version, String format,
+            TimePeriod validTime, Map<String, Procedure> cache, Locale language, Session session)
+            throws OwsExceptionReport {
+        ProcedureDescriptionEnrichments enrichments =
+                ProcedureDescriptionEnrichments.create().setIdentifier(procedure.getIdentifier()).setVersion(version)
+                        .setDescription(desc).setProcedureDescriptionFormat(format).setSession(session)
+                        .setValidTime(validTime).setProcedureCache(cache).setConverter(this).setLanguage(language);
         if (desc instanceof SensorML && ((SensorML) desc).isWrapper()) {
             enrichments.setDescription(desc).createValidTimeEnrichment().enrich();
             for (AbstractProcess abstractProcess : ((SensorML) desc).getMembers()) {
@@ -289,28 +304,31 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
     /**
      * Convert the description to another procedure description format.
      *
-     * @param fromFormat  the source format
-     * @param toFormat    the target format
-     * @param description the procedure description.
+     * @param fromFormat
+     *            the source format
+     * @param toFormat
+     *            the target format
+     * @param description
+     *            the procedure description.
      *
      * @return the converted description
      *
-     * @throws OwsExceptionReport if conversion fails
+     * @throws OwsExceptionReport
+     *             if conversion fails
      */
-    private SosProcedureDescription convert(String fromFormat, String toFormat,
-                                            SosProcedureDescription description)
+    private SosProcedureDescription convert(String fromFormat, String toFormat, SosProcedureDescription description)
             throws OwsExceptionReport {
         try {
             Converter<SosProcedureDescription, Object> converter =
-                    ConverterRepository.getInstance()
-                    .getConverter(fromFormat, toFormat);
+                    ConverterRepository.getInstance().getConverter(fromFormat, toFormat);
             if (converter != null) {
                 return converter.convert(description);
             }
-            throw new ConverterException(String.format("No converter available to convert from '%s' to '%s'", fromFormat, toFormat));
+            throw new ConverterException(String.format("No converter available to convert from '%s' to '%s'",
+                    fromFormat, toFormat));
         } catch (ConverterException ce) {
-            throw new NoApplicableCodeException().causedBy(ce)
-                    .withMessage("Error while processing data for DescribeSensor document!");
+            throw new NoApplicableCodeException().causedBy(ce).withMessage(
+                    "Error while processing data for DescribeSensor document!");
         }
     }
 }

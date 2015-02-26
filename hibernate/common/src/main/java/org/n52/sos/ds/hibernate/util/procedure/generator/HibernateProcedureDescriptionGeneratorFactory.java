@@ -26,44 +26,20 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.procedure.create;
+package org.n52.sos.ds.hibernate.util.procedure.generator;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.hibernate.Session;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactory;
-import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorRepository;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
-
-/**
- * Strategy to generate a description.
- */
-public class GeneratedDescriptionCreationStrategy implements
-        DescriptionCreationStrategy {
+public interface HibernateProcedureDescriptionGeneratorFactory {
     
-    private final HibernateProcedureDescriptionGeneratorRepository factoryRepository =
-            HibernateProcedureDescriptionGeneratorRepository.getInstance();
+    List<HibernateProcedureDescriptionGeneratorFactoryKeyType> getHibernateProcedureDescriptionGeneratorFactoryKeyTypes();
+    
+    SosProcedureDescription create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport;
 
-    @Override
-    public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s)
-            throws OwsExceptionReport {
-        SosProcedureDescription desc = getFactory(descriptionFormat).create(p, i18n, s);
-        desc.setDescriptionFormat(descriptionFormat);
-        return desc;
-    }
-
-    @Override
-    public boolean apply(Procedure p) {
-        return Strings.isNullOrEmpty(p.getDescriptionFile());
-    }
-
-    @VisibleForTesting
-    HibernateProcedureDescriptionGeneratorFactory getFactory(String descriptionFormat) {
-        return factoryRepository.getFactory(descriptionFormat);
-    }
 }

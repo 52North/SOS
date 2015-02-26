@@ -36,7 +36,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
@@ -44,7 +43,7 @@ import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
-import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureDescriptionGenerator;
+import org.n52.sos.ds.hibernate.util.procedure.generator.AbstractHibernateProcedureDescriptionGeneratorSml;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.om.OmObservableProperty;
@@ -152,42 +151,42 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
 
     private String queryUnit() {
         if (HibernateHelper.isNamedQuerySupported(
-                HibernateProcedureDescriptionGenerator.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING,
+                AbstractHibernateProcedureDescriptionGeneratorSml.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING,
                 getSession())) {
             Query namedQuery =
                     getSession()
                             .getNamedQuery(
-                                    HibernateProcedureDescriptionGenerator.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING);
+                                    AbstractHibernateProcedureDescriptionGeneratorSml.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING);
             namedQuery.setParameter(ObservationConstellation.OBSERVABLE_PROPERTY, oc.getObservableProperty()
                     .getIdentifier());
             namedQuery.setParameter(ObservationConstellation.PROCEDURE, oc.getProcedure().getIdentifier());
             namedQuery.setParameter(ObservationConstellation.OFFERING, oc.getOffering().getIdentifier());
             LOGGER.debug(
                     "QUERY queryUnit(observationConstellation) with NamedQuery: {}",
-                    HibernateProcedureDescriptionGenerator.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING);
+                    AbstractHibernateProcedureDescriptionGeneratorSml.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING);
             return (String) namedQuery.uniqueResult();
         } else if (HibernateHelper.isNamedQuerySupported(
-                HibernateProcedureDescriptionGenerator.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE,
+                AbstractHibernateProcedureDescriptionGeneratorSml.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE,
                 getSession())) {
             Query namedQuery =
                     getSession()
                             .getNamedQuery(
-                                    HibernateProcedureDescriptionGenerator.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE);
+                                    AbstractHibernateProcedureDescriptionGeneratorSml.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE);
             namedQuery.setParameter(ObservationConstellation.OBSERVABLE_PROPERTY, oc.getObservableProperty()
                     .getIdentifier());
             namedQuery.setParameter(ObservationConstellation.PROCEDURE, oc.getProcedure().getIdentifier());
             LOGGER.debug("QUERY queryUnit(observationConstellation) with NamedQuery: {}",
-                    HibernateProcedureDescriptionGenerator.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE);
+                    AbstractHibernateProcedureDescriptionGeneratorSml.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE);
             return (String) namedQuery.uniqueResult();
         } else if (HibernateHelper.isNamedQuerySupported(
-                HibernateProcedureDescriptionGenerator.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY, getSession())) {
+                AbstractHibernateProcedureDescriptionGeneratorSml.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY, getSession())) {
             Query namedQuery =
                     getSession().getNamedQuery(
-                            HibernateProcedureDescriptionGenerator.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY);
+                            AbstractHibernateProcedureDescriptionGeneratorSml.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY);
             namedQuery.setParameter(ObservationConstellation.OBSERVABLE_PROPERTY, oc.getObservableProperty()
                     .getIdentifier());
             LOGGER.debug("QUERY queryUnit(observationConstellation) with NamedQuery: {}",
-                    HibernateProcedureDescriptionGenerator.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY);
+                    AbstractHibernateProcedureDescriptionGeneratorSml.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY);
             return (String) namedQuery.uniqueResult();
         }
         return null;

@@ -80,6 +80,7 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
     private Collection<String> getFeatureOfInterestIDs()
             throws OwsExceptionReport {
         Set<String> features = Sets.newHashSet();
+        // add cache map for proc/fois and get fois for proc
         for (String offering : getCache().getOfferingsForProcedure(getIdentifier())) {
             // don't include features for offerings which this procedure is a
             // hidden child of

@@ -41,6 +41,7 @@ public class AbstractPhysicalProcess extends DescribedObject {
     
     private TemporalFrame localTimeFrame;
     
+    // TODO extend to list and support other type (point, text, datarecord, ...)
     private SmlPosition position;
     
     private Object timePosition;
@@ -57,6 +58,9 @@ public class AbstractPhysicalProcess extends DescribedObject {
     }
 
     /**
+     * Set the attachedTo reference. 
+     * It is automatically added to parentProcedure list.
+     * 
      * @param attachedTo the attachedTo to set
      */
     public void setAttachedTo(ReferenceType attachedTo) {

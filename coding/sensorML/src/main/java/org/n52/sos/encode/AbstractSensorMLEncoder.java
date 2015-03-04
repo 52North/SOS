@@ -39,6 +39,7 @@ import java.util.Set;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.custommonkey.xmlunit.Diff;
+import org.n52.oxf.xml.NcNameResolver;
 import org.n52.sos.binding.BindingConstants;
 import org.n52.sos.binding.BindingRepository;
 import org.n52.sos.exception.CodedException;
@@ -80,6 +81,8 @@ import com.google.common.collect.Sets;
 public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object> implements ProcedureEncoder<XmlObject, Object> {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSensorMLEncoder.class);
+    
+    private static final String OUTPUT_PREFIX = "output#";
 
     /**
      * Add special capabilities to abstract process:
@@ -469,7 +472,26 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
         return false;
     }
     
+    /**
+     * Create a valvalue output element name
+     * 
+     * @param counter
+     *            Element counter
+     * @param outputNames
+     *            Set with otput names
+     * @return Valvalue output element name
+     */
+    protected String getValidOutputName(final int counter, final Set<String> outputNames) {
+        String outputName = OUTPUT_PREFIX + counter;
+        while (outputNames.contains(outputName)) {
+            outputName = OUTPUT_PREFIX + (counter + 1);
+        }
+        return NcNameResolver.fixNcName(outputName);
+    }
+    
     protected XmlOptions getOptions() {
         return XmlOptionsHelper.getInstance().getXmlOptions();
     }
+    
+    
 }

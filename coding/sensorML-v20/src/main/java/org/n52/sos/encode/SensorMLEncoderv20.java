@@ -175,8 +175,6 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             encoderKeysForElements(SensorML20Constants.SENSORML_20_CONTENT_TYPE.toString(),
                     SosProcedureDescription.class, AbstractSensorML.class, DescribedObject.class));
 
-    private static final String OUTPUT_PREFIX = "output#";
-
     public SensorMLEncoderv20() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
                 .join(ENCODER_KEYS));
@@ -1197,45 +1195,41 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     }
 
     private FeaturesOfInterest createFeatureOfInterest(SmlFeatureOfInterest feature) {
-        FeaturesOfInterest foi = FeaturesOfInterest.Factory.newInstance(getOptions());
-        FeatureListType featureList = foi.addNewFeatureList();
-        if (feature.isSetDefinition()) {
-            featureList.setDefinition(feature.getDefinition());
-        }
-        if (feature.isSetDescription()) {
-            featureList.setDescription(feature.getDescription());
-        }
-        if (feature.isSetIdentifier()) {
-            featureList.setIdentifier(feature.getIdentifier());
-        }
-        if (feature.isSetLabel()) {
-            featureList.setLabel(feature.getLabel());
-        }
         if (feature.isSetFeaturesOfInterest()) {
-            // TODO set vs map
-            for (String featureIdentifier : feature.getFeaturesOfInterest()) {
-                // TODO encode in GML 3.2.1 encoder
-                featureList.addNewFeature().setHref(featureIdentifier);
+            FeaturesOfInterest foi = FeaturesOfInterest.Factory.newInstance(getOptions());
+            FeatureListType featureList = foi.addNewFeatureList();
+            if (feature.isSetDefinition()) {
+                featureList.setDefinition(feature.getDefinition());
             }
+            if (feature.isSetDescription()) {
+                featureList.setDescription(feature.getDescription());
+            }
+            if (feature.isSetIdentifier()) {
+                featureList.setIdentifier(feature.getIdentifier());
+            }
+            if (feature.isSetLabel()) {
+                featureList.setLabel(feature.getLabel());
+            }
+            return foi;
         }
-        return foi;
+        return null;
     }
-
-    /**
-     * Create a valvalue output element name
-     * 
-     * @param counter
-     *            Element counter
-     * @param outputNames
-     *            Set with otput names
-     * @return Valvalue output element name
-     */
-    private String getValidOutputName(final int counter, final Set<String> outputNames) {
-        String outputName = OUTPUT_PREFIX + counter;
-        while (outputNames.contains(outputName)) {
-            outputName = OUTPUT_PREFIX + (counter + 1);
+    
+    private void addFeatures(FeatureListType featureList, SmlFeatureOfInterest feature) {
+        Set<String> featuresToAdd = Sets.newHashSet();
+        if (feature.isSetFeaturesOfInterest()) {
+            featuresToAdd.addAll(feature.getFeaturesOfInterest());
         }
-        return NcNameResolver.fixNcName(outputName);
+        if (feature.isSetFeaturesOfInterestMap()) {
+            featuresToAdd.addAll(feature.getFeaturesOfInterestMap().keySet());
+        }
+        for (int i = 0; i < featureList.sizeOfFeatureArray(); i++) {
+            featureList.removeFeature(i);
+        }
+        for (String featureIdentifier : featuresToAdd) {
+            // TODO encode in GML 3.2.1 encoder
+            featureList.addNewFeature().setHref(featureIdentifier);
+        }
     }
 
     /**

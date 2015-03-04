@@ -185,8 +185,6 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
             encoderKeysForElements(SensorMLConstants.SENSORML_CONTENT_TYPE.toString(), SosProcedureDescription.class,
                     AbstractSensorML.class));
 
-    private static final String OUTPUT_PREFIX = "output#";
-
     public SensorMLEncoderv101() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
                 .join(ENCODER_KEYS));
@@ -1060,23 +1058,6 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
             }
         }
         return outputs;
-    }
-
-    /**
-     * Create a valvalue output element name
-     * 
-     * @param counter
-     *            Element counter
-     * @param outputNames
-     *            Set with otput names
-     * @return Valvalue output element name
-     */
-    private String getValidOutputName(final int counter, final Set<String> outputNames) {
-        String outputName = OUTPUT_PREFIX + counter;
-        while (outputNames.contains(outputName)) {
-            outputName = OUTPUT_PREFIX + (counter + 1);
-        }
-        return outputName;
     }
 
     /**

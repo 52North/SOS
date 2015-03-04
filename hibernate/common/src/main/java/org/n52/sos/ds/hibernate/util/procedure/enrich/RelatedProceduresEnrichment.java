@@ -157,7 +157,7 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
                 //matching child validProcedureTime was found, use it to build procedure description
                 SosProcedureDescription childDescription =
                         converter.createSosProcedureDescriptionFromValidProcedureTime(
-                                child, childVpt, getVersion(), getLocale(), getSession());
+                                child, procedureDescriptionFormat, childVpt, getVersion(), getLocale(), getSession());
                 childProcedures.add(childDescription);                
             } else  if  (child != null) {
                 //no matching child validProcedureTime, generate the procedure description

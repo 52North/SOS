@@ -159,13 +159,17 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public SosProcedureDescription createSosProcedureDescriptionFromValidProcedureTime(Procedure procedure,
+    public SosProcedureDescription createSosProcedureDescriptionFromValidProcedureTime(Procedure procedure, String requestedDescriptionFormat,
             ValidProcedureTime vpt, String version, Locale i18n, Session session) throws OwsExceptionReport {
-        String descriptionFormat = getFormat(vpt);
-        Optional<SosProcedureDescription> description = create(procedure, descriptionFormat, vpt, i18n, session);
+        checkOutputFormatWithDescriptionFormat(procedure, requestedDescriptionFormat, getFormat(procedure));
+        Optional<SosProcedureDescription> description = create(procedure, requestedDescriptionFormat, vpt, i18n, session);
         if (description.isPresent()) {
-            enrich(description.get(), procedure, version, descriptionFormat, getValidTime(vpt), null, i18n, session);
-            description.get().setDescriptionFormat(descriptionFormat);
+            enrich(description.get(), procedure, version, requestedDescriptionFormat, getValidTime(vpt), null, i18n, session);
+            if (!requestedDescriptionFormat.equals(description.get().getDescriptionFormat())) {
+                SosProcedureDescription converted = convert(description.get().getDescriptionFormat(), requestedDescriptionFormat, description.get());
+                converted.setDescriptionFormat(requestedDescriptionFormat);
+                return converted;
+            }
         }
         return description.orNull();
     }

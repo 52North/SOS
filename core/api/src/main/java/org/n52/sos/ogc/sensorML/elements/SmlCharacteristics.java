@@ -28,10 +28,12 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
-import java.util.Set;
+import java.util.List;
 
 import org.n52.sos.ogc.swe.DataRecord;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.util.CollectionHelper;
+
+import com.google.common.collect.Lists;
 
 /**
  * SOS internal representation of SensorML characteristics
@@ -39,6 +41,8 @@ import org.n52.sos.ogc.swe.SweAbstractDataComponent;
  * @since 4.0.0
  */
 public class SmlCharacteristics extends AbstractSmlDataComponentContainer<SmlCharacteristics> {
+    
+    private List<SmlCharacteristic> characteristics = Lists.newArrayList();
 
     /**
      * default constructor
@@ -57,14 +61,40 @@ public class SmlCharacteristics extends AbstractSmlDataComponentContainer<SmlCha
         super(dataRecord);
     }
 
+    
     /**
-     * constructor
-     * 
-     * @param abstractDataComponents
-     *            Data components to add
+     * @return the characteristics
      */
-    public SmlCharacteristics(Set<SweAbstractDataComponent> abstractDataComponents) {
-        super(abstractDataComponents);
+    public List<SmlCharacteristic> getCharacteristic() {
+        return characteristics;
     }
+
+    /**
+     * @param characteristics the characteristics to set
+     */
+    public void setCharacteristic(List<SmlCharacteristic> characteristics) {
+        if (CollectionHelper.isNotEmpty(characteristics)) {
+            this.characteristics = characteristics;
+        }
+    }
+    
+    /**
+     * @param characteristics the characteristics to add
+     */
+    public void addCharacteristic(List<SmlCharacteristic> characteristics) {
+        this.characteristics.addAll(characteristics);
+    }
+    
+    /**
+     * @param characteristic the characteristic to add
+     */
+    public void addCharacteristic(SmlCharacteristic characteristic) {
+        this.characteristics.add(characteristic);
+    }
+    
+    public boolean isSetCharacteristics() {
+        return CollectionHelper.isNotEmpty(characteristics);
+    }
+    
 
 }

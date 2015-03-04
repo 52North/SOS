@@ -28,85 +28,74 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
-import java.util.List;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 
-import org.n52.sos.ogc.swe.DataRecord;
-import org.n52.sos.util.CollectionHelper;
+public class AbstractDataComponentContainer<T> {
 
-import com.google.common.collect.Lists;
+    private String name;
 
-/**
- * SOS internal representation of SensorML capabilities
- * 
- * @since 4.0.0
- */
-public class SmlCapabilities extends AbstractSmlDataComponentContainer<SmlCapabilities> {
-    
-    
-    private List<SmlCapability> capabilities = Lists.newArrayList();
+    private SweAbstractDataComponent abstractDataComponent;
 
     /**
      * default constructor
      */
-    public SmlCapabilities() {
-       super();
-    }
-    
-    /**
-     * constructor
-     * 
-     * @param name
-     *            Type
-     */
-    public SmlCapabilities(String name) {
-        setName(name);
+    public AbstractDataComponentContainer() {
+        super();
     }
 
     /**
      * constructor
      * 
      * @param name
-     *            Type
-     * @param dataRecord
-     *            DataRecord
+     *            name
      */
-    public SmlCapabilities(String name, DataRecord dataRecord) {
-        super(dataRecord);
-        setName(name);
+    public AbstractDataComponentContainer(String name) {
+        this.name = name;
     }
 
     /**
-     * @return the capabilities
+     * constructor
+     * 
+     * @param name
+     *            name
+     * @param abstractDataComponent
+     *            data component
      */
-    public List<SmlCapability> getCapabilities() {
-        return capabilities;
+    public AbstractDataComponentContainer(String name, SweAbstractDataComponent abstractDataComponent) {
+        this.name = name;
+        this.abstractDataComponent = abstractDataComponent;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @SuppressWarnings("unchecked")
+    public T setName(String name) {
+        this.name = name;
+        return (T) this;
+    }
+
+    public boolean isSetName() {
+        return name != null && !name.isEmpty();
     }
 
     /**
-     * @param capabilities the capabilities to set
+     * @return the abstractDataComponent
      */
-    public void setCapabilities(List<SmlCapability> capabilities) {
-        if (CollectionHelper.isNotEmpty(capabilities)) {
-            this.capabilities = capabilities;
-        }
-    }
-    
-    /**
-     * @param capabilities the capabilities to add
-     */
-    public void addCapabilities(List<SmlCapability> capabilities) {
-        this.capabilities.addAll(capabilities);
-    }
-    
-    /**
-     * @param capability the capability to add
-     */
-    public void addCapability(SmlCapability capability) {
-        this.capabilities.add(capability);
-    }
-    
-    public boolean isSetCapabilities() {
-        return CollectionHelper.isNotEmpty(capabilities);
+    public SweAbstractDataComponent getAbstractDataComponent() {
+        return abstractDataComponent;
     }
 
+    /**
+     * @param abstractDataComponent
+     *            the abstractDataComponent to set
+     */
+    public void setAbstractDataComponent(SweAbstractDataComponent abstractDataComponent) {
+        this.abstractDataComponent = abstractDataComponent;
+    }
+
+    public boolean isSetAbstractDataComponent() {
+        return abstractDataComponent != null;
+    }
 }

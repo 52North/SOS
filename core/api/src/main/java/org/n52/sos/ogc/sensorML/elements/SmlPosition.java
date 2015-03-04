@@ -56,6 +56,8 @@ public class SmlPosition extends SweAbstractDataComponent {
     private List<SweCoordinate<?>> position;
     
     private SweVector vector;
+    
+    private SweAbstractDataComponent dataComponent;
 
     /**
      * default constructor
@@ -184,8 +186,26 @@ public class SmlPosition extends SweAbstractDataComponent {
        this.vector = vector;
     }
     
-    private boolean isSetVector() {
+    public boolean isSetVector() {
         return vector != null;
+    }
+    
+    public SweAbstractDataComponent getAbstractDataComponent() {
+        if (!isSetAbstractDataComponent() && isSetVector()) {
+            return vector;
+        }
+        return dataComponent;
+    }
+
+    public void setAbstractDataComponent(SweAbstractDataComponent dataComponent) {
+        if (dataComponent instanceof SweVector) {
+            setVector((SweVector)dataComponent);
+        }
+       this.dataComponent = dataComponent;
+    }
+    
+    public boolean isSetAbstractDataComponent() {
+        return dataComponent != null && isSetVector();
     }
 
     @Override

@@ -40,7 +40,10 @@ public abstract class SmlContact {
     private Role role;
     
     public String getRole() {
-        return role.getValue();
+        if (role != null) {
+            return role.getValue();
+        }
+        return null;
     }
     
     public Role getRoleObject() {

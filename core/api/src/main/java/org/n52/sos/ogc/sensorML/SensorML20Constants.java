@@ -41,7 +41,7 @@ public interface SensorML20Constants extends SensorMLConstants {
 
     String SENSORML_20_OUTPUT_FORMAT_URL = NS_SML_20;
 
-    MediaType SENSORML_20_CONTENT_TYPE = new MediaType("text", "xml", "subtype", "sensorML/2.0");
+    MediaType SENSORML_20_CONTENT_TYPE = new MediaType("text", "xml", "subtype", "sensorml/2.0");
 
     String SENSORML_20_OUTPUT_FORMAT_MIME_TYPE = SENSORML_20_CONTENT_TYPE.toString();
 

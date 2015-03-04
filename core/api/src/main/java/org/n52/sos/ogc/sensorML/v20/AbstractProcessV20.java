@@ -60,22 +60,18 @@ public class AbstractProcessV20 extends AbstractProcess {
     }
 
     public SmlFeatureOfInterest getSmlFeatureOfInterest() {
-        if (featureOfInterest != null && featureOfInterest.isSetFeatures()) {
-            return featureOfInterest;
-        } else {
-            if (featureOfInterest == null) {
-                featureOfInterest = new SmlFeatureOfInterest();
-                featureOfInterest.setDefinition(SensorMLConstants.FEATURE_OF_INTEREST_FIELD_DEFINITION);
-                featureOfInterest.setLabel(SensorMLConstants.ELEMENT_NAME_FEATURES_OF_INTEREST);
-                if (isSetFeaturesOfInterest()) {
-                    featureOfInterest.addFeaturesOfInterest(getFeaturesOfInterest());
-                }
-                if (isSetFeaturesOfInterestMap()) {
-                    featureOfInterest.addFeaturesOfInterest(getFeaturesOfInterestMap());
-                }
-            }
-            return featureOfInterest;
+        if (featureOfInterest == null && (isSetFeaturesOfInterest() || isSetFeaturesOfInterestMap())) {
+            featureOfInterest = new SmlFeatureOfInterest();
+            featureOfInterest.setDefinition(SensorMLConstants.FEATURE_OF_INTEREST_FIELD_DEFINITION);
+            featureOfInterest.setLabel(SensorMLConstants.ELEMENT_NAME_FEATURES_OF_INTEREST);
         }
+        if (isSetFeaturesOfInterest()) {
+            featureOfInterest.addFeaturesOfInterest(getFeaturesOfInterest());
+        }
+        if (isSetFeaturesOfInterestMap()) {
+            featureOfInterest.addFeaturesOfInterest(getFeaturesOfInterestMap());
+        }
+        return featureOfInterest;
     }
 
     public boolean isSetSmlFeatureOfInterest() {

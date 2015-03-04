@@ -34,6 +34,7 @@ import java.util.List;
 import org.n52.sos.ogc.sensorML.Component;
 import org.n52.sos.ogc.sensorML.ProcessChain;
 import org.n52.sos.ogc.sensorML.ProcessModel;
+import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sensorML.SensorML20Constants;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.System;
@@ -76,48 +77,112 @@ public class SensorML20SensorML101Converter implements Converter<SosProcedureDes
     public SosProcedureDescription convert(SosProcedureDescription objectToConvert) throws ConverterException {
         if (objectToConvert.getDescriptionFormat().equals(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL)
                 || objectToConvert.getDescriptionFormat().equals(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE)) {
-            return convertSensorML101ToSensorML20(objectToConvert);
+            return convertSensorML20ToSensorML101(objectToConvert);
         } else if (objectToConvert.getDescriptionFormat().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL)
                 || objectToConvert.getDescriptionFormat().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE)) {
-            return convertSensorML20ToSensorML101(objectToConvert);
+            return convertSensorML101ToSensorML20(objectToConvert);
         }
-        return null;
+        throw new ConverterException(String.format("The procedure's description format %s is not supported!", objectToConvert.getDescriptionFormat()));
     }
     
-    /*
-     * input 
-     *    SML 1.0.1 = ObservedProperty
-     *    SML 2.0   = Text
-     * observedBBOX 
-     *    SML 1.0.1 = EnvelopeType (SweEnvelope)
-     *    SML 2.0   = ??? gml:boundedBy
-     */
-    
-
-    private SosProcedureDescription convertSensorML20ToSensorML101(SosProcedureDescription objectToConvert) {
+    private SosProcedureDescription convertSensorML20ToSensorML101(SosProcedureDescription objectToConvert) throws ConverterException {
         if (objectToConvert instanceof PhysicalSystem) {
-            // TODO
+           return toSystem((PhysicalSystem)objectToConvert);
         } else if (objectToConvert instanceof PhysicalComponent) {
-         // TODO
+         return toComponent((PhysicalComponent)objectToConvert);
         } else if (objectToConvert instanceof SimpleProcess) {
-         // TODO
+         return toProcessModel((SimpleProcess)objectToConvert);
         } else if (objectToConvert instanceof AggregateProcess) {
-         // TODO
+          return toProcessChain((AggregateProcess)objectToConvert);
         }
-        return null;
+        throw new ConverterException(String.format("The procedure type  %s is not supported!", objectToConvert.getClass().getName()));
     }
 
-    private SosProcedureDescription convertSensorML101ToSensorML20(SosProcedureDescription objectToConvert) {
-        if (objectToConvert instanceof System) {
-         // TODO
-        } else if (objectToConvert instanceof Component) {
-         // TODO
-        } else if (objectToConvert instanceof ProcessModel) {
-         // TODO
-        } else if (objectToConvert instanceof ProcessChain) {
-         // TODO
+    private SosProcedureDescription toSystem(PhysicalSystem objectToConvert) {
+        System system = new System();
+        objectToConvert.copyTo(system);
+        if (objectToConvert.isSetComponents()) {
+            system.addComponents(objectToConvert.getComponents());
         }
-        return null;
+        // TODO 
+        return new SensorML().addMember(system);
+    }
+
+    private SosProcedureDescription toComponent(PhysicalComponent objectToConvert) {
+        Component component = new Component();
+        objectToConvert.copyTo(component);
+        // TODO 
+        return new SensorML().addMember(component);
+    }
+
+    private SosProcedureDescription toProcessModel(SimpleProcess objectToConvert) {
+        ProcessModel model = new ProcessModel();
+        objectToConvert.copyTo(model);
+        // TODO 
+        return new SensorML().addMember(model);
+    }
+
+    private SosProcedureDescription toProcessChain(AggregateProcess objectToConvert) {
+        ProcessChain chain = new ProcessChain();
+        objectToConvert.copyTo(chain);
+        // TODO 
+        return new SensorML().addMember(chain);
+    }
+
+    private SosProcedureDescription convertSensorML101ToSensorML20(SosProcedureDescription objectToConvert)
+            throws ConverterException {
+        if (objectToConvert instanceof SensorML) {
+            if (((SensorML) objectToConvert).isSetMembers()) {
+                return convertSml101AbstractProcess(((SensorML) objectToConvert).getMembers().iterator().next());
+            }
+        } else {
+            return convertSml101AbstractProcess(objectToConvert);
+        }
+        throw new ConverterException(String.format("The procedure type  %s is not supported!", objectToConvert.getClass().getName()));
+    }
+    
+    private SosProcedureDescription convertSml101AbstractProcess(SosProcedureDescription objectToConvert) throws ConverterException {
+        if (objectToConvert instanceof System) {
+            return toPhysicalSystem((System) objectToConvert);
+        } else if (objectToConvert instanceof Component) {
+            return toPhysicalComponent((Component) objectToConvert);
+        } else if (objectToConvert instanceof ProcessModel) {
+            return toSimpleProcess((ProcessModel) objectToConvert);
+        } else if (objectToConvert instanceof ProcessChain) {
+            return toAggregateProcess((ProcessChain) objectToConvert);
+        }
+        throw new ConverterException(String.format("The procedure type  %s is not supported!", objectToConvert.getClass().getName()));
+    }
+
+    private SosProcedureDescription toPhysicalSystem(System objectToConvert) {
+        PhysicalSystem system = new PhysicalSystem();
+        objectToConvert.copyTo(system);
+        if (objectToConvert.isSetComponents()) {
+            system.addComponents(objectToConvert.getComponents());
+        }
+        // TODO
+        return system;
+    }
+
+    private SosProcedureDescription toPhysicalComponent(Component objectToConvert) {
+        PhysicalComponent component = new PhysicalComponent();
+        objectToConvert.copyTo(component);
+        // TODO
+        return component;
+    }
+
+    private SosProcedureDescription toSimpleProcess(ProcessModel objectToConvert) {
+        SimpleProcess process = new SimpleProcess();
+        objectToConvert.copyTo(process);
+        // TODO
+        return process;
+    }
+
+    private SosProcedureDescription toAggregateProcess(ProcessChain objectToConvert) {
+        AggregateProcess process = new AggregateProcess();
+        objectToConvert.copyTo(process);
+        // TODO
+        return process;
     }
 
 }

@@ -139,16 +139,21 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
                 for (ValidProcedureTime cvpt : tChild.getValidProcedureTimes()) {
                     TimePeriod thisCvptValidTime = new TimePeriod(cvpt.getStartTime(),
                             cvpt.getEndTime());
-                    //make sure this child's validtime is within the parent's valid time,
-                    //if parent has one
-                    if (validTime != null && !thisCvptValidTime.isWithin(validTime)){
-                        continue;
-                    }
-
-                    if (childVpt == null || cvpt.getEndTime() == null ||
-                            (cvpt.getEndTime() != null && childVpt.getEndTime() != null &&
-                            cvpt.getEndTime().after(childVpt.getEndTime()))) {                       
+                    
+                    if (validTime != null && !validTime.isSetEnd() && !thisCvptValidTime.isSetEnd()) {
                         childVpt = cvpt;
+                    } else {
+                        //make sure this child's validtime is within the parent's valid time,
+                        //if parent has one
+                        if (validTime != null && !thisCvptValidTime.isWithin(validTime)){
+                            continue;
+                        }
+    
+                        if (childVpt == null || cvpt.getEndTime() == null ||
+                                (cvpt.getEndTime() != null && childVpt.getEndTime() != null &&
+                                cvpt.getEndTime().after(childVpt.getEndTime()))) {                       
+                            childVpt = cvpt;
+                        }
                     }
                 }
             }

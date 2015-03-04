@@ -79,11 +79,11 @@ import net.opengis.sensorML.x101.ValidTimeDocument.ValidTime;
 
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.encode.AbstractSensorMLDecoder;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -132,7 +132,7 @@ import com.vividsolutions.jts.geom.Point;
  * @since 4.0.0
  * 
  */
-public class SensorMLDecoderV101 implements Decoder<AbstractSensorML, XmlObject> {
+public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorMLDecoderV101.class);
 
@@ -405,36 +405,6 @@ public class SensorMLDecoderV101 implements Decoder<AbstractSensorML, XmlObject>
                 }
             }
         }
-    }
-
-    /**
-     * Determine if an SosSMLIdentifier is the unique identifier for a procedure
-     * 
-     * @param identifier
-     *            SosSMLIdentifier to example for unique identifier
-     * @return whether the SosSMLIdentifier contains the unique identifier
-     */
-    protected boolean isIdentificationProcedureIdentifier(final SmlIdentifier identifier) {
-        return (checkIdentificationNameForProcedureIdentifier(identifier.getName()) || checkIdentificationDefinitionForProcedureIdentifier(identifier
-                .getDefinition()));
-    }
-
-    private boolean checkIdentificationNameForProcedureIdentifier(final String name) {
-        return !Strings.isNullOrEmpty(name) && name.equals(OGCConstants.URN_UNIQUE_IDENTIFIER_END);
-    }
-
-    private boolean checkIdentificationDefinitionForProcedureIdentifier(final String definition) {
-        if (Strings.isNullOrEmpty(definition)) {
-            return false;
-        }
-        final Set<String> definitionValues =
-                Sets.newHashSet(OGCConstants.URN_UNIQUE_IDENTIFIER, OGCConstants.URN_IDENTIFIER_IDENTIFICATION);
-        return definitionValues.contains(definition) || checkDefinitionStartsWithAndContains(definition);
-    }
-
-    private boolean checkDefinitionStartsWithAndContains(final String definition) {
-        return definition.startsWith(OGCConstants.URN_UNIQUE_IDENTIFIER_START)
-                && definition.contains(OGCConstants.URN_UNIQUE_IDENTIFIER_END);
     }
 
     /**

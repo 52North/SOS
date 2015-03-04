@@ -67,7 +67,7 @@ public class SmlFeatureOfInterest extends SweAbstractDataComponent {
     }
 
     public boolean isSetFeaturesOfInterest() {
-        return CollectionHelper.isNotEmpty(getFeaturesOfInterest());
+        return CollectionHelper.isNotEmpty(getFeaturesOfInterest()) || CollectionHelper.isNotEmpty(getFeaturesOfInterestMap());
     }
     
     public SmlFeatureOfInterest addFeaturesOfInterest(Map<String, AbstractFeature> featuresOfInterestMap) {

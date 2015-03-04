@@ -73,7 +73,9 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     }
 
     public SosProcedureDescription addOffering(SosOffering offering) {
-        this.offerings.add(offering);
+        if (offering != null) {
+            this.offerings.add(offering);
+        }
         return this;
     }
 

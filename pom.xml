@@ -76,9 +76,9 @@
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
         <!-- managed dependencies with ${project.version} will be wrong in submodules
         with different versions -->
-        <sos.version>4.1.4</sos.version>
-        <do.version>4.1.4</do.version>
-        <rest-binding.version>4.1.4</rest-binding.version>
+        <sos.version>4.1.5</sos.version>
+        <do.version>4.1.5</do.version>
+        <rest-binding.version>4.1.5</rest-binding.version>
         <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
         <org.springframework.version>3.2.6.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>

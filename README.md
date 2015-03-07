@@ -64,7 +64,7 @@ A link to the contributors license agreement and further explanations are availa
 
 You can get support in the community mailing list and forums:
 
-    http://52north.org/resources/mailing-list-and-forums/
+    http://52north.org/resources/mailing-lists-and-forums/
 
 If you encounter any issues with the software or if you would like to see
 certain functionality added, let us know at:

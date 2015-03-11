@@ -127,6 +127,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
 
         SosProcedureDescription desc = create(procedure, null, i18n, session).orNull();
         if (desc != null) {
+        	desc.setDescriptionFormat(descriptionFormat);
             enrich(desc, procedure, requestedServiceVersion,
                    descriptionFormat, null, loadedProcedures, i18n, session);
             if (!checkOutputFormatWithDescriptionFormat(procedure, requestedDescriptionFormat, descriptionFormat)) {

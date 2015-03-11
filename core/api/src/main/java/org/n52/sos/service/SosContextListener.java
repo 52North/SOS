@@ -74,6 +74,7 @@ public class SosContextListener implements ServletContextListener {
         setPath(sce.getServletContext().getRealPath("/"));
         if (Configurator.getInstance() == null) {
             instantiateConfigurator(sce.getServletContext());
+            instantiateGeometryHandler();
         } else {
             LOG.error("Configurator already instantiated.");
         }
@@ -169,5 +170,13 @@ public class SosContextListener implements ServletContextListener {
             LOG.error(message, ce);
             throw new RuntimeException(message, ce);
         }
+    }
+    
+    /**
+     * Instantiate the {@link GeometryHandler} to avoid exceptions during the
+     * shutdown process.
+     */
+    protected void instantiateGeometryHandler() {
+        GeometryHandler.getInstance();
     }
 }

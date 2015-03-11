@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -1145,8 +1145,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             } else {
                 final Envelope envelope = new Envelope();
                 Criteria criteria = session.createCriteria(clazz);
-                Criteria createCriteria = criteria.createCriteria(AbstractObservationTime.SAMPLING_GEOMETRY);
-                createCriteria.createCriteria(AbstractObservation.OFFERINGS).add(
+                criteria.createCriteria(AbstractObservation.OFFERINGS).add(
                         Restrictions.eq(Offering.IDENTIFIER, offeringID));
                 LOGGER.debug("QUERY getEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
                 @SuppressWarnings("unchecked")

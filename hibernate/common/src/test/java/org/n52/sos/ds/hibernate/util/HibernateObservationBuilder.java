@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -267,6 +267,7 @@ public class HibernateObservationBuilder {
             series.setProcedure(getProcedure());
             series.setFeatureOfInterest(getFeatureOfInterest());
             series.setDeleted(false);
+            series.setPublished(true);
             session.save(series);
             session.flush();
             session.refresh(series);

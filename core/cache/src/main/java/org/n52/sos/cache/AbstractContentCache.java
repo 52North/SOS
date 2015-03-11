@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -393,6 +393,8 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     private Map<String, SosEnvelope> spatialFilteringProfileEnvelopeForOfferings = newSynchronizedMap();
 
     private Set<Locale> supportedLanguages = newSynchronizedSet();
+    
+    private Set<String> requestableProcedureDescriptionFormats  = newSynchronizedSet();
 
     /**
      * @return the relating offering -> max phenomenon time
@@ -725,6 +727,10 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     protected Set<Locale> getSupportedLanguageSet() {
         return this.supportedLanguages;
     }
+    
+    protected Set<String> getRequestableProcedureDescriptionFormats() {
+        return this.requestableProcedureDescriptionFormats;
+    }
 
     /**
      * @param defaultEpsgCode
@@ -754,7 +760,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                 relatedFeaturesForOfferings, resultTemplatesForOfferings, rolesForRelatedFeatures,
                 envelopeForOfferings, nameForOfferings, i18nNameForOfferings, i18nDescriptionForOfferings, epsgCodes, featuresOfInterest,
                 procedures, resultTemplates, offerings, globalEnvelope, globalResultTimeEnvelope,
-                globalPhenomenonTimeEnvelope, supportedLanguages);
+                globalPhenomenonTimeEnvelope, supportedLanguages, requestableProcedureDescriptionFormats);
     }
 
     @Override
@@ -816,7 +822,8 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                     && Objects.equal(this.globalPhenomenonTimeEnvelope, other.getGlobalPhenomenonTimeEnvelope())
                     && Objects.equal(this.globalResultTimeEnvelope, other.getGlobalResultTimeEnvelope())
                     && Objects.equal(this.offerings, other.getOfferingsSet())
-                    && Objects.equal(this.supportedLanguages, other.getSupportedLanguages());
+                    && Objects.equal(this.supportedLanguages, other.getSupportedLanguages())
+                    && Objects.equal(this.requestableProcedureDescriptionFormats, other.getRequestableProcedureDescriptionFormats());
         }
         return false;
     }

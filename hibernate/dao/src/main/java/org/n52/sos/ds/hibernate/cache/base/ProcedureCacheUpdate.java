@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,20 +34,18 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.hibernate.internal.util.collections.CollectionHelper;
-
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.dao.ProcedureDescriptionFormatDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.google.common.collect.Lists;
@@ -97,6 +95,10 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         return procedureMap;
     }
 
+    private void getProcedureDescriptionFormat() {
+        getCache().setRequestableProcedureDescriptionFormat(new ProcedureDescriptionFormatDAO().getProcedureDescriptionFormat(getSession()));
+    }
+
     @Override
     protected ProcedureCacheUpdateTask[] getUpdatesToExecute() {
         Collection<ProcedureCacheUpdateTask> procedureUpdateTasks = Lists.newArrayList();
@@ -112,6 +114,8 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         //single threaded updates
         LOGGER.debug("Executing ProcedureCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
+        getProcedureDescriptionFormat();
+        
         boolean obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class, getSession());
 
         Map<String, Collection<String>> procedureMap = procedureDAO.getProcedureIdentifiers(getSession());

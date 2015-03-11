@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -59,7 +59,7 @@ create table relatedFeatureHasRole (relatedFeatureId number(19,0) not null, rela
 create table relatedFeatureRole (relatedFeatureRoleId number(19,0) not null, relatedFeatureRole varchar2(255 char) not null, primary key (relatedFeatureRoleId));
 create table resultTemplate (resultTemplateId number(19,0) not null, offeringId number(19,0) not null, observablePropertyId number(19,0) not null, procedureId number(19,0) not null, featureOfInterestId number(19,0) not null, identifier varchar2(255 char) not null, resultStructure clob not null, resultEncoding clob not null, primary key (resultTemplateId));
 create table sensorSystem (parentSensorId number(19,0) not null, childSensorId number(19,0) not null, primary key (childSensorId, parentSensorId));
-create table series (seriesId number(19,0) not null, featureOfInterestId number(19,0) not null, observablePropertyId number(19,0) not null, procedureId number(19,0) not null, deleted char(1 char) default 'F' not null check (deleted in ('T','F')), firstTimeStamp timestamp, lastTimeStamp timestamp, firstNumericValue double precision, lastNumericValue double precision, unitId number(19,0), primary key (seriesId));
+create table series (seriesId number(19,0) not null, featureOfInterestId number(19,0) not null, observablePropertyId number(19,0) not null, procedureId number(19,0) not null, deleted char(1 char) default 'F' not null check (deleted in ('T','F')), published char(1 char) default 'T' not null check (published in ('T','F')), firstTimeStamp timestamp, lastTimeStamp timestamp, firstNumericValue double precision, lastNumericValue double precision, unitId number(19,0), primary key (seriesId));
 create table sweDataArrayValue (observationId number(19,0) not null, value clob, primary key (observationId));
 create table textValue (observationId number(19,0) not null, value clob, primary key (observationId));
 create table unit (unitId number(19,0) not null, unit varchar2(255 char) not null, primary key (unitId));

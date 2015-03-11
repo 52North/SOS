@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -559,10 +559,12 @@ public class ObservationDAO extends AbstractObservationDAO {
        return getSpatialFilteringProfileEnvelopeForOfferingId(ObservationInfo.class, offeringID, session);
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public List<Geometry> getSamplingGeometries(String feature, Session session) {
         Criteria criteria = session.createCriteria(ObservationInfo.class);
         criteria.createCriteria(AbstractObservation.FEATURE_OF_INTEREST).add(eq(FeatureOfInterest.IDENTIFIER, feature));
+        criteria.add(Restrictions.isNotNull(AbstractObservationTime.SAMPLING_GEOMETRY));
         criteria.addOrder(Order.asc(AbstractObservationTime.PHENOMENON_TIME_START));
         criteria.setProjection(Projections.property(AbstractObservationTime.SAMPLING_GEOMETRY));
         return criteria.list();

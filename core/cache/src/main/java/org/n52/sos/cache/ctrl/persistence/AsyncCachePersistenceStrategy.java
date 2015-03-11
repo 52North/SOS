@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,6 +39,8 @@ import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.util.GroupedAndNamedThreadFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Christian Autermann
@@ -46,6 +48,8 @@ import org.n52.sos.util.GroupedAndNamedThreadFactory;
 @Configurable
 public class AsyncCachePersistenceStrategy
         extends AbstractPersistingCachePersistenceStrategy {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(AsyncCachePersistenceStrategy.class);
 
     private static final TimeUnit WRITE_DELAY_UNITS = TimeUnit.SECONDS;
     private long writeDelay
@@ -56,6 +60,7 @@ public class AsyncCachePersistenceStrategy
                     new GroupedAndNamedThreadFactory("cache-persister"));
     private final AtomicReference<ContentCache> cacheReference
             = new AtomicReference<ContentCache>();
+    private Updater updater;
 
     public AsyncCachePersistenceStrategy() {
         this(null);
@@ -63,7 +68,8 @@ public class AsyncCachePersistenceStrategy
 
     public AsyncCachePersistenceStrategy(File cacheFile) {
         super(cacheFile);
-        this.executor.schedule(new Updater(), writeDelay, WRITE_DELAY_UNITS);
+        updater = new Updater();
+        this.executor.schedule(updater, writeDelay, WRITE_DELAY_UNITS);
     }
 
     @Setting(AsyncCachePersistenceStrategySettings.CACHE_PERSISTENCE_DELAY)
@@ -86,19 +92,44 @@ public class AsyncCachePersistenceStrategy
 
     @Override
     public void persistOnShutdown(ContentCache cache) {
+        updater.setReschedule(false);
         this.executor.shutdown();
+        try {
+            this.executor.awaitTermination(writeDelay, WRITE_DELAY_UNITS);
+        } catch (InterruptedException ie) {
+            LOGGER.debug("Executor awaitTermination() was interrupted!", ie);
+        }
         this.cacheReference.set(null);
         persistCache(cache);
     }
 
-    private class Updater implements Runnable {
+private class Updater implements Runnable {
+        
+        private boolean reschedule = true;
+        
+        /**
+         * @return the reschedule
+         */
+        public boolean isReschedule() {
+            return reschedule;
+        }
+        
+        /**
+         * @param reschedule the reschedule to set
+         */
+        public void setReschedule(boolean reschedule) {
+            this.reschedule = reschedule;
+        }
+        
         @Override
         public void run() {
             ContentCache cache = cacheReference.getAndSet(null);
             if (cache != null) {
                 persistCache(cache);
             }
-            executor.schedule(this, writeDelay, WRITE_DELAY_UNITS);
+            if (isReschedule()) {
+                executor.schedule(this, writeDelay, WRITE_DELAY_UNITS);
+            }
         }
     }
 

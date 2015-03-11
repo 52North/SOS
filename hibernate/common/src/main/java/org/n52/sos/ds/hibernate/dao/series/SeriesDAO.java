@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,24 +32,17 @@ import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.joda.time.DateTime;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.ObservationInfo;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ProcedureTimeExtrema;
 import org.n52.sos.request.GetObservationRequest;
@@ -185,6 +178,7 @@ public class SeriesDAO {
             series.setProcedure(procedure);
             series.setFeatureOfInterest(feature);
             series.setDeleted(false);
+            series.setPublished(true);
             session.save(series);
             session.flush();
             session.refresh(series);
@@ -341,6 +335,7 @@ public class SeriesDAO {
      */
     public Criteria getDefaultSeriesCriteria(Session session) {
         return session.createCriteria(Series.class).add(Restrictions.eq(Series.DELETED, false))
+                .add(Restrictions.eq(Series.PUBLISHED, true))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 

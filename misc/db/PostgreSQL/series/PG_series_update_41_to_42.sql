@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -27,10 +27,17 @@
 -- Public License for more details.
 --
 
---update numeric columns to double
+-- Can also be required in exiting SOS 4.2.0-SNAPSHOT versions
+
+-- update numeric columns to double
 ALTER TABLE public.numericvalue ALTER COLUMN value TYPE double precision;
 ALTER TABLE public.series ALTER COLUMN firstnumericvalue TYPE double precision;
 ALTER TABLE public.series ALTER COLUMN lastnumericvalue TYPE double precision;
+
+-- add published flag to series table
+ALTER TABLE public.series ADD published char(1) NOT NULL default 'T' check (published in ('T','F'));
+
+-- Required to update from SOS 4.1 to 4.2
 
 -- update observation table
 ALTER TABLE public.observation RENAME COLUMN codespaceid TO codespace;

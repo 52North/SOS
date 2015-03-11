@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -59,7 +59,7 @@ create table sos.relatedFeatureHasRole (relatedFeatureId bigint not null, relate
 create table sos.relatedFeatureRole (relatedFeatureRoleId bigint not null auto_increment, relatedFeatureRole varchar(255) not null, primary key (relatedFeatureRoleId)) ENGINE=InnoDB;
 create table sos.resultTemplate (resultTemplateId bigint not null auto_increment, offeringId bigint not null, observablePropertyId bigint not null, procedureId bigint not null, featureOfInterestId bigint not null, identifier varchar(255) not null, resultStructure longtext not null, resultEncoding longtext not null, primary key (resultTemplateId)) ENGINE=InnoDB;
 create table sos.sensorSystem (parentSensorId bigint not null, childSensorId bigint not null, primary key (childSensorId, parentSensorId)) ENGINE=InnoDB;
-create table sos.series (seriesId bigint not null auto_increment, featureOfInterestId bigint not null, observablePropertyId bigint not null, procedureId bigint not null, deleted char(1) default 'F' not null, firstTimeStamp datetime, lastTimeStamp datetime, firstNumericValue double precision, lastNumericValue double precision, unitId bigint, primary key (seriesId)) ENGINE=InnoDB;
+create table sos.series (seriesId bigint not null auto_increment, featureOfInterestId bigint not null, observablePropertyId bigint not null, procedureId bigint not null, deleted char(1) default 'F' not null, published char(1) default 'T' not null, firstTimeStamp datetime, lastTimeStamp datetime, firstNumericValue double precision, lastNumericValue double precision, unitId bigint, primary key (seriesId)) ENGINE=InnoDB;
 create table sos.sweDataArrayValue (observationId bigint not null, value longtext, primary key (observationId)) ENGINE=InnoDB;
 create table sos.textValue (observationId bigint not null, value longtext, primary key (observationId)) ENGINE=InnoDB;
 create table sos.unit (unitId bigint not null auto_increment, unit varchar(255) not null, primary key (unitId)) ENGINE=InnoDB;

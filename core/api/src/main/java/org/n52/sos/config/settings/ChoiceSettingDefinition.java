@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,12 +31,28 @@ package org.n52.sos.config.settings;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
+import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingType;
+import org.n52.sos.util.CollectionHelper;
 
 import com.google.common.base.Preconditions;
 
+/**
+ * {@link SettingDefinition} resulting in a drop down menu offering different
+ * options.By default the options are sorted by their display name (it's set 
+ * to value if not provided).
+ * 
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
+ * 
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
+ * 
+ * @since 4.2.0
+ *
+ */
 public class ChoiceSettingDefinition extends AbstractSettingDefinition<ChoiceSettingDefinition, String> {
+	
     private final Map<String, String> options = new HashMap<>();
 
     public ChoiceSettingDefinition() {
@@ -44,7 +60,7 @@ public class ChoiceSettingDefinition extends AbstractSettingDefinition<ChoiceSet
     }
 
     public Map<String, String> getOptions() {
-        return Collections.unmodifiableMap(options);
+        return Collections.unmodifiableMap(CollectionHelper.sortByValue(options));
     }
 
     public boolean hasOption(String value) {
@@ -58,8 +74,9 @@ public class ChoiceSettingDefinition extends AbstractSettingDefinition<ChoiceSet
     }
 
     public ChoiceSettingDefinition addOption(String option, String displayName) {
-        this.options.put(Preconditions.checkNotNull(option), Preconditions
-                         .checkNotNull(displayName));
+        this.options.put(
+        		Preconditions.checkNotNull(option),
+        		Preconditions.checkNotNull(displayName));
         return this;
     }
 

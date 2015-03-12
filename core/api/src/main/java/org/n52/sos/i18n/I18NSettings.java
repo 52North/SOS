@@ -75,22 +75,10 @@ public class I18NSettings implements SettingDefinitionProvider {
             .setDescription(
                     "Show all language specific values if no language is queried or the queried language is not supported!");
 
-    public static final ChoiceSettingDefinition CHOICE
-            = new ChoiceSettingDefinition()
-            .addOption("a")
-            .addOption("b")
-            .addOption("c")
-            .addOption("d", "Das hier ist d")
-            .setDefaultValue("b")
-            .setKey("CHOICE_SETTING")
-            .setGroup(GROUP)
-            .setOrder(ORDER_3)
-            .setTitle("Choice Test settings")
-            .setDescription("This is a choice test setting.");
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet
             .<SettingDefinition<?, ?>>of(
-                    I18N_DEFAULT_LANGUAGE_DEFINITION, SHOW_ALL_LANGUAGE_VLAUES, CHOICE);
+                    I18N_DEFAULT_LANGUAGE_DEFINITION, SHOW_ALL_LANGUAGE_VLAUES);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

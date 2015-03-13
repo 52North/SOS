@@ -32,6 +32,7 @@ import java.io.File;
 import java.net.URI;
 
 import org.n52.sos.config.settings.BooleanSettingDefinition;
+import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.settings.FileSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.config.settings.MultilingualStringSettingDefinition;
@@ -162,6 +163,20 @@ public interface SettingValueFactory {
      * @return the implementation specific {@code SettingValue}
      */
     SettingValue<MultilingualString> newMultiLingualStringValue(MultilingualStringSettingDefinition setting, String stringValue);
+
+    /**
+     * Constructs a new {@code String} setting value from the supplied
+     * definition and string value.
+     * <p/>
+     *
+     * @param setting
+     *            the setting definition
+     * @param stringValue
+     *            the value as string
+     *            <p/>
+     * @return the implementation specific {@code SettingValue}
+     */
+    SettingValue<String> newChoiceSettingValue(ChoiceSettingDefinition setting, String stringValue);
 
     /**
      * Constructs a new generic setting value from the supplied definition and

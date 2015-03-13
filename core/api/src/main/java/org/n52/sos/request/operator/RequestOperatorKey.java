@@ -42,14 +42,26 @@ public class RequestOperatorKey implements Comparable<RequestOperatorKey> {
     private final ServiceOperatorKey sok;
 
     private final String operationName;
+    
+    private boolean defaultActive = true;
 
     public RequestOperatorKey(ServiceOperatorKey sok, String operationName) {
         this.sok = sok;
         this.operationName = operationName;
     }
+    
+    public RequestOperatorKey(ServiceOperatorKey sok, String operationName, boolean defaultActive) {
+        this.sok = sok;
+        this.operationName = operationName;
+        this.defaultActive = defaultActive;
+    }
 
     public RequestOperatorKey(String service, String version, String operationName) {
         this(new ServiceOperatorKey(service, version), operationName);
+    }
+    
+    public RequestOperatorKey(String service, String version, String operationName, boolean defaultActive) {
+        this(new ServiceOperatorKey(service, version), operationName, defaultActive);
     }
 
     public ServiceOperatorKey getServiceOperatorKey() {
@@ -66,6 +78,21 @@ public class RequestOperatorKey implements Comparable<RequestOperatorKey> {
 
     public String getOperationName() {
         return operationName;
+    }
+    
+    /**
+     * @return the defaultActive
+     */
+    public boolean isDefaultActive() {
+        return defaultActive;
+    }
+
+    /**
+     * @param defaultActive the defaultActive to set
+     */
+    public RequestOperatorKey setDefaultActive(boolean defaultActive) {
+        this.defaultActive = defaultActive;
+        return this;
     }
 
     @Override
@@ -92,7 +119,7 @@ public class RequestOperatorKey implements Comparable<RequestOperatorKey> {
 
     @Override
     public String toString() {
-        return String.format("%s[serviceOperatorKeyType=%s, operationName=%s]", getClass().getSimpleName(),
-                getServiceOperatorKey(), getOperationName());
+        return String.format("%s[serviceOperatorKeyType=%s, operationName=%s, defaultActive=%b]", getClass().getSimpleName(),
+                getServiceOperatorKey(), getOperationName(), isDefaultActive());
     }
 }

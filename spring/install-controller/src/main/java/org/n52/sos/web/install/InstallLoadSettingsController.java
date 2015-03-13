@@ -45,8 +45,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
 import org.n52.sos.config.SettingDefinition;
+import org.n52.sos.config.settings.MultilingualStringSettingDefinition;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.util.JSONUtils;
 import org.n52.sos.web.AbstractController;
@@ -76,7 +76,7 @@ public class InstallLoadSettingsController extends AbstractController {
             String value;
             String key = i.next();
             if (settings.path(key).isContainerNode()) {
-                value = JSONUtils.print(settings.path("key"));
+                value = JSONUtils.print(settings.path(key));
             } else {
                 value = settings.path(key).asText();
             }
@@ -90,7 +90,11 @@ public class InstallLoadSettingsController extends AbstractController {
                 LOG.warn("No definition for setting with key {}", key);
                 continue;
             }
-            c.setSetting(def, getSettingsManager().getSettingFactory().newSettingValue(def, value));
+            if (def instanceof MultilingualStringSettingDefinition) {
+                c.setSetting(def, getSettingsManager().getSettingFactory().newMultiLingualStringValue((MultilingualStringSettingDefinition)def, value));
+            } else {
+                c.setSetting(def, getSettingsManager().getSettingFactory().newSettingValue(def, value));
+            }
         }
         AbstractInstallController.setSettings(session, c);
     }

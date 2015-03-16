@@ -753,7 +753,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         if (adcpt.isSetObservableProperty()) {
            return parseObservableProperty(adcpt.getObservableProperty());
         } else if (adcpt.isSetAbstractDataComponent()) {
-            final Object decodedObject = CodingHelper.decodeXmlElement(toDecode);
+            final Object decodedObject = CodingHelper.decodeXmlElement(adcpt.getAbstractDataComponent());
             if (decodedObject instanceof SweAbstractDataComponent) {
                return (SweAbstractDataComponent) decodedObject;
             } else {

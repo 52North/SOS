@@ -291,6 +291,8 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
                     DataArrayType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
             if (sosDataArray.isSetElementCount()) {
                 xbDataArray.addNewElementCount().setCount(createCount(sosDataArray.getElementCount()));
+            } else {
+                xbDataArray.addNewElementCount().addNewCount();
             }
             if (sosDataArray.isSetElementTyp()) {
                 final ElementType elementType = xbDataArray.addNewElementType();

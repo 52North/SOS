@@ -973,6 +973,8 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
         final Position xbPosition = Position.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         if (position.isSetName()) {
             xbPosition.setName(position.getName().getValue());
+        } else {
+            xbPosition.setName("position");
         }
         final PositionType xbSwePosition = xbPosition.addNewPosition();
         xbSwePosition.setFixed(position.isFixed());

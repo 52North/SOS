@@ -106,10 +106,14 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
 
     private final Class<Q> requestType;
 
-    @SuppressWarnings("unchecked")
     public AbstractRequestOperator(String service, String version, String operationName, Class<Q> requestType) {
+        this(service, version, operationName, true, requestType);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public AbstractRequestOperator(String service, String version, String operationName, boolean defaultActive, Class<Q> requestType) {
         this.operationName = operationName;
-        this.requestOperatorKeyType = new RequestOperatorKey(service, version, operationName);
+        this.requestOperatorKeyType = new RequestOperatorKey(service, version, operationName, defaultActive);
         this.requestType = requestType;
         this.dao = (D) OperationDAORepository.getInstance().getOperationDAO(service, operationName);
         if (this.dao == null) {

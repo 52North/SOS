@@ -26,17 +26,41 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.config.sqlite;
+package org.n52.sos.config.settings;
 
-/**
- * Extension of SQLiteSettingsManager used for testing
- *
- * @author Shane StClair
- *
- */
-public class SQLiteSettingsManagerForTesting extends ExtensionEnabledSQLiteSettingsManager {
-    @Override
-    protected SQLiteSessionFactoryForTesting createDefaultConnectionProvider() {
-        return new SQLiteSessionFactoryForTesting();
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.n52.sos.config.SettingType;
+
+import com.google.common.base.Preconditions;
+
+public class ChoiceSettingDefinition extends AbstractSettingDefinition<ChoiceSettingDefinition, String> {
+    private final Map<String, String> options = new HashMap<>();
+
+    public ChoiceSettingDefinition() {
+        super(SettingType.CHOICE);
     }
+
+    public Map<String, String> getOptions() {
+        return Collections.unmodifiableMap(options);
+    }
+
+    public boolean hasOption(String value) {
+        return this.options.containsKey(value);
+    }
+
+    public ChoiceSettingDefinition addOption(String option) {
+        String value = Preconditions.checkNotNull(option);
+        this.options.put(value, value);
+        return this;
+    }
+
+    public ChoiceSettingDefinition addOption(String option, String displayName) {
+        this.options.put(Preconditions.checkNotNull(option), Preconditions
+                         .checkNotNull(displayName));
+        return this;
+    }
+
 }

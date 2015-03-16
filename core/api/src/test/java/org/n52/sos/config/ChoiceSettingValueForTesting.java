@@ -26,17 +26,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.config.sqlite;
+package org.n52.sos.config;
 
-/**
- * Extension of SQLiteSettingsManager used for testing
- *
- * @author Shane StClair
- *
- */
-public class SQLiteSettingsManagerForTesting extends ExtensionEnabledSQLiteSettingsManager {
+public class ChoiceSettingValueForTesting extends StringSettingValueForTesting {
+
     @Override
-    protected SQLiteSessionFactoryForTesting createDefaultConnectionProvider() {
-        return new SQLiteSessionFactoryForTesting();
+    public SettingType getType() {
+        return SettingType.CHOICE;
     }
+
 }

@@ -464,7 +464,11 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
             xbTime.setValue(xbDateTime);
         }
         if (time.isSetUom()) {
-            xbTime.addNewUom().setCode(time.getUom());
+            if (time.getUom().startsWith("urn:") || time.getUom().startsWith("http://")) {
+                xbTime.addNewUom().setHref(time.getUom());
+            } else {
+                xbTime.addNewUom().setCode(time.getUom());
+            }
         }
         if (time.isSetQuality()) {
         	xbTime.setQuality(createQuality(time.getQuality())[0]);

@@ -31,6 +31,7 @@ package org.n52.sos.ogc.sensorML.elements;
 import java.util.List;
 
 import org.n52.sos.ogc.swe.DataRecord;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.util.CollectionHelper;
 
 import com.google.common.collect.Lists;
@@ -79,6 +80,15 @@ public class SmlCapabilities extends AbstractSmlDataComponentContainer<SmlCapabi
      * @return the capabilities
      */
     public List<SmlCapability> getCapabilities() {
+        if (!hasCapabilities() && isSetAbstractDataComponents()) {
+            List<SmlCapability> capabilities = Lists.newArrayList();
+            for (SweAbstractDataComponent component : getAbstractDataComponents()) {
+                SmlCapability smlCapability = new SmlCapability(component.getName().getValue());
+                smlCapability.setAbstractDataComponent(component);
+                capabilities.add(smlCapability);
+            }
+            return capabilities;
+        }
         return capabilities;
     }
 
@@ -88,6 +98,9 @@ public class SmlCapabilities extends AbstractSmlDataComponentContainer<SmlCapabi
     public void setCapabilities(List<SmlCapability> capabilities) {
         if (CollectionHelper.isNotEmpty(capabilities)) {
             this.capabilities = capabilities;
+            for (SmlCapability smlCapability : capabilities) {
+                addAbstractDataComponents(smlCapability.getAbstractDataComponent());
+            }
         }
     }
     
@@ -96,6 +109,9 @@ public class SmlCapabilities extends AbstractSmlDataComponentContainer<SmlCapabi
      */
     public void addCapabilities(List<SmlCapability> capabilities) {
         this.capabilities.addAll(capabilities);
+        for (SmlCapability smlCapability : capabilities) {
+            addAbstractDataComponents(smlCapability.getAbstractDataComponent());
+        }
     }
     
     /**
@@ -103,10 +119,15 @@ public class SmlCapabilities extends AbstractSmlDataComponentContainer<SmlCapabi
      */
     public void addCapability(SmlCapability capability) {
         this.capabilities.add(capability);
+        addAbstractDataComponents(capability.getAbstractDataComponent());
     }
     
     public boolean isSetCapabilities() {
-        return CollectionHelper.isNotEmpty(capabilities);
+        return hasCapabilities() || isSetAbstractDataComponents();
+    }
+    
+    private boolean hasCapabilities() {
+        return CollectionHelper.isNotEmpty(capabilities); 
     }
 
 }

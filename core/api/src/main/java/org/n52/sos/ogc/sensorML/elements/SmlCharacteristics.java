@@ -31,6 +31,7 @@ package org.n52.sos.ogc.sensorML.elements;
 import java.util.List;
 
 import org.n52.sos.ogc.swe.DataRecord;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.util.CollectionHelper;
 
 import com.google.common.collect.Lists;
@@ -66,6 +67,15 @@ public class SmlCharacteristics extends AbstractSmlDataComponentContainer<SmlCha
      * @return the characteristics
      */
     public List<SmlCharacteristic> getCharacteristic() {
+        if (!hasCharacteristics() && isSetAbstractDataComponents()) {
+            List<SmlCharacteristic> characteristics = Lists.newArrayList();
+            for (SweAbstractDataComponent component : getAbstractDataComponents()) {
+                SmlCharacteristic smlCharacteristic = new SmlCharacteristic(component.getName().getValue());
+                smlCharacteristic.setAbstractDataComponent(component);
+                characteristics.add(smlCharacteristic);
+            }
+            return characteristics;
+        }
         return characteristics;
     }
 
@@ -75,6 +85,9 @@ public class SmlCharacteristics extends AbstractSmlDataComponentContainer<SmlCha
     public void setCharacteristic(List<SmlCharacteristic> characteristics) {
         if (CollectionHelper.isNotEmpty(characteristics)) {
             this.characteristics = characteristics;
+            for (SmlCharacteristic smlCharacteristic : characteristics) {
+                addAbstractDataComponents(smlCharacteristic.getAbstractDataComponent());
+            }
         }
     }
     
@@ -83,6 +96,9 @@ public class SmlCharacteristics extends AbstractSmlDataComponentContainer<SmlCha
      */
     public void addCharacteristic(List<SmlCharacteristic> characteristics) {
         this.characteristics.addAll(characteristics);
+        for (SmlCharacteristic smlCharacteristic : characteristics) {
+            addAbstractDataComponents(smlCharacteristic.getAbstractDataComponent());
+        }
     }
     
     /**
@@ -90,11 +106,15 @@ public class SmlCharacteristics extends AbstractSmlDataComponentContainer<SmlCha
      */
     public void addCharacteristic(SmlCharacteristic characteristic) {
         this.characteristics.add(characteristic);
+        addAbstractDataComponents(characteristic.getAbstractDataComponent());
     }
     
     public boolean isSetCharacteristics() {
-        return CollectionHelper.isNotEmpty(characteristics);
+        return hasCharacteristics() || isSetAbstractDataComponents();
     }
     
+    private boolean hasCharacteristics() {
+        return CollectionHelper.isNotEmpty(characteristics); 
+    }
 
 }

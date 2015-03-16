@@ -317,10 +317,10 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
             parseFeatureOfInterest(apt.getFeaturesOfInterest(), abstractProcess);
         }
         if (apt.isSetInputs()) {
-
+            abstractProcess.setInputs(parseInputs(apt.getInputs()));
         }
         if (apt.isSetOutputs()) {
-
+            abstractProcess.setOutputs(parseOutputs(apt.getOutputs()));
         }
         if (CollectionHelper.isNotNullOrEmpty(apt.getModesArray())) {
 
@@ -534,6 +534,28 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         return smlContacts;
     }
 
+    private List<SmlIo<?>> parseInputs(Inputs inputs) throws OwsExceptionReport {
+        if (CollectionHelper.isNotNullOrEmpty(inputs.getInputList().getInputArray())) {
+            final List<SmlIo<?>> sosInputs = new ArrayList<SmlIo<?>>(inputs.getInputList().getInputArray().length);
+            for (final Input xbInput : inputs.getInputList().getInputArray()) {
+                sosInputs.add(parseInput(xbInput));
+            }
+            return sosInputs;
+        }
+        return Collections.emptyList();
+    }
+
+    private List<SmlIo<?>> parseOutputs(Outputs outputs) throws OwsExceptionReport {
+        if (CollectionHelper.isNotNullOrEmpty(outputs.getOutputList().getOutputArray())) {
+            final List<SmlIo<?>> sosOutputs = new ArrayList<SmlIo<?>>(outputs.getOutputList().getOutputArray().length);
+            for (final Output xbOutput : outputs.getOutputList().getOutputArray()) {
+                sosOutputs.add(parseOutput(xbOutput));
+            }
+            return sosOutputs;
+        }
+        return Collections.emptyList();
+    }
+
     private void parseFeatureOfInterest(FeaturesOfInterest featuresOfInterest, AbstractProcessV20 abstractProcess)
             throws OwsExceptionReport {
         if (CollectionHelper.isNotNullOrEmpty(featuresOfInterest.getFeatureList().getFeatureArray())) {
@@ -681,6 +703,73 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
             }
         }
         return removeComponents;
+    }
+    
+    @SuppressWarnings({ "rawtypes" })
+    private SmlIo<?> parseInput(Input xbInput) throws OwsExceptionReport {
+        final SmlIo<?> sosIo = new SmlIo();
+        sosIo.setIoName(xbInput.getName());
+        sosIo.setIoValue(parseDataComponentOrObservablePropertyType(xbInput));
+        return sosIo;
+    }
+    
+    @SuppressWarnings({ "rawtypes" })
+    private SmlIo<?> parseOutput(Output xbOutput) throws OwsExceptionReport {
+        final SmlIo<?> sosIo = new SmlIo();
+        sosIo.setIoName(xbOutput.getName());
+        sosIo.setIoValue(parseDataComponentOrObservablePropertyType(xbOutput));
+        return sosIo;
+    }
+
+    /**
+     * Parses the components
+     * 
+     * @param adcpt
+     *            XML components
+     * @return SOS component
+     * 
+     * 
+     * @throws OwsExceptionReport
+     *             * if an error occurs
+     */
+    private SweAbstractDataComponent parseDataComponentOrObservablePropertyType(final DataComponentOrObservablePropertyType adcpt)
+            throws OwsExceptionReport {
+        XmlObject toDecode = null;
+        if (adcpt.isSetObservableProperty()) {
+           return parseObservableProperty(adcpt.getObservableProperty());
+        } else if (adcpt.isSetAbstractDataComponent()) {
+            final Object decodedObject = CodingHelper.decodeXmlElement(toDecode);
+            if (decodedObject instanceof SweAbstractDataComponent) {
+               return (SweAbstractDataComponent) decodedObject;
+            } else {
+                throw new InvalidParameterValueException().at(XmlHelper.getLocalName(adcpt)).withMessage(
+                        "The 'DataComponentOrObservablePropertyType' with type '%s' as value for '%s' is not supported.",
+                        XmlHelper.getLocalName(toDecode), XmlHelper.getLocalName(adcpt));
+            }
+        } else {
+            throw new InvalidParameterValueException().at(XmlHelper.getLocalName(adcpt)).withMessage(
+                    "An 'DataComponentOrObservablePropertyType' is not supported");
+        }
+    }
+
+    /**
+     * Parse {@link ObservablePropertyType} 
+     * @param opt Object to parse
+     * @return Parsed {@link SweObservableProperty}
+     */
+    private SweObservableProperty parseObservableProperty(ObservablePropertyType opt) {
+        SweObservableProperty observableProperty = new SweObservableProperty();
+        observableProperty.setDefinition(opt.getDefinition());
+        if (opt.isSetDescription()) {
+            observableProperty.setDescription(opt.getDescription());
+        }
+        if (opt.isSetIdentifier()) {
+            observableProperty.setIdentifier(opt.getIdentifier());
+        }
+        if (opt.isSetLabel()) {
+            observableProperty.setLabel(opt.getLabel());
+        }
+        return observableProperty;
     }
 
 }

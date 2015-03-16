@@ -56,6 +56,14 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
+/**
+ * {@link Decoder} class to decode ISO TC211 Geographic MetaData (GMD)
+ * extensible markup language.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public class Iso19139GmdDecoder implements Decoder<Object, Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Iso19139GmdDecoder.class);
@@ -110,9 +118,11 @@ public class Iso19139GmdDecoder implements Decoder<Object, Object> {
         if (element.isSetContactInfo()) {
             decodeContactInfo(element.getContactInfo(), responsibleParty);
         }
-        Object decodeXmlElement = CodingHelper.decodeXmlElement(element.getRole());
-        if (decodeXmlElement instanceof Role) {
-            responsibleParty.setRole((Role) decodeXmlElement);
+        if (element.getRole().isSetCIRoleCode()) {
+            Object decodeXmlElement = CodingHelper.decodeXmlElement(element.getRole().getCIRoleCode());
+            if (decodeXmlElement instanceof Role) {
+                responsibleParty.setRole((Role) decodeXmlElement);
+            }
         }
         return responsibleParty;
     }
@@ -124,36 +134,36 @@ public class Iso19139GmdDecoder implements Decoder<Object, Object> {
     }
 
     private void decodeContact(CIContactType cic, SmlResponsibleParty responsibleParty) {
-       if (cic.isSetAddress()) {
-           decodeCiAddress(cic.getAddress().getCIAddress(), responsibleParty);
-       }
-       if (cic.isSetContactInstructions()) {
-           responsibleParty.setContactInstructions(cic.getContactInstructions().getCharacterString());
-       }
-       if (cic.isSetHoursOfService()) {
-           responsibleParty.setHoursOfService(cic.getHoursOfService().getCharacterString());
-       }
-       if (cic.isSetOnlineResource() && cic.getOnlineResource().isSetHref()) {
-           responsibleParty.setOnlineResource(Lists.newArrayList(cic.getOnlineResource().getHref()));
-       }
-       if (cic.isSetPhone() && cic.getPhone().isSetCITelephone()) {
-           decodePhone(cic.getPhone().getCITelephone(), responsibleParty);
-       }
+        if (cic.isSetAddress()) {
+            decodeCiAddress(cic.getAddress().getCIAddress(), responsibleParty);
+        }
+        if (cic.isSetContactInstructions()) {
+            responsibleParty.setContactInstructions(cic.getContactInstructions().getCharacterString());
+        }
+        if (cic.isSetHoursOfService()) {
+            responsibleParty.setHoursOfService(cic.getHoursOfService().getCharacterString());
+        }
+        if (cic.isSetOnlineResource() && cic.getOnlineResource().isSetHref()) {
+            responsibleParty.setOnlineResource(Lists.newArrayList(cic.getOnlineResource().getHref()));
+        }
+        if (cic.isSetPhone() && cic.getPhone().isSetCITelephone()) {
+            decodePhone(cic.getPhone().getCITelephone(), responsibleParty);
+        }
     }
 
     private void decodeCiAddress(CIAddressType ciat, SmlResponsibleParty responsibleParty) {
-       if (ciat.isSetAdministrativeArea()) {
-           responsibleParty.setAdministrativeArea(ciat.getAdministrativeArea().getCharacterString());
-       }
-       if (ciat.isSetCity()) {
-           responsibleParty.setCity(ciat.getCity().getCharacterString());
-       }
-       if (ciat.isSetCountry()) {
-           responsibleParty.setCountry(ciat.getCountry().getCharacterString());
-       }
-       if (ciat.isSetPostalCode()) {
-           responsibleParty.setPostalCode(ciat.getPostalCode().getCharacterString());
-       }
+        if (ciat.isSetAdministrativeArea()) {
+            responsibleParty.setAdministrativeArea(ciat.getAdministrativeArea().getCharacterString());
+        }
+        if (ciat.isSetCity()) {
+            responsibleParty.setCity(ciat.getCity().getCharacterString());
+        }
+        if (ciat.isSetCountry()) {
+            responsibleParty.setCountry(ciat.getCountry().getCharacterString());
+        }
+        if (ciat.isSetPostalCode()) {
+            responsibleParty.setPostalCode(ciat.getPostalCode().getCharacterString());
+        }
     }
 
     private void decodeOnlineResource(CIOnlineResourceType ciort, SmlResponsibleParty responsibleParty) {

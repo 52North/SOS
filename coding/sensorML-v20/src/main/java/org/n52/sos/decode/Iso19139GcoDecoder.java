@@ -34,15 +34,10 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.isotc211.x2005.gco.CodeListValueType;
-import org.isotc211.x2005.gmd.CIResponsiblePartyDocument;
-import org.isotc211.x2005.gmd.CIResponsiblePartyPropertyType;
-import org.isotc211.x2005.gmd.CIResponsiblePartyType;
-import org.isotc211.x2005.gmd.CIRoleCodePropertyType;
 import org.n52.sos.Role;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.sos.iso.GcoConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.slf4j.Logger;
@@ -50,12 +45,20 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
+/**
+ * {@link Decoder} class to decode ISO TC211 Geographic COmmon (GCO) extensible
+ * markup language.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public class Iso19139GcoDecoder implements Decoder<Object, XmlObject> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Iso19139GcoDecoder.class);
 
-    private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.decoderKeysForElements(
-            GcoConstants.NS_GCO, CIRoleCodePropertyType.class);
+    private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.decoderKeysForElements(GcoConstants.NS_GCO,
+            CodeListValueType.class);
 
     public Iso19139GcoDecoder() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -77,18 +80,16 @@ public class Iso19139GcoDecoder implements Decoder<Object, XmlObject> {
         return Collections.emptyMap();
     }
 
-
     @Override
     public Object decode(XmlObject element) throws OwsExceptionReport, UnsupportedDecoderInputException {
-        if (element instanceof CIRoleCodePropertyType) {
-            return encodeCIRoleCodeProperty((CIRoleCodePropertyType)element);
+        if (element instanceof CodeListValueType) {
+            return encodeCodeListValue((CodeListValueType) element);
         } else {
             throw new UnsupportedDecoderInputException(this, element);
         }
     }
 
-    private Role encodeCIRoleCodeProperty(CIRoleCodePropertyType circpt) {
-        CodeListValueType circ = circpt.getCIRoleCode();
+    private Role encodeCodeListValue(CodeListValueType circ) {
         Role role = new Role(circ.getStringValue());
         role.setCodeList(circ.getCodeList());
         role.setCodeListValue(circ.getCodeListValue());

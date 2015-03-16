@@ -118,6 +118,9 @@ public class SensorML20SensorML101Converter implements Converter<SosProcedureDes
     private SosProcedureDescription toSystem(PhysicalSystem objectToConvert) {
         System system = new System();
         objectToConvert.copyTo(system);
+        if (objectToConvert.isSetPosition()) {
+            system.setPosition(objectToConvert.getPosition());
+        }
         if (objectToConvert.isSetComponents()) {
             system.addComponents(objectToConvert.getComponents());
         }
@@ -128,6 +131,9 @@ public class SensorML20SensorML101Converter implements Converter<SosProcedureDes
     private SosProcedureDescription toComponent(PhysicalComponent objectToConvert) {
         Component component = new Component();
         objectToConvert.copyTo(component);
+        if (objectToConvert.isSetPosition()) {
+            component.setPosition(objectToConvert.getPosition());
+        }
         // TODO
         return new SensorML().addMember(component);
     }
@@ -177,6 +183,9 @@ public class SensorML20SensorML101Converter implements Converter<SosProcedureDes
     private SosProcedureDescription toPhysicalSystem(System objectToConvert) {
         PhysicalSystem system = new PhysicalSystem();
         objectToConvert.copyTo(system);
+        if (objectToConvert.isSetPosition()) {
+            system.setPosition(objectToConvert.getPosition());
+        }
         if (objectToConvert.isSetComponents()) {
             system.addComponents(objectToConvert.getComponents());
         }
@@ -186,6 +195,9 @@ public class SensorML20SensorML101Converter implements Converter<SosProcedureDes
 
     private SosProcedureDescription toPhysicalComponent(Component objectToConvert) {
         PhysicalComponent component = new PhysicalComponent();
+        if (objectToConvert.isSetPosition()) {
+            component.setPosition(objectToConvert.getPosition());
+        }
         objectToConvert.copyTo(component);
         // TODO
         return component;

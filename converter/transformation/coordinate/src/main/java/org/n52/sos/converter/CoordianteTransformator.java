@@ -58,6 +58,7 @@ import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 import org.n52.sos.ogc.sensorML.elements.SmlLocation;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
+import org.n52.sos.ogc.sensorML.v20.AbstractPhysicalProcess;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -402,12 +403,16 @@ public class CoordianteTransformator implements
      *             If the transformation fails
      */
     private void checkAbstractSensorML(AbstractSensorML abstractSensorML, int targetCrs) throws OwsExceptionReport {
-        if (abstractSensorML instanceof SensorML && ((SensorML) abstractSensorML).isSetMembers()) {
-            checkCapabilitiesForObservedAreaAndTransform((SensorML) abstractSensorML, targetCrs);
-            for (AbstractProcess member : ((SensorML) abstractSensorML).getMembers()) {
-                checkCapabilitiesForObservedAreaAndTransform(member, targetCrs);
-                checkAbstractProcess(member, targetCrs);
-            }
+        if (abstractSensorML instanceof SensorML) {
+            checkCapabilitiesForObservedAreaAndTransform(abstractSensorML, targetCrs);
+            if (((SensorML) abstractSensorML).isSetMembers()) {
+                for (AbstractProcess member : ((SensorML) abstractSensorML).getMembers()) {
+                    checkCapabilitiesForObservedAreaAndTransform(member, targetCrs);
+                    checkAbstractProcess(member, targetCrs);
+                }
+            } 
+        } else {
+            checkAbstractProcess(abstractSensorML, targetCrs);
         }
     }
 
@@ -421,9 +426,9 @@ public class CoordianteTransformator implements
      * @throws OwsExceptionReport
      *             If the transformation fails
      */
-    private void checkAbstractProcess(AbstractProcess abstractProcess, int targetCrs) throws OwsExceptionReport {
-        if (abstractProcess instanceof AbstractComponent) {
-            AbstractComponent abstractComponent = (AbstractComponent) abstractProcess;
+    private void checkAbstractProcess(AbstractSensorML abstractSensorML, int targetCrs) throws OwsExceptionReport {
+        if (abstractSensorML instanceof AbstractComponent) {
+            AbstractComponent abstractComponent = (AbstractComponent) abstractSensorML;
             if (abstractComponent.isSetPosition()) {
                 transformPosition(abstractComponent.getPosition(), targetCrs);
             } else if (abstractComponent.isSetLocation()) {
@@ -435,6 +440,11 @@ public class CoordianteTransformator implements
                         checkAbstractSensorML(component.getProcess(), targetCrs);
                     }
                 }
+            }
+        } else if (abstractSensorML instanceof AbstractPhysicalProcess) {
+            AbstractPhysicalProcess process = (AbstractPhysicalProcess) abstractSensorML;
+            if (process.isSetPosition()) {
+                transformPosition(process.getPosition(), targetCrs);
             }
         }
     }

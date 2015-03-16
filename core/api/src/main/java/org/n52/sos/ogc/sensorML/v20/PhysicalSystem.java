@@ -35,6 +35,13 @@ import org.n52.sos.ogc.sensorML.HasComponents;
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 import org.n52.sos.util.JavaHelper;
 
+/**
+ * Class that represents SensorML 2.0 PhysicalSystem
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public class PhysicalSystem extends AbstractPhysicalProcess implements HasComponents<PhysicalSystem> {
 
     private static final long serialVersionUID = 2985786628770187177L;

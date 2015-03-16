@@ -31,8 +31,15 @@ package org.n52.sos.ogc.sensorML;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.w3c.SchemaLocation;
 
+/**
+ * OGC SensorML 2.0 constants
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public interface SensorML20Constants extends SensorMLConstants {
-    
+
     String NS_SML_20 = "http://www.opengis.net/sensorml/2.0";
 
     String SCHEMA_LOCATION_URL_SML_20 = "http://schemas.opengis.net/sensorML/2.0/sensorML.xsd";

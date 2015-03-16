@@ -39,13 +39,23 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
+/**
+ * {@link Converter} class to convert SensorML 2.0 URL to MimeType and the other
+ * way round.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public class SensorML20UrlMimeTypeConverter implements Converter<SosProcedureDescription, SosProcedureDescription> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorML20UrlMimeTypeConverter.class);
 
     private static final List<ConverterKeyType> CONVERTER_KEY_TYPES = CollectionHelper.list(
-            new ConverterKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL), 
-            new ConverterKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE));
+            new ConverterKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL), new ConverterKeyType(
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL,
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE));
 
     public SensorML20UrlMimeTypeConverter() {
         LOGGER.debug("Converter for the following keys initialized successfully: {}!",

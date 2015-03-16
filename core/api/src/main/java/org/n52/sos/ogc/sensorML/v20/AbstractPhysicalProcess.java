@@ -31,21 +31,28 @@ package org.n52.sos.ogc.sensorML.v20;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
 
+/**
+ * Class that represents SensorML 2.0 PhysicalProcess.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public class AbstractPhysicalProcess extends DescribedObject {
-    
+
     private static final long serialVersionUID = -4028425256170806503L;
-    
+
     private ReferenceType attachedTo;
-    
+
     private SpatialFrame localReferenceFrame;
-    
+
     private TemporalFrame localTimeFrame;
-    
+
     // TODO extend to list and support other type (point, text, datarecord, ...)
     private SmlPosition position;
-    
+
     private Object timePosition;
-    
+
     /**
      * @return the attachedTo
      */
@@ -58,10 +65,11 @@ public class AbstractPhysicalProcess extends DescribedObject {
     }
 
     /**
-     * Set the attachedTo reference. 
-     * It is automatically added to parentProcedure list.
+     * Set the attachedTo reference. It is automatically added to
+     * parentProcedure list.
      * 
-     * @param attachedTo the attachedTo to set
+     * @param attachedTo
+     *            the attachedTo to set
      */
     public void setAttachedTo(ReferenceType attachedTo) {
         this.attachedTo = attachedTo;
@@ -75,7 +83,7 @@ public class AbstractPhysicalProcess extends DescribedObject {
     public boolean isSetAttachedTo() {
         return attachedTo != null || isSetParentProcedures();
     }
-    
+
     /**
      * @return the localReferenceFrame
      */
@@ -84,7 +92,8 @@ public class AbstractPhysicalProcess extends DescribedObject {
     }
 
     /**
-     * @param localReferenceFrame the localReferenceFrame to set
+     * @param localReferenceFrame
+     *            the localReferenceFrame to set
      */
     public void setLocalReferenceFrame(SpatialFrame localReferenceFrame) {
         this.localReferenceFrame = localReferenceFrame;
@@ -98,7 +107,8 @@ public class AbstractPhysicalProcess extends DescribedObject {
     }
 
     /**
-     * @param localTimeFrame the localTimeFrame to set
+     * @param localTimeFrame
+     *            the localTimeFrame to set
      */
     public void setLocalTimeFrame(TemporalFrame localTimeFrame) {
         this.localTimeFrame = localTimeFrame;
@@ -112,7 +122,8 @@ public class AbstractPhysicalProcess extends DescribedObject {
     }
 
     /**
-     * @param position the position to set
+     * @param position
+     *            the position to set
      */
     public void setPosition(SmlPosition position) {
         this.position = position;
@@ -126,7 +137,8 @@ public class AbstractPhysicalProcess extends DescribedObject {
     }
 
     /**
-     * @param timePosition the timePosition to set
+     * @param timePosition
+     *            the timePosition to set
      */
     public void setTimePosition(Object timePosition) {
         this.timePosition = timePosition;
@@ -138,12 +150,9 @@ public class AbstractPhysicalProcess extends DescribedObject {
     public static long getSerialversionuid() {
         return serialVersionUID;
     }
-    
 
     public boolean isSetPosition() {
         return getPosition() != null;
     }
-
-    
 
 }

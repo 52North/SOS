@@ -32,6 +32,13 @@ import org.n52.sos.ogc.sensorML.HasProcessMethod;
 import org.n52.sos.ogc.sensorML.ProcessMethod;
 import org.n52.sos.util.JavaHelper;
 
+/**
+ * Class that represents SensorML 2.0 PhysicalComponent
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public class PhysicalComponent extends AbstractPhysicalProcess implements HasProcessMethod {
 
     private static final long serialVersionUID = 5935212001491183960L;

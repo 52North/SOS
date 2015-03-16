@@ -49,19 +49,32 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
+/**
+ * {@link Converter} class to convert SensorML 2.0 to SensorML 1.0.1 and the
+ * other way round.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public class SensorML20SensorML101Converter implements Converter<SosProcedureDescription, SosProcedureDescription> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorML20UrlMimeTypeConverter.class);
 
-    private static final List<ConverterKeyType> CONVERTER_KEY_TYPES = CollectionHelper.list(
-            new ConverterKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE, SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE), 
-            new ConverterKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL, SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE),
-            new ConverterKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE, SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL), 
-            new ConverterKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL, SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL),
-            new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE), 
-            new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE),
-            new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL), 
-            new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL));
+    private static final List<ConverterKeyType> CONVERTER_KEY_TYPES = CollectionHelper.list(new ConverterKeyType(
+            SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
+            SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE), new ConverterKeyType(
+            SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL, SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE),
+            new ConverterKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
+                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL), new ConverterKeyType(
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL, SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL),
+            new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE), new ConverterKeyType(
+                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE), new ConverterKeyType(
+                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL), new ConverterKeyType(
+                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL));
 
     public SensorML20SensorML101Converter() {
         LOGGER.debug("Converter for the following keys initialized successfully: {}!",
@@ -76,26 +89,30 @@ public class SensorML20SensorML101Converter implements Converter<SosProcedureDes
     @Override
     public SosProcedureDescription convert(SosProcedureDescription objectToConvert) throws ConverterException {
         if (objectToConvert.getDescriptionFormat().equals(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL)
-                || objectToConvert.getDescriptionFormat().equals(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE)) {
+                || objectToConvert.getDescriptionFormat().equals(
+                        SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE)) {
             return convertSensorML20ToSensorML101(objectToConvert);
         } else if (objectToConvert.getDescriptionFormat().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL)
                 || objectToConvert.getDescriptionFormat().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE)) {
             return convertSensorML101ToSensorML20(objectToConvert);
         }
-        throw new ConverterException(String.format("The procedure's description format %s is not supported!", objectToConvert.getDescriptionFormat()));
+        throw new ConverterException(String.format("The procedure's description format %s is not supported!",
+                objectToConvert.getDescriptionFormat()));
     }
-    
-    private SosProcedureDescription convertSensorML20ToSensorML101(SosProcedureDescription objectToConvert) throws ConverterException {
+
+    private SosProcedureDescription convertSensorML20ToSensorML101(SosProcedureDescription objectToConvert)
+            throws ConverterException {
         if (objectToConvert instanceof PhysicalSystem) {
-           return toSystem((PhysicalSystem)objectToConvert);
+            return toSystem((PhysicalSystem) objectToConvert);
         } else if (objectToConvert instanceof PhysicalComponent) {
-         return toComponent((PhysicalComponent)objectToConvert);
+            return toComponent((PhysicalComponent) objectToConvert);
         } else if (objectToConvert instanceof SimpleProcess) {
-         return toProcessModel((SimpleProcess)objectToConvert);
+            return toProcessModel((SimpleProcess) objectToConvert);
         } else if (objectToConvert instanceof AggregateProcess) {
-          return toProcessChain((AggregateProcess)objectToConvert);
+            return toProcessChain((AggregateProcess) objectToConvert);
         }
-        throw new ConverterException(String.format("The procedure type  %s is not supported!", objectToConvert.getClass().getName()));
+        throw new ConverterException(String.format("The procedure type  %s is not supported!", objectToConvert
+                .getClass().getName()));
     }
 
     private SosProcedureDescription toSystem(PhysicalSystem objectToConvert) {
@@ -104,28 +121,28 @@ public class SensorML20SensorML101Converter implements Converter<SosProcedureDes
         if (objectToConvert.isSetComponents()) {
             system.addComponents(objectToConvert.getComponents());
         }
-        // TODO 
+        // TODO
         return new SensorML().addMember(system);
     }
 
     private SosProcedureDescription toComponent(PhysicalComponent objectToConvert) {
         Component component = new Component();
         objectToConvert.copyTo(component);
-        // TODO 
+        // TODO
         return new SensorML().addMember(component);
     }
 
     private SosProcedureDescription toProcessModel(SimpleProcess objectToConvert) {
         ProcessModel model = new ProcessModel();
         objectToConvert.copyTo(model);
-        // TODO 
+        // TODO
         return new SensorML().addMember(model);
     }
 
     private SosProcedureDescription toProcessChain(AggregateProcess objectToConvert) {
         ProcessChain chain = new ProcessChain();
         objectToConvert.copyTo(chain);
-        // TODO 
+        // TODO
         return new SensorML().addMember(chain);
     }
 
@@ -138,10 +155,12 @@ public class SensorML20SensorML101Converter implements Converter<SosProcedureDes
         } else {
             return convertSml101AbstractProcess(objectToConvert);
         }
-        throw new ConverterException(String.format("The procedure type  %s is not supported!", objectToConvert.getClass().getName()));
+        throw new ConverterException(String.format("The procedure type  %s is not supported!", objectToConvert
+                .getClass().getName()));
     }
-    
-    private SosProcedureDescription convertSml101AbstractProcess(SosProcedureDescription objectToConvert) throws ConverterException {
+
+    private SosProcedureDescription convertSml101AbstractProcess(SosProcedureDescription objectToConvert)
+            throws ConverterException {
         if (objectToConvert instanceof System) {
             return toPhysicalSystem((System) objectToConvert);
         } else if (objectToConvert instanceof Component) {
@@ -151,7 +170,8 @@ public class SensorML20SensorML101Converter implements Converter<SosProcedureDes
         } else if (objectToConvert instanceof ProcessChain) {
             return toAggregateProcess((ProcessChain) objectToConvert);
         }
-        throw new ConverterException(String.format("The procedure type  %s is not supported!", objectToConvert.getClass().getName()));
+        throw new ConverterException(String.format("The procedure type  %s is not supported!", objectToConvert
+                .getClass().getName()));
     }
 
     private SosProcedureDescription toPhysicalSystem(System objectToConvert) {

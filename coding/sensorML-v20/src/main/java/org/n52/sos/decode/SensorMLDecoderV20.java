@@ -40,12 +40,15 @@ import net.opengis.sensorml.x20.AbstractPhysicalProcessType;
 import net.opengis.sensorml.x20.AbstractProcessDocument;
 import net.opengis.sensorml.x20.AbstractProcessType;
 import net.opengis.sensorml.x20.AbstractProcessType.FeaturesOfInterest;
+import net.opengis.sensorml.x20.AbstractProcessType.Inputs;
+import net.opengis.sensorml.x20.AbstractProcessType.Outputs;
 import net.opengis.sensorml.x20.AggregateProcessDocument;
 import net.opengis.sensorml.x20.AggregateProcessPropertyType;
 import net.opengis.sensorml.x20.AggregateProcessType;
 import net.opengis.sensorml.x20.CapabilityListType;
 import net.opengis.sensorml.x20.CapabilityListType.Capability;
 import net.opengis.sensorml.x20.CharacteristicListPropertyType;
+import net.opengis.sensorml.x20.CharacteristicListType;
 import net.opengis.sensorml.x20.CharacteristicListType.Characteristic;
 import net.opengis.sensorml.x20.ClassifierListPropertyType;
 import net.opengis.sensorml.x20.ClassifierListType.Classifier;
@@ -53,13 +56,16 @@ import net.opengis.sensorml.x20.ComponentListPropertyType;
 import net.opengis.sensorml.x20.ComponentListType;
 import net.opengis.sensorml.x20.ComponentListType.Component;
 import net.opengis.sensorml.x20.ContactListPropertyType;
+import net.opengis.sensorml.x20.DataComponentOrObservablePropertyType;
 import net.opengis.sensorml.x20.DescribedObjectDocument;
 import net.opengis.sensorml.x20.DescribedObjectType;
 import net.opengis.sensorml.x20.DescribedObjectType.Capabilities;
 import net.opengis.sensorml.x20.IdentifierListPropertyType;
 import net.opengis.sensorml.x20.IdentifierListType.Identifier;
-import net.opengis.sensorml.x20.CharacteristicListType;
+import net.opengis.sensorml.x20.InputListType.Input;
 import net.opengis.sensorml.x20.KeywordListPropertyType;
+import net.opengis.sensorml.x20.ObservablePropertyType;
+import net.opengis.sensorml.x20.OutputListType.Output;
 import net.opengis.sensorml.x20.PhysicalComponentDocument;
 import net.opengis.sensorml.x20.PhysicalComponentPropertyType;
 import net.opengis.sensorml.x20.PhysicalComponentType;
@@ -94,6 +100,7 @@ import org.n52.sos.ogc.sensorML.elements.SmlCharacteristics;
 import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.sos.ogc.sensorML.elements.SmlIo;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
 import org.n52.sos.ogc.sensorML.v20.AbstractPhysicalProcess;
 import org.n52.sos.ogc.sensorML.v20.AbstractProcessV20;
@@ -109,6 +116,7 @@ import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
@@ -122,6 +130,13 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+/**
+ * {@link AbstractSensorMLDecoder} class to decode OGC SensorML 2.0
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorMLDecoderV20.class);

@@ -35,25 +35,32 @@ import org.n52.sos.ogc.sensorML.HasComponents;
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 import org.n52.sos.util.JavaHelper;
 
+/**
+ * Class that represents SensorML 2.0 AggregateProcess
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public class AggregateProcess extends DescribedObject implements HasComponents<AggregateProcess> {
 
     private static final long serialVersionUID = 2502657552214755614L;
-    
+
     public static final String ID_PREFIX = "ap_";
-    
+
     private final List<SmlComponent> components = new ArrayList<SmlComponent>(0);
-    
+
     private Object connections;
-    
+
     public AggregateProcess() {
         setGmlId(ID_PREFIX + JavaHelper.generateID(ID_PREFIX));
     }
-    
+
     @Override
     public List<SmlComponent> getComponents() {
         return components;
     }
-    
+
     @Override
     public AggregateProcess addComponents(final List<SmlComponent> components) {
         if (components != null) {
@@ -62,7 +69,7 @@ public class AggregateProcess extends DescribedObject implements HasComponents<A
         }
         return this;
     }
-    
+
     @Override
     public AggregateProcess addComponent(final SmlComponent component) {
         if (component != null) {
@@ -71,7 +78,7 @@ public class AggregateProcess extends DescribedObject implements HasComponents<A
         }
         return this;
     }
-    
+
     @Override
     public boolean isSetComponents() {
         return components != null && !components.isEmpty();

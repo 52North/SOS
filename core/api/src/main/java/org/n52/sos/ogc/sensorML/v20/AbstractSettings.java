@@ -28,6 +28,13 @@
  */
 package org.n52.sos.ogc.sensorML.v20;
 
+/**
+ * Class that represents SensorML 2.0 AbstractSettings
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public class AbstractSettings {
 
 }

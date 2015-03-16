@@ -37,12 +37,10 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.isotc211.x2005.gco.CodeListValueType;
-import org.isotc211.x2005.gmd.CIRoleCodePropertyType;
 import org.n52.sos.Role;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.iso.GcoConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.XmlHelper;
@@ -54,6 +52,14 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
+/**
+ * {@link AbstractXmlEncoder} class to decode ISO TC211 Geographic COmmon (GCO) extensible
+ * markup language.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public class Iso19139GcoEncoder extends AbstractXmlEncoder<Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Iso19139GcoEncoder.class);

@@ -28,18 +28,26 @@
  */
 package org.n52.sos.ogc.sensorML;
 
+/**
+ * Interface to indicate if a class has a {@link ProcessMethod}
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public interface HasProcessMethod {
-    
+
     /**
      * @return the method
      */
     public ProcessMethod getMethod();
 
     /**
-     * @param method the method to set
+     * @param method
+     *            the method to set
      */
     public void setMethod(ProcessMethod method);
-    
+
     /**
      * @return <code>true</code>, if method is not null
      */

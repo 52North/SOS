@@ -30,6 +30,15 @@ package org.n52.sos.ogc.sensorML.elements;
 
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 
+/**
+ * Abstract container class for {@link SweAbstractDataComponent}s
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ * @param <T>
+ *            Implemented class
+ */
 public class AbstractDataComponentContainer<T> {
 
     private String name;

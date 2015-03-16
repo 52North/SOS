@@ -40,6 +40,13 @@ import org.n52.sos.util.CollectionHelper;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+/**
+ * Class that represents SensorML 2.0 FeatrureOfInterest
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public class SmlFeatureOfInterest extends SweAbstractDataComponent {
     
     private final Set<String> featuresOfInterest = Sets.newLinkedHashSet();

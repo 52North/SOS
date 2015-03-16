@@ -40,28 +40,35 @@ import org.n52.sos.util.CollectionHelper;
 
 import com.google.common.collect.Sets;
 
+/**
+ * Abstract container class for SensorML data components.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.0.0
+ *
+ * @param <T> Implemented class
+ */
 public class AbstractSmlDataComponentContainer<T> {
-    
+
     private String name;
-    
+
     private String typeDefinition;
-    
+
     private DataRecord dataRecord;
 
     private Set<SweAbstractDataComponent> abstractDataComponents = Sets.newHashSet();
 
     public AbstractSmlDataComponentContainer() {
     }
-    
+
     public AbstractSmlDataComponentContainer(DataRecord dataRecord) {
         this.dataRecord = dataRecord;
     }
-    
-    public AbstractSmlDataComponentContainer(
-            Set<SweAbstractDataComponent> abstractDataComponents) {
+
+    public AbstractSmlDataComponentContainer(Set<SweAbstractDataComponent> abstractDataComponents) {
         this.abstractDataComponents = abstractDataComponents;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -75,7 +82,7 @@ public class AbstractSmlDataComponentContainer<T> {
     public boolean isSetName() {
         return name != null && !name.isEmpty();
     }
-    
+
     /**
      * @return the typeDefinition
      */
@@ -128,7 +135,7 @@ public class AbstractSmlDataComponentContainer<T> {
     public boolean isSetAbstractDataRecord() {
         return isSetDataRecord() || isSetDataComponents();
     }
-    
+
     private boolean isSetDataRecord() {
         return dataRecord != null;
     }
@@ -165,11 +172,11 @@ public class AbstractSmlDataComponentContainer<T> {
     public boolean isSetAbstractDataComponents() {
         return isSetDataComponents() || isSetDataRecord();
     }
-    
+
     private boolean isSetDataComponents() {
         return CollectionHelper.isNotEmpty(abstractDataComponents);
     }
-    
+
     @SuppressWarnings("rawtypes")
     public Set<SweAbstractSimpleType<?>> getSweAbstractSimpleTypeFromFields(Class clazz) {
         if (isSetAbstractDataRecord()) {

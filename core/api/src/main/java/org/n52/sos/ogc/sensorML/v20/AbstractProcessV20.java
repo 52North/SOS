@@ -32,6 +32,13 @@ import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 
+/**
+ * Class that represents SensorML 2.0 AbstractProcess
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public class AbstractProcessV20 extends AbstractProcess {
 
     private static final long serialVersionUID = 1L;

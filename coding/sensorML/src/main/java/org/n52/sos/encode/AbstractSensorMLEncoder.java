@@ -78,6 +78,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+
+/**
+ * Abstract {@link AbstractXmlEncoder} class to encode OGC SensorML
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object> implements ProcedureEncoder<XmlObject, Object> {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSensorMLEncoder.class);

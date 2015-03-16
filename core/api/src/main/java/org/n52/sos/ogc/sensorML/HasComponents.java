@@ -32,6 +32,15 @@ import java.util.List;
 
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 
+/**
+ * Interface to provide methods for adding/getting {@link SmlComponent}
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ * @param <T>
+ *            Implemented class
+ */
 public interface HasComponents<T> {
 
     public List<SmlComponent> getComponents();
@@ -42,6 +51,4 @@ public interface HasComponents<T> {
 
     public boolean isSetComponents();
 
-
-    
 }

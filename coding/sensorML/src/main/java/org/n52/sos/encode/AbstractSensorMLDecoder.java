@@ -41,6 +41,13 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
+/**
+ * Abstract {@link Decoder} class to decode OGC SensorML
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public abstract class AbstractSensorMLDecoder implements Decoder<AbstractSensorML, XmlObject> {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSensorMLDecoder.class);

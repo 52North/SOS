@@ -11,477 +11,125 @@
 	<swes:description>
 		<swes:SensorDescription>	
 			<swes:data>
-				<sml:PhysicalSystem gml:id="ExampleHydrophone1">
-				   <!--Short textual description of the hydrophone-->
-				   <gml:description>Exemplary description of a hydrophone</gml:description>
-				   <!--Unique identifier of the hydrophone-->
-		   		   <gml:identifier codeSpace="uniqueID">ExampleHydrophone1</gml:identifier>
-				   <!--Keywords describing the hydrophone-->
-				   <sml:keywords>
-				      <sml:KeywordList>
-				         <sml:keyword>Earth Science > Oceans > Ocean Acoustics</sml:keyword>
-				         <sml:keyword>Ocean Acoustics</sml:keyword>
-				         <sml:keyword>SODAR Acoustic Receivers Hydrophone</sml:keyword>
-				         <sml:keyword>Projects:ESONET Platforms: Fixed Oberservation Stations</sml:keyword>
-				      </sml:KeywordList>
-				   </sml:keywords>
-				   <!--Identifiers of the hydrophone-->
-				   <sml:identification>
-				      <sml:IdentifierList>
-				         <!--UUID of the hydrophone-->
-				         <sml:identifier>
-				            <sml:Term definition="http://www.nexosproject.eu/dictionary/definitions.html#UUID">
-				               <sml:label>UUID</sml:label>
-				               <sml:value>C41969B6-F170-0501-432E-B43D5420140B</sml:value>
-				            </sml:Term>
-				         </sml:identifier>
-				         <!--Short name of the hydrophone-->
-				         <sml:identifier>
-				            <sml:Term definition="http://www.nexosproject.eu/dictionary/definitions.html#shortName">
-				               <sml:label>Short name</sml:label>
-				               <sml:value>Example Hydrophone 1</sml:value>
-				            </sml:Term>
-				         </sml:identifier>
-				         <!--Long name of the hydrophone-->
-				         <sml:identifier>
-				            <sml:Term definition="http://www.nexosproject.eu/dictionary/definitions.html#longName">
-				               <sml:label>Long name</sml:label>
-				               <sml:value>Example Hydrophone 1 NeXOS</sml:value>
-				            </sml:Term>
-				         </sml:identifier>
-				         <!--Device ID of the hydrophone-->
-				         <sml:identifier>
-				            <sml:Term definition="http://www.nexosproject.eu/dictionary/definitions.html#deviceID">
-				               <sml:label>Device ID</sml:label>
-				               <sml:value>C6764FF3-A220-0001-2D56-19DB17401D90</sml:value>
-				            </sml:Term>
-				         </sml:identifier>
-				         <!--Serial number of the hydrophone-->
-				         <sml:identifier>
-				            <sml:Term definition="http://www.nexosproject.eu/dictionary/definitions.html#serialNumber">
-				               <sml:label>Serial number</sml:label>
-				               <sml:value>1234567890</sml:value>
-				            </sml:Term>
-				         </sml:identifier>
-				         <!--WMO id of the hydrophone-->
-				         <sml:identifier>
-				            <sml:Term definition="http://www.nexosproject.eu/dictionary/definitions.html#WMO_ID">
-				               <sml:label>WMO</sml:label>
-				               <sml:value>123456</sml:value>
-				            </sml:Term>
-				         </sml:identifier>
-				      </sml:IdentifierList>
-				   </sml:identification>
-				   <!--Time period for which the description of this hydrophone is valid-->
-				   <sml:validTime>
-				      <gml:TimePeriod gml:id="validityPeriod">
-				         <gml:beginPosition>2015-01-10T13:22:31+00:00</gml:beginPosition>
-				         <gml:endPosition>2015-01-17T16:57:56+00:00</gml:endPosition>
-				      </gml:TimePeriod>
-				   </sml:validTime>
-				   <!--Contact details for this hydrophone-->
-				   <sml:contacts>
-				      <sml:ContactList>
-				         <!--Point of contact for this hydrophone-->
-				         <sml:contact xlink:title="pointOfContact">
-				            <gmd:CI_ResponsibleParty>
-				               <!--Name of the organisation responsible for the hydrophone-->
-				               <gmd:organisationName>
-				                  <gco:CharacterString>52°North GmbH</gco:CharacterString>
-				               </gmd:organisationName>
-				               <gmd:contactInfo>
-				                  <gmd:CI_Contact>
-				                     <gmd:address>
-				                        <gmd:CI_Address>
-				                           <!--City where the organisation responsible for the hydrophone is located-->
-				                           <gmd:city>
-				                              <gco:CharacterString>Münster</gco:CharacterString>
-				                           </gmd:city>
-				                           <!--Country where the organisation responsible for the hydrophone is located-->
-				                           <gmd:country>
-				                              <gco:CharacterString>Germany</gco:CharacterString>
-				                           </gmd:country>
-				                        </gmd:CI_Address>
-				                     </gmd:address>
-				                  </gmd:CI_Contact>
-				               </gmd:contactInfo>
-				               <!--The role of the responsible organisation should be CI_RoleCode_pointOfContact-->
-				               <gmd:role>
-				                  <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode/" codeListValue="CI_RoleCode_pointOfContact">Point of Contact</gmd:CI_RoleCode>
-				               </gmd:role>
-				            </gmd:CI_ResponsibleParty>
-				         </sml:contact>
-				         <!--Owner of this hydrophone-->
-				         <sml:contact xlink:title="owner">
-				            <gmd:CI_ResponsibleParty>
-				               <!--The name of the organisation which owns the hydrophone-->
-				               <gmd:organisationName>
-				                  <gco:CharacterString>52°North GmbH</gco:CharacterString>
-				               </gmd:organisationName>
-				               <gmd:contactInfo>
-				                  <gmd:CI_Contact>
-				                     <gmd:phone>
-				                        <gmd:CI_Telephone>
-				                           <!--Telephone number of the organisation which owns the hydrophone-->
-				                           <gmd:voice>
-				                              <gco:CharacterString>+49-(0)-251-396371-31</gco:CharacterString>
-				                           </gmd:voice>
-				                           <!--Fax number of the organisation which owns the hydrophone-->
-				                           <gmd:facsimile>
-				                              <gco:CharacterString>+49-(0)-251-396371-11</gco:CharacterString>
-				                           </gmd:facsimile>
-				                        </gmd:CI_Telephone>
-				                     </gmd:phone>
-				                     <gmd:address>
-				                        <gmd:CI_Address>
-				                           <!--Street and house number where the organisation which owns the hydrophone is located-->
-				                           <gmd:deliveryPoint>
-				                              <gco:CharacterString>Martin-Luther-King-Weg 24</gco:CharacterString>
-				                           </gmd:deliveryPoint>
-				                           <!--City where the organisation which owns the hydrophone is located-->
-				                           <gmd:city>
-				                              <gco:CharacterString>Münster</gco:CharacterString>
-				                           </gmd:city>
-				                           <!--Administrative area where the organisation which owns the hydrophone is located (e.g. the federal state within a country)-->
-				                           <gmd:administrativeArea>
-				                              <gco:CharacterString>North Rhine-Westphalia</gco:CharacterString>
-				                           </gmd:administrativeArea>
-				                           <!--Postal code of the area where the organisation which owns the hydrophone is located-->
-				                           <gmd:postalCode>
-				                              <gco:CharacterString>48155</gco:CharacterString>
-				                           </gmd:postalCode>
-				                           <!--Country where the organisation which owns the hydrophone is located-->
-				                           <gmd:country>
-				                              <gco:CharacterString>Germany</gco:CharacterString>
-				                           </gmd:country>
-				                           <!--Email address of organisation which owns the hydrophone-->
-				                           <gmd:electronicMailAddress>
-				                              <gco:CharacterString>jirka@52north.org</gco:CharacterString>
-				                           </gmd:electronicMailAddress>
-				                        </gmd:CI_Address>
-				                     </gmd:address>
-				                  </gmd:CI_Contact>
-				               </gmd:contactInfo>
-				               <!--The role for the organisation which owns the hydrophone should be CI_RoleCode_owner-->
-				               <gmd:role>
-				                  <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode/" codeListValue="CI_RoleCode_owner">Owner</gmd:CI_RoleCode>
-				               </gmd:role>
-				            </gmd:CI_ResponsibleParty>
-				         </sml:contact>
-				         <!--Operator of this hydrophone-->
-				         <sml:contact xlink:title="operator">
-				            <gmd:CI_ResponsibleParty>
-				               <!-- The name of the organisation which operates the hydrophone-->
-				               <gmd:organisationName>
-				                  <gco:CharacterString>Test Operator</gco:CharacterString>
-				               </gmd:organisationName>
-				               <gmd:contactInfo>
-				                  <gmd:CI_Contact>
-				                     <gmd:phone>
-				                        <gmd:CI_Telephone>
-				                           <!--Phone number of the organisation which operates the hydrophone-->
-				                           <gmd:voice>
-				                              <gco:CharacterString>+49-(0)-251-396371-31</gco:CharacterString>
-				                           </gmd:voice>
-				                           <!--Fax number of the organisation which operates the hydrophone-->
-				                           <gmd:facsimile>
-				                              <gco:CharacterString>+49-(0)-251-396371-11</gco:CharacterString>
-				                           </gmd:facsimile>
-				                        </gmd:CI_Telephone>
-				                     </gmd:phone>
-				                     <gmd:address>
-				                        <gmd:CI_Address>
-				                           <!--Street and house number where the organisation which operates the hydrophone is located-->
-				                           <gmd:deliveryPoint>
-				                              <gco:CharacterString>Martin-Luther-King-Weg 24</gco:CharacterString>
-				                           </gmd:deliveryPoint>
-				                           <gmd:city>
-				                              <gco:CharacterString>Münster</gco:CharacterString>
-				                           </gmd:city>
-				                           <!--Administrative area where the organisation which operates the hydrophone is located (e.g. the federal state within a country)-->
-				                           <gmd:administrativeArea>
-				                              <gco:CharacterString>North Rhine-Westphalia</gco:CharacterString>
-				                           </gmd:administrativeArea>
-				                           <!--Postal code of the area where the organisation which operates the hydrophone is located-->
-				                           <gmd:postalCode>
-				                              <gco:CharacterString>48155</gco:CharacterString>
-				                           </gmd:postalCode>
-				                           <!--Country where the organisation which operates the hydrophone is located-->
-				                           <gmd:country>
-				                              <gco:CharacterString>Germany</gco:CharacterString>
-				                           </gmd:country>
-				                           <!--Email address of the organisation which operates the hydrophone-->
-				                           <gmd:electronicMailAddress>
-				                              <gco:CharacterString>jirka@52north.org</gco:CharacterString>
-				                           </gmd:electronicMailAddress>
-				                        </gmd:CI_Address>
-				                     </gmd:address>
-				                  </gmd:CI_Contact>
-				               </gmd:contactInfo>
-				               <!--The role for the organisation which operates the hydrophone should be CI_RoleCode_custodian-->
-				               <gmd:role>
-				                  <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode/" codeListValue="CI_RoleCode_custodian">Operator</gmd:CI_RoleCode>
-				               </gmd:role>
-				            </gmd:CI_ResponsibleParty>
-				         </sml:contact>
-				         <!--Principal investigator responsible for this hydrophone-->
-				         <sml:contact xlink:title="principalInvestigator">
-				            <gmd:CI_ResponsibleParty>
-				               <!--Name of the principal investigator responsible for this hydrophone-->
-				               <gmd:individualName>
-				                  <gco:CharacterString>Dr. Simon Jirka</gco:CharacterString>
-				               </gmd:individualName>
-				               <!--Organisation of the principal investigator responsible for this hydrophone-->
-				               <gmd:organisationName>
-				                  <gco:CharacterString>52°North GmbH</gco:CharacterString>
-				               </gmd:organisationName>
-				               <!--Position of the principal investigator responsible for this hydrophone-->
-				               <gmd:positionName>
-				                  <gco:CharacterString>Project Manager</gco:CharacterString>
-				               </gmd:positionName>
-				               <gmd:contactInfo>
-				                  <gmd:CI_Contact>
-				                     <gmd:phone>
-				                        <gmd:CI_Telephone>
-				                           <!--Telephone number of the principal investigator responsible for this hydrophone-->
-				                           <gmd:voice>
-				                              <gco:CharacterString>+49-(0)-251-396371-31</gco:CharacterString>
-				                           </gmd:voice>
-				                        </gmd:CI_Telephone>
-				                     </gmd:phone>
-				                     <gmd:address>
-				                        <gmd:CI_Address>
-				                           <!--City where the principal investigator responsible for this hydrophone is located-->
-				                           <gmd:city>
-				                              <gco:CharacterString>Münster</gco:CharacterString>
-				                           </gmd:city>
-				                           <!--Country where the principal investigator responsible for this hydrophone is located-->
-				                           <gmd:country>
-				                              <gco:CharacterString>Germany</gco:CharacterString>
-				                           </gmd:country>
-				                           <!--Email address of the principal investigator responsible for this hydrophone-->
-				                           <gmd:electronicMailAddress>
-				                              <gco:CharacterString>jirka@52north.org</gco:CharacterString>
-				                           </gmd:electronicMailAddress>
-				                        </gmd:CI_Address>
-				                     </gmd:address>
-				                     <!--Web site of the principal investigator responsible for this hydrophone-->
-				                     <gmd:onlineResource>
-				                        <gmd:CI_OnlineResource>
-				                           <gmd:linkage>
-				                              <gmd:URL>http://52north.org</gmd:URL>
-				                           </gmd:linkage>
-				                        </gmd:CI_OnlineResource>
-				                     </gmd:onlineResource>
-				                  </gmd:CI_Contact>
-				               </gmd:contactInfo>
-				               <!--The role of the principal investigator should be CI_RoleCode_principalInvestigator-->
-				               <gmd:role>
-				                  <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode/" codeListValue="CI_RoleCode_principalInvestigator">Principal Investigator</gmd:CI_RoleCode>
-				               </gmd:role>
-				            </gmd:CI_ResponsibleParty>
-				         </sml:contact>
-				      </sml:ContactList>
-				   </sml:contacts>
-				   <!--Collection of events describing the history of the hydrophone-->
-				   <sml:history>
-				      <sml:EventList>
-				         <!--Event describing the installation-->
-				         <sml:event>
-				            <sml:Event>
-				               <!--Label describing the type of the event-->
-				               <swe:label>Installation</swe:label>
-				               <!--Documentation of the installation; a link to more detailed information about this event is provided (e.g. a log file)-->
-				               <sml:documentation>
-				                  <sml:DocumentList>
-				                     <sml:document>
-				                        <gmd:CI_OnlineResource>
-				                           <gmd:linkage>
-				                              <gmd:URL>http://52north.org/hydrophone:9328_installation.log</gmd:URL>
-				                           </gmd:linkage>
-				                        </gmd:CI_OnlineResource>
-				                     </sml:document>
-				                  </sml:DocumentList>
-				               </sml:documentation>
-				               <!--Time stamp when the hydrophone was installed-->
-				               <sml:time>
-				                  <gml:TimeInstant gml:id="installationDate">
-				                     <gml:timePosition>2014-11-21T11:30:10.000Z</gml:timePosition>
-				                  </gml:TimeInstant>
-				               </sml:time>
-				            </sml:Event>
-				         </sml:event>
-				         <!--Event describing the deployment-->
-				         <sml:event>
-				            <sml:Event>
-				               <!--Label describing the type of the event-->
-				               <swe:label>Deployment</swe:label>
-				               <!--Documentation of the deployment; a link to more detailed information about this event is provided (e.g. a log file)-->
-				               <sml:documentation>
-				                  <sml:DocumentList>
-				                     <sml:document>
-				                        <gmd:CI_OnlineResource>
-				                           <gmd:linkage>
-				                              <gmd:URL>http://52north.org/hydrophone:9328_initialization.log</gmd:URL>
-				                           </gmd:linkage>
-				                        </gmd:CI_OnlineResource>
-				                     </sml:document>
-				                  </sml:DocumentList>
-				               </sml:documentation>
-				               <!--Time stamp when the hydrophone was deployed-->
-				               <sml:time>
-				                  <gml:TimeInstant gml:id="deploymentDate">
-				                     <gml:timePosition>2014-11-21T12:02:22.000Z</gml:timePosition>
-				                  </gml:TimeInstant>
-				               </sml:time>
-				            </sml:Event>
-				         </sml:event>
-				         <!--Event describing when the data collection was started-->
-				         <sml:event>
-				            <sml:Event>
-				               <!--Label describing the type of the event-->
-				               <swe:label>Start of data collection</swe:label>
-				               <!--Time stamp when the data collection started-->
-				               <sml:time>
-				                  <gml:TimeInstant gml:id="dataCollectionStartDate">
-				                     <gml:timePosition>2014-11-21T13:12:20.000Z</gml:timePosition>
-				                  </gml:TimeInstant>
-				               </sml:time>
-				            </sml:Event>
-				         </sml:event>
-				         <!--Event describing a calibration event-->
-				         <sml:event>
-				            <sml:Event>
-				               <!--Label describing the type of the event-->
-				               <swe:label>Calibration</swe:label>
-				               <sml:identification>
-				                  <sml:IdentifierList>
-				                     <!--ID of the calibration event-->
-				                     <sml:identifier>
-				                        <sml:Term>
-				                           <sml:label>Calibration ID</sml:label>
-				                           <sml:value>cal000001</sml:value>
-				                        </sml:Term>
-				                     </sml:identifier>
-				                  </sml:IdentifierList>
-				               </sml:identification>
-				               <!--Documentation of the calibration event; a link to more detailed information about this event is provided (e.g. a log file)-->
-				               <sml:documentation>
-				                  <sml:DocumentList>
-				                     <sml:document>
-				                        <gmd:CI_OnlineResource>
-				                           <gmd:linkage>
-				                              <gmd:URL>http://52north.org/hydrophone:9328_cal000001.log</gmd:URL>
-				                           </gmd:linkage>
-				                        </gmd:CI_OnlineResource>
-				                     </sml:document>
-				                  </sml:DocumentList>
-				               </sml:documentation>
-				               <!--Time stamp when the calibration was performed-->
-				               <sml:time>
-				                  <gml:TimeInstant gml:id="cal000001Date">
-				                     <gml:timePosition>2014-12-22T16:33:22.000Z</gml:timePosition>
-				                  </gml:TimeInstant>
-				               </sml:time>
-				            </sml:Event>
-				         </sml:event>
-				      </sml:EventList>
-				   </sml:history>
-				   <!--Reference to the description of the hydrophone type. The referenced URL links to a SensorML document describing all properties which are the same for all hydrophones of this type.-->
-				   <sml:typeOf xlink:href="http://52north.org/hydrophone_Type_123456B.xml"/>
-				   <!--Parameters of the hydrophone (= properties which can be adjusted)-->
-				   <sml:parameters>
-				      <sml:ParameterList>
-				         <!--Indication if the hydrophone is active-->
-				         <sml:parameter name="isActive">
-				            <swe:Boolean definition="http://www.nexosproject.eu/dictionary/definitions.html#sensorStatus">
-				               <swe:label>Sensor Status</swe:label>
-				               <swe:description>true = active, false = not active</swe:description>
-				               <swe:value>true</swe:value>
-				            </swe:Boolean>
-				         </sml:parameter>
-				         <!--Pressure dynamic range of the hydrophone-->
-				         <sml:parameter name="pressureDynamicRange">
-				            <swe:QuantityRange definition="http://www.nexosproject.eu/dictionary/definitions.html#pressureDynamicRange">
-				               <swe:label>Pressure Dynamic Range (dB[1.uPa]) [min max])</swe:label>
-				               <swe:uom code="dB[1.V/uPa]"/>
-				               <swe:value>20 120</swe:value>
-				            </swe:QuantityRange>
-				         </sml:parameter>
-				         <!--Amplifier gain of the hydrophone-->
-				         <sml:parameter name="amplifierGain">
-				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#amplifierGain">
-				               <swe:label>Amplifier Gain</swe:label>
-				               <swe:uom code="dB"/>
-				               <swe:value>5</swe:value>
-				            </swe:Quantity>
-				         </sml:parameter>
-				         <!--High pass filter of the hydrophone-->
-				         <sml:parameter name="highPassFilter">
-				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#highPassFilter">
-				               <swe:label>High Pass Filter</swe:label>
-				               <swe:uom code="Hz_[-3.dB]"/>
-				               <swe:value>23</swe:value>
-				            </swe:Quantity>
-				         </sml:parameter>
-				         <!--Low pass filter of the hydrophone-->
-				         <sml:parameter name="lowPassFilter">
-				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#lowPassFilter">
-				               <swe:label>Low Pass Filter</swe:label>
-				               <swe:uom code="Hz_[-3.dB]"/>
-				               <swe:value>23</swe:value>
-				            </swe:Quantity>
-				         </sml:parameter>
-				         <!--Output voltage of the hydrophone-->
-				         <sml:parameter name="outputVoltage">
-				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#outputVoltage">
-				               <swe:label>OutputVoltage</swe:label>
-				               <swe:uom code="V"/>
-				               <swe:value>5</swe:value>
-				            </swe:Quantity>
-				         </sml:parameter>
-				      </sml:ParameterList>
-				   </sml:parameters>
-				   <!--Position of the hydrphone-->
-				   <sml:position>
-				      <swe:DataRecord>
-				         <!--Longitude of the hydrophone position-->
-				         <swe:field name="longitude">
-				            <swe:Quantity referenceFrame="urn:ogc:crs:EPSG:4326" axisID="Lon">
-				               <swe:uom code="deg"/>
-				               <swe:value>7.99483</swe:value>
-				            </swe:Quantity>
-				         </swe:field>
-				         <!--Latitude of the hydrophone position-->
-				         <swe:field name="latitude">
-				            <swe:Quantity referenceFrame="urn:ogc:crs:EPSG:4326" axisID="Lat">
-				               <swe:uom code="deg"/>
-				               <swe:value>51.98942</swe:value>
-				            </swe:Quantity>
-				         </swe:field>
-				         <!-- Altitude of the hydrophone position-->
-				         <swe:field name="altitude">
-				            <swe:Quantity referenceFrame="urn:ogc:crs:EPSG:5715" axisID="Z">
-				               <swe:uom code="m"/>
-				               <swe:value>-84</swe:value>
-				            </swe:Quantity>
-				         </swe:field>
-				         <!--True heading of the hydrophone-->
-				         <swe:field name="trueHeading">
-				            <swe:Quantity>
-				               <swe:uom code="deg"/>
-				               <swe:value>96.95</swe:value>
-				            </swe:Quantity>
-				         </swe:field>
-				      </swe:DataRecord>
-				   </sml:position>
-				   <!--Components that belong to this hydrophone-->
-				   <sml:components>
-				      <sml:ComponentList>
-				         <!--Reference to a SensorML document describing of the pressure detector of this hydrophone-->
-				         <sml:component name="pressureDetector_of_ExampleHydrophone1" xlink:href="http://52north.org/pressureDetector_of_ExampleHydrophone1.xml"/>
-				      </sml:ComponentList>
-				   </sml:components>
+				<sml:PhysicalSystem gml:id="sensor9">
+					<!--Unique identifier -->
+					<gml:identifier codeSpace="uniqueID">http://www.52north.org/test/procedure/9</gml:identifier>
+					<sml:identification>
+						<sml:IdentifierList>
+							<sml:identifier>
+								<sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">
+		              				<sml:label>longName</sml:label>
+									<sml:value>52°North Initiative for Geospatial Open Source
+										Software GmbH (http://52north.org)
+									</sml:value>
+								</sml:Term>
+							</sml:identifier>
+							<sml:identifier>
+								<sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+		              				<sml:label>shortName</sml:label>
+									<sml:value>52°North GmbH</sml:value>
+								</sml:Term>
+							</sml:identifier>
+						</sml:IdentifierList>
+					</sml:identification>
+					<sml:capabilities name="offerings">
+				      <sml:CapabilityList>
+				         <!--The sensivitiy of detector-->
+				         <sml:capability name="offeringID">
+				            <swe:Text definition="urn:ogc:def:identifier:OGC:offeringID">
+				               <swe:label>offeringID</swe:label>
+				               <swe:value>http://www.52north.org/test/offering/9</swe:value>
+				            </swe:Text>
+				         </sml:capability>
+				      </sml:CapabilityList>
+				   </sml:capabilities>
+		          <sml:featuresOfInterest>
+		            <sml:FeatureList definition="http://www.opengis.net/def/featureOfInterest/identifier">
+		              <swe:label>featuresOfInterest</swe:label>
+		              <sml:feature xlink:href="http://www.52north.org/test/featureOfInterest/9"/>
+		            </sml:FeatureList>
+		          </sml:featuresOfInterest>
+					<sml:inputs>
+						<sml:InputList>
+							<sml:input name="test_observable_property_9">
+								<sml:ObservableProperty
+									definition="http://www.52north.org/test/observableProperty/9" />
+							</sml:input>
+						</sml:InputList>
+					</sml:inputs>
+					<sml:outputs>
+						<sml:OutputList>
+							<sml:output name="test_observable_property_9_1">
+								<swe:Category
+									definition="http://www.52north.org/test/observableProperty/9_1">
+									<swe:codeSpace xlink:href="NOT_DEFINED" />
+								</swe:Category>
+							</sml:output>
+							<sml:output name="test_observable_property_9_2">
+								<swe:Count definition="http://www.52north.org/test/observableProperty/9_2" />
+							</sml:output>
+							<sml:output name="test_observable_property_9_3">
+								<swe:Quantity
+									definition="http://www.52north.org/test/observableProperty/9_3">
+									<swe:uom code="NOT_DEFINED" />
+								</swe:Quantity>
+							</sml:output>
+							<sml:output name="test_observable_property_9_4">
+								<swe:Text definition="http://www.52north.org/test/observableProperty/9_4" />
+							</sml:output>
+							<sml:output name="test_observable_property_9_5">
+								<swe:Boolean
+									definition="http://www.52north.org/test/observableProperty/9_5" />
+							</sml:output>
+							<sml:output name="test_observable_property_9_7">
+								<swe:DataArray>
+									<swe:elementCount>
+										<swe:Count/>
+									</swe:elementCount>
+									<swe:elementType name="defs">
+										<swe:DataRecord>
+											<swe:field name="phenomenonTime">
+												<swe:Time
+													definition="http://www.opengis.net/def/property/OGC/0/PhenomenonTime">
+													<swe:uom
+														xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian" />
+												</swe:Time>
+											</swe:field>
+											<swe:field name="test_observable_property_6">
+												<swe:Quantity
+													definition="http://www.52north.org/test/observableProperty/6">
+													<swe:uom code="test_unit_6" />
+												</swe:Quantity>
+											</swe:field>
+										</swe:DataRecord>
+									</swe:elementType>
+								</swe:DataArray>
+							</sml:output>
+						</sml:OutputList>
+					</sml:outputs>
+					<sml:attachedTo xlink:href="http://www.52north.org/test/procedure/1" xlink:title="http://www.52north.org/test/procedure/1"/>
+					<sml:position>
+						<swe:Vector referenceFrame="urn:ogc:crs:EPSG:4326">
+							<swe:coordinate name="easting">
+								<swe:Quantity axisID="x">
+									<swe:uom code="degree" />
+									<swe:value>7.651968812254194</swe:value>
+								</swe:Quantity>
+							</swe:coordinate>
+							<swe:coordinate name="northing">
+								<swe:Quantity axisID="y">
+									<swe:uom code="degree" />
+									<swe:value>51.935101100104916</swe:value>
+								</swe:Quantity>
+							</swe:coordinate>
+							<swe:coordinate name="altitude">
+								<swe:Quantity axisID="z">
+									<swe:uom code="m" />
+									<swe:value>52.0</swe:value>
+								</swe:Quantity>
+							</swe:coordinate>
+						</swe:Vector>
+					</sml:position>
 				</sml:PhysicalSystem>
 			</swes:data>
 		</swes:SensorDescription>

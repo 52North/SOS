@@ -70,6 +70,7 @@ import org.n52.sos.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweEnvelope;
 import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweText;
@@ -410,7 +411,7 @@ public class CoordianteTransformator implements
                     checkCapabilitiesForObservedAreaAndTransform(member, targetCrs);
                     checkAbstractProcess(member, targetCrs);
                 }
-            } 
+            }
         } else {
             checkAbstractProcess(abstractSensorML, targetCrs);
         }
@@ -460,11 +461,41 @@ public class CoordianteTransformator implements
      *             If the transformation fails
      */
     private void transformPosition(SmlPosition position, int targetCrs) throws OwsExceptionReport {
-        int sourceCrs = getCrsFromString(position.getReferenceFrame());
+        int sourceCrs = targetCrs;
+        if (position.isSetReferenceFrame()) {
+            sourceCrs = getCrsFromString(position.getReferenceFrame());
+        } else if (position.isSetVector() && position.getVector().isSetReferenceFrame()) {
+            sourceCrs = getCrsFromString(position.getVector().getReferenceFrame());
+        }
+        if (position.isSetPosition()) {
+            position.setPosition(transformSweCoordinates(position.getPosition(), sourceCrs, targetCrs));
+            position.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
+        } else if (position.isSetVector()) {
+            SweVector vector = position.getVector();
+            vector.setCoordinates(transformSweCoordinates(vector.getCoordinates(), sourceCrs, targetCrs));
+            vector.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
+        }
+    }
+
+    /**
+     * Transform coordinates
+     * 
+     * @param position
+     *            {@link SweCoordinate}s to transform
+     * @param sourceCrs
+     *            Source CRS
+     * @param targetCrs
+     *            Target CRS
+     * @return Transformed {@link SweCoordinate}s
+     * @throws OwsExceptionReport
+     *             if an error occurs
+     */
+    private List<SweCoordinate<?>> transformSweCoordinates(List<SweCoordinate<?>> position, int sourceCrs,
+            int targetCrs) throws OwsExceptionReport {
         SweCoordinate<?> altitude = null;
         Object easting = null;
         Object northing = null;
-        for (SweCoordinate<?> coordinate : position.getPosition()) {
+        for (SweCoordinate<?> coordinate : position) {
             if (SweCoordinateName.altitude.name().equals(coordinate.getName())) {
                 altitude = coordinate;
             } else if (SweCoordinateName.northing.name().equals(coordinate.getName())) {
@@ -500,11 +531,8 @@ public class CoordianteTransformator implements
         SweQuantity xq =
                 SweHelper.createSweQuantity(x, SweConstants.X_AXIS, ProcedureDescriptionSettings.getInstance()
                         .getLatLongUom());
-        position.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
-        position.setPosition(Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(
-                SweCoordinateName.northing.name(), yq),
-                new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq), altitude));
-
+        return Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(SweCoordinateName.northing.name(), yq),
+                new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq), altitude);
     }
 
     /**
@@ -754,7 +782,8 @@ public class CoordianteTransformator implements
                     checkOmParameterForGeometry(omObservation.getParameter(), targetCRS);
                 }
                 if (omObservation.getValue() instanceof AbstractStreaming) {
-                    ((AbstractStreaming)omObservation.getValue()).add(OWSConstants.AdditionalRequestParams.crs, targetCRS);
+                    ((AbstractStreaming) omObservation.getValue()).add(OWSConstants.AdditionalRequestParams.crs,
+                            targetCRS);
                 }
             }
         }

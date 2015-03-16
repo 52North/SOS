@@ -50,7 +50,7 @@ public abstract class AbstractTransactionalRequestOperator<D extends OperationDA
                                                 String version,
                                                 String operationName,
                                                 Class<Q> requestType) {
-        super(service, version, operationName, requestType);
+        super(service, version, operationName, false, requestType);
     }
 
     @Override

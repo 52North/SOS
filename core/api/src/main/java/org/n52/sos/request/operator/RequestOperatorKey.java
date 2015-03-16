@@ -43,11 +43,10 @@ public class RequestOperatorKey implements Comparable<RequestOperatorKey> {
 
     private final String operationName;
     
-    private boolean defaultActive = true;
+    private final boolean defaultActive;
 
     public RequestOperatorKey(ServiceOperatorKey sok, String operationName) {
-        this.sok = sok;
-        this.operationName = operationName;
+        this(sok, operationName, true);
     }
     
     public RequestOperatorKey(ServiceOperatorKey sok, String operationName, boolean defaultActive) {
@@ -57,7 +56,7 @@ public class RequestOperatorKey implements Comparable<RequestOperatorKey> {
     }
 
     public RequestOperatorKey(String service, String version, String operationName) {
-        this(new ServiceOperatorKey(service, version), operationName);
+        this(new ServiceOperatorKey(service, version), operationName, true);
     }
     
     public RequestOperatorKey(String service, String version, String operationName, boolean defaultActive) {
@@ -85,14 +84,6 @@ public class RequestOperatorKey implements Comparable<RequestOperatorKey> {
      */
     public boolean isDefaultActive() {
         return defaultActive;
-    }
-
-    /**
-     * @param defaultActive the defaultActive to set
-     */
-    public RequestOperatorKey setDefaultActive(boolean defaultActive) {
-        this.defaultActive = defaultActive;
-        return this;
     }
 
     @Override

@@ -11,7 +11,7 @@
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmd="http://www.isotc211.org/2005/gmd" 
 			xsi:schemaLocation="http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd">
-			<swes:procedure>ExampleHydrophone1</swes:procedure>
+			<swes:procedure>http://www.52north.org/test/procedure/9</swes:procedure>
 			<swes:procedureDescriptionFormat>http://www.opengis.net/sensorml/2.0</swes:procedureDescriptionFormat>
 			<swes:description>
 				<swes:SensorDescription>	
@@ -114,7 +114,7 @@
 							</sml:outputs>
 							<sml:attachedTo xlink:href="http://www.52north.org/test/procedure/1" xlink:title="http://www.52north.org/test/procedure/1"/>
 							<sml:position>
-								<swe:Vector referenceFrame="urn:ogc:crs:EPSG:4326">
+								<swe:Vector referenceFrame="urn:ogc:def:crs:EPSG::4326">
 									<swe:coordinate name="easting">
 										<swe:Quantity axisID="x">
 											<swe:uom code="degree" />

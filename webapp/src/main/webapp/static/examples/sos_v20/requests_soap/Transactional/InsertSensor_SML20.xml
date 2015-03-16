@@ -110,7 +110,7 @@
 					</sml:outputs>
 					<sml:attachedTo xlink:href="http://www.52north.org/test/procedure/1" xlink:title="http://www.52north.org/test/procedure/1"/>
 					<sml:position>
-						<swe:Vector referenceFrame="urn:ogc:crs:EPSG:4326">
+						<swe:Vector referenceFrame="urn:ogc:def:crs:EPSG::4326">
 							<swe:coordinate name="easting">
 								<swe:Quantity axisID="x">
 									<swe:uom code="degree" />

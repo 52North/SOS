@@ -32,13 +32,11 @@ import java.util.List;
 
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.ogc.swe.SweCoordinate;
+import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
-
-import com.google.common.collect.Sets.SetView;
 
 /**
  * SOS internal representation of SensorML position
@@ -46,8 +44,6 @@ import com.google.common.collect.Sets.SetView;
  * @since 4.0.0
  */
 public class SmlPosition extends SweAbstractDataComponent {
-
-    private String name;
 
     private boolean fixed;
 
@@ -129,6 +125,9 @@ public class SmlPosition extends SweAbstractDataComponent {
      * @return the referenceFrame
      */
     public String getReferenceFrame() {
+        if (!isSetReferenceFrame() && isSetVector() && getVector().isSetReferenceFrame()) {
+            return getVector().getReferenceFrame();
+        }
         return referenceFrame;
     }
 
@@ -143,18 +142,18 @@ public class SmlPosition extends SweAbstractDataComponent {
     }
     
     public boolean isSetReferenceFrame() {
-        return StringHelper.isNotEmpty(getReferenceFrame());
+        return StringHelper.isNotEmpty(referenceFrame);
     }
 
     /**
      * @return the position
      */
     public List<SweCoordinate<?>> getPosition() {
-        if (!isSetPosition() && isSetVector()) {
-            setPosition(vector.getCoordinates());
-            if (vector.isSetReferenceFrame() && !isSetReferenceFrame()) {
-                setReferenceFrame(vector.getReferenceFrame());
+        if (!isSetPosition() && isSetVector() && getVector().isSetCoordinates()) {
+            if (!isSetName() && vector.isSetName()) {
+                setName(vector.getName());
             }
+            return vector.getCoordinates();
         }
         return position;
     }
@@ -169,7 +168,7 @@ public class SmlPosition extends SweAbstractDataComponent {
         return this;
     }
     
-    private boolean isSetPosition() {
+    public boolean isSetPosition() {
         return CollectionHelper.isNotEmpty(position);
     }
     
@@ -177,7 +176,10 @@ public class SmlPosition extends SweAbstractDataComponent {
         if (!isSetVector() && isSetPosition()) {
             SweVector vector = (SweVector)copyValueTo(new SweVector(getPosition()));
             vector.setReferenceFrame(getReferenceFrame());
-            setVector(vector);
+            if (isSetName()) {
+                vector.setName(getName());
+            }
+            return vector;
         }
         return vector;
     }

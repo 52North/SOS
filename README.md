@@ -21,8 +21,7 @@ Ongoing development is done in branch [develop](../../tree/develop) and dedicate
 ## Code Compilation
 
 This project is managed with Maven3. Simply run `mvn clean install`
-to create a deployable .WAR file. `mvn clean install -Pdevelop`
-additionally enables integration tests.
+to create a deployable .WAR file.
 
 ## Distributions
 

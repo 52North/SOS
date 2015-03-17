@@ -35,7 +35,6 @@ import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionGroup;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
-import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 
 import com.google.common.collect.ImmutableSet;
@@ -74,7 +73,6 @@ public class I18NSettings implements SettingDefinitionProvider {
             .setTitle("I18N show all language values")
             .setDescription(
                     "Show all language specific values if no language is queried or the queried language is not supported!");
-
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet
             .<SettingDefinition<?, ?>>of(

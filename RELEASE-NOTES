@@ -32,6 +32,8 @@ RELEASE NOTES
     * Support for "getFirst" in temporal filter of GetObservation requests, as it was implemented in 52N SOS 3.x
     * Support for choice settings
       * https://github.com/52North/SOS/pull/182
+    * EXI binding
+      * Support for EXI encoded XML messages
 
 
  --- Changes ---

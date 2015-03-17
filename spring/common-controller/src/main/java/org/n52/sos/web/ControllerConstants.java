@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -41,6 +41,8 @@ public interface ControllerConstants {
      */
     interface Views {
         String INDEX = "index";
+        
+        String DOCUMENTATION = "documentation";
 
         String CLIENT = "client";
 
@@ -105,6 +107,8 @@ public interface ControllerConstants {
         String WSDL = "/wsdl";
 
         String INDEX = "/index";
+        
+        String DOCUMENTATION = "/documentation";
 
         String LICENSE = "/license";
 

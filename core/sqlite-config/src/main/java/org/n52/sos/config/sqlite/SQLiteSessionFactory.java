@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -42,10 +42,12 @@ import org.hibernate.service.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.sqlite.entities.AdminUser;
 import org.n52.sos.config.sqlite.entities.Binding;
 import org.n52.sos.config.sqlite.entities.BooleanSettingValue;
 import org.n52.sos.config.sqlite.entities.CapabilitiesExtensionImpl;
+import org.n52.sos.config.sqlite.entities.ChoiceSettingValue;
 import org.n52.sos.config.sqlite.entities.DynamicOfferingExtension;
 import org.n52.sos.config.sqlite.entities.DynamicOwsExtendedCapabilities;
 import org.n52.sos.config.sqlite.entities.FileSettingValue;
@@ -170,6 +172,7 @@ public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
                 .addAnnotatedClass(NumericSettingValue.class)
                 .addAnnotatedClass(StringSettingValue.class)
                 .addAnnotatedClass(UriSettingValue.class)
+                .addAnnotatedClass(ChoiceSettingValue.class)
                 .addAnnotatedClass(AdminUser.class)
                 .addAnnotatedClass(CapabilitiesExtensionImpl.class)
                 .addAnnotatedClass(OfferingExtensionImpl.class)

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -551,11 +551,11 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             if (session != null) {
                 List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO(session).getSamplingGeometries(feature.getIdentifier(), session);
                 int srid = getDefault3DEPSG();
-                if (CollectionHelper.isNotEmpty(geometries)) {
+                if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(geometries)) {
                     List<Coordinate> coordinates = Lists.newLinkedList();
                     Geometry lastGeoemtry = null;
                     for (Geometry geometry : geometries) {
-                        if (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry)) {
+                        if (geometry != null && (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry))) {
                         	coordinates.add(GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(geometry).getCoordinate());
                             lastGeoemtry = geometry;
                             if (geometry.getSRID() != srid) {

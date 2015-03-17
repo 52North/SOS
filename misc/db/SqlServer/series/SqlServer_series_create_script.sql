@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -60,7 +60,7 @@ create table dbo.relatedFeatureHasRole (relatedFeatureId bigint not null, relate
 create table dbo.relatedFeatureRole (relatedFeatureRoleId bigint identity not null, relatedFeatureRole varchar(255) not null, primary key (relatedFeatureRoleId));
 create table dbo.resultTemplate (resultTemplateId bigint identity not null, offeringId bigint not null, observablePropertyId bigint not null, procedureId bigint not null, featureOfInterestId bigint not null, identifier varchar(255) not null, resultStructure varchar(MAX) not null, resultEncoding varchar(MAX) not null, primary key (resultTemplateId));
 create table dbo.sensorSystem (parentSensorId bigint not null, childSensorId bigint not null, primary key (childSensorId, parentSensorId));
-create table dbo.series (seriesId bigint identity not null, featureOfInterestId bigint not null, observablePropertyId bigint not null, procedureId bigint not null, deleted char(1) default 'F' not null check (deleted in ('T','F')), firstTimeStamp datetime2, lastTimeStamp datetime2, firstNumericValue double precision, lastNumericValue double precision, unitId bigint, primary key (seriesId));
+create table dbo.series (seriesId bigint identity not null, featureOfInterestId bigint not null, observablePropertyId bigint not null, procedureId bigint not null, deleted char(1) default 'F' not null check (deleted in ('T','F')), published char(1) default 'F' not null check (published in ('T','F')), firstTimeStamp datetime2, lastTimeStamp datetime2, firstNumericValue double precision, lastNumericValue double precision, unitId bigint, primary key (seriesId));
 create table dbo.sweDataArrayValue (observationId bigint not null, value varchar(MAX), primary key (observationId));
 create table dbo.textValue (observationId bigint not null, value varchar(MAX), primary key (observationId));
 create table dbo.unit (unitId bigint identity not null, unit varchar(255) not null, primary key (unitId));

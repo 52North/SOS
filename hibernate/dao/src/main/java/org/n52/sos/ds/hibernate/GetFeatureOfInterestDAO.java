@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -93,7 +93,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     private static final String SQL_QUERY_GET_FEATURE_FOR_IDENTIFIER_PROCEDURE = "getFeatureForIdentifierProcedure";
 
     private static final String SQL_QUERY_GET_FEATURE_FOR_IDENTIFIER_OBSERVED_PROPERTY =
-            "getFeatureForIdentifieObservableProperty";
+            "getFeatureForIdentifierObservableProperty";
 
     private static final String SQL_QUERY_GET_FEATURE_FOR_IDENTIFIER_PROCEDURE_OBSERVED_PROPERTY =
             "getFeatureForIdentifierProcedureObservableProperty";
@@ -275,7 +275,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     @SuppressWarnings("unchecked")
     private List<String> queryFeatureIdentifiersForParameter(final GetFeatureOfInterestRequest req,
             final Session session) throws OwsExceptionReport {
-        if (req.hasParameter()) {
+        if (req.hasNoParameter()) {
             return new FeatureOfInterestDAO().getFeatureOfInterestIdentifiers(session);
         }
         if (req.containsOnlyFeatureParameter() && req.isSetFeatureOfInterestIdentifiers()) {
@@ -367,6 +367,9 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     @SuppressWarnings("unchecked")
     private List<String> queryFeatureIdentifiersForParameterForSeries(GetFeatureOfInterestRequest req, Session session) {
         final Criteria c = session.createCriteria(FeatureOfInterest.class);
+        if (req.isSetFeatureOfInterestIdentifiers()) {
+            c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, req.getFeatureIdentifiers()));
+        }
         c.add(Subqueries.propertyIn(FeatureOfInterest.ID,
                 getDetachedCriteriaForSeriesWithProcedureObservableProperty(req, session)));
         c.setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
@@ -419,6 +422,9 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     private Criteria getCriteriaForFeatureIdentifiersOfParameterFromSeriesObservations(
             GetFeatureOfInterestRequest req, Session session) throws OwsExceptionReport {
         final Criteria c = session.createCriteria(FeatureOfInterest.class);
+        if (req.isSetFeatureOfInterestIdentifiers()) {
+            c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, req.getFeatureIdentifiers()));
+        }
         c.add(Subqueries.propertyIn(FeatureOfInterest.ID,
                 getDetachedCriteriaForFeautreOfInterestForSeries(req, session)));
         c.setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));

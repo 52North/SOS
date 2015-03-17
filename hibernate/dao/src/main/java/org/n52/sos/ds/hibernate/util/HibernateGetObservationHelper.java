@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -419,7 +419,7 @@ public class HibernateGetObservationHelper {
     public static boolean checkEncoderForMergeObservationValues(String responseFormat) {
         Encoder<XmlObject, OmObservation> encoder =
                 CodingRepository.getInstance().getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
-        if (encoder == null && encoder instanceof ObservationEncoder) {
+        if (encoder != null && encoder instanceof ObservationEncoder) {
             return ((ObservationEncoder<?, OmObservation>) encoder).shouldObservationsWithSameXBeMerged();
         }
         return false;

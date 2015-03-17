@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -45,7 +45,7 @@ public class PostgresCoreDatasource extends AbstractPostgresDatasource {
         setPasswordDefault(PASSWORD_DEFAULT_VALUE);
         setPasswordDescription(PASSWORD_DESCRIPTION);
         setDatabaseDefault(DATABASE_DEFAULT_VALUE);
-        setDatabaseDescription(HOST_DESCRIPTION);
+        setDatabaseDescription(DATABASE_DESCRIPTION);
         setHostDefault(HOST_DEFAULT_VALUE);
         setHostDescription(HOST_DESCRIPTION);
         setPortDefault(PORT_DEFAULT_VALUE);

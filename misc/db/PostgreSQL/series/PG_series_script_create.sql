@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -59,7 +59,7 @@ create table public.relatedFeatureHasRole (relatedFeatureId int8 not null, relat
 create table public.relatedFeatureRole (relatedFeatureRoleId int8 not null, relatedFeatureRole varchar(255) not null, primary key (relatedFeatureRoleId));
 create table public.resultTemplate (resultTemplateId int8 not null, offeringId int8 not null, observablePropertyId int8 not null, procedureId int8 not null, featureOfInterestId int8 not null, identifier varchar(255) not null, resultStructure text not null, resultEncoding text not null, primary key (resultTemplateId));
 create table public.sensorSystem (parentSensorId int8 not null, childSensorId int8 not null, primary key (childSensorId, parentSensorId));
-create table public.series (seriesId int8 not null, featureOfInterestId int8 not null, observablePropertyId int8 not null, procedureId int8 not null, deleted char(1) default 'F' not null check (deleted in ('T','F')), firstTimeStamp timestamp, lastTimeStamp timestamp, firstNumericValue double precision, lastNumericValue double precision, unitId int8, primary key (seriesId));
+create table public.series (seriesId int8 not null, featureOfInterestId int8 not null, observablePropertyId int8 not null, procedureId int8 not null, deleted char(1) default 'F' not null check (deleted in ('T','F')), published char(1) default 'T' not null check (published in ('T','F')), firstTimeStamp timestamp, lastTimeStamp timestamp, firstNumericValue double precision, lastNumericValue double precision, unitId int8, primary key (seriesId));
 create table public.sweDataArrayValue (observationId int8 not null, value text, primary key (observationId));
 create table public.textValue (observationId int8 not null, value text, primary key (observationId));
 create table public.unit (unitId int8 not null, unit varchar(255) not null, primary key (unitId));

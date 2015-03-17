@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -53,6 +53,7 @@ import org.n52.sos.config.sqlite.entities.Activatable;
 import org.n52.sos.config.sqlite.entities.AdminUser;
 import org.n52.sos.config.sqlite.entities.Binding;
 import org.n52.sos.config.sqlite.entities.BooleanSettingValue;
+import org.n52.sos.config.sqlite.entities.ChoiceSettingValue;
 import org.n52.sos.config.sqlite.entities.DynamicOfferingExtension;
 import org.n52.sos.config.sqlite.entities.DynamicOfferingExtensionKey;
 import org.n52.sos.config.sqlite.entities.DynamicOwsExtendedCapabilities;
@@ -219,7 +220,7 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
 
     @Override
     public boolean isActive(RequestOperatorKey requestOperatorKeyType) throws ConnectionProviderException {
-        return isActive(Operation.class, new OperationKey(requestOperatorKeyType));
+        return isActive(Operation.class, new OperationKey(requestOperatorKeyType), requestOperatorKeyType.isDefaultActive());
     }
 
     @Override
@@ -246,6 +247,11 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
     protected <K extends Serializable, T extends Activatable<K, T>> boolean isActive(Class<T> c, K key)
             throws ConnectionProviderException {
         return execute(new IsActiveAction<K, T>(c, key)).booleanValue();
+    }
+    
+    protected <K extends Serializable, T extends Activatable<K, T>> boolean isActive(Class<T> c, K key, boolean defaultActive)
+            throws ConnectionProviderException {
+        return execute(new IsActiveAction<K, T>(c, key, defaultActive)).booleanValue();
     }
 
     @Override
@@ -335,6 +341,11 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
         protected SettingValue<MultilingualString> newMultiLingualStringSettingValue() {
             return new MultilingualStringSettingValue();
         }
+
+        @Override
+        protected SettingValue<String> newChoiceSettingValue() {
+            return new ChoiceSettingValue();
+        }
     }
 
     protected abstract class HibernateAction<T> {
@@ -382,17 +393,24 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
         private final K key;
 
         private Class<T> type;
+        
+        private boolean defaultActive;
 
         IsActiveAction(Class<T> type, K key) {
+            this(type, key, true);
+        }
+        
+        IsActiveAction(Class<T> type, K key, boolean defaultActive) {
             this.type = type;
             this.key = key;
+            this.defaultActive = defaultActive;
         }
 
         @Override
         protected Boolean call(Session session) {
             @SuppressWarnings("unchecked")
             T o = (T) session.get(type, key);
-            return (o == null) ? true : o.isActive();
+            return (o == null) ? defaultActive : o.isActive();
         }
     }
 

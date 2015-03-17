@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,11 +31,18 @@ package org.n52.sos.request.operator;
 import java.util.Map;
 
 import org.n52.sos.ds.OperationDAO;
+import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.ogc.ows.CompositeOwsException;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.AbstractServiceRequest;
+import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.sos.util.SosHelper;
+
+import com.google.common.base.Strings;
 
 /**
  * @param <D>

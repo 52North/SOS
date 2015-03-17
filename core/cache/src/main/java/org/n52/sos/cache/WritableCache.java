@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -1562,6 +1562,12 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     public void removeSupportedLanguage(Locale language) {
         LOG.trace("Removing Language {}", language);
         getSupportedLanguageSet().remove(language);
+    }
+    
+    @Override
+    public void setRequestableProcedureDescriptionFormat(Collection<String> formats) {
+        LOG.trace("Adding requestable procedureDescriptionFormat");
+        getRequestableProcedureDescriptionFormats().addAll(formats);
     }
 
 }

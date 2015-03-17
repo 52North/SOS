@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -65,7 +65,7 @@
     </table>
     <p class="pull-right"><small>You can download the complete log file <a href="<c:url value="/admin/logging/file"/>" target="_blank">here</a>.</small></p>
 </div>
-    
+
 <form method="POST" class="form-horizontal">
     <legend>Log Levels</legend>
     <div class="control-group" id="rootLogger">
@@ -119,10 +119,10 @@
             <label class="checkbox">
                 <c:choose>
                     <c:when test="${isConsoleEnabled}" >
-                        <input type="checkbox" name="isConsoleEnabled" value="${isConsoleEnabled}" checked />
+                        <input type="checkbox" name="isConsoleEnabled" checked />
                     </c:when>
                     <c:otherwise>
-                        <input type="checkbox" name="isConsoleEnabled" value="${isConsoleEnabled}" />
+                        <input type="checkbox" name="isConsoleEnabled" />
                     </c:otherwise>
                 </c:choose>
                 Shoud messages be logged to the standard output?
@@ -134,10 +134,10 @@
             <label class="checkbox">
                 <c:choose>
                     <c:when test="${isFileEnabled}" >
-                        <input type="checkbox" name="isFileEnabled" value="${isFileEnabled}" checked />
+                        <input type="checkbox" name="isFileEnabled" checked />
                     </c:when>
                     <c:otherwise>
-                        <input type="checkbox" name="isFileEnabled" value="${isFileEnabled}" />
+                        <input type="checkbox" name="isFileEnabled" />
                     </c:otherwise>
                 </c:choose>
                 Shoud messages be logged to the log file?
@@ -208,7 +208,7 @@
 
 
     function confirm(logger, callback) {
-        
+
         var $modal = $("<div>").addClass("modal fade hide confirm");
         var $header = $("<div>").addClass("modal-header");
         $("<button>").addClass("close").attr("type", "button")
@@ -265,8 +265,8 @@
     $("#new-logger-name").on("input keyup", function() {
         var val = $(this).val();
         var loggers = [];
-        $("select.logger").each(function(){ 
-            loggers.push($(this).attr("name")); 
+        $("select.logger").each(function(){
+            loggers.push($(this).attr("name"));
         });
 
         if (!val || loggers.contains(val)) {

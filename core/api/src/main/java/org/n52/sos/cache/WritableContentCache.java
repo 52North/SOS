@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,7 +33,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-
 import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.sos.SosEnvelope;
@@ -1655,4 +1654,12 @@ public interface WritableContentCache extends ContentCache {
      *            the new language to remove
      */
     void removeSupportedLanguage(Locale language);
+    
+    /**
+     * Set the specified requestable procedureDescriptionFormat.
+     *
+     * @param formats
+     *            the new formats
+     */
+    void setRequestableProcedureDescriptionFormat(Collection<String> formats);
 }

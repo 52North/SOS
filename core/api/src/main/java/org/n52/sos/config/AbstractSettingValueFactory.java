@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,6 +36,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.n52.sos.config.settings.BooleanSettingDefinition;
+import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.settings.FileSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.config.settings.MultilingualStringSettingDefinition;
@@ -43,6 +44,7 @@ import org.n52.sos.config.settings.NumericSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.config.settings.TimeInstantSettingDefinition;
 import org.n52.sos.config.settings.UriSettingDefinition;
+import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.i18n.LocaleHelper;
 import org.n52.sos.i18n.MultilingualString;
@@ -141,6 +143,21 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     }
 
     @Override
+    public SettingValue<String> newChoiceSettingValue(ChoiceSettingDefinition setting, String stringValue) {
+        return newChoiceSettingValueFromGenericDefinition(setting, stringValue);
+    }
+
+    private SettingValue<String> newChoiceSettingValueFromGenericDefinition(SettingDefinition<?, ?> setting, String stringValue) {
+        ChoiceSettingDefinition def = (ChoiceSettingDefinition) setting;
+        if (!def.hasOption(stringValue)) {
+            throw new ConfigurationException("Invalid choice value");
+        }
+       return newChoiceSettingValue().setValue(stringValue).setKey(setting.getKey());
+    }
+
+
+
+    @Override
     public SettingValue<?> newSettingValue(SettingDefinition<?, ?> setting, String value) {
         switch (setting.getType()) {
         case BOOLEAN:
@@ -159,6 +176,8 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
             return newTimeInstantSettingValueFromGenericDefinition(setting, value);
         case MULTILINGUAL_STRING:
             return newMultiLingualStringSettingValueFromGenericDefinition(setting, value);
+        case CHOICE:
+            return newChoiceSettingValueFromGenericDefinition(setting, value);
         default:
             throw new IllegalArgumentException(String.format("Type %s not supported", setting.getType()));
         }
@@ -332,6 +351,11 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
      * @return a implementation specific instance
      */
     protected abstract SettingValue<String> newStringSettingValue();
+
+    /**
+     * @return a implementation specific instance
+     */
+    protected abstract SettingValue<String> newChoiceSettingValue();
 
     /**
      * @return a implementation specific instance

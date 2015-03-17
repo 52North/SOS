@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -163,7 +163,7 @@ public interface SosConstants {
     }
 
     enum Filter {
-        ValueReference;
+        ValueReference, TimePeriod, TimeInstant;
     }
 
     /**
@@ -207,14 +207,16 @@ public interface SosConstants {
     
     enum SosIndeterminateTime {
         first, latest;
+        
+        private static final String GET_FIRST = "getFirst";
 
         public static boolean contains(final String timeString) {
-            return timeString.equalsIgnoreCase(first.name()) || timeString.equalsIgnoreCase(latest.name());
+            return timeString.equalsIgnoreCase(first.name()) || timeString.equalsIgnoreCase(latest.name()) || timeString.equalsIgnoreCase(GET_FIRST);
         }
 
         public static SosIndeterminateTime getEnumForString(final String value) {
             for (SosIndeterminateTime sit : values()) {
-                if (sit.name().equalsIgnoreCase(value)) {
+                if (sit.name().equalsIgnoreCase(value) || (GET_FIRST.equalsIgnoreCase(value) && sit.equals(first))) {
                     return sit;
                 }
             }

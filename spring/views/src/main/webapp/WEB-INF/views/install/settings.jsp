@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -49,16 +49,19 @@
 <form action="<c:url value="/install/settings" />" method="POST" class="form-horizontal">
 	<div id="settings"></div>
 	<script type="text/javascript">
-	$.getJSON('<c:url value="/settingDefinitions.json" />', function(settings) {
+	$.getJSON('<c:url value="/settingDefinitions.json" />', function(settingDefinitions) {
  		var $container = $("#settings");
-
-		generateSettings(settings, ${settings}, $container, true);
+		var settings = ${settings};
+		generateSettings(settingDefinitions, settings, $container, true);
 		$("#service_identification .control-group:first").before("<legend>Standard Settings</legend>");
 		$("#service_provider .control-group:first").before("<legend>Standard Settings</legend>");
 		$("#service_identification .control-group:last").before("<legend>Extended Settings</legend>");
 		$("#service_provider .control-group:last").before("<legend>Extended Settings</legend>");
-		$("input[name='service.sosUrl']").val(window.location.toString()
-			.replace(/install\/settings.*/, "service")).trigger("input");
+
+		if (!settings["service.sosUrl"]) {
+			$("input[name='service.sosUrl']").val(window.location.toString()
+				.replace(/install\/settings.*/, "service")).trigger("input");
+		}
 
 		$(".required").bind("keyup input change", function() {
             var valid = true;

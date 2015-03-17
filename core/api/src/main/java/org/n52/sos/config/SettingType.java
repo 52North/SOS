@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -45,8 +45,6 @@ import org.n52.sos.ogc.gml.time.TimeInstant;
 public enum SettingType {
     /**
      * Type for {@link Boolean} and {@code boolean}.
-     *//**
-     * Type for {@link Boolean} and {@code boolean}.
      */
     BOOLEAN,
     /**
@@ -76,5 +74,10 @@ public enum SettingType {
     /**
      * Type for {@link LocalizedString}.
      */
-    MULTILINGUAL_STRING;
+    MULTILINGUAL_STRING,
+    /**
+     * Type for a selection.
+     */
+    CHOICE;
+
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -87,7 +87,7 @@ public class GetFeatureOfInterestRequestDecoder extends AbstractSosRequestDecode
     }
 
     private List<String> decodeObservedProperties(JsonNode node) {
-        JsonNode path = node.path(JSONConstants.OBSERVABLE_PROPERTY);
+        JsonNode path = node.path(JSONConstants.OBSERVED_PROPERTY);
         return parseStringOrStringList(path);
     }
 

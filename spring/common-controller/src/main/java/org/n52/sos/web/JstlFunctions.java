@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -77,13 +77,58 @@ public class JstlFunctions {
         return true;
     }
 
+    /**
+     * Check if the view in exists.
+     * 
+     * @param ctx
+     *            {@link ServletContext} to get real path
+     * @param path
+     *            View path and name
+     * @return <code>true</code>, if view exists
+     */
     public static boolean viewExists(ServletContext ctx, String path) {
-        return new File(ctx.getRealPath("/WEB-INF/views/" + path)).exists();
+        return fileExists(ctx, "/WEB-INF/views/" + path);
     }
 
+    /**
+     * Check if the {@link File} in '/static/' exists.
+     * 
+     * @param ctx
+     *            {@link ServletContext} to get real path
+     * @param path
+     *            File path and name in '/static/'
+     * @return <code>true</code>, if file exists
+     */
     public static boolean staticExtensionExists(ServletContext ctx, String path) {
-        return new File(ctx.getRealPath("/static/" + path)).exists();
+        return fileExists(ctx, "/static/" + path);
     }
+
+    /**
+     * Check if the {@link File} in '/static/doc/' exists.
+     * 
+     * @param ctx
+     *            {@link ServletContext} to get real path
+     * @param path
+     *            File path and name in '/static/doc/'
+     * @return <code>true</code>, if file exists
+     */
+    public static boolean documentExtensionExists(ServletContext ctx, String path) {
+        return fileExists(ctx, "/static/doc/" + path);
+    }
+
+    /**
+     * Check if the {@link File} exists.
+     * 
+     * @param ctx
+     *            {@link ServletContext} to get real path
+     * @param path
+     *            File path and name
+     * @return <code>true</code>, if file exists
+     */
+    public static boolean fileExists(ServletContext ctx, String path) {
+        return new File(ctx.getRealPath(path)).exists();
+    }
+
 
     public static String mapToJson(@SuppressWarnings("rawtypes") Map map) {
         ObjectNode node = JSONUtils.nodeFactory().objectNode();

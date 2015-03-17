@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -195,13 +195,23 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
 
     protected void writeBegin(TimePeriod tp) throws XMLStreamException, DateTimeFormatException {
         start(GmlConstants.QN_BEGIN_POSITION_32);
-        writeTimeString(tp.getStart(), tp.getTimeFormat());
+        if (tp.isSetStartIndeterminateValue()) {
+            attr(GmlConstants.AN_INDETERMINATE_POSITION, tp.getStartIndet().name());
+        }
+        if (tp.isSetStart()) {
+            writeTimeString(tp.getStart(), tp.getTimeFormat());
+        }
         end(GmlConstants.QN_BEGIN_POSITION_32);
     }
 
     protected void writeEnd(TimePeriod tp) throws XMLStreamException, DateTimeFormatException {
         start(GmlConstants.QN_END_POSITION_32);
-        writeTimeString(tp.getEnd(), tp.getTimeFormat());
+        if (tp.isSetEndIndeterminateValue()) {
+            attr(GmlConstants.AN_INDETERMINATE_POSITION, tp.getEndIndet().name());
+        }
+        if (tp.isSetEnd()) {
+            writeTimeString(tp.getEnd(), tp.getTimeFormat());
+        } 
         end(GmlConstants.QN_END_POSITION_32);
     }
 

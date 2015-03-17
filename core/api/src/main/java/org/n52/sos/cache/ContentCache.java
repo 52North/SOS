@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,16 +30,12 @@ package org.n52.sos.cache;
 
 import java.io.Serializable;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-
 import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.sos.SosEnvelope;
-
-import com.vividsolutions.jts.geom.MultiLineString;
 
 /**
  * This encapsulates relationships between the different metadata components of
@@ -887,5 +883,21 @@ public interface ContentCache extends Serializable {
      * @return <code>true</code>, if the specific lanugage is supported
      */
     boolean isLanguageSupported(Locale language);
+    
+    /**
+     * Get supported requestable procedure description format
+     *
+     * @return Supported requestable procedure description format
+     */
+    public Set<String> getRequstableProcedureDescriptionFormat();
+    
+    /**
+     * Is the specific requestable procedure description format supported
+     *
+     * @param format
+     *            format to check
+     * @return <code>true</code>, if the specific format is supported
+     */
+    public boolean hasRequstableProcedureDescriptionFormat(String format);
 
 }

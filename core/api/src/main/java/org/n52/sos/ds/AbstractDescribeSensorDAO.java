@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds;
 
+import java.util.Set;
+
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
@@ -52,16 +54,17 @@ public abstract class AbstractDescribeSensorDAO extends AbstractOperationDAO {
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
         addProcedureParameter(opsMeta);
+        Set<String> pdfs = getCache().getRequstableProcedureDescriptionFormat();
         if (version.equals(Sos1Constants.SERVICEVERSION)) {
+            pdfs.addAll(CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS,
+                    Sos1Constants.SERVICEVERSION));
             opsMeta.addPossibleValuesParameter(
-                    Sos1Constants.DescribeSensorParams.outputFormat,
-                    CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS,
-                            Sos1Constants.SERVICEVERSION));
+                    Sos1Constants.DescribeSensorParams.outputFormat, pdfs);
         } else if (version.equals(Sos2Constants.SERVICEVERSION)) {
+            pdfs.addAll( CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS,
+                    Sos2Constants.SERVICEVERSION));
             opsMeta.addPossibleValuesParameter(
-                    Sos2Constants.DescribeSensorParams.procedureDescriptionFormat,
-                    CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS,
-                            Sos2Constants.SERVICEVERSION));
+                    Sos2Constants.DescribeSensorParams.procedureDescriptionFormat, pdfs);
         }
     }
 

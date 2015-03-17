@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,6 +35,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.n52.sos.config.sqlite.SettingDefinitionProviderForTesting.BOOLEAN_SETTING;
+import static org.n52.sos.config.sqlite.SettingDefinitionProviderForTesting.CHOICE_SETTING;
 import static org.n52.sos.config.sqlite.SettingDefinitionProviderForTesting.DOUBLE_SETTING;
 import static org.n52.sos.config.sqlite.SettingDefinitionProviderForTesting.FILE_SETTING;
 import static org.n52.sos.config.sqlite.SettingDefinitionProviderForTesting.INTEGER_SETTING;
@@ -61,6 +62,7 @@ import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingValue;
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
+import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.settings.FileSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.config.settings.MultilingualStringSettingDefinition;
@@ -68,6 +70,7 @@ import org.n52.sos.config.settings.NumericSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.config.settings.UriSettingDefinition;
 import org.n52.sos.config.sqlite.entities.BooleanSettingValue;
+import org.n52.sos.config.sqlite.entities.ChoiceSettingValue;
 import org.n52.sos.config.sqlite.entities.FileSettingValue;
 import org.n52.sos.config.sqlite.entities.IntegerSettingValue;
 import org.n52.sos.config.sqlite.entities.MultilingualStringSettingValue;
@@ -293,6 +296,16 @@ public class SQLiteSettingsManagerTest {
         MultilingualString l2 = new MultilingualString().addLocalization(Locale.GERMAN, "Hallo").addLocalization(Locale.ENGLISH, "Hello").addLocalization(Locale.CHINESE, "???");
         SettingValue<MultilingualString> settingValue = new MultilingualStringSettingValue().setKey(LOCALIZED_STRING_SETTING).setValue(l1);
         SettingValue<MultilingualString> newSettingValue = new MultilingualStringSettingValue().setKey(LOCALIZED_STRING_SETTING).setValue(l2);
+        testSaveGetAndDelete(settingDefinition, settingValue, newSettingValue);
+    }
+
+
+    @Test
+    public void testChoiceSettings() throws ConfigurationException, ConnectionProviderException {
+        final ChoiceSettingDefinition settingDefinition = new ChoiceSettingDefinition().setKey(CHOICE_SETTING);
+        final SettingValue<String> settingValue = new ChoiceSettingValue().setKey(CHOICE_SETTING).setValue("string1");
+        final SettingValue<String> newSettingValue = new ChoiceSettingValue().setKey(CHOICE_SETTING)
+                .setValue("string2");
         testSaveGetAndDelete(settingDefinition, settingValue, newSettingValue);
     }
 }

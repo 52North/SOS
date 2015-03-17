@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,7 +33,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.hibernate.Session;
-
 import org.n52.sos.convert.Converter;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.convert.ConverterRepository;
@@ -44,6 +43,7 @@ import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.procedure.create.DescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.create.FileDescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.create.GeneratedDescriptionCreationStrategy;
+import org.n52.sos.ds.hibernate.util.procedure.create.LinkedDescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.create.ValidProcedureTimeDescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.create.XmlStringDescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.enrich.ProcedureDescriptionEnrichments;
@@ -127,6 +127,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
 
         SosProcedureDescription desc = create(procedure, null, i18n, session).orNull();
         if (desc != null) {
+        	desc.setDescriptionFormat(descriptionFormat);
             enrich(desc, procedure, requestedServiceVersion,
                    descriptionFormat, null, loadedProcedures, i18n, session);
             if (!requestedDescriptionFormat.equals(descriptionFormat)) {
@@ -241,6 +242,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
 
     protected ArrayList<DescriptionCreationStrategy> getCreationStrategies(ValidProcedureTime vpt) {
         return Lists.newArrayList(new ValidProcedureTimeDescriptionCreationStrategy(vpt),
+                                  new LinkedDescriptionCreationStrategy(),
                                   new XmlStringDescriptionCreationStrategy(),
                                   new FileDescriptionCreationStrategy(),
                                   new GeneratedDescriptionCreationStrategy());
@@ -303,7 +305,10 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
             Converter<SosProcedureDescription, Object> converter =
                     ConverterRepository.getInstance()
                     .getConverter(fromFormat, toFormat);
-            return converter.convert(description);
+            if (converter != null) {
+                return converter.convert(description);
+            }
+            throw new ConverterException(String.format("No converter available to convert from '%s' to '%s'", fromFormat, toFormat));
         } catch (ConverterException ce) {
             throw new NoApplicableCodeException().causedBy(ce)
                     .withMessage("Error while processing data for DescribeSensor document!");

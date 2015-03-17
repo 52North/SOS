@@ -36,6 +36,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -45,7 +46,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.coding.OperationKey;
 import org.n52.sos.decode.Decoder;
-import org.n52.sos.decode.OperationDecoderKey;
 import org.n52.sos.exception.HTTPException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -55,11 +55,13 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.http.MediaTypes;
+import org.n52.sos.utils.EXIUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
+import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.api.sax.EXISource;
 import com.siemens.ct.exi.exceptions.EXIException;
 
@@ -73,7 +75,9 @@ import com.siemens.ct.exi.exceptions.EXIException;
  */
 public class EXIBinding extends SimpleBinding {
 
-    private static final String URL_PATTERN = "/exi";
+    private static final EXIUtils EXI_UTILS = EXIUtils.getInstance();
+
+	private static final String URL_PATTERN = "/exi";
 
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton("http://www.opengis.net/spec/SOS/2.0/conf/exi");
@@ -157,11 +161,18 @@ public class EXIBinding extends SimpleBinding {
      */
     protected XmlObject decode(HttpServletRequest request) throws OwsExceptionReport {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            
+            EXIFactory ef = EXI_UTILS.newEXIFactory();
+            
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
-            
+            if (ef.isFragment()) {
+				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,"yes");
+			}
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             // decode EXI encoded InputStream
-            EXISource exiSource = new EXISource();
+            EXISource exiSource = new EXISource(ef);
             XMLReader exiReader = exiSource.getXMLReader();
             InputSource inputSource = new InputSource(request.getInputStream());
             inputSource.setEncoding(request.getCharacterEncoding());
@@ -182,4 +193,5 @@ public class EXIBinding extends SimpleBinding {
                     "Error while reading request! Message: %s", exie.getMessage());
         }
     }
+
 }

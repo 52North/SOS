@@ -73,7 +73,7 @@ public class TransactionalSecuritySettings implements SettingDefinitionProvider 
                     .setDescription(
                             "Activate/Deactivate transactional security support. If true, allowed IPs or token should be defined!"
                             + " If allowed IPs and/or authorization token are defined, then incoming transactional requests are checked against them.")
-                    .setDefaultValue(false);
+                    .setDefaultValue(true);
 
     public static final StringSettingDefinition TRANSACTIONAL_ALLOWED_IPS_DEFINITION = new StringSettingDefinition()
             .setGroup(TX_SEC_GROUP)

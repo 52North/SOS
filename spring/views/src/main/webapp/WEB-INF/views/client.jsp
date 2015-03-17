@@ -72,8 +72,16 @@
 
 <div>
     <h3>Examples</h3>
-    <p><b>NOTE:</b> Requests use example values and are not dynamically generated from values in this SOS. Construct valid requests by changing request values to match values in the Capabilities response.</p>
-    <p><b>NOTE:</b> For security reasons, the transactional SOS operations are disabled by default and the <i>Transactional Security</i> is actived by default with allowed IPs <i>127.0.0.1</i>. The transactional operations can be activated in the <a href="http://localhost:8080/52n-sos-webapp/admin/operations">Operations settings</a> and the <i>Transactional Security</i> can be deactivated in the <a href="http://localhost:8080/52n-sos-webapp/admin/operations">Transactional Security tab of the settings</a></p>
+    <p><b>NOTE:</b> Requests use example values and are not dynamically 
+    generated from values in this SOS. Construct valid requests by changing 
+    request values to match values in the Capabilities response.</p>
+    <p><b>NOTE:</b> For security reasons, the transactional SOS operations 
+    are disabled by default and the <i>Transactional Security</i> is actived
+     by default with allowed IPs <i>127.0.0.1</i>. The transactional 
+     operations can be activated in the <a href="<c:url value="/admin/operations" />">Operations settings</a> 
+     and the <i>Transactional Security</i> can be deactivated in the 
+     <a href="<c:url value="/admin/settings#transactional_security" />">Transactional 
+     Security tab of the settings</a>.</p>
     <div class="controls-row">
         <select id="service" class="span3"></select>
         <select id="version" class="span3"></select>

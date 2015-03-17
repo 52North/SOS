@@ -47,7 +47,7 @@ import org.n52.sos.service.TransactionalSecurityConfiguration;
 public abstract class AbstractTransactionalRequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
 	
-    private static final boolean TRANSACTIONAL_ACTIVATION_STATE = true;
+    private static final boolean TRANSACTIONAL_ACTIVATION_STATE = false;
 
 	public AbstractTransactionalRequestOperator(String service,
                                                 String version,

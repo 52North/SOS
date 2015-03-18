@@ -37,6 +37,7 @@ import org.n52.sos.convert.Converter;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.convert.ConverterRepository;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
+import org.n52.sos.ds.hibernate.entities.DescriptionXmlEntity;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureDescriptionFormat;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
@@ -129,7 +130,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
                     new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
                     HTTPStatus.INTERNAL_SERVER_ERROR);
         }
-        checkOutputFormatWithDescriptionFormat(procedure, requestedDescriptionFormat, getFormat(procedure));
+        checkOutputFormatWithDescriptionFormat(procedure.getIdentifier(), procedure, requestedDescriptionFormat, getFormat(procedure));
         SosProcedureDescription desc = create(procedure, requestedDescriptionFormat, null, i18n, session).orNull();
         if (desc != null) {
             enrich(desc, procedure, requestedServiceVersion, requestedDescriptionFormat, null, loadedProcedures, i18n,
@@ -162,7 +163,11 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      */
     public SosProcedureDescription createSosProcedureDescriptionFromValidProcedureTime(Procedure procedure, String requestedDescriptionFormat,
             ValidProcedureTime vpt, String version, Locale i18n, Session session) throws OwsExceptionReport {
-        checkOutputFormatWithDescriptionFormat(procedure, requestedDescriptionFormat, getFormat(procedure));
+        if (vpt != null) {
+            checkOutputFormatWithDescriptionFormat(procedure.getIdentifier(), vpt, requestedDescriptionFormat, getFormat(vpt));
+        } else {
+            checkOutputFormatWithDescriptionFormat(procedure.getIdentifier(), procedure, requestedDescriptionFormat, getFormat(procedure));
+        }
         Optional<SosProcedureDescription> description = create(procedure, requestedDescriptionFormat, vpt, i18n, session);
         if (description.isPresent()) {
             enrich(description.get(), procedure, version, requestedDescriptionFormat, getValidTime(vpt), null, i18n, session);
@@ -193,10 +198,11 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
     /**
      * Checks the requested procedureDescriptionFormat with the datasource
      * procedureDescriptionFormat.
+     * @param identifier 
      *
      * @param procedure
      *            the procedure
-     * @param requested
+     * @param requestedFormat
      *            requested procedureDescriptionFormat
      * @param descriptionFormat
      *            Data source procedureDescriptionFormat
@@ -205,32 +211,21 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      *             If procedureDescriptionFormats are invalid
      */
     @VisibleForTesting
-    boolean checkOutputFormatWithDescriptionFormat(Procedure procedure, String requested, String descriptionFormat)
+    boolean checkOutputFormatWithDescriptionFormat(String identifier, DescriptionXmlEntity procedure, String requestedFormat, String descriptionFormat)
             throws OwsExceptionReport {
         if (procedure.isSetDescriptionXml()) {
-            // if (!requested.equalsIgnoreCase(descriptionFormat) &&
-            // !(isSensorMLFormat(descriptionFormat) &&
-            // isSensorMLFormat(requested)) &&
-            // !existConverter(descriptionFormat, requested)) {
-            // throw new InvalidParameterValueException()
-            // .at(SosConstants.DescribeSensorParams.procedure)
-            // .withMessage("The value of the output format is wrong and has to be %s for procedure %s",
-            // descriptionFormat, procedure.getIdentifier())
-            // .setStatus(HTTPStatus.BAD_REQUEST);
-            // }
-            if (requested.equalsIgnoreCase(descriptionFormat) || existConverter(descriptionFormat, requested)) {
+            if (requestedFormat.equalsIgnoreCase(descriptionFormat) || existConverter(descriptionFormat, requestedFormat)) {
                 return true;
             }
-
         } else {
-            if (existsGenerator(requested)) {
+            if (existsGenerator(requestedFormat)) {
                 return true;
             }
         }
         throw new InvalidParameterValueException()
                 .at(SosConstants.DescribeSensorParams.procedure)
                 .withMessage("The value of the output format is wrong and has to be %s for procedure %s",
-                        descriptionFormat, procedure.getIdentifier()).setStatus(HTTPStatus.BAD_REQUEST);
+                        descriptionFormat, identifier).setStatus(HTTPStatus.BAD_REQUEST);
     }
 
     private boolean existConverter(String from, String to) {

@@ -34,6 +34,8 @@ RELEASE NOTES
       * https://github.com/52North/SOS/pull/182
     * EXI binding
       * Support for EXI encoded XML messages
+      * https://github.com/52North/SOS/pull/189
+    * Support for SensorML 2.0
 
 
  --- Changes ---
@@ -48,7 +50,7 @@ RELEASE NOTES
       * Check if not null sampledGeometries are contained in the database.
       * If not, the extent query is not executed.
       * https://github.com/52North/SOS/pull/128
-    * Update used version of 52N XML Common to 2.0.0
+    * Update used version of 52N XML Common to 2.1.0
       * SamplingFeature schema fixed multiplicity of sampledFeature from 1..1 to 1..*
     * Transactional operations are disabled by default
       * https://github.com/52North/SOS/pull/187

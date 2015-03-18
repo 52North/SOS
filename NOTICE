@@ -199,8 +199,8 @@ This project includes:
   W3C SOAP specification recommondation (v1.2 part 1) under The Apache Software License, Version 2.0
   W3C WS-Addressing specification schemas (v1.0) under The Apache Software License, Version 2.0
   W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0
-  Xerces2 Java Parser under The Apache Software License, Version 2.0
-  XML Commons External Components XML APIs under The Apache Software License, Version 2.0
+  Xerces2-j under The Apache Software License, Version 2.0
+  XML Commons External Components XML APIs under The Apache Software License, Version 2.0 or The SAX License or The W3C License
   XmlBeans under The Apache Software License, Version 2.0
   XmlBeansXPath under The Apache Software License, Version 2.0
   XMLUnit for Java under BSD License

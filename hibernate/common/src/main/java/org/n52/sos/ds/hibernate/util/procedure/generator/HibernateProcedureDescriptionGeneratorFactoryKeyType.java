@@ -28,12 +28,18 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
+/**
+ * Key class for {@link HibernateProcedureDescriptionGeneratorFactory}
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
+public class HibernateProcedureDescriptionGeneratorFactoryKeyType implements
+        Comparable<HibernateProcedureDescriptionGeneratorFactoryKeyType> {
 
-public class HibernateProcedureDescriptionGeneratorFactoryKeyType implements Comparable<HibernateProcedureDescriptionGeneratorFactoryKeyType> {
-    
     private String procedureDescriptionFormat;
-    
-    
+
     public HibernateProcedureDescriptionGeneratorFactoryKeyType(String procedureDescriptionFormat) {
         this.procedureDescriptionFormat = procedureDescriptionFormat;
     }
@@ -56,7 +62,8 @@ public class HibernateProcedureDescriptionGeneratorFactoryKeyType implements Com
     @Override
     public boolean equals(Object paramObject) {
         if (paramObject instanceof HibernateProcedureDescriptionGeneratorFactoryKeyType) {
-            HibernateProcedureDescriptionGeneratorFactoryKeyType toCheck = (HibernateProcedureDescriptionGeneratorFactoryKeyType) paramObject;
+            HibernateProcedureDescriptionGeneratorFactoryKeyType toCheck =
+                    (HibernateProcedureDescriptionGeneratorFactoryKeyType) paramObject;
             return (checkParameter(getDescriptionFormat(), toCheck.getDescriptionFormat()));
         }
         return false;

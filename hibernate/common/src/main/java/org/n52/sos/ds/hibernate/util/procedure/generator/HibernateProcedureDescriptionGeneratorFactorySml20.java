@@ -47,6 +47,13 @@ import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.util.CollectionHelper;
 
+/**
+ * Generator class for SensorML 2.0 procedure descriptions
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public class HibernateProcedureDescriptionGeneratorFactorySml20 implements HibernateProcedureDescriptionGeneratorFactory {
 
     private static final List<HibernateProcedureDescriptionGeneratorFactoryKeyType> GENERATOR_KEY_TYPES = CollectionHelper.list(

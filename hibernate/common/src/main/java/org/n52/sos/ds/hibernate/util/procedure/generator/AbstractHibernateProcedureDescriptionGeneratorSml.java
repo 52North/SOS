@@ -29,19 +29,11 @@
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.ds.I18NDAO;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -54,30 +46,23 @@ import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.i18n.I18NDAORepository;
-import org.n52.sos.i18n.LocalizedString;
-import org.n52.sos.i18n.metadata.I18NProcedureMetadata;
 import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweConstants;
-import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweConstants.SweCoordinateName;
+import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.service.Configurator;
-import org.n52.sos.service.ProcedureDescriptionSettings;
-import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JavaHelper;
@@ -86,13 +71,18 @@ import org.n52.sos.util.http.HTTPStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Coordinate;
 
-public abstract class AbstractHibernateProcedureDescriptionGeneratorSml {
+/**
+ * Abstract generator class for SensorML procedure descriptions
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
+public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
+        AbstractHibernateProcedureDescriptionGenerator {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(AbstractHibernateProcedureDescriptionGeneratorSml.class);
@@ -106,25 +96,6 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml {
             "getUnitForObservablePropertyProcedureOffering";
 
     protected static final String POSITION_NAME = "sensorPosition";
-
-    protected static final Joiner COMMA_JOINER = Joiner.on(",");
-
-    private Locale locale = ServiceConfiguration.getInstance().getDefaultLanguage();
-
-    public abstract SosProcedureDescription generateProcedureDescription(Procedure procedure, Locale i18n,
-            Session session) throws OwsExceptionReport;
-
-    protected void setLocale(Locale i18n) {
-        this.locale = i18n;
-    }
-
-    protected Locale getLocale() {
-        return locale;
-    }
-
-    protected boolean isSetLocale() {
-        return locale != null;
-    }
 
     /**
      * Set common values to procedure description
@@ -141,14 +112,10 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml {
      */
     protected void setCommonValues(Procedure procedure, AbstractProcess abstractProcess, Session session)
             throws OwsExceptionReport {
+        setCommonData(procedure, abstractProcess, session);
+
         String identifier = procedure.getIdentifier();
         String[] observableProperties = getObservablePropertiesForProcedure(identifier);
-
-        // 1 set description, names
-        addNameAndDescription(procedure, abstractProcess);
-
-        // 2 identifier
-        abstractProcess.setIdentifier(identifier);
 
         // 3 set identification
         abstractProcess.setIdentifications(createIdentifications(identifier));
@@ -160,62 +127,6 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml {
             abstractProcess.setInputs(createInputs(observableProperties));
             abstractProcess.setOutputs(createOutputs(procedure, observableProperties, session));
         }
-    }
-
-    private void addNameAndDescription(Procedure procedure, AbstractProcess abstractProcess) throws OwsExceptionReport {
-        I18NDAO<I18NProcedureMetadata> i18nDAO = I18NDAORepository.getInstance().getDAO(I18NProcedureMetadata.class);
-        Locale requestedLocale = getLocale();
-        if (i18nDAO == null) {
-            // no locale support
-            ProcedureDAO featureDAO = new ProcedureDAO();
-            abstractProcess.addName(featureDAO.getName(procedure));
-            abstractProcess.setDescription(featureDAO.getDescription(procedure));
-        } else {
-            if (requestedLocale != null) {
-                // specific locale was requested
-                I18NProcedureMetadata i18n = i18nDAO.getMetadata(procedure.getIdentifier(), requestedLocale);
-                Optional<LocalizedString> name = i18n.getName().getLocalization(requestedLocale);
-                if (name.isPresent()) {
-                    abstractProcess.addName(name.get().asCodeType());
-                }
-                Optional<LocalizedString> description = i18n.getDescription().getLocalization(requestedLocale);
-                if (description.isPresent()) {
-                    abstractProcess.setDescription(description.get().getText());
-                }
-            } else {
-                Locale defaultLocale = ServiceConfiguration.getInstance().getDefaultLanguage();
-                final I18NProcedureMetadata i18n;
-                if (ServiceConfiguration.getInstance().isShowAllLanguageValues()) {
-                    // load all names
-                    i18n = i18nDAO.getMetadata(procedure.getIdentifier());
-                } else {
-                    // load only name in default locale
-                    i18n = i18nDAO.getMetadata(procedure.getIdentifier(), defaultLocale);
-                }
-                for (LocalizedString name : i18n.getName()) {
-                    // either all or default only
-                    abstractProcess.addName(name.asCodeType());
-                }
-                // choose always the description in the default locale
-                Optional<LocalizedString> description = i18n.getDescription().getLocalization(defaultLocale);
-                if (description.isPresent()) {
-                    abstractProcess.setDescription(description.get().getText());
-                }
-            }
-        }
-    }
-
-    /**
-     * Create a names collection for procedure description
-     *
-     * @param procedure
-     *            Hibernate procedure entity
-     *
-     * @return Collection with names
-     */
-    private List<CodeType> createNames(Procedure procedure) {
-        // locale
-        return Lists.newArrayList(new CodeType(procedure.getIdentifier()));
     }
 
     private List<SmlIo<?>> createInputs(String[] observableProperties) throws OwsExceptionReport {
@@ -347,8 +258,8 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml {
             return (String) namedQuery.uniqueResult();
         }
         AbstractObservation exampleObservation =
-                getExampleObservation(oc.getProcedure().getIdentifier(), oc.getObservableProperty()
-                        .getIdentifier(), session);
+                getExampleObservation(oc.getProcedure().getIdentifier(), oc.getObservableProperty().getIdentifier(),
+                        session);
         if (exampleObservation != null && exampleObservation.isSetUnit()) {
             return exampleObservation.getUnit().getUnit();
         }
@@ -482,15 +393,6 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml {
         return new SweQuantity().setAxisID(axis).setUom(uom).setValue(JavaHelper.asDouble(value));
     }
 
-    private List<String> createDescriptions(Procedure procedure, String[] observableProperties) {
-        // locale
-        String template = procedureSettings().getDescriptionTemplate();
-        String identifier = procedure.getIdentifier();
-        String obsProps = COMMA_JOINER.join(observableProperties);
-        String type = procedure.isSpatial() ? "sensor system" : "procedure";
-        return Lists.newArrayList(String.format(template, type, identifier, obsProps));
-    }
-
     private List<SmlIdentifier> createIdentifications(final String identifier) {
         return Lists.newArrayList(createIdentifier(identifier));
     }
@@ -499,62 +401,5 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml {
         return new SmlIdentifier(OGCConstants.URN_UNIQUE_IDENTIFIER_END, OGCConstants.URN_UNIQUE_IDENTIFIER,
                 identifier);
     }
-    
-    
-    protected boolean hasChildProcedure(String procedure) {
-        return CollectionHelper.isNotEmpty(getCache().getChildProcedures(procedure, false, false));
-    }
 
-    /**
-     * Get example observation for output list creation
-     *
-     * @param identifier
-     *            Procedure identifier
-     * @param observableProperty
-     *            ObservableProperty identifier
-     * @param session
-     *            the session
-     *
-     * @return Example observation
-     *
-     * @throws OwsExceptionReport
-     *             If an error occurs.
-     */
-    @VisibleForTesting
-    AbstractObservation getExampleObservation(String identifier, String observableProperty, Session session)
-            throws OwsExceptionReport {
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
-        final Criteria c = observationDAO.getObservationCriteriaFor(identifier, observableProperty, session);
-        c.setMaxResults(1);
-        LOGGER.debug("QUERY getExampleObservation(identifier, observableProperty): {}",
-                HibernateHelper.getSqlString(c));
-        final AbstractObservation example = (AbstractObservation) c.uniqueResult();
-        if (example == null) {
-            LOGGER.debug(
-                    "Could not receive example observation from database for procedure '{}' observing property '{}'.",
-                    identifier, observableProperty);
-        }
-        return example;
-    }
-
-    @VisibleForTesting
-    ServiceConfiguration getServiceConfig() {
-        return ServiceConfiguration.getInstance();
-    }
-
-    @VisibleForTesting
-    String[] getObservablePropertiesForProcedure(String identifier) {
-        Set<String> props = getCache().getObservablePropertiesForProcedure(identifier);
-        return props.toArray(new String[props.size()]);
-    }
-
-    @VisibleForTesting
-    ProcedureDescriptionSettings procedureSettings() {
-        return ProcedureDescriptionSettings.getInstance();
-    }
-
-    @VisibleForTesting
-    ContentCache getCache() {
-        return Configurator.getInstance().getCache();
-    }
 }

@@ -32,16 +32,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.convert.ConverterKeyType;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.util.AbstractConfiguringServiceLoaderRepository;
 
-import com.google.common.collect.Sets;
-
-public class HibernateProcedureDescriptionGeneratorRepository extends AbstractConfiguringServiceLoaderRepository<HibernateProcedureDescriptionGeneratorFactory> {
+/**
+ * Repository for {@link HibernateProcedureDescriptionGeneratorFactory}
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
+public class HibernateProcedureDescriptionGeneratorRepository extends
+        AbstractConfiguringServiceLoaderRepository<HibernateProcedureDescriptionGeneratorFactory> {
 
     private static class LazyHolder {
-        private static final HibernateProcedureDescriptionGeneratorRepository INSTANCE = new HibernateProcedureDescriptionGeneratorRepository();
+        private static final HibernateProcedureDescriptionGeneratorRepository INSTANCE =
+                new HibernateProcedureDescriptionGeneratorRepository();
 
         private LazyHolder() {
         };
@@ -51,7 +57,9 @@ public class HibernateProcedureDescriptionGeneratorRepository extends AbstractCo
         return LazyHolder.INSTANCE;
     }
 
-    private final Map<HibernateProcedureDescriptionGeneratorFactoryKeyType, HibernateProcedureDescriptionGeneratorFactory> factories = new HashMap<HibernateProcedureDescriptionGeneratorFactoryKeyType, HibernateProcedureDescriptionGeneratorFactory>(0);
+    private final Map<HibernateProcedureDescriptionGeneratorFactoryKeyType, HibernateProcedureDescriptionGeneratorFactory> factories =
+            new HashMap<HibernateProcedureDescriptionGeneratorFactoryKeyType, HibernateProcedureDescriptionGeneratorFactory>(
+                    0);
 
     private HibernateProcedureDescriptionGeneratorRepository() {
         super(HibernateProcedureDescriptionGeneratorFactory.class, false);
@@ -59,25 +67,27 @@ public class HibernateProcedureDescriptionGeneratorRepository extends AbstractCo
     }
 
     @Override
-    protected void processConfiguredImplementations(final Set<HibernateProcedureDescriptionGeneratorFactory> factory) throws ConfigurationException {
+    protected void processConfiguredImplementations(final Set<HibernateProcedureDescriptionGeneratorFactory> factory)
+            throws ConfigurationException {
         this.factories.clear();
         for (final HibernateProcedureDescriptionGeneratorFactory aFactory : factory) {
-            for (final HibernateProcedureDescriptionGeneratorFactoryKeyType factoryKeyType : aFactory.getHibernateProcedureDescriptionGeneratorFactoryKeyTypes()) {
-                
+            for (final HibernateProcedureDescriptionGeneratorFactoryKeyType factoryKeyType : aFactory
+                    .getHibernateProcedureDescriptionGeneratorFactoryKeyTypes()) {
+
                 this.factories.put(factoryKeyType, aFactory);
             }
         }
         // TODO check for encoder/decoder used by converter
     }
 
-    public  HibernateProcedureDescriptionGeneratorFactory getFactory(final String descriptionFormat) {
+    public HibernateProcedureDescriptionGeneratorFactory getFactory(final String descriptionFormat) {
         return getFactory(new HibernateProcedureDescriptionGeneratorFactoryKeyType(descriptionFormat));
     }
 
-    public HibernateProcedureDescriptionGeneratorFactory getFactory(final HibernateProcedureDescriptionGeneratorFactoryKeyType key) {
+    public HibernateProcedureDescriptionGeneratorFactory getFactory(
+            final HibernateProcedureDescriptionGeneratorFactoryKeyType key) {
         return (HibernateProcedureDescriptionGeneratorFactory) factories.get(key);
     }
-
 
     /**
      * Checks if a factory is available to generate the description

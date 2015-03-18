@@ -36,10 +36,17 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 
+/**
+ * Interface for procedure description generator factories
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public interface HibernateProcedureDescriptionGeneratorFactory {
-    
+
     List<HibernateProcedureDescriptionGeneratorFactoryKeyType> getHibernateProcedureDescriptionGeneratorFactoryKeyTypes();
-    
+
     SosProcedureDescription create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport;
 
 }

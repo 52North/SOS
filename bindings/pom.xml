@@ -16,5 +16,6 @@
         <module>soap</module>
         <module>rest</module>
         <module>json</module>
+        <module>exi</module>
     </modules>
 </project>

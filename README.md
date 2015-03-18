@@ -72,6 +72,7 @@ certain functionality added, let us know at:
  - Eike Hinderk Jürrens [@EHJ-52n](e.h.juerrens@52north.org)
 
 The Sensor Web Community
+
 52°North Inititative for Geospatial Open Source Software GmbH, Germany
 
 --

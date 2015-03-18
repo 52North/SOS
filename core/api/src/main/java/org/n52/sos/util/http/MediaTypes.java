@@ -56,6 +56,8 @@ public interface MediaTypes {
     MediaType APPLICATION_ZIP = new MediaType(APPLICATION, "zip");
 
     MediaType APPLICATION_JSON = new MediaType(APPLICATION, "json");
+    
+    MediaType APPLICATION_EXI = new MediaType(APPLICATION, "exi");
 
     MediaType APPLICATION_KVP = new MediaType(APPLICATION, "x-kvp");
 

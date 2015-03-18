@@ -30,14 +30,16 @@ package org.n52.sos.util;
 
 import static java.lang.Boolean.*;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.n52.sos.util.CollectionHelper.unionOfListOfLists;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.junit.Test;
@@ -129,5 +131,25 @@ public class CollectionHelperTest {
         set.add("b");
         set.add("c");
         assertThat(CollectionHelper.collectionToString(set), is(full));
+    }
+    
+    @Test
+    public void should_return_set_sorted_by_value() {
+    	Map<String,Integer> unsorted = new HashMap<>();
+    	unsorted.put("A", 3);
+    	unsorted.put("B", 4);
+    	unsorted.put("C", 2);
+    	unsorted.put("D", 1);
+    	Map<String, Integer> sorted = CollectionHelper.sortByValue(unsorted);
+    	for (Entry<String, Integer> string : unsorted.entrySet()) {
+			if (!sorted.containsKey(string.getKey()) || !sorted.containsValue(string.getValue())){
+				fail("sorted set doesn't contain all values of unsorted");
+			}
+		}
+    	Iterator<Integer> iterator = sorted.values().iterator();
+    	assertThat(iterator.next(),is(1));
+    	assertThat(iterator.next(),is(2));
+    	assertThat(iterator.next(),is(3));
+    	assertThat(iterator.next(),is(4));
     }
 }

@@ -155,7 +155,6 @@ INSERT INTO "settings" VALUES('service.response.validate');
 INSERT INTO "settings" VALUES('service.streaming.force');
 INSERT INTO "settings" VALUES('service.security.transactional.active');
 INSERT INTO "settings" VALUES('service.sensorDirectory');
-INSERT INTO "settings" VALUES('service.skipDuplicateObservations');
 INSERT INTO "settings" VALUES('service.sosUrl');
 INSERT INTO "settings" VALUES('service.strictSpatialFilteringProfile');
 INSERT INTO "settings" VALUES('service.supportsQuality');
@@ -192,7 +191,6 @@ INSERT INTO "administrator_user" VALUES(1,'$2a$10$y1TfEacanLJHkC0mqtkpy.KSt7r6Dj
 INSERT INTO "boolean_settings" VALUES(0,'misc.httpResponseCodeUseInKvpAndPoxBinding');
 INSERT INTO "boolean_settings" VALUES(0,'misc.includeStackTraceInExceptionReport');
 INSERT INTO "boolean_settings" VALUES(1,'service.supportsQuality');
-INSERT INTO "boolean_settings" VALUES(1,'service.skipDuplicateObservations');
 INSERT INTO "boolean_settings" VALUES(0,'service.blockGetObservationRequestsWithoutRestriction');
 INSERT INTO "boolean_settings" VALUES(0,'service.useDefaultPrefixes');
 INSERT INTO "boolean_settings" VALUES(1,'service.encodeFullChildrenInDescribeSensor');

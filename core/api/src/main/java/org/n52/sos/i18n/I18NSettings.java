@@ -73,8 +73,7 @@ public class I18NSettings implements SettingDefinitionProvider {
             .setTitle("I18N show all language values")
             .setDescription(
                     "Show all language specific values if no language is queried or the queried language is not supported!");
-    
-    
+
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet
             .<SettingDefinition<?, ?>>of(
                     I18N_DEFAULT_LANGUAGE_DEFINITION, SHOW_ALL_LANGUAGE_VLAUES);

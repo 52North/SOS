@@ -75,14 +75,9 @@
         <sqljdbc4.version>4.0</sqljdbc4.version>
 
         <!-- 52N dependency versions -->
-        <n52.common.xml.version>2.0.0</n52.common.xml.version>
+        <n52.common.xml.version>2.1.0</n52.common.xml.version>
         <!-- Remove third party ncname resolver from SOS and use OXF instead -->
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
-        <!-- managed dependencies with ${project.version} will be wrong in submodules
-        with different versions -->
-        <!-- <project.version>4.2.0-SNAPSHOT</project.version>
-        <project.version>4.2.0-SNAPSHOT</project.version>
-        <project.version>4.2.0-SNAPSHOT</project.version> -->
         <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
         <org.springframework.version>3.2.6.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
@@ -556,24 +551,20 @@
                 <artifactId>52n-xml-sensorML-v20</artifactId>
                 <version>${n52.common.xml.version}</version>
             </dependency>
-            <!-- TODO fix versions -->
             <dependency>
 	            <groupId>org.n52.sensorweb</groupId>
 	            <artifactId>52n-xml-gmd-v20120713</artifactId>
-	            <version>2.0.1-SNAPSHOT</version>
-	            <!-- <version>${n52.common.xml.version}</version> -->
+	            <version>${n52.common.xml.version}</version>
        		</dependency>
        		<dependency>
 	            <groupId>org.n52.sensorweb</groupId>
 	            <artifactId>52n-xml-gco-v20120713</artifactId>
-	            <version>2.0.1-SNAPSHOT</version>
-	            <!-- <version>${n52.common.xml.version}</version> -->
+	            <version>${n52.common.xml.version}</version>
        		</dependency>
        		<dependency>
 	            <groupId>org.n52.sensorweb</groupId>
 	            <artifactId>52n-xml-sosgda-v10</artifactId>
-	            <version>2.0.1-SNAPSHOT</version>
-	            <!-- <version>${n52.common.xml.version}</version> -->
+	           <version>${n52.common.xml.version}</version>
        		</dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
@@ -1462,7 +1453,7 @@
                                 <id>check-license</id>
                                 <phase>initialize</phase>
                                 <goals>
-                                    <goal>generate</goal>
+                                    <goal>check</goal>
                                 </goals>
                             </execution>
                         </executions>

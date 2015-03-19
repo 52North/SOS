@@ -69,8 +69,8 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
     public void executePostCreateSchema(Map<String, Object> databaseSettings) {
         List<String> statements = new ArrayList<String>();
         for (TableColumn tableColumn : getTableColumns()) {
-            statements.add(getGetAndDropConstraint(tableColumn.table, tableColumn.column, databaseSettings));
-            statements.add(getCreateUniqueConstraint(databaseSettings, tableColumn.table, tableColumn.column));
+            statements.add(getGetAndDropConstraint(tableColumn.getTable(), tableColumn.getColumn(), databaseSettings));
+            statements.add(getCreateUniqueConstraint(databaseSettings, tableColumn.getTable(), tableColumn.getColumn()));
             execute(statements.toArray(new String[statements.size()]), databaseSettings);
             statements.clear();
         }

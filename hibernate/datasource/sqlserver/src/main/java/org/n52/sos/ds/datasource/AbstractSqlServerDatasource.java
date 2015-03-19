@@ -59,7 +59,15 @@ import com.google.common.collect.Sets;
 
 public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullDBDatasource {
 
-    protected static final String URL_INSTANCE = "instance=";
+    private static final int INSTANCE = 3;
+
+	private static final int DATABASE = 4;
+
+	private static final int PORT = 2;
+
+	private static final int HOST = 1;
+
+	protected static final String URL_INSTANCE = "instance=";
 
     protected static final String URL_DATABASE_NAME = "databaseName=";
 
@@ -68,14 +76,13 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     protected static final String INSTANCE_TITLE = "SQL Server instance";
 
     protected static final String INSTANCE_DESCRIPTION =
-            "Your SQL Server instance. The default value for SQL Server is \"SQLEXPRESS\".";
-
-    protected static final String INSTANCE_DEFAULT = "SQLEXPRESS";
+            "Your SQL Server instance.";
 
     protected static final String SQL_SERVER_DRIVER_CLASS = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
 
-    protected static final Pattern JDBC_URL_PATTERN = Pattern.compile("^jdbc:sqlserver://([^:]+):([0-9]+);" + URL_INSTANCE + "([^:]+);" + URL_DATABASE_NAME + "([^:]+)");
+//    TODO adjust make instance optional in regex
+    protected static final Pattern JDBC_URL_PATTERN = Pattern.compile("^jdbc:sqlserver://([^:]+):([0-9]+)(?:;" + URL_INSTANCE + "([^:]+))?;" + URL_DATABASE_NAME + "([^:]+)");
 
     protected static final String USERNAME_DESCRIPTION =
             "Your database server user name. The default value for SQL Server is \"sqlserver\".";
@@ -91,7 +98,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
             "Set this to the IP/net location of SQL Server database server. The default value for SQL Server is \"localhost\".";
 
     protected static final String PORT_DESCRIPTION =
-            "Set this to the port number of your SQL Server server. The default value for SQL Server is 1433.";
+            "Set this to the port number of your SQL Server server. The default value for SQL Server is \"1433\".";
 
     protected static final int PORT_DEFAULT_VALUE = 1433;
 
@@ -106,7 +113,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
         setPasswordDefault(PASSWORD_DEFAULT_VALUE);
         setPasswordDescription(PASSWORD_DESCRIPTION);
         setDatabaseDefault(DATABASE_DEFAULT_VALUE);
-        setDatabaseDescription(HOST_DESCRIPTION);
+        setDatabaseDescription(DATABASE_DESCRIPTION);
         setHostDefault(HOST_DEFAULT_VALUE);
         setHostDescription(HOST_DESCRIPTION);
         setPortDefault(PORT_DEFAULT_VALUE);
@@ -121,7 +128,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
         Set<SettingDefinition<?, ?>> settingDefinitions = super.getSettingDefinitions();
         return CollectionHelper.union(
-                Sets.<SettingDefinition<?, ?>> newHashSet(createInstanceDefinition(INSTANCE_DEFAULT)),
+                Sets.<SettingDefinition<?, ?>> newHashSet(createInstanceDefinition(null)),
                 settingDefinitions);
     }
 
@@ -135,9 +142,14 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     }
 
     protected StringSettingDefinition createInstanceDefinition(String instanceValue) {
-        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_2)
-                .setKey(INSTANCE_KEY).setTitle(INSTANCE_TITLE).setDescription(INSTANCE_DESCRIPTION)
-                .setDefaultValue(instanceValue);
+        return new StringSettingDefinition()
+        	.setGroup(BASE_GROUP)
+        	.setOrder(SettingDefinitionProvider.ORDER_2)
+            .setKey(INSTANCE_KEY)
+            .setTitle(INSTANCE_TITLE)
+            .setDescription(INSTANCE_DESCRIPTION)
+            .setDefaultValue(instanceValue==null?"":instanceValue)
+            .setOptional(true);
     }
 
     @Override
@@ -188,16 +200,26 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
         }
     }
 
+    /*
+     * SQL-Server JDBC String specification:
+     * https://msdn.microsoft.com/en-us/library/ms378428%28v=sql.110%29.aspx
+     * 
+     * String url =
+     * 		String.format("jdbc:sqlserver://%s:%d;instance=%s;databaseName=%s", settings.get(HOST_KEY),
+     * 		settings.get(PORT_KEY), settings.get(INSTANCE_KEY), settings.get(DATABASE_KEY));
+     */
     @Override
     protected String toURL(Map<String, Object> settings) {
         StringBuilder builder = new StringBuilder("jdbc:sqlserver://");
         builder.append(settings.get(HOST_KEY)).append(Constants.COLON_CHAR);
         builder.append(settings.get(PORT_KEY)).append(Constants.SEMICOLON_CHAR);
-        builder.append(URL_INSTANCE).append(settings.get(INSTANCE_KEY)).append(Constants.SEMICOLON_CHAR);
+        if (settings.containsKey(INSTANCE_KEY) && 
+        		settings.get(INSTANCE_KEY) != null && 
+        		settings.get(INSTANCE_KEY) instanceof String &&
+        		!((String)settings.get(INSTANCE_KEY)).isEmpty()) {
+        	builder.append(URL_INSTANCE).append(settings.get(INSTANCE_KEY)).append(Constants.SEMICOLON_CHAR);
+        }
         builder.append(URL_DATABASE_NAME).append(settings.get(DATABASE_KEY));
-//        String url =
-//                String.format("jdbc:sqlserver://%s:%d;instance=%s;databaseName=%s", settings.get(HOST_KEY),
-//                        settings.get(PORT_KEY), settings.get(INSTANCE_KEY), settings.get(DATABASE_KEY));
         return builder.toString();
     }
 
@@ -205,15 +227,19 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     protected String[] parseURL(String url) {
         Matcher matcher = JDBC_URL_PATTERN.matcher(url);
         matcher.find();
-        return new String[] { matcher.group(1), matcher.group(2), matcher.group(4), matcher.group(3) };
+        if (matcher.group(INSTANCE) == null) {
+        	return new String[] { matcher.group(HOST), matcher.group(PORT), matcher.group(DATABASE) };
+        }
+        return new String[] { matcher.group(HOST), matcher.group(PORT), matcher.group(DATABASE), matcher.group(INSTANCE) };
     }
 
     @Override
     protected Map<String, Object> parseDatasourceProperties(final Properties current) {
         super.parseDatasourceProperties(current);
         final Map<String, Object> settings = super.parseDatasourceProperties(current);
-        // parse instance
+        // parse optional instance
         final String[] parsed = parseURL(current.getProperty(HibernateConstants.CONNECTION_URL));
+//        TODO what happens here
         if (parsed.length == 4) {
             settings.put(INSTANCE_KEY, (String)parsed[3]);
         }

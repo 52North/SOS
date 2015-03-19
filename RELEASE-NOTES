@@ -36,6 +36,7 @@ RELEASE NOTES
       * Support for EXI encoded XML messages
       * https://github.com/52North/SOS/pull/189
     * Support for SensorML 2.0
+      * https://github.com/52North/SOS/pull/190
 
 
  --- Changes ---
@@ -82,8 +83,10 @@ RELEASE NOTES
     * Issue #147: Impossible to NOT use the public schema 
       * https://github.com/52North/SOS/pull/148
     * Fix NPE in DataAvailabilityTransformer for NamedQueries by using new TimerPeriod constructor with Object parameter
-      *https://github.com/52North/SOS/pull/146
-  
+      * https://github.com/52North/SOS/pull/146
+    * Issue #191: JDBC string SQL server: optional instance parameter is required in our impelementation
+      * https://github.com/52North/SOS/pull/193
+   
   Release 52n-sos-4.1.5
 ==================================
 

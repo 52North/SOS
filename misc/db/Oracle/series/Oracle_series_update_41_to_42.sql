@@ -27,7 +27,7 @@
 -- Public License for more details.
 --
 
--- Can also be required in exiting SOS 4.2.0-SNAPSHOT versions
+-- Can also be required in existing SOS 4.2.0-SNAPSHOT versions
 
 -- update numeric columns to double
 ALTER TABLE NUMERICVALUE MODIFY VALUE DOUBLE PRECISION;
@@ -75,7 +75,8 @@ ALTER TABLE FEATUREOFINTEREST ADD COLUMN CODESPACENAME number(19,0);
 ALTER TABLE FEATUREOFINTEREST ADD COLUMN DESCRIPTION varchar(255);
 ALTER TABLE FEATUREOFINTEREST ADD CONSTRAINT featureCodespaceNameFk FOREIGN KEY (CODESPACENAME) REFERENCES CODESPACE;
 
--- CREATE multiligualism tables
+-- create multiligualism tables (optional, required for multiligualism support)
+
 -- i18n featureOfInterest
 CREATE TABLE i18nfeatureOfInterest (ID number(19,0) not null, OBJECTID number(19,0) not null, LOCALE varchar(255) not null, NAME varchar(255), DESCRIPTION varchar(255), primary key (ID));
 ALTER TABLE i18nfeatureOfInterest ADD CONSTRAINT i18nFeatureIdentity unique (OBJECTID, LOCALE);

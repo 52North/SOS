@@ -66,7 +66,8 @@ ALTER TABLE sos.featureofinterest ADD COLUMN codespacename bigint;
 ALTER TABLE sos.featureofinterest ADD COLUMN description varchar(255);
 ALTER TABLE sos.featureofinterest add constraint featureCodespaceNameFk foreign key (codespacename) references sos.codespace (codespaceId);
 
--- create multiligualism tables
+-- create multiligualism tables (optional, required for multiligualism support)
+
 -- i18n featureOfInterest
 create table sos.i18nfeatureOfInterest (id bigint not null auto_increment, objectId bigint not null, locale varchar(255) not null, name varchar(255), description varchar(255), primary key (id)) ENGINE=InnoDB;
 ALTER TABLE sos.i18nfeatureOfInterest add constraint i18nFeatureIdentity unique (objectId, locale);

@@ -27,6 +27,7 @@
 -- Public License for more details.
 --
 
+-- Database name to apply changes to
 use sos
 create table dbo.[procedure] (procedureId bigint identity not null, hibernateDiscriminator char(1) not null, procedureDescriptionFormatId bigint not null, identifier varchar(255) not null, codespace bigint, name varchar(255), codespacename bigint, description varchar(255), deleted char(1) default 'F' not null check (deleted in ('T','F')), descriptionFile varchar(MAX), referenceFlag char(1) default 'F' check (referenceFlag in ('T','F')), primary key (procedureId));
 create table dbo.blobValue (observationId bigint not null, value varbinary(MAX), primary key (observationId));

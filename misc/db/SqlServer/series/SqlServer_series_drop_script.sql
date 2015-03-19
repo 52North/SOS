@@ -27,6 +27,7 @@
 -- Public License for more details.
 --
 
+-- Database name to apply changes to
 use sos
 drop table dbo.blobValue;
 drop table dbo.booleanValue;

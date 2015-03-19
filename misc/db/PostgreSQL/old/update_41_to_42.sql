@@ -66,7 +66,8 @@ ALTER TABLE public.featureofinterest ADD COLUMN codespacename int8;
 ALTER TABLE public.featureofinterest ADD COLUMN description varchar(255);
 ALTER TABLE public.featureofinterest add constraint featureCodespaceNameFk foreign key (codespacename) references public.codespace;
 
--- create multiligualism tables
+-- create multiligualism tables (optional, required for multiligualism support)
+
 -- i18n featureOfInterest
 create table public.i18nfeatureOfInterest (id int8 not null, objectId int8 not null, locale varchar(255) not null, name varchar(255), description varchar(255), primary key (id));
 ALTER TABLE public.i18nfeatureOfInterest add constraint i18nFeatureIdentity unique (objectId, locale);

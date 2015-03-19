@@ -178,7 +178,15 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>coding-sensorML</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>coding-sensorML-v101</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-sensorML-v20</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

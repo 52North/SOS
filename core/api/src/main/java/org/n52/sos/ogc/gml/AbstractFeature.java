@@ -49,7 +49,7 @@ public abstract class AbstractFeature extends AbstractGML implements Serializabl
      * serial number
      */
     private static final long serialVersionUID = -6117378246552782214L;
-
+    
     /**
      * constructor
      */
@@ -85,6 +85,9 @@ public abstract class AbstractFeature extends AbstractGML implements Serializabl
     public AbstractFeature(CodeWithAuthority featureIdentifier, String gmlId) {
         super(featureIdentifier, gmlId);
     }
-
+    
+    public void copyTo(AbstractFeature copyOf) {
+        super.copyTo(copyOf);
+    }
 
 }

@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.n52.sos.ogc.gml.CodeType;
+import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
@@ -128,6 +129,28 @@ public class AbstractProcess extends AbstractSensorML {
     public AbstractProcess addName(final CodeType name) {
         super.addName(name);
         return this;
+    }
+    
+    protected void checkAndSetChildProcedures(final List<SmlComponent> components) {
+        if (components != null) {
+            for (final SmlComponent component : components) {
+                checkAndSetChildProcedures(component);
+            }
+        }
+    }
+
+    protected void checkAndSetChildProcedures(final SmlComponent component) {
+        if (component != null && component.isSetName()
+                && component.getName().contains(SensorMLConstants.ELEMENT_NAME_CHILD_PROCEDURES)) {
+            addChildProcedure(component.getProcess());
+        }
+    }
+    
+    public void copyTo(AbstractProcess copyOf) {
+        super.copyTo(copyOf);
+        copyOf.setInputs(getInputs());
+        copyOf.setOutputs(getOutputs());
+        copyOf.setParameters(getParameters());
     }
 
 }

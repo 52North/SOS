@@ -13,7 +13,9 @@
     <description>52°North SOS - Coding Modules</description>
     <modules>
         <module>ows-v110</module>
+        <module>sensorML</module>
         <module>sensorML-v101</module>
+        <module>sensorML-v20</module>
         <module>sos-v100</module>
         <module>sos-v20</module>
 		<module>wml-v20</module>

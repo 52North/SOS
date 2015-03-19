@@ -28,27 +28,39 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 
 import org.n52.sos.ogc.swe.DataRecord;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.util.CollectionHelper;
+
+import com.google.common.collect.Lists;
 
 /**
  * SOS internal representation of SensorML capabilities
  * 
  * @since 4.0.0
  */
-public class SmlCapabilities {
-
-    private String name;
-    private DataRecord dataRecord;
+public class SmlCapabilities extends AbstractSmlDataComponentContainer<SmlCapabilities> {
+    
+    
+    private List<SmlCapability> capabilities = Lists.newArrayList();
 
     /**
      * default constructor
      */
     public SmlCapabilities() {
-        this(null, null);
+       super();
+    }
+    
+    /**
+     * constructor
+     * 
+     * @param name
+     *            Type
+     */
+    public SmlCapabilities(String name) {
+        setName(name);
     }
 
     /**
@@ -60,50 +72,62 @@ public class SmlCapabilities {
      *            DataRecord
      */
     public SmlCapabilities(String name, DataRecord dataRecord) {
-        this.name = name;
-        this.dataRecord = dataRecord;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public SmlCapabilities setName(String name) {
-        this.name = name;
-        return this;
+        super(dataRecord);
+        setName(name);
     }
 
     /**
-     * @return the dataRecord
+     * @return the capabilities
      */
-    public DataRecord getDataRecord() {
-        return dataRecord;
+    public List<SmlCapability> getCapabilities() {
+        if (!hasCapabilities() && isSetAbstractDataComponents()) {
+            List<SmlCapability> capabilities = Lists.newArrayList();
+            for (SweAbstractDataComponent component : getAbstractDataComponents()) {
+                SmlCapability smlCapability = new SmlCapability(component.getName().getValue());
+                smlCapability.setAbstractDataComponent(component);
+                capabilities.add(smlCapability);
+            }
+            return capabilities;
+        }
+        return capabilities;
     }
 
     /**
-     * @param dataRecord
-     *            the dataRecord to set
-     * @return this
+     * @param capabilities the capabilities to set
      */
-    public SmlCapabilities setDataRecord(DataRecord dataRecord) {
-        this.dataRecord = dataRecord;
-        return this;
-    }
-
-    public boolean isSetAbstractDataRecord() {
-        return getDataRecord() != null;
-    }
-
-    public boolean isSetName() {
-        return name != null && !name.isEmpty();
+    public void setCapabilities(List<SmlCapability> capabilities) {
+        if (CollectionHelper.isNotEmpty(capabilities)) {
+            this.capabilities = capabilities;
+            for (SmlCapability smlCapability : capabilities) {
+                addAbstractDataComponents(smlCapability.getAbstractDataComponent());
+            }
+        }
     }
     
-    @SuppressWarnings("rawtypes")
-    public Set<SweAbstractSimpleType<?>> getSweAbstractSimpleTypeFromFields(Class clazz) {
-        if (isSetAbstractDataRecord()) {
-            return getDataRecord().getSweAbstractSimpleTypeFromFields(clazz);
+    /**
+     * @param capabilities the capabilities to add
+     */
+    public void addCapabilities(List<SmlCapability> capabilities) {
+        this.capabilities.addAll(capabilities);
+        for (SmlCapability smlCapability : capabilities) {
+            addAbstractDataComponents(smlCapability.getAbstractDataComponent());
         }
-        return Collections.emptySet();
+    }
+    
+    /**
+     * @param capability the capability to add
+     */
+    public void addCapability(SmlCapability capability) {
+        this.capabilities.add(capability);
+        addAbstractDataComponents(capability.getAbstractDataComponent());
+    }
+    
+    public boolean isSetCapabilities() {
+        return hasCapabilities() || isSetAbstractDataComponents();
+    }
+    
+    private boolean hasCapabilities() {
+        return CollectionHelper.isNotEmpty(capabilities); 
     }
 
 }

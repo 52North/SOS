@@ -86,7 +86,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
         return Sets.<SettingDefinition<?, ?>> newHashSet(h2Database, getSpatialFilteringProfileDefiniton(),
-                getTransactionalDefiniton());
+                getTransactionalDefiniton(), getMulitLanguageDefiniton());
     }
 
     @Override

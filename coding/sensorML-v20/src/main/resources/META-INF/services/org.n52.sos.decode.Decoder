@@ -1,0 +1,5 @@
+org.n52.sos.decode.SensorMLDecoderV20
+org.n52.sos.decode.SweCommonDecoderV20
+org.n52.sos.decode.GmlDecoderv321
+org.n52.sos.decode.Iso19139GmdDecoder
+org.n52.sos.decode.Iso19139GcoDecoder

@@ -122,7 +122,10 @@ public abstract class AbstractGML implements Serializable{
      * @return Identifier of this abstract feature
      */
     public String getIdentifier() {
-        return getIdentifierCodeWithAuthority().getValue();
+        if (isSetIdentifier()) {
+            return getIdentifierCodeWithAuthority().getValue();
+        }
+        return null;
     }
 
     /**
@@ -319,5 +322,12 @@ public abstract class AbstractGML implements Serializable{
      */
     public boolean isReferenced() {
         return isSetGmlID() && gmlId.startsWith(Constants.NUMBER_SIGN_STRING);
+    }
+    
+    public void copyTo(AbstractGML copyOf) {
+        copyOf.setDescription(getDescription());
+        copyOf.setGmlId(getGmlId());
+        copyOf.setIdentifier(getIdentifierCodeWithAuthority());
+        copyOf.setName(getName());
     }
 }

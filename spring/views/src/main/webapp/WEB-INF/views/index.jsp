@@ -49,16 +49,16 @@
 	<th style="padding:3px;">Name</th><th style="padding:3px;">Organisation</th>
 </tr>
 <tr>
-	<td style="padding:3px;">Carsten Hollmann</td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
+	<td style="padding:3px;"><a href="http://52north.org/about/52-north-team/25-carsten-hollmann" title="52&deg;North Carsten Hollmann">Carsten Hollmann</a></td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
 </tr>
 <tr>
-	<td style="padding:3px;">Eike Hinderk J&uuml;rrens</td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
+	<td style="padding:3px;"><a href="http://52north.org/about/52-north-team/14-eike-hinderk-juerrens" title="52&deg;North Eike Hinderk J&uuml;rrens">Eike Hinderk J&uuml;rrens</a></td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
 </tr>
 <tr>
-	<td style="padding:3px;">Christian Autermann</td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
+	<td style="padding:3px;"><a href="http://52north.org/about/52-north-team/30-autermann-christian">Christian Autermann</a></td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
 </tr>
 <tr>
-	<td style="padding:3px;">Christoph Stasch</td><td style="padding:3px;"><a href="http://www.uni-muenster.de/Geoinformatics/en/index.html" title="IfGI">Institute for Geoinformatics (IfGI)</a></td>
+	<td style="padding:3px;"><a href="http://52north.org/about/52-north-team/31-stasch-christoph" title="52&deg;North Christoph Stasch">Christoph Stasch</a></td><td style="padding:3px;"><a href="http://www.uni-muenster.de/Geoinformatics/en/index.html" title="IfGI">Institute for Geoinformatics (IfGI)</a></td>
 </tr>
 <tr>
 	<td style="padding:3px;">Shane StClair</td><td style="padding:3px;"><a href="http://www.axiomalaska.com/" title="Axiom Alaska">Axiom Consulting &amp; Design</a></td>

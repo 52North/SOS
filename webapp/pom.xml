@@ -542,6 +542,18 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                        	<execution>
+                        		<phase>install</phase>
+                        		<goals>
+                        			<goal>single</goal>
+                        		</goals>
+                        		<configuration>
+                        			<finalName>52n-sensorweb-sos-${project.version}</finalName>
+                        			<appendAssemblyId>false</appendAssemblyId>
+                        		</configuration>
+                        	</execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -556,6 +568,7 @@
                 </dependency>
             </dependencies>
         </profile>
+
         <!-- Profile for deploy SOS -->
         <profile>
 			<id>deploy</id>

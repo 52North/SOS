@@ -6,7 +6,7 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
  
-  Changes since last Release
+  Release 52n-sensorweb-sos-4.2.0
 ==================================
 
  --- New features ---
@@ -87,7 +87,7 @@ RELEASE NOTES
     * Issue #191: JDBC string SQL server: optional instance parameter is required in our impelementation
       * https://github.com/52North/SOS/pull/193
    
-  Release 52n-sos-4.1.5
+  Release 52n-sensorweb-sos-4.1.5
 ==================================
 
  --- New features ---
@@ -102,7 +102,7 @@ RELEASE NOTES
        * The SOS does not set the procedureDescriptionFormat to the sensor description before the SensorML 1.0.1 to WML 2.0 
          converter is called which leads to an error in the converter.
   
-  Release 52n-sos-4.1.4
+  Release 52n-sensorweb-sos-4.1.4
 ==================================
 
  --- New features ---
@@ -116,7 +116,7 @@ RELEASE NOTES
     * Fix problem with query for Spatial Filtering Profile envelope for database that do not support the spatial extent function.
       * https://github.com/52North/SOS/pull/161
 
-  Release 52n-sos-4.1.3
+  Release 52n-sensorweb-sos-4.1.3
 ==================================
 
  --- New features ---
@@ -130,7 +130,7 @@ RELEASE NOTES
  --- Fixed bugs ---
    
       
-  Release 52n-sos-4.1.2
+  Release 52n-sensorweb-sos-4.1.2
 ==================================
 
  --- New features ---
@@ -143,7 +143,7 @@ RELEASE NOTES
        * https://github.com/52North/SOS/issues/149  
  
  
- Release 52n-sos-4.1.1
+ Release 52n-sensorweb-sos-4.1.1
 ==================================
 
  --- New features ---
@@ -158,7 +158,7 @@ RELEASE NOTES
      * Performance issue for first/latest GetObservation with series concept
 
 
-Release 52n-sos-4.1
+Release 52n-sensorweb-sos-4.1
 ==================================
 
  --- New features ---
@@ -284,7 +284,7 @@ Release 52n-sos-4.1
 	  * https://github.com/52North/SOS/commit/286cd8d166e3bfd95b936aec4d9ad4d487aa800b
  
  
-Release 52n-sos-4.0.1
+Release 52n-sensorweb-sos-4.0.1
 ==================================
 
  --- New features ---
@@ -297,7 +297,7 @@ Release 52n-sos-4.0.1
     * Add missing setting of namedQuery parameter
 
 
-Release 52n-sos-4.0.0
+Release 52n-sensorweb-sos-4.0.0
 ==================================
 
  --- New features ---
@@ -339,7 +339,7 @@ Release 52n-sos-4.0.0
                  Command: create sequence public.codespaceId_seq
     * [Bug 1005] Spatial Filtering Profile filtering does not work after refactoring the Hibernate GetObservation request processing (r22393)
     
-Release 52n-sos-4.0.0-RC6
+Release 52n-sensorweb-sos-4.0.0-RC6
 ==================================
 
  --- New features ---
@@ -355,7 +355,7 @@ Release 52n-sos-4.0.0-RC6
 
     * [Bug 975] NPE in TimeInstant.compareTo() when time value is null
 
-Release 52n-sos-4.0.0-RC5
+Release 52n-sensorweb-sos-4.0.0-RC5
 ==================================
 
  --- New features ---
@@ -375,7 +375,7 @@ Release 52n-sos-4.0.0-RC5
     * [Bug 951] JSON GetObservation with no temporal filters throws a NPE
 
 
-Release 52n-sos-4.0.0-RC4
+Release 52n-sensorweb-sos-4.0.0-RC4
 ==================================
 
  --- New features ---
@@ -395,7 +395,7 @@ Release 52n-sos-4.0.0-RC4
     * [Bug 964] KVP requests should require the service parameter
     * [Bug 965] KVP: The  position after decimal point of spatial filter values are ignored
 
-Release 52n-sos-4.0.0-RC3
+Release 52n-sensorweb-sos-4.0.0-RC3
 ==================================
 
  --- New features ---
@@ -410,7 +410,7 @@ Release 52n-sos-4.0.0-RC3
 
     * Double call of om:result element content creation
 
-Release 52n-sos-4.0.0-RC2
+Release 52n-sensorweb-sos-4.0.0-RC2
 ==================================
 
  --- New features ---
@@ -427,7 +427,7 @@ Release 52n-sos-4.0.0-RC2
     * [Bug 942] NPE when inserting external referenced feature
         * NPE when a referenced featureOfInterest (no geometry) was inserted via InsertObservation and the feature does not exists in the SOS 
 
-Release 52n-sos-4.0.0-RC1
+Release 52n-sensorweb-sos-4.0.0-RC1
 ==================================
 
  --- New features ---
@@ -463,7 +463,7 @@ Release 52n-sos-4.0.0-RC1
     * [Bug 935] - SOS 1.0.0 DescribeSensor request throws invalid outputFormat exception
     * [Bug 941] - CapabilitiesCache setMaxResultTime() and setMinResultTime() changes global phenomenonTime
 
-Release 52n-sos-4.0.0-Beta2
+Release 52n-sensorweb-sos-4.0.0-Beta2
 ===================================
 
 --- New features ---

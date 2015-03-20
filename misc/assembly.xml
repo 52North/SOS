@@ -19,7 +19,7 @@
 				<exclude>**/.project</exclude>
 				<exclude>**/datasource.properties</exclude>
 				<exclude>**/${project.build.directory}/**</exclude>
-				<exclude>**/${catalina.base_IS_UNDEFINED}/**</exclude>
+				<exclude>**/catalina.base_IS_UNDEFINED/**</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet>

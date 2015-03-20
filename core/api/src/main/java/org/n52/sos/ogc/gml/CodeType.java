@@ -58,6 +58,11 @@ public class CodeType {
     public CodeType(final String value) {
         this.value = value;
     }
+    
+    public CodeType(final String value, final String codespace) {
+        setValue(value);
+        setCodeSpace(codespace);
+    }
 
     /**
      * Get value

@@ -110,7 +110,7 @@ public class WaterMLv20SensorMLv101Converter implements Converter<SosProcedureDe
                 for (final AbstractProcess member : sensorML.getMembers()) {
                     // TODO get values and add to obsProcess
                     if (member.isSetIdentifier()) {
-                        observationProcess.setIdentifier(member.getIdentifier());
+                        observationProcess.setIdentifier(member.getIdentifierCodeWithAuthority());
                     }
                     if (member instanceof System) {
                         convertSystemToObservationProcess(observationProcess, (System) member);
@@ -123,7 +123,7 @@ public class WaterMLv20SensorMLv101Converter implements Converter<SosProcedureDe
         } else {
             observationProcess.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_UNKNOWN));
         }
-        observationProcess.setIdentifier(objectToConvert.getIdentifier());
+        observationProcess.setIdentifier(objectToConvert.getIdentifierCodeWithAuthority());
         observationProcess.setDescriptionFormat(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING);
         return observationProcess;
     }
@@ -394,16 +394,21 @@ public class WaterMLv20SensorMLv101Converter implements Converter<SosProcedureDe
     private NamedValue<String> convertSMLFieldToNamedValuePair(final SweField field) {
         if (field.getElement() instanceof SweAbstractSimpleType) {
             final NamedValue<String> namedValueProperty =
-                    getNamedValuePairForSosSweAbstractSimpleType((SweAbstractSimpleType) field.getElement());
-            namedValueProperty.getName().setHref(field.getName());
+                    getNamedValuePairForSosSweAbstractSimpleType((SweAbstractSimpleType) field.getElement(), field.getName().getValue());
+            namedValueProperty.getName().setTitle(field.getName().getValue());
             return namedValueProperty;
         }
         return null;
     }
 
-    private NamedValue<String> getNamedValuePairForSosSweAbstractSimpleType(final SweAbstractSimpleType<?> element) {
+    private NamedValue<String> getNamedValuePairForSosSweAbstractSimpleType(final SweAbstractSimpleType<?> element, String name) {
         final NamedValue<String> namedValueProperty = new NamedValue<String>();
-        final ReferenceType refType = new ReferenceType(element.getDefinition());
+        final ReferenceType refType;
+        if (element.isSetDefinition()) {
+            refType = new ReferenceType(element.getDefinition());
+        } else {
+            refType = new ReferenceType(name);
+        }
         namedValueProperty.setName(refType);
         if (element.isSetValue()) {
             namedValueProperty.setValue(new TextValue(element.getStringValue()));

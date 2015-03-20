@@ -132,8 +132,8 @@ public class SpatialFilteringProfileAdder {
     }
 
     private void init() {
-        this.defaultEPSG = GeometryHandler.getInstance().getDefaultEPSG();
-        this.default3DEPSG = GeometryHandler.getInstance().getDefault3DEPSG();
+        this.defaultEPSG = GeometryHandler.getInstance().getDefaultResponseEPSG();
+        this.default3DEPSG = GeometryHandler.getInstance().getDefaultResponse3DEPSG();
         this.strictSpatialFilteringProfile = ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile();
     }
 
@@ -152,11 +152,7 @@ public class SpatialFilteringProfileAdder {
     private NamedValue<?> createSpatialFilteringProfileParameter(AbstractSpatialFilteringProfile spatialFilteringProfile)
             throws OwsExceptionReport {
         final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
-        final ReferenceType referenceType = new ReferenceType(spatialFilteringProfile.getDefinition());
-        if (spatialFilteringProfile.isSetTitle()) {
-            referenceType.setTitle(spatialFilteringProfile.getTitle());
-        }
-        namedValue.setName(referenceType);
+        namedValue.setName(new ReferenceType(Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE));
         Geometry geometry;
         if (spatialFilteringProfile.isSetLongLat()) {
             final int epsg;
@@ -179,10 +175,9 @@ public class SpatialFilteringProfileAdder {
                 }
             }
         } else {
-            geometry = spatialFilteringProfile.getGeom();
+            geometry = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(spatialFilteringProfile.getGeom());
         }
-        namedValue.setValue(new GeometryValue(GeometryHandler.getInstance()
-                .switchCoordinateAxisOrderIfNeeded(geometry)));
+        namedValue.setValue(new GeometryValue(geometry));
         return namedValue;
     }
 
@@ -225,7 +220,7 @@ public class SpatialFilteringProfileAdder {
         SosEnvelope mergedEnvelope = null;
         for (final SosOffering sosOffering : offeringsForProcedure) {
             final SosEnvelope offeringEnvelope =
-                    getCache().getEnvelopeForOffering(sosOffering.getOfferingIdentifier());
+                    getCache().getEnvelopeForOffering(sosOffering.getIdentifier());
             if (offeringEnvelope != null && offeringEnvelope.isSetEnvelope()) {
                 if (mergedEnvelope == null) {
                     mergedEnvelope = offeringEnvelope;

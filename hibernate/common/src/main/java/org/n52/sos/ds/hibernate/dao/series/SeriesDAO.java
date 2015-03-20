@@ -33,6 +33,8 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
@@ -42,8 +44,10 @@ import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.ProcedureTimeExtrema;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -331,8 +335,7 @@ public class SeriesDAO {
      */
     public Criteria getDefaultSeriesCriteria(Session session) {
         return session.createCriteria(Series.class).add(Restrictions.eq(Series.DELETED, false))
-                .add(Restrictions.eq(Series.PUBLISHED, true))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                .add(Restrictions.eq(Series.PUBLISHED, true)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
     /**
@@ -373,21 +376,28 @@ public class SeriesDAO {
     }
 
     /**
-     * Update series values which will be used by the Timeseries API.
-     * Can be later used by the SOS.
+     * Update series values which will be used by the Timeseries API. Can be
+     * later used by the SOS.
      * 
-     * @param series Series object
-     * @param hObservation Observation object
-     * @param session Hibernate session
+     * @param series
+     *            Series object
+     * @param hObservation
+     *            Observation object
+     * @param session
+     *            Hibernate session
      */
     public void updateSeriesWithFirstLatestValues(Series series, AbstractObservation hObservation, Session session) {
         boolean minChanged = false;
         boolean maxChanged = false;
-        if (!series.isSetFirstTimeStamp() || (series.isSetFirstTimeStamp() && series.getFirstTimeStamp().after(hObservation.getPhenomenonTimeStart()))) {
+        if (!series.isSetFirstTimeStamp()
+                || (series.isSetFirstTimeStamp() && series.getFirstTimeStamp().after(
+                        hObservation.getPhenomenonTimeStart()))) {
             minChanged = true;
             series.setFirstTimeStamp(hObservation.getPhenomenonTimeStart());
         }
-        if (!series.isSetLastTimeStamp() || (series.isSetLastTimeStamp() && series.getLastTimeStamp().before(hObservation.getPhenomenonTimeEnd()))) {
+        if (!series.isSetLastTimeStamp()
+                || (series.isSetLastTimeStamp() && series.getLastTimeStamp().before(
+                        hObservation.getPhenomenonTimeEnd()))) {
             maxChanged = true;
             series.setLastTimeStamp(hObservation.getPhenomenonTimeEnd());
         }
@@ -408,33 +418,62 @@ public class SeriesDAO {
         session.flush();
     }
 
-	/**
-	 * Check {@link Series} if the deleted observation time stamp corresponds to
-	 * the first/last series time stamp
-	 * 
-	 * @param series
-	 *            Series to update
-	 * @param observation
-	 *            Deleted observation
-	 * @param session
-	 *            Hibernate session
-	 */
-	public void updateSeriesAfterObservationDeletion(Series series, SeriesObservation observation, Session session) {
-		SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO();
-		if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())) {
-			SeriesObservation firstObservation = seriesObservationDAO.getFirstObservationFor(series, session);
-			series.setFirstTimeStamp(firstObservation.getPhenomenonTimeStart());
-			if (firstObservation instanceof NumericObservation) {
-				series.setFirstNumericValue(((NumericObservation) firstObservation).getValue());
-			}
-		} else if (series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
-			SeriesObservation latestObservation = seriesObservationDAO.getLastObservationFor(series, session);
-			series.setLastTimeStamp(latestObservation.getPhenomenonTimeEnd());
-			if (latestObservation instanceof NumericObservation) {
-				series.setLastNumericValue(((NumericObservation) latestObservation).getValue());
-			}
-		}
-		session.saveOrUpdate(series);
-	}
+    /**
+     * Check {@link Series} if the deleted observation time stamp corresponds to
+     * the first/last series time stamp
+     * 
+     * @param series
+     *            Series to update
+     * @param observation
+     *            Deleted observation
+     * @param session
+     *            Hibernate session
+     */
+    public void updateSeriesAfterObservationDeletion(Series series, SeriesObservation observation, Session session) {
+        SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO();
+        if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())) {
+            SeriesObservation firstObservation = seriesObservationDAO.getFirstObservationFor(series, session);
+            if (firstObservation != null) {
+                series.setFirstTimeStamp(firstObservation.getPhenomenonTimeStart());
+                if (firstObservation instanceof NumericObservation) {
+                    series.setFirstNumericValue(((NumericObservation) firstObservation).getValue());
+                }
+            } else {
+                series.setFirstTimeStamp(null);
+                series.setFirstNumericValue(null);
+            }
+        } 
+        if (series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
+            SeriesObservation latestObservation = seriesObservationDAO.getLastObservationFor(series, session);
+            if (latestObservation != null) {
+                series.setLastTimeStamp(latestObservation.getPhenomenonTimeEnd());
+                if (latestObservation instanceof NumericObservation) {
+                    series.setLastNumericValue(((NumericObservation) latestObservation).getValue());
+                }
+            } else {
+                series.setLastTimeStamp(null);
+                series.setLastNumericValue(null);
+            }
+        }
+        session.saveOrUpdate(series);
+    }
+
+    public ProcedureTimeExtrema getProcedureTimeExtrema(Session session, String procedure) {
+        Criteria c = getDefaultSeriesCriteria(session);
+        addProcedureToCriteria(c, procedure);
+        ProjectionList projectionList = Projections.projectionList();
+        projectionList.add(Projections.min(Series.FIRST_TIME_STAMP));
+        projectionList.add(Projections.max(Series.LAST_TIME_STAMP));
+        c.setProjection(projectionList);
+        LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}", HibernateHelper.getSqlString(c));
+        Object[] result = (Object[]) c.uniqueResult();
+
+        ProcedureTimeExtrema pte = new ProcedureTimeExtrema();
+        if (result != null) {
+            pte.setMinTime(DateTimeHelper.makeDateTime(result[0]));
+            pte.setMaxTime(DateTimeHelper.makeDateTime(result[1]));
+        }
+        return pte;
+    }
 
 }

@@ -29,10 +29,14 @@
 package org.n52.sos.ogc.sensorML;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.n52.sos.ogc.gml.CodeType;
+import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
+import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.Constants;
 
 /**
  * @since 4.0.0
@@ -40,9 +44,7 @@ import org.n52.sos.ogc.sensorML.elements.SmlIo;
  */
 public class AbstractProcess extends AbstractSensorML {
 
-    private List<String> descriptions = new ArrayList<String>(0);
-
-    private List<CodeType> names = new ArrayList<CodeType>(0);
+    private static final long serialVersionUID = 90768395878987095L;
 
     private List<SmlIo<?>> inputs = new ArrayList<SmlIo<?>>(0);
 
@@ -50,26 +52,34 @@ public class AbstractProcess extends AbstractSensorML {
 
     private List<String> parameters = new ArrayList<String>(0);
 
-    public List<String> getDescriptions() {
-        return descriptions;
-    }
-
     public AbstractProcess setDescriptions(final List<String> descriptions) {
-        this.descriptions = descriptions;
+        if (descriptions != null) {
+            if (descriptions.size() == 1) {
+                setDescription(descriptions.iterator().next());
+            } else {
+                setDescription(Arrays.toString(descriptions.toArray(new String[descriptions.size()])));
+            }
+        }
         return this;
     }
 
     public AbstractProcess addDescription(final String description) {
-        descriptions.add(description);
+        if (isSetDescription()) {
+            setDescription(new StringBuilder(getDescription()).append(Constants.COMMA_SPACE_STRING)
+                    .append(description).toString());
+        } else {
+            setDescription(description);
+        }
+
         return this;
     }
 
     public List<CodeType> getNames() {
-        return names;
+        return getName();
     }
 
     public AbstractProcess setNames(final List<CodeType> names) {
-        this.names = names;
+        setName(names);
         return this;
     }
 
@@ -100,12 +110,8 @@ public class AbstractProcess extends AbstractSensorML {
         return this;
     }
 
-    public boolean isSetDescriptions() {
-        return descriptions != null && !descriptions.isEmpty();
-    }
-
-    public boolean isSetNames() {
-        return names != null && !names.isEmpty();
+    public boolean isSetName() {
+        return CollectionHelper.isNotEmpty(getName());
     }
 
     public boolean isSetInputs() {
@@ -121,8 +127,30 @@ public class AbstractProcess extends AbstractSensorML {
     }
 
     public AbstractProcess addName(final CodeType name) {
-        names.add(name);
+        super.addName(name);
         return this;
+    }
+    
+    protected void checkAndSetChildProcedures(final List<SmlComponent> components) {
+        if (components != null) {
+            for (final SmlComponent component : components) {
+                checkAndSetChildProcedures(component);
+            }
+        }
+    }
+
+    protected void checkAndSetChildProcedures(final SmlComponent component) {
+        if (component != null && component.isSetName()
+                && component.getName().contains(SensorMLConstants.ELEMENT_NAME_CHILD_PROCEDURES)) {
+            addChildProcedure(component.getProcess());
+        }
+    }
+    
+    public void copyTo(AbstractProcess copyOf) {
+        super.copyTo(copyOf);
+        copyOf.setInputs(getInputs());
+        copyOf.setOutputs(getOutputs());
+        copyOf.setParameters(getParameters());
     }
 
 }

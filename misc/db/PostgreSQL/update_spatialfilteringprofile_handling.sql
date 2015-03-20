@@ -27,8 +27,8 @@
 -- Public License for more details.
 --
 
-UPDATE observation SET samplingGeometry = spf.geom FROM spatialFilteringProfile spf WHERE observationId = spf.observation;
+UPDATE public.observation SET samplingGeometry = spf.geom FROM public.spatialFilteringProfile spf WHERE observationId = spf.observation;
 
-DROP TABLE spatialFilteringProfile;
+DROP TABLE public.spatialFilteringProfile;
 
-DROP sequence spatialFilteringProfileId_seq;
+DROP sequence public.spatialFilteringProfileId_seq;

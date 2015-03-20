@@ -32,7 +32,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.n52.sos.coding.json.JSONConstants;
-import org.n52.sos.coding.json.JSONUtils;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.om.OmConstants;
@@ -61,6 +60,7 @@ import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.ogc.swe.simpleType.SweTime;
+import org.n52.sos.util.JSONUtils;
 import org.n52.sos.util.OMHelper;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -98,12 +98,13 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
 
     private void encodeIdentifier(OmObservation o, ObjectNode json) {
         if (o.isSetIdentifier()) {
-            json.put(JSONConstants.IDENTIFIER, encodeCodeWithAuthority(o.getIdentifier()));
+            json.put(JSONConstants.IDENTIFIER, encodeCodeWithAuthority(o.getIdentifierCodeWithAuthority()));
         }
     }
 
     private void encodeProcedure(OmObservation o, ObjectNode json) {
-        json.put(JSONConstants.PROCEDURE, o.getObservationConstellation().getProcedure().getIdentifier());
+        json.put(JSONConstants.PROCEDURE,
+                 o.getObservationConstellation().getProcedure().getIdentifier());
     }
 
     private void encodeObservableProperty(OmObservation o, ObjectNode json) {

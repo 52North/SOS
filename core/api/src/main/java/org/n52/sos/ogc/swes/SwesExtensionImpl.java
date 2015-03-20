@@ -28,6 +28,9 @@
  */
 package org.n52.sos.ogc.swes;
 
+import org.n52.sos.ogc.swe.SweConstants;
+import org.n52.sos.util.StringHelper;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
@@ -35,10 +38,46 @@ package org.n52.sos.ogc.swes;
  * @since 4.0.0
  */
 public class SwesExtensionImpl<T> implements SwesExtension<T> {
+    
+    private String namespace = SweConstants.NS_SWE_20;
+    
+    private String identifier;
 
     private T value;
 
     private String definition;
+
+    @Override
+    public String getNamespace() {
+        return namespace;
+    }
+
+    @Override
+    public SwesExtension<T> setNamespace(String namespace) {
+        this.namespace = namespace;
+        return this;
+    }
+
+    @Override
+    public boolean isSetNamespace() {
+        return StringHelper.isNotEmpty(getNamespace());
+    }
+
+    @Override
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    @Override
+    public SwesExtension<T> setIdentifier(String identifier) {
+        this.identifier = identifier;
+        return this;
+    }
+
+    @Override
+    public boolean isSetIdentifier() {
+        return StringHelper.isNotEmpty(getIdentifier());
+    }
 
     @Override
 	public String getDefinition() {
@@ -49,6 +88,11 @@ public class SwesExtensionImpl<T> implements SwesExtension<T> {
 	public SwesExtension<T> setDefinition(final String definition) {
         this.definition = definition;
         return this;
+    }
+
+    @Override
+    public boolean isSetDefinition() {
+        return StringHelper.isNotEmpty(getDefinition());
     }
 
     @Override

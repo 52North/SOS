@@ -47,7 +47,7 @@ public abstract class AbstractDeleteSensorDAO extends AbstractOperationDAO {
     @Override
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
-        opsMeta.addPossibleValuesParameter(Sos2Constants.DeleteSensorParams.procedure, getCache().getProcedures());
+        addProcedureParameter(opsMeta);
     }
 
     public abstract DeleteSensorResponse deleteSensor(DeleteSensorRequest request) throws OwsExceptionReport;

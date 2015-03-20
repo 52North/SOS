@@ -28,7 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.create;
 
+import java.util.Locale;
+
 import org.hibernate.Session;
+
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
@@ -40,6 +43,6 @@ import com.google.common.base.Predicate;
  */
 public interface DescriptionCreationStrategy
         extends Predicate<Procedure> {
-    SosProcedureDescription create(Procedure p, Session s)
+    SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport;
 }

@@ -62,8 +62,6 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.TextObservation;
-import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ogc.gml.time.TimePeriod;
@@ -381,7 +379,6 @@ public class ObservationDAO extends AbstractObservationDAO {
         addFeatureOfInterestRestrictionToObservationCriteria(criteria, featureOfInterest);
         return criteria;
     }
-
     @SuppressWarnings("unchecked")
     public Collection<String> getObservationIdentifiers(String procedureIdentifier, Session session) {
         Criteria criteria =
@@ -562,10 +559,12 @@ public class ObservationDAO extends AbstractObservationDAO {
        return getSpatialFilteringProfileEnvelopeForOfferingId(ObservationInfo.class, offeringID, session);
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public List<Geometry> getSamplingGeometries(String feature, Session session) {
         Criteria criteria = session.createCriteria(ObservationInfo.class);
         criteria.createCriteria(AbstractObservation.FEATURE_OF_INTEREST).add(eq(FeatureOfInterest.IDENTIFIER, feature));
+        criteria.add(Restrictions.isNotNull(AbstractObservationTime.SAMPLING_GEOMETRY));
         criteria.addOrder(Order.asc(AbstractObservationTime.PHENOMENON_TIME_START));
         criteria.setProjection(Projections.property(AbstractObservationTime.SAMPLING_GEOMETRY));
         return criteria.list();

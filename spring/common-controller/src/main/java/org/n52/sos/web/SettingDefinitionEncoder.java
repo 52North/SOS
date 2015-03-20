@@ -34,38 +34,41 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionGroup;
 import org.n52.sos.config.SettingType;
+import org.n52.sos.config.SettingValue;
+import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.ds.Datasource;
+import org.n52.sos.exception.JSONException;
+import org.n52.sos.i18n.MultilingualString;
+import org.n52.sos.i18n.json.I18NJsonEncoder;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.util.JSONUtils;
 
-/**
- * TODO JavaDoc
- * 
- * @author Christian Autermann <c.autermann@52north.org>
- * 
- * @since 4.0.0
- */
-/*
- * this class contains unnecessary raw types as the OpenJDK 1.6.0 comiler will
- * fail on wrong incompatiple type errors
- */
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class SettingDefinitionEncoder {
+    private final JsonNodeFactory nodeFactory = JSONUtils.nodeFactory();
+
     public Map<SettingDefinitionGroup, Set<SettingDefinition>> sortByGroup(Set<SettingDefinition<?, ?>> defs) {
-        Map<SettingDefinitionGroup, Set<SettingDefinition>> map =
-                new HashMap<SettingDefinitionGroup, Set<SettingDefinition>>();
+
+        Map<SettingDefinitionGroup, Set<SettingDefinition>> map = new HashMap<>();
         for (SettingDefinition def : defs) {
             SettingDefinitionGroup group = def.hasGroup() ? def.getGroup() : Datasource.ADVANCED_GROUP;
             Set<SettingDefinition> groupDefs = map.get(group);
             if (groupDefs == null) {
-                groupDefs = new HashSet<SettingDefinition>();
+                groupDefs = new HashSet<>();
                 map.put(group, groupDefs);
             }
             groupDefs.add(def);
@@ -73,21 +76,23 @@ public class SettingDefinitionEncoder {
         return map;
     }
 
-    public JSONObject encode(Map<SettingDefinitionGroup, Set<SettingDefinition>> grouped) throws JSONException {
-        JSONArray sections = new JSONArray();
-        List<SettingDefinitionGroup> sortedGroups = new ArrayList<SettingDefinitionGroup>(grouped.keySet());
+    public ObjectNode encode(Map<SettingDefinitionGroup, Set<SettingDefinition>> grouped) throws JSONException {
+        ObjectNode json = nodeFactory.objectNode();
+        ArrayNode sections = json.putArray(JSONConstants.SECTIONS_KEY);
+        List<SettingDefinitionGroup> sortedGroups = new ArrayList<>(grouped.keySet());
         Collections.sort(sortedGroups);
         for (SettingDefinitionGroup group : sortedGroups) {
-            sections.put(new JSONObject().put(JSONConstants.TITLE_KEY, group.getTitle())
-                    .put(JSONConstants.DESCRIPTION_KEY, group.getDescription())
-                    .put(JSONConstants.SETTINGS_KEY, encode(grouped.get(group))));
+            ObjectNode jgroup = sections.addObject();
+            jgroup.put(JSONConstants.TITLE_KEY, group.getTitle());
+            jgroup.put(JSONConstants.DESCRIPTION_KEY, group.getDescription());
+            jgroup.put(JSONConstants.SETTINGS_KEY, encode(grouped.get(group)));
         }
-        return new JSONObject().put(JSONConstants.SECTIONS_KEY, sections);
+        return json;
     }
 
-    public JSONObject encode(Set<SettingDefinition> settings) throws JSONException {
-        JSONObject j = new JSONObject();
-        List<SettingDefinition> sorted = new ArrayList<SettingDefinition>(settings);
+    public ObjectNode encode(Set<SettingDefinition> settings) throws JSONException {
+        ObjectNode j = nodeFactory.objectNode();
+        List<SettingDefinition> sorted = new ArrayList<>(settings);
         Collections.sort(sorted);
         for (SettingDefinition def : sorted) {
             j.put(def.getKey(), encode(def));
@@ -95,12 +100,12 @@ public class SettingDefinitionEncoder {
         return j;
     }
 
-    public JSONObject encode(SettingDefinition def) throws JSONException {
-        JSONObject j =
-                new JSONObject().put(JSONConstants.TITLE_KEY, def.getTitle())
-                        .put(JSONConstants.DESCRIPTION_KEY, def.getDescription())
-                        .put(JSONConstants.TYPE_KEY, getType(def)).put(JSONConstants.REQUIRED_KEY, !def.isOptional())
-                        .put(JSONConstants.DEFAULT, def.hasDefaultValue() ? encodeValue(def) : null);
+    public ObjectNode encode(SettingDefinition def) throws JSONException {
+        ObjectNode j = nodeFactory.objectNode();
+        j.put(JSONConstants.TITLE_KEY, def.getTitle());
+        j.put(JSONConstants.DESCRIPTION_KEY, def.getDescription());
+        j.put(JSONConstants.TYPE_KEY, getType(def)).put(JSONConstants.REQUIRED_KEY, !def.isOptional());
+        j.put(JSONConstants.DEFAULT, def.hasDefaultValue() ? encodeDefaultValue(def): null);
 
         if (def.getType() == SettingType.INTEGER && def instanceof IntegerSettingDefinition) {
             IntegerSettingDefinition iDef = (IntegerSettingDefinition) def;
@@ -111,6 +116,13 @@ public class SettingDefinitionEncoder {
             if (iDef.hasMaximum()) {
                 j.put(JSONConstants.MAXIMUM_KEY, iDef.getMaximum());
                 j.put(JSONConstants.MAXIMUM_EXCLUSIVE_KEY, iDef.isExclusiveMaximum());
+            }
+        }
+        if (def.getType() == SettingType.CHOICE && def instanceof ChoiceSettingDefinition) {
+            ChoiceSettingDefinition cDef = (ChoiceSettingDefinition) def;
+            ObjectNode options = j.putObject(JSONConstants.OPTIONS_KEY);
+            for (Entry<String, String> option : cDef.getOptions().entrySet()) {
+                options.put(option.getKey(), option.getValue());
             }
         }
         return j;
@@ -124,27 +136,51 @@ public class SettingDefinitionEncoder {
             return JSONConstants.NUMBER_TYPE;
         case BOOLEAN:
             return JSONConstants.BOOLEAN_TYPE;
+        case TIMEINSTANT:
         case FILE:
         case STRING:
         case URI:
             return JSONConstants.STRING_TYPE;
+        case MULTILINGUAL_STRING:
+            return JSONConstants.MULTILINGUAL_TYPE;
+        case CHOICE:
+            return JSONConstants.CHOICE_TYPE;
         default:
             throw new IllegalArgumentException(String.format("Unknown Type %s", def.getType()));
         }
     }
 
-    private Object encodeValue(SettingDefinition def) {
-        switch (def.getType()) {
-        case FILE:
-        case URI:
-            return def.getDefaultValue().toString();
-        case BOOLEAN:
-        case INTEGER:
-        case NUMERIC:
-        case STRING:
-            return def.getDefaultValue();
-        default:
-            throw new IllegalArgumentException(String.format("Unknown Type %s", def.getType()));
+    private JsonNode encodeDefaultValue(SettingDefinition def) throws JSONException {
+        return encodeValue(def.getType(), def.getDefaultValue());
+    }
+
+    public JsonNode encodeValue(SettingValue def) throws JSONException {
+        return encodeValue(def.getType(), def.getValue());
+    }
+
+    private JsonNode encodeValue(SettingType type, Object value)
+            throws IllegalArgumentException {
+        if (value == null) {
+            return nodeFactory.nullNode();
+        }
+        switch (type) {
+            case TIMEINSTANT:
+                return nodeFactory.textNode(DateTimeHelper.format((TimeInstant) value));
+            case FILE:
+            case URI:
+            case CHOICE:
+            case STRING:
+                return nodeFactory.textNode(String.valueOf(value));
+            case BOOLEAN:
+                return nodeFactory.booleanNode((Boolean) value);
+            case INTEGER:
+                return nodeFactory.numberNode((Integer) value);
+            case NUMERIC:
+                return nodeFactory.numberNode((Double) value);
+            case MULTILINGUAL_STRING:
+                return new I18NJsonEncoder().encode((MultilingualString) value);
+            default:
+                throw new IllegalArgumentException(String.format("Unknown Type %s", type));
         }
     }
 }

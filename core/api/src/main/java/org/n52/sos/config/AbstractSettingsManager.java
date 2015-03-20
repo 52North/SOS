@@ -52,6 +52,10 @@ import org.n52.sos.encode.ResponseFormatKey;
 import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.SettingsChangeEvent;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesKey;
+import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesRepository;
+import org.n52.sos.ogc.swes.OfferingExtensionKey;
+import org.n52.sos.ogc.swes.OfferingExtensionRepository;
 import org.n52.sos.request.operator.RequestOperatorKey;
 import org.n52.sos.request.operator.RequestOperatorRepository;
 import org.n52.sos.service.Configurator;
@@ -357,7 +361,35 @@ public abstract class AbstractSettingsManager extends SettingsManager {
             BindingRepository.getInstance().setActive(bk, active);
         }
     }
+    
+    @Override
+    public void setActive(OfferingExtensionKey oek, boolean active) throws ConnectionProviderException {
+        setActive(oek, active, true);
+    }
+    
+    @Override
+    public void setActive(OfferingExtensionKey oek, boolean active, boolean updateRepository) throws ConnectionProviderException {
+        LOG.debug("Setting status of {} to {}", oek, active);
+        setOfferingExtensionStatus(oek, active);
+        if (updateRepository && OfferingExtensionRepository.getInstance() != null) {
+            OfferingExtensionRepository.getInstance().setActive(oek, active);
+        }
+    }
 
+    @Override
+    public void setActive(OwsExtendedCapabilitiesKey oeck, boolean active) throws ConnectionProviderException {
+        setActive(oeck, active, true);
+    }
+    
+    @Override
+    public void setActive(OwsExtendedCapabilitiesKey oeck, boolean active, boolean updateRepository) throws ConnectionProviderException {
+        LOG.debug("Setting status of {} to {}", oeck, active);
+        setOwsExtendedCapabilitiesStatus(oeck, active);
+        if (updateRepository && OwsExtendedCapabilitiesRepository.getInstance() != null) {
+            OwsExtendedCapabilitiesRepository.getInstance().setActive(oeck, active);
+        }
+    }
+    
     /**
      * @return all saved setting values
      * 
@@ -475,6 +507,10 @@ public abstract class AbstractSettingsManager extends SettingsManager {
      * @see #setActive(org.n52.sos.binding.BindingKey, boolean)
      */
     protected abstract void setBindingStatus(BindingKey bk, boolean active) throws ConnectionProviderException;
+    
+    protected abstract void setOfferingExtensionStatus(OfferingExtensionKey oek, boolean active) throws ConnectionProviderException;
+    
+    protected abstract void setOwsExtendedCapabilitiesStatus(OwsExtendedCapabilitiesKey oeck, boolean active) throws ConnectionProviderException;
 
     private class ConfigurableObject {
         private final Method method;

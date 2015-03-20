@@ -29,6 +29,9 @@
 package org.n52.sos.ogc.swe;
 
 import java.util.List;
+import java.util.Set;
+
+import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 
 /**
  * @since 4.0.0
@@ -75,5 +78,8 @@ public interface DataRecord {
      *         if not found.
      */
     int getFieldIndexByIdentifier(String fieldNameOrElementDefinition);
+
+    @SuppressWarnings("rawtypes")
+    Set<SweAbstractSimpleType<?>> getSweAbstractSimpleTypeFromFields(Class clazz);
 
 }

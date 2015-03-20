@@ -28,7 +28,6 @@
  */
 package org.n52.sos.decode;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -50,6 +49,7 @@ import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.OwsExceptionCode;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.GmlMeasureType;
 import org.n52.sos.ogc.gml.ReferenceType;
@@ -247,16 +247,16 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
             namedValue.setValue((GeometryValue) value);
             return namedValue;
         } else if (value instanceof QuantityValue) {
-            NamedValue<BigDecimal> namedValue = new NamedValue<BigDecimal>();
+            NamedValue<Double> namedValue = new NamedValue<Double>();
             namedValue.setValue((QuantityValue) value);
             return namedValue;
         } else if (value instanceof TextValue) {
             NamedValue<String> namedValue = new NamedValue<String>();
             namedValue.setValue((TextValue) value);
             return namedValue;
-        } else if (value instanceof Geometry) {
+        } else if (value instanceof AbstractGeometry) {
             NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
-            namedValue.setValue(new GeometryValue((Geometry) value));
+            namedValue.setValue(new GeometryValue((AbstractGeometry)value));
             return namedValue;
         } else {
             throw new UnsupportedDecoderInputException(this, xmlObject);
@@ -428,7 +428,7 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
             if (decodedObject instanceof ObservationValue) {
                 return (ObservationValue) decodedObject;
             } else if (decodedObject instanceof GmlMeasureType) {
-                SingleObservationValue<BigDecimal> result = new SingleObservationValue<BigDecimal>();
+                SingleObservationValue<Double> result = new SingleObservationValue<Double>();
                 GmlMeasureType measureType = (GmlMeasureType) decodedObject;
                 QuantityValue quantitiyValue = new QuantityValue(measureType.getValue(), measureType.getUnit());
                 result.setValue(quantitiyValue);

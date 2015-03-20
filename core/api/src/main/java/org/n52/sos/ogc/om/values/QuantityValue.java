@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ogc.om.values;
 
-import java.math.BigDecimal;
-
 import org.n52.sos.util.StringHelper;
 
 /**
@@ -38,7 +36,7 @@ import org.n52.sos.util.StringHelper;
  * @since 4.0.0
  * 
  */
-public class QuantityValue implements Value<BigDecimal> {
+public class QuantityValue implements Value<Double> {
     /**
      * serial number
      */
@@ -47,7 +45,7 @@ public class QuantityValue implements Value<BigDecimal> {
     /**
      * Measurement value
      */
-    private BigDecimal value;
+    private Double value;
 
     /**
      * Unit of measure
@@ -60,7 +58,7 @@ public class QuantityValue implements Value<BigDecimal> {
      * @param value
      *            Measurement value
      */
-    public QuantityValue(BigDecimal value) {
+    public QuantityValue(Double value) {
         this(value, null);
     }
 
@@ -72,18 +70,18 @@ public class QuantityValue implements Value<BigDecimal> {
      * @param unit
      *            Unit of measure
      */
-    public QuantityValue(BigDecimal value, String unit) {
+    public QuantityValue(Double value, String unit) {
         this.value = value;
         this.unit = unit;
     }
 
     @Override
-    public void setValue(BigDecimal value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 
     @Override
-    public BigDecimal getValue() {
+    public Double getValue() {
         return value;
     }
 

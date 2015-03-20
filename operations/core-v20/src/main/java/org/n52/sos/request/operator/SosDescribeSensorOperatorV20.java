@@ -32,9 +32,11 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.n52.sos.ds.AbstractDescribeSensorDAO;
+import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
+import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.response.DescribeSensorResponse;
@@ -67,6 +69,7 @@ public class SosDescribeSensorOperatorV20 extends
     @Override
     public DescribeSensorResponse receive(DescribeSensorRequest request) throws OwsExceptionReport {
         return getDao().getSensorDescription(request);
+        // TODO check if sensor description position/location/observedArea should be transformed (CRS support)
     }
 
     @Override
@@ -88,8 +91,7 @@ public class SosDescribeSensorOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            SosHelper.checkProcedureDescriptionFormat(sosRequest.getProcedureDescriptionFormat(),
-                    sosRequest.getService(), sosRequest.getVersion());
+            checkProcedureDescriptionFromat(sosRequest.getProcedureDescriptionFormat(), sosRequest);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -98,11 +100,19 @@ public class SosDescribeSensorOperatorV20 extends
         // OptionNotSupportedException().at(Sos2Constants.DescribeSensorParams.validTime)
         // .withMessage("The requested parameter is not supported by this server!"));
         // }
+        checkExtensions(sosRequest, exceptions);
         exceptions.throwIfNotEmpty();
     }
 
     @Override
     public WSDLOperation getSosOperationDefinition() {
         return WSDLConstants.Operations.DESCRIBE_SENSOR;
+    }
+    
+    private void checkProcedureDescriptionFromat(String procedureDescriptionFormat, DescribeSensorRequest sosRequest) throws MissingParameterValueException, OwsExceptionReport {
+        if (!checkOnlyRequestableProcedureDescriptionFromats(sosRequest.getProcedureDescriptionFormat(), Sos2Constants.DescribeSensorParams.procedureDescriptionFormat)) {
+            SosHelper.checkProcedureDescriptionFormat(sosRequest.getProcedureDescriptionFormat(),
+                    sosRequest.getService(), sosRequest.getVersion());
+        }
     }
 }

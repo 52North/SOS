@@ -38,16 +38,20 @@ import org.n52.sos.ogc.sensorML.elements.SmlComponent;
  * @since 4.0.0
  * 
  */
-public class System extends AbstractComponent {
+public class System extends AbstractComponent implements HasComponents<System> {
+
+    private static final long serialVersionUID = -7628087158818024900L;
 
     private EngineeringCRS spatialReferenceFrame;
 
     private final List<SmlComponent> components = new ArrayList<SmlComponent>(0);
 
+    @Override
     public List<SmlComponent> getComponents() {
         return components;
     }
 
+    @Override
     public System addComponents(final List<SmlComponent> components) {
         if (components != null) {
             checkAndSetChildProcedures(components);
@@ -56,6 +60,7 @@ public class System extends AbstractComponent {
         return this;
     }
 
+    @Override
     public System addComponent(final SmlComponent component) {
         if (component != null) {
             checkAndSetChildProcedures(component);
@@ -64,23 +69,9 @@ public class System extends AbstractComponent {
         return this;
     }
 
+    @Override
     public boolean isSetComponents() {
         return components != null && !components.isEmpty();
-    }
-
-    private void checkAndSetChildProcedures(final List<SmlComponent> components) {
-        if (components != null) {
-            for (final SmlComponent component : components) {
-                checkAndSetChildProcedures(component);
-            }
-        }
-    }
-
-    private void checkAndSetChildProcedures(final SmlComponent component) {
-        if (component != null && component.isSetName()
-                && component.getName().contains(SensorMLConstants.ELEMENT_NAME_CHILD_PROCEDURES)) {
-            addChildProcedure(component.getProcess());
-        }
     }
 
 }

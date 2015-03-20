@@ -88,7 +88,7 @@ public class FeatureCollection extends AbstractFeature implements Iterable<Abstr
     }
 
     public void addMember(AbstractFeature member) {
-        members.put(member.getIdentifier().getValue(), member);
+        members.put(member.getIdentifierCodeWithAuthority().getValue(), member);
     }
 
     /**

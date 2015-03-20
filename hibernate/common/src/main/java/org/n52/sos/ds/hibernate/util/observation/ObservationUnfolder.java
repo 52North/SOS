@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -151,7 +150,7 @@ public class ObservationUnfolder {
                      * observation values
                      */
                     else if (fieldForToken instanceof SweQuantity) {
-                        observedValue = new QuantityValue(new BigDecimal(token));
+                        observedValue = new QuantityValue(Double.parseDouble(token));
                         observedValue.setUnit(((SweQuantity) fieldForToken).getUom());
                     } else if (fieldForToken instanceof SweBoolean) {
                         observedValue = new BooleanValue(Boolean.parseBoolean(token));

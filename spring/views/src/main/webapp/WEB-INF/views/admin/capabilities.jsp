@@ -47,9 +47,9 @@
 
 <script type="text/javascript" src="<c:url value="/static/js/jquery.additions.js" />"></script>
 <script type="text/javascript" src="<c:url value="/static/js/EventMixin.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/js/StaticCapabilitiesController.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/js/OfferingExtensionController.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/js/CapabilitiesExtensionController.js" />"></script>
+<script type="text/javascript" src="<c:url value="/static/js/capabilities/StaticCapabilitiesController.js" />"></script>
+<script type="text/javascript" src="<c:url value="/static/js/capabilities/OfferingExtensionController.js" />"></script>
+<script type="text/javascript" src="<c:url value="/static/js/capabilities/CapabilitiesExtensionController.js" />"></script>
 
 
 <jsp:include page="../common/logotitle.jsp">

@@ -56,6 +56,7 @@ import net.opengis.swe.x20.QuantityRangeType;
 import net.opengis.swe.x20.QuantityType;
 import net.opengis.swe.x20.TextEncodingDocument;
 import net.opengis.swe.x20.TextEncodingType;
+import net.opengis.swe.x20.TextPropertyType;
 import net.opengis.swe.x20.TextType;
 import net.opengis.swe.x20.TimeRangeType;
 import net.opengis.swe.x20.TimeType;
@@ -112,7 +113,7 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
             DataArrayPropertyType.class, DataArrayDocument.class, DataArrayType.class, DataRecordDocument.class,
             DataRecordType.class, CountType.class, QuantityType.class, TextType.class, Coordinate[].class,
             AnyScalarPropertyType[].class, TextEncodingDocument.class, TextEncodingType.class,
-            AbstractDataComponentDocument.class, AbstractDataComponentType.class);
+            AbstractDataComponentDocument.class, AbstractDataComponentType.class, TextPropertyType.class, CountPropertyType.class);
 
     public SweCommonDecoderV20() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -160,6 +161,10 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
             final SweTextEncoding sosTextEncoding = parseTextEncoding(textEncoding);
             sosTextEncoding.setXml(textEncodingDoc.xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
             return sosTextEncoding;
+        } else if (element instanceof TextPropertyType) {
+            return parseAbstractDataComponent(((TextPropertyType)element).getText());
+        } else if (element instanceof CountPropertyType) {
+            return parseAbstractDataComponent(((CountPropertyType)element).getCount());
         } else {
             throw new UnsupportedDecoderInputException(this, element);
         }
@@ -359,7 +364,7 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
         }
         return sosCount;
     }
-
+    
     private SweCountRange parseCountRange(final CountRangeType countRange) throws OwsExceptionReport {
         throw new NotYetSupportedException(SweConstants.EN_COUNT_RANGE);
     }
@@ -464,9 +469,8 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
                 throw new InvalidParameterValueException().at(SweConstants.EN_POSITION).withMessage(
                         "Error when parsing the Coordinates of Position: It must be of type Quantity!");
             }
-            return sosCoordinates;
         }
-        return null;
+        return sosCoordinates;
     }
 
     private List<SweField> parseAnyScalarPropertyTypeArray(final AnyScalarPropertyType[] fieldArray)

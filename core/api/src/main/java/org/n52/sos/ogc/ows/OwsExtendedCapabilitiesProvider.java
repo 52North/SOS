@@ -30,6 +30,8 @@ package org.n52.sos.ogc.ows;
 
 import java.util.Set;
 
+import org.n52.sos.request.GetCapabilitiesRequest;
+
 /**
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * 
@@ -39,10 +41,26 @@ import java.util.Set;
 public interface OwsExtendedCapabilitiesProvider {
 
     /**
-     * Get all {@link OwsExtendedCapabilities} this implementation provides
+     * Get the {@link OwsExtendedCapabilities} for the
+     * {@link GetCapabilitiesRequest}
      * 
-     * @return All provided {@link OwsExtendedCapabilities}
+     * @param request
+     *            Capabilities request
+     * @return Resulting {@link OwsExtendedCapabilities}
+     * @throws OwsExceptionReport
+     *             If an error occurs when creating extended capabilities
      */
-    Set<OwsExtendedCapabilities> getOwsExtendedCapabilities();
+    OwsExtendedCapabilities getOwsExtendedCapabilities(GetCapabilitiesRequest request) throws OwsExceptionReport;
+
+    /**
+     * @param request
+     * @return
+     */
+    boolean hasExtendedCapabilitiesFor(GetCapabilitiesRequest request);
+
+    /**
+     * @return
+     */
+    Set<OwsExtendedCapabilitiesKey> getExtendedCapabilitiesKeyType();
 
 }

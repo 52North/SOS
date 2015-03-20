@@ -42,6 +42,7 @@ import java.util.Stack;
 
 import org.n52.oxf.xml.NcNameResolver;
 import org.n52.sos.binding.Binding;
+import org.n52.sos.binding.BindingConstants;
 import org.n52.sos.binding.BindingRepository;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.encode.Encoder;
@@ -228,7 +229,6 @@ public class SosHelper implements Constants {
         // version
         url.append(getVersionParam(version));
         // procedure
-
         url.append(getParameter(SosConstants.DescribeSensorParams.procedure.name(), procedureId));
         // outputFormat
         if (version.equalsIgnoreCase(Sos1Constants.SERVICEVERSION)) {
@@ -243,14 +243,79 @@ public class SosHelper implements Constants {
         return url.toString();
     }
 
+    public static String getGetObservationKVPRequest(String version) {
+        final StringBuilder url = new StringBuilder();
+        // service URL
+        url.append(getBaseGetUrl(ServiceConfiguration.getInstance().getServiceURL(),
+                BindingConstants.KVP_BINDING_ENDPOINT));
+        // request
+        url.append(getRequest(SosConstants.Operations.GetObservation.name()));
+        // service
+        url.append(getServiceParam());
+        // version
+        url.append(getVersionParam(version));
+        return url.toString();
+    }
+    
+    public static String addKVPOfferingParameterToRequest(String request, String offering) {
+        if (StringHelper.isNotEmpty(offering)) {
+            final StringBuilder url = new StringBuilder(request);
+            url.append(getParameter(SosConstants.GetObservationParams.offering.name(), offering));
+            return url.toString();
+        }
+        return request;
+    }
+
+    public static String addKVPLanguageParameterToRequest(String request, String language) {
+        if (StringHelper.isNotEmpty(language)) {
+            final StringBuilder url = new StringBuilder(request);
+            url.append(getParameter(OWSConstants.AdditionalRequestParams.language.name(), language));
+            return url.toString();
+        }
+        return request;
+    }
+
+    public static String addKVPCrsParameterToRequest(String request, String crs) {
+        if (StringHelper.isNotEmpty(crs)) {
+            final StringBuilder url = new StringBuilder(request);
+            url.append(getParameter(OWSConstants.AdditionalRequestParams.crs.name(), crs));
+            return url.toString();
+        }
+        return request;
+    }
+    
+    public static String getGetCapabilitiesKVPRequest() {
+        final StringBuilder url = new StringBuilder();
+        // service URL
+        url.append(getBaseGetUrl(ServiceConfiguration.getInstance().getServiceURL(),
+                BindingConstants.KVP_BINDING_ENDPOINT));
+        // request
+        url.append(getRequest(SosConstants.Operations.GetCapabilities.name()));
+        // service
+        url.append(getServiceParam());
+        return url.toString();
+    }
+
+    /**
+     * 
+     * Parse the srsName to integer value
+     * 
+     * @param srsName
+     *            the srsName to parse
+     * @return srsName integer value
+     * @throws OwsExceptionReport
+     *             If the srsName can not be parsed
+     * 
+     */
     public static int parseSrsName(final String srsName) throws OwsExceptionReport {
         int srid = -1;
         if (StringHelper.isNotEmpty(srsName) && !"NOT_SET".equalsIgnoreCase(srsName)) {
             final String urnSrsPrefix = getConfiguration().getSrsNamePrefix();
             final String urlSrsPrefix = getConfiguration().getSrsNamePrefixSosV2();
             try {
-                srid = Integer.valueOf(srsName.replace(urnSrsPrefix, Constants.EMPTY_STRING)
-                                              .replace(urlSrsPrefix, Constants.EMPTY_STRING));
+                srid =
+                        Integer.valueOf(srsName.replace(urnSrsPrefix, Constants.EMPTY_STRING).replace(urlSrsPrefix,
+                                Constants.EMPTY_STRING));
             } catch (final NumberFormatException nfe) {
                 throw new InvalidParameterValueException()
                         .causedBy(nfe)
@@ -545,8 +610,7 @@ public class SosHelper implements Constants {
         return new MinMax<String>().setMaximum(Joiner.on(' ').join(envelope.getMaxX(), envelope.getMaxY()))
                 .setMinimum(Joiner.on(' ').join(envelope.getMinX(), envelope.getMinY()));
     }
-    
-    
+
     /**
      * Creates the minimum and maximum values of this envelope in the default
      * EPSG as list.
@@ -560,8 +624,10 @@ public class SosHelper implements Constants {
      */
     public static MinMax<List<String>> getMinMaxFromEnvelopeAsList(final Envelope envelope) {
         // TODO for full 3D support add minz to parameter in setStringValue
-        return new MinMax<List<String>>().setMaximum(Lists.newArrayList(Double.toString(envelope.getMaxX()), Double.toString(envelope.getMaxY())))
-                .setMinimum(Lists.newArrayList(Double.toString(envelope.getMinX()), Double.toString(envelope.getMinY())));
+        return new MinMax<List<String>>().setMaximum(
+                Lists.newArrayList(Double.toString(envelope.getMaxX()), Double.toString(envelope.getMaxY())))
+                .setMinimum(
+                        Lists.newArrayList(Double.toString(envelope.getMinX()), Double.toString(envelope.getMinY())));
     }
 
     public static OmObservableProperty createSosOberavablePropertyFromSosSMLIo(final SmlIo<?> output) {

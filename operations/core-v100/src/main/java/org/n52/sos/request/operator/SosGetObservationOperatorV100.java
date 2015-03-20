@@ -162,7 +162,6 @@ public class SosGetObservationOperatorV100 extends
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-
         if (sosRequest.isSetResultModel()) {
             for (String offering : sosRequest.getOfferings()) {
                 Collection<String> observationTypesForResultModel = getCache().getObservationTypesForOffering(offering);

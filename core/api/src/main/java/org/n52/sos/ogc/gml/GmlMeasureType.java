@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ogc.gml;
 
-import java.math.BigDecimal;
-
 import org.n52.sos.util.StringHelper;
 
 /**
@@ -43,7 +41,7 @@ public class GmlMeasureType {
     /**
      * Measured value
      */
-    private BigDecimal value;
+    private Double value;
 
     /**
      * Unit of measure
@@ -56,7 +54,7 @@ public class GmlMeasureType {
      * @param value
      *            Measured value
      */
-    public GmlMeasureType(BigDecimal value) {
+    public GmlMeasureType(Double value) {
         this(value, null);
     }
 
@@ -68,7 +66,7 @@ public class GmlMeasureType {
      * @param unit
      *            Unit of measure
      */
-    public GmlMeasureType(BigDecimal value, String unit) {
+    public GmlMeasureType(Double value, String unit) {
         this.value = value;
         this.unit = unit;
     }
@@ -77,14 +75,14 @@ public class GmlMeasureType {
      * @param value
      *            Measured value to set
      */
-    public void setValue(BigDecimal value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 
     /**
      * @return Measured value
      */
-    public BigDecimal getValue() {
+    public Double getValue() {
         return value;
     }
 

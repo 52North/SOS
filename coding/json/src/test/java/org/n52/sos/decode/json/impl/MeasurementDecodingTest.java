@@ -37,7 +37,6 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.n52.sos.util.DateTimeHelper.parseIsoString2DateTime;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -146,7 +145,7 @@ public class MeasurementDecodingTest {
     @Test
     public void testIdentifier() {
         assertThat(observation, is(notNullValue()));
-        final CodeWithAuthority cwa = observation.getIdentifier();
+        final CodeWithAuthority cwa = observation.getIdentifierCodeWithAuthority();
         assertThat(cwa, is(notNullValue()));
         assertThat(cwa.getValue(), is(equalTo(IDENTIFIER)));
         assertThat(cwa.getCodeSpace(), is(equalTo(UNKNOWN_CODESPACE)));
@@ -172,7 +171,7 @@ public class MeasurementDecodingTest {
         assertThat(ov.getValue(), is(instanceOf(QuantityValue.class)));
         QuantityValue qv = (QuantityValue) ov.getValue();
         assertThat(qv.getUnit(), is(equalTo("testunit1")));
-        assertThat(qv.getValue(), is(equalTo(new BigDecimal("123123"))));
+        assertThat(qv.getValue(), is(equalTo(new Double("123123"))));
     }
 
     @Test
@@ -242,13 +241,13 @@ public class MeasurementDecodingTest {
 
         final AbstractFeature af1 = sf.getSampledFeatures().get(0);
         assertThat(af1, is(notNullValue()));
-        assertThat(af1.getIdentifier(), is(notNullValue()));
-        assertThat(af1.getIdentifier().getValue(), is(equalTo("sampledFeature1")));
+        assertThat(af1.getIdentifierCodeWithAuthority(), is(notNullValue()));
+        assertThat(af1.getIdentifierCodeWithAuthority().getValue(), is(equalTo("sampledFeature1")));
 
         final AbstractFeature af2 = sf.getSampledFeatures().get(1);
         assertThat(af2, is(notNullValue()));
-        assertThat(af2.getIdentifier(), is(notNullValue()));
-        assertThat(af2.getIdentifier().getValue(), is(equalTo("sampledFeature2")));
+        assertThat(af2.getIdentifierCodeWithAuthority(), is(notNullValue()));
+        assertThat(af2.getIdentifierCodeWithAuthority().getValue(), is(equalTo("sampledFeature2")));
         assertThat(af2.getName(), is(notNullValue()));
         assertThat(af2.getName().size(), is(1));
         assertThat(af2.getName().get(0), is(not(nullValue())));
@@ -262,8 +261,8 @@ public class MeasurementDecodingTest {
 
         final AbstractFeature af3 = sf.getSampledFeatures().get(2);
         assertThat(af3, is(notNullValue()));
-        assertThat(af3.getIdentifier(), is(notNullValue()));
-        assertThat(af3.getIdentifier().getValue(), is(equalTo("sampledFeature3")));
+        assertThat(af3.getIdentifierCodeWithAuthority(), is(notNullValue()));
+        assertThat(af3.getIdentifierCodeWithAuthority().getValue(), is(equalTo("sampledFeature3")));
     }
 
     @Test
@@ -273,9 +272,9 @@ public class MeasurementDecodingTest {
         assertThat(oc, is(notNullValue()));
         final AbstractFeature foi = oc.getFeatureOfInterest();
         assertThat(foi, is(notNullValue()));
-        assertThat(foi.getIdentifier(), is(notNullValue()));
-        assertThat(foi.getIdentifier().getCodeSpace(), is(equalTo(UNKNOWN_CODESPACE)));
-        assertThat(foi.getIdentifier().getValue(), is(equalTo(FEATURE_IDENTIFIER)));
+        assertThat(foi.getIdentifierCodeWithAuthority(), is(notNullValue()));
+        assertThat(foi.getIdentifierCodeWithAuthority().getCodeSpace(), is(equalTo(UNKNOWN_CODESPACE)));
+        assertThat(foi.getIdentifierCodeWithAuthority().getValue(), is(equalTo(FEATURE_IDENTIFIER)));
     }
 
     @Test

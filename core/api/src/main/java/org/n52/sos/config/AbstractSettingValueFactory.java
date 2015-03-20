@@ -29,26 +29,34 @@
 package org.n52.sos.config;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.n52.sos.config.settings.BooleanSettingDefinition;
+import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.settings.FileSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
+import org.n52.sos.config.settings.MultilingualStringSettingDefinition;
 import org.n52.sos.config.settings.NumericSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
+import org.n52.sos.config.settings.TimeInstantSettingDefinition;
 import org.n52.sos.config.settings.UriSettingDefinition;
+import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.exception.ows.concrete.DateTimeParseException;
+import org.n52.sos.i18n.LocaleHelper;
+import org.n52.sos.i18n.MultilingualString;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.util.JSONUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableSet;
 
-/**
- * Abstract implementation that does everything exept object instantiation.
- * <p/>
- * 
- * @author Christian Autermann <c.autermann@52north.org>
- * @since 4.0.0
- */
+
+
 public abstract class AbstractSettingValueFactory implements SettingValueFactory {
 
     private static final Set<String> VALID_FALSE_VALUES = ImmutableSet.of("false", "no", "off", "0");
@@ -116,6 +124,40 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     }
 
     @Override
+    public SettingValue<TimeInstant> newTimeInstantSettingValue(TimeInstantSettingDefinition setting, String stringValue) {
+        return newTimeInstantSettingValueFromGenericDefinition(setting, stringValue);
+    }
+
+    private SettingValue<TimeInstant> newTimeInstantSettingValueFromGenericDefinition(SettingDefinition<?, ?> setting,
+            String stringValue) {
+        return newTimeInstantSettingValue().setValue(parseTimeInstant(stringValue)).setKey(setting.getKey());
+    }
+
+    @Override
+    public SettingValue<MultilingualString> newMultiLingualStringValue(MultilingualStringSettingDefinition setting, String stringValue) {
+        return newMultiLingualStringSettingValueFromGenericDefinition(setting, stringValue);
+    }
+
+    private SettingValue<MultilingualString> newMultiLingualStringSettingValueFromGenericDefinition(SettingDefinition<?, ?> setting, String stringValue) {
+       return newMultiLingualStringSettingValue().setValue(parseMultilingualString(stringValue)).setKey(setting.getKey());
+    }
+
+    @Override
+    public SettingValue<String> newChoiceSettingValue(ChoiceSettingDefinition setting, String stringValue) {
+        return newChoiceSettingValueFromGenericDefinition(setting, stringValue);
+    }
+
+    private SettingValue<String> newChoiceSettingValueFromGenericDefinition(SettingDefinition<?, ?> setting, String stringValue) {
+        ChoiceSettingDefinition def = (ChoiceSettingDefinition) setting;
+        if (!def.hasOption(stringValue)) {
+            throw new ConfigurationException("Invalid choice value");
+        }
+       return newChoiceSettingValue().setValue(stringValue).setKey(setting.getKey());
+    }
+
+
+
+    @Override
     public SettingValue<?> newSettingValue(SettingDefinition<?, ?> setting, String value) {
         switch (setting.getType()) {
         case BOOLEAN:
@@ -130,6 +172,12 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
             return newStringSettingValueFromGenericDefinition(setting, value);
         case URI:
             return newUriSettingValueFromGenericDefinition(setting, value);
+        case TIMEINSTANT:
+            return newTimeInstantSettingValueFromGenericDefinition(setting, value);
+        case MULTILINGUAL_STRING:
+            return newMultiLingualStringSettingValueFromGenericDefinition(setting, value);
+        case CHOICE:
+            return newChoiceSettingValueFromGenericDefinition(setting, value);
         default:
             throw new IllegalArgumentException(String.format("Type %s not supported", setting.getType()));
         }
@@ -138,7 +186,7 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     /**
      * Parses the a string to a {@code Boolean}.
      * <p/>
-     * 
+     *
      * @param stringValue
      *            the string value
      *            <p/>
@@ -164,7 +212,7 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     /**
      * Parses the a string to a {@code File}.
      * <p/>
-     * 
+     *
      * @param stringValue
      *            the string value
      *            <p/>
@@ -180,7 +228,7 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     /**
      * Parses the a string to a {@code Integer}.
      * <p/>
-     * 
+     *
      * @param stringValue
      *            the string value
      *            <p/>
@@ -196,7 +244,7 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     /**
      * Parses the a string to a {@code Double}.
      * <p/>
-     * 
+     *
      * @param stringValue
      *            the string value
      *            <p/>
@@ -212,7 +260,7 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     /**
      * Parses the a string to a {@code URI}.
      * <p/>
-     * 
+     *
      * @param stringValue
      *            the string value
      *            <p/>
@@ -235,7 +283,7 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     /**
      * Parses the a string to a {@code String}.
      * <p/>
-     * 
+     *
      * @param stringValue
      *            the string value
      *            <p/>
@@ -246,6 +294,47 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
      */
     protected String parseString(String stringValue) {
         return nullOrEmpty(stringValue) ? null : stringValue;
+    }
+
+    /**
+     * Parses the a string to a {@code String}.
+     * <p/>
+     *
+     * @param stringValue
+     *            the string value
+     *            <p/>
+     * @return the parsed value
+     *         <p/>
+     * @throws IllegalArgumentException
+     *             if the string value is invalid
+     */
+    protected TimeInstant parseTimeInstant(String stringValue) {
+        if (nullOrEmpty(stringValue)) {
+            return null;
+        } else {
+            try {
+                return (TimeInstant)DateTimeHelper.parseIsoString2DateTime2Time(stringValue);
+            } catch (DateTimeParseException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+    }
+     private MultilingualString parseMultilingualString(String stringValue) {
+        MultilingualString ms = new MultilingualString();
+        if (!nullOrEmpty(stringValue)) {
+            try {
+                JsonNode json = JSONUtils.loadString(stringValue);
+                Iterator<String> it = json.fieldNames();
+                while(it.hasNext()) {
+                    String key = it.next();
+                    String value = json.path(key).asText();
+                    ms.addLocalization(LocaleHelper.fromString(key), value);
+                }
+            } catch (IOException ex) {
+                throw new IllegalArgumentException(String.format("Malformed multilingual string: %s", stringValue));
+            }
+        }
+        return ms;
     }
 
     /**
@@ -266,6 +355,11 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     /**
      * @return a implementation specific instance
      */
+    protected abstract SettingValue<String> newChoiceSettingValue();
+
+    /**
+     * @return a implementation specific instance
+     */
     protected abstract SettingValue<File> newFileSettingValue();
 
     /**
@@ -279,6 +373,16 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     protected abstract SettingValue<Double> newNumericSettingValue();
 
     /**
+     * @return a implementation specific instance
+     */
+    protected abstract SettingValue<TimeInstant> newTimeInstantSettingValue();
+
+    /**
+     * @return a implementation specific instance
+     */
+    protected abstract SettingValue<MultilingualString> newMultiLingualStringSettingValue();
+
+    /**
      * @param stringValue
      *            <p/>
      * @return <code>stringValue == null || stringValue.trim().isEmpty()</code>
@@ -286,4 +390,6 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     protected boolean nullOrEmpty(String stringValue) {
         return stringValue == null || stringValue.trim().isEmpty();
     }
+
+
 }

@@ -33,7 +33,9 @@ import java.util.Map;
 
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.util.CollectionHelper;
 
 /**
@@ -41,7 +43,7 @@ import org.n52.sos.util.CollectionHelper;
  * 
  * @since 4.0.0
  */
-public class GetFeatureOfInterestRequest extends AbstractServiceRequest {
+public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatureOfInterestResponse> {
 
     /**
      * FOI identifiers list
@@ -213,6 +215,11 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest {
 
     public boolean hasNoParameter() {
         return !isSetObservableProperties() && !isSetProcedures() && !isSetTemporalFilters() && !isSetFeatureOfInterestIdentifiers();
+    }
+
+    @Override
+    public GetFeatureOfInterestResponse getResponse() throws OwsExceptionReport {
+        return (GetFeatureOfInterestResponse) new GetFeatureOfInterestResponse().set(this);
     }
 
 }

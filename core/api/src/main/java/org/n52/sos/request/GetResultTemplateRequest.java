@@ -28,14 +28,16 @@
  */
 package org.n52.sos.request;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.response.GetResultTemplateResponse;
 import org.n52.sos.util.StringHelper;
 
 /**
  * @since 4.0.0
  * 
  */
-public class GetResultTemplateRequest extends AbstractServiceRequest {
+public class GetResultTemplateRequest extends AbstractServiceRequest<GetResultTemplateResponse> {
 
     private String offering;
 
@@ -72,6 +74,11 @@ public class GetResultTemplateRequest extends AbstractServiceRequest {
 
     public boolean isSetObservedProperty() {
         return StringHelper.isNotEmpty(getObservedProperty());
+    }
+
+    @Override
+    public GetResultTemplateResponse getResponse() throws OwsExceptionReport {
+        return (GetResultTemplateResponse) new GetResultTemplateResponse().set(this);
     }
 
 }

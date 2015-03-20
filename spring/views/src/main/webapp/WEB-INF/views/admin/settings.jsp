@@ -54,23 +54,10 @@
 </div>
 
 <form id="settings" class="form-horizontal"></form>
-<script type="text/javascript">
-    function overwriteDefaultSettings(settings) {
-    <c:if test="${not empty settings}">
-        <c:set var="search" value='"' />
-        <c:set var="replace" value='\\"' />
-        <c:forEach items="${settings}" var="entry">
-            <c:if test="${not empty entry.value}">
-                setSetting("${entry.key}","${fn:replace(entry.value, search, replace)}", settings);
-            </c:if>
-        </c:forEach>
-    </c:if>
-    }
-</script>
 
 <script type="text/javascript">
     $(function(){
-        $.getJSON('<c:url value="/settingDefinitions.json" />', function(settings) {
+        $.getJSON('<c:url value="/settingDefinitions.json" />', function(settingDefinitions) {
             var $container = $("#settings"),
                 $button = $("<button>").attr("type", "button").addClass("btn btn-info").text("Save");
 
@@ -87,7 +74,7 @@
                 });
             });
 
-            settings.sections.push({
+            settingDefinitions.sections.push({
                 "id": "credentials",
                 "title": "Credentials",
                 "settings": {
@@ -110,7 +97,9 @@
                     }
                 }
             });
-            generateSettings(settings, $container, true);
+
+            var settings = ${settings};
+            generateSettings(settingDefinitions, settings, $container, true);
             $("#service_identification .control-group:first").before("<legend>Standard Settings</legend>");
             $("#service_provider .control-group:first").before("<legend>Standard Settings</legend>");
             $("#service_identification .control-group:last").before("<legend>Extended Settings</legend>");
@@ -121,8 +110,10 @@
                 $("input[name='service.sosUrl']").val(window.location.toString()
                     .replace(/admin\/settings.*/, "service")).trigger("input");
             }
-            setSosUrl();
 
+            if (!settings["service.sosUrl"]) {
+              setSosUrl();
+            }
 
             $(".required").bind("keyup input change", function() {
                 var valid = true;
@@ -136,8 +127,6 @@
                     $button.attr("disabled", true);
                 }
             });
-
-            overwriteDefaultSettings(settings);
 
             $(".required:first").trigger("change");
 
@@ -155,9 +144,9 @@
                 .attr("disabled", true).css("margin-left", "5px").addClass("btn")
                 .text("Defaults").click(function() {
                 function getSettings(section) {
-                    for (var i = 0; i < settings.sections.length; ++i) {
-                        if (settings.sections[i].title === section) {
-                            return settings.sections[i].settings;
+                    for (var i = 0; i < settingDefinitions.sections.length; ++i) {
+                        if (settingDefinitions.sections[i].title === section) {
+                            return settingDefinitions.sections[i].settings;
                         }
                     }
                 }
@@ -169,7 +158,7 @@
                         setSosUrl();
                     } else {
                         setSetting(key, (s[key]["default"] !== undefined
-                            && s[key]["default"] !== null) ? s[key]["default"] : "", settings);
+                            && s[key]["default"] !== null) ? s[key]["default"] : "", settingDefinitions);
                     }
                 }
                 $(".required").trigger("input").trigger("change");

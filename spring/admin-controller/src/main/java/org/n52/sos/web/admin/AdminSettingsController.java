@@ -37,17 +37,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.codehaus.jettison.json.JSONObject;
-import org.n52.sos.config.AdministratorUser;
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingValue;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.util.StringHelper;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.auth.DefaultAdministratorUser;
-import org.n52.sos.web.auth.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,10 +52,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-/**
- * @since 4.0.0
- * 
- */
+import org.n52.sos.config.AdministratorUser;
+import org.n52.sos.config.SettingDefinition;
+import org.n52.sos.config.SettingValue;
+import org.n52.sos.ds.ConnectionProviderException;
+import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.exception.JSONException;
+import org.n52.sos.util.JSONUtils;
+import org.n52.sos.util.StringHelper;
+import org.n52.sos.web.AbstractController;
+import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.auth.DefaultAdministratorUser;
+import org.n52.sos.web.auth.UserService;
+
+
+
+
 @Controller
 public class AdminSettingsController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(AdminSettingsController.class);
@@ -90,9 +91,9 @@ public class AdminSettingsController extends AbstractController {
     }
 
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_SETTINGS, method = RequestMethod.GET)
-    public ModelAndView displaySettings(Principal user) {
+    public ModelAndView displaySettings(Principal user) throws ConfigurationException, JSONException, ConnectionProviderException {
         Map<String, Object> model = new HashMap<String, Object>(2);
-        model.put(ControllerConstants.SETTINGS_MODEL_ATTRIBUTE, getData());
+        model.put(ControllerConstants.SETTINGS_MODEL_ATTRIBUTE, getSettingsJsonString());
         model.put(ControllerConstants.ADMIN_USERNAME_REQUEST_PARAMETER, user.getName());
         return new ModelAndView(ControllerConstants.Views.ADMIN_SETTINGS, model);
     }
@@ -114,20 +115,17 @@ public class AdminSettingsController extends AbstractController {
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_SETTINGS_DUMP, method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
     public String dump() {
         try {
-            return new JSONObject(getData()).toString(4);
+            return getSettingsJsonString();
         } catch (Exception ex) {
             LOG.error("Could not load settings", ex);
             throw new RuntimeException(ex);
         }
     }
 
-    public Map<String, Object> getData() {
-        try {
-            return toSimpleMap(getSettingsManager().getSettings());
-        } catch (Exception ex) {
-            LOG.error("Error reading settings", ex);
-            throw new RuntimeException(ex);
-        }
+    private String getSettingsJsonString()
+            throws ConfigurationException, JSONException,
+                   ConnectionProviderException {
+        return JSONUtils.print(toJSONValueMap(getSettingsManager().getSettings()));
     }
 
     private void logSettings(Collection<SettingValue<?>> values) {

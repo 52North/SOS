@@ -28,27 +28,30 @@
  */
 package org.n52.sos.request;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
+import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.sos.response.DummyResponse;
 
 /**
  * SOS DescribeObservationType request
  * 
  * @since 4.0.0
  */
-public class SosDescribeObservationTypeRequest extends AbstractServiceRequest {
+public class SosDescribeObservationTypeRequest extends AbstractServiceRequest<AbstractServiceResponse> {
 
     /**
      * DescribeObservationType operation name
      */
     private final String operationName = Sos1Constants.Operations.DescribeObservationType.name();
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.n52.sos.request.AbstractSosRequest#getOperationName()
-     */
     @Override
     public String getOperationName() {
         return operationName;
+    }
+    
+    @Override
+    public AbstractServiceResponse getResponse() throws OwsExceptionReport {
+        return (AbstractServiceResponse) new DummyResponse().setOperationName(getOperationName()).set(this).setVersion(getVersion());
     }
 }

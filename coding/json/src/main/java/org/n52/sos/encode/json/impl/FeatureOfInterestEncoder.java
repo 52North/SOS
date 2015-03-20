@@ -69,7 +69,7 @@ public class FeatureOfInterestEncoder extends JSONEncoder<AbstractFeature> {
         if (sf.isSetUrl()) {
             return nodeFactory().textNode(sf.getUrl());
         } else if (!sf.isSetGeometry()) {
-            return nodeFactory().textNode(sf.getIdentifier().getValue());
+            return nodeFactory().textNode(sf.getIdentifierCodeWithAuthority().getValue());
         } else {
             ObjectNode json = nodeFactory().objectNode();
             encodeIdentifier(sf, json);
@@ -91,13 +91,13 @@ public class FeatureOfInterestEncoder extends JSONEncoder<AbstractFeature> {
 
     private void encodeIdentifier(SamplingFeature sf, ObjectNode json) {
         if (sf.isSetIdentifier()) {
-            json.put(JSONConstants.IDENTIFIER, encodeCodeWithAuthority(sf.getIdentifier()));
+            json.put(JSONConstants.IDENTIFIER, encodeCodeWithAuthority(sf.getIdentifierCodeWithAuthority()));
         }
 
     }
 
     private void encodeNames(SamplingFeature samplingFeature, ObjectNode json) {
-        if (samplingFeature.isSetNames()) {
+        if (samplingFeature.isSetName()) {
             if (samplingFeature.getName().size() == 1) {
                 json.put(JSONConstants.NAME, encodeCodeType(samplingFeature.getName().iterator().next()));
             } else {

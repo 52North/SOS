@@ -51,6 +51,7 @@ import com.google.common.collect.Iterables;
  * 
  */
 public class AbstractSensorML extends SosProcedureDescription {
+    private static final long serialVersionUID = -5715790909736521952L;
     private List<String> keywords = new ArrayList<String>(0);
     private List<SmlIdentifier> identifications = new ArrayList<SmlIdentifier>(0);
     private List<SmlClassifier> classifications = new ArrayList<SmlClassifier>(0);
@@ -288,5 +289,16 @@ public class AbstractSensorML extends SosProcedureDescription {
 
     public boolean isSetGmlId() {
         return StringHelper.isNotEmpty(gmlId);
+    }
+    
+    public void copyTo(AbstractSensorML copyOf) {
+        super.copyTo(copyOf);
+        copyOf.setCharacteristics(getCharacteristics());
+        copyOf.setClassifications(getClassifications());
+        copyOf.setContact(getContact());
+        copyOf.setDocumentation(getDocumentation());
+        copyOf.setHistory(getHistory());
+        copyOf.setIdentifications(getIdentifications());
+        copyOf.setKeywords(getKeywords());
     }
 }

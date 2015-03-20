@@ -33,10 +33,17 @@ import java.util.List;
 
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
+import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.ogc.swes.SwesConstants.HasSwesExtension;
+import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesExtensions;
+import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.service.AbstractServiceCommunicationObject;
 import org.n52.sos.service.operator.ServiceOperatorKey;
+import org.n52.sos.util.Constants;
+import org.n52.sos.util.StringHelper;
 
 /**
  * abstract super class for all service request classes
@@ -44,7 +51,8 @@ import org.n52.sos.service.operator.ServiceOperatorKey;
  * @since 4.0.0
  * 
  */
-public abstract class AbstractServiceRequest extends AbstractServiceCommunicationObject {
+@SuppressWarnings("rawtypes")
+public abstract class AbstractServiceRequest<T extends AbstractServiceResponse> extends AbstractServiceCommunicationObject implements HasSwesExtension<AbstractServiceRequest> {
     private List<ServiceOperatorKey> serviceOperatorKeyTypes;
 
     private SwesExtensions extensions;
@@ -68,17 +76,57 @@ public abstract class AbstractServiceRequest extends AbstractServiceCommunicatio
         }
     }
 
+    @Override
     public SwesExtensions getExtensions() {
         return extensions;
     }
 
+    @Override
     public AbstractServiceRequest setExtensions(final SwesExtensions extensions) {
         this.extensions = extensions;
         return this;
     }
+    
+    @Override
+    public AbstractServiceRequest addExtensions(final SwesExtensions extensions) {
+        if (getExtensions() == null) {
+            setExtensions(extensions);
+        } else {
+            getExtensions().addSwesExtension(extensions.getExtensions());
+        }
+        return this;
+    }
 
+    @Override
+    public AbstractServiceRequest addExtension(final SwesExtension extension) {
+        if (getExtensions() == null) {
+            setExtensions(new SwesExtensions());
+        }
+        getExtensions().addSwesExtension(extension);
+        return this;
+    }
+
+    @Override
     public boolean isSetExtensions() {
         return extensions != null && !extensions.isEmpty();
+    }
+
+    public String getRequestedLanguage() {
+        if (isSetExtensions()) {
+            if (getExtensions().containsExtension(OWSConstants.AdditionalRequestParams.language)) {
+                Object value = getExtensions().getExtension(OWSConstants.AdditionalRequestParams.language).getValue();
+                if (value instanceof SweText) {
+                    return ((SweText) value).getValue();
+                } else if (value instanceof Integer) {
+                    return (String) getExtensions().getExtension(OWSConstants.AdditionalRequestParams.language).getValue();
+                }
+            }
+        }
+        return Constants.EMPTY_STRING;
+    }
+    
+    public boolean isSetRequestedLanguage() {
+        return StringHelper.isNotEmpty(getRequestedLanguage());
     }
 
     public RequestContext getRequestContext() {
@@ -93,6 +141,8 @@ public abstract class AbstractServiceRequest extends AbstractServiceCommunicatio
     public boolean isSetRequestContext() {
         return requestContext != null;
     }
+    
+    public abstract T getResponse() throws OwsExceptionReport;
 
     @Override
     public String toString() {

@@ -38,24 +38,27 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.ds.Datasource;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.SettingDefinitionEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import org.n52.sos.config.SettingDefinition;
+import org.n52.sos.ds.Datasource;
+import org.n52.sos.exception.JSONException;
+import org.n52.sos.util.JSONUtils;
+import org.n52.sos.web.AbstractController;
+import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.SettingDefinitionEncoder;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 @Controller
@@ -66,12 +69,12 @@ public class InstallDatasourceSettingsController extends AbstractController {
     public String get(HttpSession session) throws JSONException {
         InstallationConfiguration c = AbstractInstallController.getSettings(session);
         Map<String, Datasource> datasources = getDatasources();
-        return encode(c, datasources).toString(4);
+        return JSONUtils.print(encode(c, datasources));
     }
 
-    private JSONObject encode(InstallationConfiguration c, Map<String, Datasource> dialects) throws JSONException {
+    private JsonNode encode(InstallationConfiguration c, Map<String, Datasource> dialects) throws JSONException {
         SettingDefinitionEncoder enc = new SettingDefinitionEncoder();
-        JSONObject j = new JSONObject();
+        ObjectNode node = JSONUtils.nodeFactory().objectNode();
         List<String> orderedDialects = getOrderedDialects(dialects.keySet());
         for (String dialect : orderedDialects) {
             boolean selected = false;
@@ -85,12 +88,13 @@ public class InstallDatasourceSettingsController extends AbstractController {
                     setDefaultValue(c, def);
                 }
             }
-            JSONObject settings = enc.encode(enc.sortByGroup(defs));
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("settings", settings).put("needsSchema", d.needsSchema()).put("selected", selected);
-            j.put(dialect, jsonObject);
+            JsonNode settings = enc.encode(enc.sortByGroup(defs));
+            ObjectNode jsonObject = node.putObject(dialect);
+            jsonObject.put("settings", settings);
+            jsonObject.put("needsSchema", d.needsSchema());
+            jsonObject.put("selected", selected);
         }
-        return j;
+        return node;
     }
 
     protected Map<String, Datasource> getDatasources() {

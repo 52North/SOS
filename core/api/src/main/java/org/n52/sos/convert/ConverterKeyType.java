@@ -28,11 +28,6 @@
  */
 package org.n52.sos.convert;
 
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.StringHelper;
-
-import com.google.common.base.Strings;
-
 /**
  * @since 4.0.0
  * 

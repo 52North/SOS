@@ -41,7 +41,7 @@ import org.n52.sos.service.ConformanceClass;
  * @since 4.0.0
  */
 public interface RequestOperator extends ConformanceClass {
-    AbstractServiceResponse receiveRequest(AbstractServiceRequest request) throws OwsExceptionReport;
+    AbstractServiceResponse receiveRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport;
 
     RequestOperatorKey getRequestOperatorKeyType();
 

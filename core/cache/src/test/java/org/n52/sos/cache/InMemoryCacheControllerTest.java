@@ -56,7 +56,6 @@ import static org.n52.sos.util.builder.SweDataArrayBuilder.aSweDataArray;
 import static org.n52.sos.util.builder.SweDataArrayValueBuilder.aSweDataArrayValue;
 import static org.n52.sos.util.builder.SweTimeBuilder.aSweTime;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Set;
 
@@ -374,10 +373,10 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
             assertTrue(
                     "single \"offering -> related features relation\" NOT in cache",
                     getCache().getRelatedFeaturesForOffering(getAssignedOfferingId()).contains(
-                            relatedFeature.getFeature().getIdentifier().getValue()));
+                            relatedFeature.getFeature().getIdentifierCodeWithAuthority().getValue()));
 
             assertTrue("single \"related feature -> role relation\" NOT in cache",
-                    getCache().getRolesForRelatedFeature(relatedFeature.getFeature().getIdentifier().getValue())
+                    getCache().getRolesForRelatedFeature(relatedFeature.getFeature().getIdentifierCodeWithAuthority().getValue())
                             .contains(relatedFeature.getRole()));
         }
     }
@@ -930,7 +929,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
     private String getFoiIdFromInsertObservationRequest() {
         return ((InsertObservationRequest) request).getObservations().get(0).getObservationConstellation()
-                .getFeatureOfInterest().getIdentifier().getValue();
+                .getFeatureOfInterest().getIdentifierCodeWithAuthority().getValue();
     }
 
     private void insertObservationRequestExample(String procedure) {
@@ -965,7 +964,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
                                         .setValue(
                                                 aQuantityValue()
                                                         .setValue(
-                                                                aQuantitiy().setValue(new BigDecimal(2.0))
+                                                                aQuantitiy().setValue(2.0)
                                                                         .setUnit("m").build())
                                                         .setPhenomenonTime(phenomenonTime).build())
                                         .setIdentifier(CODESPACE, OBSERVATION_ID).build()).build();

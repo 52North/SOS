@@ -31,16 +31,16 @@
 -- Execute this script after running the installtion process with selected "Update schema" to update the old database model.
 -- It is not required if you create the tables during the installation process.
 
-ALTER TABLE mySchema.codespace DROP INDEX codespace;
-ALTER TABLE mySchema.featureofinterest DROP INDEX identifier;
-ALTER TABLE mySchema.featureofinterest DROP INDEX url;
-ALTER TABLE mySchema.featureofinteresttype DROP INDEX featureofinteresttype;
-ALTER TABLE mySchema.observableproperty DROP INDEX identifier;
-ALTER TABLE mySchema.observation DROP INDEX identifier;
+ALTER TABLE sos.codespace DROP INDEX codespace;
+ALTER TABLE sos.featureofinterest DROP INDEX identifier;
+ALTER TABLE sos.featureofinterest DROP INDEX url;
+ALTER TABLE sos.featureofinteresttype DROP INDEX featureofinteresttype;
+ALTER TABLE sos.observableproperty DROP INDEX identifier;
+ALTER TABLE sos.observation DROP INDEX identifier;
 -- old concept
-ALTER TABLE mySchema.observation DROP INDEX featureofinterestid;
-ALTER TABLE mySchema.observationtype DROP INDEX observationtype;
-ALTER TABLE mySchema.offering DROP INDEX identifier;
-ALTER TABLE mySchema.`procedure` DROP INDEX identifier;
-ALTER TABLE mySchema.relatedfeaturerole DROP INDEX relatedfeaturerole;
-ALTER TABLE mySchema.unit DROP INDEX unit;
+ALTER TABLE sos.observation DROP INDEX featureofinterestid;
+ALTER TABLE sos.observationtype DROP INDEX observationtype;
+ALTER TABLE sos.offering DROP INDEX identifier;
+ALTER TABLE sos.`procedure` DROP INDEX identifier;
+ALTER TABLE sos.relatedfeaturerole DROP INDEX relatedfeaturerole;
+ALTER TABLE sos.unit DROP INDEX unit;

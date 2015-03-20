@@ -28,9 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.create;
 
+import java.util.Locale;
+
 import org.hibernate.Session;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureDescriptionGenerator;
+import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactory;
+import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorRepository;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 
@@ -42,13 +45,16 @@ import com.google.common.base.Strings;
  */
 public class GeneratedDescriptionCreationStrategy implements
         DescriptionCreationStrategy {
-    private final HibernateProcedureDescriptionGenerator creator =
-            new HibernateProcedureDescriptionGenerator();
+    
+    private final HibernateProcedureDescriptionGeneratorRepository factoryRepository =
+            HibernateProcedureDescriptionGeneratorRepository.getInstance();
 
     @Override
-    public SosProcedureDescription create(Procedure p, Session s)
+    public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport {
-        return getCreator().generateProcedureDescription(p, s);
+        SosProcedureDescription desc = getFactory(descriptionFormat).create(p, i18n, s);
+        desc.setDescriptionFormat(descriptionFormat);
+        return desc;
     }
 
     @Override
@@ -57,7 +63,7 @@ public class GeneratedDescriptionCreationStrategy implements
     }
 
     @VisibleForTesting
-    HibernateProcedureDescriptionGenerator getCreator() {
-        return creator;
+    HibernateProcedureDescriptionGeneratorFactory getFactory(String descriptionFormat) {
+        return factoryRepository.getFactory(descriptionFormat);
     }
 }

@@ -130,6 +130,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
                 throw new NoApplicableCodeException().withMessage("The object {} is not supported", resultObject
                         .getClass().getName());
             }
+            checkForModifications(observation);
             session.evict(resultObject);
             return observation;
         } catch (final HibernateException he) {

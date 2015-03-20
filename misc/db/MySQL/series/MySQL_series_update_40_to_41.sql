@@ -27,14 +27,14 @@
 -- Public License for more details.
 --
 
-ALTER TABLE series ADD COLUMN firstTimeStamp datetime;
-ALTER TABLE series ADD COLUMN lastTimeStamp datetime;
-ALTER TABLE series ADD COLUMN firstNumericValue decimal(19,2);
-ALTER TABLE series ADD COLUMN lastNumericValue decimal(19,2);
-ALTER TABLE series ADD COLUMN unitId bigint;
+ALTER TABLE sos.series ADD COLUMN firstTimeStamp datetime;
+ALTER TABLE sos.series ADD COLUMN lastTimeStamp datetime;
+ALTER TABLE sos.series ADD COLUMN firstNumericValue DOUBLE PRECISION;
+ALTER TABLE sos.series ADD COLUMN lastNumericValue DOUBLE PRECISION;
+ALTER TABLE sos.series ADD COLUMN unitId bigint;
 
-alter table series add constraint seriesUnitFk foreign key (unitId) references unit;
+alter table sos.series add constraint seriesUnitFk foreign key (unitId) references sos.unit (unitId);
 
-ALTER TABLE `procedure` ADD COLUMN referenceFlag char(1) default 'F';
+ALTER TABLE sos.`procedure` ADD COLUMN referenceFlag char(1) default 'F';
 
-ALTER TABLE observation ADD COLUMN samplingGeometry GEOMETRY;
+ALTER TABLE sos.observation ADD COLUMN samplingGeometry GEOMETRY;

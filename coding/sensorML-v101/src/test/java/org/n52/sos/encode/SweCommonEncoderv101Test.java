@@ -299,7 +299,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassTest {
         thrown.expectMessage("The element type 'org.n52.sos.encode.SweCommonEncoderv101Test$1' "
                 + "of the received 'org.n52.sos.ogc.swe.SweField' is not supported"
                 + " by this encoder 'org.n52.sos.encode.SweCommonEncoderv101'.");
-        new SweCommonEncoderv101().encode(new SweDataRecord().addField(new SweField(null,
+        new SweCommonEncoderv101().encode(new SweDataRecord().addField(new SweField("test",
                 new SweAbstractDataComponent() {
 
                     @Override
@@ -525,54 +525,53 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassTest {
 		assertThat((Double)xbCount.getQualityArray(0).getQuantityRange().getValue().get(1),is(qualityQuantityRangeValue.getRangeEnd()));
     }
 
-    @Test public void
-    should_encode_SosEnvelope()
-    		throws OwsExceptionReport {
-    	final int srid = 4326;
-    	final double x1 = 1.0;
-    	final double y1 = 2.0;
-    	final double x2 = 3.0;
-		final double y2 = 4.0;
-		final String uom = "test-uom";
-		final String definition = "test-definition";
-		final SweEnvelope sweEnvelope = new SweEnvelope(new SosEnvelope(new Envelope(x1, x2, y1, y2), srid),uom);
-		final String xAxisId = "x";
-		final String yAxisId = "y";
-		final String northing = "northing";
-		final String easting = "easting";
-		sweEnvelope.setDefinition(definition);
-		
-		final XmlObject encode = new SweCommonEncoderv101().encode(sweEnvelope);
-		
-		assertThat(encode, instanceOf(EnvelopeType.class));
-		
-		final EnvelopeType xbEnvelope = (EnvelopeType) encode;
-		assertThat(xbEnvelope.isSetDefinition(), is(true));
-		assertThat(xbEnvelope.getDefinition(), is(definition));
-		
-		final Coordinate lcX = xbEnvelope.getLowerCorner().getVector().getCoordinateArray(0);
-		assertThat(lcX.getName(),is(easting));
-		assertThat(lcX.getQuantity().getAxisID(), is(xAxisId));
-		assertThat(lcX.getQuantity().getUom().getCode(), is(uom));
-		assertThat(lcX.getQuantity().getValue(), is(1.0));
-		
-		final Coordinate lcY = xbEnvelope.getLowerCorner().getVector().getCoordinateArray(1);
-		assertThat(lcY.getName(),is(northing));
-		assertThat(lcY.getQuantity().getAxisID(), is(yAxisId));
-		assertThat(lcY.getQuantity().getUom().getCode(), is(uom));
-		assertThat(lcY.getQuantity().getValue(), is(2.0));
-		
-		final Coordinate ucX = xbEnvelope.getUpperCorner().getVector().getCoordinateArray(0);
-		assertThat(ucX.getName(),is(easting));
-		assertThat(ucX.getQuantity().getAxisID(), is(xAxisId));
-		assertThat(ucX.getQuantity().getUom().getCode(), is(uom));
-		assertThat(ucX.getQuantity().getValue(), is(3.0));
-		
-		final Coordinate ucY = xbEnvelope.getUpperCorner().getVector().getCoordinateArray(1);
-		assertThat(ucY.getName(),is(northing));
-		assertThat(ucY.getQuantity().getAxisID(), is(yAxisId));
-		assertThat(ucY.getQuantity().getUom().getCode(), is(uom));
-		assertThat(ucY.getQuantity().getValue(), is(4.0));
+    @Test
+    public void should_encode_SosEnvelope() throws OwsExceptionReport {
+        final int srid = 4326;
+        final double y1 = 7.0;
+        final double x1 = 51.0;
+        final double y2 = 8.0;
+        final double x2 = 52.0;
+        final String uom = "test-uom";
+        final String definition = "test-definition";
+        final SweEnvelope sweEnvelope = new SweEnvelope(new SosEnvelope(new Envelope(x1, x2, y1, y2), srid), uom);
+        final String xAxisId = "x";
+        final String yAxisId = "y";
+        final String northing = "northing";
+        final String easting = "easting";
+        sweEnvelope.setDefinition(definition);
+
+        final XmlObject encode = new SweCommonEncoderv101().encode(sweEnvelope);
+
+        assertThat(encode, instanceOf(EnvelopeType.class));
+
+        final EnvelopeType xbEnvelope = (EnvelopeType) encode;
+        assertThat(xbEnvelope.isSetDefinition(), is(true));
+        assertThat(xbEnvelope.getDefinition(), is(definition));
+
+        final Coordinate lcX = xbEnvelope.getLowerCorner().getVector().getCoordinateArray(0);
+        assertThat(lcX.getName(), is(easting));
+        assertThat(lcX.getQuantity().getAxisID(), is(xAxisId));
+        assertThat(lcX.getQuantity().getUom().getCode(), is(uom));
+        assertThat(lcX.getQuantity().getValue(), is(y1));
+
+        final Coordinate lcY = xbEnvelope.getLowerCorner().getVector().getCoordinateArray(1);
+        assertThat(lcY.getName(), is(northing));
+        assertThat(lcY.getQuantity().getAxisID(), is(yAxisId));
+        assertThat(lcY.getQuantity().getUom().getCode(), is(uom));
+        assertThat(lcY.getQuantity().getValue(), is(x1));
+
+        final Coordinate ucX = xbEnvelope.getUpperCorner().getVector().getCoordinateArray(0);
+        assertThat(ucX.getName(), is(easting));
+        assertThat(ucX.getQuantity().getAxisID(), is(xAxisId));
+        assertThat(ucX.getQuantity().getUom().getCode(), is(uom));
+        assertThat(ucX.getQuantity().getValue(), is(y2));
+
+        final Coordinate ucY = xbEnvelope.getUpperCorner().getVector().getCoordinateArray(1);
+        assertThat(ucY.getName(), is(northing));
+        assertThat(ucY.getQuantity().getAxisID(), is(yAxisId));
+        assertThat(ucY.getQuantity().getUom().getCode(), is(uom));
+        assertThat(ucY.getQuantity().getValue(), is(x2));
 		
 		assertThat(xbEnvelope.isSetReferenceFrame(), is(true));
 		assertThat(xbEnvelope.getReferenceFrame(), is(""+srid));

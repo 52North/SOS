@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities.interfaces;
 
-import java.math.BigDecimal;
-
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValue;
 
 /**
@@ -39,6 +37,6 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValue;
  * @since 4.1.0
  * 
  */
-public interface NumericValue extends HasValue<BigDecimal> {
+public interface NumericValue extends HasValue<Double> {
 
 }

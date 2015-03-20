@@ -42,6 +42,7 @@ import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.util.XmlHelper;
 import org.n52.sos.w3c.SchemaLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,7 @@ import com.google.common.collect.Sets;
  */
 public class GetDataAvailabilityXmlEncoder extends AbstractResponseEncoder<GetDataAvailabilityResponse> {
 
+    @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(GetDataAvailabilityXmlEncoder.class);
 
     public GetDataAvailabilityXmlEncoder() {
@@ -76,7 +78,11 @@ public class GetDataAvailabilityXmlEncoder extends AbstractResponseEncoder<GetDa
             if (Sos2Constants.NS_SOS_20.equals(response.getNamespace())) {
                 new SosGetDataAvailabilityStreamWriter(response.getVersion(), response.getDataAvailabilities()).write(out);
             } else {
-                new GetDataAvailabilityStreamWriter(response.getVersion(), response.getDataAvailabilities()).write(out);  
+                new GetDataAvailabilityStreamWriter(response.getVersion(), response.getDataAvailabilities()).write(out);
+                XmlObject encodedObject = XmlObject.Factory.parse(out.toString("UTF8"));
+                LOG.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
+                        XmlHelper.validateDocument(encodedObject));
+                return encodedObject;
             }
             return XmlObject.Factory.parse(out.toString("UTF8"));
         } catch (XMLStreamException ex) {

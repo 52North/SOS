@@ -29,6 +29,7 @@
 package org.n52.sos.config.settings;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingType;
@@ -47,5 +48,14 @@ public class UriSettingDefinition extends AbstractSettingDefinition<UriSettingDe
      */
     public UriSettingDefinition() {
         super(SettingType.URI);
+    }
+    
+    public UriSettingDefinition setDefaultStringValue(String value) {
+        try {
+            setDefaultValue(new URI(value));
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
+        return this;
     }
 }

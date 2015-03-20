@@ -61,4 +61,5 @@ public class SweDataRecord extends SweAbstractDataRecord {
         return String.format("SweDataRecord [fields=%s, definition=%s, label=%s, identifier=%s, xml=%s]", getFields(),
                 getDefinition(), getLabel(), getIdentifier(), getXml());
     }
+
 }

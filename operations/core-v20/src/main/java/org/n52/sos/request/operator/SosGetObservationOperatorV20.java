@@ -44,9 +44,6 @@ import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.StreamingObservation;
-import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
@@ -185,6 +182,7 @@ public class SosGetObservationOperatorV20 extends
             exceptions.add(owse);
         }
 
+        checkExtensions(sosRequest, exceptions);
         exceptions.throwIfNotEmpty();
 
         // check if parameters are set, if not throw ResponseExceedsSizeLimit
@@ -195,7 +193,7 @@ public class SosGetObservationOperatorV20 extends
                     .withMessage("The response exceeds the size limit! Please define some filtering parameters.");
         }
     }
-
+    
     private boolean isBlockRequestsWithoutRestriction() {
         return blockRequestsWithoutRestriction;
     }

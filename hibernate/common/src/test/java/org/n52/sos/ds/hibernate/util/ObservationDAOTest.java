@@ -37,23 +37,23 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @author CarstenHollmann
- * 
+ *
  * @since 4.0.0
  */
 public class ObservationDAOTest extends ExtendedHibernateTestCase {
@@ -65,9 +65,9 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
     private final OfferingDAO offeringDAO = new OfferingDAO();
 
     @Before
-    public void fillObservations() throws CodedException {
+    public void fillObservations() throws OwsExceptionReport {
         Session session = getSession();
-        
+
         Transaction transaction = null;
         try {
             observationDAO = DaoFactory.getInstance().getObservationDAO(session);
@@ -141,14 +141,14 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
     }
 
     @Test
-    public void getTemporalBoundingBoxForOfferingsWithNullReturnsEmptyList() throws CodedException {
+    public void getTemporalBoundingBoxForOfferingsWithNullReturnsEmptyList() throws OwsExceptionReport {
         Map<String, TimePeriod> emptyMap = offeringDAO.getTemporalBoundingBoxesForOfferings(null);
         assertThat("empty map", is(notNullValue()));
         assertThat("map is empty", emptyMap.isEmpty(), is(true));
     }
 
     @Test
-    public void getTemporalBoundingBoxForOfferingsContainsNoNullElements() throws ConnectionProviderException, CodedException {
+    public void getTemporalBoundingBoxForOfferingsContainsNoNullElements() throws ConnectionProviderException, OwsExceptionReport {
         Session session = getSession();
         try {
             Map<String, TimePeriod> tempBBoxMap = offeringDAO.getTemporalBoundingBoxesForOfferings(session);

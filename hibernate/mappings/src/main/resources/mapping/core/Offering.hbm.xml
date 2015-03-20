@@ -13,8 +13,20 @@
         <property name="identifier" type="string">
             <column name="identifier" not-null="true" unique-key="offIdentifierUK"/>
         </property>
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="offCodespaceIdentifierFk">
+            <column name="codespace" />
+        </many-to-one>
         <property name="name" type="string">
             <column name="name" />
+        </property>
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="offCodespaceNameFk">
+            <column name="codespaceName" />
+        </many-to-one>
+        <property name="description" type="string">
+            <column name="description" />
+        </property>
+        <property name="disabled" type="org.hibernate.type.TrueFalseType">
+            <column name="disabled" not-null="true" default="'F'" check="disabled in ('T','F')"/>
         </property>
     </class>
 </hibernate-mapping>

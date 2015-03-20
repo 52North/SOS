@@ -6,19 +6,130 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
  
+  Changes since last Release
+==================================
+
+ --- New features ---
+ 
+    * INSPIRE SOS:
+      * Details: https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#INSPIRE_Download_Service_extensi
+      * Multilingualism:
+        * Name/description of offering, procedure, observableProperty, and featureOfInterest can be defined in different languages
+        * Define/Change via the admin interface, insertion via transactional operations is not yet supported.
+        * Details: https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#Multilingualism_support
+      * Coordinate transformation:
+        * Requested coordinates are transformed to the defined database CRS
+        * Coordinates in the responses are transformed to the requested or defined response CRS
+        *Details: https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#CRS_support
+      *https://github.com/52North/SOS/pull/131
+    * Support for transactional feature relation insertion
+      * Insert valid sampledFeature feature and add relation to database
+      * https://github.com/52North/SOS/pull/125
+    * Maven source plugin added to build source jar artifacts (good for debugging)
+      * https://github.com/52North/SOS/pull/121
+    * Support for procedures with external (http URL) description
+      * URL should be stored in descriptionfile column of the procedure table
+    * Support for "getFirst" in temporal filter of GetObservation requests, as it was implemented in 52N SOS 3.x
+    * Support for choice settings
+      * https://github.com/52North/SOS/pull/182
+    * EXI binding
+      * Support for EXI encoded XML messages
+      * https://github.com/52North/SOS/pull/189
+    * Support for SensorML 2.0
+      * https://github.com/52North/SOS/pull/190
+
+
+ --- Changes ---
+ 
+    * Database model: Use doubles instead of BigDecimals for numeric obs values
+      * Discussion: https://github.com/52North/SOS/issues/120
+      * !!! Requires database update via SQL script (/mis/db/../.._update_41_to_42.sql
+    * Use series first/last timestamp for procedure time extrema (Performance improvement)
+      * Query the procedure time extrema from the series table if the information are available
+      * https://github.com/52North/SOS/pull/130
+    * Query samplingGeometry extent only if values are not null (Performance improvement)
+      * Check if not null sampledGeometries are contained in the database.
+      * If not, the extent query is not executed.
+      * https://github.com/52North/SOS/pull/128
+    * Update used version of 52N XML Common to 2.1.0
+      * SamplingFeature schema fixed multiplicity of sampledFeature from 1..1 to 1..*
+    * Transactional operations are disabled by default
+      * https://github.com/52North/SOS/pull/187
+  
+ 
+ --- Fixed issues ---
+ 
+    * Fix checkSchemaCreation during install
+      * https://github.com/52North/SOS/pull/119
+    * Removed mandatory schema settings for full DB datasources and fixed the MySQL one.
+      * MySQL does not support separate schema. Schema is a synonym for database.
+      * https://github.com/52North/SOS/pull/129
+    * Issue #185: Multilingual settings are not loaded from settings file
+      * https://github.com/52North/SOS/pull/186
+    * Issue #172: JSON GetFeatureOfInterest request ignores the observedProperty parameter
+      * https://github.com/52North/SOS/pull/184
+    * Issue #176: DeleteObservation throws NPE when deleting the latest observation for a series
+      * https://github.com/52North/SOS/pull/184
+    * Persisted service URL was not displayed in settings
+      * https://github.com/52North/SOS/pull/181
+    * Fix/stop threads in async cache persistence strategy and created by json schema factory
+      * https://github.com/52North/SOS/pull/171
+    * Issue #167: Improve error message when requesting empty time period
+      * https://github.com/52North/SOS/pull/170
+    * Issue #168: Laxer checking of output format
+      * https://github.com/52North/SOS/pull/169
+    * Fix IP address with port proxy chain
+      * https://github.com/52North/SOS/pull/165
+    * Issue #147: Impossible to NOT use the public schema 
+      * https://github.com/52North/SOS/pull/148
+    * Fix NPE in DataAvailabilityTransformer for NamedQueries by using new TimerPeriod constructor with Object parameter
+      * https://github.com/52North/SOS/pull/146
+    * Issue #191: JDBC string SQL server: optional instance parameter is required in our impelementation
+      * https://github.com/52North/SOS/pull/193
+   
   Release 52n-sos-4.1.5
 ==================================
 
  --- New features ---
  
+ 
  --- Changes ---
+ 
+  
+ --- Fixed bugs ---
+  
+    * Fix problem when requesting DescribeSensor with procedureDescriptionFormat = http://www.opengis.net/waterml/2.0/observationProcess.
+       * The SOS does not set the procedureDescriptionFormat to the sensor description before the SensorML 1.0.1 to WML 2.0 
+         converter is called which leads to an error in the converter.
+  
+  Release 52n-sos-4.1.4
+==================================
+
+ --- New features ---
+
+ 
+ --- Changes ---
+
   
  --- Fixed bugs ---
  
-     * Internal error when requesting DescribeSensor with procedureDescriptionFormat = http://www.opengis.net/waterml/2.0/observationProcess
-       * The procedureDescriptionFormat was not set in the sensor description before the SensorML 1.0.1 to WML 2.0 converter is called 
-         which leads to an error in the converter. 
+    * Fix problem with query for Spatial Filtering Profile envelope for database that do not support the spatial extent function.
+      * https://github.com/52North/SOS/pull/161
+
+  Release 52n-sos-4.1.3
+==================================
+
+ --- New features ---
  
+    * Add published flag to series table
+ 
+ --- Changes ---
+ 
+    * Set OGC unknown URL instead of URN as xlink:href value of sampledFeature
+  
+ --- Fixed bugs ---
+   
+      
   Release 52n-sos-4.1.2
 ==================================
 
@@ -30,6 +141,7 @@ RELEASE NOTES
  
      * NullPointerException when Features Of Interest have no geometries
        * https://github.com/52North/SOS/issues/149  
+ 
  
  Release 52n-sos-4.1.1
 ==================================

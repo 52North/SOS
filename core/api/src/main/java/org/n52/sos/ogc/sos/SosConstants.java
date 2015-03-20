@@ -163,7 +163,7 @@ public interface SosConstants {
     }
 
     enum Filter {
-        ValueReference;
+        ValueReference, TimePeriod, TimeInstant;
     }
 
     /**
@@ -204,17 +204,19 @@ public interface SosConstants {
     enum DescribeSensorParams {
         procedure;
     }
-
+    
     enum SosIndeterminateTime {
         first, latest;
+        
+        private static final String GET_FIRST = "getFirst";
 
         public static boolean contains(final String timeString) {
-            return timeString.equalsIgnoreCase(first.name()) || timeString.equalsIgnoreCase(latest.name());
+            return timeString.equalsIgnoreCase(first.name()) || timeString.equalsIgnoreCase(latest.name()) || timeString.equalsIgnoreCase(GET_FIRST);
         }
 
         public static SosIndeterminateTime getEnumForString(final String value) {
             for (SosIndeterminateTime sit : values()) {
-                if (sit.name().equalsIgnoreCase(value)) {
+                if (sit.name().equalsIgnoreCase(value) || (GET_FIRST.equalsIgnoreCase(value) && sit.equals(first))) {
                     return sit;
                 }
             }
@@ -229,7 +231,7 @@ public interface SosConstants {
          * Encode the given 'object to encode' in a <tt>*Document</tt> object
          * and not <tt>*Type</tt>.
          */
-        DOCUMENT, PROPERTY_TYPE, FOR_OBSERVATION, ENCODE, ENCODE_NAMESPACE,
+        DOCUMENT, PROPERTY_TYPE, FOR_OBSERVATION, ENCODE, ENCODE_NAMESPACE, REFERENCED,
         /**
          * Encode the given <tt>OwsExceptionReport</tt> not into an
          * <tt>ows:ExceptionReport</tt> but one <tt>ows:Exception</tt>.

@@ -55,6 +55,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OptionNotSupportedException;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosEnvelope;
@@ -81,7 +82,8 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 @Configurable
 @Deprecated
-public abstract class AbstractSpatialFilteringProfileDAO<T extends AbstractSpatialFilteringProfile> {
+public abstract class AbstractSpatialFilteringProfileDAO<T extends AbstractSpatialFilteringProfile> extends
+        AbstractIdentifierNameDescriptionDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSpatialFilteringProfileDAO.class);
 
@@ -222,13 +224,10 @@ public abstract class AbstractSpatialFilteringProfileDAO<T extends AbstractSpati
         if (HibernateHelper.isEntitySupported(clazz, session)) {
             AbstractSpatialFilteringProfile spatialFilteringProfile = getSpatialFilteringProfileImpl();
             spatialFilteringProfile.setObservation(observation);
-            spatialFilteringProfile.setDefinition(namedValue.getName().getHref());
-            if (namedValue.getName().isSetTitle()) {
-                spatialFilteringProfile.setTitle(namedValue.getName().getTitle());
-            }
-
-            spatialFilteringProfile.setGeom(GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(
-                    namedValue.getValue().getValue()));
+            GeometryValue geometryValue = (GeometryValue)namedValue.getValue();
+            addIdentifierNameDescription(geometryValue, spatialFilteringProfile, session);
+            spatialFilteringProfile.setGeom(GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
+                    geometryValue.getValue()));
             session.saveOrUpdate(spatialFilteringProfile);
             //dont flush here because we may be batching
         } else {
@@ -396,9 +395,9 @@ public abstract class AbstractSpatialFilteringProfileDAO<T extends AbstractSpati
      */
     protected Geometry getGeomtery(AbstractSpatialFilteringProfile spatialFilteringProfile) throws OwsExceptionReport {
         if (spatialFilteringProfile.isSetGeometry()) {
-            return GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(spatialFilteringProfile.getGeom());
+            return GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(spatialFilteringProfile.getGeom());
         } else if (spatialFilteringProfile.isSetLongLat()) {
-            int epsg = GeometryHandler.getInstance().getDefaultEPSG();
+            int epsg = GeometryHandler.getInstance().getStorageEPSG();
             if (spatialFilteringProfile.isSetSrid()) {
                 epsg = spatialFilteringProfile.getSrid();
             }
@@ -409,11 +408,11 @@ public abstract class AbstractSpatialFilteringProfileDAO<T extends AbstractSpati
             if (spatialFilteringProfile.isSetAltitude()) {
                 geom.getCoordinate().z =
                         GeometryHandler.getInstance().getValueAsDouble(spatialFilteringProfile.getAltitude());
-                if (geom.getSRID() == GeometryHandler.getInstance().getDefaultEPSG()) {
-                    geom.setSRID(GeometryHandler.getInstance().getDefault3DEPSG());
+                if (geom.getSRID() == GeometryHandler.getInstance().getStorageEPSG()) {
+                    geom.setSRID(GeometryHandler.getInstance().getStorage3DEPSG());
                 }
             }
-            return GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(geom);
+            return geom;
         }
         return null;
     }
@@ -434,7 +433,7 @@ public abstract class AbstractSpatialFilteringProfileDAO<T extends AbstractSpati
         if (spatialFilter != null) {
             detachedCriteria.add(SpatialRestrictions.filter(AbstractSpatialFilteringProfile.GEOMETRY,
                     spatialFilter.getOperator(),
-                    GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(spatialFilter.getGeometry())));
+                    GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(spatialFilter.getGeometry())));
         }
         detachedCriteria.setProjection(Projections.distinct(Projections
                 .property(AbstractSpatialFilteringProfile.OBSERVATION)));
@@ -490,9 +489,10 @@ public abstract class AbstractSpatialFilteringProfileDAO<T extends AbstractSpati
                         Restrictions.eq(Offering.IDENTIFIER, offeringID));
                 LOGGER.debug("QUERY getEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
                 Geometry geom = (Geometry) criteria.uniqueResult();
-                geom = GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(geom);
                 if (geom != null) {
-                    return new SosEnvelope(geom.getEnvelopeInternal(), GeometryHandler.getInstance().getDefaultEPSG());
+                    int srid = geom.getSRID() > 0 ? geom.getSRID() : GeometryHandler.getInstance().getStorageEPSG();
+                    geom.setSRID(srid);
+                    return new SosEnvelope(GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(geom).getEnvelopeInternal(), srid);
                 }
             } else {
                 final Envelope envelope = new Envelope();
@@ -518,7 +518,7 @@ public abstract class AbstractSpatialFilteringProfileDAO<T extends AbstractSpati
 
                     }
                     if (!envelope.isNull()) {
-                        return new SosEnvelope(envelope, GeometryHandler.getInstance().getDefaultEPSG());
+                        return new SosEnvelope(envelope, GeometryHandler.getInstance().getStorageEPSG());
                     }
                 }
             }
@@ -528,5 +528,4 @@ public abstract class AbstractSpatialFilteringProfileDAO<T extends AbstractSpati
         }
         return null;
     }
-
 }

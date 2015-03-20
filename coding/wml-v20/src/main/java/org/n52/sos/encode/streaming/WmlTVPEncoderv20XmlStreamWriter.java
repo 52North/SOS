@@ -31,6 +31,7 @@ package org.n52.sos.encode.streaming;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.ogc.gml.GmlConstants;
@@ -43,6 +44,7 @@ import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
+import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.wml.WaterMLConstants;
@@ -222,6 +224,10 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
         } else if (value instanceof CountValue) {
             CountValue countValue = (CountValue) value;
             return Integer.toString(countValue.getValue().intValue());
+        } else if (value instanceof TextValue) {
+            TextValue textValue = (TextValue) value;
+            String nonXmlEscapedText = textValue.getValue();
+            return StringEscapeUtils.escapeXml(nonXmlEscapedText);
         }
         return null;
     }

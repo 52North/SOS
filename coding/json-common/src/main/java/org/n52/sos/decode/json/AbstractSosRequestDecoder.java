@@ -64,7 +64,7 @@ import com.google.common.collect.Sets;
  * 
  * @since 4.0.0
  */
-public abstract class AbstractSosRequestDecoder<T extends AbstractServiceRequest> extends JSONDecoder<T> {
+public abstract class AbstractSosRequestDecoder<T extends AbstractServiceRequest<?>> extends JSONDecoder<T> {
 
     public AbstractSosRequestDecoder(Class<T> type, String service, String version, Enum<?> operation) {
         this(type, service, version, operation.name());

@@ -56,6 +56,12 @@ public interface SweConstants {
     SchemaLocation SWE_101_SCHEMA_LOCATION = new SchemaLocation(NS_SWE_101, SCHEMA_LOCATION_URL_SWE_101);
 
     SchemaLocation SWE_20_SCHEMA_LOCATION = new SchemaLocation(NS_SWE_20, SCHEMA_LOCATION_URL_SWE_20);
+    
+    String X_AXIS = "x";
+    
+    String Y_AXIS = "y";
+    
+    String Z_AXIS = "z";
 
     String ENCODING_TEXT = "http://www.opengis.net/swe/2.0/TextEncoding";
 

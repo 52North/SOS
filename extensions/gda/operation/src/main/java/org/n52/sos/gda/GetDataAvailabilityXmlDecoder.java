@@ -31,8 +31,10 @@ package org.n52.sos.gda;
 import java.util.Collections;
 import java.util.Set;
 
+import org.apache.xmlbeans.XmlAnyURI;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlString;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 import org.n52.sos.decode.AbstractXmlDecoder;
 import org.n52.sos.decode.DecoderKey;
@@ -155,31 +157,41 @@ public class GetDataAvailabilityXmlDecoder extends AbstractXmlDecoder<GetDataAva
                 version = roots[0].selectAttribute(GetDataAvailabilityConstants.VERSION);
             }
             if (version != null) {
-                request.setVersion(((XmlAnyTypeImpl) version).getStringValue());
+                request.setVersion(parseStringValue(version));
             }
             XmlObject service = roots[0].selectAttribute(GetDataAvailabilityConstants.SOS_SERVICE);
             if (service == null) {
                 service = roots[0].selectAttribute(GetDataAvailabilityConstants.SERVICE);
             }
             if (service != null) {
-                request.setService(((XmlAnyTypeImpl) service).getStringValue());
+            request.setService(parseStringValue(service));
             }
         }
 
         for (XmlObject x : xml.selectPath(getPath(xpathPrefix, prefix, "observedProperty"))) {
-            request.addObservedProperty(((XmlAnyTypeImpl) x).getStringValue());
+            request.addObservedProperty(parseStringValue(x));
         }
         for (XmlObject x : xml.selectPath(getPath(xpathPrefix, prefix, "procedure"))) {
-            request.addProcedure(((XmlAnyTypeImpl) x).getStringValue());
+            request.addProcedure(parseStringValue(x));
         }
         for (XmlObject x : xml.selectPath(getPath(xpathPrefix, prefix, "featureOfInterest"))) {
-            request.addFeatureOfInterest(((XmlAnyTypeImpl) x).getStringValue());
+            request.addFeatureOfInterest(parseStringValue(x));
         }
         for (XmlObject x : xml.selectPath(getPath(xpathPrefix, prefix, "offering"))) {
-            request.addOffering(((XmlAnyTypeImpl) x).getStringValue());
+            request.addOffering(parseStringValue(x));
         }
         request.setExtensions(parseExtensions(xml));
         return request;
+    }
+    
+    private String parseStringValue(XmlObject xmlObject) {
+        if (xmlObject instanceof XmlString) {
+            return ((XmlString) xmlObject).getStringValue();
+        } else if (xmlObject instanceof XmlAnyURI) {
+            return ((XmlAnyURI)xmlObject).getStringValue();
+        } else {
+            return ((XmlAnyTypeImpl) xmlObject).getStringValue();
+        }
     }
 
     /**

@@ -215,15 +215,15 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
                     String gmlId;
                     // FIXME CodeWithAuthority VS. String keys
                     if (gmlID4sfIdentifier.containsKey(sosObservation.getObservationConstellation()
-                            .getFeatureOfInterest().getIdentifier())) {
+                            .getFeatureOfInterest().getIdentifierCodeWithAuthority())) {
                         gmlId =
                                 gmlID4sfIdentifier.get(sosObservation.getObservationConstellation()
-                                        .getFeatureOfInterest().getIdentifier());
+                                        .getFeatureOfInterest().getIdentifierCodeWithAuthority());
                         foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(true));
                     } else {
                         gmlId = "sf_" + sfIdCounter;
                         gmlID4sfIdentifier.put(sosObservation.getObservationConstellation().getFeatureOfInterest()
-                                .getIdentifier().getValue(), gmlId);
+                                .getIdentifierCodeWithAuthority().getValue(), gmlId);
                         foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(false));
                     }
                     foiHelper.put(HelperValues.GMLID, gmlId);
@@ -253,7 +253,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
             SamplingFeature sampFeat = (SamplingFeature) absFeature;
             StringBuilder builder = new StringBuilder();
             builder.append("mp_");
-            builder.append(JavaHelper.generateID(absFeature.getIdentifier().getValue()));
+            builder.append(JavaHelper.generateID(absFeature.getIdentifierCodeWithAuthority().getValue()));
             absFeature.setGmlId(builder.toString());
 
             MonitoringPointDocument monitoringPointDoc =
@@ -282,15 +282,15 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
             monitoringPoint.setId(absFeature.getGmlId());
 
             if (sampFeat.isSetIdentifier()
-                    && SosHelper.checkFeatureOfInterestIdentifierForSosV2(sampFeat.getIdentifier().getValue(),
+                    && SosHelper.checkFeatureOfInterestIdentifierForSosV2(sampFeat.getIdentifierCodeWithAuthority().getValue(),
                             Sos2Constants.SERVICEVERSION)) {
-                XmlObject xmlObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sampFeat.getIdentifier());
+                XmlObject xmlObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sampFeat.getIdentifierCodeWithAuthority());
                 if (xmlObject != null) {
                     monitoringPoint.addNewIdentifier().set(xmlObject);
                 }
             }
 
-            if (sampFeat.isSetNames()) {
+            if (sampFeat.isSetName()) {
                 for (CodeType sosName : sampFeat.getName()) {
                     monitoringPoint.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sosName));
                 }
@@ -368,7 +368,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
             observationProcess.setId("process." + JavaHelper.generateID(procedure.toString()));
         }
         if (procedure.isSetIdentifier()) {
-            CodeWithAuthority codeWithAuthority = new CodeWithAuthority(procedure.getIdentifier());
+            CodeWithAuthority codeWithAuthority = procedure.getIdentifierCodeWithAuthority();
             Encoder<?, CodeWithAuthority> encoder =
                     CodingRepository.getInstance().getEncoder(
                             CodingHelper.getEncoderKey(GmlConstants.NS_GML_32,codeWithAuthority));

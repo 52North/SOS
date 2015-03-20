@@ -49,16 +49,16 @@
 	<th style="padding:3px;">Name</th><th style="padding:3px;">Organisation</th>
 </tr>
 <tr>
-	<td style="padding:3px;">Carsten Hollmann</td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
+	<td style="padding:3px;"><a href="http://52north.org/about/52-north-team/25-carsten-hollmann" title="52&deg;North Carsten Hollmann">Carsten Hollmann</a></td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
 </tr>
 <tr>
-	<td style="padding:3px;">Eike Hinderk J&uuml;rrens</td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
+	<td style="padding:3px;"><a href="http://52north.org/about/52-north-team/14-eike-hinderk-juerrens" title="52&deg;North Eike Hinderk J&uuml;rrens">Eike Hinderk J&uuml;rrens</a></td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
 </tr>
 <tr>
-	<td style="padding:3px;">Christian Autermann</td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
+	<td style="padding:3px;"><a href="http://52north.org/about/52-north-team/30-autermann-christian">Christian Autermann</a></td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
 </tr>
 <tr>
-	<td style="padding:3px;">Christoph Stasch</td><td style="padding:3px;"><a href="http://www.uni-muenster.de/Geoinformatics/en/index.html" title="IfGI">Institute for Geoinformatics (IfGI)</a></td>
+	<td style="padding:3px;"><a href="http://52north.org/about/52-north-team/31-stasch-christoph" title="52&deg;North Christoph Stasch">Christoph Stasch</a></td><td style="padding:3px;"><a href="http://www.uni-muenster.de/Geoinformatics/en/index.html" title="IfGI">Institute for Geoinformatics (IfGI)</a></td>
 </tr>
 <tr>
 	<td style="padding:3px;">Shane StClair</td><td style="padding:3px;"><a href="http://www.axiomalaska.com/" title="Axiom Alaska">Axiom Consulting &amp; Design</a></td>
@@ -73,7 +73,13 @@
 	<td style="padding:3px;">Carlos Giraldo</td><td style="padding:3px;"><a href="http://www.itg.es/" title="ITG"> Instituto Tecnol&oacute;gico de Galicia (ITG)</a></td>
 </tr>
 <tr>
-	<td style="padding:3px;">Alexander Kmoch</td><td style="padding:3px;"><a target="_blank" href="http://www.zgis.at">Z_GIS</a>,  <a target="_blank" href="http://www.uni-salzburg.at">Universit&auml;t Salzburg</a></td>
+	<td style="padding:3px;">Alexander Kmoch</td><td style="padding:3px;"><a target="_blank" href="http://www.zgis.at">Z_GIS</a>,  <a target="_blank" href="http://www.uni-salzburg.at">Universit&auml;t Salzburg</a> (Austria and Germany)</td>
+</tr>
+<tr>
+	<td style="padding:3px;">Carl Schroedl</td><td style="padding:3px;">Center for Integrated Data Analytics (<a target="_blank" href="http://cida.usgs.gov">CIDA</a>), <a target="_blank" href="http://www.usgs.gov">USGS</a></td>
+</tr>
+<tr>
+	<td style="padding:3px;">Jordan Walker</td><td style="padding:3px;">Center for Integrated Data Analytics (<a target="_blank" href="http://cida.usgs.gov">CIDA</a>), <a target="_blank" href="http://www.usgs.gov">USGS</a></td>
 </tr>
 </table>
 
@@ -93,14 +99,14 @@
 
 <table style="background-color:white;width:100%;">
 	<tr>
-		 <td align="center" style="width:25%;"><a target="_blank" href="http://www.uni-muenster.de/Geoinformatics/en/index.html"><img alt="IfGI"  align="middle" width="200" src="static/images/contribution/logo_ifgi.png"/></a></td>
+		<td align="center" style="width:25%;"><a target="_blank" href="http://www.uni-muenster.de/Geoinformatics/en/index.html"><img alt="IfGI"  align="middle" width="200" src="static/images/contribution/logo_ifgi.png"/></a></td>
 		<td align="center" style="width:25%;"><a target="_blank" href="http://www.axiomalaska.com/"><img alt="Axiom"  align="middle" width="85" src="static/images/contribution/axiom.png" /></a></td>
 		<td align="center" style="width:25%;"><a target="_blank" href="http://geomati.co"><img alt="geomati.co"  align="middle" width="85" src="static/images/contribution/logo_geomatico_256.png" /></a></td>
 		<td align="center" style="width:25%;"><a target="_blank" href="http://www.itg.es/"><img alt="ITG"  align="middle" width="104" src="static/images/contribution/Logo_ITG_vectorizado.png" /></a></td>
 	</tr>
 	<tr>
 		<td align="center" style="width:25%;"><a target="_blank" href="http://www.zgis.at"><img alt="ZIGS"  align="middle" width="128" src="static/images/contribution/UniSalzburgZGIS_1.jpg"/></a></td>
-		<td align="center" style="width:25%;"><a target="_blank" href="<c:url value="/get-involved" />">Your logo?!<br/>Get involved!</a></td>
+		<td align="center" style="width:25%;"><a href="<c:url value="/get-involved" />">Your logo?!<br/>Get involved!</a></td>
 		<td align="center" style="width:25%;"><img alt="Placeholder" align="middle" width="85" src="static/images/contribution/placeholder.png" /></td>
 	</tr>
 </table>

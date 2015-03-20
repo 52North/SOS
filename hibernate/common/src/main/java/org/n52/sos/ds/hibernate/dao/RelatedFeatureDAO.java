@@ -122,13 +122,13 @@ public class RelatedFeatureDAO {
     public List<RelatedFeature> getOrInsertRelatedFeature(final AbstractFeature feature, final List<RelatedFeatureRole> roles,
             final Session session) throws OwsExceptionReport {
         // TODO: create featureOfInterest and link to relatedFeature
-        List<RelatedFeature> relFeats = getRelatedFeatures(feature.getIdentifier().getValue(), session);
+        List<RelatedFeature> relFeats = getRelatedFeatures(feature.getIdentifierCodeWithAuthority().getValue(), session);
         if (relFeats == null) {
             relFeats = new LinkedList<RelatedFeature>();
         }
         if (relFeats.isEmpty()) {
             final RelatedFeature relFeat = new RelatedFeature();
-            String identifier = feature.getIdentifier().getValue();
+            String identifier = feature.getIdentifierCodeWithAuthority().getValue();
             String url = null;
             if (feature instanceof SamplingFeature) {
                 identifier =

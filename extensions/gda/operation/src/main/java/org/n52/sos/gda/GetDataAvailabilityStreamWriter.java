@@ -34,13 +34,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventFactory;
-import javax.xml.stream.XMLEventWriter;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 import org.joda.time.DateTime;
+import org.n52.sos.encode.EncodingValues;
+import org.n52.sos.encode.XmlEventWriter;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 import org.n52.sos.ogc.gml.GmlConstants;
@@ -61,18 +59,14 @@ import org.n52.sos.w3c.W3CConstants;
  * 
  * @since 4.0.0
  */
-public class GetDataAvailabilityStreamWriter {
+public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAvailability>> {
     private static final String TIME_PERIOD_PREFIX = "tp_";
 
     private static final String DATA_AVAILABILITY_PREFIX = "dam_";
 
     private static final String RESULT_TIME = "resultTime";
 
-    private final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-
-    private final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-
-    private final List<DataAvailability> gdas;
+    private List<DataAvailability> gdas;
 
     private final Map<TimePeriod, String> times;
 
@@ -84,53 +78,38 @@ public class GetDataAvailabilityStreamWriter {
 
     private int resultTimeCount = 1;
 
-    private XMLEventWriter w;
-
     public GetDataAvailabilityStreamWriter(String version, List<DataAvailability> gdas) {
         this.gdas = gdas == null ? Collections.<DataAvailability> emptyList() : gdas;
         this.times = new HashMap<TimePeriod, String>(this.gdas.size());
         this.version = version == null ? Sos2Constants.SERVICEVERSION : version;
     }
 
-    protected void attr(QName name, String value) throws XMLStreamException {
-        w.add(eventFactory.createAttribute(name, value));
-    }
-
-    protected void attr(String name, String value) throws XMLStreamException {
-        w.add(eventFactory.createAttribute(name, value));
-    }
-
-    protected void chars(String chars) throws XMLStreamException {
-        w.add(eventFactory.createCharacters(chars));
-    }
-
-    protected void end(QName name) throws XMLStreamException {
-        w.add(eventFactory.createEndElement(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart()));
-    }
-
-    protected void end() throws XMLStreamException {
-        w.add(eventFactory.createEndDocument());
-    }
-
-    protected void namespace(String prefix, String namespace) throws XMLStreamException {
-        w.add(eventFactory.createNamespace(prefix, namespace));
-    }
-
-    protected void start(QName name) throws XMLStreamException {
-        w.add(eventFactory.createStartElement(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart()));
-    }
-
-    protected void start() throws XMLStreamException {
-        w.add(eventFactory.createStartDocument());
-    }
-
+    @Override
     public void write(OutputStream out) throws XMLStreamException, OwsExceptionReport {
-        this.w = outputFactory.createXMLEventWriter(out, "UTF-8");
-        start();
+        init(out);
+        start(true);
         writeGetDataAvailabilityResponse();
         end();
-        this.w.flush();
-        this.w.close();
+        finish();
+    }
+
+    @Override
+    public void write(OutputStream out, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
+        write(out);
+    }
+
+    @Override
+    public void write(List<DataAvailability> elementToStream, OutputStream out) throws XMLStreamException,
+            OwsExceptionReport {
+       this.gdas = elementToStream;
+       write(out);
+    }
+
+    @Override
+    public void write(List<DataAvailability> elementToStream, OutputStream out, EncodingValues encodingValues)
+            throws XMLStreamException, OwsExceptionReport {
+        this.gdas = elementToStream;
+        write(out);
     }
 
     protected void writeGetDataAvailabilityResponse() throws XMLStreamException, OwsExceptionReport {
@@ -216,13 +195,23 @@ public class GetDataAvailabilityStreamWriter {
 
     protected void writeBegin(TimePeriod tp) throws XMLStreamException, DateTimeFormatException {
         start(GmlConstants.QN_BEGIN_POSITION_32);
-        writeTimeString(tp.getStart(), tp.getTimeFormat());
+        if (tp.isSetStartIndeterminateValue()) {
+            attr(GmlConstants.AN_INDETERMINATE_POSITION, tp.getStartIndet().name());
+        }
+        if (tp.isSetStart()) {
+            writeTimeString(tp.getStart(), tp.getTimeFormat());
+        }
         end(GmlConstants.QN_BEGIN_POSITION_32);
     }
 
     protected void writeEnd(TimePeriod tp) throws XMLStreamException, DateTimeFormatException {
         start(GmlConstants.QN_END_POSITION_32);
-        writeTimeString(tp.getEnd(), tp.getTimeFormat());
+        if (tp.isSetEndIndeterminateValue()) {
+            attr(GmlConstants.AN_INDETERMINATE_POSITION, tp.getEndIndet().name());
+        }
+        if (tp.isSetEnd()) {
+            writeTimeString(tp.getEnd(), tp.getTimeFormat());
+        } 
         end(GmlConstants.QN_END_POSITION_32);
     }
 
@@ -270,4 +259,5 @@ public class GetDataAvailabilityStreamWriter {
         writeTimeString(ti.getValue(), ti.getTimeFormat());
         end(SweConstants.QN_VALUE_SWE_200);
     }
+
 }

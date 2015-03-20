@@ -28,14 +28,17 @@
  */
 package org.n52.sos.request;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
+import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.sos.response.DummyResponse;
 
 /**
  * SOS GetFeatureOfInterestTime request
  * 
  * @since 4.0.0
  */
-public class SosGetFeatureOfInterestTimeRequest extends AbstractServiceRequest {
+public class SosGetFeatureOfInterestTimeRequest extends AbstractServiceRequest<AbstractServiceResponse> {
 
     /**
      * GetFeatureOfInterestTime operation name
@@ -66,13 +69,13 @@ public class SosGetFeatureOfInterestTimeRequest extends AbstractServiceRequest {
         this.featureIdentifier = featureIdentifier;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.n52.sos.request.AbstractSosRequest#getOperationName()
-     */
     @Override
     public String getOperationName() {
         return operationName;
+    }
+    
+    @Override
+    public AbstractServiceResponse getResponse() throws OwsExceptionReport {
+        return (AbstractServiceResponse) new DummyResponse().setOperationName(getOperationName()).set(this).setVersion(getVersion());
     }
 }

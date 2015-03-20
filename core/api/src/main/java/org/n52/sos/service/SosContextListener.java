@@ -41,6 +41,7 @@ import javax.servlet.ServletContextListener;
 
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +74,7 @@ public class SosContextListener implements ServletContextListener {
         setPath(sce.getServletContext().getRealPath("/"));
         if (Configurator.getInstance() == null) {
             instantiateConfigurator(sce.getServletContext());
+            instantiateGeometryHandler();
         } else {
             LOG.error("Configurator already instantiated.");
         }
@@ -87,6 +89,7 @@ public class SosContextListener implements ServletContextListener {
         }
         cleanupConfigurator();
         cleanupSettingsManager();
+        cleanupGeometryHandler();
         if (providedJdbcDriver != null) {
             cleanupDrivers(providedJdbcDriver);
         }
@@ -134,6 +137,16 @@ public class SosContextListener implements ServletContextListener {
             LOG.error("Error while Configurator clean up", ex);
         }
     }
+    
+    protected void cleanupGeometryHandler() {
+        try {
+            if (GeometryHandler.getInstance() != null) {
+                GeometryHandler.getInstance().cleanup();
+            }
+        } catch (Throwable ex) {
+            LOG.error("Error while GeometryHandler clean up", ex);
+        }
+    }
 
     protected void instantiateConfigurator(ServletContext context) {
         DatabaseSettingsHandler dbsh = DatabaseSettingsHandler.getInstance(context);
@@ -157,5 +170,13 @@ public class SosContextListener implements ServletContextListener {
             LOG.error(message, ce);
             throw new RuntimeException(message, ce);
         }
+    }
+    
+    /**
+     * Instantiate the {@link GeometryHandler} to avoid exceptions during the
+     * shutdown process.
+     */
+    protected void instantiateGeometryHandler() {
+        GeometryHandler.getInstance();
     }
 }

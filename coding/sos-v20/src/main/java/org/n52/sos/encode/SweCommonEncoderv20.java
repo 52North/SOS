@@ -73,6 +73,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;
+import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -290,6 +291,8 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
                     DataArrayType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
             if (sosDataArray.isSetElementCount()) {
                 xbDataArray.addNewElementCount().setCount(createCount(sosDataArray.getElementCount()));
+            } else {
+                xbDataArray.addNewElementCount().addNewCount();
             }
             if (sosDataArray.isSetElementTyp()) {
                 final ElementType elementType = xbDataArray.addNewElementType();
@@ -360,8 +363,8 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         LOGGER.trace("sweField: {}, sosElement: {}", sweField, sosElement);
         final DataRecordType.Field xbField =
                 DataRecordType.Field.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        if (sweField.getName() != null) {
-            xbField.setName(NcNameResolver.fixNcName(sweField.getName()));
+        if (sweField.isSetName()) {
+            xbField.setName(NcNameResolver.fixNcName(sweField.getName().getValue()));
         }
         final AbstractDataComponentType xbDCD = xbField.addNewAbstractDataComponent();
         xbDCD.set(createAbstractDataComponent(sosElement, new EnumMap<SosConstants.HelperValues, String>(
@@ -401,7 +404,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         if (sosSimpleType instanceof SweBoolean) {
             return createBoolean((SweBoolean) sosSimpleType);
         } else if (sosSimpleType instanceof SweCategory) {
-            return createCategoy((SweCategory) sosSimpleType);
+            return createCategory((SweCategory) sosSimpleType);
         } else if (sosSimpleType instanceof SweCount) {
             return createCount((SweCount) sosSimpleType);
         } else if (sosSimpleType instanceof SweObservableProperty) {
@@ -428,7 +431,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return xbBoolean;
     }
 
-    private CategoryType createCategoy(final SweCategory sosCategory) {
+    private CategoryType createCategory(final SweCategory sosCategory) {
         final CategoryType xbCategory =
                 CategoryType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         if (sosCategory.getCodeSpace() != null) {
@@ -455,13 +458,15 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         final QuantityType xbQuantity =
                 QuantityType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         if (quantity.isSetAxisID()) {
-            xbQuantity.setAxisID(quantity.getDescription());
+            xbQuantity.setAxisID(quantity.getAxisID());
         }
         if (quantity.isSetValue()) {
             xbQuantity.setValue(Double.valueOf(quantity.getValue()));
         }
         if (quantity.isSetUom()) {
             xbQuantity.setUom(createUnitReference(quantity.getUom()));
+        } else {
+            xbQuantity.setUom(createUnknownUnitReference());
         }
         if (quantity.getQuality() != null) {
             // TODO implement
@@ -474,13 +479,15 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         final QuantityRangeType xbQuantityRange =
                 QuantityRangeType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         if (quantityRange.isSetAxisID()) {
-            xbQuantityRange.setAxisID(quantityRange.getDescription());
+            xbQuantityRange.setAxisID(quantityRange.getAxisID());
         }
         if (quantityRange.isSetValue()) {
             xbQuantityRange.setValue(quantityRange.getValue().getRangeAsList());
         }
         if (quantityRange.isSetUom()) {
             xbQuantityRange.setUom(createUnitReference(quantityRange.getUom()));
+        } else {
+            xbQuantityRange.setUom(createUnknownUnitReference());
         }
         if (quantityRange.isSetQuality()) {
             // TODO implement
@@ -527,7 +534,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return xbTimeRange;
     }
 
-    private VectorType createVector(SweVector sweVector) {
+    private VectorType createVector(SweVector sweVector) throws OwsExceptionReport {
         final VectorType xbVector = VectorType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         if (sweVector.isSetReferenceFrame()) {
             xbVector.setReferenceFrame(sweVector.getReferenceFrame());
@@ -543,10 +550,10 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return xbVector;
     }
 
-    private Coordinate createCoordinate(final SweCoordinate<?> coordinate) {
+    private Coordinate createCoordinate(final SweCoordinate<?> coordinate) throws OwsExceptionReport {
         final Coordinate xbCoordinate = Coordinate.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         xbCoordinate.setName(coordinate.getName());
-        xbCoordinate.setQuantity(createQuantity((SweQuantity) coordinate.getValue()));
+        xbCoordinate.setQuantity((QuantityType)createAbstractDataComponent((SweQuantity) coordinate.getValue(), null));
         return xbCoordinate;
     }
 
@@ -596,6 +603,13 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         } else {
             unitReference.setCode(uom);
         }
+        return unitReference;
+    }
+    
+    private UnitReference createUnknownUnitReference() {
+        final UnitReference unitReference =
+                UnitReference.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        unitReference.setHref(OGCConstants.UNKNOWN);
         return unitReference;
     }
 

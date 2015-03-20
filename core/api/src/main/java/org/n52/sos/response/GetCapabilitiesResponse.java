@@ -39,7 +39,7 @@ public class GetCapabilitiesResponse extends AbstractServiceResponse {
 
     private SosCapabilities capabilities;
 	
-	private String xmlString;
+    private String xmlString;
 
     public SosCapabilities getCapabilities() {
         return capabilities;

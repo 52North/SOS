@@ -35,7 +35,7 @@ import java.util.Set;
 
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.coding.json.JSONConstants;
-import org.n52.sos.coding.json.JSONUtils;
+import org.n52.sos.util.JSONUtils;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.exception.ows.NoApplicableCodeException;

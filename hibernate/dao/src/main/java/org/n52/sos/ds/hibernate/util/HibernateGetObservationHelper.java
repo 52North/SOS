@@ -43,6 +43,9 @@ import org.hibernate.criterion.HibernateCriterionHelper;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.dao.AbstractSpatialFilteringProfileDAO;
@@ -75,8 +78,6 @@ import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
@@ -84,7 +85,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Helper class for GetObservation DAOs
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
@@ -95,7 +96,7 @@ public class HibernateGetObservationHelper {
 
     /**
      * Get ObservationConstellations and check if size limit is exceeded
-     * 
+     *
      * @param request
      *            GetObservation request
      * @param session
@@ -113,7 +114,7 @@ public class HibernateGetObservationHelper {
 
     /**
      * Check if the max number of returned time series is exceeded
-     * 
+     *
      * @param seriesObservations
      *            Observations to check
      * @param metadataObservationsCount
@@ -134,7 +135,7 @@ public class HibernateGetObservationHelper {
 
     /**
      * Check if the size limit is exceeded
-     * 
+     *
      * @param size
      *            The size limit to check
      * @throws CodedException
@@ -149,7 +150,7 @@ public class HibernateGetObservationHelper {
 
     /**
      * Check if the max number of returned values is exceeded
-     * 
+     *
      * @param size
      *            Max number count
      * @throws CodedException
@@ -162,21 +163,8 @@ public class HibernateGetObservationHelper {
         }
     }
 
-    /**
-     * Get and check featureOfInterest identifiers for Hydrology-Profile
-     * 
-     * @param observationConstellation
-     *            ObservationConstellation
-     * @param featureIdentifier
-     *            FeatureOfInterest identifiers
-     * @param session
-     *            Hibernate session
-     * @return Checked featureOfInterest identifiers
-     * @throws CodedException
-     *             If an error occurs
-     */
     public static List<String> getAndCheckFeatureOfInterest(final ObservationConstellation observationConstellation,
-            final Set<String> featureIdentifier, final Session session) throws CodedException {
+            final Set<String> featureIdentifier, final Session session) throws OwsExceptionReport {
         final List<String> featuresForConstellation =
                 new FeatureOfInterestDAO().getFeatureOfInterestIdentifiersForObservationConstellation(
                         observationConstellation, session);
@@ -189,7 +177,7 @@ public class HibernateGetObservationHelper {
 
     /**
      * Convert observation entities to internal observations
-     * 
+     *
      * @param observations
      *            Observation entities
      * @param version
@@ -237,7 +225,7 @@ public class HibernateGetObservationHelper {
 
     /**
      * Convert observation entity to internal observationy
-     * 
+     *
      * @param observation
      *            Observation entity
      * @param version
@@ -280,7 +268,7 @@ public class HibernateGetObservationHelper {
 
     /**
      * Add a result filter to the Criteria
-     * 
+     *
      * @param c
      *            Hibernate criteria
      * @param resultFilter
@@ -317,7 +305,7 @@ public class HibernateGetObservationHelper {
 
     /**
      * Get the Hibernate Criterion for the requested result filter
-     * 
+     *
      * @param resultFilter
      *            Requested result filter
      * @return Hibernate Criterion
@@ -346,7 +334,7 @@ public class HibernateGetObservationHelper {
      * Check if the default SQL values for wildcard, single char or escape are
      * used. If not replace the characters from the result filter with the
      * default values.
-     * 
+     *
      * @param resultFilter
      *            Requested result filter
      * @return Modified request string with default character.
@@ -367,7 +355,7 @@ public class HibernateGetObservationHelper {
 
     /**
      * Check if the requested value reference is supported.
-     * 
+     *
      * @param valueReference
      *            Requested value reference
      * @throws CodedException
@@ -387,7 +375,7 @@ public class HibernateGetObservationHelper {
 
     /**
      * Get ObervationConstellation from requested parameters
-     * 
+     *
      * @param session
      *            Hibernate session
      * @param request
@@ -402,7 +390,7 @@ public class HibernateGetObservationHelper {
 
     /**
      * Get Hibernate Criterion from requested temporal filters
-     * 
+     *
      * @param request
      *            GetObservation request
      * @return Hibernate Criterion from requested temporal filters
@@ -422,7 +410,7 @@ public class HibernateGetObservationHelper {
     /**
      * Check if the {@link ObservationEncoder} demands for merging of
      * observations with the same timeseries.
-     * 
+     *
      * @param responseFormat
      *            Response format
      * @return <code>true</code>, if the {@link ObservationEncoder} demands for
@@ -431,7 +419,7 @@ public class HibernateGetObservationHelper {
     public static boolean checkEncoderForMergeObservationValues(String responseFormat) {
         Encoder<XmlObject, OmObservation> encoder =
                 CodingRepository.getInstance().getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
-        if (encoder == null && encoder instanceof ObservationEncoder) {
+        if (encoder != null && encoder instanceof ObservationEncoder) {
             return ((ObservationEncoder<?, OmObservation>) encoder).shouldObservationsWithSameXBeMerged();
         }
         return false;

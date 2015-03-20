@@ -28,10 +28,17 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.Session;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
+import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.service.Configurator;
 import org.n52.sos.util.SosHelper;
 
 import com.google.common.collect.Sets;
@@ -42,9 +49,20 @@ import com.google.common.collect.Sets;
  * @author Christian Autermann <c.autermann@52north.org>
  */
 public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment {
+    
+    private Session session;
+    
+    public FeatureOfInterestEnrichment setSession(Session session) {
+        this.session = checkNotNull(session);
+        return this;
+
+    }
+    
     @Override
     public void enrich() throws OwsExceptionReport {
-        getDescription().addFeaturesOfInterest(getFeatureOfInterestIDs());
+        Collection<String> featureOfInterestIDs = getFeatureOfInterestIDs();
+        getDescription().addFeaturesOfInterest(featureOfInterestIDs);
+        getDescription().addFeaturesOfInterest(getAbstractFeaturesMap(featureOfInterestIDs));
     }
 
     @Override
@@ -62,6 +80,7 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
     private Collection<String> getFeatureOfInterestIDs()
             throws OwsExceptionReport {
         Set<String> features = Sets.newHashSet();
+        // add cache map for proc/fois and get fois for proc
         for (String offering : getCache().getOfferingsForProcedure(getIdentifier())) {
             // don't include features for offerings which this procedure is a
             // hidden child of
@@ -70,5 +89,15 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
             }
         }
         return SosHelper.getFeatureIDs(features, getVersion());
+    }
+
+    private Map<String, AbstractFeature> getAbstractFeaturesMap(Collection<String> featureOfInterestIDs) throws OwsExceptionReport {
+        FeatureQueryHandlerQueryObject object = new FeatureQueryHandlerQueryObject();
+        object.setFeatureIdentifiers(featureOfInterestIDs);
+        object.setConnection(session);
+        if (isSetLocale()) {
+            object.setI18N(getLocale());
+        }
+        return Configurator.getInstance().getFeatureQueryHandler().getFeatures(object);
     }
 }

@@ -197,7 +197,7 @@ public abstract class SimpleBinding extends Binding {
         return getServiceOperatorRepository().getServiceOperator(sokt);
     }
 
-    protected ServiceOperator getServiceOperator(AbstractServiceRequest request) throws OwsExceptionReport {
+    protected ServiceOperator getServiceOperator(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         checkServiceOperatorKeyTypes(request);
         for (ServiceOperatorKey sokt : request.getServiceOperatorKeyType()) {
             ServiceOperator so = getServiceOperator(sokt);
@@ -213,7 +213,7 @@ public abstract class SimpleBinding extends Binding {
         }
     }
 
-    protected void checkServiceOperatorKeyTypes(AbstractServiceRequest request) throws OwsExceptionReport {
+    protected void checkServiceOperatorKeyTypes(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         for (ServiceOperatorKey sokt : request.getServiceOperatorKeyType()) {
             if (sokt.hasService()) {

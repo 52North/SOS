@@ -38,13 +38,14 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-//import org.n52.sos.ds.hibernate.entities.Observation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.ObservationInfo;
-//import org.n52.sos.ds.hibernate.entities.ObservationInfo;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.series.Series;
@@ -52,22 +53,21 @@ import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.om.OmObservableProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * Hibernate data access class for observable properties
- * 
+ *
  * @author CarstenHollmann
  * @since 4.0.0
  */
-public class ObservablePropertyDAO {
+public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservablePropertyDAO.class);
 
     /**
      * Get observable property objects for observable property identifiers
-     * 
+     *
      * @param identifiers
      *            Observable property identifiers
      * @param session
@@ -85,7 +85,7 @@ public class ObservablePropertyDAO {
 
     /**
      * Get observable property identifiers for offering identifier
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -96,7 +96,7 @@ public class ObservablePropertyDAO {
      */
     @SuppressWarnings("unchecked")
     public List<String> getObservablePropertyIdentifiersForOffering(final String offeringIdentifier,
-            final Session session) throws CodedException {
+            final Session session) throws OwsExceptionReport {
         final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class, session);
         Criteria c = null;
 
@@ -129,7 +129,7 @@ public class ObservablePropertyDAO {
 
     /**
      * Get observable property identifiers for procedure identifier
-     * 
+     *
      * @param procedureIdentifier
      *            Procedure identifier
      * @param session
@@ -176,7 +176,7 @@ public class ObservablePropertyDAO {
 
     /**
      * Get observable property by identifier
-     * 
+     *
      * @param identifier
      *            The observable property's identifier
      * @param session
@@ -184,7 +184,8 @@ public class ObservablePropertyDAO {
      * @return Observable property object
      */
     public ObservableProperty getObservablePropertyForIdentifier(final String identifier, final Session session) {
-        Criteria criteria = session.createCriteria(ObservableProperty.class).add(Restrictions.idEq(identifier));
+        Criteria criteria = session.createCriteria(ObservableProperty.class)
+                .add(Restrictions.eq(ObservableProperty.IDENTIFIER, identifier));
         LOGGER.debug("QUERY getObservablePropertyForIdentifier(identifier): {}",
                 HibernateHelper.getSqlString(criteria));
         return (ObservableProperty) criteria.uniqueResult();
@@ -192,7 +193,7 @@ public class ObservablePropertyDAO {
 
     /**
      * Get observable properties by identifiers
-     * 
+     *
      * @param identifiers
      *            The observable property identifiers
      * @param session
@@ -212,7 +213,7 @@ public class ObservablePropertyDAO {
 
     /**
      * Get all observable property objects
-     * 
+     *
      * @param session
      *            Hibernate session
      * @return Observable property objects
@@ -227,7 +228,7 @@ public class ObservablePropertyDAO {
     /**
      * Insert and/or get observable property objects for SOS observable
      * properties
-     * 
+     *
      * @param observableProperty
      *            SOS observable properties
      * @param session
@@ -238,21 +239,20 @@ public class ObservablePropertyDAO {
             final Session session) {
         final List<String> identifiers = new ArrayList<String>(observableProperty.size());
         for (final OmObservableProperty sosObservableProperty : observableProperty) {
-            identifiers.add(sosObservableProperty.getIdentifier());
+            identifiers.add(sosObservableProperty.getIdentifierCodeWithAuthority().getValue());
         }
         final List<ObservableProperty> obsProps = getObservableProperties(identifiers, session);
         for (final OmObservableProperty sosObsProp : observableProperty) {
             boolean exists = false;
             for (final ObservableProperty obsProp : obsProps) {
-                if (obsProp.getIdentifier().equals(sosObsProp.getIdentifier())) {
+                if (obsProp.getIdentifier().equals(sosObsProp.getIdentifierCodeWithAuthority().getValue())) {
                     exists = true;
                     break;
                 }
             }
             if (!exists) {
                 final ObservableProperty obsProp = new ObservableProperty();
-                obsProp.setIdentifier(sosObsProp.getIdentifier());
-                obsProp.setDescription(sosObsProp.getDescription());
+                addIdentifierNameDescription(sosObsProp, obsProp, session);
                 session.save(obsProp);
                 session.flush();
                 session.refresh(obsProp);
@@ -265,7 +265,7 @@ public class ObservablePropertyDAO {
     /**
      * Get Hibernate Detached Criteria to get ObservableProperty entities from
      * ObservationConstellation for procedure identifier
-     * 
+     *
      * @param procedureIdentifier
      *            Procedure identifier parameter
      * @param session
@@ -286,7 +286,7 @@ public class ObservablePropertyDAO {
     /**
      * Get Hibernate Detached Criteria to get ObservableProperty entities from
      * Series for procedure identifier
-     * 
+     *
      * @param procedureIdentifier
      *            Procedure identifier parameter
      * @param session
@@ -306,7 +306,7 @@ public class ObservablePropertyDAO {
     /**
      * Get Hibernate Detached Criteria to get ObservableProperty entities from
      * ObservationConstellation for offering identifier
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier parameter
      * @param session

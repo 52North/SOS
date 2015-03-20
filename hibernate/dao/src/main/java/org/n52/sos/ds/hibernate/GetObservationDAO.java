@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,6 +50,9 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.AbstractGetObservationDAO;
@@ -94,6 +98,7 @@ import org.n52.sos.exception.ows.OptionNotSupportedException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
+import org.n52.sos.i18n.LocaleHelper;
 import org.n52.sos.ogc.filter.BinaryLogicFilter;
 import org.n52.sos.ogc.filter.ComparisonFilter;
 import org.n52.sos.ogc.filter.Filter;
@@ -116,8 +121,6 @@ import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.http.HTTPStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -126,7 +129,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Implementation of the abstract class AbstractGetObservationDAO
- * 
+ *
  * @since 4.0.0
  */
 public class GetObservationDAO extends AbstractGetObservationDAO {
@@ -192,7 +195,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                 }
 
             }
-        } catch (final HibernateException he) {
+        } catch (HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         } catch (ConverterException ce) {
@@ -206,21 +209,15 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
     @Override
     public Set<String> getConformanceClasses() {
-        try {
-            Session session = sessionHolder.getSession();
-            if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
-                return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
-            }
-            sessionHolder.returnSession(session);
-        } catch (OwsExceptionReport owse) {
-            LOGGER.error("Error while getting Spatial Filtering Profile conformance class!", owse);
+        if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
+            return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
         }
         return super.getConformanceClasses();
     }
 
     /**
      * Query observations from database depending on requested filters
-     * 
+     *
      * @param request
      *            GetObservation request
      * @param session
@@ -279,9 +276,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
         int metadataObservationsCount = 0;
 
-        List<OmObservation> result =
-                HibernateGetObservationHelper.toSosObservation(observations, request.getVersion(),
-                        request.getResultModel(), session);
+        List<OmObservation> result = toSosObservation(observations, request.getVersion(), request.getResultModel(), LocaleHelper.fromRequest(request), session);
         Set<OmObservationConstellation> timeSeries = Sets.newHashSet();
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowMetadataOfEmptyObservations()
                 || ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries() > 0) {
@@ -296,9 +291,8 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                     request, session)) {
                 final List<String> featureIds =
                         HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features, session);
-                for (OmObservation omObservation : HibernateObservationUtilities
-                        .createSosObservationFromObservationConstellation(oc, featureIds, request.getVersion(),
-                                session)) {
+                for (OmObservation omObservation : HibernateObservationUtilities.createSosObservationFromObservationConstellation(oc,
+                        featureIds, request.getVersion(), LocaleHelper.fromRequest(request), session)) {
                     if (!timeSeries.contains(omObservation.getObservationConstellation())) {
                         result.add(omObservation);
                         timeSeries.add(omObservation.getObservationConstellation());
@@ -316,7 +310,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
     /**
      * Query observation if the series mapping is supported.
-     * 
+     *
      * @param request
      *            GetObservation request
      * @param session
@@ -398,7 +392,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             metadataObservationsCount = seriesToCheckMap.size();
             for (Series series : seriesToCheckMap.values()) {
                 result.addAll(HibernateObservationUtilities.createSosObservationFromSeries(series,
-                        request.getVersion(), session));
+                        request.getVersion(), LocaleHelper.fromRequest(request), session));
             }
         }
         HibernateGetObservationHelper
@@ -408,14 +402,13 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
         Collection<AbstractObservation> abstractObservations = Lists.newArrayList();
         abstractObservations.addAll(seriesObservations);
-        result.addAll(HibernateGetObservationHelper.toSosObservation(abstractObservations, request.getVersion(),
-                request.getResultModel(), session));
+        result.addAll(toSosObservation(abstractObservations, request.getVersion(), request.getResultModel(), LocaleHelper.fromRequest(request), session));
         return result;
     }
 
     /**
      * Query the observations for streaming datasource
-     * 
+     *
      * @param request
      *            The GetObservation request
      * @param session
@@ -444,7 +437,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                     .createSosObservationFromObservationConstellation(oc, featureIds, request.getVersion(), session)) {
                 FeatureOfInterest featureOfInterest =
                         new FeatureOfInterestDAO().getFeatureOfInterest(observationTemplate
-                                .getObservationConstellation().getFeatureOfInterest().getIdentifier().getValue(),
+                                .getObservationConstellation().getFeatureOfInterest().getIdentifier(),
                                 session);
                 HibernateStreamingValue streamingValue =
                         getStreamingValue(request, oc.getProcedure().getProcedureId(), oc.getObservableProperty()
@@ -461,7 +454,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
     /**
      * Query the series observations for streaming datasource
-     * 
+     *
      * @param request
      *            The GetObservation request
      * @param session
@@ -499,7 +492,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
     /**
      * Get the series streaming observation value for the observations
-     * 
+     *
      * @param request
      *            GetObservation request
      * @param seriesId
@@ -516,7 +509,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
     /**
      * Get the streaming observation value for the observations
-     * 
+     *
      * @param request
      *            GetObservation request
      * @param procedure
@@ -584,24 +577,9 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         }
     }
 
-    /**
-     * Get and check featureOfInterest identifiers for Hydrology-Profile
-     * 
-     * @param observationConstellation
-     *            ObservationConstellation
-     * @param featureIdentifier
-     *            FeatureOfInterest identifiers
-     * @param session
-     *            Hibernate session
-     * @return Checked featureOfInterest identifiers
-     * @throws CodedException
-     *             If an error occurs
-     *
-     * @see {@link HibernateGetObservationHelper#getAndCheckObservationConstellationSize}
-     */
     @Deprecated
     private List<String> getAndCheckFeatureOfInterest(final ObservationConstellation observationConstellation,
-            final Set<String> featureIdentifier, final Session session) throws CodedException {
+            final Set<String> featureIdentifier, final Session session) throws OwsExceptionReport {
         final List<String> featuresForConstellation =
                 new FeatureOfInterestDAO().getFeatureOfInterestIdentifiersForObservationConstellation(
                         observationConstellation, session);
@@ -614,7 +592,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
     /**
      * Convert observation entities to internal observations
-     * 
+     *
      * @param observations
      *            Observation entities
      * @param version
@@ -632,7 +610,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
      */
     @Deprecated
     protected List<OmObservation> toSosObservation(final Collection<AbstractObservation> observations,
-            final String version, final String resultModel, final Session session) throws OwsExceptionReport,
+            final String version, final String resultModel, final Locale language ,final Session session) throws OwsExceptionReport,
             ConverterException {
         if (!observations.isEmpty()) {
             Map<Long, AbstractSpatialFilteringProfile> spatialFilteringProfile = Maps.newHashMap();
@@ -647,7 +625,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             final List<OmObservation> sosObservations =
                     HibernateObservationUtilities.createSosObservationsFromObservations(
                             new HashSet<AbstractObservation>(observations), spatialFilteringProfile, version,
-                            resultModel, session);
+                            resultModel, language, session);
             LOGGER.debug("Time to process observations needs {} ms!", (System.currentTimeMillis() - startProcess));
             return sosObservations;
         } else {
@@ -657,14 +635,14 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
     /**
      * Add a result filter to the Criteria
-     * 
+     *
      * @param c
      *            Hibernate criteria
      * @param resultFilter
      *            Result filter to add
      * @throws CodedException
      *             If the requested filter is not supported!
-     * 
+     *
      * @see {@link HibernateGetObservationHelper#addResultFilterToCriteria}
      */
     @Deprecated
@@ -697,7 +675,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
     /**
      * Get the Hibernate Criterion for the requested result filter
-     * 
+     *
      * @param resultFilter
      *            Requested result filter
      * @return Hibernate Criterion
@@ -728,7 +706,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
      * Check if the default SQL values for wildcard, single char or escape are
      * used. If not replace the characters from the result filter with the
      * default values.
-     * 
+     *
      * @param resultFilter
      *            Requested result filter
      * @return Modified request string with default character.
@@ -751,7 +729,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
     /**
      * Check if the requested value reference is supported.
-     * 
+     *
      * @param valueReference
      *            Requested value reference
      * @throws CodedException
@@ -773,7 +751,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
     /**
      * Get ObervationConstellation from requested parameters
-     * 
+     *
      * @param session
      *            Hibernate session
      * @param request
@@ -790,7 +768,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
     /**
      * Get Hibernate Criterion from requested temporal filters
-     * 
+     *
      * @param request
      *            GetObservation request
      * @return Hibernate Criterion from requested temporal filters
@@ -816,7 +794,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
     private boolean checkEncoderForMergeObservationValues(String responseFormat) {
         Encoder<XmlObject, OmObservation> encoder =
                 CodingRepository.getInstance().getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
-        if (encoder == null && encoder instanceof ObservationEncoder) {
+        if (encoder != null && encoder instanceof ObservationEncoder) {
             return ((ObservationEncoder<?, OmObservation>) encoder).shouldObservationsWithSameXBeMerged();
         }
         return false;
@@ -825,7 +803,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
     /**
      * Create Hibernate Criteria for Observation entity and add restrictions for
      * ObservationConstellation parameter
-     * 
+     *
      * @param session
      *            Hibernate session
      * @param oc
@@ -847,7 +825,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
     /**
      * Create Hibernate Criteria for Observation entity and add restrictions for
      * ObservationConstellation parameter and featureOfInterest identifier
-     * 
+     *
      * @param session
      *            Hibernate session
      * @param oc
@@ -869,7 +847,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
     /**
      * Create Hibernate Criteria from requested parameters
-     * 
+     *
      * @param session
      *            Hibernate session
      * @param request
@@ -933,7 +911,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
     /**
      * Get result order for {@link SosIndeterminateTime}
-     * 
+     *
      * @param indetTime
      *            SosIndeterminateTime value
      * @return Hibernate result Order
@@ -950,7 +928,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
     /**
      * Execute database query for Hydrology-Profile
-     * 
+     *
      * @param criteria
      *            Hibernate Criteria to execute
      * @return List of resulting observations
@@ -965,7 +943,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
     /**
      * Get latest observation time Hibernate Criterion with named query and for
      * ObservationConstellation and featureOfInterest identifier
-     * 
+     *
      * @param oc
      *            ObservationConstellation with parameter for restrictions
      * @param featureIdentifier
@@ -989,7 +967,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
     /**
      * Get first observation time Hibernate Criterion with named query and for
      * ObservationConstellation and featureOfInterest identifier
-     * 
+     *
      * @param oc
      *            ObservationConstellation with parameter for restrictions
      * @param featureIdentifier

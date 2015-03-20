@@ -76,13 +76,36 @@
                                     <c:if test="${sos:hasClient()}">
                                         <li>
                                             <a id="client-menuitem" class="menu-item1" href="<c:url value="/client" />">
-                                                <span class="menu-title">Test Client</span>
+                                            	<span class="menu-title">Client</span>
                                             </a>
+                                            <ul>
+                                                 <c:if test="${sos:staticExtensionExists(pageContext.servletContext, 'client/jsClient/index.html')}">
+                                                    <li>
+                                                        <a id="jsclient-menuitem" target="_blank" href="<c:url value="/static/client/jsClient" />">
+                                                            <span class="menu-title">Sensor Web JS Client</span>
+                                                        </a>
+                                                    </li>
+                                                </c:if>
+                                                </ul>
                                         </li>
                                     </c:if>
+                                    <li>
+                                        <a id="documentation-menuitem" class="menu-item2" href="<c:url value="/documentation" />">
+                                            <span class="menu-title">Documentation</span>
+                                        </a>
+                                        <ul>
+                                            <c:if test="${sos:documentExtensionExists(pageContext.servletContext, 'api-doc/index.html')}">
+                                                <li>
+                                                    <a id="rest-menuitem" target="_blank" href="<c:url value="/static/doc/api-doc" />">
+                                                        <span class="menu-title">Sensor Web Client REST-API</span>
+                                                    </a>
+                                                </li>
+                                            </c:if>
+                                         </ul>
+                                    </li>
                                     <c:if test="${sos:hasAdministrator()}">
                                         <li>
-                                            <a id="admin-menuitem" class="menu-item2" href="<c:url value="/admin/index" />">
+                                            <a id="admin-menuitem" class="menu-item3" href="<c:url value="/admin/index" />">
                                                 <span class="menu-title">Admin</span>
                                             </a>
                                             <sec:authorize access="hasRole('ROLE_ADMIN')">
@@ -116,6 +139,11 @@
                                                                 </a>
                                                             </li>
                                                             <li>
+                                                                <a href="<c:url value="/admin/extensions" />">
+                                                                    <span class="menu-title">Extensions</span>
+                                                                </a>
+                                                            </li>
+                                                            <li>
                                                                 <a href="<c:url value="/admin/datasource/settings" />">
                                                                     <span class="menu-title">Datasource</span>
                                                                 </a>
@@ -133,6 +161,11 @@
                                                             <li>
                                                                 <a href="<c:url value="/admin/observableProperties" />">
                                                                     <span class="menu-title">Observable Properties</span>
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="<c:url value="/admin/i18n" />">
+                                                                    <span class="menu-title">I18N Settings</span>
                                                                 </a>
                                                             </li>
                                                         </ul>
@@ -162,7 +195,7 @@
                                     </c:if>
                                     <sec:authorize access="hasRole('ROLE_ADMIN')">
 										<li style="float: right;">
-											<a id="logout-menuitem" class="menu-item3" href="<c:url value="/j_spring_security_logout" />">
+											<a id="logout-menuitem" class="menu-item4" href="<c:url value="/j_spring_security_logout" />">
 												<span class="menu-title">Logout</span>
 											</a>
 										</li>

@@ -28,20 +28,11 @@
  */
 package org.n52.sos.web.admin.caps;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.n52.sos.exception.NoSuchExtensionException;
-import org.n52.sos.exception.NoSuchIdentifierException;
-import org.n52.sos.exception.NoSuchOfferingException;
-import org.n52.sos.ogc.ows.StringBasedCapabilitiesExtension;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.web.ControllerConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -53,14 +44,27 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import org.n52.sos.exception.NoSuchExtensionException;
+import org.n52.sos.exception.NoSuchIdentifierException;
+import org.n52.sos.exception.NoSuchOfferingException;
+import org.n52.sos.ogc.ows.StringBasedCapabilitiesExtension;
+import org.n52.sos.ogc.sos.Sos1Constants;
+import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.util.JSONUtils;
+import org.n52.sos.web.ControllerConstants;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 @Controller
 @RequestMapping(ControllerConstants.Paths.CAPABILITIES_EXTENSION_AJAX_ENDPOINT)
 public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxEndpoint {
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getCapabilitiesExtensions() throws JSONException {
-        JSONObject response = new JSONObject();
+    public String getCapabilitiesExtensions() {
+        ObjectNode response = JSONUtils.nodeFactory().objectNode();
         Map<String, StringBasedCapabilitiesExtension> capabilitiesExtensions = getDao()
                 .getActiveCapabilitiesExtensions();
         for (String id : capabilitiesExtensions.keySet()) {
@@ -68,40 +72,38 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
         }
         return response.toString();
     }
-    
-    private JSONObject toJson(StringBasedCapabilitiesExtension capabilitiesExtension) throws JSONException {
-        return new JSONObject()
+
+    private JsonNode toJson(StringBasedCapabilitiesExtension capabilitiesExtension) {
+        return JSONUtils.nodeFactory().objectNode()
                 .put(IDENTIFIER_PROPERTY, capabilitiesExtension.getSectionName())
                 .put(DISABLED_PROPERTY, capabilitiesExtension.isDisabled())
                 .put(EXTENSION_PROPERTY, capabilitiesExtension.getExtension());
-        
+
     }
-    
+
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value="/{identifier}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public String getCapabilitiesExtension(@PathVariable("identifier") String identifier) throws NoSuchIdentifierException, JSONException {
+    public String getCapabilitiesExtension(@PathVariable("identifier") String identifier) throws NoSuchIdentifierException {
         StringBasedCapabilitiesExtension ce = getDao().getActiveCapabilitiesExtensions().get(identifier);
         if (ce == null) {
             throw new NoSuchIdentifierException(identifier);
         }
         return toJson(ce).toString();
     }
-    
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value="/{identifier}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void setCapabilitiesExtensionSettings(
             @PathVariable("identifier") String identifier,
-            @RequestBody String settings) throws JSONException, NoSuchExtensionException, NoSuchOfferingException {
-        
-        JSONObject request = new JSONObject(settings);
-        
-        Object disabled = request.opt(DISABLED_PROPERTY);
-        if (disabled != null && disabled != JSONObject.NULL) {
-            getDao().disableCapabilitiesExtension(identifier, ((Boolean) disabled).booleanValue());
+            @RequestBody String settings) throws NoSuchExtensionException, NoSuchOfferingException, IOException {
+        JsonNode request = JSONUtils.loadString(settings);
+
+        if (request.has(DISABLED_PROPERTY)) {
+            getDao().disableCapabilitiesExtension(identifier, request.path(DISABLED_PROPERTY).asBoolean());
         }
     }
-    
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value="/{identifier}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE)
     @SuppressWarnings("unchecked")

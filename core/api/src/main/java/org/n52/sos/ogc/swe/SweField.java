@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ogc.swe;
 
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
 
 /**
@@ -36,11 +37,6 @@ import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
  * @since 4.0.0
  */
 public class SweField extends SweAbstractDataComponent {
-
-    /**
-     * field name
-     */
-    private String name;
 
     /**
      * field element
@@ -57,26 +53,32 @@ public class SweField extends SweAbstractDataComponent {
      */
     public SweField(final String name, final SweAbstractDataComponent element) {
         super();
-        this.name = name;
+        setName(name);
+        this.element = element;
+    }
+    
+    public SweField(final CodeType name, final SweAbstractDataComponent element) {
+        super();
+        setName(name);
         this.element = element;
     }
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name
-     *            the name to set
-     * @return This SweField
-     */
-    public SweField setName(final String name) {
-        this.name = name;
-        return this;
-    }
+//    /**
+//     * @return the name
+//     */
+//    public String getName() {
+//        return name;
+//    }
+//
+//    /**
+//     * @param name
+//     *            the name to set
+//     * @return This SweField
+//     */
+//    public SweField setName(final String name) {
+//        this.name = name;
+//        return this;
+//    }
 
     /**
      * @return the element

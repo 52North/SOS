@@ -38,13 +38,13 @@ import org.n52.sos.request.AbstractServiceRequest;
  */
 public class RequestEvent implements SosEvent {
 
-    private final AbstractServiceRequest request;
+    private final AbstractServiceRequest<?> request;
 
-    public RequestEvent(final AbstractServiceRequest request) {
+    public RequestEvent(final AbstractServiceRequest<?> request) {
         this.request = request;
     }
 
-    public AbstractServiceRequest getRequest() {
+    public AbstractServiceRequest<?> getRequest() {
         return request;
     }
 

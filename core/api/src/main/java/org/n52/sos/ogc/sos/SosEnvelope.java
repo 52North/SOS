@@ -111,8 +111,9 @@ public class SosEnvelope implements Serializable {
      * @param envelope
      *            the envelope to set
      */
-    public void setEnvelope(final Envelope envelope) {
+    public SosEnvelope setEnvelope(final Envelope envelope) {
         this.envelope = envelope;
+        return this;
     }
 
     /**
@@ -125,7 +126,7 @@ public class SosEnvelope implements Serializable {
     }
 
     public boolean isSetSrid() {
-        return srid != -1;
+        return getSrid() > 0;
     }
 
     /**
@@ -134,8 +135,9 @@ public class SosEnvelope implements Serializable {
      * @param srid
      *            the srid to set
      */
-    public void setSrid(final int srid) {
+    public SosEnvelope setSrid(final int srid) {
         this.srid = srid;
+        return this;
     }
 
     public boolean isSetEnvelope() {
@@ -146,8 +148,8 @@ public class SosEnvelope implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((envelope == null) ? 0 : envelope.hashCode());
-		result = prime * result + srid;
+		result = prime * result + ((getEnvelope() == null) ? 0 : getEnvelope().hashCode());
+		result = prime * result + getSrid();
 		return result;
 	}
 
@@ -163,14 +165,14 @@ public class SosEnvelope implements Serializable {
 			return false;
 		}
 		final SosEnvelope other = (SosEnvelope) obj;
-		if (envelope == null) {
-			if (other.envelope != null) {
+		if (getEnvelope() == null) {
+			if (other.getEnvelope() != null) {
 				return false;
 			}
-		} else if (!envelope.equals(other.envelope)) {
+		} else if (!getEnvelope().equals(other.getEnvelope())) {
 			return false;
 		}
-		if (srid != other.srid) {
+		if (getSrid() != other.getSrid()) {
 			return false;
 		}
 		return true;
@@ -195,17 +197,19 @@ public class SosEnvelope implements Serializable {
     /**
      * Switches the coordinates of this Envelope if needed.
      *
+     * @param srid SRID to check axis order for
      * @return this
      *
-     * @see GeometryHandler#isAxisOrderSwitchRequired(int)
+     * @see GeometryHandler#isNorthingFirstEpsgCode(int)
      */
+    @Deprecated
     public SosEnvelope switchCoordinatesIfNeeded() {
-        if (isSetEnvelope() && getGeometryHandler().isAxisOrderSwitchRequired(getSrid())) {
-            envelope = new Envelope(getEnvelope().getMinY(),
-                                         getEnvelope().getMaxY(),
-                                         getEnvelope().getMinX(),
-                                         getEnvelope().getMaxX());
-        }
+        if (isSetEnvelope() && getGeometryHandler().isNorthingFirstEpsgCode(getSrid())) {
+            this.envelope = new Envelope(getEnvelope().getMinY(),
+                    getEnvelope().getMaxY(),
+                    getEnvelope().getMinX(),
+                    getEnvelope().getMaxX());
+                }
         return this;
     }
 

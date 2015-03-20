@@ -28,17 +28,12 @@
  */
 package org.n52.sos.web.install;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -50,10 +45,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.n52.sos.config.SettingDefinition;
+import org.n52.sos.config.settings.MultilingualStringSettingDefinition;
+import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.util.JSONUtils;
+import org.n52.sos.web.AbstractController;
+import org.n52.sos.web.ControllerConstants;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.INSTALL_LOAD_CONFIGURATION)
@@ -63,14 +67,19 @@ public class InstallLoadSettingsController extends AbstractController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void post(@RequestBody String config, HttpServletRequest req) throws JSONException, ConfigurationException {
+    public void post(@RequestBody String config, HttpServletRequest req) throws ConfigurationException, IOException {
         final HttpSession session = req.getSession();
         InstallationConfiguration c = AbstractInstallController.getSettings(session);
-        JSONObject settings = new JSONObject(config);
-        Iterator<?> i = settings.keys();
+        JsonNode settings = JSONUtils.loadString(config);
+        Iterator<String> i = settings.fieldNames();
         while (i.hasNext()) {
-            String key = (String) i.next();
-            String value = settings.getString(key);
+            String value;
+            String key = i.next();
+            if (settings.path(key).isContainerNode()) {
+                value = JSONUtils.print(settings.path(key));
+            } else {
+                value = settings.path(key).asText();
+            }
             // skip null values
             if (value == null || value.equals("null")) {
                 LOG.warn("Value for setting with key {} is null", key);
@@ -81,7 +90,11 @@ public class InstallLoadSettingsController extends AbstractController {
                 LOG.warn("No definition for setting with key {}", key);
                 continue;
             }
-            c.setSetting(def, getSettingsManager().getSettingFactory().newSettingValue(def, value));
+            if (def instanceof MultilingualStringSettingDefinition) {
+                c.setSetting(def, getSettingsManager().getSettingFactory().newMultiLingualStringValue((MultilingualStringSettingDefinition)def, value));
+            } else {
+                c.setSetting(def, getSettingsManager().getSettingFactory().newSettingValue(def, value));
+            }
         }
         AbstractInstallController.setSettings(session, c);
     }

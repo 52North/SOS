@@ -129,6 +129,7 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
                 if (isSetSpatialFilteringProfileAdder()) {
                     getSpatialFilteringProfileAdder().add(resultObject.getObservationId(), observation);
                 }
+                checkForModifications(observation);
                 session.evict(resultObject);
                 return observation;
             }
@@ -138,10 +139,6 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    public void setObservationTemplate(OmObservation observationTemplate) {
-        this.observationTemplate = observationTemplate;
     }
 
     /**

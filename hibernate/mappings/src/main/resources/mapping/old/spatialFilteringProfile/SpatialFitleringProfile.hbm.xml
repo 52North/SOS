@@ -15,11 +15,20 @@
          <!--<property name="observationId" type="long">
             <column name="observationId" not-null="true"/>
         </property> -->
-        <property name="definition" type="string">
-            <column name="definition" not-null="true"/>
+       <property name="identifier" type="string">
+            <column name="identifier" not-null="false"/>
         </property>
-        <property name="title" type="string">
-            <column name="title" />
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="sfpCodespaceIdentifierFk">
+            <column name="codespace" not-null="false"/>
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name" not-null="false"/>
+        </property>
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="sfpCodespaceNameFk">
+            <column name="codespaceName" not-null="false"/>
+        </many-to-one>
+        <property name="description" type="string">
+            <column name="description" not-null="false"/>
         </property>
         <property name="geom" type="org.hibernate.spatial.GeometryType">
             <column name="geom" not-null="true"/>

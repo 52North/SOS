@@ -51,17 +51,21 @@ public abstract class AbstractServiceCommunicationObject {
     /**
      * @param service
      *            the service to set
+     * @return this
      */
-    public void setService(String service) {
+    public AbstractServiceCommunicationObject setService(String service) {
         this.service = service;
+        return this;
     }
 
     /**
      * @param version
      *            the version to set
+     * @return this
      */
-    public void setVersion(String version) {
+    public AbstractServiceCommunicationObject setVersion(String version) {
         this.version = version;
+        return this;
     }
 
     /**
@@ -77,6 +81,12 @@ public abstract class AbstractServiceCommunicationObject {
 
     public boolean isSetVersion() {
         return version != null && !version.isEmpty();
+    }
+    
+    public AbstractServiceCommunicationObject set(AbstractServiceCommunicationObject object) {
+        setService(object.getService());
+        setVersion(object.getVersion());
+        return this;
     }
 
     /**

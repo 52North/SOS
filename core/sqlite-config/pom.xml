@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>core</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.0-SNAPSHOT</version>
     </parent>
     <artifactId>sqlite-config</artifactId>
     <name>52°North SOS - SQLite Configuration</name>
@@ -31,13 +31,17 @@
             <artifactId>test</artifactId>
             <scope>test</scope>
         </dependency>
-             <dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-spatial</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+		</dependency>
     </dependencies>
-<build>
+    <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

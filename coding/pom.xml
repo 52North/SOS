@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>52n-sos</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.0-SNAPSHOT</version>
     </parent>
     <artifactId>coding</artifactId>
     <packaging>pom</packaging>
@@ -13,11 +13,14 @@
     <description>52°North SOS - Coding Modules</description>
     <modules>
         <module>ows-v110</module>
+        <module>sensorML</module>
         <module>sensorML-v101</module>
+        <module>sensorML-v20</module>
         <module>sos-v100</module>
         <module>sos-v20</module>
 		<module>wml-v20</module>
 		<module>json</module>
 		<module>json-common</module>
+		<module>exi</module>
     </modules>
 </project>

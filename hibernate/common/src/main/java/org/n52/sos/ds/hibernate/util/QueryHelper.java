@@ -36,6 +36,7 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
@@ -80,8 +81,12 @@ public class QueryHelper {
             if (spatialFilter.getValueReference().contains("om:featureOfInterest")
                     && spatialFilter.getValueReference().contains("sams:shape")) {
                 foiIDs =
-                        new HashSet<String>(Configurator.getInstance().getFeatureQueryHandler()
-                                .getFeatureIDs(spatialFilter, session));
+                        new HashSet<String>(Configurator
+                                .getInstance()
+                                .getFeatureQueryHandler()
+                                .getFeatureIDs(
+                                        new FeatureQueryHandlerQueryObject().addSpatialFilter(spatialFilter)
+                                                .setConnection(session)));
             } else {
                 throw new NoApplicableCodeException()
                         .withMessage("The requested valueReference for spatial filters is not supported by this server!");

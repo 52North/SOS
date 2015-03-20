@@ -28,12 +28,11 @@
  */
 package org.n52.sos.ds.hibernate.entities.values;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCodespace;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescription;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
-import org.n52.sos.ds.hibernate.entities.Codespace;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCodespace;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescription;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.Unit;
 
 /**
@@ -48,65 +47,8 @@ public abstract class AbstractValue extends AbstractObservationTime implements H
 
     private static final long serialVersionUID = -3803490157787902881L;
 
-    private String identifier;
-
-    private Codespace codespace;
-
-    private String description;
-
     private Unit unit;
 
-    @Override
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    @Override
-    public AbstractValue setIdentifier(final String identifier) {
-        this.identifier = identifier;
-        return this;
-    }
-
-    @Override
-    public boolean isSetIdentifier() {
-        return getIdentifier() != null && !getIdentifier().isEmpty();
-    }
-
-    @Override
-    public Codespace getCodespace() {
-        return codespace;
-    }
-
-    @Override
-    public void setCodespace(final Codespace codespace) {
-        this.codespace = codespace;
-    }
-
-    @Override
-    public boolean isSetCodespace() {
-        return getCodespace() != null && getCodespace().isSetCodespace();
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public AbstractValue setDescription(final String description) {
-        this.description = description;
-        return this;
-    }
-
-    @Override
-    public boolean isSetDescription() {
-        return getDescription() != null && !getDescription().isEmpty();
-    }
-
-    @Override
-    public boolean isSetValidTime() {
-        return getValidTimeStart() != null && getValidTimeEnd() != null;
-    }
 
     @Override
     public Unit getUnit() {

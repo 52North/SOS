@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NProcedureMetadata" table="i18nprocedure">
+        <id name="id" type="long">
+            <column name="id" />
+            <generator class="native">
+            	<param name="sequence">i18nProcedureId_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="objectId" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="select" lazy="no-proxy" foreign-key="i18nProcedureProcedureFk">
+           	<column index="i18nProcedureIdx" name="objectId" not-null="true" unique-key="i18nProcedureIdentity" />
+        </many-to-one>
+ 		<property name="locale" type="locale" >
+            <column name="locale" not-null="true" unique-key="i18nProcedureIdentity" />
+        </property>
+        <property name="name" type="string">
+            <column name="name" />
+        </property>
+        <property name="description" type="string">
+            <column name="description" />
+        </property>
+        <property name="shortname" type="string">
+            <column name="shortname" />
+        </property>
+        <property name="longname" type="string">
+            <column name="longname" />
+        </property>
+	</class>
+</hibernate-mapping>

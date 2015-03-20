@@ -28,7 +28,16 @@
  */
 package org.n52.sos.ogc.swe;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.StringHelper;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
@@ -49,6 +58,11 @@ public abstract class SweAbstractDataComponent {
     private String label;
 
     /**
+     * optional: gml:name [0..*] (SweCommon 1.0.1)
+     */
+    private List<CodeType> names = Lists.newArrayList();
+
+    /**
      * optional: swe:identifier [0..1]
      */
     private String identifier;
@@ -67,7 +81,25 @@ public abstract class SweAbstractDataComponent {
     }
 
     public String getLabel() {
-        return label;
+        if (StringHelper.isNotEmpty(label)) {
+            return label;
+        } else if (isSetNames()) {
+            return getName().getValue();
+        }
+        return null;
+    }
+
+    public CodeType getName() {
+        if (isSetNames()) {
+            return getNames().iterator().next();
+        } else if (StringHelper.isNotEmpty(label)) {
+            return new CodeType(getLabel());
+        }
+        return null;
+    }
+
+    public List<CodeType> getNames() {
+        return names;
     }
 
     public String getIdentifier() {
@@ -86,6 +118,39 @@ public abstract class SweAbstractDataComponent {
 
     public SweAbstractDataComponent setLabel(final String label) {
         this.label = label;
+        return this;
+    }
+
+    public SweAbstractDataComponent addName(final String name) {
+        getNames().add(new CodeType(name));
+        return this;
+    }
+
+    public SweAbstractDataComponent addName(final CodeType name) {
+        getNames().add(name);
+        return this;
+    }
+
+    public SweAbstractDataComponent addName(final Collection<CodeType> names) {
+        getNames().addAll(names);
+        return this;
+    }
+
+    public SweAbstractDataComponent setName(final String name) {
+        getNames().clear();
+        getNames().add(new CodeType(name));
+        return this;
+    }
+
+    public SweAbstractDataComponent setName(final CodeType name) {
+        getNames().clear();
+        getNames().add(name);
+        return this;
+    }
+
+    public SweAbstractDataComponent setName(final Collection<CodeType> names) {
+        getNames().clear();
+        getNames().addAll(names);
         return this;
     }
 
@@ -112,7 +177,15 @@ public abstract class SweAbstractDataComponent {
     }
 
     public boolean isSetLabel() {
-        return label != null && !label.isEmpty();
+        return StringHelper.isNotEmpty(getLabel());
+    }
+
+    public boolean isSetName() {
+        return getName() != null && getName().isSetValue();
+    }
+
+    public boolean isSetNames() {
+        return CollectionHelper.isNotEmpty(getNames());
     }
 
     public boolean isSetIdentifier() {
@@ -125,12 +198,7 @@ public abstract class SweAbstractDataComponent {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int hash = 7;
-        hash = prime * hash + (getDefinition() != null ? getDefinition().hashCode() : 0);
-        hash = prime * hash + (getDescription() != null ? getDescription().hashCode() : 0);
-        hash = prime * hash + (getIdentifier() != null ? getIdentifier().hashCode() : 0);
-        return hash;
+        return Objects.hashCode(31, 7, getDefinition(), getDescription(), getIdentifier());
     }
 
     @Override
@@ -158,5 +226,22 @@ public abstract class SweAbstractDataComponent {
     }
 
     public abstract SweDataComponentType getDataComponentType();
+
+    /**
+     * Copies all values from this {@link SweAbstractDataComponent} to the
+     * passed
+     * 
+     * @param copy
+     *            {@link SweAbstractDataComponent} to copy values to
+     * @return 
+     */
+    public SweAbstractDataComponent copyValueTo(SweAbstractDataComponent copy) {
+        copy.setDefinition(definition);
+        copy.setDescription(description);
+        copy.setIdentifier(identifier);
+        copy.setLabel(label);
+        copy.setName(names);
+        return copy;
+    }
 
 }

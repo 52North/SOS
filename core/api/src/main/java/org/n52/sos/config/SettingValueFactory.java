@@ -32,16 +32,21 @@ import java.io.File;
 import java.net.URI;
 
 import org.n52.sos.config.settings.BooleanSettingDefinition;
+import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.settings.FileSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
+import org.n52.sos.config.settings.MultilingualStringSettingDefinition;
 import org.n52.sos.config.settings.NumericSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
+import org.n52.sos.config.settings.TimeInstantSettingDefinition;
 import org.n52.sos.config.settings.UriSettingDefinition;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.i18n.MultilingualString;
 
 /**
  * Factory to construct implementation specific {@link SettingValue}s.
  * <p/>
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
@@ -51,7 +56,7 @@ public interface SettingValueFactory {
      * Constructs a new {@code Boolean} setting value from the supplied
      * definition and string value.
      * <p/>
-     * 
+     *
      * @param setting
      *            the setting definition
      * @param stringValue
@@ -65,7 +70,7 @@ public interface SettingValueFactory {
      * Constructs a new {@code Integer} setting value from the supplied
      * definition and string value.
      * <p/>
-     * 
+     *
      * @param setting
      *            the setting definition
      * @param stringValue
@@ -79,7 +84,7 @@ public interface SettingValueFactory {
      * Constructs a new {@code String} setting value from the supplied
      * definition and string value.
      * <p/>
-     * 
+     *
      * @param setting
      *            the setting definition
      * @param stringValue
@@ -93,7 +98,7 @@ public interface SettingValueFactory {
      * Constructs a new {@code File} setting value from the supplied definition
      * and string value.
      * <p/>
-     * 
+     *
      * @param setting
      *            the setting definition
      * @param stringValue
@@ -107,7 +112,7 @@ public interface SettingValueFactory {
      * Constructs a new {@code URI} setting value from the supplied definition
      * and string value.
      * <p/>
-     * 
+     *
      * @param setting
      *            the setting definition
      * @param stringValue
@@ -121,7 +126,7 @@ public interface SettingValueFactory {
      * Constructs a new {@code Double} setting value from the supplied
      * definition and string value.
      * <p/>
-     * 
+     *
      * @param setting
      *            the setting definition
      * @param stringValue
@@ -132,10 +137,52 @@ public interface SettingValueFactory {
     SettingValue<Double> newNumericSettingValue(NumericSettingDefinition setting, String stringValue);
 
     /**
+     * Constructs a new {@code TimeInstant} setting value from the supplied
+     * definition and string value.
+     * <p/>
+     *
+     * @param setting
+     *            the setting definition
+     * @param stringValue
+     *            the value as string
+     *            <p/>
+     * @return the implementation specific {@code SettingValue}
+     */
+    SettingValue<TimeInstant> newTimeInstantSettingValue(TimeInstantSettingDefinition setting, String stringValue);
+
+     /**
+     * Constructs a new {@code MultilingualString} setting value from the supplied
+     * definition and string value.
+     * <p/>
+     *
+     * @param setting
+     *            the setting definition
+     * @param stringValue
+     *            the value as string
+     *            <p/>
+     * @return the implementation specific {@code SettingValue}
+     */
+    SettingValue<MultilingualString> newMultiLingualStringValue(MultilingualStringSettingDefinition setting, String stringValue);
+
+    /**
+     * Constructs a new {@code String} setting value from the supplied
+     * definition and string value.
+     * <p/>
+     *
+     * @param setting
+     *            the setting definition
+     * @param stringValue
+     *            the value as string
+     *            <p/>
+     * @return the implementation specific {@code SettingValue}
+     */
+    SettingValue<String> newChoiceSettingValue(ChoiceSettingDefinition setting, String stringValue);
+
+    /**
      * Constructs a new generic setting value from the supplied definition and
      * string value.
      * <p/>
-     * 
+     *
      * @param setting
      *            the setting definition
      * @param stringValue

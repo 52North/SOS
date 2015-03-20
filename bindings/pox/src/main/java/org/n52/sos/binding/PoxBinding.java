@@ -66,7 +66,7 @@ public class PoxBinding extends SimpleBinding {
     public void doPostOperation(HttpServletRequest req,
                                 HttpServletResponse res)
             throws HTTPException, IOException {
-        AbstractServiceRequest sosRequest = null;
+        AbstractServiceRequest<?> sosRequest = null;
         try {
             sosRequest = parseRequest(req);
             AbstractServiceResponse sosResponse = getServiceOperator(sosRequest)
@@ -78,13 +78,13 @@ public class PoxBinding extends SimpleBinding {
         }
     }
 
-    protected AbstractServiceRequest parseRequest(HttpServletRequest request)
+    protected AbstractServiceRequest<?> parseRequest(HttpServletRequest request)
             throws OwsExceptionReport {
         XmlObject doc = XmlHelper.parseXmlSosRequest(request);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("XML-REQUEST: {}", doc.xmlText());
         }
-        Decoder<AbstractServiceRequest, XmlObject> decoder =
+        Decoder<AbstractServiceRequest<?>, XmlObject> decoder =
                 getDecoder(CodingHelper.getDecoderKey(doc));
         return decoder.decode(doc).setRequestContext(getRequestContext(request));
     }

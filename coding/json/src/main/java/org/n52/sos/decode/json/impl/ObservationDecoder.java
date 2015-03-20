@@ -28,7 +28,6 @@
  */
 package org.n52.sos.decode.json.impl;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -182,9 +181,9 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
 
     protected ObservationValue<?> parseMeasurementValue(JsonNode node) throws OwsExceptionReport {
         final QuantityValue qv =
-                new QuantityValue(node.path(JSONConstants.RESULT).path(JSONConstants.VALUE).decimalValue(), node
+                new QuantityValue(node.path(JSONConstants.RESULT).path(JSONConstants.VALUE).doubleValue(), node
                         .path(JSONConstants.RESULT).path(JSONConstants.UOM).textValue());
-        return new SingleObservationValue<BigDecimal>(parsePhenomenonTime(node), qv);
+        return new SingleObservationValue<Double>(parsePhenomenonTime(node), qv);
     }
 
     private ObservationValue<?> parseTextObservationValue(JsonNode node) throws OwsExceptionReport {

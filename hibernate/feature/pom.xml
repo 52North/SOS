@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>hibernate</artifactId>
-        <version>4.1.5</version>
+        <version>4.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hibernate-feature</artifactId>
@@ -30,11 +30,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>test</artifactId>
             <scope>test</scope>
         </dependency>
@@ -42,6 +37,21 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
             <classifier>tests</classifier>
+        </dependency>
+                <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sqlite-config</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

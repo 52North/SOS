@@ -27,6 +27,8 @@
 -- Public License for more details.
 --
 
+-- Database name to apply changes to
+use sos
 drop table dbo.blobValue;
 drop table dbo.booleanValue;
 drop table dbo.categoryValue;
@@ -60,3 +62,7 @@ drop table dbo.[procedure];
 drop table dbo.featureOfInterestType;
 drop table dbo.procedureDescriptionFormat;
 drop table dbo.codespace;
+drop table dbo.i18nfeatureOfInterest;
+drop table dbo.i18nobservableProperty;
+drop table dbo.i18noffering;
+drop table dbo.i18nprocedure;

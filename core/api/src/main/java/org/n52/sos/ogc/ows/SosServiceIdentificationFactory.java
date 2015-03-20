@@ -38,24 +38,27 @@ import static org.n52.sos.ogc.ows.SosServiceIdentificationFactorySettings.SERVIC
 import static org.n52.sos.ogc.ows.SosServiceIdentificationFactorySettings.TITLE;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Set;
 
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.i18n.I18NSettings;
+import org.n52.sos.i18n.LocaleHelper;
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.util.LazyThreadSafeProducer;
+import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.Validation;
 import org.n52.sos.util.XmlHelper;
 
-/**
- * @author Christian Autermann <c.autermann@52north.org>
- * 
- * @since 4.0.0
- */
+import com.google.common.collect.Sets;
+
 @Configurable
 public class SosServiceIdentificationFactory extends LazyThreadSafeProducer<SosServiceIdentification> {
 
@@ -63,9 +66,9 @@ public class SosServiceIdentificationFactory extends LazyThreadSafeProducer<SosS
 
     private String[] keywords;
 
-    private String title;
+    private MultilingualString title;
 
-    private String description;
+    private MultilingualString abstrakt;
 
     private String serviceType;
 
@@ -73,7 +76,7 @@ public class SosServiceIdentificationFactory extends LazyThreadSafeProducer<SosS
 
     private String fees;
 
-    private String constraints;
+    private String[] constraints;
 
     public SosServiceIdentificationFactory() throws ConfigurationException {
         SettingsManager.getInstance().configure(this);
@@ -86,37 +89,42 @@ public class SosServiceIdentificationFactory extends LazyThreadSafeProducer<SosS
     }
 
     public void setKeywords(String[] keywords) {
-        this.keywords = keywords == null ? new String[0] : Arrays.copyOf(keywords, keywords.length);
+        this.keywords = copyOf(keywords);
         setRecreate();
     }
 
     @Setting(KEYWORDS)
     public void setKeywords(String keywords) {
-        if (keywords != null) {
-            String[] keywordArray = keywords.split(",");
-            ArrayList<String> keywordList = new ArrayList<String>(keywordArray.length);
-            for (String s : keywordArray) {
-                if (s != null && !s.trim().isEmpty()) {
-                    keywordList.add(s.trim());
-                }
-            }
-            setKeywords(keywordList.toArray(new String[keywordList.size()]));
-        } else {
-            setKeywords(new String[0]);
-        }
+        setKeywords(StringHelper.splitToArray(keywords));
     }
 
     @Setting(TITLE)
-    public void setTitle(String title) throws ConfigurationException {
-        Validation.notNullOrEmpty("Service Identification Title", title);
-        this.title = title;
+    public void setTitle(Object title) throws ConfigurationException {
+        Validation.notNull("Service Identification Title", title);
+        if (title instanceof MultilingualString) {
+            this.title = (MultilingualString) title;
+        } else if (title instanceof String) {
+            Locale locale = LocaleHelper.fromString(I18NSettings.I18N_DEFAULT_LANGUAGE_DEFINITION.getDefaultValue());
+            this.title = new MultilingualString().addLocalization(locale, (String)title);
+        } else {
+            throw new ConfigurationException(
+                    String.format("%s is not supported as title!", title.getClass().getName()));
+        }
         setRecreate();
     }
 
     @Setting(ABSTRACT)
-    public void setAbstract(String description) throws ConfigurationException {
-        Validation.notNullOrEmpty("Service Identification Abstract", description);
-        this.description = description;
+    public void setAbstract(Object description) throws ConfigurationException {
+        Validation.notNull("Service Identification Abstract", description);
+        if (description instanceof MultilingualString) {
+            this.abstrakt = (MultilingualString) description;
+        } else if (description instanceof String) {
+            Locale locale = LocaleHelper.fromString(I18NSettings.I18N_DEFAULT_LANGUAGE_DEFINITION.getDefaultValue());
+            this.abstrakt = new MultilingualString().addLocalization(locale, (String)description);
+        } else {
+            throw new ConfigurationException(
+                    String.format("%s is not supported as abstract!", description.getClass().getName()));
+        }
         setRecreate();
     }
 
@@ -135,38 +143,79 @@ public class SosServiceIdentificationFactory extends LazyThreadSafeProducer<SosS
 
     @Setting(FEES)
     public void setFees(String fees) throws ConfigurationException {
-        Validation.notNullOrEmpty("Service Identification Fees", fees);
+        // Validation.notNullOrEmpty("Service Identification Fees", fees);
         this.fees = fees;
         setRecreate();
     }
 
-    @Setting(ACCESS_CONSTRAINTS)
-    public void setConstraints(String constraints) throws ConfigurationException {
-        Validation.notNullOrEmpty("Service Identification Access Constraints", constraints);
-        this.constraints = constraints;
+    public void setConstraints(String[] constraints) {
+        this.constraints = copyOf(constraints);
         setRecreate();
     }
 
+    @Setting(ACCESS_CONSTRAINTS)
+    public void setConstraints(String constraints) {
+        setConstraints(StringHelper.splitToArray(constraints));
+    }
+
     @Override
-    protected SosServiceIdentification create() throws ConfigurationException {
-        SosServiceIdentification serviceIdentification = new SosServiceIdentification();
+    protected SosServiceIdentification create(Locale language) throws ConfigurationException {
         if (this.file != null) {
-            try {
-                serviceIdentification.setServiceIdentification(XmlHelper.loadXmlDocumentFromFile(this.file));
-            } catch (OwsExceptionReport ex) {
-                throw new ConfigurationException(ex);
-            }
+            return createFromFile();
         } else {
-            serviceIdentification.setAbstract(this.description);
-            serviceIdentification.setAccessConstraints(this.constraints);
-            serviceIdentification.setFees(this.fees);
-            serviceIdentification.setServiceType(this.serviceType);
-            serviceIdentification.setServiceTypeCodeSpace(this.serviceTypeCodeSpace);
-            serviceIdentification.setTitle(this.title);
-            serviceIdentification.setVersions(ServiceOperatorRepository.getInstance().getSupportedVersions(
-                    SosConstants.SOS));
+            return createFromSettings(language);
+        }
+    }
+
+    private SosServiceIdentification createFromSettings(Locale locale) {
+        SosServiceIdentification serviceIdentification = new SosServiceIdentification();
+        if (this.title != null) {
+            serviceIdentification.setTitle(this.title.filter(locale));
+        }
+        if (this.abstrakt != null) {
+            serviceIdentification.setAbstract(this.abstrakt.filter(locale));
+        }
+        if (this.constraints != null) {
+            serviceIdentification.setAccessConstraints(Arrays.asList(this.constraints));
+        }
+        serviceIdentification.setFees(this.fees);
+        serviceIdentification.setServiceType(this.serviceType);
+        serviceIdentification.setServiceTypeCodeSpace(this.serviceTypeCodeSpace);
+        Set<String> supportedVersions = ServiceOperatorRepository.getInstance().getSupportedVersions(SosConstants.SOS);
+        serviceIdentification.setVersions(supportedVersions);
+        if (this.keywords != null) {
             serviceIdentification.setKeywords(Arrays.asList(this.keywords));
         }
         return serviceIdentification;
+    }
+
+    private SosServiceIdentification createFromFile() throws ConfigurationException {
+        try {
+            SosServiceIdentification serviceIdentification = new SosServiceIdentification();
+            serviceIdentification.setServiceIdentification(XmlHelper.loadXmlDocumentFromFile(this.file));
+            return serviceIdentification;
+        } catch (OwsExceptionReport ex) {
+            throw new ConfigurationException(ex);
+        }
+    }
+
+    public Set<Locale> getAvailableLocales() {
+        if (this.title == null) {
+            if (this.abstrakt == null) {
+                return Collections.emptySet();
+            } else {
+                return this.abstrakt.getLocales();
+            }
+        } else {
+            if (this.abstrakt == null) {
+                return this.title.getLocales();
+            } else {
+                return Sets.union(this.title.getLocales(), this.abstrakt.getLocales());
+            }
+        }
+    }
+
+    private static String[] copyOf(String[] a) {
+        return a == null ? new String[0] : Arrays.copyOf(a, a.length);
     }
 }

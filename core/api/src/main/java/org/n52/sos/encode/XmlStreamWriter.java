@@ -41,7 +41,7 @@ import org.n52.sos.w3c.W3CConstants;
  * Abstract {@link XmlWriter} class for {@link XMLStreamWriter}
  * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.1.0
+ * @since 4.0.2
  *
  */
 public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {

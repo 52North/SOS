@@ -28,15 +28,18 @@
  */
 package org.n52.sos.config;
 
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.sos.binding.BindingKey;
 import org.n52.sos.config.annotation.Configurable;
@@ -45,12 +48,13 @@ import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.encode.ProcedureDescriptionFormatKey;
 import org.n52.sos.encode.ResponseFormatKey;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesKey;
+import org.n52.sos.ogc.swes.OfferingExtensionKey;
 import org.n52.sos.request.operator.RequestOperatorKey;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.AbstractConfiguringServiceLoaderRepository;
+import org.n52.sos.util.Comparables;
 import org.n52.sos.util.ConfiguringSingletonServiceLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class to handle the settings and configuration of the SOS. Allows other
@@ -64,7 +68,7 @@ import org.slf4j.LoggerFactory;
  * all classes loaded by the {@link Configurator}. All other classes have to
  * call {@code configure(java.lang.Object)} manually.
  * <p/>
- * 
+ *
  * @see AdministratorUser
  * @see SettingDefinition
  * @see SettingDefinitionProvider
@@ -79,14 +83,14 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
 
     private static final Logger LOG = LoggerFactory.getLogger(SettingsManager.class);
 
-    private static ReentrantLock creationLock = new ReentrantLock();
+    private static final ReentrantLock creationLock = new ReentrantLock();
 
     private static SettingsManager instance;
 
     /**
      * Gets the singleton instance of the SettingsManager.
      * <p/>
-     * 
+     *
      * @return the settings manager
      *         <p/>
      * @throws ConfigurationException
@@ -110,7 +114,7 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
      * Creates a new {@code SettingsManager} with the {@link ServiceLoader}
      * interface.
      * <p/>
-     * 
+     *
      * @return the implementation
      *         <p/>
      * @throws ConfigurationException
@@ -118,47 +122,27 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
      */
     private static SettingsManager createInstance() throws ConfigurationException {
         List<SettingsManager> settingsManagers = new LinkedList<SettingsManager>();
-        for (SettingsManager sm : ServiceLoader.load(SettingsManager.class)) {
-            settingsManagers.add(sm);
-        }
-        Collections.sort(settingsManagers, new SettingsManagerComparator());
-        for (SettingsManager smManager : settingsManagers) {
+        Iterator<SettingsManager> it = ServiceLoader.load(SettingsManager.class).iterator();
+        while(it.hasNext()) {
             try {
-                return smManager;
+                settingsManagers.add(it.next());
             } catch (ServiceConfigurationError e) {
                 LOG.error("Could not instantiate SettingsManager", e);
             }
-            }
-        throw new ConfigurationException("No SettingsManager implementation loaded");
-    }
-
-    /**
-     * Order SettingsManagers by examining class inheritance, so that
-     * SettingsManagers that inherit from other SettingsManagers are used first
-     */
-    private static class SettingsManagerComparator implements Comparator<SettingsManager> {
-        @Override
-        public int compare(SettingsManager o1, SettingsManager o2) {
-            if (o1 == null ^ o2 == null) {
-                return (o1 == null) ? -1 : 1;
-            }
-            if (o1 == null && o2 == null) {
-                return 0;
-            }
-            if (o1.getClass().isAssignableFrom(o2.getClass())) {
-                return 1;
-            } else if (o2.getClass().isAssignableFrom(o1.getClass())) {
-                return -1;
-            }
-            return 0;
+        }
+        try {
+            return Comparables.inheritance().min(settingsManagers);
+        } catch (NoSuchElementException e) {
+            throw new ConfigurationException("No SettingsManager implementation loaded", e);
         }
     }
+
 
     /**
      * Configure {@code o} with the required settings. All changes to a setting
      * required by the object will be applied.
      * <p/>
-     * 
+     *
      * @param o
      *            the object to configure
      *            <p/>
@@ -172,7 +156,7 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
     /**
      * Get the definition that is defined with the specified key.
      * <p/>
-     * 
+     *
      * @param key
      *            the key
      *            <p/>
@@ -184,15 +168,15 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
     /**
      * Gets all {@code SettingDefinition}s known by this class.
      * <p/>
-     * 
-     * @return the defnitions
+     *
+     * @return the definitions
      */
     public abstract Set<SettingDefinition<?, ?>> getSettingDefinitions();
 
     /**
      * Gets the value of the setting defined by {@code key}.
      * <p/>
-     * 
+     *
      * @param <T>
      *            the type of the setting and value
      * @param key
@@ -208,7 +192,7 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
      * Gets all values for all definitions. If there is no value for a
      * definition {@code null} is added to the map.
      * <p/>
-     * 
+     *
      * @return all values by definition
      *         <p/>
      * @throws ConnectionProviderException
@@ -218,7 +202,7 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
     /**
      * Deletes the setting defined by {@code setting}.
      * <p/>
-     * 
+     *
      * @param setting
      *            the definition
      *            <p/>
@@ -234,7 +218,7 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
      * configured. If the change fails for one of these objects, the setting is
      * reverted to the old value of the setting for all objects.
      * <p/>
-     * 
+     *
      * @param value
      *            the new value of the setting
      *            <p/>
@@ -252,31 +236,31 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
 
     /**
      * Gets all registered administrator users.
-     * 
+     *
      * @return the users
-     * 
+     *
      * @throws ConnectionProviderException
      */
     public abstract Set<AdministratorUser> getAdminUsers() throws ConnectionProviderException;
 
     /**
      * Gets the administrator user with the specified user name.
-     * 
+     *
      * @param username
      *            the username
-     * 
+     *
      * @return the administrator user or {@code null} if no user with the
      *         specified name exists
-     * 
+     *
      * @throws ConnectionProviderException
      */
     public abstract AdministratorUser getAdminUser(String username) throws ConnectionProviderException;
 
     /**
      * Checks if a administrator user exists.
-     * 
+     *
      * @return {@code true} if there is a admin user, otherwise {@code false}.
-     * 
+     *
      * @throws ConnectionProviderException
      */
     public abstract boolean hasAdminUser() throws ConnectionProviderException;
@@ -285,7 +269,7 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
      * Creates a new {@code AdministratorUser}. This method will fail if the
      * username is already used by another user.
      * <p/>
-     * 
+     *
      * @param username
      *            the proposed username
      * @param password
@@ -302,7 +286,7 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
      * Saves a user previously returned by
      * {@link #getAdminUser(java.lang.String)} or {@link #getAdminUsers()}.
      * <p/>
-     * 
+     *
      * @param user
      *            the user to change
      *            <p/>
@@ -313,7 +297,7 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
     /**
      * Deletes the user with the specified username.
      * <p/>
-     * 
+     *
      * @param username
      *            the username
      *            <p/>
@@ -325,7 +309,7 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
      * Deletes the user previously returned by
      * {@link #getAdminUser(java.lang.String)} or {@link #getAdminUsers()}.
      * <p/>
-     * 
+     *
      * @param user
      *            <p/>
      * @throws ConnectionProviderException
@@ -335,7 +319,7 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
     /**
      * Deletes all settings and users.
      * <p/>
-     * 
+     *
      * @throws ConnectionProviderException
      */
     public abstract void deleteAll() throws ConnectionProviderException;
@@ -349,7 +333,7 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
     /**
      * Returns if a operation is active and should be offered by this SOS.
      * <p/>
-     * 
+     *
      * @param rokt
      *            the key identifying the operation
      *            <p/>
@@ -362,12 +346,12 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
     /**
      * Checks if the response format is active for the specified service and
      * version.
-     * 
+     *
      * @param rfkt
      *            the service/version/responseFormat combination
-     * 
+     *
      * @return if the format is active
-     * 
+     *
      * @throws ConnectionProviderException
      */
     public abstract boolean isActive(ResponseFormatKey rfkt) throws ConnectionProviderException;
@@ -375,12 +359,12 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
     /**
      * Checks if the procedure description format is active for the specified
      * service and version.
-     * 
+     *
      * @param pdfkt
      *            the service/version/procedure description combination
-     * 
+     *
      * @return if the format is active
-     * 
+     *
      * @throws ConnectionProviderException
      */
     public abstract boolean isActive(ProcedureDescriptionFormatKey pdfkt) throws ConnectionProviderException;
@@ -388,7 +372,7 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
     /**
      * Sets the status of an operation.
      * <p/>
-     * 
+     *
      * @param rokt
      *            the key identifying the operation
      * @param active
@@ -401,12 +385,12 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
     /**
      * Sets the status of a response format for the specified service and
      * version.
-     * 
+     *
      * @param rfkt
      *            the service/version/responseFormat combination
      * @param active
      *            the status
-     * 
+     *
      * @throws ConnectionProviderException
      */
     public abstract void setActive(ResponseFormatKey rfkt, boolean active) throws ConnectionProviderException;
@@ -414,12 +398,12 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
     /**
      * Sets the status of a procedure description format for the specified
      * service and version.
-     * 
+     *
      * @param pdfkt
      *            the service/version/procedure description combination
      * @param active
      *            the status
-     * 
+     *
      * @throws ConnectionProviderException
      */
     public abstract void setActive(ProcedureDescriptionFormatKey pdfkt, boolean active)
@@ -427,25 +411,102 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
 
     /**
      * Sets the status of a binding.
-     * 
+     *
      * @param bk
      *            the binding
      * @param active
      *            the status
-     * 
+     *
      * @throws ConnectionProviderException
      */
     public abstract void setActive(BindingKey bk, boolean active) throws ConnectionProviderException;
 
     /**
      * Checks if the binding is active.
-     * 
+     *
      * @param bk
      *            the binding
-     * 
+     *
      * @return if the binding is active
-     * 
+     *
      * @throws ConnectionProviderException
      */
     public abstract boolean isActive(BindingKey bk) throws ConnectionProviderException;
+
+    /**
+     * Checks if the offering extension is active.
+     *
+     * @param oek
+     *            the offering extension key
+     *
+     * @return if the offering extension is active
+     *
+     * @throws ConnectionProviderException
+     */
+    public abstract boolean isActive(OfferingExtensionKey oek) throws ConnectionProviderException;
+
+    /**
+     * Sets the status of a offering extension.
+     *
+     * @param oek
+     *            the offering extension
+     * @param active
+     *            the status
+     *
+     * @throws ConnectionProviderException
+     */
+    public abstract void setActive(OfferingExtensionKey oek, boolean active) throws ConnectionProviderException;
+
+    /**
+     * Sets the status of a offering extension.
+     *
+     * @param oek
+     *            the offering extension
+     * @param active
+     *            the status
+     *  @param updateRepository
+     *            indicator if the repository should be updated
+     *
+     * @throws ConnectionProviderException
+     */
+    public abstract void setActive(OfferingExtensionKey oek, boolean active, boolean updateRepository) throws ConnectionProviderException;
+
+    /**
+     * Checks if the extended capabilities is active.
+     *
+     * @param oeck
+     *            the extended capabilities key
+     *
+     * @return if the extended capabilities is active
+     *
+     * @throws ConnectionProviderException
+     */
+    public abstract boolean isActive(OwsExtendedCapabilitiesKey oeck) throws ConnectionProviderException;
+
+    /**
+     * Sets the status of a extended capabilities.
+     *
+     * @param oeck
+     *            the extended capabilities
+     * @param active
+     *            the status
+     *
+     * @throws ConnectionProviderException
+     */
+    public abstract void setActive(OwsExtendedCapabilitiesKey oeck, boolean active) throws ConnectionProviderException;
+
+    /**
+     * Sets the status of a extended capabilities.
+     *
+     * @param oeck
+     *            the extended capabilities
+     * @param active
+     *            the status
+     *  @param updateRepository
+     *            indicator if the repository should be updated
+     *
+     * @throws ConnectionProviderException
+     */
+    public abstract void setActive(OwsExtendedCapabilitiesKey oeck, boolean active, boolean updateRepository)  throws ConnectionProviderException;
+
 }

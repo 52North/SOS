@@ -4,7 +4,7 @@
     <parent>
         <artifactId>52n-sos</artifactId>
         <groupId>org.n52.sensorweb.sos</groupId>
-        <version>4.1.5</version>
+        <version>4.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>webapp</artifactId>
@@ -178,7 +178,15 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>coding-sensorML</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>coding-sensorML-v101</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-sensorML-v20</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -215,6 +223,11 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>resultHandling-v20</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>request-response-coordinate-transformer</artifactId>
+        </dependency>
+        <!-- dependencies for integration test -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>core-v100</artifactId>
@@ -273,6 +286,10 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>binding-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>binding-exi</artifactId>
         </dependency>
 
         <!-- REST BINDING -->
@@ -402,7 +419,12 @@
 			<groupId>org.n52.sensorweb.sos</groupId>
 			<artifactId>third-party-ncname-resolver</artifactId>
         </dependency>
-
+        
+        <!-- INSPIRE -->
+		<dependency>
+            <groupId>${project.groupId}</groupId>
+        	<artifactId>inspire-code</artifactId>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
@@ -413,6 +435,21 @@
                     <artifactId>hibernate-datasource-oracle</artifactId>
                 </dependency>
             </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.mortbay.jetty</groupId>
+                        <artifactId>maven-jetty-plugin</artifactId>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.oracle</groupId>
+                                <artifactId>ojdbc6</artifactId>
+                                <version>${ojdbc6.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>sqlserver</id>
@@ -422,6 +459,21 @@
                     <artifactId>hibernate-datasource-sqlserver</artifactId>
                 </dependency>
             </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.mortbay.jetty</groupId>
+                        <artifactId>maven-jetty-plugin</artifactId>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.microsoft</groupId>
+                                <artifactId>sqljdbc4</artifactId>
+                                <version>${sqljdbc4.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <!-- Profile for integration testing, run with: mvn -P itest clean install -->

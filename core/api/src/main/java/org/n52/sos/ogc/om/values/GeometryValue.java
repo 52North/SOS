@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.util.StringHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -37,33 +38,36 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.0.0
  * 
  */
-public class GeometryValue implements Value<Geometry> {
+public class GeometryValue extends AbstractGeometry implements Value<Geometry> {
     private static final long serialVersionUID = 4634315072352929082L;
-    /**
-     * Measurement value
-     */
-    private Geometry value;
     /**
      * Unit of measure
      */
     private String unit;
+    
+    public GeometryValue(AbstractGeometry abstractGeometry) {
+        setDescription(abstractGeometry.getDescription());
+        setGeometry(abstractGeometry.getGeometry());
+        setIdentifier(abstractGeometry.getIdentifierCodeWithAuthority());
+        setName(abstractGeometry.getName());
+    }
 
     /**
      * construcor
-     * @param value Measurement value
+     * @param value Geometry value
      */
     public GeometryValue(Geometry value) {
-        this.value = value;
+        setValue(value);
     }
 
     @Override
     public void setValue(Geometry value) {
-        this.value = value;
+        setGeometry(value);
     }
 
     @Override
     public Geometry getValue() {
-        return value;
+        return getGeometry();
     }
 
     @Override
@@ -83,7 +87,7 @@ public class GeometryValue implements Value<Geometry> {
 
     @Override
     public boolean isSetValue() {
-        return value != null && !value.isEmpty();
+        return isSetGeometry();
     }
 
     @Override

@@ -52,7 +52,8 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @since 4.0.0
  */
 public class GetFeatureOfInterestRequestDecoder extends AbstractSosRequestDecoder<GetFeatureOfInterestRequest> {
-    private static final Logger log = LoggerFactory.getLogger(GetFeatureOfInterestRequestDecoder.class);
+    @SuppressWarnings("unused")
+    private static final Logger LOGGER = LoggerFactory.getLogger(GetFeatureOfInterestRequestDecoder.class);
 
     public GetFeatureOfInterestRequestDecoder() {
         super(GetFeatureOfInterestRequest.class, SosConstants.SOS, Sos2Constants.SERVICEVERSION,
@@ -86,7 +87,7 @@ public class GetFeatureOfInterestRequestDecoder extends AbstractSosRequestDecode
     }
 
     private List<String> decodeObservedProperties(JsonNode node) {
-        JsonNode path = node.path(JSONConstants.OBSERVABLE_PROPERTY);
+        JsonNode path = node.path(JSONConstants.OBSERVED_PROPERTY);
         return parseStringOrStringList(path);
     }
 

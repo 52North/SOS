@@ -28,7 +28,6 @@
  */
 package org.n52.sos.decode;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -68,8 +67,8 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.GmlAbstractGeometry;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.GmlMeasureType;
 import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
@@ -333,17 +332,17 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
     }
 
     private GmlMeasureType parseMeasureType(MeasureType measureType) {
-        GmlMeasureType sosMeasureType = new GmlMeasureType(new BigDecimal(measureType.getStringValue()));
+        GmlMeasureType sosMeasureType = new GmlMeasureType(measureType.getDoubleValue());
         sosMeasureType.setUnit(measureType.getUom());
         return sosMeasureType;
     }
 
     private Object parseGeometryPropertyType(GeometryPropertyType geometryPropertyType) throws OwsExceptionReport {
-        return decode(geometryPropertyType.getAbstractGeometry());
+        return parseAbstractGeometryType(geometryPropertyType.getAbstractGeometry());
     }
 
-    private GmlAbstractGeometry parseAbstractGeometry(AbstractGeometryType abstractGeometry) {
-        GmlAbstractGeometry gmlAbstractGeometry = new GmlAbstractGeometry(abstractGeometry.getId());
+    private AbstractGeometry parseAbstractGeometryType(AbstractGeometryType abstractGeometry) throws OwsExceptionReport {
+        AbstractGeometry gmlAbstractGeometry = new AbstractGeometry(abstractGeometry.getId());
         if (abstractGeometry.isSetIdentifier()) {
             gmlAbstractGeometry.setIdentifier(parseCodeWithAuthorityTye(abstractGeometry.getIdentifier()));
         }
@@ -359,6 +358,7 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
                 gmlAbstractGeometry.setDescription(abstractGeometry.getDescription().getStringValue());
             }
         }
+        gmlAbstractGeometry.setGeometry((Geometry)decode(abstractGeometry));
         return gmlAbstractGeometry;
     }
 

@@ -60,8 +60,10 @@ import net.opengis.swe.x101.DataComponentPropertyType;
 import net.opengis.swe.x101.DataRecordType;
 import net.opengis.swe.x101.SimpleDataRecordType;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.n52.sos.AbstractBeforeAfterClassTest;
+import org.n52.sos.config.SettingsManager;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
@@ -84,7 +86,7 @@ import org.n52.sos.util.XmlOptionsHelper;
  * 
  * @since 4.0.0
  */
-public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassTest {
+public class SensorMLDecoderV101Test  {
     private static final String TEST_ID_1 = "test-id-1";
 
     private static final String TEST_NAME_1 = "test-name-1";
@@ -92,6 +94,17 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassTest {
     private static final String TEST_ID_2 = "test-id-2";
 
     private static final String TEST_NAME_2 = "test-name-2";
+    
+    
+    @BeforeClass
+    public static void initSettingsManager() {
+        SettingsManager.getInstance();
+    }
+
+    @AfterClass
+    public static void cleanupSettingManager() {
+        SettingsManager.getInstance().cleanup();
+    }
 
     @Test
     public void should_set_identifier_by_identifier_name() throws OwsExceptionReport {
@@ -171,9 +184,9 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassTest {
         assertThat(absProcess.getCapabilities().size(), is(1));
         List<SosOffering> sosOfferings = new ArrayList<SosOffering>(absProcess.getOfferings());
         Collections.sort(sosOfferings);
-        assertThat(sosOfferings.get(0).getOfferingIdentifier(), is(TEST_ID_1));
+        assertThat(sosOfferings.get(0).getIdentifier(), is(TEST_ID_1));
         assertThat(sosOfferings.get(0).getOfferingName(), is(TEST_NAME_1));
-        assertThat(sosOfferings.get(1).getOfferingIdentifier(), is(TEST_ID_2));
+        assertThat(sosOfferings.get(1).getIdentifier(), is(TEST_ID_2));
         assertThat(sosOfferings.get(1).getOfferingName(), is(TEST_NAME_2));
     }
 
@@ -225,6 +238,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassTest {
         AnyScalarPropertyType xbField = xbSimpleDataRecord.addNewField();
         xbField.setName(name);
         xbField.addNewText().setValue(value);
+        xbField.getText().addNewName().setStringValue(name);
     }
 
     private AbstractProcess decodeAbstractProcess(SensorMLDocument xbSmlDoc) throws OwsExceptionReport {

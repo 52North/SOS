@@ -41,6 +41,8 @@ import org.n52.sos.ogc.sos.SosOffering;
  */
 public class SensorML extends AbstractSensorML {
 
+    private static final long serialVersionUID = -6665511248268256489L;
+
     private String version;
 
     private final List<AbstractProcess> members = new LinkedList<AbstractProcess>();
@@ -73,7 +75,7 @@ public class SensorML extends AbstractSensorML {
 
     public SensorML addMember(final AbstractProcess member) {
         if (isEmpty() && !isSetIdentifier() && member.isSetIdentifier()) {
-            setIdentifier(member.getIdentifier());
+            setIdentifier(member.getIdentifierCodeWithAuthority());
         }
         if (isEmpty() && !isSetOfferings() && member.isSetOfferings()) {
             for (SosOffering offering : member.getOfferings()) {

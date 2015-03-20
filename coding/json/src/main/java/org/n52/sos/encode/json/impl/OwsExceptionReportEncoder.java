@@ -34,13 +34,13 @@ import static org.n52.sos.coding.json.JSONConstants.LOCATOR;
 import static org.n52.sos.coding.json.JSONConstants.TEXT;
 import static org.n52.sos.coding.json.JSONConstants.VERSION;
 
-import org.n52.sos.coding.json.JSONUtils;
 import org.n52.sos.encode.ExceptionEncoderKey;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.encode.json.JSONEncodingException;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.OwsExceptionCode;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.util.JSONUtils;
 import org.n52.sos.util.http.MediaTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

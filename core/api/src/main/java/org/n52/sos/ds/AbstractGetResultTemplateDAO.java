@@ -56,9 +56,8 @@ public abstract class AbstractGetResultTemplateDAO extends AbstractOperationDAO 
             offerings = getCache().getOfferingsWithResultTemplate();
             observableProperties = getCache().getObservablePropertiesWithResultTemplate();
         }
-        opsMeta.addPossibleValuesParameter(Sos2Constants.GetResultTemplateParams.offering, offerings);
-        opsMeta.addPossibleValuesParameter(Sos2Constants.GetResultTemplateParams.observedProperty,
-                observableProperties);
+        addOfferingParameter(opsMeta, offerings);
+        addObservablePropertyParameter(opsMeta, observableProperties);
     }
 
     public abstract GetResultTemplateResponse getResultTemplate(GetResultTemplateRequest request)

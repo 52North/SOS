@@ -38,14 +38,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingValue;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.SettingDefinitionEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -54,9 +46,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import org.n52.sos.config.SettingDefinition;
+import org.n52.sos.config.SettingValue;
+import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.exception.JSONException;
+import org.n52.sos.service.Configurator;
+import org.n52.sos.util.JSONUtils;
+import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.SettingDefinitionEncoder;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 /**
  * @since 4.0.0
- * 
+ *
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.ADMIN_DATABASE_SETTINGS)
@@ -139,18 +143,20 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
         return new ModelAndView(ControllerConstants.Views.ADMIN_DATASOURCE_SETTINGS, model);
     }
 
-    private JSONObject encodeSettings() throws JSONException {
+    private JsonNode encodeSettings() throws JSONException {
         return encodeSettings(getDatabaseSettingsHandler().getAll());
     }
 
-    private JSONObject encodeSettings(Properties p) throws JSONException {
+    private JsonNode encodeSettings(Properties p) throws JSONException {
         SettingDefinitionEncoder enc = new SettingDefinitionEncoder();
         Set<SettingDefinition<?, ?>> defs = getDatasource().getChangableSettingDefinitions(p);
-        JSONObject settings = enc.encode(enc.sortByGroup(defs));
-        return new JSONObject().put(SETTINGS, settings);
+        JsonNode settings = enc.encode(enc.sortByGroup(defs));
+        ObjectNode node = JSONUtils.nodeFactory().objectNode();
+        node.put(SETTINGS, settings);
+        return node;
     }
 
-    private JSONObject encodeSettings(Map<String, Object> p) throws JSONException {
+    private JsonNode encodeSettings(Map<String, Object> p) throws JSONException {
         SettingDefinitionEncoder enc = new SettingDefinitionEncoder();
         Set<SettingDefinition<?, ?>> defs =
                 getDatasource().getChangableSettingDefinitions(
@@ -158,8 +164,10 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
         for (SettingDefinition<?, ?> def : defs) {
             setDefaultValue(def, p.get(def.getKey()));
         }
-        JSONObject settings = enc.encode(enc.sortByGroup(defs));
-        return new JSONObject().put(SETTINGS, settings);
+        JsonNode settings = enc.encode(enc.sortByGroup(defs));
+        ObjectNode node = JSONUtils.nodeFactory().objectNode();
+        node.put(SETTINGS, settings);
+        return node;
     }
 
     @SuppressWarnings("unchecked")

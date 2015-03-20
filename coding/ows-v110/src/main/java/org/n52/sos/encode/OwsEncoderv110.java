@@ -49,6 +49,7 @@ import net.opengis.ows.x11.ExceptionReportDocument.ExceptionReport;
 import net.opengis.ows.x11.ExceptionType;
 import net.opengis.ows.x11.HTTPDocument.HTTP;
 import net.opengis.ows.x11.KeywordsType;
+import net.opengis.ows.x11.LanguageStringType;
 import net.opengis.ows.x11.MetadataType;
 import net.opengis.ows.x11.OperationDocument.Operation;
 import net.opengis.ows.x11.OperationsMetadataDocument.OperationsMetadata;
@@ -62,12 +63,19 @@ import net.opengis.ows.x11.ServiceProviderDocument.ServiceProvider;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3.x1999.xlink.ActuateType;
+import org.w3.x1999.xlink.ShowType;
+import org.w3.x1999.xlink.TypeType;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OwsExceptionCode;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.i18n.LocaleHelper;
+import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.Constraint;
 import org.n52.sos.ogc.ows.DCP;
@@ -101,19 +109,15 @@ import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.util.http.HTTPMethods;
 import org.n52.sos.util.http.MediaTypes;
 import org.n52.sos.w3c.SchemaLocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3.x1999.xlink.ActuateType;
-import org.w3.x1999.xlink.ShowType;
-import org.w3.x1999.xlink.TypeType;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+
 /**
  * @since 4.0.0
- * 
+ *
  */
 @Configurable
 public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
@@ -182,10 +186,10 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
 
     /**
      * Set the service identification information
-     * 
+     *
      * @param sosServiceIdentification
      *            SOS representation of ServiceIdentification.
-     * 
+     *
      * @throws OwsExceptionReport
      *             * if the file is invalid.
      */
@@ -204,34 +208,55 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
                 throw new NoApplicableCodeException()
                         .withMessage("The service identification file is not a ServiceIdentificationDocument, ServiceIdentification or invalid! Check the file in the Tomcat webapps: /SOS_webapp/WEB-INF/conf/capabilities/.");
             }
+            if (sosServiceIdentification.hasAbstract()) {
+                clearAbstracts(serviceIdent);
+                for (LocalizedString ls : sosServiceIdentification.getAbstract()) {
+                    serviceIdent.addNewAbstract().set(encodeOwsLanguageString(ls));
+                }
+            }
+            if (sosServiceIdentification.hasTitle()) {
+                clearTitles(serviceIdent);
+                for (LocalizedString ls : sosServiceIdentification.getTitle()) {
+                    serviceIdent.addNewTitle().set(encodeOwsLanguageString(ls));
+                }
+            }
         } else {
             /* TODO check for required fields and fail on missing ones */
             serviceIdent = ServiceIdentification.Factory.newInstance();
-            serviceIdent.addAccessConstraints(sosServiceIdentification.getAccessConstraints());
+            for (String accessConstraint : sosServiceIdentification.getAccessConstraints()) {
+                serviceIdent.addAccessConstraints(accessConstraint);
+            }
             serviceIdent.setFees(sosServiceIdentification.getFees());
-            serviceIdent.addNewAbstract().setStringValue(sosServiceIdentification.getAbstract());
             CodeType xbServiceType = serviceIdent.addNewServiceType();
             xbServiceType.setStringValue(sosServiceIdentification.getServiceType());
             if (sosServiceIdentification.getServiceTypeCodeSpace() != null) {
                 xbServiceType.setCodeSpace(sosServiceIdentification.getServiceTypeCodeSpace());
             }
-            serviceIdent.addNewTitle().setStringValue(sosServiceIdentification.getTitle());
+            if (sosServiceIdentification.hasAbstract()) {
+                for (LocalizedString ls : sosServiceIdentification.getAbstract()) {
+                    serviceIdent.addNewAbstract().set(encodeOwsLanguageString(ls));
+                }
+            }
+            if (sosServiceIdentification.hasTitle()) {
+                for (LocalizedString ls : sosServiceIdentification.getTitle()) {
+                    serviceIdent.addNewTitle().set(encodeOwsLanguageString(ls));
+                }
+            }
         }
         // set service type versions
-        if (sosServiceIdentification.getVersions() != null && !sosServiceIdentification.getVersions().isEmpty()) {
+        if (sosServiceIdentification.hasVersions()) {
             serviceIdent.setServiceTypeVersionArray(sosServiceIdentification.getVersions().toArray(
                     new String[sosServiceIdentification.getVersions().size()]));
         }
 
         // set Profiles
-        if (sosServiceIdentification.getProfiles() != null && !sosServiceIdentification.getProfiles().isEmpty()) {
+        if (sosServiceIdentification.hasProfiles()) {
             serviceIdent.setProfileArray(sosServiceIdentification.getProfiles().toArray(
                     new String[sosServiceIdentification.getProfiles().size()]));
         }
         // set keywords if they're not already in the service identification
         // doc
-        if (sosServiceIdentification.getKeywords() != null && !sosServiceIdentification.getKeywords().isEmpty()
-                && serviceIdent.getKeywordsArray().length == 0) {
+        if (sosServiceIdentification.hasKeywords() && serviceIdent.getKeywordsArray().length == 0) {
             final KeywordsType keywordsType = serviceIdent.addNewKeywords();
             for (final String keyword : sosServiceIdentification.getKeywords()) {
                 keywordsType.addNewKeyword().setStringValue(keyword.trim());
@@ -240,12 +265,28 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
         return serviceIdent;
     }
 
+    private void clearTitles(ServiceIdentification serviceIdent) {
+        if (CollectionHelper.isNotNullOrEmpty(serviceIdent.getTitleArray())) {
+            for (int i = 0; i < serviceIdent.getTitleArray().length; i++) {
+                serviceIdent.removeTitle(i);
+            }
+        }
+    }
+
+    private void clearAbstracts(ServiceIdentification serviceIdent) {
+        if (CollectionHelper.isNotNullOrEmpty(serviceIdent.getAbstractArray())) {
+            for (int i = 0; i < serviceIdent.getAbstractArray().length; i++) {
+                serviceIdent.removeAbstract(i);
+            }
+        }
+    }
+
     /**
      * Set the service provider information
-     * 
+     *
      * @param sosServiceProvider
      *            SOS representation of ServiceProvider.
-     * 
+     *
      * @throws OwsExceptionReport
      *             * if the file is invalid.
      */
@@ -309,11 +350,11 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
 
     /**
      * Sets the OperationsMetadata section to the capabilities document.
-     * 
+     *
      * @param operationsMetadata
      *            SOS metadatas for the operations
-     * 
-     * 
+     *
+     *
      * @throws CompositeOwsException
      *             * if an error occurs
      */
@@ -368,7 +409,18 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
             exceptionText.append("\n");
         }
         if (owsException.getCause() != null) {
-            addExceptionMessages(exceptionText, owsException.getCause());
+            exceptionText.append("[EXEPTION]: \n");
+            final String localizedMessage = owsException.getCause().getLocalizedMessage();
+            final String message = owsException.getCause().getMessage();
+            if (localizedMessage != null && message != null) {
+                if (!message.equals(localizedMessage)) {
+                    JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, message);
+                }
+                JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, localizedMessage);
+            } else {
+                JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, localizedMessage);
+                JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, message);
+            }
             if (includeStackTraceInExceptionReport) {
                 final ByteArrayOutputStream os = new ByteArrayOutputStream();
                 owsException.getCause().printStackTrace(new PrintStream(os));
@@ -441,7 +493,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
         }
         if (supportedDcp.containsKey(HTTPMethods.POST)) {
             List<DCP> postDcps = Lists.newArrayList(supportedDcp.get(HTTPMethods.POST));
-            Collections.sort(postDcps);            
+            Collections.sort(postDcps);
             for (DCP dcp : postDcps) {
                 RequestMethodType post = http.addNewPost();
                 post.setHref(dcp.getUrl());
@@ -453,7 +505,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
 
     /**
      * Encode OWS DomainType
-     * 
+     *
      * @param owsDomainType
      *            Service OWS DomainType
      * @return XML OWS DomainType
@@ -470,7 +522,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
 
     /**
      * Add XML OWS PossibleValues to XML OWS DomainType
-     * 
+     *
      * @param domainType
      *            XML OWS DomainType
      * @param value
@@ -491,7 +543,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
 
     /**
      * Add XML OWS AllowedValues to XML OWS DomainType
-     * 
+     *
      * @param domainType
      *            XML OWS DomainType
      * @param value
@@ -539,7 +591,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
 
     /**
      * Sets operation parameters to AnyValue, NoValues or AllowedValues.
-     * 
+     *
      * @param domainType
      *            Paramter.
      * @param parameterValue
@@ -579,12 +631,12 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
 
     /**
      * Sets the EventTime parameter.
-     * 
+     *
      * @param domainType
      *            Parameter.
      * @param parameterValue
-     * 
-     * 
+     *
+     *
      * @throws CompositeOwsException
      */
     private void setParamRange(final DomainType domainType, final OwsParameterValueRange parameterValue)
@@ -610,7 +662,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
 
     /**
      * Encode OwsMetadata element
-     * 
+     *
      * @param owsMeatadata
      *            SOS OwsMetadata object
      * @return XML OwsMetadata object
@@ -632,5 +684,12 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
         }
         xbMetadata.setType(TypeType.Enum.forString(owsMeatadata.getType().name()));
         return xbMetadata;
+    }
+
+    private LanguageStringType encodeOwsLanguageString(LocalizedString ls) {
+        LanguageStringType lst = LanguageStringType.Factory.newInstance();
+        lst.setStringValue(ls.getText());
+        lst.setLang(LocaleHelper.toString(ls.getLang()));
+        return lst;
     }
 }

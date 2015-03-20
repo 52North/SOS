@@ -105,6 +105,62 @@
 		{
 			"param":{
 				"service":"SOS",
+				"version":"2.0.0",
+				"request":"DescribeSensor",
+				"procedure":"http://www.52north.org/test/procedure/1",
+				"procedureDescriptionFormat":"http://www.opengis.net/sensorml/2.0"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/x-kvp",
+			"operation":"DescribeSensor",
+			"title":"with SensorML 2.0",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"DescribeSensor",
+				"procedure":"http://www.52north.org/test/procedure/1",
+				"procedureDescriptionFormat":"http://www.opengis.net/sensorML/1.0.1",
+				"language":"ger"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"DescribeSensor",
+			"title":"language ger",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"DescribeSensor",
+				"procedure":"http://www.52north.org/test/procedure/1",
+				"procedureDescriptionFormat":"http://www.opengis.net/sensorML/1.0.1",
+				"crs":"EPSG::4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"DescribeSensor",
+			"title":"crs = EPSG::4258",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
 				"request":"GetCapabilities"
 			},
 			"service":"SOS",
@@ -112,6 +168,102 @@
 			"binding": "application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"minimal",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"request":"GetCapabilities",
+				"language":"ger"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetCapabilities",
+			"title":"language ger",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"request":"GetCapabilities",
+				"crs":"4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetCapabilities",
+			"title":"crs = 4258",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"request":"GetCapabilities",
+				"crs":"EPSG:4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetCapabilities",
+			"title":"crs = EPSG:4258",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"request":"GetCapabilities",
+				"crs":"EPSG::4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetCapabilities",
+			"title":"crs = EPSG::4258",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"request":"GetCapabilities",
+				"crs":"http://www.opengis.net/def/crs/EPSG/0/4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetCapabilities",
+			"title":"crs = http://www.opengis.net/def/crs/EPSG/0/4258",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"request":"GetCapabilities",
+				"crs":"urn:ogc:def:crs:EPSG::4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetCapabilities",
+			"title":"crs = urn:ogc:def:crs:EPSG::4258",
 			"headers":{
 				"Accept":"application/xml"
 			},
@@ -259,6 +411,40 @@
 			"binding": "application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"minimal",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"GetFeatureOfInterest",
+				"language":"ger"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetFeatureOfInterest",
+			"title":"language=ger",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"GetFeatureOfInterest",
+				"crs":"EPSG::4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetFeatureOfInterest",
+			"title":"crs=EPSG::4258",
 			"headers":{
 				"Accept":"application/xml"
 			},
@@ -526,6 +712,42 @@
 				"service":"SOS",
 				"version":"2.0.0",
 				"request":"GetObservation",
+				"offering":"http://www.52north.org/test/offering/1",
+				"language":"ger"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetObservation",
+			"title":"offering, language=ger",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"GetObservation",
+				"offering":"http://www.52north.org/test/offering/1",
+				"crs":"EPSG::4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetObservation",
+			"title":"offering, crs=EPSG::4258",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"GetObservation",
 				"offering":[
 					"http://www.52north.org/test/offering/1",
 					"http://www.52north.org/test/offering/3"
@@ -725,6 +947,77 @@
 			"binding": "application/x-kvp",
 			"operation":"GetObservation",
 			"title":"temporal filter latest",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"GetObservationById",
+				"observation":"http://www.52north.org/test/observation/9"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetObservationById",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"GetObservationById",
+				"observation":"http://www.52north.org/test/observation/9",
+				"crs":"EPSG::4258"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetObservationById",
+			"title":"crs=EPSG::4258",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"GetObservationById",
+				"observation":"http://www.52north.org/test/observation/9",
+				"language":"ger"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetObservationById",
+			"title":"language=ger",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"GetObservationById",
+				"observation":"http://www.52north.org/test/observation/9",
+				"crs":"EPSG::4258",
+				"language":"ger"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"/kvp",
+			"operation":"GetObservationById",
+			"title":"crs=EPSG::4258,lanuage=get",
 			"headers":{
 				"Accept":"application/xml"
 			},
@@ -1124,6 +1417,19 @@
 			"method":"POST"
 		},
 		{
+			"request":"static/examples/sos_v20/requests_xml/DescribeSensor_SML20.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"DescribeSensor",
+			"title":"with SensorML 2.0",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
 			"request":"static/examples/sos_v20/requests_xml/GetCapabilities.xml",
 			"service":"SOS",
 			"version":"2.0.0",
@@ -1400,11 +1706,37 @@
 			"method":"POST"
 		},
 		{
+			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertSensor_SML20.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"InsertSensor",
+			"title":"with SensorML 2.0 description",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
 			"request":"static/examples/sos_v20/requests_xml/Transactional/UpdateSensorDescription.xml",
 			"service":"SOS",
 			"version":"2.0.0",
 			"binding": "application/xml",
 			"operation":"UpdateSensorDescription",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_xml/Transactional/UpdateSensorDescription_SML20.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"UpdateSensorDescription",
+			"title":"with SensorML 2.0 description",
 			"headers":{
 				"Accept":"application/xml",
 				"Content-Type":"application/xml"
@@ -1545,6 +1877,19 @@
 			"version":"2.0.0",
 			"binding": "application/soap+xml",
 			"operation":"DescribeSensor",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_soap/DescribeSensor_SML20.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"DescribeSensor",
+			"title":"with SensorML 2.0",
 			"headers":{
 				"Accept":"application/soap+xml",
 				"Content-Type":"application/soap+xml"
@@ -1827,12 +2172,38 @@
 			},
 			"method":"POST"
 		},
+				{
+			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertSensor_SML20.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"InsertSensor",
+			"title":"with SensorML 2.0",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
 		{
 			"request":"static/examples/sos_v20/requests_soap/Transactional/UpdateSensorDescription.xml",
 			"service":"SOS",
 			"version":"2.0.0",
 			"binding": "application/soap+xml",
 			"operation":"UpdateSensorDescription",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_soap/Transactional/UpdateSensorDescription_SML20.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"UpdateSensorDescription",
+			"title":"with SensorML 2.0",
 			"headers":{
 				"Accept":"application/soap+xml",
 				"Content-Type":"application/soap+xml"
@@ -1918,6 +2289,26 @@
 				"version":"2.0.0",
 				"procedure":"http://www.52north.org/test/procedure/1",
 				"procedureDescriptionFormat":"http://www.opengis.net/sensorML/1.0.1"
+			}
+
+		},
+		{
+			"service":"SOS",
+			"version":"2.0.0",
+			"method":"POST",
+			"binding": "application/json",
+			"headers":{
+				"Accept":"application/json",
+				"Content-Type":"application/json"
+			},
+			"operation":"DescribeSensor",
+			"title":"with SensorML 2.0",
+			"request":{
+				"request":"DescribeSensor",
+				"service":"SOS",
+				"version":"2.0.0",
+				"procedure":"http://www.52north.org/test/procedure/1",
+				"procedureDescriptionFormat":"http://www.opengis.net/sensorml/2.0"
 			}
 
 		},
@@ -2426,8 +2817,8 @@
 							}
 
 						},
-						"phenomenonTime":"012-11-19T17:45:15+00:00",
-						"resultTime":"012-11-19T17:45:15+00:00",
+						"phenomenonTime":"2012-11-19T17:45:15+00:00",
+						"resultTime":"2012-11-19T17:45:15+00:00",
 						"result":{
 							"uom":"test_unit_9_3",
 							"value":0.28

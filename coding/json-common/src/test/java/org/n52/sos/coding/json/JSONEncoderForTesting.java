@@ -28,6 +28,7 @@
  */
 package org.n52.sos.coding.json;
 
+import org.n52.sos.util.JSONUtils;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.encode.json.JSONEncoderKey;
 import org.n52.sos.encode.json.JSONEncodingException;

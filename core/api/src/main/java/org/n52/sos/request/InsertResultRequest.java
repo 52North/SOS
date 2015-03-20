@@ -28,14 +28,16 @@
  */
 package org.n52.sos.request;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.response.InsertResultResponse;
 import org.n52.sos.util.StringHelper;
 
 /**
  * @since 4.0.0
  * 
  */
-public class InsertResultRequest extends AbstractServiceRequest {
+public class InsertResultRequest extends AbstractServiceRequest<InsertResultResponse> {
 
     private String templateIdentifier;
 
@@ -68,6 +70,11 @@ public class InsertResultRequest extends AbstractServiceRequest {
 
     public boolean isSetResultValues() {
         return StringHelper.isNotEmpty(getResultValues());
+    }
+
+    @Override
+    public InsertResultResponse getResponse() throws OwsExceptionReport {
+        return (InsertResultResponse) new InsertResultResponse().set(this);
     }
 
 }

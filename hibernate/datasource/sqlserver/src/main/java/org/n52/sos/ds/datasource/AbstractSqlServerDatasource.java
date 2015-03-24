@@ -45,7 +45,6 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.StringSettingDefinition;
@@ -269,7 +268,32 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
             try {
                 conn = openConnection(settings);
                 stmt = conn.createStatement();
-                stmt.execute(String.format("truncate %s restart identity cascade", Joiner.on(", ").join(names)));
+                StringBuffer statement = new StringBuffer();
+                // alter table MyOtherTable nocheck constraint all
+                for (String table : names) {
+					statement = statement
+					.append("ALTER TABLE \"")
+					.append(table)
+					.append("\" NOCHECK CONSTRAINT ALL;");
+				}
+                // delete from MyTable
+                for (String table : names) {
+					statement = statement
+					.append("DELETE from \"")
+					.append(table)
+					.append("\"; DBCC CHECKIDENT(\"")
+					.append(table)
+					.append("\", RESEED, 0);");
+				}
+                // alter table MyOtherTable check constraint all
+                for (String table : names) {
+					statement = statement
+					.append("ALTER TABLE \"")
+					.append(table)
+					.append("\" CHECK CONSTRAINT ALL;");
+				}
+                statement = statement.append("DBCC SHRINKDATABASE (").append(settings.get(DATABASE_KEY).toString()).append(");");
+				stmt.execute(statement.toString());
             } catch (SQLException ex) {
                 throw new ConfigurationException(ex);
             } finally {

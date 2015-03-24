@@ -18,7 +18,7 @@
         <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/configuration.db</sqliteSettingDatabaseTargetFile>
     </properties>
     <build>
-        <finalName>${conf.sos.name}</finalName>
+        <finalName>${conf.sos.name}##${project.version}</finalName>
         <plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

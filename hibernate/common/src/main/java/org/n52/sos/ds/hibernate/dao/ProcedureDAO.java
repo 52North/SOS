@@ -251,8 +251,53 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @throws HibernateException 
      * @throws CodedException
      */
+    public Map<String,Collection<String>> getProceduresForAllFeaturesOfInterest(final Session session) {
+        List<Object[]> results = getFeatureProcedureResult(session);
+        Map<String,Collection<String>> foiProcMap = Maps.newHashMap();
+        if (CollectionHelper.isNotEmpty(results)) {
+            for (Object[] result : results) {
+                String foi = (String) result[0];
+                String proc = (String) result[1];
+                Collection<String> foiProcs = foiProcMap.get(foi);
+                if (foiProcs == null) {
+                    foiProcs = Lists.newArrayList();
+                    foiProcMap.put(foi, foiProcs);
+                }
+                foiProcs.add(proc);
+            }
+        }
+        return foiProcMap;
+    }
+    
+    /**
+     * Get FOIs for all procedure identifiers
+     *
+     * @param session
+     *            Hibernate session
+     *
+     * @return Map of procedure identifier to foi identifier collection
+     * @throws CodedException
+     */
+    public Map<String,Collection<String>> getFeaturesOfInterestsForAllProcedures(final Session session) {
+        List<Object[]> results = getFeatureProcedureResult(session);
+        Map<String,Collection<String>> foiProcMap = Maps.newHashMap();
+        if (CollectionHelper.isNotEmpty(results)) {
+            for (Object[] result : results) {
+                String foi = (String) result[0];
+                String proc = (String) result[1];
+                Collection<String> procFois = foiProcMap.get(proc);
+                if (procFois == null) {
+                    procFois = Lists.newArrayList();
+                    foiProcMap.put(proc, procFois);
+                }
+                procFois.add(foi);
+            }
+        }
+        return foiProcMap;
+    }
+    
     @SuppressWarnings("unchecked")
-    public Map<String,Collection<String>> getProceduresForAllFeaturesOfInterest(final Session session) throws HibernateException, CodedException {
+    private List<Object[]> getFeatureProcedureResult(Session session) {
         List<Object[]> results;
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_PROCEDURES_FOR_ALL_FEATURES_OF_INTEREST, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_PROCEDURES_FOR_ALL_FEATURES_OF_INTEREST);
@@ -281,19 +326,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             LOGGER.debug("QUERY getProceduresForAllFeaturesOfInterest(feature): {}", HibernateHelper.getSqlString(c));
             results = c.list();
         }
-
-        Map<String,Collection<String>> foiProcMap = Maps.newHashMap();
-        for (Object[] result : results) {
-            String foi = (String) result[0];
-            String proc = (String) result[1];
-            Collection<String> foiProcs = foiProcMap.get(foi);
-            if (foiProcs == null) {
-                foiProcs = Lists.newArrayList();
-                foiProcMap.put(foi, foiProcs);
-            }
-            foiProcs.add(proc);
-        }
-        return foiProcMap;
+        return results;
     }
 
     /**

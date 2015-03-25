@@ -46,11 +46,14 @@ import org.n52.sos.service.TransactionalSecurityConfiguration;
  */
 public abstract class AbstractTransactionalRequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
-    public AbstractTransactionalRequestOperator(String service,
+	
+    private static final boolean TRANSACTIONAL_ACTIVATION_STATE = false;
+
+	public AbstractTransactionalRequestOperator(String service,
                                                 String version,
                                                 String operationName,
                                                 Class<Q> requestType) {
-        super(service, version, operationName, requestType);
+        super(service, version, operationName, TRANSACTIONAL_ACTIVATION_STATE, requestType);
     }
 
     @Override

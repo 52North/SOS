@@ -33,7 +33,6 @@ import static org.n52.sos.service.MiscSettings.DEFAULT_FEATURE_PREFIX;
 import static org.n52.sos.service.MiscSettings.DEFAULT_OBSERVABLEPROPERTY_PREFIX;
 import static org.n52.sos.service.MiscSettings.DEFAULT_OFFERING_PREFIX;
 import static org.n52.sos.service.MiscSettings.DEFAULT_PROCEDURE_PREFIX;
-import static org.n52.sos.service.MiscSettings.GML_DATE_FORMAT;
 import static org.n52.sos.service.MiscSettings.HTTP_STATUS_CODE_USE_IN_KVP_POX_BINDING;
 import static org.n52.sos.service.MiscSettings.SRS_NAME_PREFIX_SOS_V1;
 import static org.n52.sos.service.MiscSettings.SRS_NAME_PREFIX_SOS_V2;
@@ -53,7 +52,6 @@ import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.i18n.I18NSettings;
-import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.Validation;
 import org.n52.sos.util.XmlOptionsHelper;
 
@@ -306,11 +304,6 @@ public class ServiceConfiguration {
     // public void setSupportsQuality(final boolean supportsQuality) {
     // this.supportsQuality = supportsQuality;
     // }
-
-    @Setting(GML_DATE_FORMAT)
-    public void setGmlDateFormat(final String format) {
-        DateTimeHelper.setResponseFormat(format);
-    }
 
     public boolean isUseHttpStatusCodesInKvpAndPoxBinding() {
         return useHttpStatusCodesInKvpAndPoxBinding;

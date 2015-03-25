@@ -170,14 +170,8 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
     @Override
     public Set<String> getConformanceClasses() {
-        try {
-            Session session = sessionHolder.getSession();
-            if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
-                return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
-            }
-            sessionHolder.returnSession(session);
-        } catch (OwsExceptionReport owse) {
-            LOGGER.error("Error while getting Spatial Filtering Profile conformance class!", owse);
+        if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
+            return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
         }
         return super.getConformanceClasses();
     }

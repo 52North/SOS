@@ -472,9 +472,8 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
                 throw new InvalidParameterValueException().at(SweConstants.EN_POSITION).withMessage(
                         "Error when parsing the Coordinates of Position: It must be of type Quantity!");
             }
-            return sosCoordinates;
         }
-        return null;
+        return sosCoordinates;
     }
 
     private List<SweField> parseAnyScalarPropertyTypeArray(final AnyScalarPropertyType[] fieldArray)

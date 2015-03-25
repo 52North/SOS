@@ -59,8 +59,6 @@ public class MiscSettings implements SettingDefinitionProvider {
 
     public static final String CHARACTER_ENCODING = "misc.characterEncoding";
 
-    public static final String GML_DATE_FORMAT = "misc.gmlDateFormat";
-
     public static final String SRS_NAME_PREFIX_SOS_V1 = "misc.srsNamePrefixSosV1";
 
     public static final String SRS_NAME_PREFIX_SOS_V2 = "misc.srsNamePrefixSosV2";
@@ -98,10 +96,6 @@ public class MiscSettings implements SettingDefinitionProvider {
     public static final StringSettingDefinition DECIMAL_SEPERATOR_DEFINITION = new StringSettingDefinition()
     .setGroup(GROUP).setOrder(ORDER_2).setKey(DECIMAL_SEPARATOR).setDefaultValue(".")
     .setTitle("Decimal separator").setDescription("Decimal separator in result element (a character)");
-
-    public static final StringSettingDefinition GML_DATE_FORMAT_DEFINITION = new StringSettingDefinition()
-            .setGroup(GROUP).setOrder(ORDER_3).setKey(GML_DATE_FORMAT).setOptional(true)
-            .setTitle("Date format of GML").setDescription("Date format of Geography Markup Language");
 
     public static final StringSettingDefinition SRS_NAME_PREFIX_SOS_V1_DEFINITION = new StringSettingDefinition()
             .setGroup(GROUP).setOrder(ORDER_4).setKey(SRS_NAME_PREFIX_SOS_V1)
@@ -201,7 +195,7 @@ public class MiscSettings implements SettingDefinitionProvider {
                             "Should the SOS return overall extrema for first/latest observation queries or for each time series");
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet.<SettingDefinition<?, ?>> of(
-            TOKEN_SEPERATOR_DEFINITION, TUPLE_SEPERATOR_DEFINITION, DECIMAL_SEPERATOR_DEFINITION, GML_DATE_FORMAT_DEFINITION,
+            TOKEN_SEPERATOR_DEFINITION, TUPLE_SEPERATOR_DEFINITION,DECIMAL_SEPERATOR_DEFINITION,
             SRS_NAME_PREFIX_SOS_V1_DEFINITION, SRS_NAME_PREFIX_SOS_V2_DEFINITION, DEFAULT_OFFERING_PREFIX_DEFINITION,
             DEFAULT_PROCEDURE_PREFIX_DEFINITION, DEFAULT_OBSERVABLEPROPERTY_PREFIX_DEFINITION,
             DEFAULT_FEATURE_PREFIX_DEFINITION, CHARACTER_ENCODING_DEFINITION,

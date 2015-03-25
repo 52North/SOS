@@ -51,7 +51,6 @@ import net.opengis.swe.x101.DataArrayDocument;
 import net.opengis.swe.x101.DataArrayType;
 import net.opengis.swe.x101.DataComponentPropertyType;
 import net.opengis.swe.x101.DataRecordType;
-import net.opengis.swe.x101.DataValuePropertyType;
 import net.opengis.swe.x101.EnvelopeType;
 import net.opengis.swe.x101.ObservablePropertyDocument.ObservableProperty;
 import net.opengis.swe.x101.QualityPropertyType;
@@ -464,7 +463,11 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
             xbTime.setValue(xbDateTime);
         }
         if (time.isSetUom()) {
-            xbTime.addNewUom().setCode(time.getUom());
+            if (time.getUom().startsWith("urn:") || time.getUom().startsWith("http://")) {
+                xbTime.addNewUom().setHref(time.getUom());
+            } else {
+                xbTime.addNewUom().setCode(time.getUom());
+            }
         }
         if (time.isSetQuality()) {
         	xbTime.setQuality(createQuality(time.getQuality())[0]);
@@ -614,10 +617,36 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
 	
 	            if (sosDataArray.isSetElementTyp()) {
 	                final DataComponentPropertyType xbElementType = xbDataArray.addNewElementType();
-	                xbDataArray.getElementType().setName("Components");
-//	
-//	                final DataRecordType xbDataRecord = createDataRecord((SweDataRecord) sosDataArray.getElementType());
-	                xbElementType.set(encode(sosDataArray.getElementType()));
+	                xbElementType.setName("Components");
+	                if (sosDataArray.getElementType() instanceof SweBoolean) {
+	                    xbElementType.addNewBoolean().set(createSimpleType((SweBoolean)sosDataArray.getElementType()));
+	                } else if (sosDataArray.getElementType() instanceof Category) {
+	                    xbElementType.addNewCategory().set(createSimpleType((SweCategory) sosDataArray.getElementType()));
+	                } else if (sosDataArray.getElementType() instanceof SweCount) {
+	                    xbElementType.addNewCount().set(createSimpleType((SweCount) sosDataArray.getElementType()));
+	                } else if (sosDataArray.getElementType() instanceof SweQuantity) {
+	                    xbElementType.addNewQuantity().set(createSimpleType((SweQuantity) sosDataArray.getElementType()));
+	                } else if (sosDataArray.getElementType() instanceof SweText) {
+	                    xbElementType.addNewText().set(createSimpleType((SweText) sosDataArray.getElementType()));
+	                } else if (sosDataArray.getElementType() instanceof SweTimeRange) {
+	                    xbElementType.addNewTimeRange().set(createSimpleType((SweTimeRange) sosDataArray.getElementType()));
+	                } else if (sosDataArray.getElementType() instanceof SweTime) {
+	                    xbElementType.addNewTime().set(createSimpleType((SweTime) sosDataArray.getElementType()));
+	                } else if (sosDataArray.getElementType() instanceof SweEnvelope) {
+	                    xbElementType.addNewAbstractDataRecord().set(createEnvelope((SweEnvelope) sosDataArray.getElementType()));
+	                    xbElementType.getAbstractDataRecord().substitute(SweConstants.QN_ENVELOPE_SWE_101, EnvelopeType.type);
+	                } else if (sosDataArray.getElementType() instanceof SweDataRecord) {
+	                    xbElementType.addNewAbstractDataRecord().set(createDataRecord((SweDataRecord) sosDataArray.getElementType()));
+	                    xbElementType.getAbstractDataRecord().substitute(SweConstants.QN_DATA_RECORD_SWE_101, DataRecordType.type);
+	                } else if (sosDataArray.getElementType() instanceof SweDataArray) {
+	                    xbElementType.addNewAbstractDataArray1().set(createDataArray((SweDataArray) sosDataArray.getElementType()).getDataArray1());
+	                    xbElementType.getAbstractDataArray1().substitute(SweConstants.QN_DATA_RECORD_SWE_101, DataArrayType.type);
+	                } else {
+	                    throw new NoApplicableCodeException().withMessage(
+	                            "The element type '%s' of the received '%s' is not supported by this encoder '%s'.",
+	                            sosDataArray.getElementType() != null ? sosDataArray.getElementType().getClass().getName() : null, xbElementType.getClass().getName(),
+	                            getClass().getName()).setStatus(BAD_REQUEST);
+	                }
 	            }
 	
 	            if (sosDataArray.isSetEncoding()) {
@@ -629,7 +658,6 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
 	                // SWEConstants.EN_TEXT_ENCODING,
 	                // SWEConstants.NS_SWE_PREFIX), TextBlock.type);
 	            }
-	            final DataValuePropertyType xbValues = xbDataArray.addNewValues();
 	            // if (absObs.getObservationTemplateIDs() == null
 	            // || (absObs.getObservationTemplateIDs() != null &&
 	            // absObs.getObservationTemplateIDs().isEmpty())) {
@@ -637,7 +665,7 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
 	            // absObs));
 	            // }
 	            if (sosDataArray.isSetValues()) {
-	                xbValues.set(createValues(sosDataArray.getValues(), sosDataArray.getEncoding()));
+	                xbDataArray.addNewValues().set(createValues(sosDataArray.getValues(), sosDataArray.getEncoding()));
 	            }
 	            return xbDataArrayDoc;
         	} else if (sosDataArray.isSetXml()) {

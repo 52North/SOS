@@ -1,6 +1,5 @@
-# 52°North SOS
-
-README file for the 52°North Sensor Observation Service (SOS) version 4.2
+# 52°North SOS [![OpenHUB](https://www.openhub.net/p/SensorObservationService/widgets/project_thin_badge.gif)](https://www.openhub.net/p/SensorObservationService)
+README file for the 52°North Sensor Observation Service (SOS) version 4.3
 
 This is the repository of the [52°North Sensor Observation Service (SOS)][1].
 
@@ -22,8 +21,7 @@ Ongoing development is done in branch [develop](../../tree/develop) and dedicate
 ## Code Compilation
 
 This project is managed with Maven3. Simply run `mvn clean install`
-to create a deployable .WAR file. `mvn clean install -Pdevelop`
-additionally enables integration tests.
+to create a deployable .WAR file.
 
 ## Distributions
 
@@ -64,7 +62,7 @@ A link to the contributors license agreement and further explanations are availa
 
 You can get support in the community mailing list and forums:
 
-    http://52north.org/resources/mailing-list-and-forums/
+    http://52north.org/resources/mailing-lists-and-forums/
 
 If you encounter any issues with the software or if you would like to see
 certain functionality added, let us know at:
@@ -74,6 +72,7 @@ certain functionality added, let us know at:
  - Eike Hinderk Jürrens [@EHJ-52n](e.h.juerrens@52north.org)
 
 The Sensor Web Community
+
 52°North Inititative for Geospatial Open Source Software GmbH, Germany
 
 --

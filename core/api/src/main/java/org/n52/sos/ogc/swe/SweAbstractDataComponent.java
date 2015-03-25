@@ -56,7 +56,7 @@ public abstract class SweAbstractDataComponent {
      * optional: swe:label [0..1]
      */
     private String label;
-    
+
     /**
      * optional: gml:name [0..*] (SweCommon 1.0.1)
      */
@@ -82,22 +82,22 @@ public abstract class SweAbstractDataComponent {
 
     public String getLabel() {
         if (StringHelper.isNotEmpty(label)) {
-            return label;   
+            return label;
         } else if (isSetNames()) {
-           return getName().getValue();
+            return getName().getValue();
         }
         return null;
     }
-    
+
     public CodeType getName() {
         if (isSetNames()) {
             return getNames().iterator().next();
         } else if (StringHelper.isNotEmpty(label)) {
-            return new CodeType(getLabel());   
+            return new CodeType(getLabel());
         }
         return null;
     }
-    
+
     public List<CodeType> getNames() {
         return names;
     }
@@ -120,34 +120,34 @@ public abstract class SweAbstractDataComponent {
         this.label = label;
         return this;
     }
-    
+
     public SweAbstractDataComponent addName(final String name) {
         getNames().add(new CodeType(name));
         return this;
     }
-    
+
     public SweAbstractDataComponent addName(final CodeType name) {
         getNames().add(name);
         return this;
     }
-    
+
     public SweAbstractDataComponent addName(final Collection<CodeType> names) {
         getNames().addAll(names);
         return this;
     }
-    
+
     public SweAbstractDataComponent setName(final String name) {
         getNames().clear();
         getNames().add(new CodeType(name));
         return this;
     }
-    
+
     public SweAbstractDataComponent setName(final CodeType name) {
         getNames().clear();
         getNames().add(name);
         return this;
     }
-    
+
     public SweAbstractDataComponent setName(final Collection<CodeType> names) {
         getNames().clear();
         getNames().addAll(names);
@@ -179,11 +179,11 @@ public abstract class SweAbstractDataComponent {
     public boolean isSetLabel() {
         return StringHelper.isNotEmpty(getLabel());
     }
-    
+
     public boolean isSetName() {
         return getName() != null && getName().isSetValue();
     }
-    
+
     public boolean isSetNames() {
         return CollectionHelper.isNotEmpty(getNames());
     }
@@ -226,5 +226,22 @@ public abstract class SweAbstractDataComponent {
     }
 
     public abstract SweDataComponentType getDataComponentType();
+
+    /**
+     * Copies all values from this {@link SweAbstractDataComponent} to the
+     * passed
+     * 
+     * @param copy
+     *            {@link SweAbstractDataComponent} to copy values to
+     * @return 
+     */
+    public SweAbstractDataComponent copyValueTo(SweAbstractDataComponent copy) {
+        copy.setDefinition(definition);
+        copy.setDescription(description);
+        copy.setIdentifier(identifier);
+        copy.setLabel(label);
+        copy.setName(names);
+        return copy;
+    }
 
 }

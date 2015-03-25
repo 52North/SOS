@@ -29,7 +29,7 @@
 
 SET FOREIGN_KEY_CHECKS = 0;
 
--- Can also be required in exiting SOS 4.2.0-SNAPSHOT versions
+-- Can also be required in existing SOS 4.2.0-SNAPSHOT versions
 
 -- update numeric columns to double
 ALTER TABLE sos.numericValue MODIFY value DOUBLE PRECISION;
@@ -76,7 +76,8 @@ ALTER TABLE sos.featureofinterest ADD COLUMN codespacename bigint;
 ALTER TABLE sos.featureofinterest ADD COLUMN description varchar(255);
 ALTER TABLE sos.featureofinterest add constraint featureCodespaceNameFk foreign key (codespacename) references sos.codespace (codespaceId);
 
--- create multiligualism tables
+-- create multiligualism tables (optional, required for multiligualism support)
+
 -- i18n featureOfInterest
 create table sos.i18nfeatureOfInterest (id bigint not null auto_increment, objectId bigint not null, locale varchar(255) not null, name varchar(255), description varchar(255), primary key (id)) ENGINE=InnoDB;
 ALTER TABLE sos.i18nfeatureOfInterest add constraint i18nFeatureIdentity unique (objectId, locale);

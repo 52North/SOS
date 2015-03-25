@@ -182,7 +182,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
             Locale requestedLanguage = LocaleHelper.fromRequest(request);
             for (ValidProcedureTime validProcedureTime : validProcedureTimes) {
                 SosProcedureDescription sosProcedureDescription =
-                        procedureConverter.createSosProcedureDescriptionFromValidProcedureTime(procedure,
+                        procedureConverter.createSosProcedureDescriptionFromValidProcedureTime(procedure, request.getProcedureDescriptionFormat(),
                                 validProcedureTime, request.getVersion(), requestedLanguage, session);
                 list.add(convertProcedureDescription(sosProcedureDescription, request));
             }

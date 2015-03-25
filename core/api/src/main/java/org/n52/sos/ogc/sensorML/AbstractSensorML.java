@@ -290,4 +290,15 @@ public class AbstractSensorML extends SosProcedureDescription {
     public boolean isSetGmlId() {
         return StringHelper.isNotEmpty(gmlId);
     }
+    
+    public void copyTo(AbstractSensorML copyOf) {
+        super.copyTo(copyOf);
+        copyOf.setCharacteristics(getCharacteristics());
+        copyOf.setClassifications(getClassifications());
+        copyOf.setContact(getContact());
+        copyOf.setDocumentation(getDocumentation());
+        copyOf.setHistory(getHistory());
+        copyOf.setIdentifications(getIdentifications());
+        copyOf.setKeywords(getKeywords());
+    }
 }

@@ -122,7 +122,6 @@ INSERT INTO "settings" VALUES('misc.defaultFeaturePrefix');
 INSERT INTO "settings" VALUES('misc.defaultObservablePropertyPrefix');
 INSERT INTO "settings" VALUES('misc.defaultOfferingPrefix');
 INSERT INTO "settings" VALUES('misc.defaultProcedurePrefix');
-INSERT INTO "settings" VALUES('misc.gmlDateFormat');
 INSERT INTO "settings" VALUES('misc.httpResponseCodeUseInKvpAndPoxBinding');
 INSERT INTO "settings" VALUES('misc.includeStackTraceInExceptionReport');
 INSERT INTO "settings" VALUES('misc.srsNamePrefixSosV1');
@@ -155,7 +154,6 @@ INSERT INTO "settings" VALUES('service.response.validate');
 INSERT INTO "settings" VALUES('service.streaming.force');
 INSERT INTO "settings" VALUES('service.security.transactional.active');
 INSERT INTO "settings" VALUES('service.sensorDirectory');
-INSERT INTO "settings" VALUES('service.skipDuplicateObservations');
 INSERT INTO "settings" VALUES('service.sosUrl');
 INSERT INTO "settings" VALUES('service.strictSpatialFilteringProfile');
 INSERT INTO "settings" VALUES('service.supportsQuality');
@@ -192,7 +190,6 @@ INSERT INTO "administrator_user" VALUES(1,'$2a$10$y1TfEacanLJHkC0mqtkpy.KSt7r6Dj
 INSERT INTO "boolean_settings" VALUES(0,'misc.httpResponseCodeUseInKvpAndPoxBinding');
 INSERT INTO "boolean_settings" VALUES(0,'misc.includeStackTraceInExceptionReport');
 INSERT INTO "boolean_settings" VALUES(1,'service.supportsQuality');
-INSERT INTO "boolean_settings" VALUES(1,'service.skipDuplicateObservations');
 INSERT INTO "boolean_settings" VALUES(0,'service.blockGetObservationRequestsWithoutRestriction');
 INSERT INTO "boolean_settings" VALUES(0,'service.useDefaultPrefixes');
 INSERT INTO "boolean_settings" VALUES(1,'service.encodeFullChildrenInDescribeSensor');
@@ -249,7 +246,6 @@ INSERT INTO "string_settings" VALUES('TBA','serviceProvider.individualName');
 INSERT INTO "string_settings" VALUES('TBA','serviceProvider.positionName');
 INSERT INTO "string_settings" VALUES('urn:ogc:def:crs:EPSG::','misc.srsNamePrefixSosV1');
 INSERT INTO "string_settings" VALUES('UTF-8','misc.characterEncoding');
-INSERT INTO "string_settings" VALUES(NULL,'misc.gmlDateFormat');
 INSERT INTO "string_settings" VALUES(NULL,'service.configurationFiles');
 INSERT INTO "string_settings" VALUES(NULL,'serviceIdentification.keywords');
 INSERT INTO "string_settings" VALUES(NULL,'service.transactionalAllowedIps');
@@ -257,7 +253,7 @@ INSERT INTO "string_settings" VALUES('127.0.0.1','service.transactionalAllowedPr
 INSERT INTO "string_settings" VALUES(NULL,'service.transactionalToken');
 
 INSERT INTO "uri_settings" VALUES('http://52north.org/swe','serviceProvider.site');
-INSERT INTO "uri_settings" VALUES('http://localhost:8080/52n-sos-webapp/sos','service.sosUrl');
+INSERT INTO "uri_settings" VALUES('http://localhost:8080/52n-sos-webapp/service','service.sosUrl');
 
 INSERT INTO "procedure_encodings" VALUES('http://www.opengis.net/sensorML/1.0.1','SOS','2.0.0',1);
 INSERT INTO "procedure_encodings" VALUES('text/xml; subtype="sensorML/1.0.1"','SOS','1.0.0',1);

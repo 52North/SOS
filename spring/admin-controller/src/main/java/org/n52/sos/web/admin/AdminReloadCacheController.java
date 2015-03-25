@@ -64,6 +64,7 @@ public class AdminReloadCacheController extends AbstractAdminController {
             LOG.debug("Reloading Capabilitities Cache");
             updateCache();
         }
+        // TODO display other message here because the WebUI is displaying information about successful cache update start but nothing is happening
     }
 
     @ResponseBody

@@ -27,9 +27,10 @@
 -- Public License for more details.
 --
 
+-- Database name to apply changes to
 use sos
 
--- Can also be required in exiting SOS 4.2.0-SNAPSHOT versions
+-- Can also be required in existing SOS 4.2.0-SNAPSHOT versions
 
 --update numeric columns to double
 ALTER TABLE dbo.numericvalue ALTER COLUMN value double precision;
@@ -37,7 +38,7 @@ ALTER TABLE dbo.series ALTER COLUMN firstNumericValue double precision;
 ALTER TABLE dbo.series ALTER COLUMN lastNumericValue double precision;
 
 -- add published flag to series table
-ALTER TABLE dbo.series ADD published char(1) default 'F'check (published in ('T','F'));
+ALTER TABLE dbo.series ADD published char(1) default 'T' check (published in ('T','F'));
 UPDATE dbo.series SET dbo.series.published = 'T';
 ALTER TABLE dbo.series ALTER COLUMN published char(1) NOT NULL;
 
@@ -82,7 +83,8 @@ ALTER TABLE dbo.featureofinterest ADD codespacename bigint;
 ALTER TABLE dbo.featureofinterest ADD  description varchar(255);
 ALTER TABLE dbo.featureofinterest add constraint featureCodespaceNameFk foreign key (codespacename) references dbo.codespace;
 
--- create multiligualism tables
+-- create multiligualism tables (optional, required for multiligualism support)
+
 -- i18n featureOfInterest
 create table dbo.i18nfeatureOfInterest (id bigint not null, objectId bigint not null, locale varchar(255) not null, name varchar(255), description varchar(255), primary key (id));
 ALTER TABLE dbo.i18nfeatureOfInterest add constraint i18nFeatureIdentity unique (objectId, locale);

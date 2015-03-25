@@ -47,10 +47,11 @@ import com.google.common.base.Strings;
 public class XmlStringDescriptionCreationStrategy implements
         DescriptionCreationStrategy {
     @Override
-    public SosProcedureDescription create(Procedure p, Locale i18n, Session s)
+    public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport {
         SosProcedureDescription desc = readXml(p.getDescriptionFile());
         desc.setIdentifier(p.getIdentifier());
+        desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
         return desc;
     }
 

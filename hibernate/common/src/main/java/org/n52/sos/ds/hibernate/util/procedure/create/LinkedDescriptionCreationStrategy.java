@@ -58,7 +58,7 @@ public class LinkedDescriptionCreationStrategy implements DescriptionCreationStr
     }
 
     @Override
-    public SosProcedureDescription create(Procedure p, Locale i18n, Session s) throws OwsExceptionReport {
+    public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s) throws OwsExceptionReport {
         String xml = loadDescriptionFromHttp(p.getDescriptionFile());
         return new SosProcedureDescriptionUnknowType(p.getIdentifier(), p.getProcedureDescriptionFormat().getProcedureDescriptionFormat(), xml);
     }

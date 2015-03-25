@@ -47,6 +47,7 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.sos.response.StreamingDataResponse;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.http.MediaTypes;
@@ -107,8 +108,8 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> imple
             UnsupportedEncoderInputException {
         AbstractServiceResponse asr = objectToEncode;
         Encoder<Object, AbstractServiceResponse> encoder = getEncoder(asr);
-        if (!(encoder instanceof StreamingDataEncoder) && asr.hasStreamingData()) {
-            asr.mergeStreamingData();
+        if (asr instanceof StreamingDataResponse && ((StreamingDataResponse)asr).hasStreamingData() && !(encoder instanceof StreamingDataEncoder)) {
+            ((StreamingDataResponse)asr).mergeStreamingData();
         }
         Object encode = encoder.encode(asr);
         if (encode != null && encode instanceof XmlObject) {

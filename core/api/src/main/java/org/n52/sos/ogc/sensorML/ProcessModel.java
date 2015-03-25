@@ -50,8 +50,4 @@ public class ProcessModel extends AbstractProcess implements HasProcessMethod {
     public boolean isSetMethod() {
         return method != null;
     }
-    
-    public boolean isSetMethod() {
-        return getMethod() != null;
-    }
 }

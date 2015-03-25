@@ -337,12 +337,6 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
         }
     }
 
-        @Override
-        protected SettingValue<String> newChoiceSettingValue() {
-            return new ChoiceSettingValue();
-        }
-    }
-
     protected class SetActiveAction<K extends Serializable, T extends Activatable<K, T>> extends VoidHibernateAction {
         private final Activatable<K, T> activatable;
 

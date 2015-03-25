@@ -133,13 +133,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
         checkOutputFormatWithDescriptionFormat(procedure.getIdentifier(), procedure, requestedDescriptionFormat, getFormat(procedure));
         SosProcedureDescription desc = create(procedure, requestedDescriptionFormat, null, i18n, session).orNull();
         if (desc != null) {
-// TODO check
-        	desc.setDescriptionFormat(descriptionFormat);
-        	addHumanReadableName(desc, procedure);
-            enrich(desc, procedure, requestedServiceVersion,
-                   descriptionFormat, null, loadedProcedures, i18n, session);
-            if (!requestedDescriptionFormat.equals(descriptionFormat)) {
-                desc = convert(descriptionFormat, requestedDescriptionFormat, desc);
+            addHumanReadableName(desc, procedure);
             enrich(desc, procedure, requestedServiceVersion, requestedDescriptionFormat, null, loadedProcedures, i18n,
                     session);
             if (!requestedDescriptionFormat.equals(desc.getDescriptionFormat())) {
@@ -177,11 +171,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
         }
         Optional<SosProcedureDescription> description = create(procedure, requestedDescriptionFormat, vpt, i18n, session);
         if (description.isPresent()) {
-// TODO check
-        	addHumanReadableName(description.get(), procedure);
-            enrich(description.get(), procedure, version, descriptionFormat,
-                   getValidTime(vpt), null, i18n, session);
-            description.get().setDescriptionFormat(descriptionFormat);
+            addHumanReadableName(description.get(), procedure);
             enrich(description.get(), procedure, version, requestedDescriptionFormat, getValidTime(vpt), null, i18n, session);
             if (!requestedDescriptionFormat.equals(description.get().getDescriptionFormat())) {
                 SosProcedureDescription converted = convert(description.get().getDescriptionFormat(), requestedDescriptionFormat, description.get());

@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.util.procedure.generator;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.hibernate.HibernateException;

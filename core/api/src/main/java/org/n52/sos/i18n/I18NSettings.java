@@ -79,10 +79,6 @@ public class I18NSettings implements SettingDefinitionProvider {
             .<SettingDefinition<?, ?>>of(
                     I18N_DEFAULT_LANGUAGE_DEFINITION, SHOW_ALL_LANGUAGE_VLAUES);
 
-    private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet
-            .<SettingDefinition<?, ?>>of(
-                    I18N_DEFAULT_LANGUAGE_DEFINITION, SHOW_ALL_LANGUAGE_VLAUES, CHOICE);
-
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
         return Collections.unmodifiableSet(DEFINITIONS);

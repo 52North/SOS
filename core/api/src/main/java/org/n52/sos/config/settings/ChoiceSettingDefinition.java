@@ -31,15 +31,6 @@ package org.n52.sos.config.settings;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-<<<<<<< .merge_file_a07052
-
-import org.n52.sos.config.SettingType;
-
-import com.google.common.base.Preconditions;
-
-public class ChoiceSettingDefinition extends AbstractSettingDefinition<ChoiceSettingDefinition, String> {
-=======
-import java.util.TreeMap;
 
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingType;
@@ -61,7 +52,6 @@ import com.google.common.base.Preconditions;
  */
 public class ChoiceSettingDefinition extends AbstractSettingDefinition<ChoiceSettingDefinition, String> {
 	
->>>>>>> .merge_file_a05232
     private final Map<String, String> options = new HashMap<>();
 
     public ChoiceSettingDefinition() {
@@ -69,11 +59,8 @@ public class ChoiceSettingDefinition extends AbstractSettingDefinition<ChoiceSet
     }
 
     public Map<String, String> getOptions() {
-<<<<<<< .merge_file_a07052
-        return Collections.unmodifiableMap(options);
-=======
         return Collections.unmodifiableMap(CollectionHelper.sortByValue(options));
->>>>>>> .merge_file_a05232
+
     }
 
     public boolean hasOption(String value) {
@@ -87,14 +74,9 @@ public class ChoiceSettingDefinition extends AbstractSettingDefinition<ChoiceSet
     }
 
     public ChoiceSettingDefinition addOption(String option, String displayName) {
-<<<<<<< .merge_file_a07052
-        this.options.put(Preconditions.checkNotNull(option), Preconditions
-                         .checkNotNull(displayName));
-=======
         this.options.put(
         		Preconditions.checkNotNull(option),
         		Preconditions.checkNotNull(displayName));
->>>>>>> .merge_file_a05232
         return this;
     }
 

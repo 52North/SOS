@@ -15,7 +15,7 @@
 		<timeseries.api.version>1.3.0</timeseries.api.version>
 	</properties>
 	<build>
-		<finalName>${conf.sos.name}</finalName>
+		<finalName>${conf.sos.name}##${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

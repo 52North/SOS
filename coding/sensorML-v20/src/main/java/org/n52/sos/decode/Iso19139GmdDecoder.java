@@ -44,7 +44,7 @@ import org.isotc211.x2005.gmd.CIResponsiblePartyType;
 import org.isotc211.x2005.gmd.CITelephoneType;
 import org.n52.sos.Role;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.sos.iso.GmdConstants;
+import org.n52.sos.iso.gmd.GmdConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;

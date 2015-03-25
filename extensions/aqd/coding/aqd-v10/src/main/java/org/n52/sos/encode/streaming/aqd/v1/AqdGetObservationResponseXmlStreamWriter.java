@@ -48,6 +48,8 @@ import org.n52.sos.encode.XmlStreamWriter;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.iso.GcoConstants;
+import org.n52.sos.iso.gmd.GmdConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -226,9 +228,9 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
 
         // ISO
         // xmlns:gmd="http://www.isotc211.org/2005/gmd"
-        namespace(AqdConstants.NS_GMD_PREFIX, AqdConstants.NS_GMD);
+        namespace(GmdConstants.NS_GMD_PREFIX, GmdConstants.NS_GMD);
         // xmlns:gco="http://www.isotc211.org/2005/gco"
-        namespace(AqdConstants.NS_GCO_PREFIX, AqdConstants.NS_GCO);
+        namespace(GcoConstants.NS_GCO_PREFIX, GcoConstants.NS_GCO);
 
         // AQD e-Reporting
         // xmlns:aqd="http://dd.eionet.europa.eu/schemaset/id2011850eu-1.0"

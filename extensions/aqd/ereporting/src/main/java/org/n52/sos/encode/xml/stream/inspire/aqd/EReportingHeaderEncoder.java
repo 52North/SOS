@@ -50,6 +50,7 @@ import org.n52.sos.inspire.aqd.InspireID;
 import org.n52.sos.inspire.aqd.Pronunciation;
 import org.n52.sos.inspire.aqd.RelatedParty;
 import org.n52.sos.inspire.aqd.Spelling;
+import org.n52.sos.iso.GcoConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.GmlConstants;
@@ -108,11 +109,11 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
         namespace(AqdConstants.NS_AQD_PREFIX, AqdConstants.NS_AQD);
         namespace(AqdConstants.NS_BASE_PREFIX, AqdConstants.NS_BASE);
         namespace(AqdConstants.NS_BASE2_PREFIX, AqdConstants.NS_BASE2);
-        namespace(AqdConstants.NS_GCO_PREFIX, AqdConstants.NS_GCO);
         namespace(AqdConstants.NS_GN_PREFIX, AqdConstants.NS_GN);
         namespace(GmlConstants.NS_GML_PREFIX, GmlConstants.NS_GML_32);
         namespace(W3CConstants.NS_XLINK_PREFIX, W3CConstants.NS_XLINK);
         namespace(W3CConstants.NS_XSI_PREFIX, W3CConstants.NS_XSI);
+        namespace(GcoConstants.NS_GCO_PREFIX, GcoConstants.NS_GCO);
         if (encodingValues.isAddSchemaLocation()) {
             schemaLocation(Collections.singleton(AqdConstants.NS_AQD_SCHEMA_LOCATION));
         }
@@ -262,7 +263,7 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
         if (v.isNil()) {
             attr(W3CConstants.QN_XSI_NIL, Boolean.toString(true));
             if (v.getNilReason().isPresent()) {
-                attr(AqdConstants.QN_GCO_NIL_REASON, v.getNilReason().get());
+                attr(GcoConstants.QN_GCO_NIL_REASON, v.getNilReason().get());
             }
         }
     }
@@ -275,9 +276,9 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
                 encodeGCONilAttr(v);
             } else {
                 start(qn);
-                start(AqdConstants.QN_GCO_CHARACTER_STRING);
+                start(GcoConstants.QN_GCO_CHARACTER_STRING);
                 chars(v.get());
-                endInline(AqdConstants.QN_GCO_CHARACTER_STRING);
+                endInline(GcoConstants.QN_GCO_CHARACTER_STRING);
                 end(qn);
             }
         }

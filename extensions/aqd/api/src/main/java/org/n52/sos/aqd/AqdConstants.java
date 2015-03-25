@@ -33,7 +33,8 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import org.n52.sos.aqd.AqdConstants.ProcessParameter;
+import org.n52.sos.iso.GcoConstants;
+import org.n52.sos.iso.gmd.GmdConstants;
 import org.n52.sos.w3c.SchemaLocation;
 
 import com.google.common.collect.ImmutableMap;
@@ -87,10 +88,6 @@ public interface AqdConstants {
 
     String NS_EF_PREFIX = "ef";
 
-    String NS_GCO = "http://www.isotc211.org/2005/gco";
-
-    String NS_GCO_PREFIX = "gco";
-
     String NS_GN = "urn:x-inspire:specification:gmlas:GeographicalNames:3.0";
 
     String NS_GN_PREFIX = "gn";
@@ -98,10 +95,6 @@ public interface AqdConstants {
     String NS_OMPR = "http://inspire.ec.europa.eu/schemas/ompr/2.0";
 
     String NS_OMPR_PREFIX = "ompr";
-
-    String NS_GMD = "http://www.isotc211.org/2005/gmd";
-
-    String NS_GMD_PREFIX = "gmd";
 
     Map<String, String> NAMESPACE_PREFIX_MAP = ImmutableMap.<String, String> builder()
             .put(NS_AQD, NS_AQD_PREFIX)
@@ -111,10 +104,10 @@ public interface AqdConstants {
             .put(NS_BASE, NS_BASE_PREFIX)
             .put(NS_BASE2, NS_BASE2_PREFIX)
             .put(NS_EF, NS_EF_PREFIX)
-            .put(NS_GCO, NS_GCO_PREFIX)
             .put(NS_GN, NS_GN_PREFIX)
             .put(NS_OMPR, NS_OMPR_PREFIX)
-            .put(NS_GMD, NS_GMD_PREFIX)
+            .put(GcoConstants.NS_GCO, GcoConstants.NS_GCO_PREFIX)
+            .put(GmdConstants.NS_GMD, GmdConstants.NS_GMD_PREFIX)
             .build();
 
     String AN_CODE_SPACE = "codeSpace";
@@ -134,8 +127,6 @@ public interface AqdConstants {
     String EN_CHANGE = "change";
 
     String EN_CHANGE_DESCRIPTION = "changeDescription";
-
-    String EN_CHARACTER_STRING = "CharacterString";
 
     String EN_CONTACT = "contact";
 
@@ -296,10 +287,6 @@ public interface AqdConstants {
     QName QN_BASE2_TELEPHONE_VOICE = new QName(NS_BASE2, EN_TELEPHONE_VOICE, NS_BASE2_PREFIX);
 
     QName QN_BASE2_WEBSITE = new QName(NS_BASE2, EN_WEBSITE, NS_BASE2_PREFIX);
-
-    QName QN_GCO_CHARACTER_STRING = new QName(NS_GCO, EN_CHARACTER_STRING, NS_GCO_PREFIX);
-
-    QName QN_GCO_NIL_REASON = new QName(NS_GCO, AN_NIL_REASON, NS_GCO_PREFIX);
 
     QName QN_GN_GEOGRAPHICAL_NAME = new QName(NS_GN, EN_GEOGRAPHICAL_NAME, NS_GN_PREFIX);
 

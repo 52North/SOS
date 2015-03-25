@@ -26,26 +26,31 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode.xml.inspire;
+package org.n52.sos.encode;
 
 import static org.hamcrest.Matchers.*;
 
 import javax.xml.namespace.NamespaceContext;
 
-import org.hamcrest.Matchers;
 import org.isotc211.x2005.gmd.DQDomainConsistencyDocument;
 import org.isotc211.x2005.gmd.DQDomainConsistencyPropertyType;
 import org.isotc211.x2005.gmd.DQDomainConsistencyType;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.gmd.GmdConformanceResult;
-import org.n52.sos.gmd.GmdDomainConsistency;
-import org.n52.sos.gmd.GmdQuantitativeResult;
+import org.n52.sos.config.SettingsManager;
+import org.n52.sos.iso.GcoConstants;
+import org.n52.sos.iso.gmd.GmdConformanceResult;
+import org.n52.sos.iso.gmd.GmdConstants;
+import org.n52.sos.iso.gmd.GmdDomainConsistency;
+import org.n52.sos.iso.gmd.GmdQuantitativeResult;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.NamespaceContextBuilder;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.w3c.W3CConstants;
@@ -53,7 +58,7 @@ import org.w3c.dom.Node;
 
 import com.google.common.collect.ImmutableMap;
 
-public class GmdEncoderTest {
+public class Iso19139GmdEncoderTest {
     private static final ImmutableMap<HelperValues, String> TYPE
             = ImmutableMap.of(HelperValues.TYPE, "true");
     private static final ImmutableMap<HelperValues, String> PROPERTY_TYPE
@@ -62,14 +67,25 @@ public class GmdEncoderTest {
             = ImmutableMap.of(HelperValues.DOCUMENT, "true");
     private static final NamespaceContext NS_CTX = new NamespaceContextBuilder()
             .add(GmlConstants.NS_GML_32, GmlConstants.NS_GML_PREFIX)
-            .add(AqdConstants.NS_GCO, AqdConstants.NS_GCO_PREFIX)
-            .add(AqdConstants.NS_GMD, AqdConstants.NS_GMD_PREFIX)
+            .add(GcoConstants.NS_GCO, GcoConstants.NS_GCO_PREFIX)
+            .add(GmdConstants.NS_GMD, GmdConstants.NS_GMD_PREFIX)
             .add(W3CConstants.NS_XLINK, W3CConstants.NS_XLINK_PREFIX)
             .build();
+    
+    
+    @BeforeClass
+    public static void initSettingsManager() {
+        SettingsManager.getInstance();
+    }
+
+    @AfterClass
+    public static void cleanupSettingManager() {
+        SettingsManager.getInstance().cleanup();
+    }
 
     @Rule
     public final ErrorCollector errors = new ErrorCollector();
-    private final GmdEncoder encoder = new GmdEncoder();
+    private final Iso19139GmdEncoder encoder = new Iso19139GmdEncoder();
 
     @Test
     public void checkReturnType() throws Exception {

@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.gmd;
+package org.n52.sos.iso.gmd;
 
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.quality.OmResultQuality;

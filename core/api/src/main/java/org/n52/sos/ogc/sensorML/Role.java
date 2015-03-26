@@ -26,21 +26,27 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos;
+package org.n52.sos.ogc.sensorML;
 
 import org.n52.sos.iso.CodeList;
 
-
+/**
+ * Class that represents SensorML Role
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.2.0
+ *
+ */
 public class Role {
-    
+
     private String value;
-    
+
     private String codeList = CodeList.CI_ROLE_CODE_URL;
-    
+
     private String codeListValue = CodeList.CiRoleCodes.CI_RoleCode_pointOfContact.name();
-    
+
     public Role(String value) {
-       this.value = value;
+        this.value = value;
     }
 
     /**
@@ -51,7 +57,8 @@ public class Role {
     }
 
     /**
-     * @param value the value to set
+     * @param value
+     *            the value to set
      */
     public Role setValue(String value) {
         this.value = value;
@@ -66,7 +73,8 @@ public class Role {
     }
 
     /**
-     * @param codeList the codeList to set
+     * @param codeList
+     *            the codeList to set
      */
     public Role setCodeList(String codeList) {
         this.codeList = codeList;
@@ -81,19 +89,21 @@ public class Role {
     }
 
     /**
-     * @param codeListValue the codeListValue to set
+     * @param codeListValue
+     *            the codeListValue to set
      */
     public Role setCodeListValue(String codeListValue) {
         this.codeListValue = codeListValue;
         return this;
     }
-    
+
     /**
-     * @param codeListValue the codeListValue to set
+     * @param codeListValue
+     *            the codeListValue to set
      */
     public Role setCodeListValue(CodeList.CiRoleCodes codeListValue) {
         this.codeListValue = codeListValue.name();
         return this;
     }
-    
+
 }

@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint" table="samplingPoint">
+    	<comment>Table to store the AQD e-Reporting Sampling Point information. Mapping file: mapping/ereporting/EReportingSamplingPoint.hbm.xml</comment>
+        <id name="samplingPointId" type="long">
+            <column name="samplingPointId">
+            	<comment>Table primary key, used for relations</comment>
+            </column>
+            <generator class="native">
+            	<param name="sequence">samplingPointId_seq</param>
+            </generator>
+        </id>
+       <property name="identifier" type="string">
+            <column name="identifier" not-null="true" unique-key="sampFeatIdentifierUK">
+            	<comment>The identifier of the samplingPoint, gml:identifier. Used as parameter for queries. Optional but unique</comment>
+            </column>
+        </property>
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="sampFeatCodespaceIdFk">
+            <column name="codespace">
+            	<comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name">
+            	<comment>The name of the samplingPoint, gml:name. Optional</comment>
+            </column>
+        </property>
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="sampFeatCodespaceNameFk">
+            <column name="codespaceName">
+            	<comment>Relation/foreign key to the codespace table. Contains the gml:name codespace. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="description" type="string">
+            <column name="description">
+            	<comment>Description of the samplingPoint, gml:description. Optional</comment>
+            </column>
+        </property>
+        <many-to-one name="assessmentType" class="org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType" fetch="join" foreign-key="sampPointAssessTypeIdFk">
+            <column name="assessmentType">
+            	<comment>Relation/foreign key to the assessmentType table. Describes the type of the assessmentType. Contains "assessmentType".assessmentType</comment>
+            </column>
+        </many-to-one>
+		<many-to-one name="station" class="org.n52.sos.ds.hibernate.entities.ereporting.EReportingStation" fetch="select" lazy="no-proxy" foreign-key="sampPointStationFk">
+            <column name="station">
+            	<comment>Relation/foreign key to the station table. Describes the type of the station. Contains "station".stationId</comment>
+            </column>
+        </many-to-one>
+		<many-to-one name="network" class="org.n52.sos.ds.hibernate.entities.ereporting.EReportingNetwork" fetch="select" lazy="no-proxy" foreign-key="sampPointNetworkFk">
+            <column name="network">
+            	<comment>Relation/foreign key to the network table. Describes the type of the network. Contains "network".networkId</comment>
+            </column>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

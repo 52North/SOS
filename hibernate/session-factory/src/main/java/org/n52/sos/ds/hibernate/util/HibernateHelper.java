@@ -36,7 +36,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.engine.query.spi.EntityGraphQueryHint;
 import org.hibernate.engine.spi.NamedQueryDefinition;
 import org.hibernate.engine.spi.NamedSQLQueryDefinition;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
@@ -111,22 +110,38 @@ public final class HibernateHelper {
     /**
      * Checks if the specified entity is supported.
      *
-     * @param clazz   the class
-     * @param session the session
+     * @param clazz
+     *            the class
      *
      * @return if the entity supported
-     *
-     * @deprecated use {@link #isEntitySupported(java.lang.Class) }
-     */
-    @Deprecated
-    public static boolean isEntitySupported(Class<?> clazz, Session session) {
-        return isEntitySupported(clazz);
-    }
 
+     */
     public static boolean isEntitySupported(Class<?> clazz) {
         return HibernateMetadataCache.getInstance().isEntitySupported(clazz);
     }
 
+    /**
+     * Checks if the specified column is supported by this entity.
+     * 
+     * @param clazz
+     *            the class
+     * @param column
+     *            the column
+     * @return if the column supported
+     */
+    public static boolean isColumnSupported(Class<?> clazz, String column) {
+        return HibernateMetadataCache.getInstance().isColumnSupported(clazz, column);
+    }
+
+    /**
+     * Checks if the specified named query is supported.
+     * 
+     * @param namedQuery
+     *            the named query
+     * @param session
+     *            Hibernate session
+     * @return if the named query supported
+     */
     public static boolean isNamedQuerySupported(String namedQuery, Session session) {
         NamedQueryDefinition namedQueryDef = ((SessionImpl) session).getSessionFactory().getNamedQuery(namedQuery);
         NamedSQLQueryDefinition namedSQLQueryDef =

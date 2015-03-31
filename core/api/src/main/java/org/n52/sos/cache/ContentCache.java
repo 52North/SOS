@@ -340,34 +340,6 @@ public interface ContentCache extends Serializable {
     Set<String> getObservablePropertiesForProcedure(String procedure);
 
     /**
-     * @return all observation identifiers
-     */
-    @Deprecated
-    Set<String> getObservationIdentifiers();
-
-    /**
-     * Checks whether the specified identifier exists.
-     *
-     * @param observationIdentifier
-     *            the observation identifier
-     *
-     * @return {@code true} if it exists
-     */
-    @Deprecated
-    boolean hasObservationIdentifier(String observationIdentifier);
-
-    /**
-     * Get the observation identifiers associated with the specified procedure.
-     *
-     * @param procedure
-     *            the procedure
-     *
-     * @return the observation identifiers
-     */
-    @Deprecated
-    Set<String> getObservationIdentifiersForProcedure(String procedure);
-
-    /**
      * @return all observation types
      */
     Set<String> getObservationTypes();
@@ -899,5 +871,21 @@ public interface ContentCache extends Serializable {
      * @return <code>true</code>, if the specific format is supported
      */
     public boolean hasRequstableProcedureDescriptionFormat(String format);
+    
+    String getFeatureOfInterestIdentifierForHumanReadableName(String humanReadableName);
+    
+    String getFeatureOfInterestHumanReadableNameForIdentifier(String identifier);
+    
+    String getObservablePropertyIdentifierForHumanReadableName(String humanReadableName);
+    
+    String getObservablePropertyHumanReadableNameForIdentifier(String identifier);
+    
+    String getProcedureIdentifierForHumanReadableName(String humanReadableName);
+    
+    String getProcedureHumanReadableNameForIdentifier(String identifier);
+    
+	String getOfferingIdentifierForHumanReadableName(String humanReadableName);
+    
+    String getOfferingHumanReadableNameForIdentifier(String identifier);
 
 }

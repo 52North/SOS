@@ -1,0 +1,4 @@
+org.n52.sos.decode.kvp.AqdGetCapabilitiesKvpDecoder
+org.n52.sos.decode.kvp.AqdDescribeSensorKvpDecoder
+org.n52.sos.decode.kvp.AqdGetObservationKvpDecoder
+org.n52.sos.decode.AqdDecoderv10

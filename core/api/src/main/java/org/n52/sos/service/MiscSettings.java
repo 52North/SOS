@@ -54,6 +54,8 @@ public class MiscSettings implements SettingDefinitionProvider {
     public static final String TOKEN_SEPARATOR = "misc.tokenSeparator";
 
     public static final String TUPLE_SEPARATOR = "misc.tupleSeparator";
+    
+    public static final String DECIMAL_SEPARATOR = "misc.decimalSeparator";
 
     public static final String CHARACTER_ENCODING = "misc.characterEncoding";
 
@@ -88,27 +90,31 @@ public class MiscSettings implements SettingDefinitionProvider {
             .setTitle("Token separator").setDescription("Token separator in result element (a character)");
 
     public static final StringSettingDefinition TUPLE_SEPERATOR_DEFINITION = new StringSettingDefinition()
-            .setGroup(GROUP).setOrder(ORDER_1).setKey(TUPLE_SEPARATOR).setDefaultValue(";")
+            .setGroup(GROUP).setOrder(ORDER_1).setKey(TUPLE_SEPARATOR).setDefaultValue("@@")
             .setTitle("Tuple separator").setDescription("Tuple separator in result element (a character)");
+    
+    public static final StringSettingDefinition DECIMAL_SEPERATOR_DEFINITION = new StringSettingDefinition()
+    .setGroup(GROUP).setOrder(ORDER_2).setKey(DECIMAL_SEPARATOR).setDefaultValue(".")
+    .setTitle("Decimal separator").setDescription("Decimal separator in result element (a character)");
 
     public static final StringSettingDefinition SRS_NAME_PREFIX_SOS_V1_DEFINITION = new StringSettingDefinition()
-            .setGroup(GROUP).setOrder(ORDER_3).setKey(SRS_NAME_PREFIX_SOS_V1)
+            .setGroup(GROUP).setOrder(ORDER_4).setKey(SRS_NAME_PREFIX_SOS_V1)
             .setDefaultValue(OGCConstants.URN_DEF_CRS_EPSG).setTitle("SOSv1 SRS Prefix")
             .setDescription("Prefix for the SRS name in SOS v1.0.0.");
 
     public static final StringSettingDefinition SRS_NAME_PREFIX_SOS_V2_DEFINITION = new StringSettingDefinition()
-            .setGroup(GROUP).setOrder(ORDER_4).setKey(SRS_NAME_PREFIX_SOS_V2)
+            .setGroup(GROUP).setOrder(ORDER_5).setKey(SRS_NAME_PREFIX_SOS_V2)
             .setDefaultValue(OGCConstants.URL_DEF_CRS_EPSG).setTitle("SOSv2 SRS Prefix")
             .setDescription("Prefix for the SRS name in SOS v2.0.0.");
 
     public static final StringSettingDefinition CHARACTER_ENCODING_DEFINITION = new StringSettingDefinition()
-            .setGroup(GROUP).setOrder(ORDER_5).setKey(CHARACTER_ENCODING).setDefaultValue("UTF-8")
+            .setGroup(GROUP).setOrder(ORDER_6).setKey(CHARACTER_ENCODING).setDefaultValue("UTF-8")
             .setTitle("Character Encoding").setDescription("The character encoding used for responses.");
 
     public static final StringSettingDefinition DEFAULT_OFFERING_PREFIX_DEFINITION =
             new StringSettingDefinition()
                     .setGroup(MiscSettings.GROUP)
-                    .setOrder(ORDER_6)
+                    .setOrder(ORDER_7)
                     .setKey(DEFAULT_OFFERING_PREFIX)
                     .setDefaultValue("http://www.example.org/offering/")
                     .setTitle("Default Offering Prefix")
@@ -118,7 +124,7 @@ public class MiscSettings implements SettingDefinitionProvider {
     public static final StringSettingDefinition DEFAULT_PROCEDURE_PREFIX_DEFINITION =
             new StringSettingDefinition()
                     .setGroup(MiscSettings.GROUP)
-                    .setOrder(ORDER_7)
+                    .setOrder(ORDER_8)
                     .setKey(DEFAULT_PROCEDURE_PREFIX)
                     .setDefaultValue("http://www.example.org/procedure/")
                     .setTitle("Default Procedure Prefix")
@@ -126,14 +132,14 @@ public class MiscSettings implements SettingDefinitionProvider {
                             "The default prefix for procedures (generated if not defined in Register-/InsertSensor requests or values from custom db).");
 
     public static final StringSettingDefinition DEFAULT_OBSERVABLEPROPERTY_PREFIX_DEFINITION =
-            new StringSettingDefinition().setGroup(MiscSettings.GROUP).setOrder(ORDER_8)
+            new StringSettingDefinition().setGroup(MiscSettings.GROUP).setOrder(ORDER_9)
                     .setKey(DEFAULT_OBSERVABLEPROPERTY_PREFIX)
                     .setDefaultValue("http://www.example.org/observableProperty/")
                     .setTitle("Default ObservableProperty Prefix")
                     .setDescription("The default prefix for observableProperty (values from custom db).");
 
     public static final StringSettingDefinition DEFAULT_FEATURE_PREFIX_DEFINITION = new StringSettingDefinition()
-            .setGroup(MiscSettings.GROUP).setOrder(ORDER_9).setKey(DEFAULT_FEATURE_PREFIX)
+            .setGroup(MiscSettings.GROUP).setOrder(ORDER_10).setKey(DEFAULT_FEATURE_PREFIX)
             .setDefaultValue("http://www.example.org/feature/").setTitle("Default Feature Prefix")
             .setDescription("The default prefix for features (values from custom db).");
 
@@ -189,7 +195,7 @@ public class MiscSettings implements SettingDefinitionProvider {
                             "Should the SOS return overall extrema for first/latest observation queries or for each time series");
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet.<SettingDefinition<?, ?>> of(
-            TOKEN_SEPERATOR_DEFINITION, TUPLE_SEPERATOR_DEFINITION,
+            TOKEN_SEPERATOR_DEFINITION, TUPLE_SEPERATOR_DEFINITION,DECIMAL_SEPERATOR_DEFINITION,
             SRS_NAME_PREFIX_SOS_V1_DEFINITION, SRS_NAME_PREFIX_SOS_V2_DEFINITION, DEFAULT_OFFERING_PREFIX_DEFINITION,
             DEFAULT_PROCEDURE_PREFIX_DEFINITION, DEFAULT_OBSERVABLEPROPERTY_PREFIX_DEFINITION,
             DEFAULT_FEATURE_PREFIX_DEFINITION, CHARACTER_ENCODING_DEFINITION,

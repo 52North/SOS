@@ -89,7 +89,7 @@ import org.n52.oxf.xml.NcNameResolver;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.iso.GmdConstants;
+import org.n52.sos.iso.gmd.GmdConstants;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.GmlConstants;

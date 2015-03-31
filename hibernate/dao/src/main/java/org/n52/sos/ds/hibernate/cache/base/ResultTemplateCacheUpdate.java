@@ -60,7 +60,7 @@ public class ResultTemplateCacheUpdate extends AbstractThreadableDatasourceCache
     public void execute() {
         LOGGER.debug("Executing ResultTemplateCacheUpdate");
         startStopwatch();
-        if (HibernateHelper.isEntitySupported(ResultTemplate.class, getSession())) {
+        if (HibernateHelper.isEntitySupported(ResultTemplate.class)) {
             List<ResultTemplate> resultTemplates = new ResultTemplateDAO().getResultTemplateObjects(getSession());
             for (ResultTemplate resultTemplate : resultTemplates) {
                 String id = resultTemplate.getIdentifier();

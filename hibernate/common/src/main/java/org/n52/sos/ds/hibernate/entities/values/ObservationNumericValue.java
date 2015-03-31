@@ -58,5 +58,10 @@ public class ObservationNumericValue extends ObservationValue implements Numeric
     public boolean isSetValue() {
         return getValue() != null;
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
 
 }

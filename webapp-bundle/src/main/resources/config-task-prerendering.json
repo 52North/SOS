@@ -1,0 +1,34 @@
+{
+	"phenomenonStyles":{
+		"phe_39b6c8bd9f50fc1892b407c9268cf557":{
+			"interval":[
+				"lastWeek",
+				"lastMonth"
+			],
+			"style":{
+				"chartType":"line",
+				"properties":{
+					"color":"#0000ff",
+					"lineType":"solid",
+					"width":2
+				}
+			}
+		}
+	},
+	"timeseriesStyles":{
+		"56":{
+			"interval":[
+				"lastWeek",
+				"lastMonth"
+			],
+			"style":{
+				"chartType":"bar",
+				"properties":{
+					"interval":"byDay",
+					"width":0.8,
+					"color":"#0000ff"
+				}
+			}
+		}
+	}
+}

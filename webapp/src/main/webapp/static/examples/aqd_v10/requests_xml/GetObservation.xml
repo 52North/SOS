@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sos:GetObservation service="AQD" version="1.0.0" 
+	xmlns:sos="http://www.opengis.net/sos/2.0" 
+	xmlns:fes="http://www.opengis.net/fes/2.0" 
+	xmlns:gml="http://www.opengis.net/gml/3.2" 
+	xmlns:swe="http://www.opengis.net/swe/2.0"
+	xmlns:xlink="http://www.w3.org/1999/xlink" 
+	xmlns:swes="http://www.opengis.net/swes/2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd">
+	
+	<!-- optional -->
+	<!--
+    <swes:extension xsi:type="swe:TextPropertyType">
+		<swe:Text>
+			<swe:identifier>flow</swe:identifier>
+			<swe:value>e1a</swe:value>
+		</swe:Text>
+	</swes:extension>
+	-->
+	<!--
+	<swes:extension xsi:type="swe:CountPropertyType">
+		<swe:Count>
+			<swe:identifier>crs</swe:identifier>
+			<swe:value>4326</swe:value>
+		</swe:Count>
+	</swes:extension>
+	-->
+	<!--
+	<swes:extension xsi:type="swe:TextPropertyType">
+		<swe:Text>
+			<swe:identifier>language</swe:identifier>
+			<swe:value>ger</swe:value>
+		</swe:Text>
+	</swes:extension>
+	-->
+
+	<!-- optional, multiple values possible -->
+	<sos:procedure>http://www.52north.org/test/procedure/1</sos:procedure>
+	<sos:procedure>http://www.52north.org/test/procedure/2</sos:procedure>
+
+	<!-- optional, multiple values possible -->
+	<sos:offering>http://www.52north.org/test/offering/1</sos:offering>
+	<sos:offering>http://www.52north.org/test/offering/2</sos:offering>
+
+	<!-- optional, multiple values possible -->
+	<sos:observedProperty>http://www.52north.org/test/observableProperty/1</sos:observedProperty>
+	<sos:observedProperty>http://www.52north.org/test/observableProperty/2</sos:observedProperty>
+
+	<!-- optional -->
+	<sos:temporalFilter>
+		<fes:During>
+			<fes:ValueReference>phenomenonTime</fes:ValueReference>
+			<gml:TimePeriod gml:id="tp_1">
+				<gml:beginPosition>2012-11-19T14:00:00.000+01:00</gml:beginPosition>
+				<gml:endPosition>2012-11-19T15:00:00.000+01:00</gml:endPosition>
+			</gml:TimePeriod>
+		</fes:During>
+	</sos:temporalFilter>
+	
+	<!-- optional -->
+	<!--
+	<sos:temporalFilter>
+		<fes:TEquals>
+			<fes:ValueReference>phenomenonTime</fes:ValueReference>
+			<gml:TimeInstant gml:id="ti_1">
+				<gml:timePosition>2012-11-19T14:00:00.000+01:00</gml:timePosition>
+			</gml:TimeInstant>
+		</fes:TEquals>
+	</sos:temporalFilter>
+	-->
+	<!--
+	<sos:temporalFilter>
+		<fes:TEquals>
+			<fes:ValueReference>phenomenonTime</fes:ValueReference>
+			<gml:TimeInstant gml:id="ti_1">
+				<gml:timePosition>first</gml:timePosition>
+			</gml:TimeInstant>
+		</fes:TEquals>
+	</sos:temporalFilter>
+	-->
+	<!--
+	<sos:temporalFilter>
+		<fes:TEquals>
+			<fes:ValueReference>phenomenonTime</fes:ValueReference>
+			<gml:TimeInstant gml:id="ti_1">
+				<gml:timePosition>latest</gml:timePosition>
+			</gml:TimeInstant>
+		</fes:TEquals>
+	</sos:temporalFilter>
+	-->
+	<!--
+	<sos:temporalFilter>
+		<fes:During>
+			<fes:ValueReference>resultTime</fes:ValueReference>
+			<gml:TimePeriod gml:id="tp_1">
+				<gml:beginPosition>2012-11-19T13:00:00.000Z</gml:beginPosition>
+				<gml:endPosition>2012-11-19T13:05:00.000Z</gml:endPosition>
+			</gml:TimePeriod>
+		</fes:During>
+	</sos:temporalFilter>
+	-->
+	<!--
+	<sos:temporalFilter>
+		<fes:TEquals>
+			<fes:ValueReference>resultTime</fes:ValueReference>
+			<gml:TimeInstant gml:id="ti_1">
+				<gml:timePosition>2012-11-19T14:00:00.000+01:00</gml:timePosition>
+			</gml:TimeInstant>
+		</fes:TEquals>
+	</sos:temporalFilter>
+	-->
+
+	<!-- optional, multiple values possible -->
+	<sos:featureOfInterest>http://www.52north.org/test/featureOfInterest/1</sos:featureOfInterest>
+	<sos:featureOfInterest>http://www.52north.org/test/featureOfInterest/2</sos:featureOfInterest>
+
+	<!-- optional -->
+	<sos:spatialFilter>
+		<fes:BBOX>
+			<fes:ValueReference>
+                om:featureOfInterest/sams:SF_SpatialSamplingFeature/sams:shape
+			</fes:ValueReference>
+			<gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+				<gml:lowerCorner>0 0</gml:lowerCorner>
+				<gml:upperCorner>60 60</gml:upperCorner>
+			</gml:Envelope>
+		</fes:BBOX>
+	</sos:spatialFilter>
+	<!-- Spatial filter for Spatial Filtering Profile -->
+	<!-- 
+	<sos:spatialFilter>
+		<fes:BBOX>
+			<fes:ValueReference>http://www.opengis.net/req/omxml/2.0/data/samplingGeometry
+			</fes:ValueReference>
+			<gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+				<gml:lowerCorner>0 0</gml:lowerCorner>
+				<gml:upperCorner>60 60</gml:upperCorner>
+			</gml:Envelope>
+		</fes:BBOX>
+	</sos:spatialFilter>
+ 	-->
+	<!-- optional -->
+	<sos:responseFormat>http://dd.eionet.europa.eu/schemaset/id2011850eu-1.0</sos:responseFormat>
+
+</sos:GetObservation>

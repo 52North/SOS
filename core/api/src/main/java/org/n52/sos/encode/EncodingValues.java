@@ -58,6 +58,8 @@ public class EncodingValues {
     
     private boolean encodeOwsExceptionOnly = false;
     
+    private boolean addSchemaLocation = false;
+    
     private int indent = 0;
     
     private boolean embedded = false;
@@ -212,6 +214,9 @@ public class EncodingValues {
      * @return the encodingNamespace
      */
     public String getEncodingNamespace() {
+    	if (encodingNamespace == null && hasAddtitionalValues() && getAdditionalValues().containsKey(HelperValues.ENCODE_NAMESPACE)) {
+    		setEncodingNamespace(getAdditionalValues().get(HelperValues.ENCODE_NAMESPACE));
+    	}
         return encodingNamespace;
     }
     
@@ -240,6 +245,20 @@ public class EncodingValues {
     public EncodingValues setEncodeOwsExceptionOnly(boolean encodeOwsExceptionOnly) {
         this.encodeOwsExceptionOnly = encodeOwsExceptionOnly;
         return this;
+    }
+
+    /**
+     * @return the addSchemaLocation
+     */
+    public boolean isAddSchemaLocation() {
+        return addSchemaLocation;
+    }
+
+    /**
+     * @param addSchemaLocation the addSchemaLocation to set
+     */
+    public void setAddSchemaLocation(boolean addSchemaLocation) {
+        this.addSchemaLocation = addSchemaLocation;
     }
 
     /**

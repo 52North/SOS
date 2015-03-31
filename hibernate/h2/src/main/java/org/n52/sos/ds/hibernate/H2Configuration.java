@@ -127,7 +127,6 @@ public class H2Configuration {
             resources.add("mapping/series/observation/SeriesObservationTime.hbm.xml");
             resources.add("mapping/series/observation/SeriesValue.hbm.xml");
             resources.add("mapping/series/observation/SeriesValueTime.hbm.xml");
-            resources.add("mapping/series/spatialFilteringProfile/SeriesSpatialFitleringProfile.hbm.xml");
             return resources;
         }
     };

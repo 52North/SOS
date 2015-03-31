@@ -1,0 +1,13 @@
+General Infos:
+==============
+project = 52North SOS Reference Implementation (${artifactId})
+version = ${project.version}
+builddate = ${git.build.time}
+
+Subversion Infos:
+=================
+repository = ${git.repository}
+path = ${git.branch}
+revision = ${git.commit.id}
+lastCommitMessage = ${git.commit.message.short}
+lastCommitDate = ${git.commit.time}

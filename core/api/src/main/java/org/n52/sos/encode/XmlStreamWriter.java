@@ -29,6 +29,8 @@
 package org.n52.sos.encode;
 
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -37,17 +39,20 @@ import javax.xml.stream.XMLStreamWriter;
 import org.n52.sos.util.Constants;
 import org.n52.sos.w3c.W3CConstants;
 
+import com.google.common.xml.XmlEscapers;
+
 /**
  * Abstract {@link XmlWriter} class for {@link XMLStreamWriter}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.2
  *
  */
 public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
 
+    private final Map<String, String> prefixes = new HashMap<>();
+
     private XMLStreamWriter w;
-    
 
     @Override
     protected void init(OutputStream out, String encoding, EncodingValues encodingValues) throws XMLStreamException {
@@ -71,13 +76,22 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
         getXmlWriter().writeAttribute(name, value);
     }
 
+    @Override
     protected void attr(String namespace, String localName, String value) throws XMLStreamException {
         getXmlWriter().writeAttribute(W3CConstants.NS_XSI, W3CConstants.SCHEMA_LOCATION, value);
     }
 
     @Override
     protected void namespace(String prefix, String namespace) throws XMLStreamException {
-        getXmlWriter().writeNamespace(prefix, namespace);
+        String ns = prefixes.get(prefix);
+        if (ns == null) {
+            getXmlWriter().writeNamespace(prefix, namespace);
+            prefixes.put(prefix, namespace);
+        } else {
+            if (!ns.equals(namespace)) {
+                throw new XMLStreamException("Prefix <" + prefix + "> is already bound to <" + ns + ">");
+            }
+        }
     }
 
     @Override
@@ -102,19 +116,27 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
 
     @Override
     protected void chars(String chars) throws XMLStreamException {
+        chars(chars, true);
+    }
+
+    @Override
+    protected void chars(String chars, boolean escape) throws XMLStreamException {
+        if (escape) {
+            chars = XmlEscapers.xmlContentEscaper().escape(chars);
+        }
         getXmlWriter().writeCharacters(chars);
     }
 
     @Override
     protected void end(QName name) throws XMLStreamException {
-        writeIndent(indent--);
+        writeIndent(--indent);
         getXmlWriter().writeEndElement();
         flush();
     }
-    
+
     @Override
     protected void endInline(QName name) throws XMLStreamException {
-        indent--;
+        --indent;
         getXmlWriter().writeEndElement();
         flush();
     }
@@ -131,8 +153,9 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
         getXmlWriter().close();
     }
 
+    @Override
     protected void flush() throws XMLStreamException {
         getXmlWriter().flush();
     }
-    
+
 }

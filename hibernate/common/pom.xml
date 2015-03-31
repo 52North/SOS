@@ -75,6 +75,10 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
         </dependency>
+        <dependency>
+        	<groupId>org.n52.sensorweb.sos</groupId>
+        	<artifactId>api-aqd-v10</artifactId>
+        </dependency>
     </dependencies>
     <build>
       <plugins>

@@ -35,8 +35,8 @@
     <jsp:param name="activeMenu" value="documentation" />
 </jsp:include>
 <jsp:include page="common/logotitle.jsp">
-    <jsp:param name="title" value="52&deg;North SOS Documentation" />
-    <jsp:param name="leadParagraph" value="Documentation of the 52&deg;North Sensor Observation Service" />
+	<jsp:param name="title" value="52&deg;North SOS Documentation" />
+	<jsp:param name="leadParagraph" value="Documentation of the 52&deg;North Sensor Observation Service" />
 </jsp:include>
 <hr/>
 <p>The 52&deg;North SOS documentation is available in the <a href="https://52north.org/twiki/bin/view/Main/WebHome" target="_blank" title="52&deg;North Wiki">52&deg;North Wiki</a>.</p>
@@ -45,19 +45,17 @@
 
 <p>The developer guide can be found <a href="https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceDeveloperGuide" target="_blank" title="Developer guide">here</a>.</p>
 
-<%--
-
 <h4>Other Documentations</h4>
 
 <p>Links to documentations of included independent software components:</p>
 <c:if test="${sos:documentExtensionExists(pageContext.servletContext, 'api-doc/index.html')}">
     <li>
-        Sensor Web Client REST-API
+    	Sensor Web Client REST-API
         <a id="rest-menuitem" class="menu-item4" target="_blank" href="<c:url value="/static/doc/api-doc" />">
             <span class="menu-title">documentation</span>
         </a>
     </li>
 </c:if>
---%>
+
 
 <jsp:include page="common/footer.jsp" />

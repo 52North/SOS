@@ -12,5 +12,7 @@
     <description>52°North SOS - Converter Modules</description>
     <modules>
         <module>transformation</module>
+        <module>identifier-modifier</module>
+        <module>split-and-merge</module>
     </modules>
 </project>

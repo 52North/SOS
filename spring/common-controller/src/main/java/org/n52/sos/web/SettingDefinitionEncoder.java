@@ -158,7 +158,7 @@ public class SettingDefinitionEncoder {
         return encodeValue(def.getType(), def.getValue());
     }
 
-    private JsonNode encodeValue(SettingType type, Object value)
+    public JsonNode encodeValue(SettingType type, Object value)
             throws IllegalArgumentException {
         if (value == null) {
             return nodeFactory.nullNode();

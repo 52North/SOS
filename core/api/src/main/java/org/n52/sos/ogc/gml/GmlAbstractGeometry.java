@@ -91,4 +91,9 @@ public class GmlAbstractGeometry extends AbstractFeature {
     public boolean isSetGeometry() {
         return this.geometry != null;
     }
+
+	@Override
+	public String getDefaultElementEncoding() {
+		return GmlConstants.NS_GML_32;
+	}
 }

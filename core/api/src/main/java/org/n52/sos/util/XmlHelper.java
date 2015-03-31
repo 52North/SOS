@@ -487,7 +487,13 @@ public final class XmlHelper {
     }
 
     private static String getSchemaTypeNamespace(final XmlObject doc) {
-        final QName name = doc.schemaType().getName();
+        QName name = null;
+        if (doc.schemaType().isAttributeType()) {
+            name = doc.schemaType().getAttributeTypeAttributeName();
+        } else {
+            // TODO check else/if for ...schemaType().isDocumentType ?
+            name = doc.schemaType().getName();
+        }
         if (name != null) {
             return name.getNamespaceURI();
         }

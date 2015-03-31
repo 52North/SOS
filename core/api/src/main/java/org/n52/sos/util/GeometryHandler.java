@@ -152,7 +152,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
                         isEastingFirstEpsgCode(getStorageEPSG())));
 
     }
-    
+
     @Override
     public void cleanup() {
         if (getCrsAuthorityFactory() != null) {
@@ -161,7 +161,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
             }
             if (getCrsAuthorityFactory() instanceof AbstractAuthorityFactory) {
                 try {
-                    ((AbstractAuthorityFactory)getCrsAuthorityFactory()).dispose();
+                    ((AbstractAuthorityFactory) getCrsAuthorityFactory()).dispose();
                 } catch (FactoryException fe) {
                     LOGGER.error("Error while GeometryHandler clean up", fe);
                 }
@@ -171,16 +171,6 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
          * close {@link WeakCollectionCleaner}
          */
         WeakCollectionCleaner.DEFAULT.exit();
-    }
-
-    @Deprecated
-    public int getDefaultEPSG() {
-        return getStorageEPSG();
-    }
-
-    @Deprecated
-    public int getDefault3DEPSG() {
-        return getStorage3DEPSG();
     }
 
     /**
@@ -217,34 +207,6 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
      */
     public int getDefaultResponse3DEPSG() {
         return defaultResponse3DEPSG;
-    }
-
-    /**
-     * Set default EPSG code from settings
-     * 
-     * @param epsgCode
-     *            EPSG code from settings
-     * @throws ConfigurationException
-     *             If an error occurs
-     */
-    @Deprecated
-    @Setting(FeatureQuerySettingsProvider.DEFAULT_EPSG)
-    public void setDefaultEpsg(final int epsgCode) throws ConfigurationException {
-        setStorageEpsg(epsgCode);
-    }
-
-    /**
-     * Set default 3D EPSG code from settings
-     * 
-     * @param epsgCode3D
-     *            3D EPSG code from settings
-     * @throws ConfigurationException
-     *             If an error occurs
-     */
-    @Deprecated
-    @Setting(FeatureQuerySettingsProvider.DEFAULT_3D_EPSG)
-    public void setDefault3DEpsg(final int epsgCode3D) throws ConfigurationException {
-        setStorage3DEpsg(epsgCode3D);
     }
 
     /**
@@ -438,24 +400,6 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
     }
 
     /**
-     * Switch Geometry coordinates if necessary
-     * 
-     * @param geom
-     *            Geometry to switch coordinates
-     * @return Geometry with switched coordinates
-     * @throws OwsExceptionReport
-     *             If an error occurs
-     */
-    @Deprecated
-    public Geometry switchCoordinateAxisOrderIfNeeded(final Geometry geom) throws OwsExceptionReport {
-        if (geom != null && isNorthingFirstEpsgCode(geom.getSRID() == 0 ? getStorageEPSG() : geom.getSRID())) {
-            return JTSHelper.switchCoordinateAxisOrder(geom);
-        } else {
-            return geom;
-        }
-    }
-
-    /**
      * Switch the coordinate axis of geometry from or for datasource
      * 
      * @param geom
@@ -499,7 +443,8 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
      *            Value to check
      * @return Double value
      */
-    //TODO replace with JavaHelper.asDouble?
+    // TODO replace with JavaHelper.asDouble?
+    @Deprecated
     public double getValueAsDouble(final Object value) {
         if (value instanceof String) {
             return Double.valueOf((String) value).doubleValue();
@@ -552,6 +497,25 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
         }
         builder.append(Constants.CLOSE_BRACE_CHAR);
         return builder.toString();
+    }
+
+    /**
+     * Get WKT string from longitude and latitude with axis order as defined by
+     * EPSG code.
+     * 
+     * @param longitude
+     *            Longitude coordinate
+     * @param latitude
+     *            Latitude coordinate
+     * @param epsg
+     *            EPSG code to check for axis order
+     * @return WKT string
+     */
+    public String getWktString(Object longitude, Object latitude, int epsg) {
+        if (isNorthingFirstEpsgCode(epsg)) {
+            return getWktString(latitude, longitude);
+        }
+        return getWktString(longitude, latitude);
     }
 
     /**
@@ -778,7 +742,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
     public String addAuthorityCrsPrefix(int crs) {
         return new StringBuilder(getAuthority()).append(Constants.DOUBLE_COLON_STRING).append(crs).toString();
     }
-    
+
     public Set<String> addOgcCrsPrefix(Collection<Integer> crses) {
         HashSet<String> withPrefix = Sets.newHashSetWithExpectedSize(crses.size());
         for (Integer crs : crses) {
@@ -786,7 +750,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
         }
         return withPrefix;
     }
-    
+
     public String addOgcCrsPrefix(int crs) {
         return new StringBuilder(ServiceConfiguration.getInstance().getSrsNamePrefixSosV2()).append(crs).toString();
     }

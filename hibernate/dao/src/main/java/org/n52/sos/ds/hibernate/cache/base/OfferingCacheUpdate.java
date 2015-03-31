@@ -38,9 +38,6 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.util.collections.CollectionHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
@@ -59,6 +56,8 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CacheHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 

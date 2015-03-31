@@ -31,26 +31,20 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
-
 import org.n52.sos.convert.ConverterException;
-import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.AbstractSpatialFilteringProfile;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -61,87 +55,28 @@ public class HibernateObservationUtilities {
     private HibernateObservationUtilities() {
     }
 
-    /**
-     * @deprecated use
-     *             {@link ObservationConstellationDAO#getFirstObservationConstellationForOfferings(org.n52.sos.ds.hibernate.entities.Procedure, org.n52.sos.ds.hibernate.entities.ObservableProperty, java.util.Collection, org.hibernate.Session)
-     * }
-     */
-    @Deprecated
-    public static ObservationConstellation getFirstObservationConstellation(Procedure p, ObservableProperty op,
-            Collection<Offering> o, Session s) {
-        return new ObservationConstellationDAO().getFirstObservationConstellationForOfferings(p, op, o, s);
-    }
-
-    /**
-     * @deprecated use
-     *             {@link ObservationConstellationDAO#getObservationConstellationsForOfferings(org.n52.sos.ds.hibernate.entities.Procedure, org.n52.sos.ds.hibernate.entities.ObservableProperty, java.util.Collection, org.hibernate.Session)
-     * }
-     */
-    @Deprecated
-    public static List<ObservationConstellation> getObservationConstellations(Procedure p, ObservableProperty op,
-            Collection<Offering> o, Session s) {
-        return new ObservationConstellationDAO().getObservationConstellationsForOfferings(p, op, o, s);
-    }
-
-    /**
-     * Create SOS internal observation from Observation objects
-     *
-     * @param o
-     *            List of Observation objects
-     * @param spf
-     *            Map with spatial filtering profile entities, key observation
-     *            entity id
-     * @param v
-     *            Service version
-     * @param rm
-     *            Requested result model
-     * @param s
-     *            Hibernate session
-     *
-     * @return SOS internal observation
-     *
-     * @throws OwsExceptionReport
-     *             If an error occurs
-     * @throws ConverterException
-     *             If procedure creation fails
-     */
-    @Deprecated
     public static List<OmObservation> createSosObservationsFromObservations(Collection<AbstractObservation> o,
-            Map<Long, AbstractSpatialFilteringProfile> spf, String v, String rm, Session s) throws OwsExceptionReport,
-            ConverterException {
-        return createSosObservationsFromObservations(o, spf, v, rm, ServiceConfiguration.getInstance().getDefaultLanguage(), s);
+            AbstractObservationRequest r, Session s) throws OwsExceptionReport, ConverterException {
+        return new ObservationOmObservationCreator(o, r, s).create();
     }
 
     public static List<OmObservation> createSosObservationsFromObservations(Collection<AbstractObservation> o,
-            Map<Long, AbstractSpatialFilteringProfile> spf, String v, String rm, Locale lang, Session s) throws OwsExceptionReport,
-            ConverterException {
-        return new ObservationOmObservationCreator(o, spf, v, rm, lang, s).create();
-    }
-    
-    public static List<OmObservation> createSosObservationsFromObservations(Collection<AbstractObservation> o,
-            String v, String rm, Session s) throws OwsExceptionReport,
-            ConverterException {
-        return new ObservationOmObservationCreator(o, v, rm, s).create();
-
+             AbstractObservationRequest r, Locale l, Session s) throws OwsExceptionReport, ConverterException {
+        return new ObservationOmObservationCreator(o, r, s).create();
     }
 
-    @Deprecated
-    public static OmObservation createSosObservationFromObservation(AbstractObservation o,
-            AbstractSpatialFilteringProfile spf, String v, String rm, Session s) throws OwsExceptionReport, ConverterException {
-        Map<Long, AbstractSpatialFilteringProfile> spfMap = Maps.newHashMap();
-        if (spf != null) {
-            spfMap.put(spf.getObservation().getObservationId(), spf);
-        }
-        List<OmObservation> c = new ObservationOmObservationCreator(Sets.newHashSet(o), spfMap, v, rm, s).create();
+    public static OmObservation createSosObservationFromObservation(AbstractObservation o, AbstractObservationRequest r,
+            Session s) throws OwsExceptionReport, ConverterException {
+        List<OmObservation> c = new ObservationOmObservationCreator(Sets.newHashSet(o), r, s).create();
         if (CollectionHelper.isNotEmpty(c)) {
             return (OmObservation) c.iterator().next();
         }
         return null;
     }
-    
-    public static OmObservation createSosObservationFromObservation(AbstractObservation o,
-            String v, String rm, Session s) throws OwsExceptionReport, ConverterException {
-        List<OmObservation> c = new ObservationOmObservationCreator(Sets.newHashSet(o), v, rm, s).create();
+
+    public static OmObservation createSosObservationFromObservation(AbstractObservation o, AbstractObservationRequest r,
+            Locale l, Session s) throws OwsExceptionReport, ConverterException {
+        List<OmObservation> c = new ObservationOmObservationCreator(Sets.newHashSet(o), r, s).create();
         if (CollectionHelper.isNotEmpty(c)) {
             return (OmObservation) c.iterator().next();
         }
@@ -166,15 +101,16 @@ public class HibernateObservationUtilities {
      *             If procedure creation fails
      */
     public static Collection<? extends OmObservation> createSosObservationFromObservationConstellation(
-            ObservationConstellation oc, List<String> fois, String version, Session session)
+            ObservationConstellation oc, List<String> fois, AbstractObservationRequest request, Session session)
             throws OwsExceptionReport, ConverterException {
-        return createSosObservationFromObservationConstellation(oc, fois, version, ServiceConfiguration.getInstance().getDefaultLanguage(), session);
+        return createSosObservationFromObservationConstellation(oc, fois, request, ServiceConfiguration.getInstance()
+                .getDefaultLanguage(), session);
     }
 
     public static Collection<? extends OmObservation> createSosObservationFromObservationConstellation(
-            ObservationConstellation oc, List<String> fois, String version, Locale language, Session session)
+            ObservationConstellation oc, List<String> fois, AbstractObservationRequest request, Locale language, Session session)
             throws OwsExceptionReport, ConverterException {
-        return new ObservationConstellationOmObservationCreator(oc, fois, version, language, session).create();
+        return new ObservationConstellationOmObservationCreator(oc, fois, request, language, session).create();
     }
 
     /**
@@ -192,14 +128,31 @@ public class HibernateObservationUtilities {
      * @throws ConverterException
      *             If procedure creation fails
      */
-    public static Collection<? extends OmObservation> createSosObservationFromSeries(Series series, String version,
+    public static Collection<? extends OmObservation> createSosObservationFromSeries(Series series, AbstractObservationRequest request,
             Session session) throws OwsExceptionReport, ConverterException {
-        return createSosObservationFromSeries(series, version, ServiceConfiguration.getInstance().getDefaultLanguage(), session);
+        return createSosObservationFromSeries(series, request,
+                ServiceConfiguration.getInstance().getDefaultLanguage(), session);
     }
 
-    public static Collection<? extends OmObservation> createSosObservationFromSeries(Series series, String version,
-           Locale language, Session session) throws OwsExceptionReport, ConverterException {
-        return new SeriesOmObservationCreator(series, version, language, session).create();
+    public static Collection<? extends OmObservation> createSosObservationFromSeries(Series series, AbstractObservationRequest request,
+            Locale language, Session session) throws OwsExceptionReport, ConverterException {
+        if (series instanceof EReportingSeries) {
+            return createSosObservationFromEReportingSeries((EReportingSeries) series, request, ServiceConfiguration
+                    .getInstance().getDefaultLanguage(), session);
+        } else {
+            return new SeriesOmObservationCreator(series, request, language, session).create();
+        }
+    }
+
+    public static Collection<? extends OmObservation> createSosObservationFromEReportingSeries(EReportingSeries series,
+            AbstractObservationRequest r, Session session) throws OwsExceptionReport, ConverterException {
+        return createSosObservationFromEReportingSeries(series, r,
+                ServiceConfiguration.getInstance().getDefaultLanguage(), session);
+    }
+
+    public static Collection<? extends OmObservation> createSosObservationFromEReportingSeries(EReportingSeries series,
+            AbstractObservationRequest r, Locale language, Session session) throws OwsExceptionReport, ConverterException {
+        return new EReportingSeriesOmObservationCreator(series, r, language, session).create();
     }
 
     /**

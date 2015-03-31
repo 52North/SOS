@@ -35,6 +35,7 @@ import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionGroup;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
+import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 
 import com.google.common.collect.ImmutableSet;

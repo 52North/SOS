@@ -57,5 +57,10 @@ public class SeriesCountObservation extends SeriesObservation implements Seriali
     public boolean isSetValue() {
         return value != null;
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
 
 }

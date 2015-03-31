@@ -57,4 +57,8 @@ public class CategoryObservation extends Observation implements Serializable, or
         return StringHelper.isNotEmpty(value);
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
 }

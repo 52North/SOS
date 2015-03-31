@@ -45,6 +45,8 @@ public abstract class AbstractObservationValue<T extends Value<?>> implements Ob
     
     private String tupleSeparator;
     
+    private String decimalSeparator;
+    
     private String unit;
     
     public void setValuesForResultEncoding(OmObservation observation) {
@@ -53,6 +55,7 @@ public abstract class AbstractObservationValue<T extends Value<?>> implements Ob
         setObservationType(observation.getObservationConstellation().getObservationType());
         setTokenSeparator(observation.getTokenSeparator());
         setTupleSeparator(observation.getTupleSeparator());
+        setDecimalSeparator(observation.getDecimalSeparator());
     }
 
     /**
@@ -143,6 +146,34 @@ public abstract class AbstractObservationValue<T extends Value<?>> implements Ob
     
     public boolean isSetTupleSeparator() {
         return StringHelper.isNotEmpty(getTupleSeparator());
+    }
+    
+    /**
+     * Get decimal separator
+     * 
+     * @return the decimalSeparator
+     */
+    public String getDecimalSeparator() {
+        return decimalSeparator;
+    }
+
+    /**
+     * Set decimal separator
+     * 
+     * @param decimalSeparator
+     *            the decimalSeparator to set
+     */
+    public void setDecimalSeparator(final String decimalSeparator) {
+        this.decimalSeparator = decimalSeparator;
+    }
+    
+    /**
+     * Check whether decimal separator is set
+     * 
+     * @return <code>true</code>, if decimal separator is set
+     */
+    public boolean isSetDecimalSeparator() {
+        return StringHelper.isNotEmpty(getDecimalSeparator());
     }
 
     /**

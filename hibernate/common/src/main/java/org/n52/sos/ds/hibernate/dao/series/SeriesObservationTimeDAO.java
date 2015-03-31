@@ -34,6 +34,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.n52.sos.ds.hibernate.dao.AbstractObservationTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime;
@@ -46,7 +47,7 @@ import org.n52.sos.util.CollectionHelper;
  * @since 4.0.0
  * 
  */
-public class SeriesObservationTimeDAO {
+public class SeriesObservationTimeDAO extends AbstractObservationTimeDAO {
 
 	/**
 	 * Create criteria for series
@@ -79,7 +80,7 @@ public class SeriesObservationTimeDAO {
 	 */
 	public Criteria getMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(
 			Series series, Collection<String> offerings, Session session) {
-		Criteria criteria = createCriteriaFor(SeriesObservationTime.class,
+		Criteria criteria = createCriteriaFor(getObservationTimeClass(),
 				series, session);
 		if (CollectionHelper.isNotEmpty(offerings)) {
 			criteria.createCriteria(SeriesObservationTime.OFFERINGS).add(
@@ -91,6 +92,11 @@ public class SeriesObservationTimeDAO {
 						.min(SeriesObservationTime.PHENOMENON_TIME_START))
 				.add(Projections.max(SeriesObservationTime.PHENOMENON_TIME_END)));
 		return criteria;
+	}
+
+	@Override
+	protected Class<?> getObservationTimeClass() {
+		return SeriesObservationTime.class;
 	}
 
 }

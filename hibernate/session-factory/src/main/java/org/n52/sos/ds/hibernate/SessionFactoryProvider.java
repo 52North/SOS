@@ -134,8 +134,6 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
                         .toURI()));
                 configuration.addDirectory(new File(getClass().getResource(
                         HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH).toURI()));
-                configuration.addDirectory(new File(getClass().getResource(
-                        HIBERNATE_MAPPING_SERIES_CONCEPT_SPATIAL_FILTERING_PROFILE_PATH).toURI()));
             }
             return configuration;
         } catch (HibernateException he) {

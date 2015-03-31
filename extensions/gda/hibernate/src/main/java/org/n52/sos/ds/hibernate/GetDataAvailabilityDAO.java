@@ -44,12 +44,15 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.ResultTransformer;
+import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
-import org.n52.sos.ds.hibernate.dao.series.SeriesDAO;
-import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
+import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.series.SeriesObservationTimeDAO;
+import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
@@ -163,8 +166,8 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         if (checkForNamedQueries(req, session)) {
             return executeNamedQuery(req, session);
         }
-        // check if series mapping is supported
-        else if (HibernateHelper.isEntitySupported(Series.class)) {
+        // check if series mapping is supporte
+        else if (EntitiyHelper.getInstance().isSeriesSupported()) {
             return querySeriesDataAvailabilities(req, session);
         } else {
             Criteria c = getDefaultObservationInfoCriteria(session);
@@ -273,14 +276,16 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         Map<String, ReferenceType> procedures = new HashMap<String, ReferenceType>();
         Map<String, ReferenceType> observableProperties = new HashMap<String, ReferenceType>();
         Map<String, ReferenceType> featuresOfInterest = new HashMap<String, ReferenceType>();
-        SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO();
+        AbstractSeriesObservationDAO seriesObservationDAO = getSeriesObservationDAO();
         SeriesMinMaxTransformer seriesMinMaxTransformer = new SeriesMinMaxTransformer();
         boolean supportsNamedQuery =
                 HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_DATA_AVAILABILITY_FOR_SERIES, session);
-        boolean supportsSeriesObservationTime = HibernateHelper.isEntitySupported(SeriesObservationTime.class);
-        SeriesObservationTimeDAO seriesObservationTimeDAO = new SeriesObservationTimeDAO();
-        for (final Series series : new SeriesDAO().getSeries(request.getProcedures(), request.getObservedProperties(),
-                request.getFeaturesOfInterest(), session)) {
+        boolean supportsSeriesObservationTime = EntitiyHelper.getInstance().isSeriesObservationTimeSupported();
+        for (final Series series : DaoFactory
+                .getInstance()
+                .getSeriesDAO()
+                .getSeries(request.getProcedures(), request.getObservedProperties(), request.getFeaturesOfInterest(),
+                        session)) {
             TimePeriod timePeriod = null;
             if (!request.isSetOfferings()) {
                 // get time information from series object
@@ -295,6 +300,8 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
             // get time information from SeriesGetDataAvailability mapping if
             // supported
             if (timePeriod == null && supportsSeriesObservationTime) {
+                SeriesObservationTimeDAO seriesObservationTimeDAO =
+                        (SeriesObservationTimeDAO) DaoFactory.getInstance().getObservationTimeDAO();
                 timePeriod =
                         getTimePeriodFromSeriesGetDataAvailability(seriesObservationTimeDAO, series, request,
                                 seriesMinMaxTransformer, session);
@@ -384,8 +391,9 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
      *            Hibernate Session
      * @return Time period
      */
-    private TimePeriod getTimePeriodFromSeriesObservation(SeriesObservationDAO seriesObservationDAO, Series series,
-            GetDataAvailabilityRequest request, SeriesMinMaxTransformer seriesMinMaxTransformer, Session session) {
+    private TimePeriod getTimePeriodFromSeriesObservation(AbstractSeriesObservationDAO seriesObservationDAO,
+            Series series, GetDataAvailabilityRequest request, SeriesMinMaxTransformer seriesMinMaxTransformer,
+            Session session) {
         Criteria criteria =
                 seriesObservationDAO
                         .getMinMaxTimeCriteriaForSeriesObservation(series, request.getOfferings(), session);
@@ -409,7 +417,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
      * @throws OwsExceptionReport
      *             if the requested temporal filter is not supported
      */
-    private List<TimeInstant> getResultTimesFromSeriesObservation(SeriesObservationDAO seriesObservationDAO,
+    private List<TimeInstant> getResultTimesFromSeriesObservation(AbstractSeriesObservationDAO seriesObservationDAO,
             Series series, GetDataAvailabilityRequest request, Session session) throws OwsExceptionReport {
         Criterion filter = null;
         if (hasPhenomenonTimeFilter(request.getExtensions())) {
@@ -661,6 +669,16 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
             }
         }
         return null;
+    }
+
+    protected AbstractSeriesObservationDAO getSeriesObservationDAO() throws OwsExceptionReport {
+        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+        if (observationDAO instanceof AbstractSeriesObservationDAO) {
+            return (AbstractSeriesObservationDAO) observationDAO;
+        } else {
+            throw new NoApplicableCodeException().withMessage("The required '%s' implementation is no supported!",
+                    AbstractObservationDAO.class.getName());
+        }
     }
 
     /**

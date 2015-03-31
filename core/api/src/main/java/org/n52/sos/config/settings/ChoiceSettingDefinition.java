@@ -31,7 +31,6 @@ package org.n52.sos.config.settings;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingType;
@@ -61,6 +60,7 @@ public class ChoiceSettingDefinition extends AbstractSettingDefinition<ChoiceSet
 
     public Map<String, String> getOptions() {
         return Collections.unmodifiableMap(CollectionHelper.sortByValue(options));
+
     }
 
     public boolean hasOption(String value) {

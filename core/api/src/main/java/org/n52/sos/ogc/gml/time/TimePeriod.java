@@ -36,6 +36,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -384,8 +385,10 @@ public class TimePeriod extends Time {
      * @param times
      */
     public void extendToContain(Collection<Time> times) {
-        for (Time time : times) {
-            extendToContain(time);
+        if (CollectionHelper.isNotEmpty(times)) {
+            for (Time time : times) {
+                extendToContain(time);
+            }
         }
     }
 
@@ -396,18 +399,19 @@ public class TimePeriod extends Time {
      *            To contain {@link Time}
      */
     public void extendToContain(Time time) {
-        if (time instanceof TimeInstant) {
-            extendToContain((TimeInstant) time);
-        } else if (time instanceof TimePeriod) {
-            extendToContain((TimePeriod) time);
-        } else {
-            String errorMsg =
-                    String.format("Received ITime type \"%s\" unknown.", time != null ? time.getClass().getName()
-                            : time);
-            LOGGER.error(errorMsg);
-            throw new IllegalArgumentException(errorMsg);
+        if (time != null) {
+            if (time instanceof TimeInstant) {
+                extendToContain((TimeInstant) time);
+            } else if (time instanceof TimePeriod) {
+                extendToContain((TimePeriod) time);
+            } else {
+                String errorMsg =
+                        String.format("Received ITime type \"%s\" unknown.", time != null ? time.getClass().getName()
+                                : time);
+                LOGGER.error(errorMsg);
+                throw new IllegalArgumentException(errorMsg);
+            }
         }
-
     }
 
     /**

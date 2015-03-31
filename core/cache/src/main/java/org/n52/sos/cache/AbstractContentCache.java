@@ -40,7 +40,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-
 import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.sos.SosEnvelope;
@@ -49,6 +48,9 @@ import org.n52.sos.util.Constants;
 import org.n52.sos.util.SetMultiMap;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -120,6 +122,42 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     protected static <K, V> Map<K, V> newSynchronizedMap() {
         return newSynchronizedMap(null);
     }
+    
+    
+    /**
+     * Creates a new empty synchronized {@link BiMap}.
+     *
+     * @param <K>
+     *            the key type
+     * @param <V>
+     *            the value type
+     *
+     * @return the synchronized map
+     */
+    protected static <K, V> BiMap<K, V> newSynchronizedBiMap() {
+        return newSynchronizedBiMap(null);
+    }
+    
+    /**
+     * Creates a new synchronized map from the specified map.
+     *
+     * @param <K>
+     *            the key type
+     * @param <V>
+     *            the value type
+     * @param map
+     *            the map
+     *
+     * @return the synchronized map
+     */
+    protected static <K, V> BiMap<K, V> newSynchronizedBiMap(BiMap<K, V> map) {
+        if (map == null) {
+            return Maps.synchronizedBiMap(HashBiMap.<K, V>create());
+        } else {
+            return Maps.synchronizedBiMap(map);
+        }
+    }
+    
 
     /**
      * Creates a new empty synchronized set.
@@ -332,9 +370,6 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     private SetMultiMap<String, String> observablePropertiesForProcedures = newSynchronizedSetMultiMap();
 
-    @Deprecated
-    private SetMultiMap<String, String> observationIdentifiersForProcedures = newSynchronizedSetMultiMap();
-
     private SetMultiMap<String, String> observationTypesForOfferings = newSynchronizedSetMultiMap();
 
     private SetMultiMap<String, String> featureOfInterestTypesForOfferings = newSynchronizedSetMultiMap();
@@ -375,9 +410,6 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     private Set<String> featuresOfInterest = newSynchronizedSet();
 
-    @Deprecated
-    private Set<String> observationIdentifiers = newSynchronizedSet();
-
     private Set<String> procedures = newSynchronizedSet();
 
     private Set<String> resultTemplates = newSynchronizedSet();
@@ -396,6 +428,23 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     
     private Set<String> requestableProcedureDescriptionFormats  = newSynchronizedSet();
 
+    
+    private BiMap<String, String> featureOfInterestIdentifierHumanReadableName = newSynchronizedBiMap();
+    
+//    private Map<String, String> featureOfInterestHumanReadableNameForIdentifier = newSynchronizedMap();
+    
+    private BiMap<String, String> observablePropertyIdentifierHumanReadableName = newSynchronizedBiMap();
+    
+//    private Map<String, String> observablePropertyHumanReadableNameForIdentifier = newSynchronizedMap();
+    
+    private BiMap<String, String> procedureIdentifierHumanReadableName = newSynchronizedBiMap();
+    
+//    private Map<String, String> procedureHumanReadableNameForIdentifier = newSynchronizedMap();
+    
+    private BiMap<String, String> offeringIdentifierHumanReadableName = newSynchronizedBiMap();
+    
+//    private Map<String, String> offeringHumanReadableNameForIdentifier = newSynchronizedMap();
+    
     /**
      * @return the relating offering -> max phenomenon time
      */
@@ -492,14 +541,6 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
      */
     protected SetMultiMap<String, String> getObservablePropertiesForOfferingsMap() {
         return this.observablePropertiesForOfferings;
-    }
-
-    /**
-     * @return the relating procedure -> observation identifier
-     */
-    @Deprecated
-    protected SetMultiMap<String, String> getObservationIdentifiersForProceduresMap() {
-        return this.observationIdentifiersForProcedures;
     }
 
     /**
@@ -664,14 +705,6 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     }
 
     /**
-     * @return the observation identifiers
-     */
-    @Deprecated
-    protected Set<String> getObservationIdentifiersSet() {
-        return this.observationIdentifiers;
-    }
-
-    /**
      * @return the procedures
      */
     protected Set<String> getProceduresSet() {
@@ -731,6 +764,38 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     protected Set<String> getRequestableProcedureDescriptionFormats() {
         return this.requestableProcedureDescriptionFormats;
     }
+    
+    protected Map<String, String> getFeatureOfInterestIdentifierForHumanReadableName() {
+    	return featureOfInterestIdentifierHumanReadableName.inverse();
+    }
+    
+    protected Map<String, String> getFeatureOfInterestHumanReadableNameForIdentifier() {
+    	return featureOfInterestIdentifierHumanReadableName;
+    }
+    
+    protected Map<String, String> getObservablePropertyIdentifierForHumanReadableName() {
+    	return observablePropertyIdentifierHumanReadableName.inverse();
+    }
+    
+    protected Map<String, String> getObservablePropertyHumanReadableNameForIdentifier() {
+    	return observablePropertyIdentifierHumanReadableName;
+    }
+    
+    protected Map<String, String> getProcedureIdentifierForHumanReadableName() {
+    	return procedureIdentifierHumanReadableName.inverse();
+    }
+    
+    protected Map<String, String> getProcedureHumanReadableNameForIdentifier() {
+    	return procedureIdentifierHumanReadableName;
+    }
+    
+    protected Map<String, String> getOfferingIdentifierForHumanReadableName() {
+    	return offeringIdentifierHumanReadableName;
+    }
+    
+    protected Map<String, String> getOfferingHumanReadableNameForIdentifier() {
+    	return offeringIdentifierHumanReadableName.inverse();
+    }
 
     /**
      * @param defaultEpsgCode
@@ -760,7 +825,9 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                 relatedFeaturesForOfferings, resultTemplatesForOfferings, rolesForRelatedFeatures,
                 envelopeForOfferings, nameForOfferings, i18nNameForOfferings, i18nDescriptionForOfferings, epsgCodes, featuresOfInterest,
                 procedures, resultTemplates, offerings, globalEnvelope, globalResultTimeEnvelope,
-                globalPhenomenonTimeEnvelope, supportedLanguages, requestableProcedureDescriptionFormats);
+                globalPhenomenonTimeEnvelope, supportedLanguages, requestableProcedureDescriptionFormats,
+                featureOfInterestIdentifierHumanReadableName, observablePropertyIdentifierHumanReadableName,
+				procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName);
     }
 
     @Override
@@ -823,7 +890,11 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                     && Objects.equal(this.globalResultTimeEnvelope, other.getGlobalResultTimeEnvelope())
                     && Objects.equal(this.offerings, other.getOfferingsSet())
                     && Objects.equal(this.supportedLanguages, other.getSupportedLanguages())
-                    && Objects.equal(this.requestableProcedureDescriptionFormats, other.getRequestableProcedureDescriptionFormats());
+                    && Objects.equal(this.requestableProcedureDescriptionFormats, other.getRequestableProcedureDescriptionFormats())
+                    && Objects.equal(this.getFeatureOfInterestIdentifierForHumanReadableName(), other.getFeatureOfInterestIdentifierForHumanReadableName())
+                    && Objects.equal(this.getObservablePropertyIdentifierForHumanReadableName(), other.getObservablePropertyIdentifierForHumanReadableName())
+                    && Objects.equal(this.getProcedureIdentifierForHumanReadableName(), other.getProcedureIdentifierForHumanReadableName())
+                    && Objects.equal(this.getOfferingIdentifierForHumanReadableName(), other.getOfferingIdentifierForHumanReadableName());
         }
         return false;
     }

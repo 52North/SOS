@@ -32,17 +32,20 @@
 							</sml:identifier>
 						</sml:IdentifierList>
 					</sml:identification>
-					<sml:capabilities name="offerings">
-				      <sml:CapabilityList>
-				         <!--The sensivitiy of detector-->
-				         <sml:capability name="offeringID">
-				            <swe:Text definition="urn:ogc:def:identifier:OGC:offeringID">
-				               <swe:label>offeringID</swe:label>
-				               <swe:value>http://www.52north.org/test/offering/9</swe:value>
-				            </swe:Text>
-				         </sml:capability>
-				      </sml:CapabilityList>
-				   </sml:capabilities>
+			        <sml:capabilities name="offerings">
+		              <sml:CapabilityList>
+				         <!-- Special capabilities used to specify offerings. -->
+				         <!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
+					         added during DescribeSensor. -->
+				         <!-- Offering is generated if not specified. -->
+		                 <sml:capability name="offeringID">
+		                    <swe:Text definition="urn:ogc:def:identifier:OGC:offeringID">
+		                       <swe:label>offeringID</swe:label>
+		                       <swe:value>http://www.52north.org/test/offering/9</swe:value>
+		                    </swe:Text>
+		                 </sml:capability>
+		              </sml:CapabilityList>
+		           </sml:capabilities>
 		          <sml:featuresOfInterest>
 		            <sml:FeatureList definition="http://www.opengis.net/def/featureOfInterest/identifier">
 		              <swe:label>featuresOfInterest</swe:label>

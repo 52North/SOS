@@ -37,10 +37,12 @@ import org.n52.sos.config.SettingsManager;
  * SettingsManager. This requires a SettingsManager implementation as test
  * dependency, e.g. sqlite-config module.
  * 
+ * @author Carsten Hollmann
+ * 
  * @since 4.0.0
  * 
  */
-public abstract class AbstractBeforeAfterClassTest {
+public abstract class AbstractBeforeAfterClassSettingsManagerTest {
 
     @BeforeClass
     public static void initSettingsManager() {

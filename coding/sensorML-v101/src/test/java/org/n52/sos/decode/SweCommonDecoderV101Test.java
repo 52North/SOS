@@ -60,10 +60,13 @@ import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 
 import com.google.common.collect.Lists;
 
-
+/**
+ * @author Carsten Hollmann
+ * 
+ * @since 4.0.0
+ */
 public class SweCommonDecoderV101Test {
 
-	private Double rangeEnd;
 
 	@Test public void
 	should_decode_Count_with_Quality_Text()

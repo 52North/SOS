@@ -26,29 +26,46 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos;
+package org.n52.sos.ogc.sensorML.v20;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.n52.sos.config.SettingsManager;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.ogc.swe.SweDataRecord;
 
 /**
- * Abstract class to execute BeforeClass and AfterClass methods to init/cleanup
- * SettingsManager. This requires a SettingsManager implementation as test
- * dependency, e.g. sqlite-config module.
- * 
- * @since 4.0.0
- * 
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
+ *
+ * @since 4.3.0
  */
-public abstract class AbstractBeforeAfterClassTest {
+public class SmlDataInterface extends SweAbstractDataComponent {
 
-    @BeforeClass
-    public static void initSettingsManager() {
-        SettingsManager.getInstance();
-    }
+	private SmlDataStreamPropertyType smlDataStreamPropertyType;
+	
+	private SweDataRecord inputParameters;
 
-    @AfterClass
-    public static void cleanupSettingManager() {
-        SettingsManager.getInstance().cleanup();
-    }
+	@Override
+	public SweDataComponentType getDataComponentType() {
+		return null;
+	}
+
+	public SmlDataStreamPropertyType getData() {
+		return smlDataStreamPropertyType;
+	}
+
+	public void setData(SmlDataStreamPropertyType smlDataStreamPropertyType) {
+		this.smlDataStreamPropertyType = smlDataStreamPropertyType;
+	}
+
+	public Boolean isSetInterfaceParameters() {
+		return inputParameters != null;
+	}
+
+	public SweDataRecord getInterfaceParameters() {
+		return inputParameters;
+	}
+
+	public void setInputParameters(SweDataRecord inputParameters) {
+		this.inputParameters = inputParameters;
+	}
+
 }

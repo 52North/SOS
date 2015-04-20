@@ -68,7 +68,9 @@ import net.opengis.swe.x20.VectorType.Coordinate;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -397,10 +399,32 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
     }
 
     private SweQuantityRange parseQuantityRange(final QuantityRangeType quantityRange) throws OwsExceptionReport {
-        throw new NotYetSupportedException(SweConstants.EN_QUANTITY_RANGE);
+    	SweQuantityRange sweQuantityRange = new SweQuantityRange();
+    	if (quantityRange.isSetDefinition()) {
+    		sweQuantityRange.setDefinition(quantityRange.getDefinition());
+    	}
+    	if (quantityRange.isSetLabel()) {
+    		sweQuantityRange.setLabel(quantityRange.getLabel());
+    	}
+    	if (!quantityRange.getUom().isNil() && quantityRange.getUom().isSetCode()) {
+    		sweQuantityRange.setUom(quantityRange.getUom().getCode());
+    	}
+    	if (quantityRange.getValue() != null) {
+    		sweQuantityRange.setValue(parseRangeValue(quantityRange.getValue()));
+    	}
+        return sweQuantityRange;
     }
 
-    private SweText parseText(final TextType xbText) {
+    private RangeValue<Double> parseRangeValue(List<?> value) throws CodedException {
+    	if (value == null || value.isEmpty() || value.size() != 2) {
+    		throw new NoApplicableCodeException()
+    			.at("?:QuantityRange/?:value")
+    			.withMessage("The 'swe:value' element of an 'swe:QuantityRange' is not set correctly", "");
+    	}
+		return new RangeValue<Double>(Double.parseDouble(value.get(0).toString()), Double.parseDouble(value.get(1).toString()));
+	}
+
+	private SweText parseText(final TextType xbText) {
         final SweText sosText = new SweText();
         if (xbText.isSetValue()) {
             sosText.setValue(xbText.getValue());

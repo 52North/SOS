@@ -66,6 +66,10 @@
 			<artifactId>gt-api</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>java3d</groupId>
+			<artifactId>vecmath</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
 		</dependency>

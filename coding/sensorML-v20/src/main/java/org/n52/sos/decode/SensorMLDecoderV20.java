@@ -57,6 +57,7 @@ import net.opengis.sensorml.x20.ComponentListType;
 import net.opengis.sensorml.x20.ComponentListType.Component;
 import net.opengis.sensorml.x20.ContactListPropertyType;
 import net.opengis.sensorml.x20.DataComponentOrObservablePropertyType;
+import net.opengis.sensorml.x20.DataInterfaceType;
 import net.opengis.sensorml.x20.DescribedObjectDocument;
 import net.opengis.sensorml.x20.DescribedObjectType;
 import net.opengis.sensorml.x20.DescribedObjectType.Capabilities;
@@ -77,6 +78,7 @@ import net.opengis.sensorml.x20.SimpleProcessDocument;
 import net.opengis.sensorml.x20.SimpleProcessPropertyType;
 import net.opengis.sensorml.x20.SimpleProcessType;
 import net.opengis.sensorml.x20.TermType;
+import net.opengis.swe.x20.DataStreamPropertyType;
 
 import org.apache.xmlbeans.XmlObject;
 import org.isotc211.x2005.gmd.CIResponsiblePartyPropertyType;
@@ -109,6 +111,8 @@ import org.n52.sos.ogc.sensorML.v20.DescribedObject;
 import org.n52.sos.ogc.sensorML.v20.PhysicalComponent;
 import org.n52.sos.ogc.sensorML.v20.PhysicalSystem;
 import org.n52.sos.ogc.sensorML.v20.SimpleProcess;
+import org.n52.sos.ogc.sensorML.v20.SmlDataInterface;
+import org.n52.sos.ogc.sensorML.v20.SmlDataStreamPropertyType;
 import org.n52.sos.ogc.sensorML.v20.SmlFeatureOfInterest;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.swe.DataRecord;
@@ -761,13 +765,35 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
                         "The 'DataComponentOrObservablePropertyType' with type '%s' as value for '%s' is not supported.",
                         XmlHelper.getLocalName(toDecode), XmlHelper.getLocalName(adcpt));
             }
+        } else if (adcpt.isSetDataInterface()) {
+        	return parseDataInterfaceType(adcpt.getDataInterface());
         } else {
             throw new InvalidParameterValueException().at(XmlHelper.getLocalName(adcpt)).withMessage(
                     "An 'DataComponentOrObservablePropertyType' is not supported");
         }
     }
+    
+    protected SmlDataInterface parseDataInterfaceType(DataInterfaceType xbDataInterface) throws OwsExceptionReport {
+		SmlDataInterface dataInterface = new SmlDataInterface();
+		// TODO implement- no funding at the moment available
+		// When starting implementation: Do not forget to activate the already available unit tests
+//		dataInterface.setData(parseDataStreamPropertyType(xbDataInterface.getData()));
+//		if (xbDataInterface.isSetInterfaceParameters()) {
+//			final Object decodedObject = CodingHelper.decodeXmlElement(xbDataInterface.getInterfaceParameters());
+//			if (decodedObject instanceof SweDataRecord) {
+//				dataInterface.setInputParameters((SweDataRecord)decodedObject);
+//			}
+//			// TODO throw exception if not instance of SweDataRecord
+//		}
+		return dataInterface;
+	}
 
-    /**
+	protected SmlDataStreamPropertyType parseDataStreamPropertyType(
+			DataStreamPropertyType data) {
+		return new SmlDataStreamPropertyType();
+	}
+
+	/**
      * Parse {@link ObservablePropertyType} 
      * @param opt Object to parse
      * @return Parsed {@link SweObservableProperty}

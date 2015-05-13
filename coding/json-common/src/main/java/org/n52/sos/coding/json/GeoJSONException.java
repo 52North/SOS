@@ -28,7 +28,7 @@
  */
 package org.n52.sos.coding.json;
 
-import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
 
 /**
  * TODO JavaDoc

@@ -28,7 +28,7 @@
  */
 package org.n52.sos.inspire;
 
-import org.n52.sos.util.StringHelper;
+import org.n52.iceland.util.StringHelper;
 
 /**
  * Service internal representation of INSPIRE unique resource identifier

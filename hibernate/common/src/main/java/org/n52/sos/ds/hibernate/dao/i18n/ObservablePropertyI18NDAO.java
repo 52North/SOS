@@ -29,11 +29,10 @@
 package org.n52.sos.ds.hibernate.dao.i18n;
 
 import org.hibernate.Session;
-
+import org.n52.iceland.i18n.metadata.I18NObservablePropertyMetadata;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NObservablePropertyMetadata;
-import org.n52.sos.i18n.metadata.I18NObservablePropertyMetadata;
 
 /**
  * TODO JavaDoc

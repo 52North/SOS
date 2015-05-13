@@ -32,7 +32,7 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
-import org.n52.sos.ogc.swes.OfferingExtensionKey;
+import org.n52.iceland.ogc.swes.OfferingExtensionKey;
 
 /**
  * Storage key for the entity {@link DynamicOfferingExtension}

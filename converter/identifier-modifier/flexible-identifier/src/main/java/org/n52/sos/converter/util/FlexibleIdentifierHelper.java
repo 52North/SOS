@@ -30,15 +30,15 @@ package org.n52.sos.converter.util;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swes.SwesExtension;
-import org.n52.sos.ogc.swes.SwesExtensions;
-import org.n52.sos.util.JavaHelper;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.config.annotation.Configurable;
+import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
+import org.n52.iceland.ogc.swes.SwesExtension;
+import org.n52.iceland.ogc.swes.SwesExtensions;
+import org.n52.iceland.util.JavaHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

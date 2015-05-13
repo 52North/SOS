@@ -34,10 +34,10 @@ import net.opengis.sosREST.x10.SensorCollectionDocument;
 import net.opengis.sosREST.x10.SensorDocument;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.response.ServiceResponse;
+import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.binding.rest.requests.RestResponse;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.response.ServiceResponse;
-import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

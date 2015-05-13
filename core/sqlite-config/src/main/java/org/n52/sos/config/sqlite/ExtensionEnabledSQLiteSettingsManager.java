@@ -40,11 +40,17 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.config.CapabilitiesExtensionManager;
+import org.n52.iceland.cache.ContentCache;
+import org.n52.iceland.config.CapabilitiesExtensionManager;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.NoSuchExtensionException;
+import org.n52.iceland.exception.NoSuchOfferingException;
+import org.n52.iceland.ogc.ows.OfferingExtension;
+import org.n52.iceland.ogc.ows.StaticCapabilities;
+import org.n52.iceland.ogc.ows.StringBasedCapabilitiesExtension;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.util.LinkedListMultiMap;
+import org.n52.iceland.util.ListMultiMap;
 import org.n52.sos.config.sqlite.SQLiteManager.HibernateAction;
 import org.n52.sos.config.sqlite.SQLiteManager.ThrowingHibernateAction;
 import org.n52.sos.config.sqlite.SQLiteManager.ThrowingVoidHibernateAction;
@@ -54,15 +60,8 @@ import org.n52.sos.config.sqlite.entities.CapabilitiesExtensionImpl;
 import org.n52.sos.config.sqlite.entities.OfferingExtensionIdentifier;
 import org.n52.sos.config.sqlite.entities.OfferingExtensionImpl;
 import org.n52.sos.config.sqlite.entities.StaticCapabilitiesImpl;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.exception.NoSuchExtensionException;
-import org.n52.sos.exception.NoSuchOfferingException;
-import org.n52.sos.ogc.ows.OfferingExtension;
-import org.n52.sos.ogc.ows.StaticCapabilities;
-import org.n52.sos.ogc.ows.StringBasedCapabilitiesExtension;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.LinkedListMultiMap;
-import org.n52.sos.util.ListMultiMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager implements CapabilitiesExtensionManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtensionEnabledSQLiteSettingsManager.class);

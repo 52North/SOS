@@ -33,8 +33,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.service.profile.Profile;
-import org.n52.sos.util.JavaHelper;
+import org.n52.iceland.service.profile.Profile;
+import org.n52.iceland.util.JavaHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

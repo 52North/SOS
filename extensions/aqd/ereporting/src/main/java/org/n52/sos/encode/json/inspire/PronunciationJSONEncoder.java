@@ -28,9 +28,9 @@
  */
 package org.n52.sos.encode.json.inspire;
 
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.inspire.aqd.Pronunciation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.AQDJSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;

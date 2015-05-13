@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.n52.sos.util.CollectionHelper;
+import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.util.Nillable;
 import org.n52.sos.util.Reference;
 

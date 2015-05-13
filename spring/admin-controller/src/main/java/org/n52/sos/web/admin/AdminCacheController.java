@@ -30,19 +30,18 @@ package org.n52.sos.web.admin;
 
 
 import org.joda.time.DateTime;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.sos.SosEnvelope;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.web.AbstractController;
+import org.n52.sos.web.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;

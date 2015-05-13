@@ -28,12 +28,12 @@
  */
 package org.n52.sos.ogc.swe.stream;
 
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
+import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.iceland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.iceland.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.om.StreamingValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
-import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
 
 public class StreamingSweDataArray extends SweAbstractDataComponent {
 

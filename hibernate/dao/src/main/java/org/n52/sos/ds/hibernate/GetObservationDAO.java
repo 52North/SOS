@@ -38,9 +38,22 @@ import java.util.Set;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
-import org.n52.sos.convert.ConverterException;
+import org.n52.iceland.convert.ConverterException;
+import org.n52.iceland.ds.HibernateDatasourceConstants;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
+import org.n52.iceland.i18n.LocaleHelper;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.om.OmObservationConstellation;
+import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.AbstractGetObservationDAO;
-import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
@@ -63,23 +76,10 @@ import org.n52.sos.ds.hibernate.values.HibernateStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateChunkSeriesStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateScrollableSeriesStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateSeriesStreamingValue;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
-import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
-import org.n52.sos.i18n.LocaleHelper;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.http.HTTPStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -204,7 +204,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             return new ArrayList<OmObservation>();
         }
         // temporal filters
-        final List<SosIndeterminateTime> sosIndeterminateTimeFilters = request.getFirstLatestTemporalFilter();
+        final List<ExtendedIndeterminateTime> sosIndeterminateTimeFilters = request.getFirstLatestTemporalFilter();
         final Criterion filterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
 
         // final List<OmObservation> result = new LinkedList<OmObservation>();
@@ -215,7 +215,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         }
         // query with first/latest value filter
         else if (CollectionHelper.isNotEmpty(sosIndeterminateTimeFilters)) {
-            for (SosIndeterminateTime sosIndeterminateTime : sosIndeterminateTimeFilters) {
+            for (ExtendedIndeterminateTime sosIndeterminateTime : sosIndeterminateTimeFilters) {
                 if (ServiceConfiguration.getInstance().isOverallExtrema()) {
                     observations =
                             observationDAO.getObservationsFor(request, features, sosIndeterminateTime, session);
@@ -297,7 +297,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             return new ArrayList<OmObservation>();
         }
         // temporal filters
-        final List<SosIndeterminateTime> sosIndeterminateTimeFilters = request.getFirstLatestTemporalFilter();
+        final List<ExtendedIndeterminateTime> sosIndeterminateTimeFilters = request.getFirstLatestTemporalFilter();
         final Criterion filterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
 
         final List<OmObservation> result = new LinkedList<OmObservation>();
@@ -312,7 +312,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         }
         // query with first/latest value filter
         else if (CollectionHelper.isNotEmpty(sosIndeterminateTimeFilters)) {
-            for (SosIndeterminateTime sosIndeterminateTime : sosIndeterminateTimeFilters) {
+            for (ExtendedIndeterminateTime sosIndeterminateTime : sosIndeterminateTimeFilters) {
                 if (ServiceConfiguration.getInstance().isOverallExtrema()) {
                     seriesObservations =
                             observationDAO.getSeriesObservationsFor(request, features,

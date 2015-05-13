@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.sos.inspire.InspireConformity;
 import org.n52.sos.inspire.InspireKeyword;
 import org.n52.sos.inspire.InspireLanguageISO6392B;
@@ -42,7 +43,6 @@ import org.n52.sos.inspire.InspireSupportedCRS;
 import org.n52.sos.inspire.InspireSupportedLanguages;
 import org.n52.sos.inspire.InspireTemporalReference;
 import org.n52.sos.inspire.InspireUniqueResourceIdentifier;
-import org.n52.sos.ogc.gml.time.TimeInstant;
 
 /**
  * Super interface for INSPIRE capabilities

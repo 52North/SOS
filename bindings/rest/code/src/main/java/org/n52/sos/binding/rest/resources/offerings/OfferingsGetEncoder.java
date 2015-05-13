@@ -28,18 +28,17 @@
  */
 package org.n52.sos.binding.rest.resources.offerings;
 
-
 import net.opengis.sosREST.x10.ObservationOfferingDocument;
 import net.opengis.sosREST.x10.ObservationOfferingType;
 import net.opengis.sosREST.x10.OfferingCollectionDocument;
 import net.opengis.sosREST.x10.ResourceCollectionType;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.response.ServiceResponse;
+import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.binding.rest.encode.ResourceEncoder;
 import org.n52.sos.binding.rest.requests.RestResponse;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.response.ServiceResponse;
-import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

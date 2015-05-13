@@ -28,18 +28,18 @@
  */
 package org.n52.sos.request.operator;
 
-import static org.n52.sos.util.HasStatusCode.hasStatusCode;
+import static org.n52.iceland.util.HasStatusCode.hasStatusCode;
 
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.RequestContext;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.request.RequestContext;
+import org.n52.iceland.util.http.HTTPStatus;
+import org.n52.iceland.util.net.IPAddress;
 import org.n52.sos.service.TransactionalSecurityConfiguration;
-import org.n52.sos.util.net.IPAddress;
-import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * @since 4.0.0

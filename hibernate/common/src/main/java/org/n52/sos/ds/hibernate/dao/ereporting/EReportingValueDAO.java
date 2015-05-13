@@ -29,9 +29,9 @@
 package org.n52.sos.ds.hibernate.dao.ereporting;
 
 import org.hibernate.Criteria;
+import org.n52.iceland.exception.CodedException;
 import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue;
-import org.n52.sos.exception.CodedException;
 import org.n52.sos.request.GetObservationRequest;
 
 public class EReportingValueDAO extends AbstractSeriesValueDAO {

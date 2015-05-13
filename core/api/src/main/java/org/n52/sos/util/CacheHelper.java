@@ -28,8 +28,9 @@
  */
 package org.n52.sos.util;
 
-import org.n52.sos.service.Configurator;
-import org.n52.sos.service.ServiceConfiguration;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.util.Constants;
 
 /**
  * Helper class that contains method to add/remove prefixes to/from offering,

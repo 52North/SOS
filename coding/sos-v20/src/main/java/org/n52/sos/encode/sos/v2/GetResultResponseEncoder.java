@@ -35,11 +35,11 @@ import net.opengis.sos.x20.GetResultResponseType;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.response.GetResultResponse;
-import org.n52.sos.w3c.SchemaLocation;
 
 import com.google.common.collect.Sets;
 

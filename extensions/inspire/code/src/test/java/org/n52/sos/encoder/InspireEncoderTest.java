@@ -29,10 +29,7 @@
 package org.n52.sos.encoder;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.dom.DOMSource;
@@ -42,17 +39,14 @@ import javax.xml.validation.Validator;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.hamcrest.Matchers;
 import org.joda.time.DateTime;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.n52.sos.encode.InspireXmlEncoder;
-import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.inspire.InspireConformity;
 import org.n52.sos.inspire.InspireConformity.InspireDegreeOfConformity;
 import org.n52.sos.inspire.InspireConformityCitation;
-import org.n52.sos.inspire.InspireConstants;
 import org.n52.sos.inspire.InspireDateOfCreation;
 import org.n52.sos.inspire.InspireDateOfLastRevision;
 import org.n52.sos.inspire.InspireDateOfPublication;
@@ -69,13 +63,7 @@ import org.n52.sos.inspire.InspireTemporalReference;
 import org.n52.sos.inspire.InspireUniqueResourceIdentifier;
 import org.n52.sos.inspire.capabilities.FullInspireExtendedCapabilities;
 import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireServiceSpatialDataResourceType;
-import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireSpatialDataServiceType;
 import org.n52.sos.inspire.capabilities.MinimalInspireExtendedCapabilities;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.http.MediaTypes;
 import org.xml.sax.SAXException;
 
 import com.google.common.collect.Sets;

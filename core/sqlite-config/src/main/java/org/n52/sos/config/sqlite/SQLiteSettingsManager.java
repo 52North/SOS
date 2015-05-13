@@ -38,15 +38,22 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.sos.binding.BindingKey;
-import org.n52.sos.config.AbstractSettingValueFactory;
-import org.n52.sos.config.AbstractSettingsManager;
-import org.n52.sos.config.AdministratorUser;
-import org.n52.sos.config.SettingValue;
-import org.n52.sos.config.SettingValueFactory;
+import org.n52.iceland.binding.BindingKey;
+import org.n52.iceland.config.AbstractSettingValueFactory;
+import org.n52.iceland.config.AbstractSettingsManager;
+import org.n52.iceland.config.AdministratorUser;
+import org.n52.iceland.config.SettingValue;
+import org.n52.iceland.config.SettingValueFactory;
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.encode.ProcedureDescriptionFormatKey;
+import org.n52.iceland.encode.ResponseFormatKey;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.i18n.MultilingualString;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesKey;
+import org.n52.iceland.ogc.swes.OfferingExtensionKey;
+import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.sos.config.sqlite.SQLiteManager.HibernateAction;
 import org.n52.sos.config.sqlite.SQLiteManager.ThrowingHibernateAction;
 import org.n52.sos.config.sqlite.SQLiteManager.VoidHibernateAction;
@@ -73,16 +80,8 @@ import org.n52.sos.config.sqlite.entities.ProcedureEncodingKey;
 import org.n52.sos.config.sqlite.entities.StringSettingValue;
 import org.n52.sos.config.sqlite.entities.TimeInstantSettingValue;
 import org.n52.sos.config.sqlite.entities.UriSettingValue;
-import org.n52.sos.ds.ConnectionProvider;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.encode.ProcedureDescriptionFormatKey;
-import org.n52.sos.encode.ResponseFormatKey;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.i18n.MultilingualString;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesKey;
-import org.n52.sos.ogc.swes.OfferingExtensionKey;
-import org.n52.sos.request.operator.RequestOperatorKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
     private static final Logger LOG = LoggerFactory.getLogger(SQLiteSettingsManager.class);
@@ -241,13 +240,6 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
     protected <K extends Serializable, T extends Activatable<K, T>> boolean isActive(Class<T> c, K key, boolean defaultActive)
             throws ConnectionProviderException {
         return execute(new IsActiveAction<K, T>(c, key, defaultActive)).booleanValue();
-    }
-
-    @Override
-    @Deprecated
-    protected void setProcedureDescriptionFormatStatus(String pdf, boolean active) throws ConnectionProviderException {
-        // setActive(ProcedureEncoding.class, new ProcedureEncoding(pdf),
-        // active);
     }
 
     @Override

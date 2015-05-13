@@ -30,10 +30,10 @@ package org.n52.sos.response;
 
 import java.util.List;
 
-import org.n52.sos.ogc.om.AbstractStreaming;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.om.AbstractStreaming;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.SosConstants;
 
 import com.google.common.collect.Lists;
 

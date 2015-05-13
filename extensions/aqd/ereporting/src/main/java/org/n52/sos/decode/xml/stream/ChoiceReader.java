@@ -33,7 +33,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 
 /**
  * TODO JavaDoc

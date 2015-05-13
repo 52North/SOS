@@ -32,6 +32,15 @@ package org.n52.sos.web.admin;
 import java.util.Collections;
 import java.util.List;
 
+import org.n52.iceland.cache.ContentCache;
+import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.util.ServiceLoaderHelper;
+import org.n52.sos.ds.RenameDAO;
+import org.n52.sos.exception.AlreadyUsedIdentifierException;
+import org.n52.sos.exception.NoSuchObservablePropertyException;
+import org.n52.sos.web.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -43,16 +52,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.ds.RenameDAO;
-import org.n52.sos.exception.AlreadyUsedIdentifierException;
-import org.n52.sos.exception.NoSuchObservablePropertyException;
-import org.n52.sos.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.ServiceLoaderHelper;
-import org.n52.sos.web.ControllerConstants;
 
 import com.google.common.collect.Lists;
 

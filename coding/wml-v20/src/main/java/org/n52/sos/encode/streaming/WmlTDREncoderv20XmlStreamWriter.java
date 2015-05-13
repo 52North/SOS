@@ -30,9 +30,9 @@ package org.n52.sos.encode.streaming;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.encode.EncodingValues;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * Implementation of {@link AbstractOmV20XmlStreamWriter} to write WaterML 2.0

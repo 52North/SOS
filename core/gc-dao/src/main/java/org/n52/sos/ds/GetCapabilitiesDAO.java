@@ -41,66 +41,67 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.sos.binding.Binding;
-import org.n52.sos.binding.BindingRepository;
-import org.n52.sos.coding.CodingRepository;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.decode.Decoder;
-import org.n52.sos.encode.Encoder;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.filter.FilterCapabilities;
-import org.n52.sos.ogc.filter.FilterConstants.ComparisonOperator;
-import org.n52.sos.ogc.filter.FilterConstants.ConformanceClassConstraintNames;
-import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.ows.MergableExtension;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OfferingExtension;
-import org.n52.sos.ogc.ows.OwsDomainType;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesProvider;
-import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesRepository;
-import org.n52.sos.ogc.ows.OwsNoValues;
-import org.n52.sos.ogc.ows.OwsOperation;
-import org.n52.sos.ogc.ows.OwsOperationsMetadata;
-import org.n52.sos.ogc.ows.OwsParameterValuePossibleValues;
-import org.n52.sos.ogc.ows.SosServiceIdentification;
-import org.n52.sos.ogc.ows.StaticCapabilities;
-import org.n52.sos.ogc.sos.CapabilitiesExtension;
-import org.n52.sos.ogc.sos.CapabilitiesExtensionProvider;
-import org.n52.sos.ogc.sos.CapabilitiesExtensionRepository;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.iceland.binding.Binding;
+import org.n52.iceland.binding.BindingRepository;
+import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.ds.OperationDAO;
+import org.n52.iceland.ds.OperationDAORepository;
+import org.n52.iceland.encode.Encoder;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.i18n.LocaleHelper;
+import org.n52.iceland.ogc.OGCConstants;
+import org.n52.iceland.ogc.filter.FilterCapabilities;
+import org.n52.iceland.ogc.filter.FilterConstants.ComparisonOperator;
+import org.n52.iceland.ogc.filter.FilterConstants.ConformanceClassConstraintNames;
+import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.iceland.ogc.gml.GmlConstants;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.ows.MergableExtension;
+import org.n52.iceland.ogc.ows.OWSConstants;
+import org.n52.iceland.ogc.ows.OfferingExtension;
+import org.n52.iceland.ogc.ows.OwsDomainType;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProvider;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesRepository;
+import org.n52.iceland.ogc.ows.OwsNoValues;
+import org.n52.iceland.ogc.ows.OwsOperation;
+import org.n52.iceland.ogc.ows.OwsOperationsMetadata;
+import org.n52.iceland.ogc.ows.OwsParameterValuePossibleValues;
+import org.n52.iceland.ogc.ows.OwsServiceIdentification;
+import org.n52.iceland.ogc.ows.StaticCapabilities;
+import org.n52.iceland.ogc.sos.CapabilitiesExtension;
+import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
+import org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository;
+import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.sos.SosEnvelope;
+import org.n52.iceland.ogc.sos.SosOffering;
+import org.n52.iceland.ogc.swes.OfferingExtensionProvider;
+import org.n52.iceland.ogc.swes.OfferingExtensionRepository;
+import org.n52.iceland.ogc.swes.SwesExtensionImpl;
+import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.iceland.request.operator.RequestOperatorKey;
+import org.n52.iceland.request.operator.RequestOperatorRepository;
+import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.service.operator.ServiceOperatorRepository;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.MultiMaps;
+import org.n52.iceland.util.SetMultiMap;
 import org.n52.sos.ogc.sos.SosCapabilities;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.sos.SosObservationOffering;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.swes.OfferingExtensionProvider;
-import org.n52.sos.ogc.swes.OfferingExtensionRepository;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
-import org.n52.sos.request.GetCapabilitiesRequest;
-import org.n52.sos.request.operator.RequestOperatorKey;
-import org.n52.sos.request.operator.RequestOperatorRepository;
-import org.n52.sos.response.GetCapabilitiesResponse;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.service.operator.ServiceOperatorRepository;
-import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.I18NHelper;
-import org.n52.sos.i18n.LocaleHelper;
-import org.n52.sos.util.MultiMaps;
 import org.n52.sos.util.OMHelper;
-import org.n52.sos.util.SetMultiMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -203,10 +204,10 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
                 response.setXmlString(getSettingsManager().getActiveStaticCapabilitiesDocument());
                 return response;
             }
-        } else if (!scId.equals(SosConstants.GetCapabilitiesParams.DYNAMIC_CAPABILITIES_IDENTIFIER)) {
+        } else if (!scId.equals(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.DYNAMIC_CAPABILITIES_IDENTIFIER)) {
             final StaticCapabilities sc = getSettingsManager().getStaticCapabilities(scId);
             if (sc == null) {
-                throw new InvalidParameterValueException(SosConstants.GetCapabilitiesParams.CapabilitiesId, scId);
+                throw new InvalidParameterValueException(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.CapabilitiesId, scId);
             }
             response.setXmlString(sc.getDocument());
             return response;
@@ -280,7 +281,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
             for (final String section : request.getSections()) {
                 if (section.isEmpty()) {
                     LOGGER.warn("A {} element is empty! Check if operator checks for empty elements!",
-                            SosConstants.GetCapabilitiesParams.Section.name());
+                            org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.Section.name());
                     continue;
                 }
                 if (section.equals(SosConstants.CapabilitiesSections.All.name())) {
@@ -301,7 +302,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
                 } else if (availableExtensionSections.contains(section) && isVersionSos2(response)) {
                     requestedExtensionSections.add(section);
                 } else {
-                    throw new InvalidParameterValueException().at(SosConstants.GetCapabilitiesParams.Section)
+                    throw new InvalidParameterValueException().at(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.Section)
                             .withMessage("The requested section '%s' does not exist or is not supported!", section);
                 }
             }
@@ -309,10 +310,10 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
         return sections;
     }
 
-    private SosServiceIdentification getServiceIdentification(
+    private OwsServiceIdentification getServiceIdentification(
             GetCapabilitiesRequest request, String version) throws OwsExceptionReport {
         Locale locale = LocaleHelper.fromRequest(request);
-        SosServiceIdentification serviceIdentification = getConfigurator()
+        OwsServiceIdentification serviceIdentification = getConfigurator()
                 .getServiceIdentification(locale);
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
             serviceIdentification.setProfiles(getProfiles());
@@ -866,7 +867,9 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
             }
             extensions.addAll(map.values());
         }
-        extensions.addAll(getSettingsManager().getActiveCapabilitiesExtensions().values());
+        if (getSettingsManager().getActiveCapabilitiesExtensions() != null && !getSettingsManager().getActiveCapabilitiesExtensions().isEmpty()) {
+            extensions.addAll(getSettingsManager().getActiveCapabilitiesExtensions().values());
+        }
         return extensions;
     }
 

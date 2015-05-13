@@ -31,12 +31,12 @@ package org.n52.sos.decode.json.impl;
 import static org.n52.sos.coding.json.JSONConstants.REF;
 import static org.n52.sos.coding.json.JSONConstants.VALUE;
 
+import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.iceland.ogc.filter.SpatialFilter;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.coding.json.JSONValidator;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.JSONDecoder;
-import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vividsolutions.jts.geom.Geometry;

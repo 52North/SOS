@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.sensorML.v20;
 
-import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.iceland.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 

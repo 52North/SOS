@@ -28,21 +28,24 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Collection;
 
 import org.junit.Test;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.SosEnvelope;
+import org.n52.iceland.ogc.sos.SosOffering;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.System;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.swe.SweEnvelope;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 

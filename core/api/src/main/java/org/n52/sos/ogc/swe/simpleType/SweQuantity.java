@@ -30,7 +30,9 @@ package org.n52.sos.ogc.swe.simpleType;
 
 import java.util.Collection;
 
-import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.iceland.ogc.swe.simpleType.SweAbstractUomType;
+import org.n52.iceland.ogc.swe.simpleType.SweQuality;
 
 /**
  * SOS internal representation of SWE simpleType quantity

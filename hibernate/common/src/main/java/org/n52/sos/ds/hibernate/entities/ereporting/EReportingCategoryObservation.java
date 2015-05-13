@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.interfaces.CategoryObservation;
-import org.n52.sos.util.StringHelper;
 
 public class EReportingCategoryObservation extends EReportingObservation implements CategoryObservation {
 

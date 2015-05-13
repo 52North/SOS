@@ -30,7 +30,7 @@ package org.n52.sos;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.n52.sos.config.SettingsManager;
+import org.n52.iceland.config.SettingsManager;
 
 /**
  * Abstract class to execute BeforeClass and AfterClass methods to init/cleanup

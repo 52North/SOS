@@ -31,11 +31,11 @@ package org.n52.sos.decode.xml.stream.ogc.gml;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
+import org.n52.iceland.ogc.gml.GmlConstants;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.decode.xml.stream.XmlReader;
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.DateTimeHelper;
 
 /**
  * TODO JavaDoc

@@ -40,6 +40,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.n52.iceland.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

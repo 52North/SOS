@@ -34,7 +34,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.service.spi.Stoppable;
-import org.n52.sos.ds.ConnectionProvider;
+import org.n52.iceland.ds.ConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

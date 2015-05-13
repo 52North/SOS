@@ -33,7 +33,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.sos.response.BatchResponse.ExceptionOrResponse;
 import org.n52.sos.util.BatchConstants;
 

@@ -32,19 +32,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.n52.sos.ogc.filter.ComparisonFilter;
-import org.n52.sos.ogc.filter.Filter;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
+import org.n52.iceland.ogc.filter.Filter;
+import org.n52.iceland.ogc.filter.SpatialFilter;
+import org.n52.iceland.ogc.filter.TemporalFilter;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.response.GetObservationResponse;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.StringHelper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -90,12 +89,6 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      * Spatial filters list
      */
     private SpatialFilter spatialFilter;
-
-    /**
-     * Result filters list
-     */
-    @Deprecated
-    private ComparisonFilter result;
 
     @SuppressWarnings("rawtypes")
     private Filter resultFilter;
@@ -214,27 +207,6 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
 
     /**
-     * Get result filters
-     * 
-     * @return result filters
-     */
-    @Deprecated
-    public ComparisonFilter getResult() {
-        return result;
-    }
-
-    /**
-     * Set result filters
-     * 
-     * @param result
-     *            result filters
-     */
-    @Deprecated
-    public void setResult(ComparisonFilter result) {
-        this.result = result;
-    }
-
-    /**
      * Get result filter(s)
      * 
      * @return result filter(s)
@@ -322,7 +294,6 @@ public class GetObservationRequest extends AbstractObservationRequest implements
         res.setResponseFormat(getResponseFormat());
         res.setResponseMode(getResponseMode());
         res.setSpatialFilter(this.spatialFilter);
-        res.setResult(this.result);
         res.setResultModel(getResultModel());
         res.setFeatureIdentifiers(this.featureIdentifiers);
         res.setService(this.getService());
@@ -395,8 +366,8 @@ public class GetObservationRequest extends AbstractObservationRequest implements
         return false;
     }
 
-    public List<SosIndeterminateTime> getFirstLatestTemporalFilter() {
-        List<SosIndeterminateTime> tf = new LinkedList<SosIndeterminateTime>();
+    public List<ExtendedIndeterminateTime> getFirstLatestTemporalFilter() {
+        List<ExtendedIndeterminateTime> tf = new LinkedList<ExtendedIndeterminateTime>();
         for (TemporalFilter temporalFilter : temporalFilters) {
             if (temporalFilter.getTime() instanceof TimeInstant) {
                 TimeInstant ti = (TimeInstant) temporalFilter.getTime();
@@ -441,10 +412,6 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     public boolean isSetRequestString() {
         return StringHelper.isNotEmpty(getRequestString());
-    }
-
-    public boolean isSetResult() {
-        return getResult() != null;
     }
 
     public boolean isSetNamespaces() {

@@ -34,8 +34,8 @@ import java.util.Properties;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.n52.iceland.util.Constants;
 import org.n52.sos.ds.hibernate.util.DefaultHibernateConstants;
-import org.n52.sos.util.Constants;
 
 /**
  * @since 4.0.0

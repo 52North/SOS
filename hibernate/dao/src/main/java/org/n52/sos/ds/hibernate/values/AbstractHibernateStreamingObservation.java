@@ -34,21 +34,21 @@ import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
-import org.n52.sos.convert.ConverterException;
+import org.n52.iceland.convert.ConverterException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.i18n.LocaleHelper;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.i18n.LocaleHelper;
-import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.StreamingObservation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * Abstract class for streaming observations

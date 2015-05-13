@@ -31,20 +31,15 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
+import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.iceland.response.GetCapabilitiesResponse;
 import org.n52.sos.ds.AbstractGetCapabilitiesDAO;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.ogc.sos.SosObservationOffering;
-import org.n52.sos.request.GetCapabilitiesRequest;
-import org.n52.sos.response.GetCapabilitiesResponse;
-import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
-
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * @since 4.0.0

@@ -32,7 +32,7 @@ import java.io.File;
 
 import javax.persistence.Entity;
 
-import org.n52.sos.config.SettingType;
+import org.n52.iceland.config.SettingType;
 
 /**
  *

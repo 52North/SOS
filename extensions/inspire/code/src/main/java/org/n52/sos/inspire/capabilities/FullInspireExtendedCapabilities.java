@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.inspire.InspireConformity;
 import org.n52.sos.inspire.InspireKeyword;
 import org.n52.sos.inspire.InspireLanguageISO6392B;
@@ -54,8 +56,6 @@ import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireExtendedCapab
 import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireExtendedCapabilitiesTemporalReference;
 import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireServiceSpatialDataResourceType;
 import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireSpatialDataServiceType;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.util.CollectionHelper;
 
 import com.google.common.collect.Lists;
 

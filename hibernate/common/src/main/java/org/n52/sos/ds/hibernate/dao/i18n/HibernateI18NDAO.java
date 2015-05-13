@@ -32,10 +32,9 @@ import java.util.Collection;
 import java.util.Locale;
 
 import org.hibernate.Session;
-
-import org.n52.sos.ds.I18NDAO;
-import org.n52.sos.i18n.metadata.AbstractI18NMetadata;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ds.I18NDAO;
+import org.n52.iceland.i18n.metadata.AbstractI18NMetadata;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 
 /**
  * TODO JavaDoc

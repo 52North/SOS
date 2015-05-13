@@ -39,14 +39,15 @@ import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.profile.DefaultProfile;
-import org.n52.sos.service.profile.Profile;
-import org.n52.sos.service.profile.ProfileHandler;
-import org.n52.sos.util.XmlHelper;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.profile.DefaultProfile;
+import org.n52.iceland.service.profile.Profile;
+import org.n52.iceland.service.profile.ProfileHandler;
+import org.n52.iceland.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.x52North.sensorweb.sos.profile.SosProfileDocument;
 
 /**

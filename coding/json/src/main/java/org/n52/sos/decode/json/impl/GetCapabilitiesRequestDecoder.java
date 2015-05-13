@@ -28,20 +28,20 @@
  */
 package org.n52.sos.decode.json.impl;
 
+import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.decode.JsonDecoderKey;
+import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.sos.SosConstants.Operations;
+import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.iceland.util.http.MediaType;
+import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
-import org.n52.sos.decode.DecoderKey;
-import org.n52.sos.decode.JsonDecoderKey;
-import org.n52.sos.decode.OperationDecoderKey;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosConstants.Operations;
-import org.n52.sos.request.GetCapabilitiesRequest;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Sets;
@@ -78,7 +78,7 @@ public class GetCapabilitiesRequestDecoder extends AbstractSosRequestDecoder<Get
 
     @Override
     protected GetCapabilitiesRequest decodeRequest(JsonNode node) throws OwsExceptionReport {
-        GetCapabilitiesRequest req = new GetCapabilitiesRequest();
+        GetCapabilitiesRequest req = new GetCapabilitiesRequest(SosConstants.SOS);
         req.setAcceptFormats(parseStringOrStringList(node.path(JSONConstants.ACCEPT_FORMATS)));
         req.setAcceptVersions(parseStringOrStringList(node.path(JSONConstants.ACCEPT_VERSIONS)));
         req.setSections(parseStringOrStringList(node.path(JSONConstants.SECTIONS)));

@@ -42,8 +42,8 @@ import junit.framework.TestCase;
 
 import org.hibernate.dialect.Dialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
 /**

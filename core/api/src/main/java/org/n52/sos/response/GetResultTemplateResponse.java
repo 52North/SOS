@@ -28,7 +28,8 @@
  */
 package org.n52.sos.response;
 
-import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
 

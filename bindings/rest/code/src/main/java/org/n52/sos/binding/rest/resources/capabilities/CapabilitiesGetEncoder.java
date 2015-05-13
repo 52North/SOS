@@ -32,11 +32,12 @@ package org.n52.sos.binding.rest.resources.capabilities;
 import net.opengis.sosREST.x10.CapabilitiesDocument;
 import net.opengis.sosREST.x10.CapabilitiesType;
 
+
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.response.ServiceResponse;
+import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.binding.rest.encode.ResourceEncoder;
 import org.n52.sos.binding.rest.requests.RestResponse;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.response.ServiceResponse;
-import org.n52.sos.util.http.HTTPStatus;
 
 
 /**

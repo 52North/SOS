@@ -28,15 +28,19 @@
  */
 package org.n52.sos.ogc.om.features.samplingFeatures;
 
-import static java.lang.Boolean.*;
-import static org.hamcrest.Matchers.*;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
 import org.junit.Test;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
+import org.n52.iceland.ogc.gml.CodeWithAuthority;
+import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeatureComplex;
 
 import com.google.common.collect.Lists;
 

@@ -34,16 +34,16 @@ import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
 import net.opengis.sosdo.x10.DeleteObservationResponseType;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
+import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
+import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.encode.AbstractResponseEncoder;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
-import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.w3c.SchemaLocation;
 
 import com.google.common.collect.Sets;
 

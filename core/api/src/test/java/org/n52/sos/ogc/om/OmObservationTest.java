@@ -28,17 +28,21 @@
  */
 package org.n52.sos.ogc.om;
 
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.Constants;
-import org.n52.sos.util.JTSHelper;
-
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.n52.iceland.ogc.gml.ReferenceType;
+import org.n52.iceland.ogc.om.NamedValue;
+import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.om.values.GeometryValue;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 

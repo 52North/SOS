@@ -30,7 +30,7 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.sos.ogc.swes.OfferingExtensionKey;
+import org.n52.iceland.ogc.swes.OfferingExtensionKey;
 
 /**
  * Entity to store the active/inactive dynamic offering extensions

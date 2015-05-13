@@ -30,6 +30,8 @@ package org.n52.sos.ogc.sos;
 
 import javax.xml.namespace.QName;
 
+import org.n52.iceland.ogc.sos.Sos2Constants;
+
 public interface Sos2StreamingConstants extends Sos2Constants {
     
     public static final String EN_GET_OBSERVATION_RESPONSE = "GetObservationResponse";

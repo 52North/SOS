@@ -30,25 +30,25 @@ package org.n52.sos.aqd;
 
 import java.util.Set;
 
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swes.SwesExtension;
-import org.n52.sos.ogc.swes.SwesExtensions;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.config.annotation.Configurable;
+import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.gml.CodeWithAuthority;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.om.features.FeatureCollection;
+import org.n52.iceland.ogc.swe.simpleType.SweText;
+import org.n52.iceland.ogc.swes.SwesExtension;
+import org.n52.iceland.ogc.swes.SwesExtensions;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.JavaHelper;
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.settings.EReportingSetting;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.Constants;
-import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.StringHelper;
 
 @Configurable
 public class AqdHelper {

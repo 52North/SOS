@@ -28,7 +28,7 @@
  */
 package org.n52.sos.web.auth;
 
-import org.n52.sos.config.AdministratorUser;
+import org.n52.iceland.config.AdministratorUser;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.util.StringHelper;
+import org.n52.iceland.util.StringHelper;
 
 public class SqlServerDatasource extends AbstractSqlServerDatasource {
     

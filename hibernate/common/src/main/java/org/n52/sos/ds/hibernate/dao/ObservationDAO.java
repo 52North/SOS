@@ -44,6 +44,9 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
 import org.n52.sos.ds.hibernate.entities.BlobObservation;
@@ -62,10 +65,7 @@ import org.n52.sos.ds.hibernate.entities.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.TextObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -225,7 +225,7 @@ public class ObservationDAO extends AbstractObservationDAO {
 
     @SuppressWarnings("unchecked")
     private List<AbstractObservation> getObservationsFor(GetObservationRequest request, Collection<String> features,
-            Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session)
+            Criterion filterCriterion, ExtendedIndeterminateTime sosIndeterminateTime, Session session)
             throws OwsExceptionReport {
         // final Criteria c = getDefaultObservationCriteria(Observation.class,
         // session);
@@ -268,7 +268,7 @@ public class ObservationDAO extends AbstractObservationDAO {
     }
 
     protected Criteria getObservationCriteriaFor(GetObservationRequest request, Collection<String> features,
-            Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session)
+            Criterion filterCriterion, ExtendedIndeterminateTime sosIndeterminateTime, Session session)
             throws OwsExceptionReport {
         final Criteria c = getDefaultObservationCriteria(session);
 
@@ -312,7 +312,7 @@ public class ObservationDAO extends AbstractObservationDAO {
     }
 
     public Collection<AbstractObservation> getObservationsFor(GetObservationRequest request, Set<String> features,
-            SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
+            ExtendedIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
         return getObservationsFor(request, features, null, sosIndeterminateTime, session);
     }
 
@@ -323,7 +323,7 @@ public class ObservationDAO extends AbstractObservationDAO {
 
     @SuppressWarnings("unchecked")
     public Collection<? extends AbstractObservation> getObservationsFor(ObservationConstellation oc,
-            HashSet<String> features, GetObservationRequest request, SosIndeterminateTime sosIndeterminateTime,
+            HashSet<String> features, GetObservationRequest request, ExtendedIndeterminateTime sosIndeterminateTime,
             Session session) throws OwsExceptionReport {
         final Criteria c = getDefaultObservationCriteria(session);
 

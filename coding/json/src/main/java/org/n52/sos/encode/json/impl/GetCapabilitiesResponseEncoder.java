@@ -124,30 +124,30 @@ import java.util.SortedSet;
 
 import javax.xml.namespace.QName;
 
+import org.n52.iceland.i18n.LocaleHelper;
+import org.n52.iceland.i18n.LocalizedString;
+import org.n52.iceland.ogc.filter.FilterCapabilities;
+import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.iceland.ogc.gml.GmlConstants;
+import org.n52.iceland.ogc.ows.Constraint;
+import org.n52.iceland.ogc.ows.DCP;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsOperation;
+import org.n52.iceland.ogc.ows.OwsOperationsMetadata;
+import org.n52.iceland.ogc.ows.OwsParameterDataType;
+import org.n52.iceland.ogc.ows.OwsParameterValue;
+import org.n52.iceland.ogc.ows.OwsParameterValuePossibleValues;
+import org.n52.iceland.ogc.ows.OwsParameterValueRange;
+import org.n52.iceland.ogc.ows.OwsServiceIdentification;
+import org.n52.iceland.ogc.ows.OwsServiceProvider;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.sos.SosOffering;
+import org.n52.iceland.response.GetCapabilitiesResponse;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
-import org.n52.sos.i18n.LocaleHelper;
-import org.n52.sos.i18n.LocalizedString;
-import org.n52.sos.ogc.filter.FilterCapabilities;
-import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.ows.Constraint;
-import org.n52.sos.ogc.ows.DCP;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsOperation;
-import org.n52.sos.ogc.ows.OwsOperationsMetadata;
-import org.n52.sos.ogc.ows.OwsParameterDataType;
-import org.n52.sos.ogc.ows.OwsParameterValue;
-import org.n52.sos.ogc.ows.OwsParameterValuePossibleValues;
-import org.n52.sos.ogc.ows.OwsParameterValueRange;
-import org.n52.sos.ogc.ows.SosServiceIdentification;
-import org.n52.sos.ogc.ows.SosServiceProvider;
 import org.n52.sos.ogc.sos.SosCapabilities;
-import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosObservationOffering;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.response.GetCapabilitiesResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,7 +172,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     @Override
     protected void encodeResponse(ObjectNode json, GetCapabilitiesResponse t) throws OwsExceptionReport {
-        SosCapabilities caps = t.getCapabilities();
+        SosCapabilities caps = (SosCapabilities) t.getCapabilities();
         encodeServiceIdentification(json, caps);
         encodeServiceProvider(json, caps);
         encodeUpdateSequence(json, caps);
@@ -185,7 +185,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
     private void encodeServiceIdentification(ObjectNode json, SosCapabilities caps) {
 
         if (caps.isSetServiceIdentification()) {
-            SosServiceIdentification si = caps.getServiceIdentification();
+            OwsServiceIdentification si = caps.getServiceIdentification();
             ObjectNode jsi = json.putObject(SERVICE_IDENTIFICATION);
 
             if (si.hasTitle()) {
@@ -237,7 +237,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
     private void encodeServiceProvider(ObjectNode json, SosCapabilities caps) {
 
         if (caps.isSetServiceProvider()) {
-            SosServiceProvider sp = caps.getServiceProvider();
+            OwsServiceProvider sp = caps.getServiceProvider();
             ObjectNode jsp = json.putObject(SERVICE_PROVIDER);
             if (sp.hasName()) {
                 jsp.put(NAME, sp.getName());
@@ -249,7 +249,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
         }
     }
 
-    private void encodeAdress(SosServiceProvider sp, ObjectNode contact) {
+    private void encodeAdress(OwsServiceProvider sp, ObjectNode contact) {
         ObjectNode address = contact.objectNode();
         if (sp.hasDeliveryPoint()) {
             address.put(DELIVERY_POINT, sp.getDeliveryPoint());
@@ -274,7 +274,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
         }
     }
 
-    private void encodeContact(ObjectNode jsp, SosServiceProvider sp) {
+    private void encodeContact(ObjectNode jsp, OwsServiceProvider sp) {
         ObjectNode contact = jsp.objectNode();
         if (sp.hasIndividualName()) {
             contact.put(NAME, sp.getIndividualName());

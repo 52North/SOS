@@ -33,15 +33,18 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.decode.XmlNamespaceDecoderKey;
+import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.service.AbstractServiceCommunicationObject;
+import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.util.XmlHelper;
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.coding.CodingRepository;
-import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.service.AbstractServiceCommunicationObject;
-import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -31,11 +31,11 @@ package org.n52.sos.ds.hibernate.values;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingDefinitionProvider;
-import org.n52.sos.config.settings.BooleanSettingDefinition;
-import org.n52.sos.config.settings.IntegerSettingDefinition;
-import org.n52.sos.service.StreamingSettings;
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingDefinitionProvider;
+import org.n52.iceland.config.settings.BooleanSettingDefinition;
+import org.n52.iceland.config.settings.IntegerSettingDefinition;
+import org.n52.iceland.service.StreamingSettings;
 
 import com.google.common.collect.Sets;
 

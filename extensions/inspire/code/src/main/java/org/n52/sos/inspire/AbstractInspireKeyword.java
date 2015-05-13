@@ -28,7 +28,6 @@
  */
 package org.n52.sos.inspire;
 
-import org.n52.sos.inspire.InspireOriginatingControlledVocabulary;
 
 /**
  * Abstract service internal representation of INSPIRE keywords

@@ -28,7 +28,9 @@
  */
 package org.n52.sos.ogc.swe;
 
-import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.iceland.ogc.swe.SweAbstractDataRecord;
+import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.iceland.ogc.swe.SweField;
 
 /**
  * @since 4.0.0

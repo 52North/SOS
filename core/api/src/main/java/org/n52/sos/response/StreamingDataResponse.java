@@ -28,8 +28,8 @@
  */
 package org.n52.sos.response;
 
-import org.n52.sos.ogc.om.AbstractStreaming;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.om.AbstractStreaming;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 
 /**
  * Interface to indicate that the response may contain streaming data.

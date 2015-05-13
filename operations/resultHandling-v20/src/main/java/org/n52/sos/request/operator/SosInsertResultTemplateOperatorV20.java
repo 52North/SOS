@@ -32,23 +32,21 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.n52.iceland.event.ServiceEventBus;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.ogc.om.OmObservationConstellation;
+import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.service.Configurator;
 import org.n52.sos.ds.AbstractInsertResultTemplateDAO;
-import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.ResultTemplateInsertion;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.concrete.DuplicateIdentifierException;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.response.InsertResultTemplateResponse;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 
@@ -77,7 +75,7 @@ public class SosInsertResultTemplateOperatorV20
     @Override
     public InsertResultTemplateResponse receive(InsertResultTemplateRequest request) throws OwsExceptionReport {
         InsertResultTemplateResponse response = getDao().insertResultTemplate(request);
-        SosEventBus.fire(new ResultTemplateInsertion(request, response));
+        ServiceEventBus.fire(new ResultTemplateInsertion(request, response));
         return response;
     }
 

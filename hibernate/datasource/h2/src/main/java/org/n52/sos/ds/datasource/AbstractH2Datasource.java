@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.datasource;
 
+import geodb.GeoDB;
+
 import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -42,12 +44,9 @@ import java.util.regex.Pattern;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
-
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.ds.DatasourceCallback;
-import org.n52.sos.exception.ConfigurationException;
-
-import geodb.GeoDB;
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.ds.DatasourceCallback;
+import org.n52.iceland.exception.ConfigurationException;
 
 
 

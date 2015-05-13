@@ -29,12 +29,12 @@
 package org.n52.sos.request.operator;
 
 
-import org.n52.sos.ds.OperationDAO;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.iceland.ds.OperationDAO;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.sos.service.TransactionalSecurityConfiguration;
 
 /**

@@ -32,15 +32,15 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject.Factory;
-import org.n52.sos.exception.ows.concrete.DecoderResponseUnsupportedException;
-import org.n52.sos.exception.ows.concrete.XmlDecodingException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweConstants;
-import org.n52.sos.util.CodingHelper;
+import org.n52.iceland.exception.ows.concrete.DecoderResponseUnsupportedException;
+import org.n52.iceland.exception.ows.concrete.XmlDecodingException;
+import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
+import org.n52.iceland.ogc.swe.SweConstants;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

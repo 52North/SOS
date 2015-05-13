@@ -29,6 +29,17 @@
 package org.n52.sos.ds.hibernate.entities.ereporting.values;
 
 import org.hibernate.Session;
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.om.values.Value;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.swe.SweDataArray;
+import org.n52.iceland.ogc.swes.SwesExtensions;
+import org.n52.iceland.util.DateTimeHelper;
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
@@ -39,17 +50,6 @@ import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
 import org.n52.sos.ds.hibernate.util.observation.EReportingHelper;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swes.SwesExtensions;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.StringHelper;
 
 public abstract class EReportingValue extends SeriesValue implements EReportingValues {
 

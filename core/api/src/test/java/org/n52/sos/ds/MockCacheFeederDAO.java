@@ -30,9 +30,9 @@ package org.n52.sos.ds;
 
 import java.util.Collection;
 
-import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.ds.CacheFeederDAO;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.cache.WritableContentCache;
+import org.n52.iceland.ds.CacheFeederDAO;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 
 /**
  * Mock NOOP implementation of CacheFeederDAO used to prevent NoImplementationFoundException.

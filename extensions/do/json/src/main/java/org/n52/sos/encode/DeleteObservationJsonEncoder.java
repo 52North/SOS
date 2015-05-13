@@ -28,16 +28,16 @@
  */
 package org.n52.sos.encode;
 
+import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
+import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
+import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
-import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ext.deleteobservation.DeleteObservationConstants;
 import org.n52.sos.ext.deleteobservation.DeleteObservationResponse;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 

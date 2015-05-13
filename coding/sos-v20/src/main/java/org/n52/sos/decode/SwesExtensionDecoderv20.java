@@ -34,16 +34,18 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
-import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swes.SwesExtension;
-import org.n52.sos.ogc.swes.SwesConstants;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
-import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.w3c.W3CConstants;
+import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
+import org.n52.iceland.ogc.swes.SwesConstants;
+import org.n52.iceland.ogc.swes.SwesExtension;
+import org.n52.iceland.ogc.swes.SwesExtensionImpl;
+import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.w3c.W3CConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -35,19 +35,19 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
-import org.n52.sos.coding.CodingRepository;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsOperation;
-import org.n52.sos.ogc.ows.OwsParameterValueRange;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsOperation;
+import org.n52.iceland.ogc.ows.OwsParameterValueRange;
+import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.sos.SosEnvelope;
+import org.n52.iceland.util.DateTimeHelper;
+import org.n52.iceland.util.MinMax;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.MinMax;
 import org.n52.sos.util.SosHelper;
 
 /**

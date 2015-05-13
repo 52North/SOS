@@ -40,13 +40,13 @@ import java.util.Random;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.Constants;
 import org.n52.sos.coding.json.GeoJSONException;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.impl.GeoJSONDecoder;
 import org.n52.sos.encode.json.JSONEncodingException;
 import org.n52.sos.encode.json.impl.GeoJSONEncoder;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.Constants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vividsolutions.jts.geom.Coordinate;

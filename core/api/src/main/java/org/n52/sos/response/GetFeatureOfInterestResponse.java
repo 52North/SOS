@@ -28,8 +28,9 @@
  */
 package org.n52.sos.response;
 
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.response.AbstractServiceResponse;
 
 /**
  * @since 4.0.0

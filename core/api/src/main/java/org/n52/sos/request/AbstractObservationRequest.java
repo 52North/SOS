@@ -28,8 +28,10 @@
  */
 package org.n52.sos.request;
 
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.request.ResponseFormat;
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.response.AbstractObservationResponse;
-import org.n52.sos.util.StringHelper;
 
 /**
  * SOS AbstractObservation request

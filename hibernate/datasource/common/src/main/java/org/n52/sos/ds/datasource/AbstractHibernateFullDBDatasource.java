@@ -34,11 +34,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.settings.StringSettingDefinition;
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.settings.StringSettingDefinition;
+import org.n52.iceland.util.JavaHelper;
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
-import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.StringHelper;
 
 import com.google.common.collect.Sets;
 

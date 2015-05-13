@@ -28,8 +28,8 @@
  */
 package org.n52.sos.decode.json.inspire;
 
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.inspire.aqd.Pronunciation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.util.Functions;
 

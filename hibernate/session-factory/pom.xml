@@ -16,6 +16,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.n52.iceland</groupId>
+            <artifactId>iceland</artifactId>
+        </dependency>
         <!-- Hibernate Core Dependencies -->
         <dependency>
             <groupId>org.hibernate</groupId>

@@ -31,7 +31,7 @@ package org.n52.sos.soap;
 import java.util.List;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.service.SoapHeader;
+import org.n52.iceland.service.SoapHeader;
 
 /**
  * @since 4.0.0

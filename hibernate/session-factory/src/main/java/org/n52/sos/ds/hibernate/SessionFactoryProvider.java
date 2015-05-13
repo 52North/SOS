@@ -47,9 +47,9 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.exception.ConfigurationException;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.ds.HibernateDatasourceConstants;
+import org.n52.iceland.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -38,6 +38,14 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingValue;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.SettingDefinitionEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -45,15 +53,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingValue;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.JSONException;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.SettingDefinitionEncoder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

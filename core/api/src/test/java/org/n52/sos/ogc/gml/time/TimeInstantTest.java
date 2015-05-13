@@ -35,8 +35,8 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
-import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
+import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
 
 /**
  * @since 4.0.0
@@ -62,7 +62,7 @@ public class TimeInstantTest {
     @Test
     public void isNotEmptyForConstructorWithNullTimeAndIndeterminateValueTest() {
         assertFalse("new TimeInstant(null) is empty", new TimeInstant((TimeIndeterminateValue) null)
-                .setSosIndeterminateTime(SosIndeterminateTime.latest).isEmpty());
+                .setSosIndeterminateTime(org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime.latest).isEmpty());
     }
     
     @Test
@@ -97,7 +97,7 @@ public class TimeInstantTest {
     
     @Test
     public void shouldEqualSosIndeterminateValue() {
-        SosIndeterminateTime sit = SosIndeterminateTime.first;
+        org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime sit = org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime.first;
         TimeInstant timeInstant = new TimeInstant(sit);
         TimeInstant equalTimeInstant = new TimeInstant(sit);
         assertTrue("TimeInstants are NOT equal", timeInstant.equals(equalTimeInstant));

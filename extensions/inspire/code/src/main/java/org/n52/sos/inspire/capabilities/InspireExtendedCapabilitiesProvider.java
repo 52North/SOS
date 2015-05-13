@@ -30,9 +30,25 @@ package org.n52.sos.inspire.capabilities;
 
 import java.util.Set;
 
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.DateTimeParseException;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.ows.OWSConstants;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilities;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesKey;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProvider;
+import org.n52.iceland.ogc.ows.OwsServiceProvider;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.swe.simpleType.SweCount;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.util.DateTimeHelper;
+import org.n52.iceland.util.http.MediaType;
+import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.inspire.AbstractInspireProvider;
 import org.n52.sos.inspire.InspireConformity;
 import org.n52.sos.inspire.InspireConformity.InspireDegreeOfConformity;
@@ -47,25 +63,8 @@ import org.n52.sos.inspire.InspireMetadataPointOfContact;
 import org.n52.sos.inspire.InspireResourceLocator;
 import org.n52.sos.inspire.InspireTemporalReference;
 import org.n52.sos.inspire.InspireUniqueResourceIdentifier;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsExtendedCapabilities;
-import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesKey;
-import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesProvider;
-import org.n52.sos.ogc.ows.SosServiceProvider;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.request.GetCapabilitiesRequest;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -226,7 +225,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
      *             contact
      */
     private InspireMetadataPointOfContact getMetadataPointOfContact() throws OwsExceptionReport {
-        SosServiceProvider serviceProvider = Configurator.getInstance().getServiceProvider();
+        OwsServiceProvider serviceProvider = Configurator.getInstance().getServiceProvider();
         return new InspireMetadataPointOfContact(serviceProvider.getName(), serviceProvider.getMailAddress());
     }
 

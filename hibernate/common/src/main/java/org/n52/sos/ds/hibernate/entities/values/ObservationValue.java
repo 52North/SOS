@@ -29,18 +29,18 @@
 package org.n52.sos.ds.hibernate.entities.values;
 
 import org.hibernate.Session;
+import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.om.SingleObservationValue;
+import org.n52.iceland.ogc.om.values.Value;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservableProperty;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservableProperty;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterest;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swes.SwesExtensions;
 
 /**
  * Implementation of {@link AbstractValue} for old concept used in streaming

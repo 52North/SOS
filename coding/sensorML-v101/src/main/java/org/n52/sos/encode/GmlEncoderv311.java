@@ -61,35 +61,37 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlRuntimeException;
 import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
-import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.gml.time.TimePosition;
-import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
-import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.JTSHelper;
-import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.MinMax;
+import org.n52.iceland.encode.Encoder;
+import org.n52.iceland.encode.EncoderKey;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
+import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.gml.CodeWithAuthority;
+import org.n52.iceland.ogc.gml.GmlConstants;
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.gml.time.TimePosition;
+import org.n52.iceland.ogc.om.features.FeatureCollection;
+import org.n52.iceland.ogc.om.features.SfConstants;
+import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.iceland.ogc.om.values.CategoryValue;
+import org.n52.iceland.ogc.om.values.QuantityValue;
+import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.SosEnvelope;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.util.DateTimeHelper;
+import org.n52.iceland.util.JTSHelper;
+import org.n52.iceland.util.JavaHelper;
+import org.n52.iceland.util.MinMax;
+import org.n52.iceland.util.XmlHelper;
+import org.n52.iceland.util.XmlOptionsHelper;
+import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.sos.w3c.SchemaLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,10 +112,10 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(GmlEncoderv311.class);
 
     private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(GmlConstants.NS_GML,
-            org.n52.sos.ogc.gml.time.Time.class, com.vividsolutions.jts.geom.Geometry.class,
-            org.n52.sos.ogc.om.values.CategoryValue.class, org.n52.sos.ogc.gml.ReferenceType.class,
-            org.n52.sos.ogc.om.values.QuantityValue.class, org.n52.sos.ogc.gml.CodeWithAuthority.class,
-            org.n52.sos.ogc.gml.CodeType.class, AbstractFeature.class, SosEnvelope.class);
+            org.n52.iceland.ogc.gml.time.Time.class, com.vividsolutions.jts.geom.Geometry.class,
+            org.n52.iceland.ogc.om.values.CategoryValue.class, org.n52.iceland.ogc.gml.ReferenceType.class,
+            org.n52.iceland.ogc.om.values.QuantityValue.class, org.n52.iceland.ogc.gml.CodeWithAuthority.class,
+            org.n52.iceland.ogc.gml.CodeType.class, AbstractFeature.class, SosEnvelope.class);
 
     public GmlEncoderv311() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -144,14 +146,14 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
             encodedObject = createPosition((Geometry) element, additionalValues.get(HelperValues.GMLID));
         } else if (element instanceof CategoryValue) {
             encodedObject = createReferenceTypeForCategroyValue((CategoryValue) element);
-        } else if (element instanceof org.n52.sos.ogc.gml.ReferenceType) {
-            encodedObject = createReferencType((org.n52.sos.ogc.gml.ReferenceType) element);
+        } else if (element instanceof org.n52.iceland.ogc.gml.ReferenceType) {
+            encodedObject = createReferencType((org.n52.iceland.ogc.gml.ReferenceType) element);
         } else if (element instanceof CodeWithAuthority) {
             encodedObject = createCodeWithAuthorityType((CodeWithAuthority) element);
         } else if (element instanceof QuantityValue) {
             encodedObject = createMeasureType((QuantityValue) element);
-        } else if (element instanceof org.n52.sos.ogc.gml.CodeType) {
-            encodedObject = createCodeType((org.n52.sos.ogc.gml.CodeType) element);
+        } else if (element instanceof org.n52.iceland.ogc.gml.CodeType) {
+            encodedObject = createCodeType((org.n52.iceland.ogc.gml.CodeType) element);
         } else if (element instanceof AbstractFeature) {
             encodedObject = createFeature((AbstractFeature) element);
         } else if (element instanceof SosEnvelope) {
@@ -408,7 +410,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
         return xbRef;
     }
 
-    private XmlObject createReferencType(org.n52.sos.ogc.gml.ReferenceType sosReferenceType) {
+    private XmlObject createReferencType(org.n52.iceland.ogc.gml.ReferenceType sosReferenceType) {
         if (sosReferenceType.isSetHref()) {
             ReferenceType referenceType =
                     ReferenceType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
@@ -436,7 +438,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
         return null;
     }
 
-    private XmlObject createCodeType(org.n52.sos.ogc.gml.CodeType sosCodeType) {
+    private XmlObject createCodeType(org.n52.iceland.ogc.gml.CodeType sosCodeType) {
         CodeType codeType = CodeType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         codeType.setCodeSpace(sosCodeType.getCodeSpace());
         codeType.setStringValue(sosCodeType.getValue());

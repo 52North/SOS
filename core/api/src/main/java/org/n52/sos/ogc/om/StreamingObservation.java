@@ -28,8 +28,17 @@
  */
 package org.n52.sos.ogc.om;
 
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.om.values.Value;
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.ogc.om.AbstractStreaming;
+import org.n52.iceland.ogc.om.NamedValue;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.om.values.Value;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OWSConstants.AdditionalRequestParams;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.sos.util.GeometryHandler;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * @author Carsten Hollmann <c.hollmann@52north.org>
@@ -64,6 +73,39 @@ public abstract class StreamingObservation extends AbstractStreaming {
     @Override
     public void setValue(Value<OmObservation> value) {
         // TODO Auto-generated method stub
+    }
+    
+    /**
+     * Check and modify observation for Spatial Filtering Profile and requested
+     * crs
+     * 
+     * @param observation
+     *            {@link OmObservation} to check
+     * @throws OwsExceptionReport
+     *             If an error occurs when modifying the {@link OmObservation}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void checkForModifications(OmObservation observation) throws OwsExceptionReport {
+        if (isSetAdditionalRequestParams() && contains(AdditionalRequestParams.crs)) {
+            Object additionalRequestParam = getAdditionalRequestParams(AdditionalRequestParams.crs);
+            int targetCRS = -1;
+            if (additionalRequestParam instanceof Integer) {
+                targetCRS = (Integer) additionalRequestParam;
+            } else if (additionalRequestParam instanceof String) {
+                targetCRS = Integer.parseInt((String) additionalRequestParam);
+            }
+            if (observation.isSetParameter()) {
+                for (NamedValue<?> namedValue : observation.getParameter()) {
+                    if (Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
+                        NamedValue<Geometry> spatialFilteringProfileParameter = (NamedValue<Geometry>) namedValue;
+                        spatialFilteringProfileParameter.getValue().setValue(
+                                GeometryHandler.getInstance().transform(
+                                        spatialFilteringProfileParameter.getValue().getValue(), targetCRS));
+                    }
+                }
+            }
+        }
     }
     
 }

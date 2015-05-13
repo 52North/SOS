@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import org.n52.sos.util.ClassHelper;
-import org.n52.sos.util.Similar;
+import org.n52.iceland.util.ClassHelper;
+import org.n52.iceland.util.Similar;
 
 import com.google.common.base.Objects;
 

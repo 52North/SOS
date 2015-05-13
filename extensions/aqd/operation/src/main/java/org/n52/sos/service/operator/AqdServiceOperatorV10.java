@@ -28,6 +28,7 @@
  */
 package org.n52.sos.service.operator;
 
+import org.n52.iceland.service.operator.AbstractServiceOperator;
 import org.n52.sos.aqd.AqdConstants;
 
 public class AqdServiceOperatorV10 extends AbstractServiceOperator {

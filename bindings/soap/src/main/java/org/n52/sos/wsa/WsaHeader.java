@@ -28,8 +28,8 @@
  */
 package org.n52.sos.wsa;
 
-import org.n52.sos.service.SoapHeader;
-import org.n52.sos.util.StringHelper;
+import org.n52.iceland.service.SoapHeader;
+import org.n52.iceland.util.StringHelper;
 
 /**
  * @since 4.0.0

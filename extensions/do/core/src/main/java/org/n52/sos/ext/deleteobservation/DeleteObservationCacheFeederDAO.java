@@ -32,21 +32,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.n52.iceland.ds.FeatureQueryHandlerQueryObject;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.om.features.FeatureCollection;
+import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.SosEnvelope;
+import org.n52.sos.ds.DatasourceCacheUpdate;
+import org.n52.sos.util.CacheHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.n52.sos.ds.DatasourceCacheUpdate;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.util.CacheHelper;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -107,7 +107,10 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
         for (String feature : features) {
             dbFeatures.add(CacheHelper.removePrefixAndGetFeatureIdentifier(feature));
         }
-        return getFeatureQueryHandler().getEnvelopeForFeatureIDs(dbFeatures, getConnection());
+        FeatureQueryHandlerQueryObject queryHandler =
+                new FeatureQueryHandlerQueryObject().setFeatureIdentifiers(dbFeatures)
+                        .setConnection(getConnection());
+        return getFeatureQueryHandler().getEnvelopeForFeatureIDs(queryHandler);
     }
 
     /**

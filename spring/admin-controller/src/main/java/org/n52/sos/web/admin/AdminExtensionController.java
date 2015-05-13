@@ -32,6 +32,17 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesKey;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesRepository;
+import org.n52.iceland.ogc.swes.OfferingExtensionKey;
+import org.n52.iceland.ogc.swes.OfferingExtensionRepository;
+import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.JSONConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -40,18 +51,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.JSONException;
-import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesKey;
-import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesRepository;
-import org.n52.sos.ogc.swes.OfferingExtensionKey;
-import org.n52.sos.ogc.swes.OfferingExtensionRepository;
-import org.n52.sos.service.operator.ServiceOperatorKey;
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.JSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;

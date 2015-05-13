@@ -28,7 +28,8 @@
  */
 package org.n52.sos.response;
 
-import org.n52.sos.service.AbstractServiceCommunicationObject;
+import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.iceland.service.AbstractServiceCommunicationObject;
 
 /**
  * Response for request which are currently not supported or do not have a

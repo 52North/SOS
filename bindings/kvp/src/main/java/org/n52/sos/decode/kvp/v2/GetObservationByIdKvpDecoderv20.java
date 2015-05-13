@@ -32,19 +32,19 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.decode.DecoderKey;
-import org.n52.sos.decode.OperationDecoderKey;
+import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
+import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
+import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.decode.kvp.AbstractKvpDecoder;
-import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.util.KvpHelper;
-import org.n52.sos.util.http.MediaTypes;
 
 /**
  * KVP decoder implementation for SOS 2.0 GetObservationById operation

@@ -31,9 +31,10 @@ package org.n52.sos.response;
 import java.util.Collections;
 import java.util.List;
 
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.request.ResponseFormat;
-import org.n52.sos.util.StringHelper;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.request.ResponseFormat;
+import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.iceland.util.StringHelper;
 
 /**
  * TODO JavaDoc
@@ -93,16 +94,6 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
 
     public boolean isSetResultModel() {
         return resultModel != null;
-    }
-
-    @Deprecated
-    public void setMergeObservationValues(boolean mergeObservationValues) {
-        setMergeObservations(mergeObservationValues);
-    }
-
-    @Deprecated
-    public boolean isMergeObservationValues() {
-        return isSetMergeObservation();
     }
 
     public void setMergeObservations(boolean mergeObservation) {

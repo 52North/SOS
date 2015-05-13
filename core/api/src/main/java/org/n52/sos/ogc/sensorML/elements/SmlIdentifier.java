@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
-import org.n52.sos.util.StringHelper;
+import org.n52.iceland.util.StringHelper;
 
 /**
  * SOS internal representation of SensorML identifier

@@ -28,25 +28,25 @@
  */
 package org.n52.sos.encode.sos.v2;
 
-import static org.n52.sos.util.CodingHelper.encodeObjectToXml;
+import static org.n52.iceland.util.CodingHelper.encodeObjectToXml;
 
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.iceland.ogc.filter.FilterConstants;
+import org.n52.iceland.ogc.gml.GmlConstants;
+import org.n52.iceland.ogc.ows.OWSConstants;
+import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.swe.SweConstants;
+import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.service.profile.Profile;
+import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.encode.AbstractResponseEncoder;
-import org.n52.sos.ogc.filter.FilterConstants;
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.ogc.swe.SweConstants;
-import org.n52.sos.response.AbstractServiceResponse;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.service.profile.Profile;
-import org.n52.sos.w3c.SchemaLocation;
 
 import com.google.common.collect.Sets;
 

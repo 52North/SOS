@@ -28,10 +28,10 @@
  */
 package org.n52.sos.decode.json.inspire;
 
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.inspire.aqd.GeographicalName;
 import org.n52.sos.inspire.aqd.Pronunciation;
 import org.n52.sos.inspire.aqd.Spelling;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.AQDJSONConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

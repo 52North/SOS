@@ -29,11 +29,10 @@
 package org.n52.sos.ds.hibernate.dao.i18n;
 
 import org.hibernate.Session;
-
+import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NOfferingMetadata;
-import org.n52.sos.i18n.metadata.I18NOfferingMetadata;
 
 
 public class OfferingI18NDAO extends AbstractHibernateI18NDAO<Offering, I18NOfferingMetadata, HibernateI18NOfferingMetadata> {

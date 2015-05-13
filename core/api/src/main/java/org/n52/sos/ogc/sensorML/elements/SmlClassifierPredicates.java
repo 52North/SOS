@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
-import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
-
 import com.google.common.base.Predicate;
 
 /**

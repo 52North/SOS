@@ -44,40 +44,41 @@ import org.apache.xmlbeans.XmlBoolean;
 import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
+import org.n52.iceland.encode.EncoderKey;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.iceland.ogc.gml.GmlConstants;
+import org.n52.iceland.ogc.om.AbstractObservationValue;
+import org.n52.iceland.ogc.om.MultiObservationValues;
+import org.n52.iceland.ogc.om.NamedValue;
+import org.n52.iceland.ogc.om.ObservationValue;
+import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.om.SingleObservationValue;
+import org.n52.iceland.ogc.om.features.SfConstants;
+import org.n52.iceland.ogc.om.values.BooleanValue;
+import org.n52.iceland.ogc.om.values.CategoryValue;
+import org.n52.iceland.ogc.om.values.CountValue;
+import org.n52.iceland.ogc.om.values.GeometryValue;
+import org.n52.iceland.ogc.om.values.QuantityValue;
+import org.n52.iceland.ogc.om.values.TextValue;
+import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.swe.SweConstants;
+import org.n52.iceland.ogc.swe.SweDataArray;
+import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.util.StringHelper;
+import org.n52.iceland.util.XmlOptionsHelper;
+import org.n52.iceland.util.http.MediaType;
+import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.encode.streaming.OmV20XmlStreamWriter;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.om.AbstractObservationValue;
-import org.n52.sos.ogc.om.MultiObservationValues;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.ObservationValue;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.ogc.swe.SweConstants;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
-import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.OMHelper;
-import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.SweHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.w3c.SchemaLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -206,13 +207,14 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
             ((AbstractObservationValue<?>)sosObservation.getValue()).setValuesForResultEncoding(sosObservation);
             return encodeResult(sosObservation.getValue());
         } else {
-            if (sosObservation.getValue() instanceof SingleObservationValue) {
-                return createSingleObservationToResult(sosObservation);
-            } else if (sosObservation.getValue() instanceof MultiObservationValues) {
-                return createMultiObservationValueToResult(sosObservation);
-            }
+            return encodeResult(sosObservation.getValue());
+//            if (sosObservation.getValue() instanceof SingleObservationValue) {
+//                return createSingleObservationToResult((SingleObservationValue<?>)sosObservation.getValue());
+//            } else if (sosObservation.getValue() instanceof MultiObservationValues) {
+//                return createMultiObservationValueToResult((MultiObservationValues<?>)sosObservation.getValue());
+//            }
         }
-        return null;
+//        return null;
     }
     
     
@@ -249,140 +251,6 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         return false;
     }
 
-    // FIXME String.equals(QName)!?
-    /**
-     * Create a om:result content XmlBeans object from a SOS single value
-     * observation object
-     * 
-     * @param sosObservation
-     *            SOS observation
-     * @return XmlBeans object for om:result
-     * @throws OwsExceptionReport
-     *             If an error occurs
-     */
-    @Deprecated
-    private XmlObject createSingleObservationToResult(OmObservation sosObservation) throws OwsExceptionReport {
-        SingleObservationValue<?> observationValue = (SingleObservationValue<?>) sosObservation.getValue();
-        final String observationType;
-        if (sosObservation.getObservationConstellation().isSetObservationType()) {
-            observationType = sosObservation.getObservationConstellation().getObservationType();
-        } else {
-            observationType = OMHelper.getObservationTypeFor(observationValue.getValue());
-        }
-        if ((observationType.equals(OmConstants.OBS_TYPE_MEASUREMENT))
-                && observationValue.getValue() instanceof QuantityValue) {
-            QuantityValue quantityValue = (QuantityValue) observationValue.getValue();
-            return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, quantityValue);
-        } else if ((observationType.equals(OmConstants.OBS_TYPE_COUNT_OBSERVATION))
-                && observationValue.getValue() instanceof CountValue) {
-            CountValue countValue = (CountValue) observationValue.getValue();
-            XmlInteger xbInteger = XmlInteger.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-            if (countValue.getValue() != null && countValue.getValue() != Integer.MIN_VALUE) {
-                xbInteger.setBigIntegerValue(new BigInteger(countValue.getValue().toString()));
-            } else {
-                xbInteger.setNil();
-            }
-            return xbInteger;
-        } else if ((observationType.equals(OmConstants.OBS_TYPE_TEXT_OBSERVATION))
-                && observationValue.getValue() instanceof TextValue) {
-            TextValue textValue = (TextValue) observationValue.getValue();
-            XmlString xbString = XmlString.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-            if (textValue.getValue() != null && !textValue.getValue().isEmpty()) {
-                xbString.setStringValue(textValue.getValue());
-            } else {
-                xbString.setNil();
-            }
-            return xbString;
-        } else if ((observationType.equals(OmConstants.OBS_TYPE_TRUTH_OBSERVATION))
-                && observationValue.getValue() instanceof BooleanValue) {
-            BooleanValue booleanValue = (BooleanValue) observationValue.getValue();
-            XmlBoolean xbBoolean = XmlBoolean.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-            if (booleanValue.getValue() != null) {
-                xbBoolean.setBooleanValue(booleanValue.getValue());
-            } else {
-                xbBoolean.setNil();
-            }
-            return xbBoolean;
-        } else if ((observationType.equals(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION))
-                && observationValue.getValue() instanceof CategoryValue) {
-            CategoryValue categoryValue = (CategoryValue) observationValue.getValue();
-            if (categoryValue.getValue() != null && !categoryValue.getValue().isEmpty()) {
-                Map<HelperValues, String> additionalValue = new EnumMap<HelperValues, String>(HelperValues.class);
-                additionalValue
-                        .put(HelperValues.GMLID, SosConstants.OBS_ID_PREFIX + sosObservation.getObservationID());
-                XmlObject xmlObject =
-                        CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, categoryValue, additionalValue);
-                return xmlObject;
-            } else {
-                return null;
-            }
-        } else if ((observationType.equals(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION))
-                && observationValue.getValue() instanceof GeometryValue) {
-
-            GeometryValue geometryValue = (GeometryValue) observationValue.getValue();
-            if (geometryValue.getValue() != null) {
-                Map<HelperValues, String> additionalValue = new EnumMap<HelperValues, String>(HelperValues.class);
-                additionalValue
-                        .put(HelperValues.GMLID, SosConstants.OBS_ID_PREFIX + sosObservation.getObservationID());
-                additionalValue.put(HelperValues.PROPERTY_TYPE, null);
-                XmlObject xmlObject =
-                        CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, geometryValue.getValue(),
-                                additionalValue);
-                return xmlObject;
-            } else {
-                return null;
-            }
-        } else if (observationType.equals(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION)) {
-            // TODO create SosSweDataArray
-            SweDataArray dataArray = SweHelper.createSosSweDataArray(sosObservation);
-            Map<HelperValues, String> additionalValues =
-                    new EnumMap<SosConstants.HelperValues, String>(SosConstants.HelperValues.class);
-            additionalValues.put(HelperValues.FOR_OBSERVATION, null);
-            // TODO create SosSweDataArray
-            Object encodedObj = CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, dataArray, additionalValues);
-            if (encodedObj instanceof XmlObject) {
-                return (XmlObject) encodedObj;
-            } else {
-                throw new NoApplicableCodeException().withMessage(
-                        "Encoding of observation value of type \"%s\" failed. Result: %s",
-                        observationValue.getValue() != null ? observationValue.getValue().getClass().getName()
-                                : observationValue.getValue(), encodedObj != null ? encodedObj.getClass().getName()
-                                : encodedObj);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Create a om:result content XmlBeans object from a SOS multi value
-     * observation object
-     * 
-     * @param sosObservation
-     *            SOS observation
-     * @return XmlBeans object for om:result
-     * @throws OwsExceptionReport
-     *             If an error occurs
-     */
-    @Deprecated
-    private XmlObject createMultiObservationValueToResult(OmObservation sosObservation) throws OwsExceptionReport {
-        MultiObservationValues<?> observationValue = (MultiObservationValues<?>) sosObservation.getValue();
-        // TODO create SosSweDataArray
-        SweDataArray dataArray = SweHelper.createSosSweDataArray(sosObservation);
-        Map<HelperValues, String> additionalValues =
-                new EnumMap<SosConstants.HelperValues, String>(SosConstants.HelperValues.class);
-        additionalValues.put(HelperValues.FOR_OBSERVATION, null);
-        Object encodedObj = CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, dataArray, additionalValues);
-        if (encodedObj instanceof XmlObject) {
-            return (XmlObject) encodedObj;
-        } else {
-            throw new NoApplicableCodeException().withMessage(
-                    "Encoding of observation value of type \"%s\" failed. Result: %s",
-                    observationValue.getValue() != null ? observationValue.getValue().getClass().getName()
-                            : observationValue.getValue(), encodedObj != null ? encodedObj.getClass().getName()
-                            : encodedObj);
-        }
-    }
-    
     private XmlObject createSingleObservationToResult(SingleObservationValue<?> observationValue) throws OwsExceptionReport {
         final String observationType;
         if (observationValue.isSetObservationType()) {

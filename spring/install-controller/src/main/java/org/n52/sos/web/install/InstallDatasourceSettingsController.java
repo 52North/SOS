@@ -38,18 +38,17 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.ds.Datasource;
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.web.AbstractController;
+import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.SettingDefinitionEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.ds.Datasource;
-import org.n52.sos.exception.JSONException;
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.SettingDefinitionEncoder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

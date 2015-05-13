@@ -31,7 +31,6 @@ package org.n52.sos.util;
 import static org.geotools.factory.Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER;
 import static org.geotools.referencing.ReferencingFactoryFinder.getCRSAuthorityFactory;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -46,19 +45,28 @@ import org.geotools.referencing.CRS;
 import org.geotools.referencing.factory.AbstractAuthorityFactory;
 import org.geotools.referencing.factory.DeferredAuthorityFactory;
 import org.geotools.util.WeakCollectionCleaner;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.ds.FeatureQuerySettingsProvider;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Range;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.service.ServiceConfiguration;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.config.annotation.Configurable;
+import org.n52.iceland.config.annotation.Instantiatable;
+import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.ds.FeatureQuerySettingsProvider;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.ogc.filter.SpatialFilter;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.service.ServiceContextListener;
+import org.n52.iceland.util.Cleanupable;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.EpsgConstants;
+import org.n52.iceland.util.JTSHelper;
+import org.n52.iceland.util.JavaHelper;
+import org.n52.iceland.util.Range;
+import org.n52.iceland.util.StringHelper;
+import org.n52.iceland.util.Validation;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -78,13 +86,13 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Class to provide some methods for JTS Geometry which is used by
- * {@link org.n52.sos.ds.FeatureQueryHandler} and SpatialFilteringProfile DAO.
+ * {@link org.n52.sos.ds.FeatureQueryHandler}.
  * 
  * @since 4.0.0
  * 
  */
 @Configurable
-public class GeometryHandler implements Cleanupable, EpsgConstants {
+public class GeometryHandler implements Instantiatable, Cleanupable, EpsgConstants {
 
     /*
      * longitude = east-west latitude = north-south
@@ -124,10 +132,20 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
     private GeometryHandler() {
     }
 
+    @Override
+    public void createInstance() {
+        init();
+    }
+
     /**
      * @return Returns a singleton instance of the GeometryHandler.
      */
     public static GeometryHandler getInstance() {
+        init();
+        return instance;
+    }
+    
+    private static void init() {
         if (instance == null) {
             creationLock.lock();
             try {
@@ -138,12 +156,12 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
                     SettingsManager.getInstance().configure(newInstance);
                     newInstance.initCrsAuthoritycrsAuthority();
                     instance = newInstance;
+                    ServiceContextListener.registerShutdownHook(instance);
                 }
             } finally {
                 creationLock.unlock();
             }
         }
-        return instance;
     }
 
     private void initCrsAuthoritycrsAuthority() {
@@ -437,27 +455,6 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
     }
 
     /**
-     * Get Object value as Double value
-     * 
-     * @param value
-     *            Value to check
-     * @return Double value
-     */
-    // TODO replace with JavaHelper.asDouble?
-    @Deprecated
-    public double getValueAsDouble(final Object value) {
-        if (value instanceof String) {
-            return Double.valueOf((String) value).doubleValue();
-        } else if (value instanceof BigDecimal) {
-            final BigDecimal bdValue = (BigDecimal) value;
-            return bdValue.doubleValue();
-        } else if (value instanceof Double) {
-            return ((Double) value).doubleValue();
-        }
-        return 0;
-    }
-
-    /**
      * Get filter geometry for BBOX spatial filter and non spatial datasource
      * 
      * @param filter
@@ -471,8 +468,9 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
         case BBOX:
             return switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
         default:
-            throw new InvalidParameterValueException(Sos2Constants.GetObservationParams.spatialFilter, filter
+            throw new InvalidParameterValueException("spatialFilter", filter
                     .getOperator().name());
+            // Sos2Constants.GetObservationParams.spatialFilter = "spatialFilter"
         }
     }
 

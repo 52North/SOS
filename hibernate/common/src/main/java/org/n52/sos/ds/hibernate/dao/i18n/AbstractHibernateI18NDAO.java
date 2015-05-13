@@ -40,15 +40,14 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-
-import org.n52.sos.ds.I18NDAO;
+import org.n52.iceland.ds.I18NDAO;
+import org.n52.iceland.i18n.LocalizedString;
+import org.n52.iceland.i18n.metadata.AbstractI18NMetadata;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.i18n.AbstractHibernateI18NMetadata;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.i18n.LocalizedString;
-import org.n52.sos.i18n.metadata.AbstractI18NMetadata;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;

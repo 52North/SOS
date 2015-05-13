@@ -30,9 +30,9 @@ package org.n52.sos.binding.rest.resources;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.RestRequest;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

@@ -30,9 +30,9 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.sos.config.SettingType;
-import org.n52.sos.config.SettingValue;
-import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.iceland.config.SettingType;
+import org.n52.iceland.config.SettingValue;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
 
 /**
  * @author Carsten Hollmann <c.hollmann@52north.org>

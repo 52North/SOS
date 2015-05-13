@@ -34,11 +34,11 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.service.ServiceContextListener;
 import org.n52.sos.aqd.ReportObligationType;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.inspire.aqd.persistence.ReportingHeaderSQLiteManager;
-import org.n52.sos.service.SosContextListener;
 
 public class ReportObligationRepository {
     private final ReadWriteLock reportingAuthorityLock = new ReentrantReadWriteLock();
@@ -49,7 +49,7 @@ public class ReportObligationRepository {
 
     private ReportObligationRepository() {
         this.obligations = new EnumMap<>(ReportObligationType.class);
-        SosContextListener.registerShutdownHook(sqlite);
+        ServiceContextListener.registerShutdownHook(sqlite);
     }
 
     public RelatedParty getReportingAuthority() {

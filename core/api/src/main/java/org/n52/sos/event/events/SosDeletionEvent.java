@@ -28,8 +28,9 @@
  */
 package org.n52.sos.event.events;
 
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.iceland.event.events.ResponseEvent;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.response.AbstractServiceResponse;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -37,7 +38,7 @@ import org.n52.sos.response.AbstractServiceResponse;
  * @since 4.0.0
  */
 public abstract class SosDeletionEvent<I extends AbstractServiceRequest<?>, O extends AbstractServiceResponse> extends
-        SosContentChangeEvent<I, O> {
+        ResponseEvent<I, O> {
 
     public SosDeletionEvent(I request, O response) {
         super(request, response);

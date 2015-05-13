@@ -28,7 +28,9 @@
  */
 package org.n52.sos.ogc.swe.simpleType;
 
-import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.iceland.ogc.swe.simpleType.SweAbstractUomType;
+import org.n52.iceland.ogc.swe.simpleType.SweQuality;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

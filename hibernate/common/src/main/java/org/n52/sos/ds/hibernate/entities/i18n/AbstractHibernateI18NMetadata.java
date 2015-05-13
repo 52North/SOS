@@ -31,11 +31,11 @@ package org.n52.sos.ds.hibernate.entities.i18n;
 import java.io.Serializable;
 import java.util.Locale;
 
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescription;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasLocale;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
-import org.n52.sos.util.StringHelper;
 
 /**
  * Abstract feature I18N entity

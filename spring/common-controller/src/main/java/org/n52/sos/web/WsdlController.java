@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.n52.sos.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationException;
 import org.n52.sos.wsdl.WSDLFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;

@@ -28,8 +28,8 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.iceland.ogc.sos.Sos2Constants;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

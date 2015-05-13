@@ -37,6 +37,12 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.iceland.exception.NoSuchExtensionException;
+import org.n52.iceland.exception.NoSuchOfferingException;
+import org.n52.iceland.ogc.ows.OfferingExtension;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.web.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -47,13 +53,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import org.n52.sos.exception.NoSuchExtensionException;
-import org.n52.sos.exception.NoSuchOfferingException;
-import org.n52.sos.ogc.ows.OfferingExtension;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.web.ControllerConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

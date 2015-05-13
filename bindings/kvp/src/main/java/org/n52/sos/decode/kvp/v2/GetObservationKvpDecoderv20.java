@@ -34,26 +34,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.decode.DecoderKey;
-import org.n52.sos.decode.OperationDecoderKey;
+import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
+import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
+import org.n52.iceland.exception.ows.concrete.ParameterNotSupportedException;
+import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.Sos2Constants.Extensions;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
+import org.n52.iceland.ogc.swes.SwesExtensionImpl;
+import org.n52.iceland.ogc.swes.SwesExtensions;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.decode.kvp.AbstractKvpDecoder;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
-import org.n52.sos.exception.ows.concrete.ParameterNotSupportedException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.Sos2Constants.Extensions;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
-import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.KvpHelper;
-import org.n52.sos.util.http.MediaTypes;
 
 /**
  * @since 4.0.0

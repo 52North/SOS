@@ -28,8 +28,8 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.util.http.HTTPStatus;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.util.http.HTTPStatus;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

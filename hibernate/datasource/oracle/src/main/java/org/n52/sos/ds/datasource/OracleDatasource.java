@@ -46,9 +46,9 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.oracle.OracleSpatial10gDialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-import org.n52.sos.ds.Datasource;
+import org.n52.iceland.ds.Datasource;
+import org.n52.iceland.exception.ConfigurationException;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
-import org.n52.sos.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

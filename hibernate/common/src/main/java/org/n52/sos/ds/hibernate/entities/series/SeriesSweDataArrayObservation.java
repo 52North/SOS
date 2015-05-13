@@ -30,8 +30,8 @@ package org.n52.sos.ds.hibernate.entities.series;
 
 import java.io.Serializable;
 
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayObservation;
-import org.n52.sos.util.StringHelper;
 
 /**
  * Hibernate series SweDataArray observation entity

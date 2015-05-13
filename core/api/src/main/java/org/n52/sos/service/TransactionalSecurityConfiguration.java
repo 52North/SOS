@@ -28,16 +28,19 @@
  */
 package org.n52.sos.service;
 
-import static org.n52.sos.service.TransactionalSecuritySettings.*;
+import static org.n52.sos.service.TransactionalSecuritySettings.ALLOWED_PROXIES;
+import static org.n52.sos.service.TransactionalSecuritySettings.TRANSACTIONAL_ACTIVE;
+import static org.n52.sos.service.TransactionalSecuritySettings.TRANSACTIONAL_ALLOWED_IPS;
+import static org.n52.sos.service.TransactionalSecuritySettings.TRANSACTIONAL_TOKEN;
 
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.StringHelper;
-import org.n52.sos.util.net.IPAddress;
-import org.n52.sos.util.net.IPAddressRange;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.config.annotation.Configurable;
+import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.StringHelper;
+import org.n52.iceland.util.net.IPAddress;
+import org.n52.iceland.util.net.IPAddressRange;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;

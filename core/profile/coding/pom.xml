@@ -12,11 +12,15 @@
     <name>52°North SOS - Profile Coding Module</name>
     <description>52°North SOS profile Coding module</description>
     <dependencies>
+    	<dependency>
+            <groupId>org.n52.iceland</groupId>
+            <artifactId>iceland</artifactId>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
         </dependency>
-	    <dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>profile-xml</artifactId>
         </dependency>

@@ -31,12 +31,13 @@ package org.n52.sos.request;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.response.InsertObservationResponse;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.StringHelper;
 
 /**
  * SOS InsertObservation request

@@ -38,11 +38,11 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.service.ServiceContextListener;
 import org.n52.sos.config.sqlite.SQLiteSessionFactory;
-import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.hibernate.AbstractSessionFactoryProvider;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.service.SosContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +81,7 @@ public class ReportingHeaderSQLiteSessionFactory extends AbstractSessionFactoryP
     private String getFilename() {
         String path = null;
         try {
-            path = SosContextListener.getPath();
+            path = ServiceContextListener.getPath();
         } catch (Throwable t) {
         }
         if (path == null) {

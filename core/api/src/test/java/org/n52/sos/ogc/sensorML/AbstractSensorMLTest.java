@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.sensorML;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;

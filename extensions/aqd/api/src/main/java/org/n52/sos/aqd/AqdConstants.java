@@ -33,9 +33,9 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.iso.GcoConstants;
 import org.n52.sos.iso.gmd.GmdConstants;
-import org.n52.sos.w3c.SchemaLocation;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;

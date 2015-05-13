@@ -28,8 +28,8 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.ogc.sos.Sos1Constants.DescribeSensorParams;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.ogc.sos.Sos1Constants.DescribeSensorParams;
 
 /**
  * @since 4.0.0

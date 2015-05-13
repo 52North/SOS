@@ -32,22 +32,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
 
+import org.n52.iceland.exception.ows.concrete.InvalidAcceptVersionsParameterException;
+import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.DCP;
+import org.n52.iceland.ogc.ows.OWSConstants;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsOperation;
+import org.n52.iceland.ogc.ows.OwsParameterValuePossibleValues;
+import org.n52.iceland.ogc.ows.OwsServiceIdentification;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.iceland.response.GetCapabilitiesResponse;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.ds.AbstractGetCapabilitiesDAO;
-import org.n52.sos.exception.ows.concrete.InvalidAcceptVersionsParameterException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.DCP;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsOperation;
-import org.n52.sos.ogc.ows.OwsParameterValuePossibleValues;
-import org.n52.sos.ogc.ows.SosServiceIdentification;
 import org.n52.sos.ogc.sos.SosCapabilities;
-import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosObservationOffering;
-import org.n52.sos.request.GetCapabilitiesRequest;
-import org.n52.sos.response.GetCapabilitiesResponse;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -73,11 +73,11 @@ public class AqdGetCapabilitiesOperatorV10 extends
     }
 
     private GetCapabilitiesResponse modifyCapabilities(GetCapabilitiesResponse response) {
-        SosCapabilities capabilities = response.getCapabilities();
+        SosCapabilities capabilities = (SosCapabilities)response.getCapabilities();
         capabilities.setVersion(AqdConstants.VERSION);
         capabilities.setService(AqdConstants.AQD);
         if (capabilities.isSetServiceIdentification()) {
-            SosServiceIdentification serviceIdentification = capabilities.getServiceIdentification();
+            OwsServiceIdentification serviceIdentification = capabilities.getServiceIdentification();
             serviceIdentification.setVersions(Lists.newArrayList(AqdConstants.VERSION));
         }
         if (capabilities.isSetOperationsMetadata()) {
@@ -96,8 +96,8 @@ public class AqdGetCapabilitiesOperatorV10 extends
             for (OwsOperation operation : capabilities.getOperationsMetadata().getOperations()) {
                 if (operation.getOperationName().equals(SosConstants.Operations.GetCapabilities.name())) {
                     if (operation.getParameterValues().containsKey(
-                            SosConstants.GetCapabilitiesParams.AcceptVersions.name())) {
-                        operation.overrideParameter(SosConstants.GetCapabilitiesParams.AcceptVersions,
+                            org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions.name())) {
+                        operation.overrideParameter(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions,
                                 new OwsParameterValuePossibleValues(AqdConstants.VERSION));
                     }
                     aqdOperations.add(operation);

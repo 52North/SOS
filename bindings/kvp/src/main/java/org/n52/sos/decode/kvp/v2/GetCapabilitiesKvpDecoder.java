@@ -33,19 +33,19 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.decode.DecoderKey;
-import org.n52.sos.decode.OperationDecoderKey;
+import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.iceland.exception.ows.concrete.ParameterNotSupportedException;
+import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.decode.kvp.AbstractKvpDecoder;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.exception.ows.concrete.ParameterNotSupportedException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.GetCapabilitiesRequest;
-import org.n52.sos.util.Constants;
 import org.n52.sos.util.KvpHelper;
-import org.n52.sos.util.http.MediaTypes;
 
 import com.google.common.collect.Sets;
 
@@ -77,7 +77,7 @@ public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder {
     @Override
     public GetCapabilitiesRequest decode(Map<String, String> element) throws OwsExceptionReport {
 
-        GetCapabilitiesRequest request = new GetCapabilitiesRequest();
+        GetCapabilitiesRequest request = new GetCapabilitiesRequest(SosConstants.SOS);
         CompositeOwsException exceptions = new CompositeOwsException();
 
         for (String parameterName : element.keySet()) {
@@ -92,7 +92,7 @@ public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder {
 //                        KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
 //                    } // acceptVersions (optional)
 //                    else 
-                        if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.AcceptVersions.name())) {
+                        if (parameterName.equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions.name())) {
                         if (!parameterValues.isEmpty()) {
                             request.setAcceptVersions(Arrays.asList(parameterValues.split(Constants.COMMA_STRING)));
                         } else {
@@ -100,19 +100,19 @@ public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder {
                         }
                     } 
                         // acceptFormats (optional)
-                    else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.AcceptFormats.name())) {
+                    else if (parameterName.equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptFormats.name())) {
                         request.setAcceptFormats(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
                     } 
                         // updateSequence (optional)
-                    else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.updateSequence.name())) {
+                    else if (parameterName.equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.updateSequence.name())) {
                         request.setUpdateSequence(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
                     } 
                         // sections (optional)
-                    else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.Sections.name())) {
+                    else if (parameterName.equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.Sections.name())) {
                         request.setSections(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
     				} 
                         // capabilitiesId (optional; non-standard)
-    			else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.CapabilitiesId.name())) {
+    			else if (parameterName.equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.CapabilitiesId.name())) {
                         request.setCapabilitiesId(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
                     } else {
                         exceptions.add(new ParameterNotSupportedException(parameterName));

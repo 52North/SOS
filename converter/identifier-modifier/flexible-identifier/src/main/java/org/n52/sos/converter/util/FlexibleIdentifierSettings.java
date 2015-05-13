@@ -31,10 +31,10 @@ package org.n52.sos.converter.util;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingDefinitionGroup;
-import org.n52.sos.config.SettingDefinitionProvider;
-import org.n52.sos.config.settings.BooleanSettingDefinition;
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingDefinitionGroup;
+import org.n52.iceland.config.SettingDefinitionProvider;
+import org.n52.iceland.config.settings.BooleanSettingDefinition;
 
 import com.google.common.collect.ImmutableSet;
 

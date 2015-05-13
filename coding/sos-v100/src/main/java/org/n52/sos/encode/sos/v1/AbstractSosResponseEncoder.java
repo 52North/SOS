@@ -30,11 +30,11 @@ package org.n52.sos.encode.sos.v1;
 
 import java.util.Set;
 
+import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.encode.AbstractResponseEncoder;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.response.AbstractServiceResponse;
-import org.n52.sos.w3c.SchemaLocation;
 
 import com.google.common.collect.Sets;
 

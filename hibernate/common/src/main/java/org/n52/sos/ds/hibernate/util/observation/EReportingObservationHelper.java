@@ -30,6 +30,11 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Collection;
 
+import org.n52.iceland.ogc.gml.ReferenceType;
+import org.n52.iceland.ogc.om.NamedValue;
+import org.n52.iceland.ogc.om.values.HrefAttributeValue;
+import org.n52.iceland.ogc.om.values.ReferenceValue;
+import org.n52.iceland.w3c.xlink.W3CHrefAttribute;
 import org.n52.sos.aqd.AqdConstants.AssessmentType;
 import org.n52.sos.aqd.AqdConstants.ProcessParameter;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
@@ -37,11 +42,6 @@ import org.n52.sos.ds.hibernate.entities.ereporting.EReportingNetwork;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingStation;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.values.HrefAttributeValue;
-import org.n52.sos.ogc.om.values.ReferenceValue;
-import org.n52.sos.w3c.xlink.W3CHrefAttribute;
 
 import com.google.common.collect.Lists;
 

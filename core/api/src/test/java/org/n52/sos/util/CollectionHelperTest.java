@@ -28,10 +28,12 @@
  */
 package org.n52.sos.util;
 
-import static java.lang.Boolean.*;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
-import static org.n52.sos.util.CollectionHelper.unionOfListOfLists;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.n52.iceland.util.CollectionHelper.unionOfListOfLists;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,6 +45,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.junit.Test;
+import org.n52.iceland.util.CollectionHelper;
 
 import com.google.common.collect.Sets;
 

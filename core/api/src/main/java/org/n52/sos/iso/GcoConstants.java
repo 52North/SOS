@@ -30,7 +30,7 @@ package org.n52.sos.iso;
 
 import javax.xml.namespace.QName;
 
-import org.n52.sos.w3c.SchemaLocation;
+import org.n52.iceland.w3c.SchemaLocation;
 
 public interface GcoConstants {
     String NS_GCO = "http://www.isotc211.org/2005/gco";

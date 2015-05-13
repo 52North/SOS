@@ -28,13 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsServiceProvider;
+import org.n52.iceland.service.Configurator;
 import org.n52.sos.iso.CodeList;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.SosServiceProvider;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.Role;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
-import org.n52.sos.service.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +72,7 @@ public class ContactsEnrichment extends SensorMLEnrichment {
      * @return SerivceProvider object
      */
     @VisibleForTesting
-    Optional<SosServiceProvider> getServiceProvider() {
+    Optional<OwsServiceProvider> getServiceProvider() {
         try {
             return Optional.fromNullable(Configurator.getInstance().getServiceProvider());
         } catch (final OwsExceptionReport e) {
@@ -87,12 +87,12 @@ public class ContactsEnrichment extends SensorMLEnrichment {
      * @return SensorML Contact
      */
     private Optional<SmlResponsibleParty> createContactFromServiceContact() {
-        Optional<SosServiceProvider> serviceProvider = getServiceProvider();
+        Optional<OwsServiceProvider> serviceProvider = getServiceProvider();
         if (!serviceProvider.isPresent()) {
             return Optional.absent();
         }
         SmlResponsibleParty rp = new SmlResponsibleParty();
-        SosServiceProvider sp = serviceProvider.get();
+        OwsServiceProvider sp = serviceProvider.get();
         if (sp.hasIndividualName()) {
             rp.setIndividualName(sp.getIndividualName());
         }

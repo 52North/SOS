@@ -28,9 +28,9 @@
  */
 package org.n52.sos.decode.xml.stream.ogc.ows;
 
+import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.sos.decode.xml.stream.NillableReader;
 import org.n52.sos.decode.xml.stream.XmlReader;
-import org.n52.sos.ogc.gml.CodeType;
 
 
 public class NillableCodeTypeReader extends NillableReader<CodeType> {

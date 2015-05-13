@@ -28,10 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
-import org.n52.sos.util.StringHelper;
 
 public abstract class EReportingObservation extends SeriesObservation
     implements EReportingValues {

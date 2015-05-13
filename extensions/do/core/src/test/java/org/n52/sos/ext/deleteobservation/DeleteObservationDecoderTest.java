@@ -31,24 +31,26 @@ package org.n52.sos.ext.deleteobservation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.n52.iceland.ogc.sos.SosConstants.SOS;
+import static org.n52.iceland.util.CodingHelper.decoderKeysForElements;
+import static org.n52.iceland.util.CodingHelper.xmlDecoderKeysForOperation;
+import static org.n52.iceland.util.CollectionHelper.union;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.CONFORMANCE_CLASSES;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.NS_SOSDO_1_0;
-import static org.n52.sos.ogc.sos.SosConstants.SOS;
-import static org.n52.sos.util.CodingHelper.decoderKeysForElements;
-import static org.n52.sos.util.CodingHelper.xmlDecoderKeysForOperation;
-import static org.n52.sos.util.CollectionHelper.union;
 
 import java.util.Set;
 
+
 import net.opengis.sosdo.x10.DeleteObservationDocument;
+
 
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.n52.sos.decode.DecoderKey;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

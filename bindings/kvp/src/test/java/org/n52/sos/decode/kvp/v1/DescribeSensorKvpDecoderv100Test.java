@@ -37,11 +37,12 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.n52.iceland.ogc.ows.OWSConstants.RequestParams;
+import org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;
-import org.n52.sos.ogc.ows.OWSConstants.RequestParams;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.DescribeSensorRequest;
 
 /**
@@ -107,7 +108,7 @@ public class DescribeSensorKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
     public void emptyParam() throws OwsExceptionReport {
         final Map<String, String> map =
                 createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, PROCEDURE, OUTPUT_FORMAT);
-        map.put(SosConstants.GetCapabilitiesParams.AcceptVersions.name(), EMPTY_STRING);
+        map.put(GetCapabilitiesParams.AcceptVersions.name(), EMPTY_STRING);
         decoder.decode(map);
     }
 

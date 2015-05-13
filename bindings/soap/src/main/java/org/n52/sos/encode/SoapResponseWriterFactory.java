@@ -30,6 +30,8 @@ package org.n52.sos.encode;
 
 import javax.xml.soap.SOAPMessage;
 
+import org.n52.iceland.encode.ResponseWriterFactory;
+
 /**
  * {@link ResponseWriterFactory} implementation for {@link SOAPMessage} and
  * {@link SoapResponseWriter}

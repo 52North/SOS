@@ -34,6 +34,7 @@ import static org.junit.Assert.assertThat;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
+import org.n52.iceland.util.DateTimeHelper;
 
 public class DateTimeHelperTest {
     

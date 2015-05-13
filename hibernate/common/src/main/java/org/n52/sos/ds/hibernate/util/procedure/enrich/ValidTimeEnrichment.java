@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 
 /**

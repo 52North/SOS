@@ -30,14 +30,14 @@ package org.n52.sos.request.operator;
 
 import java.util.Set;
 
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.RequestContext;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.request.RequestContext;
+import org.n52.iceland.util.http.HTTPStatus;
+import org.n52.iceland.util.net.IPAddress;
+import org.n52.iceland.util.net.IPAddressRange;
+import org.n52.iceland.util.net.ProxyChain;
 import org.n52.sos.service.TransactionalSecurityConfiguration;
-import org.n52.sos.util.http.HTTPStatus;
-import org.n52.sos.util.net.IPAddress;
-import org.n52.sos.util.net.IPAddressRange;
-import org.n52.sos.util.net.ProxyChain;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;

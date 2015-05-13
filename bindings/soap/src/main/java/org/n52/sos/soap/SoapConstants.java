@@ -31,7 +31,7 @@ package org.n52.sos.soap;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPConstants;
 
-import org.n52.sos.w3c.SchemaLocation;
+import org.n52.iceland.w3c.SchemaLocation;
 
 /**
  * Constants for SOAP messages

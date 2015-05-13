@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.ogc.SpatialOpsType;
 import net.opengis.sos.x10.DescribeSensorDocument;
 import net.opengis.sos.x10.DescribeSensorDocument.DescribeSensor;
 import net.opengis.sos.x10.GetCapabilitiesDocument;
@@ -54,28 +53,30 @@ import net.opengis.sos.x10.ResponseModeType.Enum;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
-import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.AbstractServiceRequest;
+import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
+import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.iceland.ogc.filter.SpatialFilter;
+import org.n52.iceland.ogc.filter.TemporalFilter;
+import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.iceland.service.AbstractServiceCommunicationObject;
+import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.XmlHelper;
+import org.n52.iceland.util.http.MediaType;
 import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.request.GetCapabilitiesRequest;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.service.AbstractServiceCommunicationObject;
-import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.OMHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.http.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -189,11 +190,9 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
      *             * If parsing the XmlBean failed
      */
     private AbstractServiceRequest<?> parseGetCapabilities(GetCapabilitiesDocument getCapsDoc) throws OwsExceptionReport {
-        GetCapabilitiesRequest request = new GetCapabilitiesRequest();
-
+       
         GetCapabilities getCaps = getCapsDoc.getGetCapabilities();
-
-        request.setService(getCaps.getService());
+        GetCapabilitiesRequest request = new GetCapabilitiesRequest(getCaps.getService());
 
         if (getCaps.getAcceptFormats() != null && getCaps.getAcceptFormats().sizeOfOutputFormatArray() != 0) {
             request.setAcceptFormats(Arrays.asList(getCaps.getAcceptFormats().getOutputFormatArray()));
@@ -353,37 +352,6 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
         }
         getObsByIdRequest.setObservationIdentifier(Arrays.asList(getObsById.getObservationId()));
         return getObsByIdRequest;
-    }
-
-    /**
-     * Parses the spatial filter of a GetObservation request.
-     * 
-     * @param spatialOpsType
-     *            XmlBean representing the spatial filter parameter of the
-     *            request
-     * @return Returns SpatialFilter created from the passed foi request
-     *         parameter
-     * 
-     * 
-     * @throws OwsExceptionReport
-     *             * if creation of the SpatialFilter failed
-     */
-    @Deprecated
-    private SpatialFilter parseSpatialFilter4GetObservation(SpatialOpsType spatialOpsType)
-            throws OwsExceptionReport {
-//        if (spatialOpsType != null) {
-//            if (spatialOpsType.getObjectIDArray() != null && spatialOpsType.getObjectIDArray().length > 0) {
-//                throw new NoApplicableCodeException().withMessage("ObjectID filtering in featureOfInterest is "
-//                        + "not supported. Only spatial filters are allowed.");
-//            }        
-//            if (spatialOpsType.getSpatialOps() != null) {
-//                Object filter = CodingHelper.decodeXmlElement(spatialOpsType.getSpatialOps());
-//                if (filter instanceof SpatialFilter) {
-//                    return (SpatialFilter) filter;
-//                }
-//            }
-//        }
-        return null;
     }
 
     /**

@@ -30,6 +30,7 @@ package org.n52.sos.request.operator;
 
 import java.util.Map;
 
+import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.sos.wsdl.WSDLOperation;
 
 /**

@@ -34,16 +34,16 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.Session;
-import org.n52.sos.convert.ConverterException;
+import org.n52.iceland.convert.ConverterException;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.CollectionHelper;
 
 import com.google.common.collect.Sets;
 

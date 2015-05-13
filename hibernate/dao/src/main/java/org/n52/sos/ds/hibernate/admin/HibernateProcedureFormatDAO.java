@@ -31,10 +31,10 @@ package org.n52.sos.ds.hibernate.admin;
 import java.util.Map;
 
 import org.hibernate.Session;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.ProcedureFormatDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * @author Shane StClair <shane@axiomalaska.com>

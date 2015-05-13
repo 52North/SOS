@@ -34,11 +34,11 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.PropertyExpression;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.util.DateTimeHelper;
 
 /**
  * Implements the 13 temporal relationships identified by Allen as

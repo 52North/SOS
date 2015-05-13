@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting.values;
 
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayValue;
-import org.n52.sos.util.StringHelper;
 
 public class EReportingSweDataArrayValue extends EReportingValue implements SweDataArrayValue {
 

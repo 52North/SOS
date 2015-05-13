@@ -28,11 +28,11 @@
  */
 package org.n52.sos.gda;
 
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
+import org.n52.iceland.config.annotation.Configurable;
+import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.sos.ds.AbstractOperationDAO;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsOperation;
 
 /**
  * DAO to get the DataAvailabilities out of the database.

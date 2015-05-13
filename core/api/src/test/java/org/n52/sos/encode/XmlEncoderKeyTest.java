@@ -28,8 +28,11 @@
  */
 package org.n52.sos.encode;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
 import org.junit.Test;
+import org.n52.iceland.encode.XmlEncoderKey;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

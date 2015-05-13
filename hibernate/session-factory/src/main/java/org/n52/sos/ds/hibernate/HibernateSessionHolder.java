@@ -29,11 +29,11 @@
 package org.n52.sos.ds.hibernate;
 
 import org.hibernate.Session;
-import org.n52.sos.ds.ConnectionProvider;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.Configurator;
 
 /**
  * @since 4.0.0

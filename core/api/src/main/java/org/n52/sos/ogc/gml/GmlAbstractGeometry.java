@@ -28,6 +28,9 @@
  */
 package org.n52.sos.ogc.gml;
 
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.gml.GmlConstants;
+
 import com.vividsolutions.jts.geom.Geometry;
 
 /**

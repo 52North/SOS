@@ -37,11 +37,11 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.sos.ogc.ows.OWSConstants.RequestParams;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.Sos2Constants.DeleteSensorParams;
-import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.ows.OWSConstants.RequestParams;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.Sos2Constants.DeleteSensorParams;
+import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.request.DeleteSensorRequest;
 
 /**

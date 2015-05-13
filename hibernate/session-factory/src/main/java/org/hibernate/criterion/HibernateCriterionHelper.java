@@ -28,7 +28,7 @@
  */
 package org.hibernate.criterion;
 
-import org.n52.sos.util.Constants;
+import org.n52.iceland.util.Constants;
 
 /**
  * Helper class to create Hibernate LikeExpression

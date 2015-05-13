@@ -33,15 +33,17 @@ import java.util.Map;
 
 import net.opengis.sensorML.x101.IoComponentPropertyType;
 import net.opengis.sensorML.x101.SystemType;
+import net.opengis.swe.x101.ObservablePropertyDocument.ObservableProperty;
+
 import net.opengis.sosREST.x10.LinkType;
 import net.opengis.sosREST.x10.SensorDocument;
 import net.opengis.sosREST.x10.SensorType;
-import net.opengis.swe.x101.ObservablePropertyDocument.ObservableProperty;
 
+
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.binding.rest.encode.ResourceEncoder;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.util.http.MediaTypes;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

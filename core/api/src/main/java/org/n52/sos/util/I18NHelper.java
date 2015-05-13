@@ -28,18 +28,16 @@
  */
 package org.n52.sos.util;
 
-import org.n52.sos.i18n.LocaleHelper;
-
 import java.util.Locale;
-import java.util.Map;
 
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.i18n.LocalizedString;
-import org.n52.sos.i18n.MultilingualString;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.service.ServiceConfiguration;
+import org.n52.iceland.cache.ContentCache;
+import org.n52.iceland.i18n.LocaleHelper;
+import org.n52.iceland.i18n.LocalizedString;
+import org.n52.iceland.i18n.MultilingualString;
+import org.n52.iceland.ogc.sos.SosOffering;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.service.ServiceConfiguration;
 
 import com.google.common.base.Optional;
 

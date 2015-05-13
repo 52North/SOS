@@ -32,7 +32,7 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
-import org.n52.sos.request.operator.RequestOperatorKey;
+import org.n52.iceland.request.operator.RequestOperatorKey;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

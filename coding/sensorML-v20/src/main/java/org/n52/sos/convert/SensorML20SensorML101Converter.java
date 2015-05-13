@@ -31,6 +31,11 @@ package org.n52.sos.convert;
 import java.util.Collections;
 import java.util.List;
 
+import org.n52.iceland.convert.Converter;
+import org.n52.iceland.convert.ConverterException;
+import org.n52.iceland.convert.ConverterKeyType;
+import org.n52.iceland.ogc.sos.SosProcedureDescription;
+import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ogc.sensorML.Component;
 import org.n52.sos.ogc.sensorML.ProcessChain;
 import org.n52.sos.ogc.sensorML.ProcessModel;
@@ -42,8 +47,6 @@ import org.n52.sos.ogc.sensorML.v20.AggregateProcess;
 import org.n52.sos.ogc.sensorML.v20.PhysicalComponent;
 import org.n52.sos.ogc.sensorML.v20.PhysicalSystem;
 import org.n52.sos.ogc.sensorML.v20.SimpleProcess;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

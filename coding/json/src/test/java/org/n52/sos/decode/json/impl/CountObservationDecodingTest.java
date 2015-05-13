@@ -35,21 +35,21 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.n52.sos.util.DateTimeHelper.parseIsoString2DateTime;
+import static org.n52.iceland.util.DateTimeHelper.parseIsoString2DateTime;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.om.ObservationValue;
+import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.om.SingleObservationValue;
+import org.n52.iceland.ogc.om.values.CountValue;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ConfiguredSettingsManager;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.om.ObservationValue;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

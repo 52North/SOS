@@ -45,15 +45,14 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingDefinitionProvider;
-import org.n52.sos.config.settings.StringSettingDefinition;
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingDefinitionProvider;
+import org.n52.iceland.config.settings.StringSettingDefinition;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.Constants;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.Constants;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
 public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullDBDatasource {

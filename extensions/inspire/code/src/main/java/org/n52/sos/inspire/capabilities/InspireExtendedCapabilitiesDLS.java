@@ -31,6 +31,7 @@ package org.n52.sos.inspire.capabilities;
 import java.util.Collection;
 import java.util.Set;
 
+import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.inspire.InspireConstants;
 import org.n52.sos.inspire.InspireLanguageISO6392B;
 import org.n52.sos.inspire.InspireSupportedCRS;
@@ -38,7 +39,6 @@ import org.n52.sos.inspire.InspireSupportedLanguages;
 import org.n52.sos.inspire.InspireUniqueResourceIdentifier;
 import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireExtendedCapabilitiesSpatialDataSetIdentifier;
 import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireExtendedCapabilitiesSupportedCRS;
-import org.n52.sos.util.CollectionHelper;
 
 import com.google.common.collect.Sets;
 

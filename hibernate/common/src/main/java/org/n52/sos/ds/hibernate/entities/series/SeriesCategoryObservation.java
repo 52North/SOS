@@ -30,7 +30,7 @@ package org.n52.sos.ds.hibernate.entities.series;
 
 import java.io.Serializable;
 
-import org.n52.sos.util.StringHelper;
+import org.n52.iceland.util.StringHelper;
 
 /**
  * Hibernate series category observation entity

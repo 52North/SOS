@@ -44,27 +44,28 @@ import net.opengis.swes.x20.FeatureRelationshipType;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.OptionNotSupportedException;
-import org.n52.sos.exception.ows.concrete.XmlDecodingException;
-import org.n52.sos.ogc.gml.CodeType;
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.ows.OfferingExtension;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.StringBasedExtension;
-import org.n52.sos.ogc.sos.CapabilitiesExtension;
-import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.OptionNotSupportedException;
+import org.n52.iceland.exception.ows.concrete.XmlDecodingException;
+import org.n52.iceland.ogc.gml.CodeType;
+import org.n52.iceland.ogc.gml.GmlConstants;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.ows.OfferingExtension;
+import org.n52.iceland.ogc.ows.OwsCapabilities;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.StringBasedExtension;
+import org.n52.iceland.ogc.sos.CapabilitiesExtension;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.sos.SosOffering;
+import org.n52.iceland.ogc.swes.SwesExtension;
+import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.ogc.sos.SosCapabilities;
-import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosInsertionCapabilities;
 import org.n52.sos.ogc.sos.SosObservationOffering;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.swes.SwesExtension;
-import org.n52.sos.response.GetCapabilitiesResponse;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.w3c.SchemaLocation;
-import org.n52.sos.w3c.W3CConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,18 +103,22 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
         }
 		
         // set version.
-        SosCapabilities caps = response.getCapabilities();
-        if (caps.isSetVersion()) {
-            xbCaps.setVersion(caps.getVersion());
+        
+        
+        if (response.getCapabilities().isSetVersion()) {
+            xbCaps.setVersion(response.getCapabilities().getVersion());
         } else {
             xbCaps.setVersion(response.getVersion());
         }
-        encodeServiceIdentification(caps, xbCaps);
-        encodeServiceProvider(caps, xbCaps);
-        encodeOperationsMetadata(caps, xbCaps);
-        encodeFilterCapabilities(caps, xbCaps);
-        encodeContents(caps, xbCaps, response.getVersion());
-        encodeExtensions(caps, xbCaps);
+        encodeServiceIdentification(response.getCapabilities(), xbCaps);
+        encodeServiceProvider(response.getCapabilities(), xbCaps);
+        encodeOperationsMetadata(response.getCapabilities(), xbCaps);
+        if (response.getCapabilities() instanceof SosCapabilities) {
+            SosCapabilities caps = (SosCapabilities)response.getCapabilities();
+            encodeFilterCapabilities(caps, xbCaps);
+            encodeContents(caps, xbCaps, response.getVersion());
+            encodeExtensions(caps, xbCaps);
+        }
         return doc;
     }
 
@@ -266,19 +271,19 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
         return Sets.newHashSet(Sos2Constants.SOS_GET_CAPABILITIES_SCHEMA_LOCATION);
     }
 
-    private void encodeServiceIdentification(SosCapabilities caps, CapabilitiesType xbCaps) throws OwsExceptionReport {
+    private void encodeServiceIdentification(OwsCapabilities caps, CapabilitiesType xbCaps) throws OwsExceptionReport {
         if (caps.isSetServiceIdentification()) {
             xbCaps.addNewServiceIdentification().set(encodeOws(caps.getServiceIdentification()));
         }
     }
 
-    private void encodeServiceProvider(SosCapabilities caps, CapabilitiesType xbCaps) throws OwsExceptionReport {
+    private void encodeServiceProvider(OwsCapabilities caps, CapabilitiesType xbCaps) throws OwsExceptionReport {
         if (caps.isSetServiceProvider()) {
             xbCaps.addNewServiceProvider().set(encodeOws(caps.getServiceProvider()));
         }
     }
 
-    private void encodeOperationsMetadata(SosCapabilities caps, CapabilitiesType xbCaps) throws OwsExceptionReport {
+    private void encodeOperationsMetadata(OwsCapabilities caps, CapabilitiesType xbCaps) throws OwsExceptionReport {
         if (caps.isSetOperationsMetadata() && caps.getOperationsMetadata().isSetOperations()) {
             xbCaps.addNewOperationsMetadata().set(encodeOws(caps.getOperationsMetadata()));
         }

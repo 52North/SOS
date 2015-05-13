@@ -33,8 +33,8 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.n52.iceland.exception.CodedException;
 import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.exception.CodedException;
 import org.n52.sos.request.GetObservationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

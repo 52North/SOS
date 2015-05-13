@@ -38,19 +38,19 @@ import javax.xml.soap.SOAPConstants;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlCursor.TokenType;
 import org.apache.xmlbeans.XmlObject;
-
-import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.ows.OWSConstants;
+import org.n52.iceland.ogc.OGCConstants;
+import org.n52.iceland.ogc.gml.GmlConstants;
+import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.ogc.om.features.SfConstants;
+import org.n52.iceland.ogc.ows.OWSConstants;
+import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.swe.SweConstants;
+import org.n52.iceland.ogc.swes.SwesConstants;
+import org.n52.iceland.util.Constants;
+import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.swe.SweConstants;
-import org.n52.sos.ogc.swes.SwesConstants;
-import org.n52.sos.w3c.SchemaLocation;
-import org.n52.sos.w3c.W3CConstants;
 
 import com.google.common.collect.Sets;
 

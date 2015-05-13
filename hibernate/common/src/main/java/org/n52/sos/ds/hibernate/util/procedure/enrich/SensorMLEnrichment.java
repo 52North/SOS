@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.OGCConstants;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;

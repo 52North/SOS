@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
-import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
 
 /**
  * @since 4.0.0

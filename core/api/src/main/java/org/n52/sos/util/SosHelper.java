@@ -32,7 +32,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -40,35 +39,37 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import org.n52.iceland.binding.Binding;
+import org.n52.iceland.binding.BindingConstants;
+import org.n52.iceland.binding.BindingRepository;
+import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.encode.Encoder;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.iceland.exception.sos.ResponseExceedsSizeLimitException;
+import org.n52.iceland.ogc.gml.CodeType;
+import org.n52.iceland.ogc.om.OmObservableProperty;
+import org.n52.iceland.ogc.ows.OWSConstants;
+import org.n52.iceland.ogc.ows.OWSConstants.RequestParams;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
+import org.n52.iceland.ogc.swe.SweConstants;
+import org.n52.iceland.ogc.swe.simpleType.SweTime;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.MinMax;
+import org.n52.iceland.util.StringHelper;
 import org.n52.oxf.xml.NcNameResolver;
-import org.n52.sos.binding.Binding;
-import org.n52.sos.binding.BindingConstants;
-import org.n52.sos.binding.BindingRepository;
-import org.n52.sos.coding.CodingRepository;
-import org.n52.sos.encode.Encoder;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
-import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.sos.ogc.gml.CodeType;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OWSConstants.RequestParams;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.service.operator.ServiceOperatorKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,40 +133,6 @@ public class SosHelper implements Constants {
     private static String getParameter(String name, String value) {
         return new StringBuilder().append(AMPERSAND_CHAR).append(name).append(EQUAL_SIGN_CHAR).append(value)
                 .toString();
-    }
-
-    /**
-     * Creates a HTTP-Get request for FeatureOfInterst without identifier
-     *
-     * @deprecated use {@link #createFoiGetUrl(String, String, String, String)}
-     *
-     * @param version
-     *            SOS version
-     * @param serviceURL
-     *            Service URL
-     * @return HTTP-Get request for FeatureOfInterest
-     */
-    @Deprecated
-    public static String getFoiGetUrl(final String version, final String serviceURL, final String urlPattern) {
-        final StringBuilder url = new StringBuilder();
-        // service URL
-        url.append(getBaseGetUrl(serviceURL, urlPattern));
-        // request
-        url.append(getRequest(SosConstants.Operations.GetFeatureOfInterest.name()));
-        // service
-        url.append(getServiceParam());
-        // version
-        url.append(getVersionParam(version));
-        // FOI identifier
-        if (version.equalsIgnoreCase(Sos1Constants.SERVICEVERSION)) {
-            url.append(AMPERSAND_CHAR).append(Sos1Constants.GetFeatureOfInterestParams.featureOfInterestID.name())
-                    .append(EQUAL_SIGN_CHAR);
-        } else {
-            url.append(AMPERSAND_CHAR).append(Sos2Constants.GetFeatureOfInterestParams.featureOfInterest.name())
-                    .append(EQUAL_SIGN_CHAR);
-        }
-
-        return url.toString();
     }
 
     /**
@@ -370,40 +337,6 @@ public class SosHelper implements Constants {
         return checkedEnvelope;
     }
 
-    /**
-     * Parses the HTTP-Post body with a parameter
-     *
-     * @param paramNames
-     *            Parameter names
-     * @param parameterMap
-     *            Parameter map
-     * @return Value of the parameter
-     *
-     * @throws OwsExceptionReport
-     *             * If the parameter is not supported by this SOS.
-     */
-    public static String parseHttpPostBodyWithParameter(final Enumeration<?> paramNames, final Map<?, ?> parameterMap)
-            throws OwsExceptionReport {
-        while (paramNames.hasMoreElements()) {
-            final String paramName = (String) paramNames.nextElement();
-            if (RequestParams.request.name().equalsIgnoreCase(paramName)) {
-                final String[] paramValues = (String[]) parameterMap.get(paramName);
-                if (paramValues.length == 1) {
-                    return paramValues[0];
-                } else {
-                    throw new NoApplicableCodeException()
-                            .withMessage(
-                                    "The parameter '%s' has more than one value or is empty for HTTP-Post requests by this SOS!",
-                                    paramName);
-                }
-            } else {
-                throw new NoApplicableCodeException().withMessage(
-                        "The parameter '%s' is not supported for HTTP-Post requests by this SOS!", paramName);
-            }
-        }
-        // FIXME: valid exception
-        throw new NoApplicableCodeException();
-    }
 
     /**
      * Checks if the FOI identifier was generated by SOS
@@ -752,14 +685,6 @@ public class SosHelper implements Constants {
 
         protected Collection<Binding> getBindings() {
             return BindingRepository.getInstance().getBindings().values();
-        }
-    }
-
-    @Deprecated
-    public static void checkSection(List<String> sections) throws CodedException {
-        if (CollectionHelper.isEmpty(sections)) {
-            throw new MissingParameterValueException(SosConstants.GetCapabilitiesParams.Section.name())
-                    .withMessage("The section element is empty!");
         }
     }
 

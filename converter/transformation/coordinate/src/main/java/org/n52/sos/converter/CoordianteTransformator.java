@@ -34,21 +34,41 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.convert.RequestResponseModifier;
-import org.n52.sos.convert.RequestResponseModifierFacilitator;
-import org.n52.sos.convert.RequestResponseModifierKeyType;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.om.AbstractStreaming;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.convert.RequestResponseModifier;
+import org.n52.iceland.convert.RequestResponseModifierFacilitator;
+import org.n52.iceland.convert.RequestResponseModifierKeyType;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.ogc.filter.SpatialFilter;
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.om.AbstractStreaming;
+import org.n52.iceland.ogc.om.NamedValue;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.om.features.FeatureCollection;
+import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.iceland.ogc.ows.OWSConstants;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.sos.SosEnvelope;
+import org.n52.iceland.ogc.sos.SosProcedureDescription;
+import org.n52.iceland.ogc.swe.SweConstants;
+import org.n52.iceland.ogc.swe.SweConstants.SweCoordinateName;
+import org.n52.iceland.ogc.swe.SweField;
+import org.n52.iceland.ogc.swe.simpleType.SweCount;
+import org.n52.iceland.ogc.swe.simpleType.SweText;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.EpsgConstants;
+import org.n52.iceland.util.JTSHelper;
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ogc.sensorML.AbstractComponent;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
@@ -60,24 +80,13 @@ import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 import org.n52.sos.ogc.sensorML.elements.SmlLocation;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
 import org.n52.sos.ogc.sensorML.v20.AbstractPhysicalProcess;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosObservationOffering;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.swe.SweConstants;
-import org.n52.sos.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweEnvelope;
-import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.SweVector;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.request.GetCapabilitiesRequest;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
@@ -85,9 +94,7 @@ import org.n52.sos.request.GetResultRequest;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.request.SrsNameRequest;
-import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.response.DescribeSensorResponse;
-import org.n52.sos.response.GetCapabilitiesResponse;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.response.GetObservationByIdResponse;
 import org.n52.sos.response.GetObservationResponse;
@@ -95,13 +102,7 @@ import org.n52.sos.response.GetResultResponse;
 import org.n52.sos.response.InsertObservationResponse;
 import org.n52.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.service.ProcedureDescriptionSettings;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.Constants;
-import org.n52.sos.util.EpsgConstants;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.JTSHelper;
-import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.SweHelper;
 
 import com.google.common.base.Joiner;
@@ -136,7 +137,7 @@ public class CoordianteTransformator implements
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
         Map<AbstractServiceRequest<?>, AbstractServiceResponse> requestResponseMap = Maps.newHashMap();
-        requestResponseMap.put(new GetCapabilitiesRequest(), new GetCapabilitiesResponse());
+        requestResponseMap.put(new GetCapabilitiesRequest(SosConstants.SOS), new GetCapabilitiesResponse());
         requestResponseMap.put(new GetObservationRequest(), new GetObservationResponse());
         requestResponseMap.put(new GetObservationByIdRequest(), new GetObservationByIdResponse());
         requestResponseMap.put(new GetFeatureOfInterestRequest(), new GetFeatureOfInterestResponse());
@@ -352,8 +353,8 @@ public class CoordianteTransformator implements
      */
     private AbstractServiceResponse modifyGetCapabilitiesResponse(GetCapabilitiesRequest request,
             GetCapabilitiesResponse response) throws OwsExceptionReport {
-        if (response.getCapabilities().isSetContents()) {
-            for (SosObservationOffering sosObservationOffering : response.getCapabilities().getContents()) {
+        if (response.getCapabilities() instanceof SosCapabilities && ((SosCapabilities)response.getCapabilities()).isSetContents()) {
+            for (SosObservationOffering sosObservationOffering : ((SosCapabilities)response.getCapabilities()).getContents()) {
                 if (sosObservationOffering.isSetObservedArea()) {
                     SosEnvelope observedArea = sosObservationOffering.getObservedArea();
                     int targetSrid = getRequestedCrs(request);

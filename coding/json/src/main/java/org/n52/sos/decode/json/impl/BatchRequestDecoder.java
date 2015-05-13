@@ -28,20 +28,20 @@
  */
 package org.n52.sos.decode.json.impl;
 
-import org.n52.sos.coding.CodingRepository;
+import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.exception.ows.concrete.NoDecoderForKeyException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
-import org.n52.sos.decode.Decoder;
-import org.n52.sos.decode.OperationDecoderKey;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
-import org.n52.sos.exception.ows.concrete.NoDecoderForKeyException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.BatchRequest;
 import org.n52.sos.util.BatchConstants;
-import org.n52.sos.util.http.MediaTypes;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

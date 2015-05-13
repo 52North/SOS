@@ -31,12 +31,12 @@ package org.n52.sos.decode.kvp;
 import java.util.Collections;
 import java.util.Set;
 
+import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.decode.DecoderKey;
-import org.n52.sos.decode.OperationDecoderKey;
 import org.n52.sos.decode.kvp.v2.GetCapabilitiesKvpDecoder;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.util.http.MediaTypes;
 
 import com.google.common.collect.Sets;
 

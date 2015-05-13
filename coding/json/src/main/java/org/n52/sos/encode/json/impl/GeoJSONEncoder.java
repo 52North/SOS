@@ -43,9 +43,9 @@ import static org.n52.sos.coding.json.JSONConstants.POLYGON;
 import static org.n52.sos.coding.json.JSONConstants.PROPERTIES;
 import static org.n52.sos.coding.json.JSONConstants.TYPE;
 
+import org.n52.iceland.util.Constants;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.encode.json.JSONEncodingException;
-import org.n52.sos.util.Constants;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;

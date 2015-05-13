@@ -28,7 +28,7 @@
  */
 package org.n52.sos.binding.rest.decode;
 
-import static org.n52.sos.util.CodingHelper.decoderKeysForElements;
+import static org.n52.iceland.util.CodingHelper.decoderKeysForElements;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +37,18 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.exception.HTTPException;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.OperationNotSupportedException;
+import org.n52.iceland.exception.ows.concrete.ContentTypeNotSupportedException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.util.http.HTTPHeaders;
+import org.n52.iceland.util.http.HTTPStatus;
+import org.n52.iceland.util.http.HTTPUtils;
+import org.n52.iceland.util.http.MediaType;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.ServiceEndpointDecoder;
@@ -45,18 +57,6 @@ import org.n52.sos.binding.rest.resources.features.FeaturesDecoder;
 import org.n52.sos.binding.rest.resources.observations.ObservationsDecoder;
 import org.n52.sos.binding.rest.resources.offerings.OfferingsDecoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsDecoder;
-import org.n52.sos.decode.Decoder;
-import org.n52.sos.decode.DecoderKey;
-import org.n52.sos.exception.HTTPException;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.OperationNotSupportedException;
-import org.n52.sos.exception.ows.concrete.ContentTypeNotSupportedException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
-import org.n52.sos.util.http.HTTPHeaders;
-import org.n52.sos.util.http.HTTPStatus;
-import org.n52.sos.util.http.HTTPUtils;
-import org.n52.sos.util.http.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

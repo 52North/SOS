@@ -37,20 +37,19 @@ import java.util.TreeMap;
 
 import javax.servlet.ServletContext;
 
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingValue;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.i18n.MultilingualString;
+import org.n52.iceland.i18n.json.I18NJsonEncoder;
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.service.DatabaseSettingsHandler;
+import org.n52.iceland.util.DateTimeHelper;
+import org.n52.iceland.util.JSONUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingValue;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.JSONException;
-import org.n52.sos.i18n.MultilingualString;
-import org.n52.sos.i18n.json.I18NJsonEncoder;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.service.DatabaseSettingsHandler;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.JSONUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

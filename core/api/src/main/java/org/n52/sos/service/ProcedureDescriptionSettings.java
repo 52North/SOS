@@ -33,15 +33,15 @@ import static java.lang.Boolean.TRUE;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingDefinitionGroup;
-import org.n52.sos.config.SettingDefinitionProvider;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.config.settings.BooleanSettingDefinition;
-import org.n52.sos.config.settings.StringSettingDefinition;
-import org.n52.sos.util.Validation;
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingDefinitionGroup;
+import org.n52.iceland.config.SettingDefinitionProvider;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.config.annotation.Configurable;
+import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.config.settings.BooleanSettingDefinition;
+import org.n52.iceland.config.settings.StringSettingDefinition;
+import org.n52.iceland.util.Validation;
 
 import com.google.common.collect.Sets;
 

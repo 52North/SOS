@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.sos.response.BatchResponse;
 import org.n52.sos.util.BatchConstants;
 

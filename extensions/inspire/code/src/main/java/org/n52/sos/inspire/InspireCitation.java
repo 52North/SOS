@@ -32,9 +32,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireExtendedCapabilitiesResourceLocator;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.StringHelper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

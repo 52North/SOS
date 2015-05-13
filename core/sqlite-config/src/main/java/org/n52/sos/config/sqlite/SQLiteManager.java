@@ -31,10 +31,9 @@ package org.n52.sos.config.sqlite;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-
-import org.n52.sos.ds.ConnectionProvider;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.util.Cleanupable;
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.util.Cleanupable;
 
 /**
  * TODO JavaDoc

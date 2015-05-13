@@ -64,28 +64,30 @@ import net.opengis.gml.x32.TimePositionType;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.sos.ogc.gml.AbstractGeometry;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.GmlConstants;
+import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.iceland.ogc.gml.AbstractGeometry;
+import org.n52.iceland.ogc.gml.CodeWithAuthority;
+import org.n52.iceland.ogc.gml.GmlConstants;
+import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.DateTimeHelper;
+import org.n52.iceland.util.JTSHelper;
+import org.n52.iceland.util.XmlHelper;
 import org.n52.sos.ogc.gml.GmlMeasureType;
-import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
-import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.Constants;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -187,7 +189,7 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
             } else {
                 feature = new SamplingFeature(new CodeWithAuthority(featurePropertyType.getHref()));
                 if (featurePropertyType.getTitle() != null && !featurePropertyType.getTitle().isEmpty()) {
-                    feature.addName(new org.n52.sos.ogc.gml.CodeType(featurePropertyType.getTitle()));
+                    feature.addName(new org.n52.iceland.ogc.gml.CodeType(featurePropertyType.getTitle()));
                 }
             }
             feature.setGmlId(featurePropertyType.getHref());
@@ -303,8 +305,8 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
         TimeInstant ti = new TimeInstant();
         String timeString = xbTimePosition.getStringValue();
         if (timeString != null && !timeString.isEmpty()) {
-            if ((SosIndeterminateTime.contains(timeString))) {
-                ti.setSosIndeterminateTime(SosIndeterminateTime.getEnumForString(timeString));
+            if ((ExtendedIndeterminateTime.contains(timeString))) {
+                ti.setSosIndeterminateTime(ExtendedIndeterminateTime.getEnumForString(timeString));
             } else {
                 ti.setValue(DateTimeHelper.parseIsoString2DateTime(timeString));
                 ti.setRequestedTimeLength(DateTimeHelper.getTimeLengthBeforeTimeZone(timeString));
@@ -319,16 +321,16 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
         return ti;
     }
 
-    private org.n52.sos.ogc.gml.ReferenceType parseReferenceType(ReferenceType referenceType) {
+    private org.n52.iceland.ogc.gml.ReferenceType parseReferenceType(ReferenceType referenceType) {
         if (referenceType.isSetHref() && !referenceType.getHref().isEmpty()) {
-            org.n52.sos.ogc.gml.ReferenceType sosReferenceType =
-                    new org.n52.sos.ogc.gml.ReferenceType(referenceType.getHref());
+            org.n52.iceland.ogc.gml.ReferenceType sosReferenceType =
+                    new org.n52.iceland.ogc.gml.ReferenceType(referenceType.getHref());
             if (referenceType.isSetTitle() && !referenceType.getTitle().isEmpty()) {
                 sosReferenceType.setTitle(referenceType.getTitle());
             }
             return sosReferenceType;
         }
-        return new org.n52.sos.ogc.gml.ReferenceType("UNKNOWN");
+        return new org.n52.iceland.ogc.gml.ReferenceType("UNKNOWN");
     }
 
     private GmlMeasureType parseMeasureType(MeasureType measureType) {
@@ -498,8 +500,8 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
         return null;
     }
 
-    private org.n52.sos.ogc.gml.CodeType parseCodeType(CodeType element) {
-        org.n52.sos.ogc.gml.CodeType codeType = new org.n52.sos.ogc.gml.CodeType(element.getStringValue());
+    private org.n52.iceland.ogc.gml.CodeType parseCodeType(CodeType element) {
+        org.n52.iceland.ogc.gml.CodeType codeType = new org.n52.iceland.ogc.gml.CodeType(element.getStringValue());
         if (element.isSetCodeSpace()) {
             codeType.setCodeSpace(element.getCodeSpace());
         }

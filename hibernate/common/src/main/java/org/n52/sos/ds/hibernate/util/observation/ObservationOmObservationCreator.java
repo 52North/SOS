@@ -39,7 +39,29 @@ import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.sos.convert.ConverterException;
+import org.n52.iceland.convert.ConverterException;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.gml.CodeWithAuthority;
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.om.AbstractPhenomenon;
+import org.n52.iceland.ogc.om.OmObservableProperty;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.om.OmObservationConstellation;
+import org.n52.iceland.ogc.om.SingleObservationValue;
+import org.n52.iceland.ogc.om.values.QuantityValue;
+import org.n52.iceland.ogc.om.values.SweDataArrayValue;
+import org.n52.iceland.ogc.om.values.UnknownValue;
+import org.n52.iceland.ogc.om.values.Value;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.sos.SosProcedureDescription;
+import org.n52.iceland.ogc.swe.SweDataArray;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.util.StringHelper;
+import org.n52.iceland.util.XmlHelper;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -51,30 +73,8 @@ import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.UnknownValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.StringHelper;
-import org.n52.sos.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -230,17 +230,17 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         if (hObservation instanceof NumericObservation) {
             return new QuantityValue(((NumericObservation) hObservation).getValue());
         } else if (hObservation instanceof BooleanObservation) {
-            return new org.n52.sos.ogc.om.values.BooleanValue(Boolean.valueOf(((BooleanObservation) hObservation)
+            return new org.n52.iceland.ogc.om.values.BooleanValue(Boolean.valueOf(((BooleanObservation) hObservation)
                     .getValue()));
         } else if (hObservation instanceof CategoryObservation) {
-            return new org.n52.sos.ogc.om.values.CategoryValue(((CategoryObservation) hObservation).getValue());
+            return new org.n52.iceland.ogc.om.values.CategoryValue(((CategoryObservation) hObservation).getValue());
         } else if (hObservation instanceof CountObservation) {
-            return new org.n52.sos.ogc.om.values.CountValue(Integer.valueOf(((CountObservation) hObservation)
+            return new org.n52.iceland.ogc.om.values.CountValue(Integer.valueOf(((CountObservation) hObservation)
                     .getValue()));
         } else if (hObservation instanceof TextObservation) {
-            return new org.n52.sos.ogc.om.values.TextValue(((TextObservation) hObservation).getValue().toString());
+            return new org.n52.iceland.ogc.om.values.TextValue(((TextObservation) hObservation).getValue().toString());
         } else if (hObservation instanceof GeometryObservation) {
-            return new org.n52.sos.ogc.om.values.GeometryValue(((GeometryObservation) hObservation).getValue());
+            return new org.n52.iceland.ogc.om.values.GeometryValue(((GeometryObservation) hObservation).getValue());
         } else if (hObservation instanceof BlobObservation) {
             return new UnknownValue(((BlobObservation) hObservation).getValue());
         } else if (hObservation instanceof SweDataArrayObservation) {

@@ -31,10 +31,10 @@ package org.n52.sos.encode;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingDefinitionProvider;
-import org.n52.sos.config.settings.BooleanSettingDefinition;
-import org.n52.sos.service.MiscSettings;
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingDefinitionProvider;
+import org.n52.iceland.config.settings.BooleanSettingDefinition;
+import org.n52.iceland.service.MiscSettings;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

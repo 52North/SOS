@@ -28,12 +28,12 @@
  */
 package org.n52.sos.decode.json.inspire;
 
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.inspire.aqd.EReportingChange;
 import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.inspire.aqd.InspireID;
 import org.n52.sos.inspire.aqd.RelatedParty;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.AQDJSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;

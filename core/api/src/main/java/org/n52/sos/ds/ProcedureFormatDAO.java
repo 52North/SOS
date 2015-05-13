@@ -30,7 +30,7 @@ package org.n52.sos.ds;
 
 import java.util.Map;
 
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 
 /**
  * @author Shane StClair <shane@axiomalaska.com>

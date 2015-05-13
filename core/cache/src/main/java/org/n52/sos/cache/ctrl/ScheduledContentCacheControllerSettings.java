@@ -31,10 +31,10 @@ package org.n52.sos.cache.ctrl;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingDefinitionProvider;
-import org.n52.sos.config.settings.IntegerSettingDefinition;
-import org.n52.sos.service.ServiceSettings;
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingDefinitionProvider;
+import org.n52.iceland.config.settings.IntegerSettingDefinition;
+import org.n52.iceland.service.ServiceSettings;
 
 /**
  * Settings for the {@link AbstractSchedulingContentCacheController}.

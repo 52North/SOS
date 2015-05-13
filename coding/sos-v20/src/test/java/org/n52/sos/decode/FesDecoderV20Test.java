@@ -38,9 +38,9 @@ import net.opengis.fes.x20.PropertyIsEqualToDocument;
 
 import org.apache.xmlbeans.XmlString;
 import org.junit.Test;
-import org.n52.sos.ogc.filter.ComparisonFilter;
-import org.n52.sos.ogc.filter.FilterConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.filter.ComparisonFilter;
+import org.n52.iceland.ogc.filter.FilterConstants;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 
 /**
  * FES 2.0 decoder test class

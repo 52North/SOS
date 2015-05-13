@@ -16,6 +16,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
         </dependency>
+        <dependency>
+			<groupId>org.n52.iceland</groupId>
+			<artifactId>iceland</artifactId>
+		</dependency>
         <!-- XML Beans Generated Classes -->
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
@@ -56,7 +60,19 @@
             <artifactId>sqlite-config</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
-        </dependency>  
+        </dependency> 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>api</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.iceland</groupId>
+            <artifactId>iceland</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>

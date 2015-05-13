@@ -31,11 +31,12 @@ package org.n52.sos.cache;
 import java.io.File;
 import java.io.IOException;
 
+import org.n52.iceland.cache.WritableContentCache;
+import org.n52.iceland.ds.CacheFeederDAORepository;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.cache.ctrl.ContentCacheControllerImpl;
 import org.n52.sos.cache.ctrl.persistence.ImmediatePersistenceStrategy;
-import org.n52.sos.ds.CacheFeederDAORepository;
 import org.n52.sos.ds.MockCacheFeederDAO;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 
 public class TestableInMemoryCacheController extends ContentCacheControllerImpl {

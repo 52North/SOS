@@ -31,11 +31,11 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.iceland.response.GetCapabilitiesResponse;
 import org.n52.sos.ds.AbstractGetCapabilitiesDAO;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.GetCapabilitiesRequest;
-import org.n52.sos.response.GetCapabilitiesResponse;
 
 /**
  * @since 4.0.0

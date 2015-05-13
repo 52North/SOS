@@ -53,5 +53,9 @@
 			<groupId>xmlunit</groupId>
 			<artifactId>xmlunit</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>third-party-ncname-resolver</artifactId>
+		</dependency>
 	</dependencies>
 </project>

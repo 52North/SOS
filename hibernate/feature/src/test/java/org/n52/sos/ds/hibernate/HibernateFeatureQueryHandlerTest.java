@@ -28,27 +28,27 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import static org.n52.sos.util.JTSHelperForTesting.randomCoordinate;
 import static org.n52.sos.util.ReverseOf.reverseOf;
-import static org.n52.sos.util.JTSHelperForTesting.*;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ds.FeatureQuerySettingsProvider;
+import org.n52.iceland.ds.FeatureQueryHandlerQueryObject;
+import org.n52.iceland.ds.FeatureQuerySettingsProvider;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.om.features.SfConstants;
+import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.JTSHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.util.Constants;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.JTSHelperForTesting;
 import org.n52.sos.util.builder.SamplingFeatureBuilder;
 

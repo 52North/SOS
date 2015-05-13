@@ -31,18 +31,16 @@ package org.n52.sos.ds.datasource;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.text.IsEmptyString.isEmptyString;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.text.IsEmptyString;
 import org.junit.Test;
-import org.n52.sos.config.SettingDefinition;
+import org.n52.iceland.config.SettingDefinition;
 
 
 /**

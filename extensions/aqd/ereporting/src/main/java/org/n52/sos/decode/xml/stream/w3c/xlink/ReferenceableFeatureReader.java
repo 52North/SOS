@@ -28,9 +28,9 @@
  */
 package org.n52.sos.decode.xml.stream.w3c.xlink;
 
+import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.sos.decode.xml.stream.XmlReader;
 import org.n52.sos.decode.xml.stream.ogc.gml.AbstractFeatureReader;
-import org.n52.sos.ogc.gml.AbstractFeature;
 
 
 public class ReferenceableFeatureReader extends ReferenceableReader<AbstractFeature> {

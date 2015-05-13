@@ -33,8 +33,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.n52.sos.ogc.gml.CodeType;
-import org.n52.sos.util.CollectionHelper;
+import org.n52.iceland.ogc.gml.CodeType;
+import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.util.Nillable;
 
 import com.google.common.base.Objects;

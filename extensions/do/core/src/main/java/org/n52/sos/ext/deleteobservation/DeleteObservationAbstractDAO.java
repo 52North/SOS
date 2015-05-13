@@ -30,10 +30,10 @@ package org.n52.sos.ext.deleteobservation;
 
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.PARAMETER_NAME;
 
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsOperation;
+import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.ds.AbstractOperationDAO;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsOperation;
-import org.n52.sos.ogc.sos.SosConstants;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

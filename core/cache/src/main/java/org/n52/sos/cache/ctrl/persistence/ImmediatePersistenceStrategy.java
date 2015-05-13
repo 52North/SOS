@@ -30,7 +30,7 @@ package org.n52.sos.cache.ctrl.persistence;
 
 import java.io.File;
 
-import org.n52.sos.cache.ContentCache;
+import org.n52.iceland.cache.ContentCache;
 
 public class ImmediatePersistenceStrategy
         extends AbstractPersistingCachePersistenceStrategy {

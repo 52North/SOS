@@ -31,21 +31,21 @@ package org.n52.sos.cache.ctrl;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.cache.ContentCacheUpdate;
+import org.n52.iceland.cache.ContentCacheUpdate;
+import org.n52.iceland.event.ServiceEvent;
+import org.n52.iceland.event.ServiceEventListener;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.Configurator;
 import org.n52.sos.cache.ctrl.action.ObservationInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultTemplateInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorDeletionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorInsertionUpdate;
-import org.n52.sos.event.SosEvent;
-import org.n52.sos.event.SosEventListener;
 import org.n52.sos.event.events.ObservationInsertion;
 import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.event.events.SensorInsertion;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,21 +55,21 @@ import com.google.common.collect.Sets;
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
-public class DefaultContentModificationListener implements SosEventListener {
+public class DefaultContentModificationListener implements ServiceEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultContentModificationListener.class);
 
     @SuppressWarnings("unchecked")
-    private static final Set<Class<? extends SosEvent>> TYPES = Sets.<Class<? extends SosEvent>> newHashSet(
+    private static final Set<Class<? extends ServiceEvent>> TYPES = Sets.<Class<? extends ServiceEvent>> newHashSet(
             SensorInsertion.class, ObservationInsertion.class, ResultTemplateInsertion.class, SensorDeletion.class,
             ResultInsertion.class);
 
     @Override
-    public Set<Class<? extends SosEvent>> getTypes() {
+    public Set<Class<? extends ServiceEvent>> getTypes() {
         return Collections.unmodifiableSet(TYPES);
     }
 
     @Override
-    public void handle(SosEvent event) {
+    public void handle(ServiceEvent event) {
         if (event instanceof SensorInsertion) {
             SensorInsertion e = (SensorInsertion) event;
             handle(new SensorInsertionUpdate(e.getRequest(), e.getResponse()));

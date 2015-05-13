@@ -28,6 +28,8 @@
  */
 package org.n52.sos.util;
 
+import org.n52.iceland.util.Constants;
+
 /**
  * Interface for SQL constanst
  * 

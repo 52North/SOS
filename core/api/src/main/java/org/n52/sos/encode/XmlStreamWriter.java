@@ -36,8 +36,8 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.n52.sos.util.Constants;
-import org.n52.sos.w3c.W3CConstants;
+import org.n52.iceland.util.Constants;
+import org.n52.iceland.w3c.W3CConstants;
 
 import com.google.common.xml.XmlEscapers;
 

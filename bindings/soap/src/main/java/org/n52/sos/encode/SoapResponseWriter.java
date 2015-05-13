@@ -34,8 +34,9 @@ import java.io.OutputStream;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
+import org.n52.iceland.encode.ResponseProxy;
+import org.n52.iceland.util.http.MediaType;
+import org.n52.iceland.util.http.MediaTypes;
 
 /**
  * Writer for {@link SOAPMessage} objects

@@ -32,10 +32,10 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
-import org.n52.sos.util.CollectionHelper;
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
+import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.iceland.util.CollectionHelper;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;

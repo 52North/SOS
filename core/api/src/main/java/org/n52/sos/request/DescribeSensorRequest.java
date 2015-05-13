@@ -28,10 +28,11 @@
  */
 package org.n52.sos.request;
 
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.response.DescribeSensorResponse;
-import org.n52.sos.util.StringHelper;
 
 /**
  * SOS DescribeSensor request

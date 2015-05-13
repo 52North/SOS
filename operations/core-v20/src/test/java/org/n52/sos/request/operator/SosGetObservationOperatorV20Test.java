@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
-import org.n52.sos.cache.ContentCache;
+import org.n52.iceland.cache.ContentCache;
 
 import com.google.common.collect.Lists;
 

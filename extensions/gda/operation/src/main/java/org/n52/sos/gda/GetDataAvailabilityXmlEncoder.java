@@ -36,14 +36,14 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.util.XmlHelper;
+import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.encode.AbstractResponseEncoder;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.w3c.SchemaLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,16 +75,11 @@ public class GetDataAvailabilityXmlEncoder extends AbstractResponseEncoder<GetDa
     protected XmlObject create(GetDataAvailabilityResponse response) throws OwsExceptionReport {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            if (Sos2Constants.NS_SOS_20.equals(response.getNamespace())) {
-                new SosGetDataAvailabilityStreamWriter(response.getVersion(), response.getDataAvailabilities()).write(out);
-            } else {
-                new GetDataAvailabilityStreamWriter(response.getVersion(), response.getDataAvailabilities()).write(out);
-                XmlObject encodedObject = XmlObject.Factory.parse(out.toString("UTF8"));
-                LOG.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
-                        XmlHelper.validateDocument(encodedObject));
-                return encodedObject;
-            }
-            return XmlObject.Factory.parse(out.toString("UTF8"));
+            new GetDataAvailabilityStreamWriter(response.getVersion(), response.getDataAvailabilities()).write(out);
+            XmlObject encodedObject = XmlObject.Factory.parse(out.toString("UTF8"));
+            LOG.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
+                    XmlHelper.validateDocument(encodedObject));
+            return encodedObject;
         } catch (XMLStreamException ex) {
             throw new NoApplicableCodeException().causedBy(ex).withMessage("Error encoding response");
         } catch (DateTimeFormatException ex) {

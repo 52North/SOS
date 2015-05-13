@@ -28,13 +28,14 @@
  */
 package org.n52.sos.request;
 
-import static java.lang.Boolean.*;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
-import org.n52.sos.ogc.swes.SwesExtensions;
+import org.n52.iceland.ogc.swes.SwesExtensionImpl;
+import org.n52.iceland.ogc.swes.SwesExtensions;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

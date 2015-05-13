@@ -36,12 +36,6 @@ import org.hibernate.cfg.AvailableSettings;
  */
 public interface HibernateConstants {
 
-    /**
-     * @deprecated no entity has this relation
-     * TODO Eike: move to according entity class
-     */
-    @Deprecated
-    public static final String PARAMETER_OFFERING_EXTENSION_ID = "offeringExtensionId";
     String DIALECT = "hibernate.dialect";
 
     String DRIVER_CLASS = AvailableSettings.DRIVER;

@@ -31,7 +31,7 @@ package org.n52.sos.ogc.sensorML;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.sos.util.CollectionHelper;
+import org.n52.iceland.util.CollectionHelper;
 
 /**
  * Implementation for sml:ResponsibleParty

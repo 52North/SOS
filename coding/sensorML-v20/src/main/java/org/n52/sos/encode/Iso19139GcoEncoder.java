@@ -28,8 +28,8 @@
  */
 package org.n52.sos.encode;
 
-import static org.n52.sos.util.CodingHelper.encoderKeysForElements;
-import static org.n52.sos.util.CollectionHelper.union;
+import static org.n52.iceland.util.CodingHelper.encoderKeysForElements;
+import static org.n52.iceland.util.CollectionHelper.union;
 
 import java.util.Collections;
 import java.util.Map;
@@ -37,15 +37,16 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.isotc211.x2005.gco.CodeListValueType;
-import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.iceland.encode.EncoderKey;
+import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.util.XmlHelper;
+import org.n52.iceland.util.XmlOptionsHelper;
+import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.iso.GcoConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.Role;
-import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.sos.w3c.SchemaLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

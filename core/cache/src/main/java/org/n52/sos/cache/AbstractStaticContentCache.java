@@ -30,7 +30,8 @@ package org.n52.sos.cache;
 
 import java.util.Set;
 
-import org.n52.sos.coding.CodingRepository;
+import org.n52.iceland.cache.ContentCache;
+import org.n52.iceland.coding.CodingRepository;
 
 /**
  * Readable content cache that gets static information from the configurator (or

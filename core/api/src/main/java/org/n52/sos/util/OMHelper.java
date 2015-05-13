@@ -34,25 +34,25 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.ogc.om.features.SfConstants;
+import org.n52.iceland.ogc.om.values.BooleanValue;
+import org.n52.iceland.ogc.om.values.CategoryValue;
+import org.n52.iceland.ogc.om.values.CountValue;
+import org.n52.iceland.ogc.om.values.GeometryValue;
+import org.n52.iceland.ogc.om.values.QuantityValue;
+import org.n52.iceland.ogc.om.values.SweDataArrayValue;
+import org.n52.iceland.ogc.om.values.TextValue;
+import org.n52.iceland.ogc.om.values.Value;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
+import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
+import org.n52.iceland.ogc.swe.simpleType.SweCount;
+import org.n52.iceland.ogc.swe.simpleType.SweText;
+import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * Utility class for Observation and Measurement

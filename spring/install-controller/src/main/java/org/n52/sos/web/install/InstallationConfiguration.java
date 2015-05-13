@@ -31,9 +31,9 @@ package org.n52.sos.web.install;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingValue;
-import org.n52.sos.ds.Datasource;
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingValue;
+import org.n52.iceland.ds.Datasource;
 
 /**
  * TODO JavaDoc

@@ -28,7 +28,7 @@
  */
 package org.n52.sos.binding.rest;
 
-import static org.n52.sos.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
+import static org.n52.iceland.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -41,7 +41,27 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.binding.Binding;
+import org.n52.iceland.binding.Binding;
+import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.encode.Encoder;
+import org.n52.iceland.encode.EncoderKey;
+import org.n52.iceland.encode.ExceptionEncoderKey;
+import org.n52.iceland.encode.XmlEncoderKey;
+import org.n52.iceland.event.ServiceEventBus;
+import org.n52.iceland.event.events.ExceptionEvent;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.HTTPException;
+import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionCode;
+import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.response.ServiceResponse;
+import org.n52.iceland.util.XmlOptionsHelper;
+import org.n52.iceland.util.http.HTTPStatus;
+import org.n52.iceland.util.http.HTTPUtils;
+import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.binding.rest.decode.RestDecoder;
 import org.n52.sos.binding.rest.encode.RestEncoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
@@ -62,26 +82,6 @@ import org.n52.sos.binding.rest.resources.offerings.OfferingsRequest;
 import org.n52.sos.binding.rest.resources.offerings.OfferingsRequestHandler;
 import org.n52.sos.binding.rest.resources.sensors.ISensorsRequest;
 import org.n52.sos.binding.rest.resources.sensors.SensorsRequestHandler;
-import org.n52.sos.decode.Decoder;
-import org.n52.sos.encode.Encoder;
-import org.n52.sos.encode.EncoderKey;
-import org.n52.sos.encode.ExceptionEncoderKey;
-import org.n52.sos.encode.XmlEncoderKey;
-import org.n52.sos.event.SosEventBus;
-import org.n52.sos.event.events.ExceptionEvent;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.HTTPException;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.OwsExceptionCode;
-import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.response.ServiceResponse;
-import org.n52.sos.coding.CodingRepository;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.sos.util.http.HTTPStatus;
-import org.n52.sos.util.http.HTTPUtils;
-import org.n52.sos.util.http.MediaTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,7 +172,7 @@ public class RestBinding extends Binding {
         } catch (final OwsExceptionReport oer) {
             LOGGER.error("Error while processing rest request. Exception thrown: {}",
                          oer.getClass().getSimpleName());
-            SosEventBus.fire(new ExceptionEvent(oer));
+            ServiceEventBus.fire(new ExceptionEvent(oer));
             serviceResponse = encodeOwsExceptionReport(oer);
         }
         HTTPUtils.writeObject(request, response, serviceResponse);

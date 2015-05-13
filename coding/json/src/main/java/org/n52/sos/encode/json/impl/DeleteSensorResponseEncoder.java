@@ -28,10 +28,10 @@
  */
 package org.n52.sos.encode.json.impl;
 
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.response.DeleteSensorResponse;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;

@@ -31,12 +31,12 @@ package org.n52.sos.decode.xml.stream.inspire.ad;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.decode.xml.stream.NillableStringReader;
 import org.n52.sos.decode.xml.stream.XmlReader;
 import org.n52.sos.decode.xml.stream.w3c.xlink.NillableReferenceReader;
 import org.n52.sos.inspire.aqd.Address;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class AddressRepresentationReader extends XmlReader<Address> {
     private Address address;

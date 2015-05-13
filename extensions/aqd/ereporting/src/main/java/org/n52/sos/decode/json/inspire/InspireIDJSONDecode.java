@@ -28,10 +28,10 @@
  */
 package org.n52.sos.decode.json.inspire;
 
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.Validation;
 import org.n52.sos.inspire.aqd.InspireID;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.AQDJSONConstants;
-import org.n52.sos.util.Validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

@@ -63,52 +63,53 @@ import net.opengis.ows.x11.ServiceProviderDocument.ServiceProvider;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.iceland.config.annotation.Configurable;
+import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.encode.EncoderKey;
+import org.n52.iceland.encode.ExceptionEncoderKey;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionCode;
+import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.iceland.i18n.LocaleHelper;
+import org.n52.iceland.i18n.LocalizedString;
+import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.Constraint;
+import org.n52.iceland.ogc.ows.DCP;
+import org.n52.iceland.ogc.ows.OWSConstants;
+import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+import org.n52.iceland.ogc.ows.OwsAllowedValues;
+import org.n52.iceland.ogc.ows.OwsAllowedValuesRange;
+import org.n52.iceland.ogc.ows.OwsAllowedValuesValue;
+import org.n52.iceland.ogc.ows.OwsAnyValue;
+import org.n52.iceland.ogc.ows.OwsDomainType;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsMetadata;
+import org.n52.iceland.ogc.ows.OwsNoValues;
+import org.n52.iceland.ogc.ows.OwsOperation;
+import org.n52.iceland.ogc.ows.OwsOperationsMetadata;
+import org.n52.iceland.ogc.ows.OwsParameterDataType;
+import org.n52.iceland.ogc.ows.OwsParameterValue;
+import org.n52.iceland.ogc.ows.OwsParameterValuePossibleValues;
+import org.n52.iceland.ogc.ows.OwsParameterValueRange;
+import org.n52.iceland.ogc.ows.OwsPossibleValues;
+import org.n52.iceland.ogc.ows.OwsRange;
+import org.n52.iceland.ogc.ows.OwsServiceIdentification;
+import org.n52.iceland.ogc.ows.OwsServiceProvider;
+import org.n52.iceland.ogc.ows.OwsValuesRererence;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.JavaHelper;
+import org.n52.iceland.util.XmlOptionsHelper;
+import org.n52.iceland.util.http.HTTPMethods;
+import org.n52.iceland.util.http.MediaTypes;
+import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.sos.util.N52XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.x1999.xlink.ActuateType;
 import org.w3.x1999.xlink.ShowType;
 import org.w3.x1999.xlink.TypeType;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.OwsExceptionCode;
-import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.i18n.LocaleHelper;
-import org.n52.sos.i18n.LocalizedString;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.Constraint;
-import org.n52.sos.ogc.ows.DCP;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OwsAllowedValues;
-import org.n52.sos.ogc.ows.OwsAllowedValuesRange;
-import org.n52.sos.ogc.ows.OwsAllowedValuesValue;
-import org.n52.sos.ogc.ows.OwsAnyValue;
-import org.n52.sos.ogc.ows.OwsDomainType;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsMetadata;
-import org.n52.sos.ogc.ows.OwsNoValues;
-import org.n52.sos.ogc.ows.OwsOperation;
-import org.n52.sos.ogc.ows.OwsOperationsMetadata;
-import org.n52.sos.ogc.ows.OwsParameterDataType;
-import org.n52.sos.ogc.ows.OwsParameterValue;
-import org.n52.sos.ogc.ows.OwsParameterValuePossibleValues;
-import org.n52.sos.ogc.ows.OwsParameterValueRange;
-import org.n52.sos.ogc.ows.OwsPossibleValues;
-import org.n52.sos.ogc.ows.OwsRange;
-import org.n52.sos.ogc.ows.OwsValuesRererence;
-import org.n52.sos.ogc.ows.SosServiceIdentification;
-import org.n52.sos.ogc.ows.SosServiceProvider;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.N52XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.sos.util.http.HTTPMethods;
-import org.n52.sos.util.http.MediaTypes;
-import org.n52.sos.w3c.SchemaLocation;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -126,8 +127,8 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
     @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = CollectionHelper.union(Sets.<EncoderKey> newHashSet(
             new ExceptionEncoderKey(MediaTypes.TEXT_XML), new ExceptionEncoderKey(MediaTypes.APPLICATION_XML)),
-            CodingHelper.encoderKeysForElements(OWSConstants.NS_OWS, SosServiceIdentification.class,
-                    SosServiceProvider.class, OwsOperationsMetadata.class, OwsExceptionReport.class,
+            CodingHelper.encoderKeysForElements(OWSConstants.NS_OWS, OwsServiceIdentification.class,
+                    OwsServiceProvider.class, OwsOperationsMetadata.class, OwsExceptionReport.class,
                     OwsMetadata.class, OwsDomainType.class));
 
     private boolean includeStackTraceInExceptionReport = false;
@@ -160,10 +161,10 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
     @Override
     public XmlObject encode(final Object element, final Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
-        if (element instanceof SosServiceIdentification) {
-            return encodeServiceIdentification((SosServiceIdentification) element);
-        } else if (element instanceof SosServiceProvider) {
-            return encodeServiceProvider((SosServiceProvider) element);
+        if (element instanceof OwsServiceIdentification) {
+            return encodeServiceIdentification((OwsServiceIdentification) element);
+        } else if (element instanceof OwsServiceProvider) {
+            return encodeServiceProvider((OwsServiceProvider) element);
         } else if (element instanceof OwsOperationsMetadata) {
             return encodeOperationsMetadata((OwsOperationsMetadata) element);
         } else if (element instanceof OwsExceptionReport) {
@@ -181,7 +182,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
 
     protected boolean isEncodeExceptionsOnly(final Map<HelperValues, String> additionalValues) {
         return additionalValues != null && !additionalValues.isEmpty()
-                && additionalValues.containsKey(SosConstants.HelperValues.ENCODE_OWS_EXCEPTION_ONLY);
+                && additionalValues.containsKey(org.n52.iceland.ogc.ows.OWSConstants.HelperValues.ENCODE_OWS_EXCEPTION_ONLY);
     }
 
     /**
@@ -193,7 +194,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
      * @throws OwsExceptionReport
      *             * if the file is invalid.
      */
-    private XmlObject encodeServiceIdentification(final SosServiceIdentification sosServiceIdentification)
+    private XmlObject encodeServiceIdentification(final OwsServiceIdentification sosServiceIdentification)
             throws OwsExceptionReport {
         ServiceIdentification serviceIdent;
         if (sosServiceIdentification.getServiceIdentification() != null) {
@@ -292,7 +293,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
      * @throws OwsExceptionReport
      *             * if the file is invalid.
      */
-    private XmlObject encodeServiceProvider(final SosServiceProvider sosServiceProvider) throws OwsExceptionReport {
+    private XmlObject encodeServiceProvider(final OwsServiceProvider sosServiceProvider) throws OwsExceptionReport {
         if (sosServiceProvider.getServiceProvider() != null) {
             if (sosServiceProvider.getServiceProvider() instanceof ServiceProviderDocument) {
                 return ((ServiceProviderDocument) sosServiceProvider.getServiceProvider()).getServiceProvider();

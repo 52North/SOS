@@ -28,13 +28,13 @@
  */
 package org.n52.sos.decode;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.util.http.HTTPConstants;
-import org.n52.sos.util.http.MediaTypes;
+import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.util.http.MediaTypes;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

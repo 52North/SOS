@@ -28,8 +28,8 @@
  */
 package org.n52.sos.encode.json;
 
-import org.n52.sos.encode.EncoderKey;
-import org.n52.sos.util.ClassHelper;
+import org.n52.iceland.encode.EncoderKey;
+import org.n52.iceland.util.ClassHelper;
 
 import com.google.common.base.Objects;
 

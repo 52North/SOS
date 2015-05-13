@@ -43,16 +43,16 @@ import net.opengis.ows.x11.ServiceIdentificationDocument.ServiceIdentification;
 import org.apache.xmlbeans.XmlObject;
 import org.junit.AfterClass;
 import org.junit.Test;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.SosServiceIdentification;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.CollectionHelper;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.ogc.ows.OWSConstants;
+import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsServiceIdentification;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.util.CollectionHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -98,7 +98,7 @@ public class OwsEncoderv110Test {
     @Test
     public void should_encode_service_identification_without_service_type_codespace() throws OwsExceptionReport {
         String serviceTypeValue = "serviceType";
-        SosServiceIdentification serviceId = new SosServiceIdentification();
+        OwsServiceIdentification serviceId = new OwsServiceIdentification();
         serviceId.setServiceType(serviceTypeValue);
         XmlObject xbEncoded = CodingHelper.encodeObjectToXml(OWSConstants.NS_OWS, serviceId);
         assertThat(xbEncoded, instanceOf(ServiceIdentification.class));
@@ -111,7 +111,7 @@ public class OwsEncoderv110Test {
     public void should_encode_service_identification_with_service_type_codespace() throws OwsExceptionReport {
         String serviceTypeValue = "serviceType";
         String serviceTypeCodeSpaceValue = "codeSpace";
-        SosServiceIdentification serviceId = new SosServiceIdentification();
+        OwsServiceIdentification serviceId = new OwsServiceIdentification();
         serviceId.setServiceType(serviceTypeValue);
         serviceId.setServiceTypeCodeSpace(serviceTypeCodeSpaceValue);
         XmlObject xbEncoded = CodingHelper.encodeObjectToXml(OWSConstants.NS_OWS, serviceId);

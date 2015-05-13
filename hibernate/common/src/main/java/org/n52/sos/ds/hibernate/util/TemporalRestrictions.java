@@ -29,13 +29,16 @@
 package org.n52.sos.ds.hibernate.util;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
+import org.n52.iceland.exception.ows.concrete.UnsupportedOperatorException;
+import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.iceland.ogc.filter.TemporalFilter;
+import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.sos.ds.hibernate.entities.Observation;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.AfterRestriction;
@@ -51,12 +54,8 @@ import org.n52.sos.ds.hibernate.util.TemporalRestriction.MetByRestriction;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.OverlappedByRestriction;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.OverlapsRestriction;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.TEqualsRestriction;
-import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
-import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.gml.time.Time;
 
 import com.google.common.collect.Maps;
 

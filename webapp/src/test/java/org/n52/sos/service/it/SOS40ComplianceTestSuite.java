@@ -31,9 +31,8 @@ package org.n52.sos.service.it;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
-
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.service.SosService;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.service.Service;
 
 /**
  * TODO JavaDoc
@@ -48,7 +47,7 @@ public class SOS40ComplianceTestSuite extends MockHttpExecutor
     private final H2Database datasource = new H2Database();
 
     public SOS40ComplianceTestSuite() {
-        super(SosService.class);
+        super(Service.class);
     }
 
     @Rule

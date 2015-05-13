@@ -28,9 +28,9 @@
  */
 package org.n52.sos.encode.exi;
 
+import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.sos.exi.EXIObject;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.response.AbstractServiceResponse;
 
 /**
  * Abstract response encoder class for {@link EXIObject} and SOS 1.0.0

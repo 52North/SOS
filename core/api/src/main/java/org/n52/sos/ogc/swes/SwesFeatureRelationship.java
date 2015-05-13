@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.swes;
 
-import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.gml.AbstractFeature;
 
 /**
  * @since 4.0.0

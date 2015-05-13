@@ -35,6 +35,7 @@ import static org.junit.Assert.assertThat;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
+import org.n52.iceland.cache.WritableContentCache;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

@@ -35,13 +35,16 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.iceland.encode.Encoder;
+import org.n52.iceland.encode.EncoderKey;
+import org.n52.iceland.encode.ResponseProxy;
+import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.sos.encode.streaming.StreamingEncoder;
-import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.soap.SoapResponse;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlOptionsHelper;
 
 /**
  * Streaming SOAP response writer implementation.

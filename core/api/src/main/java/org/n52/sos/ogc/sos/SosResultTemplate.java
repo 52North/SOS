@@ -28,14 +28,14 @@
  */
 package org.n52.sos.ogc.sos;
 
-import org.n52.sos.exception.ows.concrete.DecoderResponseUnsupportedException;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
-import org.n52.sos.util.CodingHelper;
+import org.n52.iceland.exception.ows.concrete.DecoderResponseUnsupportedException;
+import org.n52.iceland.ogc.gml.CodeWithAuthority;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
+import org.n52.iceland.ogc.swe.SweDataRecord;
+import org.n52.iceland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.iceland.ogc.swe.encoding.SweTextEncoding;
+import org.n52.iceland.util.CodingHelper;
 
 /**
  * @since 4.0.0

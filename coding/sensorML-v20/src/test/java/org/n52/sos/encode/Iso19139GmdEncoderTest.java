@@ -28,7 +28,10 @@
  */
 package org.n52.sos.encode;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasXPath;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
 
 import javax.xml.namespace.NamespaceContext;
 
@@ -40,20 +43,18 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.sos.config.SettingsManager;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.ogc.gml.GmlConstants;
+import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.XmlHelper;
+import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.iso.GcoConstants;
 import org.n52.sos.iso.gmd.GmdConformanceResult;
 import org.n52.sos.iso.gmd.GmdConstants;
 import org.n52.sos.iso.gmd.GmdDomainConsistency;
 import org.n52.sos.iso.gmd.GmdQuantitativeResult;
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.NamespaceContextBuilder;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.w3c.W3CConstants;
 import org.w3c.dom.Node;
 
 import com.google.common.collect.ImmutableMap;

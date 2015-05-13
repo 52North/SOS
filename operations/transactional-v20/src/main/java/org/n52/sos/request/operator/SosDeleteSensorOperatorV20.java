@@ -31,18 +31,18 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
+import org.n52.iceland.event.ServiceEventBus;
+import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.service.Configurator;
 import org.n52.sos.ds.AbstractDeleteSensorDAO;
-import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.exception.ows.concrete.InvalidProcedureParameterException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.request.DeleteSensorRequest;
 import org.n52.sos.response.DeleteSensorResponse;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 
@@ -67,7 +67,7 @@ public class SosDeleteSensorOperatorV20 extends AbstractV2TransactionalRequestOp
     @Override
     public DeleteSensorResponse receive(DeleteSensorRequest request) throws OwsExceptionReport {
         DeleteSensorResponse response = getDao().deleteSensor(request);
-        SosEventBus.fire(new SensorDeletion(request, response));
+        ServiceEventBus.fire(new SensorDeletion(request, response));
         return response;
     }
 

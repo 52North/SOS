@@ -41,8 +41,8 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ConfiguredSettingsManager;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.InsertSensorRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;

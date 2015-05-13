@@ -30,10 +30,9 @@ package org.n52.sos.web.admin;
 
 import java.util.Properties;
 
+import org.n52.iceland.ds.Datasource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.n52.sos.ds.Datasource;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

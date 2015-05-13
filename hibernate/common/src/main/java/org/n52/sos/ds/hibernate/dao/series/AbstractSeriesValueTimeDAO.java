@@ -34,6 +34,10 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.AbstractValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
 import org.n52.sos.ds.hibernate.entities.Offering;
@@ -41,11 +45,7 @@ import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValueTime;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.DateTimeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,7 +129,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
     public SeriesValueTime getMinSeriesValueFor(GetObservationRequest request, long series,
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         return (SeriesValueTime) getSeriesValueCriteriaFor(request, series, temporalFilterCriterion,
-                SosIndeterminateTime.first, session).uniqueResult();
+                ExtendedIndeterminateTime.first, session).uniqueResult();
     }
 
     /**
@@ -150,7 +150,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
     public SeriesValueTime getMaxSeriesValueFor(GetObservationRequest request, long series,
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         return (SeriesValueTime) getSeriesValueCriteriaFor(request, series, temporalFilterCriterion,
-                SosIndeterminateTime.latest, session).uniqueResult();
+                ExtendedIndeterminateTime.latest, session).uniqueResult();
     }
 
     /**
@@ -170,7 +170,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
      */
     public SeriesValueTime getMinSeriesValueFor(GetObservationRequest request, long series, Session session)
             throws OwsExceptionReport {
-        return (SeriesValueTime) getSeriesValueCriteriaFor(request, series, null, SosIndeterminateTime.first, session)
+        return (SeriesValueTime) getSeriesValueCriteriaFor(request, series, null, ExtendedIndeterminateTime.first, session)
                 .uniqueResult();
     }
 
@@ -191,7 +191,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
      */
     public SeriesValueTime getMaxSeriesValueFor(GetObservationRequest request, long series, Session session)
             throws OwsExceptionReport {
-        return (SeriesValueTime) getSeriesValueCriteriaFor(request, series, null, SosIndeterminateTime.latest, session)
+        return (SeriesValueTime) getSeriesValueCriteriaFor(request, series, null, ExtendedIndeterminateTime.latest, session)
                 .uniqueResult();
     }
 
@@ -256,7 +256,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
      *             restrictions
      */
     private Criteria getSeriesValueCriteriaFor(GetObservationRequest request, long series,
-            Criterion temporalFilterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session)
+            Criterion temporalFilterCriterion, ExtendedIndeterminateTime sosIndeterminateTime, Session session)
             throws OwsExceptionReport {
         final Criteria c = getDefaultObservationCriteria(session).createAlias(SeriesValueTime.SERIES, "s");
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);

@@ -30,7 +30,7 @@ package org.n52.sos.inspire;
 
 import javax.xml.namespace.QName;
 
-import org.n52.sos.w3c.SchemaLocation;
+import org.n52.iceland.w3c.SchemaLocation;
 
 /**
  * Constants interface for INSPIRE. Provides element names, prefixes,

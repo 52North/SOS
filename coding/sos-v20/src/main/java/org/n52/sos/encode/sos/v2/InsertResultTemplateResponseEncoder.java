@@ -34,10 +34,10 @@ import net.opengis.sos.x20.InsertResultTemplateResponseDocument;
 import net.opengis.sos.x20.InsertResultTemplateResponseType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.response.InsertResultTemplateResponse;
-import org.n52.sos.w3c.SchemaLocation;
 
 import com.google.common.collect.Sets;
 

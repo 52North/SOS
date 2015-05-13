@@ -45,6 +45,10 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
@@ -59,11 +63,7 @@ import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -310,7 +310,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      * @throws OwsExceptionReport 
      */
     protected Criteria getSeriesObservationCriteriaFor(GetObservationRequest request, Collection<String> features,
-                Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
+                Criterion filterCriterion, ExtendedIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
             
             final Criteria c = getDefaultObservationCriteria(session);
             String seriesAliasPrefix = createSeriesAliasAndRestrictions(c);
@@ -411,7 +411,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      * @throws OwsExceptionReport 
      */
     protected ScrollableResults getStreamingSeriesObservationsFor(GetObservationRequest request, Collection<String> features,
-            Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
+            Criterion filterCriterion, ExtendedIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
         return getSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session).setReadOnly(true).scroll(ScrollMode.FORWARD_ONLY);
     }
     
@@ -511,7 +511,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      *            Hibernate session
      * @return Series observations that fit
      */
-    public abstract List<SeriesObservation> getSeriesObservationForSosIndeterminateTimeFilter(Series series, List<String> offerings, SosIndeterminateTime sosIndeterminateTime, Session session);
+    public abstract List<SeriesObservation> getSeriesObservationForSosIndeterminateTimeFilter(Series series, List<String> offerings, ExtendedIndeterminateTime sosIndeterminateTime, Session session);
     
     /**
      * Query series observations for GetObservation request and features
@@ -560,7 +560,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      * @return Series observations that fit
      * @throws OwsExceptionReport
      */
-    public abstract List<SeriesObservation> getSeriesObservationsFor(GetObservationRequest request, Collection<String> features, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport;
+    public abstract List<SeriesObservation> getSeriesObservationsFor(GetObservationRequest request, Collection<String> features, ExtendedIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport;
     
     /**
      * Query series observations for GetObservation request, features, and
@@ -582,15 +582,15 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      * @return Series observations that fit
      * @throws OwsExceptionReport
      */
-    protected abstract List<SeriesObservation> getSeriesObservationsFor(GetObservationRequest request, Collection<String> features, Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport;
+    protected abstract List<SeriesObservation> getSeriesObservationsFor(GetObservationRequest request, Collection<String> features, Criterion filterCriterion, ExtendedIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport;
     
     
-    public abstract List<SeriesObservation> getSeriesObservationsFor(Series series, GetObservationRequest request, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport;
+    public abstract List<SeriesObservation> getSeriesObservationsFor(Series series, GetObservationRequest request, ExtendedIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport;
     
     protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException;
     
     protected Criteria getSeriesObservationCriteriaFor(Series series, GetObservationRequest request,
-            SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
+            ExtendedIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
         final Criteria c =
                 getDefaultObservationCriteria(session).add(
                         Restrictions.eq(SeriesObservation.SERIES, series));
@@ -609,7 +609,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     }
     
     protected Criteria getSeriesObservationCriteriaForSosIndeterminateTimeFilter(Series series,
-            List<String> offerings, SosIndeterminateTime sosIndeterminateTime, Session session) {
+            List<String> offerings, ExtendedIndeterminateTime sosIndeterminateTime, Session session) {
         final Criteria criteria = createCriteriaFor(getObservationClass(), series, offerings, session);
         criteria.addOrder(getOrder(sosIndeterminateTime)).setMaxResults(1);
         LOGGER.debug("QUERY getSeriesObservationForSosIndeterminateTimeFilter(series, offerings,(first,latest)): {}",

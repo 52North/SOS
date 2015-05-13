@@ -32,20 +32,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import net.opengis.om.x20.OMObservationType;
 import net.opengis.sos.x20.GetObservationResponseType.ObservationData;
+
 import net.opengis.sosREST.x10.ObservationCollectionDocument;
 import net.opengis.sosREST.x10.ObservationCollectionType;
 import net.opengis.sosREST.x10.ObservationDocument;
 import net.opengis.sosREST.x10.ObservationType;
 
+
+import org.n52.iceland.exception.ows.concrete.NoEncoderForResponseException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.response.ServiceResponse;
+import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.binding.rest.requests.RestResponse;
-import org.n52.sos.exception.ows.concrete.NoEncoderForResponseException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.response.ServiceResponse;
 import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.http.HTTPStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

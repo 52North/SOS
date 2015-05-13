@@ -33,9 +33,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
-import org.n52.sos.exception.ows.concrete.GenericThrowableWrapperException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.GroupedAndNamedThreadFactory;
+import org.n52.iceland.cache.ContentCacheUpdate;
+import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.GroupedAndNamedThreadFactory;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

@@ -30,18 +30,18 @@ package org.n52.sos.web.admin;
 
 import java.util.Iterator;
 
+import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.decode.JsonDecoderKey;
+import org.n52.iceland.encode.Encoder;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.aqd.ReportObligationType;
-import org.n52.sos.coding.CodingRepository;
-import org.n52.sos.decode.Decoder;
-import org.n52.sos.decode.JsonDecoderKey;
-import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.json.JSONEncoderKey;
 import org.n52.sos.inspire.aqd.RelatedParty;
 import org.n52.sos.inspire.aqd.ReportObligation;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.AQDJSONConstants;
-import org.n52.sos.util.JSONUtils;
 import org.n52.sos.web.AbstractController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

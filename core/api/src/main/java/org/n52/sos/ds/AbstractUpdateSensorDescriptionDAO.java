@@ -28,10 +28,10 @@
  */
 package org.n52.sos.ds;
 
-import org.n52.sos.coding.CodingRepository;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsOperation;
-import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsOperation;
+import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.sos.request.UpdateSensorRequest;
 import org.n52.sos.response.UpdateSensorResponse;
 

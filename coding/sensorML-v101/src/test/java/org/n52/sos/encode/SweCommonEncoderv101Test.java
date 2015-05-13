@@ -29,7 +29,8 @@
 package org.n52.sos.encode;
 
 import static java.lang.Boolean.TRUE;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
@@ -51,27 +52,27 @@ import org.joda.time.DateTimeZone;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.SosEnvelope;
+import org.n52.iceland.ogc.swe.RangeValue;
+import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
+import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.iceland.ogc.swe.SweDataRecord;
+import org.n52.iceland.ogc.swe.SweField;
+import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
+import org.n52.iceland.ogc.swe.simpleType.SweCount;
+import org.n52.iceland.ogc.swe.simpleType.SweQuality;
+import org.n52.iceland.ogc.swe.simpleType.SweText;
+import org.n52.iceland.ogc.swe.simpleType.SweTime;
+import org.n52.iceland.ogc.swe.simpleType.SweTimeRange;
+import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.ogc.swe.RangeValue;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
-import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweEnvelope;
-import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.SweSimpleDataRecord;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweQuality;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
-import org.n52.sos.util.DateTimeHelper;
 
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Envelope;
@@ -296,7 +297,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
             throws OwsExceptionReport {
         thrown.expect(NoApplicableCodeException.class);
         thrown.expectMessage("The element type 'org.n52.sos.encode.SweCommonEncoderv101Test$1' "
-                + "of the received 'org.n52.sos.ogc.swe.SweField' is not supported"
+                + "of the received '"+ SweField.class.getName() + "' is not supported"
                 + " by this encoder 'org.n52.sos.encode.SweCommonEncoderv101'.");
         new SweCommonEncoderv101().encode(new SweDataRecord().addField(new SweField("test",
                 new SweAbstractDataComponent() {

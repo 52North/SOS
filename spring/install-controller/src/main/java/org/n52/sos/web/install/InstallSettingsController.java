@@ -31,18 +31,17 @@ package org.n52.sos.web.install;
 import java.io.File;
 import java.util.Map;
 
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingType;
+import org.n52.iceland.config.SettingValue;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.install.InstallConstants.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingType;
-import org.n52.sos.config.SettingValue;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.install.InstallConstants.Step;
 
 /**
  * @since 4.0.0

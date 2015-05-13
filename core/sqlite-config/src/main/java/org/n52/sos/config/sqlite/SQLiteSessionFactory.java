@@ -39,10 +39,10 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.sos.config.settings.ChoiceSettingDefinition;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.service.ServiceContextListener;
 import org.n52.sos.config.sqlite.entities.AdminUser;
 import org.n52.sos.config.sqlite.entities.Binding;
 import org.n52.sos.config.sqlite.entities.BooleanSettingValue;
@@ -62,11 +62,9 @@ import org.n52.sos.config.sqlite.entities.StaticCapabilitiesImpl;
 import org.n52.sos.config.sqlite.entities.StringSettingValue;
 import org.n52.sos.config.sqlite.entities.TimeInstantSettingValue;
 import org.n52.sos.config.sqlite.entities.UriSettingValue;
-import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.hibernate.AbstractSessionFactoryProvider;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.service.SosContextListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -135,7 +133,7 @@ public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
     protected String getFilename() {
         String path = null;
         try {
-            path = SosContextListener.getPath();
+            path = ServiceContextListener.getPath();
         } catch (Throwable t) {
         }
         if (path == null) {

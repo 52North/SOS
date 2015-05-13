@@ -39,28 +39,30 @@ import net.opengis.samplingSpatial.x20.ShapeType;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.coding.CodingRepository;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.encode.Encoder;
+import org.n52.iceland.encode.EncoderKey;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.iceland.ogc.OGCConstants;
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.gml.GmlConstants;
+import org.n52.iceland.ogc.om.NamedValue;
+import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.ogc.om.features.SfConstants;
+import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.JavaHelper;
+import org.n52.iceland.util.XmlHelper;
+import org.n52.iceland.util.XmlOptionsHelper;
+import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.sos.w3c.SchemaLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -280,7 +282,7 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
         if (xbSamplingFeature != null) {
                 if (samplingFeature.isSetName()) {
                     removeExitingNames(xbSamplingFeature);
-                    for (org.n52.sos.ogc.gml.CodeType codeType : samplingFeature.getName()) {
+                    for (org.n52.iceland.ogc.gml.CodeType codeType : samplingFeature.getName()) {
                         xbSamplingFeature.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, codeType));
                     }
                 }

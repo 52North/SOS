@@ -28,8 +28,9 @@
  */
 package org.n52.sos.response;
 
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.response.AbstractServiceResponse;
 
 /**
  * @since 4.0.0

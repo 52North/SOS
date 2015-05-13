@@ -32,15 +32,16 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.sos.exception.AdministratorException;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.response.ServiceResponse;
-import org.n52.sos.service.admin.AdministratorConstants.AdministratorParams;
-import org.n52.sos.service.admin.request.AdminRequest;
-import org.n52.sos.service.admin.request.operator.AdminRequestOperator;
-import org.n52.sos.service.admin.request.operator.AdminRequestOperatorRepository;
+import org.n52.iceland.exception.AdministratorException;
+import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.iceland.ogc.ows.OWSConstants;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.response.ServiceResponse;
+import org.n52.iceland.service.admin.AdministratorConstants.AdministratorParams;
+import org.n52.iceland.service.admin.operator.AdminServiceOperator;
+import org.n52.iceland.service.admin.request.AdminRequest;
+import org.n52.iceland.service.admin.request.operator.AdminRequestOperator;
+import org.n52.iceland.service.admin.request.operator.AdminRequestOperatorRepository;
 import org.n52.sos.util.KvpHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

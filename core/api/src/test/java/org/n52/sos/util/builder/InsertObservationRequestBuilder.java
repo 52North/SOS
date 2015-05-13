@@ -30,7 +30,7 @@ package org.n52.sos.util.builder;
 
 import java.util.ArrayList;
 
-import org.n52.sos.ogc.om.OmObservation;
+import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.sos.request.InsertObservationRequest;
 
 /**

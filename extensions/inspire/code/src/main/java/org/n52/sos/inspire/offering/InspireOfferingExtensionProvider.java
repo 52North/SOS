@@ -30,17 +30,17 @@ package org.n52.sos.inspire.offering;
 
 import java.util.Set;
 
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.swes.OfferingExtensionKey;
+import org.n52.iceland.ogc.swes.OfferingExtensionProvider;
+import org.n52.iceland.ogc.swes.SwesExtensionImpl;
+import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.sos.inspire.AbstractInspireProvider;
 import org.n52.sos.inspire.InspireConstants;
 import org.n52.sos.inspire.InspireHelper;
 import org.n52.sos.inspire.InspireSupportedCRS;
 import org.n52.sos.inspire.InspireSupportedLanguages;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.swes.OfferingExtensionKey;
-import org.n52.sos.ogc.swes.OfferingExtensionProvider;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
-import org.n52.sos.ogc.swes.SwesExtensions;
 
 import com.google.common.collect.Sets;
 

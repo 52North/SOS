@@ -28,8 +28,8 @@
  */
 package org.n52.sos.cache.ctrl;
 
+import org.n52.iceland.cache.WritableContentCache;
 import org.n52.sos.cache.WritableCache;
-import org.n52.sos.cache.WritableContentCache;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

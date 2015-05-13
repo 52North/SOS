@@ -34,19 +34,18 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingDefinitionGroup;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.iceland.util.StringHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingDefinitionGroup;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.JSONException;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.util.StringHelper;
 
 
 

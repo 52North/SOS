@@ -47,11 +47,29 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.ds.FeatureQueryHandler;
-import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ds.I18NDAO;
+import org.n52.iceland.config.annotation.Configurable;
+import org.n52.iceland.ds.FeatureQueryHandler;
+import org.n52.iceland.ds.FeatureQueryHandlerQueryObject;
+import org.n52.iceland.ds.HibernateDatasourceConstants;
+import org.n52.iceland.ds.I18NDAO;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.iceland.i18n.LocalizedString;
+import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
+import org.n52.iceland.ogc.OGCConstants;
+import org.n52.iceland.ogc.filter.SpatialFilter;
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.gml.CodeWithAuthority;
+import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.sos.SosEnvelope;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.JTSHelper;
+import org.n52.iceland.util.JavaHelper;
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
@@ -61,26 +79,8 @@ import org.n52.sos.ds.hibernate.entities.TFeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
-import org.n52.sos.i18n.I18NDAORepository;
-import org.n52.sos.i18n.LocalizedString;
-import org.n52.sos.i18n.metadata.I18NFeatureMetadata;
-import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.JTSHelper;
-import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,17 +97,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 public class HibernateFeatureQueryHandler implements FeatureQueryHandler, HibernateSqlQueryConstants {
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateFeatureQueryHandler.class);
 
-    @Deprecated
-    @Override
-    public AbstractFeature getFeatureByID(String featureID, Object connection, String version)
-            throws OwsExceptionReport {
-        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
-        queryObject.setConnection(connection);
-        queryObject.addFeatureIdentifier(featureID);
-        queryObject.setVersion(version);
-        return getFeatureByID(queryObject);
-    }
-
     @Override
     public AbstractFeature getFeatureByID(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
         final Session session = HibernateSessionHolder.getSession(queryObject.getConnection());
@@ -123,18 +112,17 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
 
     }
 
-    @Deprecated
     @Override
     @SuppressWarnings("unchecked")
-    public Collection<String> getFeatureIDs(final SpatialFilter filter, final Object connection)
-            throws OwsExceptionReport {
-        final Session session = HibernateSessionHolder.getSession(connection);
+    public Collection<String> getFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
+        final Session session = HibernateSessionHolder.getSession(queryObject.getConnection());
         try {
             if (GeometryHandler.getInstance().isSpatialDatasource()) {
                 final Criteria c =
                         session.createCriteria(FeatureOfInterest.class).setProjection(
                                 Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
-                if (filter != null) {
+                if (queryObject.isSetSpatialFilters()) {
+                    SpatialFilter filter = queryObject.getSpatialFitler();
                     c.add(SpatialRestrictions.filter(FeatureOfInterest.GEOMETRY, filter.getOperator(),
                             getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry())));
                 }
@@ -143,7 +131,8 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
 
                 final List<String> identifiers = new LinkedList<String>();
                 final List<FeatureOfInterest> features = session.createCriteria(FeatureOfInterest.class).list();
-                if (filter != null) {
+                if (queryObject.isSetSpatialFilters()) {
+                    SpatialFilter filter = queryObject.getSpatialFitler();
                     final Geometry envelope = GeometryHandler.getInstance().getFilterForNonSpatialDatasource(filter);
                     for (final FeatureOfInterest feature : features) {
                         final Geometry geom = getGeomtery(feature, session);
@@ -161,23 +150,6 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
     }
 
     @Override
-    public Collection<String> getFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
-        return getFeatureIDs(queryObject.getSpatialFitler(), queryObject.getConnection());
-    }
-
-    @Deprecated
-    @Override
-    public Map<String, AbstractFeature> getFeatures(Collection<String> featureIDs, List<SpatialFilter> spatialFilters,
-            Object connection, String version) throws OwsExceptionReport {
-        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
-        queryObject.setFeatureIdentifiers(featureIDs);
-        queryObject.setSpatialFilters(spatialFilters);
-        queryObject.setConnection(connection);
-        queryObject.setVersion(version);
-        return getFeatures(queryObject);
-    }
-
-    @Override
     public Map<String, AbstractFeature> getFeatures(FeatureQueryHandlerQueryObject queryObject)
             throws OwsExceptionReport {
         try {
@@ -190,14 +162,6 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             throw new NoApplicableCodeException().causedBy(he).withMessage(
                     "Error while querying features from data source!");
         }
-    }
-
-    @Deprecated
-    @Override
-    public SosEnvelope getEnvelopeForFeatureIDs(Collection<String> featureIDs, Object connection)
-            throws OwsExceptionReport {
-        return getEnvelopeForFeatureIDs(new FeatureQueryHandlerQueryObject().setFeatureIdentifiers(featureIDs)
-                .setConnection(connection));
     }
 
     @Override
@@ -257,7 +221,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                         }
                     }
                     if (!envelope.isNull()) {
-                        return new SosEnvelope(envelope, getDefaultEPSG());
+                        return new SosEnvelope(envelope, GeometryHandler.getInstance().getStorageEPSG());
                     }
                 }
             } catch (final HibernateException he) {
@@ -298,18 +262,6 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             }
             return insertFeatureOfInterest(samplingFeature, session).getIdentifier();
         }
-    }
-
-    @Deprecated
-    @Override
-    public int getDefaultEPSG() {
-        return getStorageEPSG();
-    }
-
-    @Deprecated
-    @Override
-    public int getDefault3DEPSG() {
-        return getStorage3DEPSG();
     }
 
     @Override
@@ -540,7 +492,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                     GeometryHandler.getInstance().getWktString(feature.getLongitude(), feature.getLatitude(), epsg);
             final Geometry geom = JTSHelper.createGeometryFromWKT(wktString, epsg);
             if (feature.isSetAltitude()) {
-                geom.getCoordinate().z = GeometryHandler.getInstance().getValueAsDouble(feature.getAltitude());
+                geom.getCoordinate().z = JavaHelper.asDouble(feature.getAltitude());
                 if (geom.getSRID() == getStorage3DEPSG()) {
                     geom.setSRID(getStorage3DEPSG());
                 }

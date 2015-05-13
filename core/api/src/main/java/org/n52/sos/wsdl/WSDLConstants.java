@@ -32,12 +32,12 @@ import java.net.URI;
 
 import javax.xml.namespace.QName;
 
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.swes.SwesConstants;
+import org.n52.iceland.util.http.HTTPMethods;
+import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.ogc.sos.SosSoapConstants;
-import org.n52.sos.ogc.swes.SwesConstants;
-import org.n52.sos.util.http.HTTPMethods;
-import org.n52.sos.util.http.MediaTypes;
 
 /**
  * 

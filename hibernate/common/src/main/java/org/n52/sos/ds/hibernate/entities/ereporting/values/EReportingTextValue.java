@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting.values;
 
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextValue;
-import org.n52.sos.util.StringHelper;
 
 public class EReportingTextValue extends EReportingValue implements TextValue {
 

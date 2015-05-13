@@ -38,11 +38,12 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.n52.iceland.ogc.ows.OWSConstants.RequestParams;
+import org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;
-import org.n52.sos.ogc.ows.OWSConstants.RequestParams;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.GetCapabilitiesRequest;
 
 /**
  * @author Shane StClair <shane@axiomalaska.com>
@@ -73,7 +74,7 @@ public class GetCapabilitiesKvpDecoderTest extends DeleteSensorKvpDecoderv20 {
     @Test
     public void acceptVersions() throws OwsExceptionReport {
         final Map<String, String> map = createMap();
-        map.put(SosConstants.GetCapabilitiesParams.AcceptVersions.name(), ACCEPT_VERSIONS);
+        map.put(GetCapabilitiesParams.AcceptVersions.name(), ACCEPT_VERSIONS);
         GetCapabilitiesRequest req = decoder.decode(map);
         assertThat(req, is(notNullValue()));
         assertThat(req.getOperationName(), is(SosConstants.Operations.GetCapabilities.name()));
@@ -91,7 +92,7 @@ public class GetCapabilitiesKvpDecoderTest extends DeleteSensorKvpDecoderv20 {
     @Test(expected = OwsExceptionReport.class)
     public void emptyParam() throws OwsExceptionReport {
         final Map<String, String> map = createMap();
-        map.put(SosConstants.GetCapabilitiesParams.AcceptVersions.name(), EMPTY_STRING);
+        map.put(GetCapabilitiesParams.AcceptVersions.name(), EMPTY_STRING);
         decoder.decode(map);
     }
 

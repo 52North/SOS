@@ -32,8 +32,8 @@ import java.net.URI;
 
 import javax.persistence.Entity;
 
-import org.n52.sos.config.SettingType;
-import org.n52.sos.config.SettingValue;
+import org.n52.iceland.config.SettingType;
+import org.n52.iceland.config.SettingValue;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

@@ -28,11 +28,11 @@
  */
 package org.n52.sos.converter.util;
 
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.config.annotation.Configurable;
+import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.settings.EReportingSetting;
-import org.n52.sos.util.StringHelper;
 
 @Configurable
 public class EReportingPrefixedIdentifierHelper {

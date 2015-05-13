@@ -28,8 +28,10 @@
  */
 package org.n52.sos.ogc.swes;
 
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.swes.SwesConstants.HasSwesExtension;
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.swes.SwesConstants.HasSwesExtension;
+import org.n52.iceland.ogc.swes.SwesExtension;
+import org.n52.iceland.ogc.swes.SwesExtensions;
 
 /**
  * SOS internal representation of AbstractSWES element

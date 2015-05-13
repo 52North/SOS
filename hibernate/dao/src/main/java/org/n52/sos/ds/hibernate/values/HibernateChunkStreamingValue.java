@@ -32,14 +32,14 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.om.TimeValuePair;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.TimeValuePair;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * Hibernate streaming value implementation for chunk results

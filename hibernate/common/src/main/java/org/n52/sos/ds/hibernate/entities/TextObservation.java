@@ -30,7 +30,7 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
-import org.n52.sos.util.StringHelper;
+import org.n52.iceland.util.StringHelper;
 
 /**
  * @since 4.0.0

@@ -33,7 +33,14 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
+import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.gml.time.TimePosition;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.http.MediaType;
 import org.n52.sos.inspire.InspireCitation;
 import org.n52.sos.inspire.InspireConformity;
 import org.n52.sos.inspire.InspireConformity.InspireDegreeOfConformity;
@@ -59,13 +66,6 @@ import org.n52.sos.inspire.capabilities.FullInspireExtendedCapabilities;
 import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireServiceSpatialDataResourceType;
 import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireSpatialDataServiceType;
 import org.n52.sos.inspire.capabilities.MinimalInspireExtendedCapabilities;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.gml.time.TimePosition;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.http.MediaType;
 
 import com.google.common.html.HtmlEscapers;
 

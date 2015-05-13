@@ -28,6 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingObservationDAO;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingSeriesDAO;
@@ -48,9 +51,6 @@ import org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValueTime;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 
 /**

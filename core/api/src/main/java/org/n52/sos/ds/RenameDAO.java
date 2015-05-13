@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds;
 
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.exception.NoSuchObservablePropertyException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

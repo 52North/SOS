@@ -30,8 +30,11 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.*;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureDescriptionFormat;
 
 /**
  * @since 4.0.0

@@ -28,14 +28,23 @@
  */
 package org.n52.sos.util;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.n52.sos.util.JTSHelperForTesting.randomCoordinate;
+import static org.n52.sos.util.JTSHelperForTesting.randomCoordinateRing;
+import static org.n52.sos.util.JTSHelperForTesting.randomCoordinates;
 import static org.n52.sos.util.ReverseOf.reverseOf;
-import static org.n52.sos.util.JTSHelperForTesting.*;
-
 
 import org.junit.Test;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.JTSConstants;
+import org.n52.iceland.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;

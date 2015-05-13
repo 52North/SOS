@@ -34,7 +34,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
-import org.n52.sos.ogc.ows.OfferingExtension;
+import org.n52.iceland.ogc.ows.OfferingExtension;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

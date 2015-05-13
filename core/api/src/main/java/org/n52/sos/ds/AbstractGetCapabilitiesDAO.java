@@ -32,14 +32,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsOperation;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.GetCapabilitiesRequest;
-import org.n52.sos.response.GetCapabilitiesResponse;
-import org.n52.sos.service.operator.ServiceOperatorRepository;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsOperation;
+import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.iceland.service.operator.ServiceOperatorRepository;
 
 //import org.n52.sos.service.operator.ServiceOperatorRepository;
 
@@ -81,12 +81,12 @@ public abstract class AbstractGetCapabilitiesDAO extends AbstractOperationDAO {
             }
         }
 
-        opsMeta.addPossibleValuesParameter(SosConstants.GetCapabilitiesParams.Sections, sectionsValues);
-        opsMeta.addPossibleValuesParameter(SosConstants.GetCapabilitiesParams.AcceptFormats,
+        opsMeta.addPossibleValuesParameter(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.Sections, sectionsValues);
+        opsMeta.addPossibleValuesParameter(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptFormats,
                 SosConstants.ACCEPT_FORMATS);
-        opsMeta.addPossibleValuesParameter(SosConstants.GetCapabilitiesParams.AcceptVersions,
+        opsMeta.addPossibleValuesParameter(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions,
                 ServiceOperatorRepository.getInstance().getSupportedVersions(service));
-        opsMeta.addAnyParameterValue(SosConstants.GetCapabilitiesParams.updateSequence);
+        opsMeta.addAnyParameterValue(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.updateSequence);
     }
 
     protected abstract Set<String> getExtensionSections(final String service, final String version)

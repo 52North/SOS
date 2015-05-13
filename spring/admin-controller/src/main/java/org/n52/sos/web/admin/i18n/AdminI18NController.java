@@ -29,20 +29,18 @@
 package org.n52.sos.web.admin.i18n;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.n52.iceland.cache.ContentCache;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.web.ControllerConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.web.ControllerConstants;
 
 
 @Controller

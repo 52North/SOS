@@ -58,28 +58,27 @@ import net.opengis.fes.x20.ValueReferenceDocument;
 import net.opengis.fes.x20.impl.ComparisonOperatorNameTypeImpl;
 import net.opengis.fes.x20.impl.SpatialOperatorNameTypeImpl;
 import net.opengis.fes.x20.impl.TemporalOperatorNameTypeImpl;
-import net.opengis.ows.x11.DomainType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.ogc.filter.FilterConstants;
-import org.n52.sos.ogc.filter.FilterConstants.ComparisonOperator;
-import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.filter.FilterConstants.ConformanceClassConstraintNames;
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OwsDomainType;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.sos.w3c.SchemaLocation;
+import org.n52.iceland.encode.EncoderKey;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.iceland.ogc.filter.FilterConstants;
+import org.n52.iceland.ogc.filter.FilterConstants.ComparisonOperator;
+import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.iceland.ogc.filter.SpatialFilter;
+import org.n52.iceland.ogc.filter.TemporalFilter;
+import org.n52.iceland.ogc.gml.GmlConstants;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.ows.OWSConstants;
+import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+import org.n52.iceland.ogc.ows.OwsDomainType;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.util.XmlOptionsHelper;
+import org.n52.iceland.w3c.SchemaLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +97,7 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
     private static final String TRUE = Boolean.TRUE.toString();
 
     private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(FilterConstants.NS_FES_2,
-            TemporalFilter.class, org.n52.sos.ogc.filter.FilterCapabilities.class, SpatialFilter.class);
+            TemporalFilter.class, org.n52.iceland.ogc.filter.FilterCapabilities.class, SpatialFilter.class);
 
     public FesEncoderv20() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -126,8 +125,8 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
     public XmlObject encode(final Object element, final Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
         XmlObject encodedObject = null;
-        if (element instanceof org.n52.sos.ogc.filter.FilterCapabilities) {
-            encodedObject = encodeFilterCapabilities((org.n52.sos.ogc.filter.FilterCapabilities) element);
+        if (element instanceof org.n52.iceland.ogc.filter.FilterCapabilities) {
+            encodedObject = encodeFilterCapabilities((org.n52.iceland.ogc.filter.FilterCapabilities) element);
             // LOGGER.debug("Encoded object {} is valid: {}",
             // encodedObject.schemaType().toString(),
             // XmlHelper.validateDocument(encodedObject));
@@ -213,14 +212,14 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
         return valueReferenceDoc;
     }
 
-    private XmlObject encodeFilterCapabilities(final org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps)
+    private XmlObject encodeFilterCapabilities(final org.n52.iceland.ogc.filter.FilterCapabilities sosFilterCaps)
             throws OwsExceptionReport {
         final FilterCapabilities filterCapabilities =
                 FilterCapabilities.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         if (sosFilterCaps.isSetCoinformance()) {
             setConformance(filterCapabilities.addNewConformance(), sosFilterCaps.getConformance());
-        } else {
-            setConformance(filterCapabilities.addNewConformance());
+//        } else {
+//            setConformance(filterCapabilities.addNewConformance());
         }
         if (sosFilterCaps.getComparisonOperators() != null && !sosFilterCaps.getComparisonOperators().isEmpty()) {
             setScalarFilterCapabilities(filterCapabilities.addNewScalarCapabilities(), sosFilterCaps);
@@ -256,93 +255,6 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
     }
 
     /**
-     * Sets the FES conformance classes in the filter capabilities section.
-     * 
-     * @param conformance
-     *            XML FES conformence
-     * @throws OwsExceptionReport
-     */
-    @Deprecated
-    private void setConformance(final ConformanceType conformance) throws OwsExceptionReport {
-        // set Query conformance class
-        final DomainType implQuery = conformance.addNewConstraint();
-        implQuery.setName(ConformanceClassConstraintNames.ImplementsQuery.name());
-        implQuery.addNewNoValues();
-        implQuery.addNewDefaultValue().setStringValue(FALSE);
-        // set Ad hoc query conformance class
-        final DomainType implAdHocQuery = conformance.addNewConstraint();
-        implAdHocQuery.setName(ConformanceClassConstraintNames.ImplementsAdHocQuery.name());
-        implAdHocQuery.addNewNoValues();
-        implAdHocQuery.addNewDefaultValue().setStringValue(FALSE);
-        // set Functions conformance class
-        final DomainType implFunctions = conformance.addNewConstraint();
-        implFunctions.setName(ConformanceClassConstraintNames.ImplementsFunctions.name());
-        implFunctions.addNewNoValues();
-        implFunctions.addNewDefaultValue().setStringValue(FALSE);
-        // set Resource Identification conformance class
-        final DomainType implResourceId = conformance.addNewConstraint();
-        implResourceId.setName(ConformanceClassConstraintNames.ImplementsResourceld.name());
-        implResourceId.addNewNoValues();
-        implResourceId.addNewDefaultValue().setStringValue(FALSE);
-        // set Minimum Standard Filter conformance class
-        final DomainType implMinStandardFilter = conformance.addNewConstraint();
-        implMinStandardFilter.setName(ConformanceClassConstraintNames.ImplementsMinStandardFilter.name());
-        implMinStandardFilter.addNewNoValues();
-        implMinStandardFilter.addNewDefaultValue().setStringValue(FALSE);
-        // set Standard Filter conformance class
-        final DomainType implStandardFilter = conformance.addNewConstraint();
-        implStandardFilter.setName(ConformanceClassConstraintNames.ImplementsStandardFilter.name());
-        implStandardFilter.addNewNoValues();
-        implStandardFilter.addNewDefaultValue().setStringValue(FALSE);
-        // set Minimum Spatial Filter conformance class
-        final DomainType implMinSpatialFilter = conformance.addNewConstraint();
-        implMinSpatialFilter.setName(ConformanceClassConstraintNames.ImplementsMinSpatialFilter.name());
-        implMinSpatialFilter.addNewNoValues();
-        implMinSpatialFilter.addNewDefaultValue().setStringValue(TRUE);
-        // set Spatial Filter conformance class
-        final DomainType implSpatialFilter = conformance.addNewConstraint();
-        implSpatialFilter.setName(ConformanceClassConstraintNames.ImplementsSpatialFilter.name());
-        implSpatialFilter.addNewNoValues();
-        implSpatialFilter.addNewDefaultValue().setStringValue(TRUE);
-        // set Minimum Temporal Filter conformance class
-        final DomainType implMinTemporalFilter = conformance.addNewConstraint();
-        implMinTemporalFilter.setName(ConformanceClassConstraintNames.ImplementsMinTemporalFilter.name());
-        implMinTemporalFilter.addNewNoValues();
-        implMinTemporalFilter.addNewDefaultValue().setStringValue(TRUE);
-        // set Temporal Filter conformance class
-        final DomainType implTemporalFilter = conformance.addNewConstraint();
-        implTemporalFilter.setName(ConformanceClassConstraintNames.ImplementsTemporalFilter.name());
-        implTemporalFilter.addNewNoValues();
-        implTemporalFilter.addNewDefaultValue().setStringValue(TRUE);
-        // set Version navigation conformance class
-        final DomainType implVersionNav = conformance.addNewConstraint();
-        implVersionNav.setName(ConformanceClassConstraintNames.ImplementsVersionNav.name());
-        implVersionNav.addNewNoValues();
-        implVersionNav.addNewDefaultValue().setStringValue(FALSE);
-        // set Sorting conformance class
-        final DomainType implSorting = conformance.addNewConstraint();
-        implSorting.setName(ConformanceClassConstraintNames.ImplementsSorting.name());
-        implSorting.addNewNoValues();
-        implSorting.addNewDefaultValue().setStringValue(FALSE);
-        // set Extended Operators conformance class
-        final DomainType implExtendedOperators = conformance.addNewConstraint();
-        implExtendedOperators.setName(ConformanceClassConstraintNames.ImplementsExtendedOperators.name());
-        implExtendedOperators.addNewNoValues();
-        implExtendedOperators.addNewDefaultValue().setStringValue(FALSE);
-        // set Minimum XPath conformance class
-        final DomainType implMinimumXPath = conformance.addNewConstraint();
-        implMinimumXPath.setName(ConformanceClassConstraintNames.ImplementsMinimumXPath.name());
-        implMinimumXPath.addNewNoValues();
-        implMinimumXPath.addNewDefaultValue().setStringValue(FALSE);
-        // set Schema Element Function conformance class
-        final DomainType implSchemaElementFunc = conformance.addNewConstraint();
-        implSchemaElementFunc.setName(ConformanceClassConstraintNames.ImplementsSchemaElementFunc.name());
-        implSchemaElementFunc.addNewNoValues();
-        implSchemaElementFunc.addNewDefaultValue().setStringValue(FALSE);
-
-    }
-
-    /**
      * Sets the SpatialFilterCapabilities.
      * 
      * !!! Modify method addicted to your implementation !!!
@@ -353,7 +265,7 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
      *            SOS spatial filter information
      */
     private void setSpatialFilterCapabilities(final SpatialCapabilitiesType spatialCapabilitiesType,
-            final org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps) throws UnsupportedEncoderInputException {
+            final org.n52.iceland.ogc.filter.FilterCapabilities sosFilterCaps) throws UnsupportedEncoderInputException {
 
         // set GeometryOperands
         if (sosFilterCaps.getSpatialOperands() != null && !sosFilterCaps.getSpatialOperands().isEmpty()) {
@@ -389,7 +301,7 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
      *            SOS temporal filter information
      */
     private void setTemporalFilterCapabilities(final TemporalCapabilitiesType temporalCapabilitiesType,
-            final org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps) throws UnsupportedEncoderInputException {
+            final org.n52.iceland.ogc.filter.FilterCapabilities sosFilterCaps) throws UnsupportedEncoderInputException {
 
         // set TemporalOperands
         if (sosFilterCaps.getTemporalOperands() != null && !sosFilterCaps.getTemporalOperands().isEmpty()) {
@@ -425,7 +337,7 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
      *            SOS scalar filter information
      */
     private void setScalarFilterCapabilities(final ScalarCapabilitiesType scalarCapabilitiesType,
-            final org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps) throws UnsupportedEncoderInputException {
+            final org.n52.iceland.ogc.filter.FilterCapabilities sosFilterCaps) throws UnsupportedEncoderInputException {
 
         if (sosFilterCaps.getComparisonOperators() != null && !sosFilterCaps.getComparisonOperators().isEmpty()) {
             final ComparisonOperatorsType scalarOps = scalarCapabilitiesType.addNewComparisonOperators();

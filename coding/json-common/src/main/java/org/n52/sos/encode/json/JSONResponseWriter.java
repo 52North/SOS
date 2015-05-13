@@ -31,11 +31,11 @@ package org.n52.sos.encode.json;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.n52.sos.util.JSONUtils;
+import org.n52.iceland.encode.ResponseProxy;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.iceland.util.http.MediaType;
+import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.encode.AbstractResponseWriter;
-import org.n52.sos.encode.ResponseProxy;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

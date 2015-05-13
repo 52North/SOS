@@ -28,6 +28,8 @@
  */
 package org.n52.sos.encode;
 
+import org.n52.iceland.encode.ResponseWriterFactory;
+
 /**
  * {@link ResponseWriterFactory} implementation for {@link SoapChain} and
  * {@link SoapChainResponseWriter}

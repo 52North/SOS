@@ -30,9 +30,9 @@ package org.n52.sos.decode.xml.stream.ogc.ows;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.decode.xml.stream.XmlReader;
-import org.n52.sos.ogc.gml.CodeType;
 
 /**
  * TODO JavaDoc

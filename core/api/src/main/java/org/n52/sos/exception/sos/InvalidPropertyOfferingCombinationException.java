@@ -28,7 +28,10 @@
  */
 package org.n52.sos.exception.sos;
 
-import static org.n52.sos.util.http.HTTPStatus.BAD_REQUEST;
+import static org.n52.iceland.util.http.HTTPStatus.BAD_REQUEST;
+
+import org.n52.iceland.exception.sos.CodedSosException;
+import org.n52.iceland.exception.sos.SosExceptionCode;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

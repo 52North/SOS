@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ogc.swe;
 
-import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
+import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.iceland.ogc.swe.simpleType.SweAbstractUomType;
 
 /**
  * SOS internal representation of SWE coordinates

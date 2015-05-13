@@ -29,12 +29,11 @@
 package org.n52.sos.ds.hibernate.dao.i18n;
 
 import org.hibernate.Session;
-
+import org.n52.iceland.i18n.LocalizedString;
+import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NProcedureMetadata;
-import org.n52.sos.i18n.LocalizedString;
-import org.n52.sos.i18n.metadata.I18NProcedureMetadata;
 
 import com.google.common.base.Optional;
 

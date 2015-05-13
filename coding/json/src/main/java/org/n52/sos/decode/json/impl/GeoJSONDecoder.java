@@ -45,12 +45,12 @@ import static org.n52.sos.coding.json.JSONConstants.POLYGON;
 import static org.n52.sos.coding.json.JSONConstants.PROPERTIES;
 import static org.n52.sos.coding.json.JSONConstants.TYPE;
 
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.Constants;
 import org.n52.sos.coding.json.GeoJSONException;
 import org.n52.sos.coding.json.JSONValidator;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.JSONDecoder;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.Constants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vividsolutions.jts.geom.Coordinate;

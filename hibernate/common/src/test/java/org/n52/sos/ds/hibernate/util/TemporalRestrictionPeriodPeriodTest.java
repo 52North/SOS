@@ -50,6 +50,8 @@ import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.AfterRestriction;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.BeforeRestriction;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.BeginsRestriction;
@@ -64,8 +66,6 @@ import org.n52.sos.ds.hibernate.util.TemporalRestriction.OverlappedByRestriction
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.OverlapsRestriction;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.TEqualsRestriction;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * TODO JavaDoc

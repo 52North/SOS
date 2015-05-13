@@ -40,42 +40,42 @@ import java.util.RandomAccess;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.decode.Decoder;
-import org.n52.sos.ds.FeatureQuerySettingsProvider;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.exception.ows.concrete.DateTimeParseException;
-import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
-import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.sos.ogc.filter.FilterConstants.TimeOperator2;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swes.SwesExtension;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.service.ServiceConstants;
-import org.n52.sos.util.Constants;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.JTSHelper;
+import org.n52.iceland.config.annotation.Configurable;
+import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.ds.FeatureQuerySettingsProvider;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
+import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
+import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
+import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator2;
+import org.n52.iceland.ogc.filter.SpatialFilter;
+import org.n52.iceland.ogc.filter.TemporalFilter;
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.OWSConstants;
+import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
+import org.n52.iceland.ogc.swe.simpleType.SweText;
+import org.n52.iceland.ogc.swes.SwesExtension;
+import org.n52.iceland.ogc.swes.SwesExtensionImpl;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.service.ServiceConstants;
+import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.DateTimeHelper;
+import org.n52.iceland.util.JTSHelper;
+import org.n52.iceland.util.Validation;
 import org.n52.sos.util.KvpHelper;
 import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -308,8 +308,8 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
         String[] times = parameterValue.split("/");
         if (times.length == 1) {
             TimeInstant ti = new TimeInstant();
-            if (SosIndeterminateTime.contains(times[0])) {
-                ti.setSosIndeterminateTime(SosIndeterminateTime.getEnumForString(times[0]));
+            if (ExtendedIndeterminateTime.contains(times[0])) {
+                ti.setSosIndeterminateTime(ExtendedIndeterminateTime.getEnumForString(times[0]));
             } else {
                 DateTime instant = DateTimeHelper.parseIsoString2DateTime(times[0]);
                 ti.setValue(instant);
@@ -380,8 +380,8 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
         String[] times = value.split("/");
         if (times.length == 1 && !temporalFilter.getOperator().equals(TimeOperator.TM_During)) {
             TimeInstant ti = new TimeInstant();
-            if (SosIndeterminateTime.contains(times[0])) {
-                ti.setSosIndeterminateTime(SosIndeterminateTime.getEnumForString(times[0]));
+            if (ExtendedIndeterminateTime.contains(times[0])) {
+                ti.setSosIndeterminateTime(ExtendedIndeterminateTime.getEnumForString(times[0]));
             } else {
                 DateTime instant = DateTimeHelper.parseIsoString2DateTime(times[0]);
                 ti.setValue(instant);

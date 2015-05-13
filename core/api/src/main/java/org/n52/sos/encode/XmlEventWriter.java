@@ -32,15 +32,13 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 
-import org.n52.sos.util.Constants;
+import org.n52.iceland.util.Constants;
 
-import com.google.common.base.StandardSystemProperty;
 import com.google.common.xml.XmlEscapers;
 
 /**

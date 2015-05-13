@@ -30,7 +30,8 @@ package org.n52.sos.util;
 
 import javax.servlet.ServletContext;
 
-import org.n52.sos.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.util.AbstractServletContextPropertyFileHandler;
 
 /**
  * @since 4.0.0

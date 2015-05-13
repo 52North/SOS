@@ -32,8 +32,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.sos.util.http.MediaType;
+import org.n52.iceland.encode.ResponseProxy;
+import org.n52.iceland.util.XmlOptionsHelper;
+import org.n52.iceland.util.http.MediaType;
 
 /**
  * TODO JavaDoc

@@ -28,9 +28,11 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.*;
+import org.n52.iceland.util.StringHelper;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingValues;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingValuesTime;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime;
-import org.n52.sos.util.StringHelper;
 
 public class EReportingObservationTime extends SeriesObservationTime implements EReportingValuesTime {
 

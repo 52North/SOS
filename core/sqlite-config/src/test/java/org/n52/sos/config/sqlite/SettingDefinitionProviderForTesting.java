@@ -30,16 +30,16 @@ package org.n52.sos.config.sqlite;
 
 import java.util.Set;
 
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingDefinitionProvider;
-import org.n52.sos.config.settings.BooleanSettingDefinition;
-import org.n52.sos.config.settings.ChoiceSettingDefinition;
-import org.n52.sos.config.settings.FileSettingDefinition;
-import org.n52.sos.config.settings.IntegerSettingDefinition;
-import org.n52.sos.config.settings.MultilingualStringSettingDefinition;
-import org.n52.sos.config.settings.NumericSettingDefinition;
-import org.n52.sos.config.settings.StringSettingDefinition;
-import org.n52.sos.config.settings.UriSettingDefinition;
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingDefinitionProvider;
+import org.n52.iceland.config.settings.BooleanSettingDefinition;
+import org.n52.iceland.config.settings.ChoiceSettingDefinition;
+import org.n52.iceland.config.settings.FileSettingDefinition;
+import org.n52.iceland.config.settings.IntegerSettingDefinition;
+import org.n52.iceland.config.settings.MultilingualStringSettingDefinition;
+import org.n52.iceland.config.settings.NumericSettingDefinition;
+import org.n52.iceland.config.settings.StringSettingDefinition;
+import org.n52.iceland.config.settings.UriSettingDefinition;
 
 import com.google.common.collect.Sets;
 

@@ -28,8 +28,8 @@
  */
 package org.n52.sos.web.admin;
 
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.Configurator;
 import org.n52.sos.web.AbstractController;
 
 /**

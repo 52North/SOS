@@ -31,18 +31,17 @@ package org.n52.sos.ds.hibernate.dao;
 import java.util.List;
 
 import org.hibernate.Session;
-
-import org.n52.sos.ds.I18NDAO;
+import org.n52.iceland.ds.I18NDAO;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
+import org.n52.iceland.ogc.OGCConstants;
+import org.n52.iceland.ogc.gml.AbstractGML;
+import org.n52.iceland.ogc.gml.CodeType;
+import org.n52.iceland.ogc.gml.CodeWithAuthority;
+import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
-import org.n52.sos.i18n.I18NDAORepository;
-import org.n52.sos.i18n.metadata.I18NFeatureMetadata;
-import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.gml.AbstractGML;
-import org.n52.sos.ogc.gml.CodeType;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 
 public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
 

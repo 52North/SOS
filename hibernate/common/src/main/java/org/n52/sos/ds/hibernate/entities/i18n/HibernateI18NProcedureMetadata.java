@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.entities.i18n;
 
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.util.StringHelper;
 
 /**
  * Implementation of {@link AbstractHibernateI18NMetadata} for {@link Procedure}

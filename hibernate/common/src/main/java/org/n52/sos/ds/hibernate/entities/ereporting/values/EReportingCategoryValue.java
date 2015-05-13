@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting.values;
 
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.interfaces.CategoryValue;
-import org.n52.sos.util.StringHelper;
 
 public class EReportingCategoryValue extends EReportingValue implements CategoryValue {
 

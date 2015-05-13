@@ -28,7 +28,7 @@
  */
 package org.n52.sos.util.builder;
 
-import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.sos.response.InsertResultTemplateResponse;
 
 /**

@@ -44,8 +44,8 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBTimestampDialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+import org.n52.iceland.exception.ConfigurationException;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
-import org.n52.sos.exception.ConfigurationException;
 
 import com.google.common.base.Joiner;
 

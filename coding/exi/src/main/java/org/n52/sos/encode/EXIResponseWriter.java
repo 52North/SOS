@@ -33,11 +33,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.n52.iceland.encode.ResponseProxy;
+import org.n52.iceland.util.XmlOptionsHelper;
+import org.n52.iceland.util.http.MediaType;
+import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.exi.EXIObject;
 import org.n52.sos.exi.EXISettings;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
 import org.n52.sos.utils.EXIUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

@@ -28,23 +28,23 @@
  */
 package org.n52.sos.ds;
 
-import org.n52.sos.exception.ows.concrete.InvalidAcceptVersionsParameterException;
-import org.n52.sos.exception.ows.concrete.InvalidServiceOrVersionException;
-import org.n52.sos.exception.ows.concrete.InvalidServiceParameterException;
-import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
-import org.n52.sos.exception.ows.concrete.VersionNotSupportedException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsOperation;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.AbstractServiceRequest;
+import org.n52.iceland.exception.ows.concrete.InvalidAcceptVersionsParameterException;
+import org.n52.iceland.exception.ows.concrete.InvalidServiceOrVersionException;
+import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
+import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
+import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
+import org.n52.iceland.exception.ows.concrete.VersionNotSupportedException;
+import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsOperation;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.iceland.service.operator.ServiceOperator;
+import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.sos.request.BatchRequest;
-import org.n52.sos.request.GetCapabilitiesRequest;
 import org.n52.sos.response.BatchResponse;
-import org.n52.sos.service.operator.ServiceOperator;
-import org.n52.sos.service.operator.ServiceOperatorKey;
-import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.util.BatchConstants;
 
 /**

@@ -28,7 +28,7 @@
  */
 package org.n52.sos.cache;
 
-import static org.n52.sos.util.MultiMaps.newSynchronizedSetMultiMap;
+import static org.n52.iceland.util.MultiMaps.newSynchronizedSetMultiMap;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -40,12 +40,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-import org.n52.sos.i18n.MultilingualString;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.Constants;
-import org.n52.sos.util.SetMultiMap;
+import org.n52.iceland.i18n.MultilingualString;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.sos.SosEnvelope;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.SetMultiMap;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.BiMap;

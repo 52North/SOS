@@ -28,18 +28,18 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
+import static org.n52.iceland.ogc.sos.SosConstants.SOS;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.CONFORMANCE_CLASSES;
-import static org.n52.sos.ogc.sos.SosConstants.SOS;
 
 import java.util.Set;
 
-import org.n52.sos.event.SosEventBus;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.iceland.event.ServiceEventBus;
+import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.request.operator.RequestOperator;
+import org.n52.iceland.service.Configurator;
 import org.n52.sos.request.operator.AbstractTransactionalRequestOperator;
-import org.n52.sos.request.operator.RequestOperator;
-import org.n52.sos.service.Configurator;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -60,7 +60,7 @@ public class DeleteObservationRequestOperator
     @Override
     public DeleteObservationResponse receive(DeleteObservationRequest request) throws OwsExceptionReport {
         DeleteObservationResponse response = getDao().deleteObservation(request);
-        SosEventBus.fire(new DeleteObservationEvent(request, response));
+        ServiceEventBus.fire(new DeleteObservationEvent(request, response));
         return response;
     }
 

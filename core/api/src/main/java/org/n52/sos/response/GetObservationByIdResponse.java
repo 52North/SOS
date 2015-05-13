@@ -28,7 +28,7 @@
  */
 package org.n52.sos.response;
 
-import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.sos.SosConstants;
 
 /**
  * @since 4.0.0

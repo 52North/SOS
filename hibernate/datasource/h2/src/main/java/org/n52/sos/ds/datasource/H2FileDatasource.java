@@ -41,11 +41,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.settings.StringSettingDefinition;
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.settings.StringSettingDefinition;
+import org.n52.iceland.exception.ConfigurationException;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
-import org.n52.sos.exception.ConfigurationException;
 
 import com.google.common.collect.Sets;
 

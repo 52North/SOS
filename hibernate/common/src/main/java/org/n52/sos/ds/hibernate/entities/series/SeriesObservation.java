@@ -32,13 +32,12 @@ import java.io.Serializable;
 
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterestGetter;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservablePropertyGetter;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureGetter;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.series.HibernateSeriesRelations.HasSeries;
-
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterestGetter;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureGetter;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservablePropertyGetter;
 
 /**
  * Hibernate series observation entity

@@ -31,14 +31,14 @@ package org.n52.sos.ds.hibernate.cache.base;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
-import org.n52.sos.exception.ows.concrete.GenericThrowableWrapperException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

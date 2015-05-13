@@ -32,7 +32,7 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
-import org.n52.sos.encode.ProcedureDescriptionFormatKey;
+import org.n52.iceland.encode.ProcedureDescriptionFormatKey;
 
 /**
  * TODO JavaDoc

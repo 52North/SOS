@@ -34,13 +34,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.JSONException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.JSONException;
 
 /**
  * TODO JavaDoc

@@ -33,8 +33,10 @@ import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.n52.sos.ogc.ows.MergableExtension;
-import org.n52.sos.util.CollectionHelper;
+import org.n52.iceland.ogc.ows.MergableExtension;
+import org.n52.iceland.ogc.sos.CapabilitiesExtension;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.util.CollectionHelper;
 
 /**
  * @since 4.0.0

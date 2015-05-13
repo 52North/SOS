@@ -34,7 +34,8 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.Constants;
 
 import com.google.common.base.Joiner;
 import com.vividsolutions.jts.geom.Geometry;

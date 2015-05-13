@@ -31,7 +31,8 @@ package org.n52.sos.profile;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.n52.sos.service.profile.Profile;
+import org.n52.iceland.service.profile.Profile;
+
 import org.x52North.sensorweb.sos.profile.DefaultObservationTypesForEncodingDocument.DefaultObservationTypesForEncoding;
 import org.x52North.sensorweb.sos.profile.EncodeProcedureDocument.EncodeProcedure;
 import org.x52North.sensorweb.sos.profile.NoDataPlaceholderDocument.NoDataPlaceholder;

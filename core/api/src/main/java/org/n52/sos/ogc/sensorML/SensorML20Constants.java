@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ogc.sensorML;
 
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.w3c.SchemaLocation;
+import org.n52.iceland.util.http.MediaType;
+import org.n52.iceland.w3c.SchemaLocation;
 
 /**
  * OGC SensorML 2.0 constants

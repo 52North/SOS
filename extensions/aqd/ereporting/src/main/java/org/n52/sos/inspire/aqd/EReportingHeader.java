@@ -32,11 +32,11 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.aqd.AbstractEReportingHeader;
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Nillable;
 import org.n52.sos.util.Referenceable;
 

@@ -32,7 +32,7 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
-import org.n52.sos.encode.ResponseFormatKey;
+import org.n52.iceland.encode.ResponseFormatKey;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

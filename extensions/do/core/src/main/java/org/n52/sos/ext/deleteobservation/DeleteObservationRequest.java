@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.AbstractServiceRequest;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.request.AbstractServiceRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

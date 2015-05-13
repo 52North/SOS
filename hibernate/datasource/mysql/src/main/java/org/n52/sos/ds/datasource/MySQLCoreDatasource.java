@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
-import org.n52.sos.config.SettingDefinition;
+import org.n52.iceland.config.SettingDefinition;
 
 import com.google.common.collect.ImmutableSet;
 

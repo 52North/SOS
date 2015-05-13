@@ -31,20 +31,20 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
+import org.n52.iceland.event.ServiceEventBus;
+import org.n52.iceland.exception.ows.OptionNotSupportedException;
+import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosProcedureDescription;
+import org.n52.iceland.service.Configurator;
 import org.n52.sos.ds.AbstractUpdateSensorDescriptionDAO;
-import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.SensorModification;
-import org.n52.sos.exception.ows.OptionNotSupportedException;
 import org.n52.sos.exception.ows.concrete.InvalidProcedureParameterException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.UpdateSensorRequest;
 import org.n52.sos.response.UpdateSensorResponse;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 
@@ -68,7 +68,7 @@ public class SosUpdateSensorDescriptionOperatorV20 extends
     @Override
     public UpdateSensorResponse receive(UpdateSensorRequest request) throws OwsExceptionReport {
         UpdateSensorResponse response = getDao().updateSensorDescription(request);
-        SosEventBus.fire(new SensorModification(request, response));
+        ServiceEventBus.fire(new SensorModification(request, response));
         return response;
     }
 

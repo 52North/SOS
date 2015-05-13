@@ -30,18 +30,18 @@ package org.n52.sos.decode.json.impl;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.coding.CodingRepository;
+import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.decode.XmlNamespaceDecoderKey;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
-import org.n52.sos.decode.Decoder;
-import org.n52.sos.decode.XmlNamespaceDecoderKey;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.UpdateSensorRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;

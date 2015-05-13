@@ -35,22 +35,22 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.n52.iceland.binding.SimpleBinding;
+import org.n52.iceland.coding.OperationKey;
+import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.exception.HTTPException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.concrete.NoDecoderForKeyException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.iceland.util.http.MediaType;
+import org.n52.iceland.util.http.MediaTypes;
+import org.n52.sos.coding.json.JSONConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.n52.sos.coding.OperationKey;
-import org.n52.sos.coding.json.JSONConstants;
-import org.n52.sos.decode.Decoder;
-import org.n52.sos.decode.OperationDecoderKey;
-import org.n52.sos.exception.HTTPException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.NoDecoderForKeyException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.response.AbstractServiceResponse;
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

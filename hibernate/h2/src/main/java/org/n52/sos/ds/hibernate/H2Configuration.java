@@ -51,14 +51,14 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.jdbc.Work;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.ds.Datasource;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.service.ServiceContextListener;
 import org.n52.sos.cache.ctrl.ScheduledContentCacheControllerSettings;
 import org.n52.sos.config.sqlite.SQLiteSessionFactory;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.ds.Datasource;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.service.SosContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -313,7 +313,7 @@ public class H2Configuration {
         setTempDir(File.createTempFile("hibernate-test-case", ""));
         getTempDir().delete();
         FileUtils.forceMkdir(getTempDir());
-        SosContextListener.setPath(getTempDir().getAbsolutePath());
+        ServiceContextListener.setPath(getTempDir().getAbsolutePath());
     }
 
     private void createConfigurator() throws ConfigurationException {

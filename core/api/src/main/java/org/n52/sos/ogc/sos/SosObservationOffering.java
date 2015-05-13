@@ -40,11 +40,13 @@ import java.util.TreeSet;
 
 import javax.xml.namespace.QName;
 
-import org.n52.sos.ogc.gml.time.Time;
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.ogc.sos.SosEnvelope;
+import org.n52.iceland.ogc.sos.SosOffering;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.QNameComparator;
 import org.n52.sos.ogc.swes.AbstractSWES;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.Constants;
-import org.n52.sos.util.QNameComparator;
 
 /**
  * Class which represents a ObservationOffering. Used in the SosCapabilities.

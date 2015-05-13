@@ -28,8 +28,6 @@
  */
 package org.n52.sos.cache.ctrl.persistence;
 
-import org.n52.sos.cache.ContentCachePersistenceStrategy;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -38,12 +36,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.n52.iceland.cache.ContentCache;
+import org.n52.iceland.cache.ContentCachePersistenceStrategy;
+import org.n52.iceland.cache.WritableContentCache;
+import org.n52.iceland.service.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.service.Configurator;
 
 import com.google.common.base.Optional;
 

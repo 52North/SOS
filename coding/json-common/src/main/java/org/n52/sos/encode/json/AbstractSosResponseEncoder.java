@@ -28,14 +28,14 @@
  */
 package org.n52.sos.encode.json;
 
+import org.n52.iceland.encode.OperationEncoderKey;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.encode.OperationEncoderKey;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.response.AbstractServiceResponse;
-import org.n52.sos.util.http.MediaTypes;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

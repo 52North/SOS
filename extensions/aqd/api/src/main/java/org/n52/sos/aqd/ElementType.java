@@ -28,9 +28,9 @@
  */
 package org.n52.sos.aqd;
 
+import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.aqd.AqdConstants.PrimaryObservation;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.util.StringHelper;
 
 public class ElementType {
     

@@ -35,7 +35,8 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
-
+import org.n52.iceland.ogc.om.values.BooleanValue;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
@@ -56,8 +57,6 @@ import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesBooleanObservation;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.google.common.collect.Sets;
 

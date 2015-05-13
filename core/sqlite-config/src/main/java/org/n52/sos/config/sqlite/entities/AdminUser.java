@@ -30,9 +30,12 @@ package org.n52.sos.config.sqlite.entities;
 
 import java.io.Serializable;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
-import org.n52.sos.config.AdministratorUser;
+import org.n52.iceland.config.AdministratorUser;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

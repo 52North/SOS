@@ -35,44 +35,43 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.convert.RequestResponseModifier;
-import org.n52.sos.convert.RequestResponseModifierRepository;
-import org.n52.sos.ds.OperationDAO;
-import org.n52.sos.ds.OperationDAORepository;
-import org.n52.sos.event.SosEventBus;
-import org.n52.sos.event.events.RequestEvent;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.exception.ows.OperationNotSupportedException;
-import org.n52.sos.exception.ows.VersionNegotiationFailedException;
-import org.n52.sos.exception.ows.concrete.InvalidServiceParameterException;
+import org.n52.iceland.cache.ContentCache;
+import org.n52.iceland.convert.RequestResponseModifier;
+import org.n52.iceland.convert.RequestResponseModifierRepository;
+import org.n52.iceland.ds.OperationDAO;
+import org.n52.iceland.ds.OperationDAORepository;
+import org.n52.iceland.event.ServiceEventBus;
+import org.n52.iceland.event.events.RequestEvent;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.iceland.exception.ows.OperationNotSupportedException;
+import org.n52.iceland.exception.ows.VersionNegotiationFailedException;
+import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
+import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
+import org.n52.iceland.exception.ows.concrete.MissingValueReferenceException;
+import org.n52.iceland.ogc.filter.SpatialFilter;
+import org.n52.iceland.ogc.filter.TemporalFilter;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.OWSConstants;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsOperation;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.swes.SwesExtensions;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.request.operator.RequestOperator;
+import org.n52.iceland.request.operator.RequestOperatorKey;
+import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.service.operator.ServiceOperatorRepository;
+import org.n52.iceland.service.profile.Profile;
+import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.exception.ows.concrete.InvalidValueReferenceException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
-import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.sos.exception.ows.concrete.MissingValueReferenceException;
-import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsOperation;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.response.AbstractObservationResponse;
-import org.n52.sos.response.AbstractServiceResponse;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.service.operator.ServiceOperatorRepository;
-import org.n52.sos.service.profile.Profile;
-import org.n52.sos.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -158,7 +157,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
     @Override
     public AbstractServiceResponse receiveRequest(final AbstractServiceRequest<?> abstractRequest)
             throws OwsExceptionReport {
-        SosEventBus.fire(new RequestEvent(abstractRequest));
+        ServiceEventBus.fire(new RequestEvent(abstractRequest));
         if (requestType.isAssignableFrom(abstractRequest.getClass())) {
             Q request = requestType.cast(abstractRequest);
             checkForModifierAndProcess(request);
@@ -278,13 +277,13 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
                 }
             }
             if (validVersions.isEmpty()) {
-                throw new VersionNegotiationFailedException().at(SosConstants.GetCapabilitiesParams.AcceptVersions)
+                throw new VersionNegotiationFailedException().at(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions)
                         .withMessage("The parameter '%s' does not contain a supported Service version!",
-                                SosConstants.GetCapabilitiesParams.AcceptVersions.name());
+                                org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions.name());
             }
             return validVersions;
         } else {
-            throw new MissingParameterValueException(SosConstants.GetCapabilitiesParams.AcceptVersions);
+            throw new MissingParameterValueException(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions);
         }
     }
 
@@ -333,7 +332,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
             final String[] versionsArray = versionsString.split(",");
             checkAcceptedVersionsParameter(service, Arrays.asList(versionsArray));
         } else {
-            throw new MissingParameterValueException(SosConstants.GetCapabilitiesParams.AcceptVersions);
+            throw new MissingParameterValueException(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions);
         }
     }
 

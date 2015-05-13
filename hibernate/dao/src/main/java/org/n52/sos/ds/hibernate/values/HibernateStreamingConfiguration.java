@@ -28,9 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.config.annotation.Configurable;
+import org.n52.iceland.config.annotation.Setting;
 
 /**
  * Configuration class for Hibernate streaming settings

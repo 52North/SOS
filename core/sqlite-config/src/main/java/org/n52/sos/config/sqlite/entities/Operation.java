@@ -30,7 +30,7 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.sos.request.operator.RequestOperatorKey;
+import org.n52.iceland.request.operator.RequestOperatorKey;
 
 /**
  * TODO JavaDoc

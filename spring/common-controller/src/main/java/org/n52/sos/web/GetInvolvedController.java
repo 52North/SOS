@@ -30,10 +30,10 @@ package org.n52.sos.web;
 
 import java.net.URI;
 
-import org.n52.sos.config.SettingValue;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.service.ServiceSettings;
+import org.n52.iceland.config.SettingValue;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.service.ServiceSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;

@@ -28,9 +28,9 @@
  */
 package org.n52.sos.encode.json.impl;
 
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.response.BatchResponse;
 import org.n52.sos.response.BatchResponse.ExceptionOrResponse;
 import org.n52.sos.util.BatchConstants;

@@ -32,20 +32,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.n52.iceland.binding.Binding;
+import org.n52.iceland.binding.BindingRepository;
+import org.n52.iceland.coding.OperationKey;
+import org.n52.iceland.exception.HTTPException;
+import org.n52.iceland.request.operator.RequestOperatorKey;
+import org.n52.iceland.request.operator.RequestOperatorRepository;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.util.http.HTTPMethods;
+import org.n52.iceland.util.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.n52.sos.binding.Binding;
-import org.n52.sos.binding.BindingRepository;
-import org.n52.sos.coding.OperationKey;
-import org.n52.sos.exception.HTTPException;
-import org.n52.sos.request.operator.RequestOperatorKey;
-import org.n52.sos.request.operator.RequestOperatorRepository;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.http.HTTPMethods;
-import org.n52.sos.util.http.MediaType;
 
 import com.google.common.base.Objects;
 

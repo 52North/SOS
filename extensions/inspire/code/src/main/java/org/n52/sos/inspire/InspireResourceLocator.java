@@ -31,9 +31,9 @@ package org.n52.sos.inspire;
 import java.util.Collection;
 import java.util.Set;
 
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.StringHelper;
-import org.n52.sos.util.http.MediaType;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.StringHelper;
+import org.n52.iceland.util.http.MediaType;
 
 import com.google.common.collect.Sets;
 

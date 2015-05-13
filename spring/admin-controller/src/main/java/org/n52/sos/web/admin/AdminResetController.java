@@ -28,6 +28,11 @@
  */
 package org.n52.sos.web.admin;
 
+import org.n52.iceland.cache.ContentCachePersistenceStrategy;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.service.Configurator;
+import org.n52.sos.web.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -35,12 +40,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
-
-import org.n52.sos.cache.ContentCachePersistenceStrategy;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.web.ControllerConstants;
 
 /**
  * @since 4.0.0

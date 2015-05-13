@@ -33,8 +33,8 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
-import org.n52.sos.service.DatabaseSettingsHandler;
-import org.n52.sos.util.JSONUtils;
+import org.n52.iceland.service.DatabaseSettingsHandler;
+import org.n52.iceland.util.JSONUtils;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 

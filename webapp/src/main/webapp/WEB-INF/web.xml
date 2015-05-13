@@ -36,9 +36,9 @@
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
-	<!-- SOS startup listener -->
+	<!-- Service startup listener -->
 	<listener>
-		<listener-class>org.n52.sos.service.SosContextListener</listener-class>
+		<listener-class>org.n52.iceland.service.ServiceContextListener</listener-class>
 	</listener>
 
 	<filter>
@@ -113,27 +113,27 @@
 	<!-- Admin servlet -->
 	<servlet>
 		<servlet-name>Admin</servlet-name>
-		<servlet-class>org.n52.sos.service.admin.SosAdminService</servlet-class>
+		<servlet-class>org.n52.iceland.service.admin.AdminService</servlet-class>
 	</servlet>
 
 	<!-- SOS servlet -->
 	<servlet>
-		<servlet-name>SOS</servlet-name>
-		<servlet-class>org.n52.sos.service.SosService</servlet-class>
+		<servlet-name>Service</servlet-name>
+		<servlet-class>org.n52.iceland.service.Service</servlet-class>
 	</servlet>
 
 	<!-- mappings of endpoints -->
 	<servlet-mapping>
 		<servlet-name>Admin</servlet-name>
-		<url-pattern>/admin</url-pattern>
+		<url-pattern>/adm</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>SOS</servlet-name>
+		<servlet-name>Service</servlet-name>
 		<url-pattern>/sos/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>SOS</servlet-name>
+		<servlet-name>Service</servlet-name>
 		<url-pattern>/service/*</url-pattern>
 	</servlet-mapping>
 

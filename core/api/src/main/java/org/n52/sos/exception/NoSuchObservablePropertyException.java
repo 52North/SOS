@@ -28,6 +28,8 @@
  */
 package org.n52.sos.exception;
 
+import org.n52.iceland.exception.NoSuchIdentifierException;
+
 /**
  * @author Christian Autermann <c.autermann@52north.org>
  */

@@ -28,9 +28,9 @@
  */
 package org.n52.sos.encode.exi.impl;
 
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.response.GetCapabilitiesResponse;
 import org.n52.sos.encode.exi.AbstractSosV2ResponseEncoder;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.response.GetCapabilitiesResponse;
 
 /**
  * Response encoder for {@link GetCapabilitiesResponse}

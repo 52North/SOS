@@ -40,10 +40,10 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
 
-import org.n52.sos.config.SettingType;
-import org.n52.sos.config.SettingValue;
-import org.n52.sos.i18n.LocalizedString;
-import org.n52.sos.i18n.MultilingualString;
+import org.n52.iceland.config.SettingType;
+import org.n52.iceland.config.SettingValue;
+import org.n52.iceland.i18n.LocalizedString;
+import org.n52.iceland.i18n.MultilingualString;
 
 import com.google.common.collect.Maps;
 

@@ -31,15 +31,20 @@ package org.n52.sos.encode;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.n52.iceland.encode.Encoder;
+import org.n52.iceland.encode.OperationEncoderKey;
+import org.n52.iceland.encode.ResponseProxy;
+import org.n52.iceland.encode.ResponseWriter;
+import org.n52.iceland.encode.ResponseWriterRepository;
+import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.request.ResponseFormat;
+import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.util.http.MediaType;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.StreamingEncoder;
-import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.ResponseFormat;
-import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.response.StreamingDataResponse;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.http.MediaType;
 
 /**
  * {@link ResponseWriter} for {@link AbstractServiceResponse}

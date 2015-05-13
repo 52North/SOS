@@ -33,6 +33,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.n52.iceland.binding.Binding;
+import org.n52.iceland.binding.BindingRepository;
+import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.exception.HTTPException;
+import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.util.ServiceLoaderHelper;
+import org.n52.iceland.util.http.MediaTypes;
+import org.n52.sos.ds.ProcedureFormatDAO;
+import org.n52.sos.web.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -43,20 +56,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.n52.sos.binding.Binding;
-import org.n52.sos.binding.BindingRepository;
-import org.n52.sos.decode.OperationDecoderKey;
-import org.n52.sos.ds.ProcedureFormatDAO;
-import org.n52.sos.exception.HTTPException;
-import org.n52.sos.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.ServiceLoaderHelper;
-import org.n52.sos.util.http.MediaTypes;
-import org.n52.sos.web.ControllerConstants;
 
 import com.google.common.collect.Lists;
 

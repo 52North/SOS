@@ -34,7 +34,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
+import org.n52.iceland.ogc.swes.SwesExtensionImpl;
 
 /**
  * @param <K> the key type

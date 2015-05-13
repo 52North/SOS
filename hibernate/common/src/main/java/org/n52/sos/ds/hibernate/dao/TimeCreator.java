@@ -34,7 +34,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
 
 /**
  * Abstract class to create a time period object

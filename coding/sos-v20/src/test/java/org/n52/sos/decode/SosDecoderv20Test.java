@@ -38,9 +38,9 @@ import org.apache.xmlbeans.XmlException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.AbstractServiceCommunicationObject;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.service.AbstractServiceCommunicationObject;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

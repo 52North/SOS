@@ -34,7 +34,8 @@ import java.util.Properties;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.n52.sos.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.service.Configurator;
 
 /**
  * @since 4.0.0

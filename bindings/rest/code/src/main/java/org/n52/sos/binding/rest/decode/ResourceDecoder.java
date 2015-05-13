@@ -40,26 +40,27 @@ import java.util.RandomAccess;
 import javax.servlet.http.HttpServletRequest;
 
 import org.joda.time.DateTime;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.iceland.exception.ows.OperationNotSupportedException;
+import org.n52.iceland.exception.ows.concrete.DateTimeException;
+import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.iceland.ogc.filter.SpatialFilter;
+import org.n52.iceland.ogc.filter.TemporalFilter;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.util.DateTimeHelper;
+import org.n52.iceland.util.JTSHelper;
+import org.n52.iceland.util.http.HTTPMethods;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RestRequest;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.exception.ows.OperationNotSupportedException;
-import org.n52.sos.exception.ows.concrete.DateTimeException;
-import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
-import org.n52.sos.request.GetCapabilitiesRequest;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.http.HTTPMethods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,7 +135,7 @@ public abstract class ResourceDecoder extends RestDecoder {
     
     protected GetCapabilitiesRequest createGetCapabilitiesRequest()
     {
-        final GetCapabilitiesRequest getCapabilitiesRequest = new GetCapabilitiesRequest();
+        final GetCapabilitiesRequest getCapabilitiesRequest = new GetCapabilitiesRequest(SosConstants.SOS);
         getCapabilitiesRequest.setVersion(bindingConstants.getSosVersion());
         getCapabilitiesRequest.setService(bindingConstants.getSosService());
         final String[] acceptedVersions = { bindingConstants.getSosVersion() };
@@ -243,8 +244,8 @@ public abstract class ResourceDecoder extends RestDecoder {
 
     	if (times.length == 1) {
     		final TimeInstant ti = new TimeInstant();
-    		if (SosIndeterminateTime.contains(times[0])) {
-    		    ti.setSosIndeterminateTime(SosIndeterminateTime.getEnumForString(times[0]));
+    		if (ExtendedIndeterminateTime.contains(times[0])) {
+    		    ti.setSosIndeterminateTime(ExtendedIndeterminateTime.getEnumForString(times[0]));
     		} else {
     			final DateTime instant = DateTimeHelper.parseIsoString2DateTime(times[0]);
     			ti.setValue(instant);

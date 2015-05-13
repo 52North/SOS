@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.cache;
 
-import org.n52.sos.util.CompositeAction;
-import org.n52.sos.util.CompositeSerialAction;
+import org.n52.iceland.util.CompositeAction;
+import org.n52.iceland.util.CompositeSerialAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -29,22 +29,21 @@
 package org.n52.sos.web.admin.caps;
 
 import org.apache.xmlbeans.XmlException;
+import org.n52.iceland.cache.ContentCache;
+import org.n52.iceland.config.CapabilitiesExtensionManager;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.exception.NoSuchExtensionException;
+import org.n52.iceland.exception.NoSuchOfferingException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.Configurator;
+import org.n52.sos.web.AbstractController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.config.CapabilitiesExtensionManager;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.JSONException;
-import org.n52.sos.exception.NoSuchExtensionException;
-import org.n52.sos.exception.NoSuchOfferingException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.web.AbstractController;
 
 public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
     private static final Logger log = LoggerFactory.getLogger(AbstractAdminCapabiltiesAjaxEndpoint.class);

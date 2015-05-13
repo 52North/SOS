@@ -30,7 +30,7 @@ package org.n52.sos.util;
 
 import javax.xml.namespace.QName;
 
-import org.n52.sos.ogc.ows.OWSConstants;
+import org.n52.iceland.ogc.ows.OWSConstants;
 
 /**
  * Helper class for OGC OWS

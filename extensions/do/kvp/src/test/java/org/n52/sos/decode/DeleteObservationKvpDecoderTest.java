@@ -33,8 +33,8 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.n52.iceland.ogc.sos.SosConstants.SOS;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.PARAMETER_NAME;
-import static org.n52.sos.ogc.sos.SosConstants.SOS;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,11 +43,12 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.ext.deleteobservation.DeleteObservationConstants;
 import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.util.http.MediaTypes;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

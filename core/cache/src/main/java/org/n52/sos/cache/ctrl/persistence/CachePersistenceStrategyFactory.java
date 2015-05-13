@@ -28,8 +28,8 @@
  */
 package org.n52.sos.cache.ctrl.persistence;
 
-import org.n52.sos.cache.ContentCachePersistenceStrategy;
-import org.n52.sos.config.SettingsManager;
+import org.n52.iceland.cache.ContentCachePersistenceStrategy;
+import org.n52.iceland.config.SettingsManager;
 
 public class CachePersistenceStrategyFactory {
     private CachePersistenceStrategyFactory() {

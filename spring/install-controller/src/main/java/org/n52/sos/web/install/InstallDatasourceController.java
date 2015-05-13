@@ -33,16 +33,15 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingValue;
-import org.n52.sos.ds.Datasource;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.util.StringHelper;
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingValue;
+import org.n52.iceland.ds.Datasource;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.web.ControllerConstants;
 import org.n52.sos.web.install.InstallConstants.Step;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.common.collect.Maps;
 

@@ -33,7 +33,7 @@ import java.io.IOException;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.n52.sos.ds.ConnectionProviderException;
+import org.n52.iceland.ds.ConnectionProviderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

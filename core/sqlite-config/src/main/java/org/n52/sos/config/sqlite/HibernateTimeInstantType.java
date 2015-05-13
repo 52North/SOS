@@ -30,12 +30,12 @@ package org.n52.sos.config.sqlite;
 
 import org.hibernate.HibernateException;
 import org.hibernate.TypeMismatchException;
-import org.n52.sos.exception.ows.concrete.DateTimeParseException;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.util.Constants;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.StringHelper;
+import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.DateTimeHelper;
+import org.n52.iceland.util.StringHelper;
 
 public class HibernateTimeInstantType extends AbstractStringBasedHibernateUserType<Time> {
     

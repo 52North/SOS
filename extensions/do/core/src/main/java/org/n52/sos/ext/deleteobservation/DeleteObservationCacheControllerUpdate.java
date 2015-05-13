@@ -28,16 +28,16 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
-import static org.n52.sos.util.ConfiguringSingletonServiceLoader.loadAndConfigure;
+import static org.n52.iceland.util.ConfiguringSingletonServiceLoader.loadAndConfigure;
 
 import java.util.List;
 
-import org.n52.sos.cache.ContentCacheUpdate;
-import org.n52.sos.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.CollectionHelper;
+import org.n52.iceland.cache.ContentCacheUpdate;
+import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.CollectionHelper;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

@@ -33,12 +33,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.iceland.util.http.HTTPMethods;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.GetCapabilitiesRequest;
-import org.n52.sos.util.http.HTTPMethods;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

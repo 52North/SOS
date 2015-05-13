@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.gmlcov;
 
-import org.n52.sos.w3c.SchemaLocation;
+import org.n52.iceland.w3c.SchemaLocation;
 
 /**
  * Interface for GML coverage constants

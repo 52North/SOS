@@ -31,10 +31,10 @@ package org.n52.sos.ext.deleteobservation;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.event.SosEvent;
-import org.n52.sos.event.SosEventListener;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
+import org.n52.iceland.event.ServiceEvent;
+import org.n52.iceland.event.ServiceEventListener;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,19 +42,19 @@ import org.slf4j.LoggerFactory;
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 1.0.0
  */
-public class DeleteObservationContentModificationListener implements SosEventListener {
+public class DeleteObservationContentModificationListener implements ServiceEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeleteObservationContentModificationListener.class);
 
-    private static final Set<Class<? extends SosEvent>> TYPES = Collections
-            .<Class<? extends SosEvent>> singleton(DeleteObservationEvent.class);
+    private static final Set<Class<? extends ServiceEvent>> TYPES = Collections
+            .<Class<? extends ServiceEvent>> singleton(DeleteObservationEvent.class);
 
     @Override
-    public Set<Class<? extends SosEvent>> getTypes() {
+    public Set<Class<? extends ServiceEvent>> getTypes() {
         return Collections.unmodifiableSet(TYPES);
     }
 
     @Override
-    public void handle(SosEvent event) {
+    public void handle(ServiceEvent event) {
         if (event instanceof DeleteObservationEvent) {
             DeleteObservationEvent e = (DeleteObservationEvent) event;
             DeleteObservationCacheControllerUpdate update =

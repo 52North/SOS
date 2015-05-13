@@ -31,9 +31,9 @@ package org.n52.sos.ogc.sensorML.v20;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.n52.iceland.util.JavaHelper;
 import org.n52.sos.ogc.sensorML.HasComponents;
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
-import org.n52.sos.util.JavaHelper;
 
 /**
  * Class that represents SensorML 2.0 PhysicalSystem

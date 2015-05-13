@@ -36,22 +36,41 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.convert.RequestResponseModifier;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.cache.ContentCache;
+import org.n52.iceland.convert.RequestResponseModifier;
+import org.n52.iceland.convert.RequestResponseModifierFacilitator;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.ogc.OGCConstants;
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.om.AbstractPhenomenon;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.om.OmObservationConstellation;
+import org.n52.iceland.ogc.om.features.FeatureCollection;
+import org.n52.iceland.ogc.ows.OwsCapabilities;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsOperation;
+import org.n52.iceland.ogc.ows.OwsParameterValue;
+import org.n52.iceland.ogc.ows.OwsParameterValuePossibleValues;
+import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.sos.SosOffering;
+import org.n52.iceland.ogc.sos.SosProcedureDescription;
+import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
+import org.n52.iceland.ogc.swe.SweDataArray;
+import org.n52.iceland.ogc.swe.SweDataRecord;
+import org.n52.iceland.ogc.swe.SweField;
+import org.n52.iceland.ogc.swe.simpleType.SweText;
+import org.n52.iceland.ogc.swe.simpleType.SweTime;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.service.profile.Profile;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.Constants;
 import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.gda.GetDataAvailabilityResponse;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
-import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsOperation;
-import org.n52.sos.ogc.ows.OwsParameterValue;
-import org.n52.sos.ogc.ows.OwsParameterValuePossibleValues;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.ProcessMethod;
@@ -61,34 +80,17 @@ import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
-import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.SosCapabilities;
-import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosObservationOffering;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.GetResultRequest;
 import org.n52.sos.request.GetResultTemplateRequest;
 import org.n52.sos.response.AbstractObservationResponse;
-import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.response.DescribeSensorResponse;
-import org.n52.sos.response.GetCapabilitiesResponse;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.response.GetResultTemplateResponse;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.service.profile.Profile;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.Constants;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -240,7 +242,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     }
 
     protected GetCapabilitiesResponse changeGetCapabilitiesResponseIdentifier(GetCapabilitiesResponse response) {
-        SosCapabilities capabilities = response.getCapabilities();
+        OwsCapabilities capabilities = response.getCapabilities();
         if (capabilities.isSetOperationsMetadata() && capabilities.getOperationsMetadata().isSetOperations()) {
             for (OwsOperation operation : capabilities.getOperationsMetadata().getOperations()) {
                 SortedMap<String, List<OwsParameterValue>> parameterValues = operation.getParameterValues();
@@ -269,8 +271,8 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
                 }
             }
         }
-        if (capabilities.isSetContents()) {
-            for (SosObservationOffering observationOffering : capabilities.getContents()) {
+        if (capabilities instanceof SosCapabilities && ((SosCapabilities)capabilities).isSetContents()) {
+            for (SosObservationOffering observationOffering : ((SosCapabilities)capabilities).getContents()) {
                 if (!observationOffering.isEmpty()) {
                     checkAndChangOfferingIdentifier(observationOffering.getOffering());
                     observationOffering.setFeatureOfInterest(checkFeatureOfInterestIdentifier(observationOffering

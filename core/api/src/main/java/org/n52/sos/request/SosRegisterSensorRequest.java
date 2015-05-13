@@ -30,11 +30,12 @@ package org.n52.sos.request;
 
 import java.util.Collection;
 
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.om.AbstractPhenomenon;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.sos.response.DummyResponse;
 
 /**

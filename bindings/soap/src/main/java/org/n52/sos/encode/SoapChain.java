@@ -31,8 +31,8 @@ package org.n52.sos.encode;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.sos.soap.SoapRequest;
 import org.n52.sos.soap.SoapResponse;
 

@@ -30,12 +30,12 @@ package org.n52.sos.ext.deleteobservation;
 
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
+import static org.n52.iceland.ogc.sos.SosConstants.SOS;
+import static org.n52.iceland.util.CodingHelper.decoderKeysForElements;
+import static org.n52.iceland.util.CodingHelper.xmlDecoderKeysForOperation;
+import static org.n52.iceland.util.CollectionHelper.union;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.CONFORMANCE_CLASSES;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.NS_SOSDO_1_0;
-import static org.n52.sos.ogc.sos.SosConstants.SOS;
-import static org.n52.sos.util.CodingHelper.decoderKeysForElements;
-import static org.n52.sos.util.CodingHelper.xmlDecoderKeysForOperation;
-import static org.n52.sos.util.CollectionHelper.union;
 
 import java.util.Collections;
 import java.util.Map;
@@ -45,13 +45,13 @@ import net.opengis.sosdo.x10.DeleteObservationDocument;
 import net.opengis.sosdo.x10.DeleteObservationType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.decode.Decoder;
-import org.n52.sos.decode.DecoderKey;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

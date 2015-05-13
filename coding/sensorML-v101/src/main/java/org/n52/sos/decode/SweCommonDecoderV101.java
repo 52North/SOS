@@ -40,6 +40,7 @@ import net.opengis.swe.x101.AbstractDataComponentType;
 import net.opengis.swe.x101.AbstractDataRecordDocument;
 import net.opengis.swe.x101.AbstractDataRecordType;
 import net.opengis.swe.x101.AnyScalarPropertyType;
+import net.opengis.swe.x101.BlockEncodingPropertyType;
 import net.opengis.swe.x101.BooleanDocument;
 import net.opengis.swe.x101.CategoryDocument;
 import net.opengis.swe.x101.CategoryDocument.Category;
@@ -47,7 +48,6 @@ import net.opengis.swe.x101.CountDocument;
 import net.opengis.swe.x101.CountDocument.Count;
 import net.opengis.swe.x101.CountRangeDocument;
 import net.opengis.swe.x101.CountRangeDocument.CountRange;
-import net.opengis.swe.x101.BlockEncodingPropertyType;
 import net.opengis.swe.x101.DataArrayDocument;
 import net.opengis.swe.x101.DataArrayType;
 import net.opengis.swe.x101.DataComponentPropertyType;
@@ -63,8 +63,8 @@ import net.opengis.swe.x101.QuantityDocument.Quantity;
 import net.opengis.swe.x101.QuantityRangeDocument;
 import net.opengis.swe.x101.QuantityRangeDocument.QuantityRange;
 import net.opengis.swe.x101.SimpleDataRecordType;
-import net.opengis.swe.x101.TextDocument;
 import net.opengis.swe.x101.TextBlockDocument.TextBlock;
+import net.opengis.swe.x101.TextDocument;
 import net.opengis.swe.x101.TextDocument.Text;
 import net.opengis.swe.x101.TimeDocument;
 import net.opengis.swe.x101.TimeDocument.Time;
@@ -75,41 +75,42 @@ import net.opengis.swe.x101.VectorType;
 import net.opengis.swe.x101.VectorType.Coordinate;
 
 import org.joda.time.DateTime;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
-import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
+import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.swe.RangeValue;
+import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
+import org.n52.iceland.ogc.swe.SweConstants;
+import org.n52.iceland.ogc.swe.SweDataArray;
+import org.n52.iceland.ogc.swe.SweDataRecord;
+import org.n52.iceland.ogc.swe.SweField;
+import org.n52.iceland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.iceland.ogc.swe.encoding.SweTextEncoding;
+import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
+import org.n52.iceland.ogc.swe.simpleType.SweCount;
+import org.n52.iceland.ogc.swe.simpleType.SweQuality;
+import org.n52.iceland.ogc.swe.simpleType.SweText;
+import org.n52.iceland.ogc.swe.simpleType.SweTime;
+import org.n52.iceland.ogc.swe.simpleType.SweTimeRange;
+import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.util.DateTimeHelper;
+import org.n52.iceland.util.XmlHelper;
+import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
-import org.n52.sos.ogc.swe.RangeValue;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweConstants;
-import org.n52.sos.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.sos.ogc.swe.SweCoordinate;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweEnvelope;
-import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.SweSimpleDataRecord;
 import org.n52.sos.ogc.swe.SweVector;
-import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
-import org.n52.sos.ogc.swe.simpleType.SweQuality;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
-import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -598,20 +599,6 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
             }
         }
         return sosCoordinates;
-    }
-
-    @Deprecated
-    private SweCoordinateName checkCoordinateName(final String name) throws OwsExceptionReport {
-        if (name.equals(SweCoordinateName.easting.name())) {
-            return SweCoordinateName.easting;
-        } else if (name.equals(SweCoordinateName.northing.name())) {
-            return SweCoordinateName.northing;
-        } else if (name.equals(SweCoordinateName.altitude.name())) {
-            return SweCoordinateName.altitude;
-        } else {
-            throw new InvalidParameterValueException().at("Position").withMessage(
-                    "The coordinate name is neighter 'easting' nor 'northing' nor 'altitude'!");
-        }
     }
 
     private List<SweField> parseAnyScalarPropertyArray(final AnyScalarPropertyType[] fieldArray)

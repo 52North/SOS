@@ -30,9 +30,10 @@ package org.n52.sos.encode;
 
 import java.util.Map;
 
-import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.StringHelper;
+import org.n52.iceland.encode.Encoder;
+import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.StringHelper;
 
 import com.google.common.collect.Maps;
 

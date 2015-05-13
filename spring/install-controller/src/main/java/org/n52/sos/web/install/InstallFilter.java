@@ -38,7 +38,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import org.n52.sos.service.DatabaseSettingsHandler;
+import org.n52.iceland.service.DatabaseSettingsHandler;
 
 /**
  * @since 4.0.0

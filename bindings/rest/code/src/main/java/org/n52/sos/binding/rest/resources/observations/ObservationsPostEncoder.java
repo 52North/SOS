@@ -29,12 +29,12 @@
 package org.n52.sos.binding.rest.resources.observations;
 
 
-import net.opengis.sosREST.x10.ObservationDocument;
-
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.response.ServiceResponse;
+import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.binding.rest.requests.RestResponse;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.response.ServiceResponse;
-import org.n52.sos.util.http.HTTPStatus;
+
+import net.opengis.sosREST.x10.ObservationDocument;
 
 
 /**

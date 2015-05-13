@@ -28,8 +28,9 @@
  */
 package org.n52.sos.service.operator;
 
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.service.operator.AbstractServiceOperator;
 
 /**
  * @since 4.0.0

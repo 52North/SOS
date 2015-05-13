@@ -30,10 +30,10 @@ package org.n52.sos.settings;
 
 import java.util.Set;
 
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingDefinitionGroup;
-import org.n52.sos.config.SettingDefinitionProvider;
-import org.n52.sos.config.settings.StringSettingDefinition;
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingDefinitionGroup;
+import org.n52.iceland.config.SettingDefinitionProvider;
+import org.n52.iceland.config.settings.StringSettingDefinition;
 
 import com.google.common.collect.ImmutableSet;
 

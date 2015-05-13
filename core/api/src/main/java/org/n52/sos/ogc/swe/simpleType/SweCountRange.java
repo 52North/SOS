@@ -28,8 +28,9 @@
  */
 package org.n52.sos.ogc.swe.simpleType;
 
-import org.n52.sos.ogc.swe.RangeValue;
-import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.iceland.ogc.swe.RangeValue;
+import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
 
 /**
  * @since 4.0.0

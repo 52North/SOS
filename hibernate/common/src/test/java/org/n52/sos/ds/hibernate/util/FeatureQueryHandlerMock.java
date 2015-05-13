@@ -30,54 +30,28 @@ package org.n52.sos.ds.hibernate.util;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.n52.sos.ds.AbstractFeatureQueryHandler;
-import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.iceland.ds.FeatureQueryHandler;
+import org.n52.iceland.ds.FeatureQueryHandlerQueryObject;
+import org.n52.iceland.ds.HibernateDatasourceConstants;
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.gml.CodeWithAuthority;
+import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.SosEnvelope;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
  * 
  * @since 4.0.0
  */
-public class FeatureQueryHandlerMock extends AbstractFeatureQueryHandler {
-
-    @Override
-    public Collection<String> getFeatureIDs(SpatialFilter filter, Object connection) throws OwsExceptionReport {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public SosEnvelope getEnvelopeForFeatureIDs(Collection<String> featureIDs, Object connection) throws
-            OwsExceptionReport {
-        return new SosEnvelope(null, getStorageEPSG());
-    }
+public class FeatureQueryHandlerMock implements FeatureQueryHandler {
 
     @Override
     public String insertFeature(SamplingFeature samplingFeature, Object connection) throws OwsExceptionReport {
         return UUID.randomUUID().toString();
-    }
-
-    @Override
-    public AbstractFeature getFeatureByID(String featureID, Object connection, String version)
-            throws OwsExceptionReport {
-        return new SamplingFeature(new CodeWithAuthority("feature"));
-    }
-
-    @Override
-    public Map<String, AbstractFeature> getFeatures(Collection<String> foiIDs, List<SpatialFilter> list,
-            Object connection, String version) throws OwsExceptionReport {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override

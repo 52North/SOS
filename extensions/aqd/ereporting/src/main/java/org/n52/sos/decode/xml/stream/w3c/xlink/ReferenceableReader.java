@@ -30,11 +30,11 @@ package org.n52.sos.decode.xml.stream.w3c.xlink;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.decode.xml.stream.NillableReader;
 import org.n52.sos.decode.xml.stream.XmlReader;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.Referenceable;
-import org.n52.sos.w3c.W3CConstants;
 
 public abstract class ReferenceableReader<T> extends XmlReader<Referenceable<T>> {
 

@@ -31,10 +31,10 @@ package org.n52.sos.gda;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.StringHelper;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.StringHelper;
 
 /**
  * A request to obtain the {@code DataAvailabilites} of the SOS.

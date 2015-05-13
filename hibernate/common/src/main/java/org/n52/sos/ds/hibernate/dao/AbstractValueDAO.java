@@ -36,12 +36,12 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GeometryHandler;
 
@@ -92,7 +92,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
      *            Indeterminate time restriction to add
      * @return Modified criteria
      */
-    protected Criteria addIndeterminateTimeRestriction(Criteria c, SosIndeterminateTime sosIndeterminateTime) {
+    protected Criteria addIndeterminateTimeRestriction(Criteria c, ExtendedIndeterminateTime sosIndeterminateTime) {
         // get extrema indeterminate time
         c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
         Timestamp indeterminateExtremaTime = (Timestamp) c.uniqueResult();
@@ -111,16 +111,16 @@ public abstract class AbstractValueDAO extends TimeCreator {
     }
 
     /**
-     * Get projection for {@link SosIndeterminateTime} value
+     * Get projection for {@link ExtendedIndeterminateTime} value
      * 
      * @param indetTime
      *            Value to get projection for
      * @return Projection to use to determine indeterminate time extrema
      */
-    protected Projection getIndeterminateTimeExtremaProjection(final SosIndeterminateTime indetTime) {
-        if (indetTime.equals(SosIndeterminateTime.first)) {
+    protected Projection getIndeterminateTimeExtremaProjection(final ExtendedIndeterminateTime indetTime) {
+        if (indetTime.equals(ExtendedIndeterminateTime.first)) {
             return Projections.min(AbstractValue.PHENOMENON_TIME_START);
-        } else if (indetTime.equals(SosIndeterminateTime.latest)) {
+        } else if (indetTime.equals(ExtendedIndeterminateTime.latest)) {
             return Projections.max(AbstractValue.PHENOMENON_TIME_END);
         }
         return null;
@@ -128,16 +128,16 @@ public abstract class AbstractValueDAO extends TimeCreator {
 
     /**
      * Get the AbstractValue property to filter on for an
-     * {@link SosIndeterminateTime}
+     * {@link ExtendedIndeterminateTime}
      * 
      * @param indetTime
      *            Value to get property for
      * @return String property to filter on
      */
-    protected String getIndeterminateTimeFilterProperty(final SosIndeterminateTime indetTime) {
-        if (indetTime.equals(SosIndeterminateTime.first)) {
+    protected String getIndeterminateTimeFilterProperty(final ExtendedIndeterminateTime indetTime) {
+        if (indetTime.equals(ExtendedIndeterminateTime.first)) {
             return AbstractValue.PHENOMENON_TIME_START;
-        } else if (indetTime.equals(SosIndeterminateTime.latest)) {
+        } else if (indetTime.equals(ExtendedIndeterminateTime.latest)) {
             return AbstractValue.PHENOMENON_TIME_END;
         }
         return null;

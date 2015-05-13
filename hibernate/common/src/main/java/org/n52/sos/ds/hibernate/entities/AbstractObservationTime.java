@@ -34,7 +34,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
@@ -43,8 +44,6 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasResultTime;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSamplingGeometry;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValidTime;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.GmlHelper;
 
 import com.vividsolutions.jts.geom.Geometry;

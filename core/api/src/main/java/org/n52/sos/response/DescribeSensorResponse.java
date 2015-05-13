@@ -30,9 +30,10 @@ package org.n52.sos.response;
 
 import java.util.List;
 
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.util.CollectionHelper;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.sos.SosProcedureDescription;
+import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.iceland.util.CollectionHelper;
 
 /**
  * @since 4.0.0
@@ -50,19 +51,6 @@ public class DescribeSensorResponse extends AbstractServiceResponse {
 
     public void setOutputFormat(String outputFormat) {
         this.outputFormat = outputFormat;
-    }
-
-    @Deprecated
-    public SosProcedureDescription getSensorDescription() {
-        if (isSetProcedureDescriptions()) {
-            return getProcedureDescriptions().get(0);
-        }
-        return null;
-    }
-
-    @Deprecated
-    public void setSensorDescription(SosProcedureDescription procedureDescription) {
-        addSensorDescription(procedureDescription);
     }
 
     @Override

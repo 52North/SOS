@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate.dao;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,57 +47,57 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OptionNotSupportedException;
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.om.NamedValue;
+import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.om.SingleObservationValue;
+import org.n52.iceland.ogc.om.values.BooleanValue;
+import org.n52.iceland.ogc.om.values.CategoryValue;
+import org.n52.iceland.ogc.om.values.CountValue;
+import org.n52.iceland.ogc.om.values.GeometryValue;
+import org.n52.iceland.ogc.om.values.QuantityValue;
+import org.n52.iceland.ogc.om.values.SweDataArrayValue;
+import org.n52.iceland.ogc.om.values.TextValue;
+import org.n52.iceland.ogc.om.values.UnknownValue;
+import org.n52.iceland.ogc.om.values.Value;
+import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosEnvelope;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
-import org.n52.sos.ds.hibernate.entities.interfaces.BlobObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.CategoryObservation;
 import org.n52.sos.ds.hibernate.entities.Codespace;
-import org.n52.sos.ds.hibernate.entities.interfaces.CountObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Observation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.interfaces.BlobObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.BooleanObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.CategoryObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.CountObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
-import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ds.hibernate.entities.interfaces.BooleanObservation;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.OptionNotSupportedException;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.om.values.UnknownValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
-import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -884,32 +883,32 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     }
 
     /**
-     * Get order for {@link SosIndeterminateTime} value
+     * Get order for {@link ExtendedIndeterminateTime} value
      *
      * @param indetTime
      *            Value to get order for
      * @return Order
      */
-    protected Order getOrder(final SosIndeterminateTime indetTime) {
-        if (indetTime.equals(SosIndeterminateTime.first)) {
+    protected Order getOrder(final ExtendedIndeterminateTime indetTime) {
+        if (indetTime.equals(ExtendedIndeterminateTime.first)) {
             return Order.asc(AbstractObservation.PHENOMENON_TIME_START);
-        } else if (indetTime.equals(SosIndeterminateTime.latest)) {
+        } else if (indetTime.equals(ExtendedIndeterminateTime.latest)) {
             return Order.desc(AbstractObservation.PHENOMENON_TIME_END);
         }
         return null;
     }
 
     /**
-     * Get projection for {@link SosIndeterminateTime} value
+     * Get projection for {@link ExtendedIndeterminateTime} value
      *
      * @param indetTime
      *            Value to get projection for
      * @return Projection to use to determine indeterminate time extrema
      */
-    protected Projection getIndeterminateTimeExtremaProjection(final SosIndeterminateTime indetTime) {
-        if (indetTime.equals(SosIndeterminateTime.first)) {
+    protected Projection getIndeterminateTimeExtremaProjection(final ExtendedIndeterminateTime indetTime) {
+        if (indetTime.equals(ExtendedIndeterminateTime.first)) {
             return Projections.min(AbstractObservation.PHENOMENON_TIME_START);
-        } else if (indetTime.equals(SosIndeterminateTime.latest)) {
+        } else if (indetTime.equals(ExtendedIndeterminateTime.latest)) {
             return Projections.max(AbstractObservation.PHENOMENON_TIME_END);
         }
         return null;
@@ -917,16 +916,16 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Get the AbstractObservation property to filter on for an
-     * {@link SosIndeterminateTime}
+     * {@link ExtendedIndeterminateTime}
      *
      * @param indetTime
      *            Value to get property for
      * @return String property to filter on
      */
-    protected String getIndeterminateTimeFilterProperty(final SosIndeterminateTime indetTime) {
-        if (indetTime.equals(SosIndeterminateTime.first)) {
+    protected String getIndeterminateTimeFilterProperty(final ExtendedIndeterminateTime indetTime) {
+        if (indetTime.equals(ExtendedIndeterminateTime.first)) {
             return AbstractObservation.PHENOMENON_TIME_START;
-        } else if (indetTime.equals(SosIndeterminateTime.latest)) {
+        } else if (indetTime.equals(ExtendedIndeterminateTime.latest)) {
             return AbstractObservation.PHENOMENON_TIME_END;
         }
         return null;
@@ -945,7 +944,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Indeterminate time restriction to add
      * @return Modified criteria
      */
-    protected Criteria addIndeterminateTimeRestriction(Criteria c, SosIndeterminateTime sosIndeterminateTime) {
+    protected Criteria addIndeterminateTimeRestriction(Criteria c, ExtendedIndeterminateTime sosIndeterminateTime) {
         // get extrema indeterminate time
         c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
         Timestamp indeterminateExtremaTime = (Timestamp) c.uniqueResult();
@@ -967,7 +966,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Indeterminate time extrema
      * @return Modified criteria
      */
-    protected Criteria addIndeterminateTimeRestriction(Criteria c, SosIndeterminateTime sosIndeterminateTime,
+    protected Criteria addIndeterminateTimeRestriction(Criteria c, ExtendedIndeterminateTime sosIndeterminateTime,
             Date indeterminateExtremaTime) {
         // reset criteria
         // see http://stackoverflow.com/a/1472958/193435

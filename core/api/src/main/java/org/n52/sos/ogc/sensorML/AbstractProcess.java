@@ -32,11 +32,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.n52.sos.ogc.gml.CodeType;
+import org.n52.iceland.ogc.gml.CodeType;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.Constants;
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.Constants;
 
 /**
  * @since 4.0.0

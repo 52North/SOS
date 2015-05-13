@@ -31,14 +31,14 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
+import org.n52.iceland.event.ServiceEventBus;
+import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.sos.ds.AbstractInsertResultDAO;
-import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.exception.ows.concrete.MissingResultValuesParameterException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.request.InsertResultRequest;
 import org.n52.sos.response.InsertResultResponse;
 import org.n52.sos.wsdl.WSDLConstants;
@@ -66,7 +66,7 @@ public class SosInsertResultOperatorV20 extends
     @Override
     public InsertResultResponse receive(InsertResultRequest request) throws OwsExceptionReport {
         InsertResultResponse response = getDao().insertResult(request);
-        SosEventBus.fire(new ResultInsertion(request, response));
+        ServiceEventBus.fire(new ResultInsertion(request, response));
         return response;
     }
 

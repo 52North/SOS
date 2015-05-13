@@ -45,18 +45,20 @@ import net.opengis.gml.TimePeriodType;
 import net.opengis.gml.TimePositionType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
-import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.JTSHelper;
+import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.iceland.ogc.gml.GmlConstants;
+import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.util.DateTimeHelper;
+import org.n52.iceland.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,8 +169,8 @@ public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
         TimeInstant ti = new TimeInstant();
         String timeString = xbTimePosition.getStringValue();
         if (timeString != null && !timeString.isEmpty()) {
-            if ((SosIndeterminateTime.contains(timeString))) {
-                ti.setSosIndeterminateTime(SosIndeterminateTime.getEnumForString(timeString));
+            if ((ExtendedIndeterminateTime.contains(timeString))) {
+                ti.setSosIndeterminateTime(ExtendedIndeterminateTime.getEnumForString(timeString));
             } else {
                 ti.setValue(DateTimeHelper.parseIsoString2DateTime(timeString));
                 ti.setRequestedTimeLength(DateTimeHelper.getTimeLengthBeforeTimeZone(timeString));
@@ -182,8 +184,8 @@ public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
         return ti;
     }
 
-    private org.n52.sos.ogc.gml.CodeType parseCodeType(CodeType element) {
-        org.n52.sos.ogc.gml.CodeType codeType = new org.n52.sos.ogc.gml.CodeType(element.getStringValue());
+    private org.n52.iceland.ogc.gml.CodeType parseCodeType(CodeType element) {
+        org.n52.iceland.ogc.gml.CodeType codeType = new org.n52.iceland.ogc.gml.CodeType(element.getStringValue());
         if (element.isSetCodeSpace()) {
             codeType.setCodeSpace(element.getCodeSpace());
         }

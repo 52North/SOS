@@ -34,7 +34,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
-import org.n52.sos.ogc.ows.StaticCapabilities;
+import org.n52.iceland.ogc.ows.StaticCapabilities;
 
 @Entity(name = "static_capabilities")
 public class StaticCapabilitiesImpl extends Activatable<String, StaticCapabilitiesImpl> implements StaticCapabilities,

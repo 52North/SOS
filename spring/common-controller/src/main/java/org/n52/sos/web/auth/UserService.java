@@ -32,10 +32,10 @@ import java.io.Serializable;
 import java.security.Principal;
 import java.util.Collections;
 
-import org.n52.sos.config.AdministratorUser;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.exception.ConfigurationException;
+import org.n52.iceland.config.AdministratorUser;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

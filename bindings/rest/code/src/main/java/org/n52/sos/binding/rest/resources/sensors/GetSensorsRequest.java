@@ -28,7 +28,7 @@
  */
 package org.n52.sos.binding.rest.resources.sensors;
 
-import org.n52.sos.request.GetCapabilitiesRequest;
+import org.n52.iceland.request.GetCapabilitiesRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

@@ -35,7 +35,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
-import org.n52.sos.config.SettingValue;
+import org.n52.iceland.config.SettingValue;
 
 /**
  * @param <T> settings type

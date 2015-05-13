@@ -30,8 +30,8 @@ package org.n52.sos.iso.gmd;
 
 import javax.xml.namespace.QName;
 
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.w3c.SchemaLocation;
+import org.n52.iceland.ogc.gml.GmlConstants;
+import org.n52.iceland.w3c.SchemaLocation;
 
 public interface GmdConstants {
     

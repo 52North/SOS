@@ -38,17 +38,16 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.xmlbeans.XmlObject;
-
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePosition;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.Constants;
-import org.n52.sos.util.DateTimeHelper;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePosition;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.DateTimeHelper;
+import org.n52.iceland.util.StringHelper;
+import org.n52.iceland.util.XmlOptionsHelper;
+import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.util.N52XmlHelper;
-import org.n52.sos.util.StringHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.sos.w3c.SchemaLocation;
-import org.n52.sos.w3c.W3CConstants;
 
 import com.google.common.base.StandardSystemProperty;
 

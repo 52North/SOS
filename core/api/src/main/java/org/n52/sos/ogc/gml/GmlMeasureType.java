@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.gml;
 
-import org.n52.sos.util.StringHelper;
+import org.n52.iceland.util.StringHelper;
 
 /**
  * Class represents a GML conform MeasureType element

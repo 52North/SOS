@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.entities.values;
 
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.interfaces.CategoryValue;
-import org.n52.sos.util.StringHelper;
 
 /**
  * Concrete implementation of {@link ObservationValue} for old concept and category

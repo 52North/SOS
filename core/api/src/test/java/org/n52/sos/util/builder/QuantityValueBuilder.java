@@ -28,7 +28,7 @@
  */
 package org.n52.sos.util.builder;
 
-import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.iceland.ogc.om.values.QuantityValue;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

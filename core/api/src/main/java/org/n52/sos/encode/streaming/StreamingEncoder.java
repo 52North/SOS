@@ -30,9 +30,9 @@ package org.n52.sos.encode.streaming;
 
 import java.io.OutputStream;
 
-import org.n52.sos.encode.Encoder;
+import org.n52.iceland.encode.Encoder;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.encode.EncodingValues;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * Generic interface for StreamingEncoders.

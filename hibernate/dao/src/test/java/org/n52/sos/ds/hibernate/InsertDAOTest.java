@@ -45,58 +45,61 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.convert.ConverterException;
+import org.n52.iceland.cache.ContentCache;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.convert.ConverterException;
+import org.n52.iceland.event.ServiceEventBus;
+import org.n52.iceland.ogc.filter.FilterConstants;
+import org.n52.iceland.ogc.filter.TemporalFilter;
+import org.n52.iceland.ogc.gml.CodeWithAuthority;
+import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.om.ObservationValue;
+import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.ogc.om.OmObservableProperty;
+import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.om.OmObservationConstellation;
+import org.n52.iceland.ogc.om.SingleObservationValue;
+import org.n52.iceland.ogc.om.features.SfConstants;
+import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.iceland.ogc.om.values.QuantityValue;
+import org.n52.iceland.ogc.om.values.SweDataArrayValue;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.sos.SosOffering;
+import org.n52.iceland.ogc.sos.SosProcedureDescription;
+import org.n52.iceland.ogc.swe.SweConstants;
+import org.n52.iceland.ogc.swe.SweDataArray;
+import org.n52.iceland.ogc.swe.SweDataRecord;
+import org.n52.iceland.ogc.swe.SweField;
+import org.n52.iceland.ogc.swe.encoding.SweTextEncoding;
+import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
+import org.n52.iceland.ogc.swe.simpleType.SweCount;
+import org.n52.iceland.ogc.swe.simpleType.SweTime;
+import org.n52.iceland.ogc.swes.SwesExtension;
+import org.n52.iceland.ogc.swes.SwesExtensionImpl;
+import org.n52.iceland.ogc.swes.SwesExtensions;
+import org.n52.iceland.service.Configurator;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
-import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.ObservationInsertion;
 import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.event.events.SensorInsertion;
-import org.n52.sos.ogc.filter.FilterConstants;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.om.ObservationValue;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingObservation;
 import org.n52.sos.ogc.om.StreamingValue;
-import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.System;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosInsertionMetadata;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.sos.ogc.swe.SweConstants;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.ogc.swes.SwesExtension;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
-import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.DeleteSensorRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.InsertObservationRequest;
@@ -110,10 +113,6 @@ import org.n52.sos.response.InsertObservationResponse;
 import org.n52.sos.response.InsertResultResponse;
 import org.n52.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.response.InsertSensorResponse;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.Constants;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -257,7 +256,7 @@ public class InsertDAOTest extends HibernateTestCase {
         req.setProcedureDescription(system);
         req.setAssignedOfferings(assignedOfferings);
         InsertSensorResponse resp = insertSensorDAO.insertSensor(req);
-        SosEventBus.fire(new SensorInsertion(req, resp));
+        ServiceEventBus.fire(new SensorInsertion(req, resp));
     }
 
     @SuppressWarnings("unused")
@@ -265,7 +264,7 @@ public class InsertDAOTest extends HibernateTestCase {
         DeleteSensorRequest req = new DeleteSensorRequest();
         req.setProcedureIdentifier(procedure);
         DeleteSensorResponse resp = deleteSensorDAO.deleteSensor(req);
-        SosEventBus.fire(new SensorDeletion(req, resp));
+        ServiceEventBus.fire(new SensorDeletion(req, resp));
     }
 
     private void insertResultTemplate(String identifier, String procedureId, String offeringId, String obsPropId,
@@ -303,7 +302,7 @@ public class InsertDAOTest extends HibernateTestCase {
         resultStructure.getResultStructure().setXml(xbDataRecordDoc.xmlText());
         req.setResultStructure(resultStructure);
         InsertResultTemplateResponse resp = insertResultTemplateDAO.insertResultTemplate(req);
-        SosEventBus.fire(new ResultTemplateInsertion(req, resp));
+        ServiceEventBus.fire(new ResultTemplateInsertion(req, resp));
     }
 
     private ContentCache getCache() {
@@ -481,7 +480,7 @@ public class InsertDAOTest extends HibernateTestCase {
         obs.setValue(obsVal);
         req.setObservation(Lists.newArrayList(obs));
         InsertObservationResponse resp = insertObservationDAO.insertObservation(req);
-        SosEventBus.fire(new ObservationInsertion(req, resp));
+        ServiceEventBus.fire(new ObservationInsertion(req, resp));
         assertInsertionAftermathBeforeAndAfterCacheReload();
 
         // TODO requests for the parent procedures fail?
@@ -578,7 +577,7 @@ public class InsertDAOTest extends HibernateTestCase {
         req.setResultValues(makeResultValueString(CollectionHelper.list(TIME1, TIME2, TIME3),
                 CollectionHelper.list(VAL1, VAL2, VAL3)));
         InsertResultResponse resp = insertResultDAO.insertResult(req);
-        SosEventBus.fire(new ResultInsertion(req, resp));
+        ServiceEventBus.fire(new ResultInsertion(req, resp));
         assertInsertionAftermathBeforeAndAfterCacheReload();
 
         checkObservation(OFFERING1, PROCEDURE3, OBSPROP3, TIME1, PROCEDURE3, OBSPROP3, FEATURE3, VAL1, TEMP_UNIT);

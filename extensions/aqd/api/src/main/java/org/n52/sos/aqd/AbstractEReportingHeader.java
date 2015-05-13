@@ -28,7 +28,7 @@
  */
 package org.n52.sos.aqd;
 
-import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.gml.AbstractFeature;
 
 /**
  * Abstract class for AQD e-Reporting header. Required to use defined method in

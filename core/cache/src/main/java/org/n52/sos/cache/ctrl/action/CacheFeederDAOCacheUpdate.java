@@ -28,10 +28,10 @@
  */
 package org.n52.sos.cache.ctrl.action;
 
-import org.n52.sos.cache.ContentCacheUpdate;
-import org.n52.sos.ds.CacheFeederDAO;
-import org.n52.sos.ds.CacheFeederDAORepository;
-import org.n52.sos.exception.ows.concrete.NoImplementationFoundException;
+import org.n52.iceland.cache.ContentCacheUpdate;
+import org.n52.iceland.ds.CacheFeederDAO;
+import org.n52.iceland.ds.CacheFeederDAORepository;
+import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

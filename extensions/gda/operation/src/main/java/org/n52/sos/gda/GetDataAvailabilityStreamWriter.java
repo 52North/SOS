@@ -37,20 +37,20 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 
 import org.joda.time.DateTime;
+import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
+import org.n52.iceland.ogc.gml.GmlConstants;
+import org.n52.iceland.ogc.gml.time.Time.TimeFormat;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.swe.SweConstants;
+import org.n52.iceland.util.DateTimeHelper;
+import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.XmlEventWriter;
-import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.gml.time.Time.TimeFormat;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.swe.SweConstants;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.w3c.W3CConstants;
 
 /**
  * GetDataAvailability response stream writer.

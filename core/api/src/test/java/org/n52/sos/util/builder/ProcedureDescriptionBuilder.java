@@ -28,11 +28,11 @@
  */
 package org.n52.sos.util.builder;
 
-import org.n52.sos.ogc.gml.CodeType;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.iceland.ogc.gml.CodeType;
+import org.n52.iceland.ogc.sos.SosOffering;
+import org.n52.iceland.ogc.sos.SosProcedureDescription;
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
-import org.n52.sos.util.StringHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

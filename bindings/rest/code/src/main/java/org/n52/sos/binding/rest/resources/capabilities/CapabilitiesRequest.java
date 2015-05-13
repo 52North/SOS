@@ -28,8 +28,8 @@
  */
 package org.n52.sos.binding.rest.resources.capabilities;
 
+import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.sos.binding.rest.requests.RestRequest;
-import org.n52.sos.request.GetCapabilitiesRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

@@ -28,9 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasPrimaryObservation;
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingQualityData;
-import org.n52.sos.util.StringHelper;
+import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasPrimaryObservation;
 
 public class EReportingQuality implements HasPrimaryObservation, EReportingQualityData {
     

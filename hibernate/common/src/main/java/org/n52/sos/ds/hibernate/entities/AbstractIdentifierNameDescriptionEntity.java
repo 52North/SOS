@@ -30,12 +30,12 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
+import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCodespace;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCodespaceName;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescription;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
-import org.n52.sos.util.StringHelper;
 
 /**
  * @since 4.0.0

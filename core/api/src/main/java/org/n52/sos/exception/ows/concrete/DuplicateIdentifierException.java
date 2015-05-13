@@ -28,7 +28,7 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
-import org.n52.sos.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

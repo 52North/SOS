@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.gml;
 
-import org.n52.sos.ogc.gml.GmlConstants.SortingOrder;
+import org.n52.iceland.ogc.gml.GmlConstants.SortingOrder;
 
 /**
  * class represents the gml:sortByType

@@ -28,12 +28,11 @@
  */
 package org.n52.sos.binding;
 
-import static org.n52.sos.util.http.HTTPStatus.BAD_REQUEST;
+import static org.n52.iceland.util.http.HTTPStatus.BAD_REQUEST;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,34 +40,36 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.soap.SOAPConstants;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.coding.OperationKey;
-import org.n52.sos.decode.Decoder;
-import org.n52.sos.decode.DecoderKey;
-import org.n52.sos.encode.Encoder;
-import org.n52.sos.encode.EncoderKey;
+import org.n52.iceland.binding.BindingConstants;
+import org.n52.iceland.binding.SimpleBinding;
+import org.n52.iceland.coding.OperationKey;
+import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.encode.Encoder;
+import org.n52.iceland.encode.EncoderKey;
+import org.n52.iceland.event.ServiceEventBus;
+import org.n52.iceland.event.events.ExceptionEvent;
+import org.n52.iceland.exception.HTTPException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.concrete.NoDecoderForKeyException;
+import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.iceland.service.CommunicationObjectWithSoapHeader;
+import org.n52.iceland.service.SoapHeader;
+import org.n52.iceland.util.CodingHelper;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.XmlHelper;
+import org.n52.iceland.util.http.HTTPStatus;
+import org.n52.iceland.util.http.HTTPUtils;
+import org.n52.iceland.util.http.MediaType;
+import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.encode.SoapChain;
-import org.n52.sos.event.SosEventBus;
-import org.n52.sos.event.events.ExceptionEvent;
-import org.n52.sos.exception.HTTPException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.NoDecoderForKeyException;
-import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.request.GetCapabilitiesRequest;
-import org.n52.sos.service.CommunicationObjectWithSoapHeader;
-import org.n52.sos.service.SoapHeader;
 import org.n52.sos.soap.SoapHelper;
 import org.n52.sos.soap.SoapRequest;
 import org.n52.sos.soap.SoapResponse;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.http.HTTPStatus;
-import org.n52.sos.util.http.HTTPUtils;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
 import org.n52.sos.wsa.WsaMessageIDHeader;
 import org.n52.sos.wsa.WsaReplyToHeader;
 import org.n52.sos.wsa.WsaToHeader;
@@ -175,12 +176,6 @@ public class SoapBinding extends SimpleBinding {
         chain.setBodyResponse(getServiceOperator(req).receiveRequest(req));
     }
 
-    @Deprecated
-    private void encodeBodyResponse(SoapChain chain) throws OwsExceptionReport {
-        XmlObject encodedResponse = (XmlObject) encodeResponse(chain.getBodyResponse(), MediaTypes.APPLICATION_XML);
-        chain.getSoapResponse().setSoapBodyContent(encodedResponse);
-    }
-
     private Object encodeSoapResponse(SoapChain chain) throws OwsExceptionReport {
         final EncoderKey key =
                 CodingHelper.getEncoderKey(chain.getSoapResponse().getSoapNamespace(), chain.getSoapResponse());
@@ -195,7 +190,7 @@ public class SoapBinding extends SimpleBinding {
     private void writeOwsExceptionReport(SoapChain chain, OwsExceptionReport owse) throws HTTPException, IOException {
         try {
             String version = chain.hasBodyRequest() ? chain.getBodyRequest().getVersion() : null;
-            SosEventBus.fire(new ExceptionEvent(owse));
+            ServiceEventBus.fire(new ExceptionEvent(owse));
             chain.getSoapResponse().setException(owse.setVersion(version));
             if (!chain.getSoapResponse().hasSoapVersion()) {
                 chain.getSoapResponse().setSoapVersion(SOAPConstants.SOAP_1_2_PROTOCOL);
@@ -285,27 +280,4 @@ public class SoapBinding extends SimpleBinding {
         return null;
     }
 
-    /**
-     * Deprecated because of functionality has moved to
-     * {@link #writeResponse(SoapChain)} for streaming support
-     * 
-     * @param chain
-     * @throws IOException
-     * @throws OwsExceptionReport
-     */
-    @Deprecated
-    private void writeSoapResponse(SoapChain chain) throws IOException, OwsExceptionReport {
-        Object encodedSoapResponse = encodeSoapResponse(chain);
-        if (chain.getSoapResponse().hasException() && chain.getSoapResponse().getException().hasStatus()) {
-            chain.getHttpResponse().setStatus(chain.getSoapResponse().getException().getStatus().getCode());
-        }
-        MediaType mt = MediaTypes.APPLICATION_SOAP_XML;
-        if (chain.getBodyRequest() instanceof GetCapabilitiesRequest) {
-            GetCapabilitiesRequest r = (GetCapabilitiesRequest) chain.getBodyRequest();
-            if (r.isSetAcceptFormats()) {
-                mt = MediaType.parse(r.getAcceptFormats().get(0));
-            }
-        }
-        HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), mt, encodedSoapResponse);
-    }
 }

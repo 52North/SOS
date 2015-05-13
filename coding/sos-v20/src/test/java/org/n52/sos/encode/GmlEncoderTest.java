@@ -32,9 +32,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
-import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.iceland.ogc.om.values.QuantityValue;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
 
 /**
  * @since 4.0.0

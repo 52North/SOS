@@ -55,10 +55,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.FileIOHelper;
 import org.n52.sos.service.AbstractLoggingConfigurator;
-import org.n52.sos.util.FileIOHelper;
 import org.slf4j.Logger;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;

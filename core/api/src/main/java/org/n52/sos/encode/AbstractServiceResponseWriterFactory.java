@@ -28,7 +28,8 @@
  */
 package org.n52.sos.encode;
 
-import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.iceland.encode.ResponseWriterFactory;
+import org.n52.iceland.response.AbstractServiceResponse;
 
 /**
  * {@link ResponseWriterFactory} implementation for {@link AbstractServiceResponse} and

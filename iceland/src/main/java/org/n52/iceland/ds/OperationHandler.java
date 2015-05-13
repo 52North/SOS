@@ -28,27 +28,59 @@
  */
 package org.n52.iceland.ds;
 
-import java.util.Collection;
+import java.util.Set;
 
-import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsOperation;
 
 /**
- * Interface for implementations of cache feeder DAOs. Used to feed the
- * CapabilitiesCache with data from the data source.
+ * Interface for all operation Handlers.
  * 
- * @since 4.0.0
+ * In 52N SOS version 4.x called OperationDAO
+ * 
+ * @since 1.0.0
  */
-public interface CacheFeederDAO extends DatasourceDaoIdentifier {
-    void updateCache(WritableContentCache capabilitiesCache) throws OwsExceptionReport;
+public interface OperationHandler extends DatasourceDaoIdentifier {
 
     /**
-     * Reload all cache data for a list of offerings, for instance after a DeleteSensor event
+     * Get the operation and service key this Handler supports
      * 
-     * @param capabilitiesCache The cache to update
-     * @param offerings A list of offerings to update
-     * @throws OwsExceptionReport
+     * @return The supported operation name
      */
-    void updateCacheOfferings(WritableContentCache capabilitiesCache, Collection<String> offerings)
-            throws OwsExceptionReport;
+    OperationHandlerKeyType getOperationHandlerKeyType();
+
+    /**
+     * TODO check if necessary in feature
+     * 
+     * Get the operation name this Handler supports
+     * 
+     * @return The supported operation name
+     */
+    String getOperationName();
+
+    /**
+     * Get the OperationsMetadata of the supported SOS operation for the
+     * capabilities
+     * 
+     * @param service
+     *            OGC service identifier
+     * @param version
+     *            Service version
+     * @return OperationsMetadata for the operation
+     * 
+     * @throws OwsExceptionReport
+     *             If an error occurs.
+     */
+    OwsOperation getOperationsMetadata(String service, String version) throws OwsExceptionReport;
+
+    // /**
+    // * @return the operation specific extension information (&larr; should be
+    // available from cache or from code)
+    // *
+    // * @throws OwsExceptionReport
+    // */
+    // // SosCapabilitiesExtension getExtension() throws OwsExceptionReport;
+
+    Set<String> getConformanceClasses();
+    
 }

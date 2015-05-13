@@ -46,8 +46,8 @@ import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.ds.OperationDAO;
-import org.n52.iceland.ds.OperationDAORepository;
+import org.n52.iceland.ds.OperationHandler;
+import org.n52.iceland.ds.OperationHandlerRepository;
 import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ConfigurationException;
@@ -109,11 +109,11 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
- * Implementation of the interface IGetCapabilitiesDAO
+ * Implementation of the interface AbstractGetCapabilitiesHandler
  *
  * @since 4.0.0
  */
-public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
+public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
 
     private class SectionSpecificContentObject {
 
@@ -335,7 +335,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
         for (final Encoder<?, ?> encoder : CodingRepository.getInstance().getEncoders()) {
             profiles.addAll(encoder.getConformanceClasses());
         }
-        for (final OperationDAO operationDAO : OperationDAORepository.getInstance().getOperationDAOs().values()) {
+        for (final OperationHandler operationDAO : OperationHandlerRepository.getInstance().getOperationDAOs().values()) {
             profiles.addAll(operationDAO.getConformanceClasses());
         }
         // FIXME additional profiles

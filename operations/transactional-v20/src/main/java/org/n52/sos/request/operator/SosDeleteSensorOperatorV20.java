@@ -36,7 +36,7 @@ import org.n52.iceland.ogc.ows.CompositeOwsException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.service.Configurator;
-import org.n52.sos.ds.AbstractDeleteSensorDAO;
+import org.n52.sos.ds.AbstractDeleteSensorHandler;
 import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.exception.ows.concrete.InvalidProcedureParameterException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
@@ -50,7 +50,7 @@ import org.n52.sos.wsdl.WSDLOperation;
  * @since 4.0.0
  *
  */
-public class SosDeleteSensorOperatorV20 extends AbstractV2TransactionalRequestOperator<AbstractDeleteSensorDAO, DeleteSensorRequest, DeleteSensorResponse> {
+public class SosDeleteSensorOperatorV20 extends AbstractV2TransactionalRequestOperator<AbstractDeleteSensorHandler, DeleteSensorRequest, DeleteSensorResponse> {
 
     private static final String OPERATION_NAME = Sos2Constants.Operations.DeleteSensor.name();
     private static final Set<String> CONFORMANCE_CLASSES = Collections.singleton(ConformanceClasses.SOS_V2_SENSOR_DELETION);

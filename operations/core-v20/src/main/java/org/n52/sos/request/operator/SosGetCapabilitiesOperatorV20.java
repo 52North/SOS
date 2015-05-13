@@ -36,7 +36,7 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.response.GetCapabilitiesResponse;
-import org.n52.sos.ds.AbstractGetCapabilitiesDAO;
+import org.n52.sos.ds.AbstractGetCapabilitiesHandler;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
@@ -46,7 +46,7 @@ import org.n52.sos.wsdl.WSDLOperation;
  * 
  */
 public class SosGetCapabilitiesOperatorV20 extends
-        AbstractV2RequestOperator<AbstractGetCapabilitiesDAO, GetCapabilitiesRequest, GetCapabilitiesResponse> {
+        AbstractV2RequestOperator<AbstractGetCapabilitiesHandler, GetCapabilitiesRequest, GetCapabilitiesResponse> {
     private static final String OPERATION_NAME = SosConstants.Operations.GetCapabilities.name();
 
     private static final Set<String> CONFORMANCE_CLASSES = Collections

@@ -32,7 +32,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.n52.iceland.cache.WritableContentCache;
-import org.n52.iceland.ds.CacheFeederDAORepository;
+import org.n52.iceland.ds.CacheFeederHandlerRepository;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.cache.ctrl.ContentCacheControllerImpl;
 import org.n52.sos.cache.ctrl.persistence.ImmediatePersistenceStrategy;
@@ -49,7 +49,7 @@ public class TestableInMemoryCacheController extends ContentCacheControllerImpl 
 
     public static void setUp() {
         try {
-            CacheFeederDAORepository.createInstance(MockCacheFeederDAO.DATASOURCE_DAO_IDENTIFIER);
+            CacheFeederHandlerRepository.createInstance(MockCacheFeederDAO.DATASOURCE_DAO_IDENTIFIER);
             tempFile = File.createTempFile("TestableInMemoryCacheController", "");
         } catch (IOException ex) {
             throw new RuntimeException(ex);

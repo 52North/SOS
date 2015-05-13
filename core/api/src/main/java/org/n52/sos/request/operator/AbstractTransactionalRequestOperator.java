@@ -29,7 +29,7 @@
 package org.n52.sos.request.operator;
 
 
-import org.n52.iceland.ds.OperationDAO;
+import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
@@ -44,7 +44,7 @@ import org.n52.sos.service.TransactionalSecurityConfiguration;
  * @param <Q>
  * @param <A>
  */
-public abstract class AbstractTransactionalRequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
+public abstract class AbstractTransactionalRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
 	
     private static final boolean TRANSACTIONAL_ACTIVATION_STATE = false;

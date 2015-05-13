@@ -50,7 +50,7 @@ import org.n52.sos.wsdl.WSDLOperation;
  */
 public class GetDataAvailabilityOperator
         extends
-        AbstractRequestOperator<AbstractGetDataAvailabilityDAO, GetDataAvailabilityRequest, GetDataAvailabilityResponse>
+        AbstractRequestOperator<AbstractGetDataAvailabilityHandler, GetDataAvailabilityRequest, GetDataAvailabilityResponse>
         implements WSDLAwareRequestOperator {
 
     private static final Set<String> CONFORMANCE_CLASSES = Collections

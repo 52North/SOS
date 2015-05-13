@@ -39,7 +39,7 @@ import java.util.Set;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.ds.OperationDAORepository;
+import org.n52.iceland.ds.OperationHandlerRepository;
 import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.encode.EncoderKey;
 import org.n52.iceland.encode.XmlEncoderKey;
@@ -135,7 +135,7 @@ public class SosAdminRequestOperator implements AdminRequestOperator {
                     builder.append("Bindings");
                 } else if (parameter.equalsIgnoreCase(UPDATE_CONFIGURATION)) {
                 	BindingRepository.getInstance().update();
-                	OperationDAORepository.getInstance().update();
+                	OperationHandlerRepository.getInstance().update();
                     CodingRepository.getInstance().updateDecoders();
                     CodingRepository.getInstance().updateEncoders();
                     ServiceOperatorRepository.getInstance().update();

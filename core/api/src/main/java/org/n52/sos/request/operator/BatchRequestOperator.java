@@ -37,7 +37,7 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.sos.ds.BatchOperationDAO;
+import org.n52.sos.ds.BatchOperationHandler;
 import org.n52.sos.request.BatchRequest;
 import org.n52.sos.response.BatchResponse;
 import org.n52.sos.util.BatchConstants;
@@ -49,7 +49,7 @@ import org.n52.sos.util.BatchConstants;
  * 
  * @since 4.0.0
  */
-public class BatchRequestOperator extends AbstractRequestOperator<BatchOperationDAO, BatchRequest, BatchResponse> {
+public class BatchRequestOperator extends AbstractRequestOperator<BatchOperationHandler, BatchRequest, BatchResponse> {
     public BatchRequestOperator() {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, BatchConstants.OPERATION_NAME, BatchRequest.class);
     }

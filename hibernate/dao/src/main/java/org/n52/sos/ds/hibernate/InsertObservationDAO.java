@@ -54,7 +54,7 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.http.HTTPStatus;
-import org.n52.sos.ds.AbstractInsertObservationDAO;
+import org.n52.sos.ds.AbstractInsertObservationHandler;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
@@ -74,12 +74,12 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 
 /**
- * Implementation of the abstract class AbstractInsertObservationDAO
+ * Implementation of the abstract class AbstractInsertObservationHandler
  * 
  * @since 4.0.0
  *
  */
-public class InsertObservationDAO extends AbstractInsertObservationDAO {
+public class InsertObservationDAO extends AbstractInsertObservationHandler {
     private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
 
     private final ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();

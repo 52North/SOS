@@ -34,7 +34,7 @@ import org.n52.iceland.ds.HibernateDatasourceConstants;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.ds.AbstractGetResultTemplateDAO;
+import org.n52.sos.ds.AbstractGetResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
@@ -43,11 +43,11 @@ import org.n52.sos.request.GetResultTemplateRequest;
 import org.n52.sos.response.GetResultTemplateResponse;
 
 /**
- * Implementation of the abstract class AbstractGetResultTemplateDAO
+ * Implementation of the abstract class AbstractGetResultTemplateHandler
  * @since 4.0.0
  * 
  */
-public class GetResultTemplateDAO extends AbstractGetResultTemplateDAO {
+public class GetResultTemplateDAO extends AbstractGetResultTemplateHandler {
     private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
 
     /**

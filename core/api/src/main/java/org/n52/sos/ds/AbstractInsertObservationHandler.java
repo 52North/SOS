@@ -28,27 +28,36 @@
  */
 package org.n52.sos.ds;
 
+import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.sos.request.InsertResultTemplateRequest;
-import org.n52.sos.response.InsertResultTemplateResponse;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.sos.request.InsertObservationRequest;
+import org.n52.sos.response.InsertObservationResponse;
 
 /**
- * @since 4.0.0
+ * Renamed, in version 4.x called AbstractInsertObservationDAO
+ * 
+ * @since 5.0.0
  * 
  */
-public abstract class AbstractInsertResultTemplateDAO extends AbstractResultHandlingDAO {
-    public AbstractInsertResultTemplateDAO(String service) {
-        super(service, Sos2Constants.Operations.InsertResultTemplate.name());
+public abstract class AbstractInsertObservationHandler extends AbstractOperationHandler {
+
+    public AbstractInsertObservationHandler(String service) {
+        super(service, SosConstants.Operations.InsertObservation.name());
     }
 
     @Override
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
-        opsMeta.addAnyParameterValue(Sos2Constants.InsertResultTemplateParams.proposedTemplate);
+        addOfferingParameter(opsMeta);
+        opsMeta.addAnyParameterValue(Sos2Constants.InsertObservationParams.observation);
+        opsMeta.addDataTypeParameter(Sos2Constants.InsertObservationParams.observation,
+                OmConstants.SCHEMA_LOCATION_URL_OM_20_OM_OBSERVATION);
     }
 
-    public abstract InsertResultTemplateResponse insertResultTemplate(InsertResultTemplateRequest request)
+    public abstract InsertObservationResponse insertObservation(InsertObservationRequest request)
             throws OwsExceptionReport;
+
 }

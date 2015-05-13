@@ -36,7 +36,7 @@ import org.n52.iceland.ogc.ows.CompositeOwsException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.ds.AbstractDescribeSensorDAO;
+import org.n52.sos.ds.AbstractDescribeSensorHandler;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.response.DescribeSensorResponse;
@@ -51,7 +51,7 @@ import org.n52.sos.wsdl.WSDLOperation;
  * 
  */
 public class SosDescribeSensorOperatorV20 extends
-        AbstractV2RequestOperator<AbstractDescribeSensorDAO, DescribeSensorRequest, DescribeSensorResponse> {
+        AbstractV2RequestOperator<AbstractDescribeSensorHandler, DescribeSensorRequest, DescribeSensorResponse> {
     private static final String OPERATION_NAME = SosConstants.Operations.DescribeSensor.name();
 
     private static final Set<String> CONFORMANCE_CLASSES = Collections

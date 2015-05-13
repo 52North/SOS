@@ -43,11 +43,13 @@ import org.n52.sos.request.GetResultRequest;
 import org.n52.sos.response.GetResultResponse;
 
 /**
- * @since 4.0.0
+ * Renamed, in version 4.x called AbstractGetResultDAO
+ * 
+ * @since 5.0.0
  * 
  */
-public abstract class AbstractGetResultDAO extends AbstractOperationDAO {
-    public AbstractGetResultDAO(String service) {
+public abstract class AbstractGetResultHandler extends AbstractOperationHandler {
+    public AbstractGetResultHandler(String service) {
         super(service, SosConstants.Operations.GetResult.name());
     }
 

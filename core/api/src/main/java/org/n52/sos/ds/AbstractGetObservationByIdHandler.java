@@ -28,34 +28,30 @@
  */
 package org.n52.sos.ds;
 
-import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.request.InsertObservationRequest;
-import org.n52.sos.response.InsertObservationResponse;
+import org.n52.sos.request.GetObservationByIdRequest;
+import org.n52.sos.response.GetObservationByIdResponse;
 
 /**
- * @since 4.0.0
+ * Renamed, in version 4.x called AbstractGetObservationByIdDAO
+ * 
+ * @since 5.0.0
  * 
  */
-public abstract class AbstractInsertObservationDAO extends AbstractOperationDAO {
-
-    public AbstractInsertObservationDAO(String service) {
-        super(service, SosConstants.Operations.InsertObservation.name());
+public abstract class AbstractGetObservationByIdHandler extends AbstractOperationHandler {
+    public AbstractGetObservationByIdHandler(String service) {
+        super(service, SosConstants.Operations.GetObservationById.name());
     }
 
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
-            throws OwsExceptionReport {
-        addOfferingParameter(opsMeta);
-        opsMeta.addAnyParameterValue(Sos2Constants.InsertObservationParams.observation);
-        opsMeta.addDataTypeParameter(Sos2Constants.InsertObservationParams.observation,
-                OmConstants.SCHEMA_LOCATION_URL_OM_20_OM_OBSERVATION);
+    public void setOperationsMetadata(OwsOperation opsMeta, String service, String version) throws OwsExceptionReport {
+            opsMeta.addAnyParameterValue(Sos2Constants.GetObservationByIdParams.observation);
     }
 
-    public abstract InsertObservationResponse insertObservation(InsertObservationRequest request)
+    public abstract GetObservationByIdResponse getObservationById(GetObservationByIdRequest request)
             throws OwsExceptionReport;
 
 }

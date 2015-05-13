@@ -35,7 +35,7 @@ import org.n52.iceland.ogc.ows.CompositeOwsException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.ds.AbstractGetFeatureOfInterestDAO;
+import org.n52.sos.ds.AbstractGetFeatureOfInterestHandler;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
 
@@ -45,7 +45,7 @@ import org.n52.sos.response.GetFeatureOfInterestResponse;
  */
 public class SosGetFeatureOfInterestOperatorV100
         extends
-        AbstractV1RequestOperator<AbstractGetFeatureOfInterestDAO, GetFeatureOfInterestRequest, GetFeatureOfInterestResponse> {
+        AbstractV1RequestOperator<AbstractGetFeatureOfInterestHandler, GetFeatureOfInterestRequest, GetFeatureOfInterestResponse> {
 
     private static final String OPERATION_NAME = SosConstants.Operations.GetFeatureOfInterest.name();
 

@@ -56,7 +56,7 @@ import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
-import org.n52.sos.ds.AbstractGetObservationDAO;
+import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
@@ -69,7 +69,7 @@ import org.n52.sos.util.SosHelper;
 import com.google.common.collect.Lists;
 
 public class AqdGetObservationOperatorV10 extends
-        AbstractAqdRequestOperator<AbstractGetObservationDAO, GetObservationRequest, GetObservationResponse> {
+        AbstractAqdRequestOperator<AbstractGetObservationHandler, GetObservationRequest, GetObservationResponse> {
 
     private static final TemporalFilter TEMPORAL_FILTER_LATEST = new TemporalFilter(TimeOperator.TM_Equals,
             new TimeInstant(ExtendedIndeterminateTime.latest), OmConstants.EN_PHENOMENON_TIME);

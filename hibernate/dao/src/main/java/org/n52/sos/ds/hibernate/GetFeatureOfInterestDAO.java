@@ -54,7 +54,7 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.StringHelper;
-import org.n52.sos.ds.AbstractGetFeatureOfInterestDAO;
+import org.n52.sos.ds.AbstractGetFeatureOfInterestHandler;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
@@ -75,12 +75,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * Implementation of the abstract class AbstractGetFeatureOfInterestDAO
+ * Implementation of the abstract class AbstractGetFeatureOfInterestHandler
  *
  * @since 4.0.0
  *
  */
-public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO implements HibernateSqlQueryConstants {
+public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler implements HibernateSqlQueryConstants {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetFeatureOfInterestDAO.class);
 

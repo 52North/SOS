@@ -38,8 +38,8 @@ import java.util.Set;
 import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierRepository;
-import org.n52.iceland.ds.OperationDAO;
-import org.n52.iceland.ds.OperationDAORepository;
+import org.n52.iceland.ds.OperationHandler;
+import org.n52.iceland.ds.OperationHandlerRepository;
 import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.event.events.RequestEvent;
 import org.n52.iceland.exception.CodedException;
@@ -91,7 +91,7 @@ import com.google.common.collect.Sets;
  * 
  * @since 4.0.0
  */
-public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
+public abstract class AbstractRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
         implements RequestOperator {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRequestOperator.class);
 
@@ -122,7 +122,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
 
     @SuppressWarnings("unchecked")
     protected D initDAO(String service, String operationName) {
-        D dao = (D) OperationDAORepository.getInstance().getOperationDAO(service, operationName);
+        D dao = (D) OperationHandlerRepository.getInstance().getOperationDAO(service, operationName);
         if (dao == null) {
             throw new NullPointerException(String.format("OperationDAO for Operation %s has no implementation!",
                     operationName));

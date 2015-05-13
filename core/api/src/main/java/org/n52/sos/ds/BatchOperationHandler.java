@@ -50,12 +50,14 @@ import org.n52.sos.util.BatchConstants;
 /**
  * TODO JavaDoc
  * 
+ * Renamed, in version 4.x called BatchOperationDAO
+ * 
  * @author Christian Autermann <c.autermann@52north.org>
  * 
- * @since 4.0.0
+ * @since 5.0.0
  */
-public class BatchOperationDAO extends AbstractOperationDAO {
-    public BatchOperationDAO() {
+public class BatchOperationHandler extends AbstractOperationHandler {
+    public BatchOperationHandler() {
         super(SosConstants.SOS, BatchConstants.OPERATION_NAME);
     }
 

@@ -76,7 +76,7 @@ import org.n52.iceland.ogc.swe.encoding.SweTextEncoding;
 import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.DateTimeHelper;
-import org.n52.sos.ds.AbstractInsertResultDAO;
+import org.n52.sos.ds.AbstractInsertResultHandler;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
@@ -110,7 +110,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  * 
  */
-public class InsertResultDAO extends AbstractInsertResultDAO implements CapabilitiesExtensionProvider {
+public class InsertResultDAO extends AbstractInsertResultHandler implements CapabilitiesExtensionProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InsertResultDAO.class);
 

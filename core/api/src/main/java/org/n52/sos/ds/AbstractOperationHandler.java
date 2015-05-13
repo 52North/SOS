@@ -39,8 +39,8 @@ import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.coding.OperationKey;
-import org.n52.iceland.ds.OperationDAO;
-import org.n52.iceland.ds.OperationDAOKeyType;
+import org.n52.iceland.ds.OperationHandler;
+import org.n52.iceland.ds.OperationHandlerKeyType;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.Constraint;
 import org.n52.iceland.ogc.ows.DCP;
@@ -60,37 +60,39 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @since 4.0.0
+ * Renamed, in version 4.x called AbstractOperationDAO
+ * 
+ * @since 5.0.0
  *
  */
-public abstract class AbstractOperationDAO implements OperationDAO {
+public abstract class AbstractOperationHandler implements OperationHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractOperationDAO.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractOperationHandler.class);
 
-    private final OperationDAOKeyType operationDAOIdentifier;
+    private final OperationHandlerKeyType operationHandlerIdentifier;
 
-    public AbstractOperationDAO(String service, String operationName) {
-        operationDAOIdentifier = new OperationDAOKeyType(service, operationName);
+    public AbstractOperationHandler(String service, String operationName) {
+        operationHandlerIdentifier = new OperationHandlerKeyType(service, operationName);
     }
 
     // TODO check if necessary in feature
     @Override
     public String getOperationName() {
-        return this.operationDAOIdentifier.getOperationName();
+        return this.operationHandlerIdentifier.getOperationName();
     }
 
     @Override
-    public OperationDAOKeyType getOperationDAOKeyType() {
-        return this.operationDAOIdentifier;
+    public OperationHandlerKeyType getOperationHandlerKeyType() {
+        return this.operationHandlerIdentifier;
     }
 
     @Override
     public OwsOperation getOperationsMetadata(String service, String version) throws OwsExceptionReport {
         Map<String, Set<DCP>> dcp =
-                getDCP(new OperationKey(service, version, getOperationDAOKeyType().getOperationName()));
+                getDCP(new OperationKey(service, version, getOperationHandlerKeyType().getOperationName()));
         if (dcp == null || dcp.isEmpty()) {
             LOG.debug("Operation {} for Service {} not available due to empty DCP map.", getOperationName(),
-                    getOperationDAOKeyType().getService());
+                    getOperationHandlerKeyType().getService());
             return null;
         }
         OwsOperation operation = new OwsOperation();
@@ -125,7 +127,7 @@ public abstract class AbstractOperationDAO implements OperationDAO {
      *
      * @param decoderKey
      *            the decoderKey
-     * @return Map with DCPs for the SOS operation
+     * @return Map with DCPs for the service operation
      *
      * @throws OwsExceptionReport
      */

@@ -35,7 +35,7 @@ import org.n52.iceland.ogc.ows.CompositeOwsException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.ds.AbstractGetResultDAO;
+import org.n52.sos.ds.AbstractGetResultHandler;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.request.GetResultRequest;
 import org.n52.sos.response.GetResultResponse;
@@ -46,7 +46,7 @@ import org.n52.sos.wsdl.WSDLOperation;
  * @since 4.0.0
  *
  */
-public class SosGetResultOperatorV20 extends AbstractV2RequestOperator<AbstractGetResultDAO, GetResultRequest, GetResultResponse> {
+public class SosGetResultOperatorV20 extends AbstractV2RequestOperator<AbstractGetResultHandler, GetResultRequest, GetResultResponse> {
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton(ConformanceClasses.SOS_V2_RESULT_RETRIEVAL);
 

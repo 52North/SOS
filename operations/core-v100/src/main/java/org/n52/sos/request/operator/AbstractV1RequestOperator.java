@@ -28,7 +28,7 @@
  */
 package org.n52.sos.request.operator;
 
-import org.n52.iceland.ds.OperationDAO;
+import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
@@ -46,7 +46,7 @@ import org.n52.iceland.response.AbstractServiceResponse;
  * 
  * @since 4.0.0
  */
-public abstract class AbstractV1RequestOperator<T extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
+public abstract class AbstractV1RequestOperator<T extends OperationHandler, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
         extends AbstractRequestOperator<T, Q, A> {
     public AbstractV1RequestOperator(String operationName, Class<Q> requestType) {
         super(SosConstants.SOS, Sos1Constants.SERVICEVERSION, operationName, requestType);

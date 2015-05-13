@@ -45,7 +45,7 @@ import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.response.GetCapabilitiesResponse;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.ReportObligationType;
-import org.n52.sos.ds.AbstractGetCapabilitiesDAO;
+import org.n52.sos.ds.AbstractGetCapabilitiesHandler;
 import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosObservationOffering;
 
@@ -53,7 +53,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public class AqdGetCapabilitiesOperatorV10 extends
-        AbstractAqdRequestOperator<AbstractGetCapabilitiesDAO, GetCapabilitiesRequest, GetCapabilitiesResponse> {
+        AbstractAqdRequestOperator<AbstractGetCapabilitiesHandler, GetCapabilitiesRequest, GetCapabilitiesResponse> {
 
     private static final String OPERATION_NAME = SosConstants.Operations.GetCapabilities.name();
 

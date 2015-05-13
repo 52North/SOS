@@ -40,7 +40,7 @@ import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ds.AbstractUpdateSensorDescriptionDAO;
+import org.n52.sos.ds.AbstractUpdateSensorDescriptionHandler;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDescriptionFormatDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
@@ -52,11 +52,11 @@ import org.n52.sos.request.UpdateSensorRequest;
 import org.n52.sos.response.UpdateSensorResponse;
 
 /**
- * Implementation of the abstract class AbstractUpdateSensorDescriptionDAO
+ * Implementation of the abstract class AbstractUpdateSensorDescriptionHandler
  * @since 4.0.0
  * 
  */
-public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionDAO {
+public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionHandler {
 
     private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
 

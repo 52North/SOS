@@ -55,7 +55,7 @@ import org.n52.sos.request.GetObservationRequest;
  * 
  * @since 1.0.0
  */
-public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
+public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
 
     private HibernateSessionHolder hibernateSessionHolder = new HibernateSessionHolder();
 

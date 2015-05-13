@@ -46,7 +46,7 @@ import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.ogc.swe.SweDataRecord;
 import org.n52.iceland.ogc.swe.SweField;
 import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.sos.ds.AbstractInsertResultTemplateDAO;
+import org.n52.sos.ds.AbstractInsertResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
@@ -64,7 +64,7 @@ import org.n52.sos.response.InsertResultTemplateResponse;
  * @since 4.0.0
  * 
  */
-public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO implements CapabilitiesExtensionProvider {
+public class InsertResultTemplateDAO extends AbstractInsertResultTemplateHandler implements CapabilitiesExtensionProvider {
 
     private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
 

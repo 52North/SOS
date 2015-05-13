@@ -35,7 +35,7 @@ import java.util.Set;
 
 import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.ds.OperationDAORepository;
+import org.n52.iceland.ds.OperationHandlerRepository;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
 import org.n52.iceland.util.AbstractConfiguringServiceLoaderRepository;
@@ -92,7 +92,7 @@ public class RequestOperatorRepository extends AbstractConfiguringServiceLoaderR
 
     @Override
     public void update() throws ConfigurationException {
-        OperationDAORepository.getInstance().update();
+        OperationHandlerRepository.getInstance().update();
         super.update();
     }
 

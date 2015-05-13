@@ -35,7 +35,7 @@ import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.ogc.ows.CompositeOwsException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.sos.ds.AbstractInsertResultDAO;
+import org.n52.sos.ds.AbstractInsertResultHandler;
 import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.exception.ows.concrete.MissingResultValuesParameterException;
 import org.n52.sos.ogc.sos.ConformanceClasses;
@@ -49,7 +49,7 @@ import org.n52.sos.wsdl.WSDLOperation;
  *
  */
 public class SosInsertResultOperatorV20 extends
-        AbstractV2TransactionalRequestOperator<AbstractInsertResultDAO, InsertResultRequest, InsertResultResponse> {
+        AbstractV2TransactionalRequestOperator<AbstractInsertResultHandler, InsertResultRequest, InsertResultResponse> {
 
     private static final String OPERATION_NAME = Sos2Constants.Operations.InsertResult.name();
     private static final Set<String> CONFORMANCE_CLASSES = Collections.singleton(ConformanceClasses.SOS_V2_RESULT_INSERTION);

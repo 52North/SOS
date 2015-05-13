@@ -35,14 +35,14 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.response.GetCapabilitiesResponse;
-import org.n52.sos.ds.AbstractGetCapabilitiesDAO;
+import org.n52.sos.ds.AbstractGetCapabilitiesHandler;
 
 /**
  * @since 4.0.0
  * 
  */
 public class SosGetCapabilitiesOperatorV100 extends
-        AbstractV1RequestOperator<AbstractGetCapabilitiesDAO, GetCapabilitiesRequest, GetCapabilitiesResponse> {
+        AbstractV1RequestOperator<AbstractGetCapabilitiesHandler, GetCapabilitiesRequest, GetCapabilitiesResponse> {
     // TODO check for SOS 1.0.0
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton("http://www.opengis.net/spec/SOS/1.0/conf/core");

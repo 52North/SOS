@@ -37,7 +37,7 @@ import org.n52.iceland.ds.HibernateDatasourceConstants;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.ds.AbstractDeleteSensorDAO;
+import org.n52.sos.ds.AbstractDeleteSensorHandler;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
@@ -54,11 +54,11 @@ import org.n52.sos.request.DeleteSensorRequest;
 import org.n52.sos.response.DeleteSensorResponse;
 
 /**
- * Implementation of the abstract class AbstractDeleteSensorDAO
+ * Implementation of the abstract class AbstractDeleteSensorHandler
  * @since 4.0.0
  * 
  */
-public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
+public class DeleteSensorDAO extends AbstractDeleteSensorHandler {
     private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
 
     /**

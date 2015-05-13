@@ -52,7 +52,7 @@ import org.n52.iceland.service.MiscSettings;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.JavaHelper;
-import org.n52.sos.ds.AbstractInsertSensorDAO;
+import org.n52.sos.ds.AbstractInsertSensorHandler;
 import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.exception.ows.concrete.InvalidFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
@@ -73,7 +73,7 @@ import com.google.common.collect.Sets;
  */
 @Configurable
 public class SosInsertSensorOperatorV20 extends
-        AbstractV2TransactionalRequestOperator<AbstractInsertSensorDAO, InsertSensorRequest, InsertSensorResponse> {
+        AbstractV2TransactionalRequestOperator<AbstractInsertSensorHandler, InsertSensorRequest, InsertSensorResponse> {
 
 
     private static final Set<String> CONFORMANCE_CLASSES = Sets.newHashSet(

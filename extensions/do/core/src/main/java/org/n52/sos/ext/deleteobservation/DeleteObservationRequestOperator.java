@@ -49,7 +49,7 @@ import org.n52.sos.request.operator.AbstractTransactionalRequestOperator;
  */
 public class DeleteObservationRequestOperator
         extends
-        AbstractTransactionalRequestOperator<DeleteObservationAbstractDAO, DeleteObservationRequest, DeleteObservationResponse>
+        AbstractTransactionalRequestOperator<AbstractDeleteObservationHandler, DeleteObservationRequest, DeleteObservationResponse>
         implements RequestOperator {
 
     public DeleteObservationRequestOperator() {

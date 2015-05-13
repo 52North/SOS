@@ -49,7 +49,7 @@ import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.CodingHelper;
-import org.n52.sos.ds.AbstractGetObservationDAO;
+import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
@@ -71,7 +71,7 @@ import com.google.common.collect.Lists;
  * @since 4.0.0
  */
 public class SosGetObservationOperatorV100 extends
-        AbstractV1RequestOperator<AbstractGetObservationDAO, GetObservationRequest, GetObservationResponse> {
+        AbstractV1RequestOperator<AbstractGetObservationHandler, GetObservationRequest, GetObservationResponse> {
 
     private static final String OPERATION_NAME = SosConstants.Operations.GetObservation.name();
 

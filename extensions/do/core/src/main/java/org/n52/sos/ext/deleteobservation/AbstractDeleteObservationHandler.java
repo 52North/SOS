@@ -26,59 +26,35 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.iceland.ds;
+package org.n52.sos.ext.deleteobservation;
 
-import java.util.Set;
+import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.PARAMETER_NAME;
 
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.sos.ds.AbstractOperationHandler;
 
 /**
- * Interface for all SOS operation DAOs.
+ * Renamed, in version 4.x called DeleteObservationAbstractDAO
  * 
- * @since 4.0.0
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
+ *         J&uuml;rrens</a>
+ * 
+ * @since 5.0.0
  */
-public interface OperationDAO extends DatasourceDaoIdentifier {
+public abstract class AbstractDeleteObservationHandler extends AbstractOperationHandler {
 
-    /**
-     * Get the operation and service key this DAO supports
-     * 
-     * @return The supported SOS operation name
-     */
-    OperationDAOKeyType getOperationDAOKeyType();
+    public AbstractDeleteObservationHandler() {
+        super(SosConstants.SOS, DeleteObservationConstants.Operations.DeleteObservation.name());
+    }
 
-    /**
-     * TODO check if necessary in feature
-     * 
-     * Get the SOS operation name this DAO supports
-     * 
-     * @return The supported SOS operation name
-     */
-    String getOperationName();
+    public abstract DeleteObservationResponse deleteObservation(DeleteObservationRequest deleteObservationRequest)
+            throws OwsExceptionReport;
 
-    /**
-     * Get the OperationsMetadata of the supported SOS operation for the
-     * capabilities
-     * 
-     * @param service
-     *            OGC service identfier
-     * @param version
-     *            SOS version
-     * @return OperationsMetadata for the operation
-     * 
-     * @throws OwsExceptionReport
-     *             If an error occurs.
-     */
-    OwsOperation getOperationsMetadata(String service, String version) throws OwsExceptionReport;
-
-    // /**
-    // * @return the operation specific extension information (&larr; should be
-    // available from cache or from code)
-    // *
-    // * @throws OwsExceptionReport
-    // */
-    // // SosCapabilitiesExtension getExtension() throws OwsExceptionReport;
-
-    Set<String> getConformanceClasses();
-    
+    @Override
+    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
+            throws OwsExceptionReport {
+        opsMeta.addAnyParameterValue(PARAMETER_NAME);
+    }
 }

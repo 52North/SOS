@@ -28,40 +28,30 @@
  */
 package org.n52.sos.ds;
 
-import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.sos.request.InsertSensorRequest;
-import org.n52.sos.response.InsertSensorResponse;
+import org.n52.sos.request.InsertResultRequest;
+import org.n52.sos.response.InsertResultResponse;
 
 /**
- * @since 4.0.0
+ * Renamed, in version 4.x called AbstractInsertResultDAO
+ * 
+ * @since 5.0.0
  * 
  */
-public abstract class AbstractInsertSensorDAO extends AbstractOperationDAO {
-
-    public AbstractInsertSensorDAO(String service) {
-        super(service, Sos2Constants.Operations.InsertSensor.name());
+public abstract class AbstractInsertResultHandler extends AbstractResultHandlingHandler {
+    public AbstractInsertResultHandler(String service) {
+        super(service, Sos2Constants.Operations.InsertResult.name());
     }
 
     @Override
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
-        if (version.equals(Sos1Constants.SERVICEVERSION)) {
-            opsMeta.addAnyParameterValue(Sos1Constants.RegisterSensorParams.SensorDescription);
-            opsMeta.addAnyParameterValue(Sos1Constants.RegisterSensorParams.ObservationTemplate);
-        } else {
-            opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.procedureDescription);
-            opsMeta.addPossibleValuesParameter(Sos2Constants.InsertSensorParams.procedureDescriptionFormat,
-                    CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(service, version));
-            opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.observableProperty);
-            opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.metadata);
-            opsMeta.addDataTypeParameter(Sos2Constants.InsertSensorParams.metadata,
-                    Sos2Constants.SCHEMA_LOCATION_URL_SOS_INSERTION_CAPABILITIES);
-        }
+        opsMeta.addPossibleValuesParameter(Sos2Constants.InsertResultParams.template, getCache().getResultTemplates());
+        opsMeta.addAnyParameterValue(Sos2Constants.InsertResultParams.resultValues);
     }
 
-    public abstract InsertSensorResponse insertSensor(InsertSensorRequest request) throws OwsExceptionReport;
+    public abstract InsertResultResponse insertResult(InsertResultRequest request) throws OwsExceptionReport;
+    
 }

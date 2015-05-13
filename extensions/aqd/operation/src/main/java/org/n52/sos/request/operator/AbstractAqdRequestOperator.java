@@ -28,7 +28,7 @@
  */
 package org.n52.sos.request.operator;
 
-import org.n52.iceland.ds.OperationDAO;
+import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
@@ -44,7 +44,7 @@ import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
 
-public abstract class AbstractAqdRequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
+public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
     public AbstractAqdRequestOperator(String operationName, Class<Q> requestType) {
         super(AqdConstants.AQD, AqdConstants.VERSION, operationName, requestType);

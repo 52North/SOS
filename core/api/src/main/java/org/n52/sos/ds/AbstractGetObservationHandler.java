@@ -54,12 +54,14 @@ import org.n52.sos.util.SosHelper;
  * interface for getting observations for a passed getObservation request from
  * the data source
  * 
- * @since 4.0.0
+ * Renamed, in version 4.x called AbstractGetObservationDAO
+ * 
+ * @since 5.0.0
  * 
  */
-public abstract class AbstractGetObservationDAO extends AbstractOperationDAO {
+public abstract class AbstractGetObservationHandler extends AbstractOperationHandler {
 
-    public AbstractGetObservationDAO(final String service) {
+    public AbstractGetObservationHandler(final String service) {
         super(service, SosConstants.Operations.GetObservation.name());
     }
 

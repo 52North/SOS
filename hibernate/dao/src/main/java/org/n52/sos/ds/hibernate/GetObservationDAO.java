@@ -53,7 +53,7 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.http.HTTPStatus;
-import org.n52.sos.ds.AbstractGetObservationDAO;
+import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
@@ -88,11 +88,11 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
- * Implementation of the abstract class AbstractGetObservationDAO
+ * Implementation of the abstract class AbstractGetObservationHandler
  *
  * @since 4.0.0
  */
-public class GetObservationDAO extends AbstractGetObservationDAO {
+public class GetObservationDAO extends AbstractGetObservationHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationDAO.class);
 

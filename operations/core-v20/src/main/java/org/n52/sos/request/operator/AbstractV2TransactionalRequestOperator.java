@@ -30,7 +30,7 @@ package org.n52.sos.request.operator;
 
 import java.util.Map;
 
-import org.n52.iceland.ds.OperationDAO;
+import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
@@ -46,7 +46,7 @@ import org.n52.iceland.response.AbstractServiceResponse;
  * @param <A>
  *            the response type
  */
-public abstract class AbstractV2TransactionalRequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
+public abstract class AbstractV2TransactionalRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
         extends AbstractTransactionalRequestOperator<D, Q, A> implements WSDLAwareRequestOperator {
     public AbstractV2TransactionalRequestOperator(String operationName, Class<Q> requestType) {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, operationName, requestType);

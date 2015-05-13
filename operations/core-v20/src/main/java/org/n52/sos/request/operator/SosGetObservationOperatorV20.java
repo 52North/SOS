@@ -46,7 +46,7 @@ import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.ds.AbstractGetObservationDAO;
+import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
@@ -66,7 +66,7 @@ import org.n52.sos.wsdl.WSDLOperation;
  */
 @Configurable
 public class SosGetObservationOperatorV20 extends
-        AbstractV2RequestOperator<AbstractGetObservationDAO, GetObservationRequest, GetObservationResponse> {
+        AbstractV2RequestOperator<AbstractGetObservationHandler, GetObservationRequest, GetObservationResponse> {
 
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton(ConformanceClasses.SOS_V2_CORE_PROFILE);

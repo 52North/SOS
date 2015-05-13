@@ -31,13 +31,13 @@ package org.n52.sos.ds;
 import java.util.Collection;
 
 import org.n52.iceland.cache.WritableContentCache;
-import org.n52.iceland.ds.CacheFeederDAO;
+import org.n52.iceland.ds.CacheFeederHandler;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 
 /**
  * Mock NOOP implementation of CacheFeederDAO used to prevent NoImplementationFoundException.
  */
-public class MockCacheFeederDAO implements CacheFeederDAO {
+public class MockCacheFeederDAO implements CacheFeederHandler {
     
     public static final String DATASOURCE_DAO_IDENTIFIER = "hibernate.orm";
     

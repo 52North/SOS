@@ -50,7 +50,7 @@ import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.sos.SosOffering;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ds.AbstractInsertSensorDAO;
+import org.n52.sos.ds.AbstractInsertSensorHandler;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
@@ -76,12 +76,12 @@ import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.response.InsertSensorResponse;
 
 /**
- * Implementation of the abstract class AbstractInsertSensorDAO
+ * Implementation of the abstract class AbstractInsertSensorHandler
  * 
  * @since 4.0.0
  * 
  */
-public class InsertSensorDAO extends AbstractInsertSensorDAO implements CapabilitiesExtensionProvider {
+public class InsertSensorDAO extends AbstractInsertSensorHandler implements CapabilitiesExtensionProvider {
 
     private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
 

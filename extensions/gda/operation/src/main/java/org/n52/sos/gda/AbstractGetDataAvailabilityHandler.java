@@ -32,17 +32,19 @@ import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.sos.ds.AbstractOperationDAO;
+import org.n52.sos.ds.AbstractOperationHandler;
 
 /**
- * DAO to get the DataAvailabilities out of the database.
+ * Handler to get the DataAvailabilities out of the database.
+ * 
+ * Renamed, in version 4.x called AbstractGetDataAvailabilityDAO
  * 
  * @author Christian Autermann
  * 
- * @since 4.0.0
+ * @since 5.0.0
  */
 @Configurable
-public abstract class AbstractGetDataAvailabilityDAO extends AbstractOperationDAO {
+public abstract class AbstractGetDataAvailabilityHandler extends AbstractOperationHandler {
     
     public static final String INCLUDE_RESULT_TIMES = "IncludeResultTimes";
     
@@ -50,7 +52,7 @@ public abstract class AbstractGetDataAvailabilityDAO extends AbstractOperationDA
     
     private boolean forceValueCount = false;
 
-    public AbstractGetDataAvailabilityDAO(String service) {
+    public AbstractGetDataAvailabilityHandler(String service) {
         super(service, GetDataAvailabilityConstants.OPERATION_NAME);
     }
 

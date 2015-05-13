@@ -29,20 +29,22 @@
 package org.n52.iceland.ds;
 
 /**
- * @since 4.0.0
+ * In 52N SOS version 4.x called OperationDAOKeyType
+ * 
+ * @since 1.0.0
  * 
  */
-public class OperationDAOKeyType implements Comparable<OperationDAOKeyType> {
+public class OperationHandlerKeyType implements Comparable<OperationHandlerKeyType> {
 
     private String operationName;
 
     private String service;
 
-    public OperationDAOKeyType() {
+    public OperationHandlerKeyType() {
         super();
     }
 
-    public OperationDAOKeyType(String service, String operationName) {
+    public OperationHandlerKeyType(String service, String operationName) {
         super();
         this.service = service;
         this.operationName = operationName;
@@ -65,8 +67,8 @@ public class OperationDAOKeyType implements Comparable<OperationDAOKeyType> {
     }
 
     @Override
-    public int compareTo(OperationDAOKeyType o) {
-        if (o instanceof OperationDAOKeyType) {
+    public int compareTo(OperationHandlerKeyType o) {
+        if (o instanceof OperationHandlerKeyType) {
             if (service.equals(o.service) && operationName.equals(o.operationName)) {
                 return 0;
             }
@@ -82,8 +84,8 @@ public class OperationDAOKeyType implements Comparable<OperationDAOKeyType> {
      */
     @Override
     public boolean equals(Object paramObject) {
-        if (service != null && operationName != null && paramObject instanceof OperationDAOKeyType) {
-            OperationDAOKeyType toCheck = (OperationDAOKeyType) paramObject;
+        if (service != null && operationName != null && paramObject instanceof OperationHandlerKeyType) {
+            OperationHandlerKeyType toCheck = (OperationHandlerKeyType) paramObject;
             return (service.equals(toCheck.service) && operationName.equals(toCheck.operationName));
         }
         return false;

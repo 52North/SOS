@@ -34,7 +34,7 @@ import java.util.Set;
 import org.n52.iceland.ogc.ows.CompositeOwsException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.sos.ds.AbstractGetResultTemplateDAO;
+import org.n52.sos.ds.AbstractGetResultTemplateHandler;
 import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
@@ -49,7 +49,7 @@ import org.n52.sos.wsdl.WSDLOperation;
  * @since 4.0.0
  *
  */
-public class SosGetResultTemplateOperatorV20 extends AbstractV2RequestOperator<AbstractGetResultTemplateDAO, GetResultTemplateRequest, GetResultTemplateResponse> {
+public class SosGetResultTemplateOperatorV20 extends AbstractV2RequestOperator<AbstractGetResultTemplateHandler, GetResultTemplateRequest, GetResultTemplateResponse> {
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton(ConformanceClasses.SOS_V2_RESULT_RETRIEVAL);
 

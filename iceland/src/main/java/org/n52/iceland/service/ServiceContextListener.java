@@ -76,7 +76,7 @@ public class ServiceContextListener implements ServletContextListener {
     }
 
     private void initInstantiable() {
-        Reflections reflections = new Reflections("org.n62");
+        Reflections reflections = new Reflections("org.n52");
         Set<Class<?>> annotated = 
                   reflections.getTypesAnnotatedWith(Instantiate.class);
         for (Class<?> clazz : annotated) {

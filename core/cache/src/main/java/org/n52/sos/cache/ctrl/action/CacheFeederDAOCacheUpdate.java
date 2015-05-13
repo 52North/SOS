@@ -29,8 +29,8 @@
 package org.n52.sos.cache.ctrl.action;
 
 import org.n52.iceland.cache.ContentCacheUpdate;
-import org.n52.iceland.ds.CacheFeederDAO;
-import org.n52.iceland.ds.CacheFeederDAORepository;
+import org.n52.iceland.ds.CacheFeederHandler;
+import org.n52.iceland.ds.CacheFeederHandlerRepository;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
 
 /**
@@ -39,13 +39,13 @@ import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
  * @since 4.0.0
  */
 public abstract class CacheFeederDAOCacheUpdate extends ContentCacheUpdate {
-    private CacheFeederDAO cacheFeederDAO;
+    private CacheFeederHandler cacheFeederDAO;
 
-    protected CacheFeederDAO getDao() throws NoImplementationFoundException {
+    protected CacheFeederHandler getDao() throws NoImplementationFoundException {
         if (this.cacheFeederDAO == null) {
-            this.cacheFeederDAO = CacheFeederDAORepository.getInstance().getCacheFeederDAO();
+            this.cacheFeederDAO = CacheFeederHandlerRepository.getInstance().getCacheFeederHandler();
             if (this.cacheFeederDAO == null) {
-                throw new NoImplementationFoundException(CacheFeederDAO.class);
+                throw new NoImplementationFoundException(CacheFeederHandler.class);
             }
         }
         return this.cacheFeederDAO;

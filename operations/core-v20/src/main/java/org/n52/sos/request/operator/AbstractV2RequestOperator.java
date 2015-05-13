@@ -30,7 +30,7 @@ package org.n52.sos.request.operator;
 
 import java.util.Map;
 
-import org.n52.iceland.ds.OperationDAO;
+import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.ogc.ows.CompositeOwsException;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
@@ -48,7 +48,7 @@ import org.n52.iceland.response.AbstractServiceResponse;
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
-public abstract class AbstractV2RequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
+public abstract class AbstractV2RequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
         extends AbstractRequestOperator<D, Q, A> implements WSDLAwareRequestOperator {
     public AbstractV2RequestOperator(String operationName, Class<Q> requestType) {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, operationName, requestType);

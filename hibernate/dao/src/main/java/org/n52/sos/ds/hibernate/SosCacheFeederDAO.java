@@ -40,7 +40,7 @@ import org.joda.time.format.PeriodFormat;
 import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.ds.CacheFeederDAO;
+import org.n52.iceland.ds.CacheFeederHandler;
 import org.n52.iceland.ds.HibernateDatasourceConstants;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.ogc.ows.CompositeOwsException;
@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
  * @since 4.0.0
  */
 @Configurable
-public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFeederDAO {
+public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFeederHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosCacheFeederDAO.class);
 

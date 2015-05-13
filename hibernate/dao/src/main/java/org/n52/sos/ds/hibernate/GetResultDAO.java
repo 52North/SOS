@@ -49,7 +49,7 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.ds.AbstractGetResultDAO;
+import org.n52.sos.ds.AbstractGetResultHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
@@ -80,12 +80,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Sets;
 
 /**
- * Implementation of the abstract class AbstractGetResultDAO
+ * Implementation of the abstract class AbstractGetResultHandler
  * 
  * @since 4.0.0
  * 
  */
-public class GetResultDAO extends AbstractGetResultDAO {
+public class GetResultDAO extends AbstractGetResultHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetResultDAO.class);
 

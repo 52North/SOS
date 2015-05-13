@@ -66,7 +66,7 @@ import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.http.HTTPStatus;
-import org.n52.sos.ds.AbstractInsertObservationDAO;
+import org.n52.sos.ds.AbstractInsertObservationHandler;
 import org.n52.sos.event.events.ObservationInsertion;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeForOfferingException;
@@ -90,7 +90,7 @@ import com.google.common.collect.Sets;
  *
  */
 public class SosInsertObservationOperatorV20 extends
-        AbstractV2TransactionalRequestOperator<AbstractInsertObservationDAO, InsertObservationRequest, InsertObservationResponse> {
+        AbstractV2TransactionalRequestOperator<AbstractInsertObservationHandler, InsertObservationRequest, InsertObservationResponse> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosInsertObservationOperatorV20.class);
 

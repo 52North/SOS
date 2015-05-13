@@ -35,7 +35,7 @@ import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.ds.AbstractGetObservationByIdDAO;
+import org.n52.sos.ds.AbstractGetObservationByIdHandler;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.response.GetObservationByIdResponse;
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SosGetObservationByIdOperatorV100
         extends
-        AbstractV1RequestOperator<AbstractGetObservationByIdDAO, GetObservationByIdRequest, GetObservationByIdResponse> {
+        AbstractV1RequestOperator<AbstractGetObservationByIdHandler, GetObservationByIdRequest, GetObservationByIdResponse> {
     @SuppressWarnings("unused")
     private static final Logger LOGGER = LoggerFactory.getLogger(SosGetObservationByIdOperatorV100.class.getName());
 

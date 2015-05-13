@@ -41,7 +41,7 @@ import org.n52.iceland.ogc.ows.CompositeOwsException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.service.Configurator;
-import org.n52.sos.ds.AbstractInsertResultTemplateDAO;
+import org.n52.sos.ds.AbstractInsertResultTemplateHandler;
 import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.sos.exception.ows.concrete.DuplicateIdentifierException;
 import org.n52.sos.ogc.sos.ConformanceClasses;
@@ -56,7 +56,7 @@ import org.n52.sos.wsdl.WSDLOperation;
  */
 public class SosInsertResultTemplateOperatorV20
         extends
-        AbstractV2TransactionalRequestOperator<AbstractInsertResultTemplateDAO, InsertResultTemplateRequest, InsertResultTemplateResponse> {
+        AbstractV2TransactionalRequestOperator<AbstractInsertResultTemplateHandler, InsertResultTemplateRequest, InsertResultTemplateResponse> {
 
     private static final String OPERATION_NAME = Sos2Constants.Operations.InsertResultTemplate.name();
 

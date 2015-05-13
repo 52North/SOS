@@ -37,14 +37,16 @@ import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.util.AbstractConfiguringServiceLoaderRepository;
 
 /**
+ * In 52N SOS version 4.x called OperationDAORepository
+ * 
  * @author Christian Autermann <c.autermann@52north.org>
  * 
- * @since 4.0.0
+ * @since 1.0.0
  */
-public class OperationDAORepository extends AbstractConfiguringServiceLoaderRepository<OperationDAO> {
+public class OperationHandlerRepository extends AbstractConfiguringServiceLoaderRepository<OperationHandler> {
 
     private static class LazyHolder {
-        private static final OperationDAORepository INSTANCE = new OperationDAORepository();
+        private static final OperationHandlerRepository INSTANCE = new OperationHandlerRepository();
 
         private LazyHolder() {
         };
@@ -53,52 +55,52 @@ public class OperationDAORepository extends AbstractConfiguringServiceLoaderRepo
     private static String datasourceDaoIdentficator;
 
     /**
-     * @return Returns a singleton instance of the CodingRepository.
+     * @return Returns a singleton instance of the {@link OperationHandlerRepository}.
      */
-    public static OperationDAORepository getInstance() {
+    public static OperationHandlerRepository getInstance() {
         return LazyHolder.INSTANCE;
     }
 
     /**
-     * @return Returns a singleton instance of the CodingRepository.
+     * @return Returns a singleton instance of the {@link OperationHandlerRepository}.
      */
-    public static OperationDAORepository createInstance(String datasourceDaoIdentficator) {
+    public static OperationHandlerRepository createInstance(String datasourceDaoIdentficator) {
         setDatasourceDaoIdentficator(datasourceDaoIdentficator);
         return getInstance();
     }
 
     private static void setDatasourceDaoIdentficator(String datasourceDaoIdentficator) {
-        OperationDAORepository.datasourceDaoIdentficator = datasourceDaoIdentficator;
+        OperationHandlerRepository.datasourceDaoIdentficator = datasourceDaoIdentficator;
     }
 
-    /** Implemented ISosOperationDAO */
-    private final Map<OperationDAOKeyType, OperationDAO> operationDaos =
-            new HashMap<OperationDAOKeyType, OperationDAO>(0);
+    /** Implemented {@link OperationHandler} */
+    private final Map<OperationHandlerKeyType, OperationHandler> operationHandlers =
+            new HashMap<OperationHandlerKeyType, OperationHandler>(0);
 
     /**
-     * Load implemented operation dao
+     * Load implemented operation handler
      * 
      * @throws ConfigurationException
-     *             If no operation dao is implemented
+     *             If no operation handler is implemented
      */
-    private OperationDAORepository() throws ConfigurationException {
-        super(OperationDAO.class, false);
+    private OperationHandlerRepository() throws ConfigurationException {
+        super(OperationHandler.class, false);
         load(false);
     }
 
     /**
-     * Load the implemented operation dao and add them to a map with operation
+     * Load the implemented operation handler and add them to a map with operation
      * name as key.
      * 
      * @throws ConfigurationException
-     *             If no operation dao is implemented
+     *             If no operation handler is implemented
      */
     @Override
-    protected void processConfiguredImplementations(final Set<OperationDAO> daos) throws ConfigurationException {
-        operationDaos.clear();
-        for (final OperationDAO dao : daos) {
+    protected void processConfiguredImplementations(final Set<OperationHandler> daos) throws ConfigurationException {
+        operationHandlers.clear();
+        for (final OperationHandler dao : daos) {
             if (checkDatasourceDaoIdentifications(dao)) {
-                operationDaos.put(dao.getOperationDAOKeyType(), dao);
+                operationHandlers.put(dao.getOperationHandlerKeyType(), dao);
             }
         }
     }
@@ -113,10 +115,10 @@ public class OperationDAORepository extends AbstractConfiguringServiceLoaderRepo
     }
 
     /**
-     * @return the implemented operation DAOs
+     * @return the implemented operation Handlers
      */
-    public Map<OperationDAOKeyType, OperationDAO> getOperationDAOs() {
-        return Collections.unmodifiableMap(operationDaos);
+    public Map<OperationHandlerKeyType, OperationHandler> getOperationDAOs() {
+        return Collections.unmodifiableMap(operationHandlers);
     }
 
     /**
@@ -124,18 +126,18 @@ public class OperationDAORepository extends AbstractConfiguringServiceLoaderRepo
      *            the service name
      * @param operationName
      *            the operation name
-     * @return the implemented operation DAO
+     * @return the implemented operation handler
      */
-    public OperationDAO getOperationDAO(final String service, final String operationName) {
-        return operationDaos.get(new OperationDAOKeyType(service, operationName));
+    public OperationHandler getOperationDAO(final String service, final String operationName) {
+        return operationHandlers.get(new OperationHandlerKeyType(service, operationName));
     }
 
     /**
-     * @param operationDAOIdentifier
+     * @param operationHandlerIdentifier
      *            the operation DAO identifier
      * @return the implemented operation DAO
      */
-    public OperationDAO getOperationDAO(final OperationDAOKeyType operationDAOIdentifier) {
-        return operationDaos.get(operationDAOIdentifier);
+    public OperationHandler getOperationDAO(final OperationHandlerKeyType operationHandlerIdentifier) {
+        return operationHandlers.get(operationHandlerIdentifier);
     }
 }

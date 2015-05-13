@@ -38,11 +38,13 @@ import org.n52.sos.request.GetResultTemplateRequest;
 import org.n52.sos.response.GetResultTemplateResponse;
 
 /**
- * @since 4.0.0
+ * Renamed, in version 4.x called AbstractGetResultTemplateDAO
+ * 
+ * @since 5.0.0
  * 
  */
-public abstract class AbstractGetResultTemplateDAO extends AbstractOperationDAO {
-    public AbstractGetResultTemplateDAO(String service) {
+public abstract class AbstractGetResultTemplateHandler extends AbstractOperationHandler {
+    public AbstractGetResultTemplateHandler(String service) {
         super(service, Sos2Constants.Operations.GetResultTemplate.name());
     }
 

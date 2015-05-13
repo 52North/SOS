@@ -47,15 +47,17 @@ import org.n52.iceland.service.operator.ServiceOperatorRepository;
  * interface for getting capabilities for a passed GetCapabilities request from
  * the data source
  * 
- * @since 4.0.0
+ * Renamed, in version 4.x called AbstractGetCapabilitiesDAO
+ * 
+ * @since 5.0.0
  */
-public abstract class AbstractGetCapabilitiesDAO extends AbstractOperationDAO {
+public abstract class AbstractGetCapabilitiesHandler extends AbstractOperationHandler {
     
     protected static final String FALSE = Boolean.FALSE.toString();
 
     protected static final String TRUE = Boolean.TRUE.toString();
 
-    public AbstractGetCapabilitiesDAO(String service) {
+    public AbstractGetCapabilitiesHandler(String service) {
         super(service, SosConstants.Operations.GetCapabilities.name());
     }
 

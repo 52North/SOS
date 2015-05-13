@@ -37,7 +37,7 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.http.MediaType;
-import org.n52.sos.ds.AbstractDescribeSensorDAO;
+import org.n52.sos.ds.AbstractDescribeSensorHandler;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.SosHelper;
@@ -48,7 +48,7 @@ import org.n52.sos.util.SosHelper;
  * @since 4.0.0
  */
 public class SosDescribeSensorOperatorV100 extends
-        AbstractV1RequestOperator<AbstractDescribeSensorDAO, DescribeSensorRequest, DescribeSensorResponse> {
+        AbstractV1RequestOperator<AbstractDescribeSensorHandler, DescribeSensorRequest, DescribeSensorResponse> {
 
     private static final String OPERATION_NAME = SosConstants.Operations.DescribeSensor.name();
 

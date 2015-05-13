@@ -51,7 +51,7 @@ import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
-import org.n52.sos.ds.AbstractDescribeSensorDAO;
+import org.n52.sos.ds.AbstractDescribeSensorHandler;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -68,7 +68,7 @@ import com.google.common.collect.Sets;
 
 
 /**
- * Implementation of the abstract class AbstractDescribeSensorDAO
+ * Implementation of the abstract class AbstractDescribeSensorHandler
  *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
@@ -78,7 +78,7 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
-public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
+public class DescribeSensorDAO extends AbstractDescribeSensorHandler {
     private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
 
     private final HibernateProcedureConverter procedureConverter = new HibernateProcedureConverter();

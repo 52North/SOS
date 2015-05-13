@@ -43,7 +43,7 @@ import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.convert.RequestResponseModifierRepository;
-import org.n52.iceland.ds.CacheFeederDAORepository;
+import org.n52.iceland.ds.CacheFeederHandlerRepository;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderIdentificator;
 import org.n52.iceland.ds.DataConnectionProvider;
@@ -52,7 +52,7 @@ import org.n52.iceland.ds.DatasourceDaoIdentifier;
 import org.n52.iceland.ds.FeatureQueryHandler;
 import org.n52.iceland.ds.HibernateDatasourceConstants;
 import org.n52.iceland.ds.IFeatureConnectionProvider;
-import org.n52.iceland.ds.OperationDAORepository;
+import org.n52.iceland.ds.OperationHandlerRepository;
 import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.event.events.ConfiguratorInitializedEvent;
 import org.n52.iceland.exception.ConfigurationException;
@@ -309,11 +309,11 @@ public class Configurator implements Cleanupable {
         ServiceConfiguration.getInstance();
 
         initializeConnectionProviders();
-        CacheFeederDAORepository.createInstance(getDatasourceDaoIdentificator());
+        CacheFeederHandlerRepository.createInstance(getDatasourceDaoIdentificator());
 
         serviceIdentificationFactory = new ServiceIdentificationFactory();
         serviceProviderFactory = new ServiceProviderFactory();
-        OperationDAORepository.createInstance(getDatasourceDaoIdentificator());
+        OperationHandlerRepository.createInstance(getDatasourceDaoIdentificator());
         ServiceOperatorRepository.getInstance();
         CodingRepository.getInstance();
         featureQueryHandler = loadAndConfigure(FeatureQueryHandler.class, false, getDatasourceDaoIdentificator());

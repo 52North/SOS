@@ -28,58 +28,42 @@
  */
 package org.n52.sos.ds;
 
-import java.util.Set;
-
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.response.DescribeSensorResponse;
+import org.n52.sos.request.InsertSensorRequest;
+import org.n52.sos.response.InsertSensorResponse;
 
 /**
- * interface for getting procedure description for a passed DescribeSensor
- * request from the data source
+ * Renamed, in version 4.x called AbstractInsertSensorDAO
  * 
- * @since 4.0.0
+ * @since 5.0.0
+ * 
  */
-public abstract class AbstractDescribeSensorDAO extends AbstractOperationDAO {
-    public AbstractDescribeSensorDAO(String service) {
-        super(service, SosConstants.Operations.DescribeSensor.name());
+public abstract class AbstractInsertSensorHandler extends AbstractOperationHandler {
+
+    public AbstractInsertSensorHandler(String service) {
+        super(service, Sos2Constants.Operations.InsertSensor.name());
     }
 
     @Override
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
-        addProcedureParameter(opsMeta);
-        Set<String> pdfs = getCache().getRequstableProcedureDescriptionFormat();
         if (version.equals(Sos1Constants.SERVICEVERSION)) {
-            pdfs.addAll(CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS,
-                    Sos1Constants.SERVICEVERSION));
-            opsMeta.addPossibleValuesParameter(
-                    Sos1Constants.DescribeSensorParams.outputFormat, pdfs);
-        } else if (version.equals(Sos2Constants.SERVICEVERSION)) {
-            pdfs.addAll( CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS,
-                    Sos2Constants.SERVICEVERSION));
-            opsMeta.addPossibleValuesParameter(
-                    Sos2Constants.DescribeSensorParams.procedureDescriptionFormat, pdfs);
+            opsMeta.addAnyParameterValue(Sos1Constants.RegisterSensorParams.SensorDescription);
+            opsMeta.addAnyParameterValue(Sos1Constants.RegisterSensorParams.ObservationTemplate);
+        } else {
+            opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.procedureDescription);
+            opsMeta.addPossibleValuesParameter(Sos2Constants.InsertSensorParams.procedureDescriptionFormat,
+                    CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(service, version));
+            opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.observableProperty);
+            opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.metadata);
+            opsMeta.addDataTypeParameter(Sos2Constants.InsertSensorParams.metadata,
+                    Sos2Constants.SCHEMA_LOCATION_URL_SOS_INSERTION_CAPABILITIES);
         }
     }
 
-    /**
-     * Get the procedure description for a procedure
-     * 
-     * @param request
-     *            the request
-     * 
-     * @return Returns the DescribeSensor response
-     * 
-     * @throws OwsExceptionReport
-     *             If an error occurs
-     */
-    public abstract DescribeSensorResponse getSensorDescription(DescribeSensorRequest request)
-            throws OwsExceptionReport;
-
+    public abstract InsertSensorResponse insertSensor(InsertSensorRequest request) throws OwsExceptionReport;
 }

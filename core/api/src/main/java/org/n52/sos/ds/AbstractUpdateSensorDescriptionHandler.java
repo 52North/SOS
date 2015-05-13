@@ -28,28 +28,37 @@
  */
 package org.n52.sos.ds;
 
+import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.request.GetObservationByIdRequest;
-import org.n52.sos.response.GetObservationByIdResponse;
+import org.n52.sos.request.UpdateSensorRequest;
+import org.n52.sos.response.UpdateSensorResponse;
 
 /**
- * @since 4.0.0
+ * Renamed, in version 4.x called AbstractUpdateSensorDescriptionDAO
+ * 
+ * @since 5.0.0
  * 
  */
-public abstract class AbstractGetObservationByIdDAO extends AbstractOperationDAO {
-    public AbstractGetObservationByIdDAO(String service) {
-        super(service, SosConstants.Operations.GetObservationById.name());
+public abstract class AbstractUpdateSensorDescriptionHandler extends AbstractOperationHandler {
+
+    public AbstractUpdateSensorDescriptionHandler(String service) {
+        super(service, Sos2Constants.Operations.UpdateSensorDescription.name());
     }
 
     @Override
-    public void setOperationsMetadata(OwsOperation opsMeta, String service, String version) throws OwsExceptionReport {
-            opsMeta.addAnyParameterValue(Sos2Constants.GetObservationByIdParams.observation);
+    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
+            throws OwsExceptionReport {
+        addProcedureParameter(opsMeta);
+        if (version.equals(Sos2Constants.SERVICEVERSION)) {
+            opsMeta.addPossibleValuesParameter(Sos2Constants.UpdateSensorDescriptionParams.procedureDescriptionFormat,
+                    CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(service, version));
+        }
+        opsMeta.addAnyParameterValue(Sos2Constants.UpdateSensorDescriptionParams.description);
     }
 
-    public abstract GetObservationByIdResponse getObservationById(GetObservationByIdRequest request)
+    public abstract UpdateSensorResponse updateSensorDescription(UpdateSensorRequest request)
             throws OwsExceptionReport;
 
 }

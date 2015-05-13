@@ -31,25 +31,26 @@ package org.n52.sos.ds;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.sos.request.InsertResultRequest;
-import org.n52.sos.response.InsertResultResponse;
+import org.n52.sos.request.InsertResultTemplateRequest;
+import org.n52.sos.response.InsertResultTemplateResponse;
 
 /**
- * @since 4.0.0
+ * Renamed, in version 4.x called AbstractInsertResultTemplateDAO
+ * 
+ * @since 5.0.0
  * 
  */
-public abstract class AbstractInsertResultDAO extends AbstractResultHandlingDAO {
-    public AbstractInsertResultDAO(String service) {
-        super(service, Sos2Constants.Operations.InsertResult.name());
+public abstract class AbstractInsertResultTemplateHandler extends AbstractResultHandlingHandler {
+    public AbstractInsertResultTemplateHandler(String service) {
+        super(service, Sos2Constants.Operations.InsertResultTemplate.name());
     }
 
     @Override
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
-        opsMeta.addPossibleValuesParameter(Sos2Constants.InsertResultParams.template, getCache().getResultTemplates());
-        opsMeta.addAnyParameterValue(Sos2Constants.InsertResultParams.resultValues);
+        opsMeta.addAnyParameterValue(Sos2Constants.InsertResultTemplateParams.proposedTemplate);
     }
 
-    public abstract InsertResultResponse insertResult(InsertResultRequest request) throws OwsExceptionReport;
-    
+    public abstract InsertResultTemplateResponse insertResultTemplate(InsertResultTemplateRequest request)
+            throws OwsExceptionReport;
 }

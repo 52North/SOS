@@ -35,7 +35,7 @@ import org.n52.iceland.ogc.ows.CompositeOwsException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.ds.AbstractGetObservationByIdDAO;
+import org.n52.sos.ds.AbstractGetObservationByIdHandler;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.request.GetObservationByIdRequest;
@@ -49,7 +49,7 @@ import org.n52.sos.wsdl.WSDLOperation;
  */
 public class SosGetObservationByIdOperatorV20
         extends
-        AbstractV2RequestOperator<AbstractGetObservationByIdDAO, GetObservationByIdRequest, GetObservationByIdResponse> {
+        AbstractV2RequestOperator<AbstractGetObservationByIdHandler, GetObservationByIdRequest, GetObservationByIdResponse> {
 
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton(ConformanceClasses.SOS_V2_OBSERVATION_BY_ID_RETRIEVAL);

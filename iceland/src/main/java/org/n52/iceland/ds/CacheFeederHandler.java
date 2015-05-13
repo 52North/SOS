@@ -26,30 +26,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds;
+package org.n52.iceland.ds;
 
+import java.util.Collection;
+
+import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.sos.request.DeleteSensorRequest;
-import org.n52.sos.response.DeleteSensorResponse;
 
 /**
- * @since 4.0.0
+ * Interface for implementations of cache feeder Handlers. Used to feed the
+ * CapabilitiesCache with data from the data source.
  * 
+ * @since 4.0.0
  */
-public abstract class AbstractDeleteSensorDAO extends AbstractOperationDAO {
+public interface CacheFeederHandler extends DatasourceDaoIdentifier {
+    void updateCache(WritableContentCache capabilitiesCache) throws OwsExceptionReport;
 
-    public AbstractDeleteSensorDAO(String service) {
-        super(service, Sos2Constants.Operations.DeleteSensor.name());
-    }
-
-    @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
-            throws OwsExceptionReport {
-        addProcedureParameter(opsMeta);
-    }
-
-    public abstract DeleteSensorResponse deleteSensor(DeleteSensorRequest request) throws OwsExceptionReport;
-
+    /**
+     * Reload all cache data for a list of offerings, for instance after a DeleteSensor event
+     * 
+     * @param capabilitiesCache The cache to update
+     * @param offerings A list of offerings to update
+     * @throws OwsExceptionReport
+     */
+    void updateCacheOfferings(WritableContentCache capabilitiesCache, Collection<String> offerings)
+            throws OwsExceptionReport;
 }

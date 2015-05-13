@@ -77,7 +77,7 @@ import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
-import org.n52.sos.gda.AbstractGetDataAvailabilityDAO;
+import org.n52.sos.gda.AbstractGetDataAvailabilityHandler;
 import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.gda.GetDataAvailabilityResponse;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
@@ -88,13 +88,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * {@code IGetDataAvailabilityDao} to handle {@link GetDataAvailabilityRequest}
+ * {@code AbstractGetDataAvailabilityHandler} to handle {@link GetDataAvailabilityRequest}
  * s.
  * 
  * @author Christian Autermann
  * @since 4.0.0
  */
-public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO implements HibernateSqlQueryConstants {
+public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler implements HibernateSqlQueryConstants {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetDataAvailabilityDAO.class);
 

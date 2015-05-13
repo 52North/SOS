@@ -41,7 +41,7 @@ import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.ds.AbstractGetObservationByIdDAO;
+import org.n52.sos.ds.AbstractGetObservationByIdHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -53,12 +53,12 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * Implementation of the abstract class AbstractGetObservationByIdDAO
+ * Implementation of the abstract class AbstractGetObservationByIdHandler
  *
  * @since 4.0.0
  *
  */
-public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
+public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationByIdDAO.class);
 

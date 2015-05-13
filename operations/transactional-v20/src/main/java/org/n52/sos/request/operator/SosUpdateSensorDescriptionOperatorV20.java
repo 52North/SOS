@@ -38,7 +38,7 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.service.Configurator;
-import org.n52.sos.ds.AbstractUpdateSensorDescriptionDAO;
+import org.n52.sos.ds.AbstractUpdateSensorDescriptionHandler;
 import org.n52.sos.event.events.SensorModification;
 import org.n52.sos.exception.ows.concrete.InvalidProcedureParameterException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
@@ -53,7 +53,7 @@ import org.n52.sos.wsdl.WSDLOperation;
  *
  */
 public class SosUpdateSensorDescriptionOperatorV20 extends 
-        AbstractV2TransactionalRequestOperator<AbstractUpdateSensorDescriptionDAO, UpdateSensorRequest, UpdateSensorResponse>{
+        AbstractV2TransactionalRequestOperator<AbstractUpdateSensorDescriptionHandler, UpdateSensorRequest, UpdateSensorResponse>{
     private static final Set<String> CONFORMANCE_CLASSES = Collections.singleton(ConformanceClasses.SOS_V2_UPDATE_SENSOR_DESCRIPTION);
 
     public SosUpdateSensorDescriptionOperatorV20() {

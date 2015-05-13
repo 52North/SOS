@@ -35,15 +35,17 @@ import org.n52.iceland.ogc.swe.SweDataArray;
 import org.n52.iceland.ogc.swe.SweDataRecord;
 
 /**
- * Abstract class for Result Handling operation DAOs to provide common methods
+ * Abstract class for Result Handling operation Handlers to provide common methods
+ * 
+ * Renamed, in version 4.x called AbstractResultHandlingDAO
  * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.0.0
+ * @since 5.0.0
  * 
  */
-public abstract class AbstractResultHandlingDAO extends AbstractOperationDAO {
+public abstract class AbstractResultHandlingHandler extends AbstractOperationHandler {
 
-    public AbstractResultHandlingDAO(String service, String operationName) {
+    public AbstractResultHandlingHandler(String service, String operationName) {
         super(service, operationName);
     }
 

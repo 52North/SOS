@@ -26,33 +26,31 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ext.deleteobservation;
-
-import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.PARAMETER_NAME;
+package org.n52.sos.ds;
 
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.ds.AbstractOperationDAO;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.sos.request.DeleteSensorRequest;
+import org.n52.sos.response.DeleteSensorResponse;
 
 /**
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- *         J&uuml;rrens</a>
+ * Renamed, in version 4.x called AbstractDeleteSensorDAO
+ * @since 5.0.0
  * 
- * @since 1.0.0
  */
-public abstract class DeleteObservationAbstractDAO extends AbstractOperationDAO {
+public abstract class AbstractDeleteSensorHandler extends AbstractOperationHandler {
 
-    public DeleteObservationAbstractDAO() {
-        super(SosConstants.SOS, DeleteObservationConstants.Operations.DeleteObservation.name());
+    public AbstractDeleteSensorHandler(String service) {
+        super(service, Sos2Constants.Operations.DeleteSensor.name());
     }
-
-    public abstract DeleteObservationResponse deleteObservation(DeleteObservationRequest deleteObservationRequest)
-            throws OwsExceptionReport;
 
     @Override
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
-        opsMeta.addAnyParameterValue(PARAMETER_NAME);
+        addProcedureParameter(opsMeta);
     }
+
+    public abstract DeleteSensorResponse deleteSensor(DeleteSensorRequest request) throws OwsExceptionReport;
+
 }

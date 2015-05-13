@@ -38,9 +38,9 @@ import org.n52.iceland.util.ServiceLoaderHelper;
  * 
  * @since 4.0.2
  */
-public class CacheFeederDAORepository {
+public class CacheFeederHandlerRepository {
 	private static class LazyHolder {
-		private static final CacheFeederDAORepository INSTANCE = new CacheFeederDAORepository();
+		private static final CacheFeederHandlerRepository INSTANCE = new CacheFeederHandlerRepository();
 		
 		private LazyHolder() {};
 	}
@@ -49,44 +49,44 @@ public class CacheFeederDAORepository {
 	
 	
     /**
-     * @return Returns a singleton instance of the CacheFeederDAORepository.
+     * @return Returns a singleton instance of the {@link CacheFeederHandlerRepository}.
      */
-    public static CacheFeederDAORepository getInstance() {
+    public static CacheFeederHandlerRepository getInstance() {
         return LazyHolder.INSTANCE;
     }
     
     /**
-     * @return Returns a singleton instance of the CodingRepository.
+     * @return Returns a singleton instance of the {@link CacheFeederHandlerRepository}.
      */
-    public static CacheFeederDAORepository createInstance(String datasourceDaoIdentficator) {
+    public static CacheFeederHandlerRepository createInstance(String datasourceDaoIdentficator) {
         setDatasourceDaoIdentficator(datasourceDaoIdentficator);
         return getInstance();
     }
     
     private static void setDatasourceDaoIdentficator(String datasourceDaoIdentficator) {
-        CacheFeederDAORepository.datasourceDaoIdentficator = datasourceDaoIdentficator;
+        CacheFeederHandlerRepository.datasourceDaoIdentficator = datasourceDaoIdentficator;
     }
 
     /** Loaded and configured implementation */
-    private CacheFeederDAO cacheFeederDAO;
+    private CacheFeederHandler cacheFeederHandler;
 
     /**
-     * Load implemented CacheFeederDAO
+     * Load implemented {@link CacheFeederHandler}
      * 
      * @throws ConfigurationException
-     *             If no CacheFeederDAO implementation is found
+     *             If no {@link CacheFeederHandler} implementation is found
      * @throws ConfigurationException 
      */
-    private CacheFeederDAORepository() throws ConfigurationException {
+    private CacheFeederHandlerRepository() throws ConfigurationException {
         try {
-            cacheFeederDAO = ServiceLoaderHelper.loadImplementation(CacheFeederDAO.class, datasourceDaoIdentficator);
+            cacheFeederHandler = ServiceLoaderHelper.loadImplementation(CacheFeederHandler.class, datasourceDaoIdentficator);
         } catch (NoImplementationFoundException e) {
             throw new ConfigurationException(e);
         }
-        SettingsManager.getInstance().configure(cacheFeederDAO);
+        SettingsManager.getInstance().configure(cacheFeederHandler);
     }
 
-    public CacheFeederDAO getCacheFeederDAO() {
-        return cacheFeederDAO;
+    public CacheFeederHandler getCacheFeederHandler() {
+        return cacheFeederHandler;
     }
 }

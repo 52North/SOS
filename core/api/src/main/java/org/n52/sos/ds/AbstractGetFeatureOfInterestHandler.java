@@ -44,11 +44,13 @@ import org.n52.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.util.SosHelper;
 
 /**
- * @since 4.0.0
+ * Renamed, in version 4.x called AbstractGetFeatureOfInterestDAO
+ * 
+ * @since 5.0.0
  * 
  */
-public abstract class AbstractGetFeatureOfInterestDAO extends AbstractOperationDAO {
-    public AbstractGetFeatureOfInterestDAO(final String service) {
+public abstract class AbstractGetFeatureOfInterestHandler extends AbstractOperationHandler {
+    public AbstractGetFeatureOfInterestHandler(final String service) {
         super(service, SosConstants.Operations.GetFeatureOfInterest.name());
     }
 

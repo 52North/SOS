@@ -61,7 +61,7 @@
 	<td style="padding:3px;"><a href="http://52north.org/about/52-north-team/31-stasch-christoph" title="52&deg;North Christoph Stasch">Christoph Stasch</a></td><td style="padding:3px;"><a href="http://www.uni-muenster.de/Geoinformatics/en/index.html" title="IfGI">Institute for Geoinformatics (IfGI)</a></td>
 </tr>
 <tr>
-	<td style="padding:3px;">Shane StClair</td><td style="padding:3px;"><a href="http://www.axiomalaska.com/" title="Axiom Alaska">Axiom Consulting &amp; Design</a></td>
+	<td style="padding:3px;">Shane StClair</td><td style="padding:3px;"><a href="http://www.axiomdatascience.com" title="Axiom Data Science">Axiom Data Science</a></td>
 </tr>
 <tr>
 	<td style="padding:3px;">Victor Gonz&aacute;lez</td><td style="padding:3px;"><a href="http://geomati.co/en" title="geomati.co">geomati.co</a></td>
@@ -100,7 +100,7 @@
 <table style="background-color:white;width:100%;">
 	<tr>
 		<td align="center" style="width:25%;"><a target="_blank" href="http://www.uni-muenster.de/Geoinformatics/en/index.html"><img alt="IfGI"  align="middle" width="200" src="static/images/contribution/logo_ifgi.png"/></a></td>
-		<td align="center" style="width:25%;"><a target="_blank" href="http://www.axiomalaska.com/"><img alt="Axiom"  align="middle" width="85" src="static/images/contribution/axiom.png" /></a></td>
+		<td align="center" style="width:25%;"><a target="_blank" href="http://www.axiomdatascience.com"><img alt="Axiom Data Science"  align="middle" width="85" src="static/images/contribution/axiom.png" /></a></td>
 		<td align="center" style="width:25%;"><a target="_blank" href="http://geomati.co"><img alt="geomati.co"  align="middle" width="85" src="static/images/contribution/logo_geomatico_256.png" /></a></td>
 		<td align="center" style="width:25%;"><a target="_blank" href="http://www.itg.es/"><img alt="ITG"  align="middle" width="104" src="static/images/contribution/Logo_ITG_vectorizado.png" /></a></td>
 	</tr>

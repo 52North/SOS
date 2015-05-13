@@ -44,7 +44,7 @@
 
 <c:if test="${warning}">
     <script type="text/javascript">
-    showMessage('<b>Warning!</b> You are used the default credentials to log in. Please change them \
+    showMessage('<b>Warning!</b> You are using the default credentials to log in. Please change them \
                    <a href="<c:url value="/admin/settings#credentials"/>">here</a> as soon as possible!');
     </script>
 </c:if>

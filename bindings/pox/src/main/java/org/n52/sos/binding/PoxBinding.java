@@ -42,13 +42,13 @@ import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -42,7 +42,7 @@ import org.n52.iceland.service.admin.operator.AdminServiceOperator;
 import org.n52.iceland.service.admin.request.AdminRequest;
 import org.n52.iceland.service.admin.request.operator.AdminRequestOperator;
 import org.n52.iceland.service.admin.request.operator.AdminRequestOperatorRepository;
-import org.n52.sos.util.KvpHelper;
+import org.n52.iceland.util.KvpHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -48,6 +48,7 @@ import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.om.OmObservationConstellation;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.ServiceConfiguration;
@@ -77,7 +78,6 @@ import org.n52.sos.ds.hibernate.values.series.HibernateChunkSeriesStreamingValue
 import org.n52.sos.ds.hibernate.values.series.HibernateScrollableSeriesStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateSeriesStreamingValue;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
-import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.slf4j.Logger;

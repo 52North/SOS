@@ -28,8 +28,8 @@
  */
 package org.n52.sos.decode;
 
+import static org.n52.iceland.util.KvpHelper.checkParameterSingleValue;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.PARAMETER_NAME;
-import static org.n52.sos.util.KvpHelper.checkParameterSingleValue;
 
 import java.util.Collections;
 import java.util.Map;
@@ -37,6 +37,7 @@ import java.util.Set;
 
 import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.exception.ows.concrete.MissingRequestParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
@@ -45,13 +46,12 @@ import org.n52.iceland.ogc.ows.OWSConstants;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.util.KvpHelper;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.decode.kvp.AbstractKvpDecoder;
-import org.n52.sos.exception.ows.concrete.MissingRequestParameterException;
 import org.n52.sos.ext.deleteobservation.DeleteObservationConstants;
 import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
 import org.n52.sos.ext.deleteobservation.MissingObservationParameterException;
-import org.n52.sos.util.KvpHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

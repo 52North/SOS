@@ -78,6 +78,7 @@ import org.n52.iceland.ogc.om.values.ReferenceValue;
 import org.n52.iceland.ogc.om.values.SweDataArrayValue;
 import org.n52.iceland.ogc.om.values.TextValue;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.ogc.swe.SweDataArray;
@@ -87,7 +88,6 @@ import org.n52.iceland.util.Constants;
 import org.n52.iceland.w3c.xlink.W3CHrefAttribute;
 import org.n52.sos.ogc.gml.GmlMeasureType;
 import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

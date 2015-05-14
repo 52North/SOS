@@ -47,10 +47,10 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.KvpHelper;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.decode.kvp.AbstractKvpDecoder;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
-import org.n52.sos.util.KvpHelper;
 
 /**
  * @since 4.0.0

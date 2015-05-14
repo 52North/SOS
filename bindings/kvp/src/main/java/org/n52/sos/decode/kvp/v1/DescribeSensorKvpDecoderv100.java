@@ -41,13 +41,13 @@ import org.n52.iceland.ogc.ows.CompositeOwsException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.util.KvpHelper;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.decode.kvp.AbstractKvpDecoder;
 import org.n52.sos.exception.ows.concrete.MissingOutputFormatParameterException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
 import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.util.KvpHelper;
 
 import com.google.common.base.Strings;
 

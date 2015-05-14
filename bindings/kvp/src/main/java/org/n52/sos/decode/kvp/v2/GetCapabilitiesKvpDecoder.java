@@ -43,9 +43,9 @@ import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.KvpHelper;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.decode.kvp.AbstractKvpDecoder;
-import org.n52.sos.util.KvpHelper;
 
 import com.google.common.collect.Sets;
 

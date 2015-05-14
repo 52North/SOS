@@ -50,10 +50,10 @@ import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
 import org.n52.iceland.ogc.swes.SwesExtensionImpl;
 import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.KvpHelper;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.decode.kvp.AbstractKvpDecoder;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.util.KvpHelper;
 
 /**
  * @since 4.0.0

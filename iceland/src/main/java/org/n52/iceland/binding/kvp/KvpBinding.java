@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.binding;
+package org.n52.iceland.binding.kvp;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -44,6 +44,7 @@ import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.decode.OperationDecoderKey;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
+import org.n52.iceland.exception.ows.concrete.MissingRequestParameterException;
 import org.n52.iceland.exception.ows.concrete.NoDecoderForKeyException;
 import org.n52.iceland.exception.ows.concrete.VersionNotSupportedException;
 import org.n52.iceland.ogc.ows.OWSConstants.RequestParams;
@@ -51,11 +52,10 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.iceland.util.KvpHelper;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.exception.ows.concrete.MissingRequestParameterException;
-import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.util.KvpHelper;
+import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

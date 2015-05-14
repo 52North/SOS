@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.util;
+package org.n52.iceland.util;
 
 import java.util.Arrays;
 import java.util.Enumeration;

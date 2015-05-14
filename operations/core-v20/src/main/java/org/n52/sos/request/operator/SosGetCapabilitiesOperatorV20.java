@@ -33,11 +33,11 @@ import java.util.Set;
 
 import org.n52.iceland.ogc.ows.CompositeOwsException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.response.GetCapabilitiesResponse;
 import org.n52.sos.ds.AbstractGetCapabilitiesHandler;
-import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 

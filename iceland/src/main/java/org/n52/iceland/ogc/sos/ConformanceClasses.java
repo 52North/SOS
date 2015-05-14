@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ogc.sos;
+package org.n52.iceland.ogc.sos;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.exception.ows.concrete;
+package org.n52.iceland.exception.ows.concrete;
 
 import org.n52.iceland.exception.ows.MissingParameterValueException;
 import org.n52.iceland.ogc.ows.OWSConstants;

@@ -82,7 +82,7 @@ public class AdminBindingController extends AbstractAdminController {
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_BINDINGS_JSON_ENDPOINT, method = RequestMethod.GET, produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public String getAll() throws ConnectionProviderException {
         ObjectNode node = JSONUtils.nodeFactory().objectNode();
-        node.put(JSONConstants.BINDINGS_KEY, getBindings());
+        node.set(JSONConstants.BINDINGS_KEY, getBindings());
         return JSONUtils.print(node);
     }
 

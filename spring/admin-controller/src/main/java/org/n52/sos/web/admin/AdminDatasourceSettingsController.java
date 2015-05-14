@@ -151,7 +151,7 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
         Set<SettingDefinition<?, ?>> defs = getDatasource().getChangableSettingDefinitions(p);
         JsonNode settings = enc.encode(enc.sortByGroup(defs));
         ObjectNode node = JSONUtils.nodeFactory().objectNode();
-        node.put(SETTINGS, settings);
+        node.set(SETTINGS, settings);
         return node;
     }
 
@@ -165,11 +165,10 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
         }
         JsonNode settings = enc.encode(enc.sortByGroup(defs));
         ObjectNode node = JSONUtils.nodeFactory().objectNode();
-        node.put(SETTINGS, settings);
+        node.set(SETTINGS, settings);
         return node;
     }
 
-    @SuppressWarnings("unchecked")
     protected void setDefaultValue(SettingDefinition<?, ?> def, String sval) {
         if (sval != null) {
             Object val = getSettingsManager().getSettingFactory().newSettingValue(def, sval).getValue();
@@ -204,6 +203,14 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
             case URI:
                 SettingDefinition<?, URI> usd = (SettingDefinition<?, URI>) def;
                 usd.setDefaultValue((URI) val);
+                break;
+            case CHOICE:
+                break;
+            case MULTILINGUAL_STRING:
+                break;
+            case TIMEINSTANT:
+                break;
+            default:
                 break;
             }
         }

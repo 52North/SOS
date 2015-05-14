@@ -77,8 +77,8 @@ public class AdminEncodingController extends AbstractAdminController {
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_ENCODINGS_JSON_ENDPOINT, method = RequestMethod.GET, produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public String getAll() throws ConnectionProviderException {
         ObjectNode node = JSONUtils.nodeFactory().objectNode();
-        node.put(JSONConstants.OBSERVATION_ENCODINGS_KEY, getObservationEncodings());
-        node.put(JSONConstants.PROCEDURE_ENCODINGS_KEY, getProcedureEncodings());
+        node.set(JSONConstants.OBSERVATION_ENCODINGS_KEY, getObservationEncodings());
+        node.set(JSONConstants.PROCEDURE_ENCODINGS_KEY, getProcedureEncodings());
         return JSONUtils.print(node);
     }
 

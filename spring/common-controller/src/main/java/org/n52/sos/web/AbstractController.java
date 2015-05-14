@@ -119,7 +119,7 @@ public class AbstractController {
         	}
         }
         ObjectNode node = JSONUtils.nodeFactory().objectNode();
-        node.putAll(map);
+        node.setAll(map);
         return node;
     }
 

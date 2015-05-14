@@ -87,8 +87,8 @@ public class AdminExtensionController extends AbstractAdminController {
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_EXTENSIONS_JSON_ENDPOINT, method = RequestMethod.GET, produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public String getAll() throws JSONException, ConnectionProviderException {
         ObjectNode node = JSONUtils.nodeFactory().objectNode();
-        node.put(JSONConstants.EXTENDED_CAPABILITIES_EXTENSION_KEY, getExtendedCapabilitiesExtensions());
-        node.put(JSONConstants.OFFERING_EXTENSION_EXTENSION_KEY, getOfferingExtensionExtensions());
+        node.set(JSONConstants.EXTENDED_CAPABILITIES_EXTENSION_KEY, getExtendedCapabilitiesExtensions());
+        node.set(JSONConstants.OFFERING_EXTENSION_EXTENSION_KEY, getOfferingExtensionExtensions());
         return JSONUtils.print(node);
     }
 

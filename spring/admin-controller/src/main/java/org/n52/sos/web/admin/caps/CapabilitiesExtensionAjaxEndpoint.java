@@ -67,7 +67,7 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
         Map<String, StringBasedCapabilitiesExtension> capabilitiesExtensions = getDao()
                 .getActiveCapabilitiesExtensions();
         for (String id : capabilitiesExtensions.keySet()) {
-            response.put(id, toJson(capabilitiesExtensions.get(id)));
+            response.set(id, toJson(capabilitiesExtensions.get(id)));
         }
         return response.toString();
     }
@@ -105,7 +105,6 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value="/{identifier}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE)
-    @SuppressWarnings("unchecked")
     public void saveCapabilitiesExtension(
             @PathVariable("identifier") String identifier,
             @RequestBody String extension) throws XmlException, InvalidIdentifierException {

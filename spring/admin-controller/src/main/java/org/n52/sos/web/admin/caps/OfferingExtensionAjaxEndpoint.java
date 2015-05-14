@@ -69,7 +69,7 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
         ObjectNode jsonOffering = JSONUtils.nodeFactory().objectNode();
 		if (extensionsForOffering != null) {
 			for (final OfferingExtension e : extensionsForOffering) {
-				jsonOffering.put(e.getIdentifier(), toJson(e));
+				jsonOffering.set(e.getIdentifier(), toJson(e));
 			}
 		}
 		return jsonOffering;
@@ -92,7 +92,7 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
 		Collections.sort(offerings);
         ObjectNode response = JSONUtils.nodeFactory().objectNode();
 		for (final String offering : offerings) {
-			response.put(offering, toJson(offeringExtensions.get(offering)));
+			response.set(offering, toJson(offeringExtensions.get(offering)));
 		}
 		return response.toString();
 	}

@@ -28,16 +28,13 @@
  */
 package org.n52.sos.profile;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Set;
 
 import org.n52.iceland.service.profile.Profile;
+import org.n52.iceland.util.Constants;
 
-import org.x52North.sensorweb.sos.profile.DefaultObservationTypesForEncodingDocument.DefaultObservationTypesForEncoding;
-import org.x52North.sensorweb.sos.profile.EncodeProcedureDocument.EncodeProcedure;
-import org.x52North.sensorweb.sos.profile.NoDataPlaceholderDocument.NoDataPlaceholder;
-import org.x52North.sensorweb.sos.profile.SosProfileDocument;
-import org.x52North.sensorweb.sos.profile.SosProfileType;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.Sets;
 
 /*
  * FIXME why is this class a helper class?
@@ -48,64 +45,170 @@ import org.x52North.sensorweb.sos.profile.SosProfileType;
  */
 public class ProfileParser {
 
-    public static Profile parseSosProfile(SosProfileDocument sosProfileDoc) {
-        ProfileImpl profile = new ProfileImpl();
-        SosProfileType sosProfile = sosProfileDoc.getSosProfile();
-        profile.setIdentifier(sosProfile.getIdentifier());
-        profile.setActiveProfile(sosProfile.getActiveProfile());
-        profile.setListFeatureOfInterestsInOfferings(sosProfile.getListFeatureOfInterestsInOfferings());
-        profile.setEncodeChildProcedureDescriptions(sosProfile.getEncodeChildProcedureDescriptions());
-        profile.setShowFullOperationsMetadata(sosProfile.getShowFullOperationsMetadata());
-        profile.setShowFullOperationsMetadataForObservations(sosProfile.getShowFullOperationsMetadataForObservations());
-        profile.setAllowSubsettingForSOS20OM20(sosProfile.getAllowSubsettingForSOS20OM20());
-        profile.setEncodeFeatureOfInterestInObservations(sosProfile.getEncodeFeatureOfInterestInObservations());
-        profile.setEncodingNamespaceForFeatureOfInterest(sosProfile.getEncodingNamespaceForFeatureOfInterestEncoding());
-        profile.setMergeValues(sosProfile.getMergeValues());
-        profile.setObservationResponseFormat(sosProfile.getObservationResponseFormat());
-        parseNoDataPlaceholder(profile, sosProfile.getNoDataPlaceholder());
-        profile.setReturnLatestValueIfTemporalFilterIsMissingInGetObservation(sosProfile
-                .getReturnLatestValueIfTemporalFilterIsMissingInGetObservation());
-        profile.setShowMetadataOfEmptyObservations(sosProfile.getShowMetadataOfEmptyObservations());
-        if (sosProfile.getDefaultObservationTypesForEncodingArray() != null) {
-            parseDefaultObservationTypesForEncoding(profile, sosProfile.getDefaultObservationTypesForEncodingArray());
-        }
-        if (sosProfile.getEncodeProcedureArray() != null) {
-            parseEncodeProcedure(profile, sosProfile.getEncodeProcedureArray());
-        }
-        if (sosProfile.isSetEncodingNamespaceForFeatureOfInterestEncoding()) {
-            profile.setEncodingNamespaceForFeatureOfInterest(sosProfile
-                    .getEncodingNamespaceForFeatureOfInterestEncoding());
-        }
+    private static final String IDENTIFIER = "identifier";
+    private static final String ACTIVE = "active";
+    private static final String OBSERVATION_RESPONSE_FORMAT = "observationResponseFormat";
+    private static final String ENCODE_FOI_IN_OBS = "encodeFeatureOfInterestInObservations";
+    private static final String ENCODE_NAMESPACE_FOIS = "encodingNamespaceForFeatureOfInterestEncoding";
+    private static final String SHOW_METADATA_OF_EMPTY_OBS = "showMetadataOfEmptyObservations";
+    private static final String LIST_FOIS_IN_OFFERINGS = "listFeatureOfInterestsInOfferings";
+    private static final String ENCODE_CHILD_PROCS = "encodeChildProcedureDescriptions";
+    private static final String SHOW_FULL_OPS_METADATA ="showFullOperationsMetadata";
+    private static final String SHOW_FULL_OPS_METADATA_FOR_OBS = "showFullOperationsMetadataForObservations";
+    private static final String ALLOW_SUBSETTING = "allowSubsettingForSOS20OM20";
+    private static final String MERGE_VALUES = "mergeValues";
+    private static final String NO_DATA_PLACEHOLDER = "NoDataPlaceholder";
+    private static final String RESPONSE_PLACEHOLDER = "responsePlaceholder";
+    private static final String PLACEHOLDER = "placeholder";
+    private static final String RETURN_LATEST_VALUE = "returnLatestValueIfTemporalFilterIsMissingInGetObservation";
+    
+    private static final String ENCODE_PROCEDURE = "EncodeProcedure";
+    private static final String NAMESPACE = "namespace";
+    private static final String ENCCODE = "encode";
+    
+    private static final String DEFAULT_OBS_TYPE_FOR_ENCODING = "DefaultObservationTypesForEncoding";
+    private static final String  OBS_TYPE = "observationType";
 
+    public Profile parseSosProfile(JsonNode node) {
+        ProfileImpl profile = new ProfileImpl();
+        profile.setIdentifier(parseIdentifier(node));
+        profile.setActiveProfile(parseActiveProfile(node));
+        profile.setListFeatureOfInterestsInOfferings(parseListFeatureOfInterestsInOfferings(node));
+        profile.setEncodeChildProcedureDescriptions(parseEncodeChildProcedureDescriptions(node));
+        profile.setShowFullOperationsMetadata(parseShowFullOperationsMetadata(node));
+        profile.setShowFullOperationsMetadataForObservations(parseShowFullOperationsMetadataForObservations(node));
+        profile.setAllowSubsettingForSOS20OM20(parseAllowSubsettingForSOS20OM20(node));
+        profile.setEncodeFeatureOfInterestInObservations(parseEncodeFeatureOfInterestInObservations(node));
+        profile.setEncodingNamespaceForFeatureOfInterest(parseEncodingNamespaceForFeatureOfInterestEncoding(node));
+        profile.setMergeValues(parseMergeValues(node));
+        profile.setObservationResponseFormat(parseObservationResponseFormat(node));
+        parseNoDataPlaceholder(profile, node);
+        profile.setReturnLatestValueIfTemporalFilterIsMissingInGetObservation(parseReturnLatestValueIfTemporalFilterIsMissingInGetObservation(node));
+        profile.setShowMetadataOfEmptyObservations(parseShowMetadataOfEmptyObservations(node));
+        parseDefaultObservationTypesForEncoding(profile, node);
+        parseEncodeProcedure(profile, node);
         return profile;
     }
-
-    private static void parseNoDataPlaceholder(ProfileImpl profile, NoDataPlaceholder noDataPlaceholder) {
-        if (noDataPlaceholder.getResponsePlaceholder() != null
-                && !noDataPlaceholder.getResponsePlaceholder().isEmpty()) {
-            profile.setResponseNoDataPlaceholder(noDataPlaceholder.getResponsePlaceholder());
-        }
-        if (noDataPlaceholder.getPlaceholderArray() != null && noDataPlaceholder.getPlaceholderArray().length > 0) {
-            profile.setNoDataPlaceholder(new HashSet<String>(Arrays.asList(noDataPlaceholder.getPlaceholderArray())));
-        }
-
+    
+    private String parseText(JsonNode node) {
+        return node.textValue();
     }
 
-    private static void parseEncodeProcedure(ProfileImpl profile, EncodeProcedure[] encodeProcedureArray) {
-        for (EncodeProcedure encodeProcedure : encodeProcedureArray) {
-            profile.addEncodeProcedureInObservation(encodeProcedure.getNamespace(), encodeProcedure.getEncode());
+    private boolean parseBoolean(JsonNode node) {
+        return node.booleanValue();
+    }
+
+    private boolean isNotMissingNode(JsonNode node) {
+        return !node.isMissingNode();
+    }
+
+    private String parseIdentifier(JsonNode node) {
+        return parseText(node.path(IDENTIFIER));
+    }
+
+    private boolean parseActiveProfile(JsonNode node) {
+        return parseBoolean(node.path(ACTIVE));
+    }
+
+    private boolean parseListFeatureOfInterestsInOfferings(JsonNode node) {
+        return parseBoolean(node.path(LIST_FOIS_IN_OFFERINGS));
+    }
+
+    private boolean parseEncodeChildProcedureDescriptions(JsonNode node) {
+        return parseBoolean(node.path(ENCODE_CHILD_PROCS));
+    }
+
+    private boolean parseShowFullOperationsMetadata(JsonNode node) {
+        return parseBoolean(node.path(SHOW_FULL_OPS_METADATA));
+    }
+
+    private boolean parseShowFullOperationsMetadataForObservations(JsonNode node) {
+        return parseBoolean(node.path(SHOW_FULL_OPS_METADATA_FOR_OBS));
+    }
+
+    private boolean parseAllowSubsettingForSOS20OM20(JsonNode node) {
+        return parseBoolean(node.path(ALLOW_SUBSETTING));
+    }
+
+    private boolean parseEncodeFeatureOfInterestInObservations(JsonNode node) {
+        return parseBoolean(node.path(ENCODE_FOI_IN_OBS));
+    }
+
+    private String parseEncodingNamespaceForFeatureOfInterestEncoding(JsonNode node) {
+        if (isNotMissingNode(node.path(ENCODE_NAMESPACE_FOIS))) {
+            return parseText(node.path(ENCODE_NAMESPACE_FOIS));
         }
-
+        return Constants.EMPTY_STRING;
     }
 
-    private static void parseDefaultObservationTypesForEncoding(ProfileImpl profile,
-            DefaultObservationTypesForEncoding[] defaultObservationTypesForEncodingArray) {
-        for (DefaultObservationTypesForEncoding defaultObservationTypesForEncoding : defaultObservationTypesForEncodingArray) {
-            profile.addDefaultObservationTypesForEncoding(defaultObservationTypesForEncoding.getNamespace(),
-                    defaultObservationTypesForEncoding.getObservationType());
+    private String parseObservationResponseFormat(JsonNode node) {
+        return parseText(node.path(OBSERVATION_RESPONSE_FORMAT));
+    }
+
+    private boolean parseMergeValues(JsonNode node) {
+        return parseBoolean(node.path(MERGE_VALUES));
+    }
+
+    private void parseNoDataPlaceholder(ProfileImpl profile, JsonNode node) {
+        if (isNotMissingNode(node.path(NO_DATA_PLACEHOLDER))) {
+            if (isNotMissingNode(node.path(NO_DATA_PLACEHOLDER).path(RESPONSE_PLACEHOLDER))) {
+                profile.setResponseNoDataPlaceholder(parseText(node.path(NO_DATA_PLACEHOLDER).path(RESPONSE_PLACEHOLDER)));
+            }
+            if (isNotMissingNode(node.path(NO_DATA_PLACEHOLDER).path(PLACEHOLDER))) {
+                Set<String> placeholder =  Sets.newHashSet();
+                JsonNode phNode = node.path(NO_DATA_PLACEHOLDER).path(PLACEHOLDER);
+                if (node.path(NO_DATA_PLACEHOLDER).path(PLACEHOLDER).isArray()) {
+                    for (int i = 0; i < phNode.size(); i++) {
+                        placeholder.add(phNode.get(i).asText());
+                    }
+                } else {
+                    placeholder.add(phNode.asText());
+                }
+                profile.setNoDataPlaceholder(placeholder);
+            }
         }
     }
 
-    private ProfileParser() {
+    private boolean parseShowMetadataOfEmptyObservations(JsonNode node) {
+        return parseBoolean(node.path(SHOW_METADATA_OF_EMPTY_OBS));
     }
+
+    private boolean parseReturnLatestValueIfTemporalFilterIsMissingInGetObservation(JsonNode node) {
+        return parseBoolean(node.path(RETURN_LATEST_VALUE));
+    }
+
+    private void parseEncodeProcedure(ProfileImpl profile, JsonNode node) {
+        if (isNotMissingNode(node.path(ENCODE_PROCEDURE))) {
+            JsonNode epNode = node.path(ENCODE_PROCEDURE);
+            if (epNode.isArray()) {
+                for (int i = 0; i < epNode.size(); i++) {
+                    parseEncodeProcedureElement(profile, epNode);
+                }
+            } else {
+                parseEncodeProcedureElement(profile, epNode);
+            }
+        }
+    }
+
+    private void parseEncodeProcedureElement(ProfileImpl profile, JsonNode node) {
+        profile.addEncodeProcedureInObservation(parseText(node.path(NAMESPACE)), parseBoolean(node.path(ENCCODE)));
+    }
+
+    private void parseDefaultObservationTypesForEncoding(ProfileImpl profile, JsonNode node) {
+        if (isNotMissingNode(node.path(DEFAULT_OBS_TYPE_FOR_ENCODING))) {
+            JsonNode epNode = node.path(DEFAULT_OBS_TYPE_FOR_ENCODING);
+            if (epNode.isArray()) {
+                for (int i = 0; i < epNode.size(); i++) {
+                    parseDefaultObservationTypesForEncodingElement(profile, epNode);
+                }
+            } else {
+                parseDefaultObservationTypesForEncodingElement(profile, epNode);
+            }
+        }
+    }
+
+    private void parseDefaultObservationTypesForEncodingElement(ProfileImpl profile, JsonNode node) {
+        profile.addDefaultObservationTypesForEncoding(parseText(node.path(NAMESPACE)), parseText(node.path(OBS_TYPE)));
+    }
+
 }

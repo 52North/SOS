@@ -143,10 +143,6 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>profile-xml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>profile-coding</artifactId>
         </dependency>
         <dependency>

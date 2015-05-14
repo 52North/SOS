@@ -1,0 +1,50 @@
+{
+	"profiles" : [
+		{
+		    "identifier": "SOS_20_PROFILE",
+		    "active": true,
+		    "observationResponseFormat": "http://www.opengis.net/om/2.0",
+		    "encodeFeatureOfInterestInObservations": false,
+		    "encodingNamespaceForFeatureOfInterestEncoding": "",
+		    "showMetadataOfEmptyObservations": false,
+		    "listFeatureOfInterestsInOfferings": true,
+		    "encodeChildProcedureDescriptions": false,
+		    "showFullOperationsMetadata": true,
+		    "showFullOperationsMetadataForObservations": true,
+		    "allowSubsettingForSOS20OM20": false,
+		    "mergeValues": false,
+		    "NoDataPlaceholder": {
+		      "responsePlaceholder": "noData",
+		      "placeholder": "noData"
+		    },
+		    "returnLatestValueIfTemporalFilterIsMissingInGetObservation": false
+		},
+  		{
+		    "identifier": "hydrology",
+		    "active": false,
+		    "observationResponseFormat": "http://www.opengis.net/waterml/2.0",
+		    "encodeFeatureOfInterestInObservations": false,
+		    "encodingNamespaceForFeatureOfInterestEncoding": "http://www.opengis.net/waterml/2.0",
+		    "showMetadataOfEmptyObservations": true,
+		    "listFeatureOfInterestsInOfferings": true,
+		    "encodeChildProcedureDescriptions": false,
+		    "showFullOperationsMetadata": true,
+		    "showFullOperationsMetadataForObservations": true,
+		    "allowSubsettingForSOS20OM20": true,
+		    "mergeValues": true,
+		    "NoDataPlaceholder": {
+		      "responsePlaceholder": "noData",
+		      "placeholder": "noData"
+		    },
+		    "returnLatestValueIfTemporalFilterIsMissingInGetObservation": true,
+		    "EncodeProcedure": {
+		      "namespace": "http://www.opengis.net/waterml/2.0/observationProcess",
+		      "encode": true
+		    },
+		    "DefaultObservationTypesForEncoding": {
+		      "namespace": "http://www.opengis.net/waterml/2.0",
+		      "observationType": "http://www.opengis.net/def/observationType/waterml/2.0/MeasurementTimeseriesTVPObservation"
+		    }
+		}
+	]
+}

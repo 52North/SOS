@@ -29,6 +29,7 @@
 package org.n52.sos.profile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,17 +39,17 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.profile.DefaultProfile;
 import org.n52.iceland.service.profile.Profile;
 import org.n52.iceland.service.profile.ProfileHandler;
-import org.n52.iceland.util.XmlHelper;
+import org.n52.iceland.util.JSONUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.x52North.sensorweb.sos.profile.SosProfileDocument;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * @since 4.0.0
@@ -60,6 +61,8 @@ public class ProfileHandlerImpl implements ProfileHandler {
      * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileHandlerImpl.class);
+
+    private static final String PROFILES = "profiles";
 
     private Profile activeProfile;
 
@@ -94,14 +97,25 @@ public class ProfileHandlerImpl implements ProfileHandler {
     }
 
     private void loadProfiles() throws OwsExceptionReport {
-        IOFileFilter fileFilter = new WildcardFileFilter("*-profile.xml");
+        IOFileFilter fileFilter = new WildcardFileFilter("profiles.json");
         File folder = FileUtils.toFile(ProfileHandlerImpl.class.getResource("/"));
         Collection<File> listFiles = FileUtils.listFiles(folder, fileFilter, DirectoryFileFilter.DIRECTORY);
         for (File file : listFiles) {
-            XmlObject xmlDocument = XmlHelper.loadXmlDocumentFromFile(file);
-            if (xmlDocument instanceof SosProfileDocument) {
-                Profile profile = ProfileParser.parseSosProfile((SosProfileDocument) xmlDocument);
-                addProfile(profile);
+            try {
+                JsonNode profiles = JSONUtils.loadFile(file);
+                ProfileParser pp = new ProfileParser();
+                JsonNode pNode = profiles.path(PROFILES);
+                if (pNode.isArray()) {
+                    for (int i = 0; i < pNode.size(); i++) {
+                        Profile profile =  pp.parseSosProfile(pNode.get(i));
+                        addProfile(profile);
+                    }
+                } else {
+                    Profile profile = pp.parseSosProfile(pNode);
+                    addProfile(profile);
+                }
+            } catch (IOException ioe) {
+                throw new NoApplicableCodeException().causedBy(ioe).withMessage("Error while loading profies file.");
             }
         }
     }

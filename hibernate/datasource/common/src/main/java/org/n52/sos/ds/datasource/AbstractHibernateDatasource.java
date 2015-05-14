@@ -357,7 +357,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         CustomConfiguration config = new CustomConfiguration();
         config.configure("/sos-hibernate.cfg.xml");
         config.addDirectory(resource(HIBERNATE_MAPPING_CORE_PATH));
-        config.addDirectory(resource(getDatabaseConceptMappingDirectory(settings)));
+        addDatabaseConceptMappingDirectory(config, settings);
         if (isTransactionalDatasource()) {
             Boolean transactional = (Boolean) settings.get(this.transactionalDefiniton.getKey());
             if (transactional != null && transactional.booleanValue()) {
@@ -379,43 +379,63 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         return config;
     }
 
-    protected String getDatabaseConceptMappingDirectory(Map<String, Object> settings) {
-        String concept = (String)settings.get(this.databaseConceptDefinition.getKey());
+    /**
+     * Adds concept depending mapping file directories to the
+     * {@link CustomConfiguration}.
+     * 
+     * @param config
+     *            Configuration to add mapping directories
+     * @param settings
+     *            Setting to get values from
+     */
+    private void addDatabaseConceptMappingDirectory(CustomConfiguration config, Map<String, Object> settings) {
+        String concept = (String) settings.get(this.databaseConceptDefinition.getKey());
         switch (DatabaseConcept.valueOf(concept)) {
         case SERIES_CONCEPT:
-            return HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH;
+            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH));
+            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH));
+            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH));
         case EREPORTING_CONCEPT:
-            return HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH;
+            config.addDirectory(resource(HIBERNATE_MAPPING_EREPORTING_CONCEPT_BASE_PATH));
+            config.addDirectory(resource(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH));
+            config.addDirectory(resource(HIBERNATE_MAPPING_EREPORTING_CONCEPT_VALUE_PATH));
         case OLD_CONCEPT:
-            return HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH;
+            config.addDirectory(resource(HIBERNATE_MAPPING_OLD_CONCEPT_BASE_PATH));
+            config.addDirectory(resource(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH));
+            config.addDirectory(resource(HIBERNATE_MAPPING_OLD_CONCEPT_VALUE_PATH));
         default:
-            return HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH;
+            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH));
+            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH));
+            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH));
         }
     }
 
-//    /**
-//     * Check if this datasource supported the series concept
-//     *
-//     * @param settings
-//     *            Datasource settings
-//     * @return <code>true</code>, if this datasource supported the series
-//     *         concept
-//     */
-//    private boolean isSeriesConceptDatasource(Map<String, Object> settings) {
-//        return !isOldConceptDatasource(settings);
-//    }
-//
-//    /**
-//     * Check if this datasource supported the old concept
-//     *
-//     * @param settings
-//     *            Datasource settings
-//     * @return <code>true</code>, if this datasource supported the old concept
-//     */
-//    private boolean isOldConceptDatasource(Map<String, Object> settings) {
-//        Boolean oldConcept = (Boolean) settings.get(this.oldConceptDefiniton.getKey());
-//        return oldConcept != null && oldConcept;
-//    }
+    private String getDatabaseConceptMappingDirectoriesString(Map<String, Object> settings) {
+        String concept = (String) settings.get(this.databaseConceptDefinition.getKey());
+        StringBuilder builder = new StringBuilder();
+        switch (DatabaseConcept.valueOf(concept)) {
+        case SERIES_CONCEPT:
+            builder.append(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH);
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH);
+            break;
+        case EREPORTING_CONCEPT:
+            builder.append(HIBERNATE_MAPPING_EREPORTING_CONCEPT_BASE_PATH);
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH);
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_EREPORTING_CONCEPT_VALUE_PATH);
+            break;
+        case OLD_CONCEPT:
+            builder.append(HIBERNATE_MAPPING_OLD_CONCEPT_BASE_PATH);
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH);
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_OLD_CONCEPT_VALUE_PATH);
+            break;
+        default:
+            builder.append(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH);
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH);
+        }
+        return builder.toString();
+    }
 
     /**
      * Get File from resource String
@@ -718,7 +738,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         StringBuilder builder = new StringBuilder();
         builder.append(HIBERNATE_MAPPING_CORE_PATH);
         builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
-                getDatabaseConceptMappingDirectory(settings));
+                getDatabaseConceptMappingDirectoriesString(settings));
         if (isTransactionalDatasource()) {
             Boolean t = (Boolean) settings.get(transactionalDefiniton.getKey());
             if (t != null && t) {

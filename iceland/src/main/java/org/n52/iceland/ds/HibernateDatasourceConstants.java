@@ -54,6 +54,23 @@ public interface HibernateDatasourceConstants {
     
     String HIBERNATE_MAPPING_TRANSACTIONAL_PATH = HIBERNATE_MAPPING_PATH + "/transactional";
     
+    // concrete observation/value mapping file names
+    String HIBERNATE_MAPPING_FILE_BLOB = "Blob.hbm.xml";
+    
+    String HIBERNATE_MAPPING_FILE_BOOLEAN = "Boolean.hbm.xml";
+    
+    String HIBERNATE_MAPPING_FILE_CATEGORY = "Category.hbm.xml";
+    
+    String HIBERNATE_MAPPING_FILE_COUNT = "Count.hbm.xml";
+    
+    String HIBERNATE_MAPPING_FILE_GEOMETRY = "Geometry.hbm.xml";
+    
+    String HIBERNATE_MAPPING_FILE_NUMERIC = "Numeric.hbm.xml";
+    
+    String HIBERNATE_MAPPING_FILE_SWE_DATA_ARRAY = "SweDataArray.hbm.xml";
+    
+    String HIBERNATE_MAPPING_FILE_TEXT = "Text.hbm.xml";
+    
     // old concept
     String HIBERNATPE_MAPPING_OLD_CONCEPT_PATH = HIBERNATE_MAPPING_PATH + "/old";
     

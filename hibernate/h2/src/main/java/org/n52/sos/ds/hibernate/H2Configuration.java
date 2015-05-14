@@ -121,12 +121,28 @@ public class H2Configuration {
             // resources.add("mapping/old/observation/ObservationInfo.hbm.xml");
             // resources.add("mapping/old/spatialFilteringProfile/SpatialFitleringProfile.hbm.xml");
             // series observation concept, needs changes in tests
-            resources.add("mapping/series/observation/Series.hbm.xml");
-            resources.add("mapping/series/observation/SeriesObservation.hbm.xml");
-            resources.add("mapping/series/observation/SeriesObservationInfo.hbm.xml");
-            resources.add("mapping/series/observation/SeriesObservationTime.hbm.xml");
-            resources.add("mapping/series/observation/SeriesValue.hbm.xml");
-            resources.add("mapping/series/observation/SeriesValueTime.hbm.xml");
+            resources.add("mapping/series/base/Series.hbm.xml");
+            resources.add("mapping/series/base/SeriesObservation.hbm.xml");
+            resources.add("mapping/series/base/SeriesObservationInfo.hbm.xml");
+            resources.add("mapping/series/base/SeriesObservationTime.hbm.xml");
+            resources.add("mapping/series/base/SeriesValue.hbm.xml");
+            resources.add("mapping/series/base/SeriesValueTime.hbm.xml");
+            resources.add("mapping/series/obsevation/Blob.hbm.xml");
+            resources.add("mapping/series/obsevation/Boolean.hbm.xml");
+            resources.add("mapping/series/obsevation/Category.hbm.xml");
+            resources.add("mapping/series/obsevation/Count.hbm.xml");
+            resources.add("mapping/series/obsevation/Geometry.hbm.xml");
+            resources.add("mapping/series/obsevation/Numeric.hbm.xml");
+            resources.add("mapping/series/obsevation/SweDataArray.hbm.xml");
+            resources.add("mapping/series/obsevation/Text.hbm.xml");
+            resources.add("mapping/series/value/Blob.hbm.xml");
+            resources.add("mapping/series/value/Boolean.hbm.xml");
+            resources.add("mapping/series/value/Category.hbm.xml");
+            resources.add("mapping/series/value/Count.hbm.xml");
+            resources.add("mapping/series/value/Geometry.hbm.xml");
+            resources.add("mapping/series/value/Numeric.hbm.xml");
+            resources.add("mapping/series/value/SweDataArray.hbm.xml");
+            resources.add("mapping/series/value/Text.hbm.xml");
             return resources;
         }
     };

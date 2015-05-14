@@ -2,5 +2,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingNumericValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="numericValue">
+        	<key column="observationId" foreign-key="observationNumericValueFk" />
+         	<property name="value" type="double" />
+        </joined-subclass>
 </hibernate-mapping>

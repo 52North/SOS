@@ -59,37 +59,5 @@
          <property name="samplingGeometry" type="org.hibernate.spatial.GeometryType">
             <column name="samplingGeometry" />
         </property>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.values.ObservationBlobValue" extends="org.n52.sos.ds.hibernate.entities.values.ObservationValue" table="blobValue">
-        	<key column="observationId" foreign-key="observationBlobValueFk" />
-         	<property name="value" type="blob" />
-        </joined-subclass>
-		<joined-subclass name="org.n52.sos.ds.hibernate.entities.values.ObservationBooleanValue" extends="org.n52.sos.ds.hibernate.entities.values.ObservationValue" table="booleanValue" check="value in ('T','F')">
-        	<key column="observationId" foreign-key="observationBooleanValueFk" />
-        	<property name="value" type="org.hibernate.type.TrueFalseType"/>
-        </joined-subclass>
-		<joined-subclass name="org.n52.sos.ds.hibernate.entities.values.ObservationCategoryValue" extends="org.n52.sos.ds.hibernate.entities.values.ObservationValue" table="categoryValue">
-        	<key column="observationId" foreign-key="observationCategoryValueFk" />
-         	<property name="value" type="string" />
-        </joined-subclass>
-		<joined-subclass name="org.n52.sos.ds.hibernate.entities.values.ObservationCountValue" extends="org.n52.sos.ds.hibernate.entities.values.ObservationValue" table="countValue">
-        	<key column="observationId" foreign-key="observationCountValueFk" />
-        	<property name="value" type="integer" />
-        </joined-subclass>
-		<joined-subclass name="org.n52.sos.ds.hibernate.entities.values.ObservationGeometryValue" extends="org.n52.sos.ds.hibernate.entities.values.ObservationValue" table="geometryValue">
-        	<key column="observationId" foreign-key="observationGeometryValueFk" />
-         	<property name="value" type="org.hibernate.spatial.GeometryType" />
-        </joined-subclass>
-		<joined-subclass name="org.n52.sos.ds.hibernate.entities.values.ObservationNumericValue" extends="org.n52.sos.ds.hibernate.entities.values.ObservationValue" table="numericValue">
-        	<key column="observationId" foreign-key="observationNumericValueFk" />
-         	<property name="value" type="double" />
-        </joined-subclass>
-		<joined-subclass name="org.n52.sos.ds.hibernate.entities.values.ObservationTextValue" extends="org.n52.sos.ds.hibernate.entities.values.ObservationValue" table="textValue">
-        	<key column="observationId" foreign-key="observationTextValueFk" />
-        	<property name="value" type="org.hibernate.type.StringClobType" />
-        </joined-subclass>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.values.ObservationSweDataArrayValue" extends="org.n52.sos.ds.hibernate.entities.values.ObservationValue" table="sweDataArrayValue">
-        	<key column="observationId" foreign-key="observationSweDataArrayValueFk" />
-        	<property name="value" type="org.hibernate.type.StringClobType" />
-        </joined-subclass>
     </class>
 </hibernate-mapping>

@@ -2,5 +2,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.values.ObservationBooleanValue" extends="org.n52.sos.ds.hibernate.entities.values.ObservationValue" table="booleanValue" check="value in ('T','F')">
+        	<key column="observationId" foreign-key="observationBooleanValueFk" />
+        	<property name="value" type="org.hibernate.type.TrueFalseType"/>
+        </joined-subclass>
 </hibernate-mapping>

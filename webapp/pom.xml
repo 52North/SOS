@@ -273,19 +273,11 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>binding-kvp</artifactId>
+            <artifactId>coding-kvp</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>binding-soap</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>binding-pox</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>binding-json</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

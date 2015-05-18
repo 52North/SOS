@@ -1,4 +1,4 @@
-Copyright ${inceptionYear}-${latestYearOfContribution} 52Â°North Initiative for Geospatial Open Source
+Copyright ${year} 52°North Initiative for Geospatial Open Source
 Software GmbH
 
 Licensed under the Apache License, Version 2.0 (the "License");

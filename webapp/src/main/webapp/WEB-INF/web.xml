@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+		 xmlns="http://java.sun.com/xml/ns/javaee"
+		 xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+		 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<display-name>${project.parent.name}; Git-Branch: '${git.branch}'; Git-Commit: '${git.commit.id}' @ ${git.commit.time}; Build time: ${git.build.time}</display-name>
 	<description>This is an OGC SOS.</description>
@@ -25,10 +25,10 @@
 		<param-name>datasourceConfigLocation</param-name>
 		<param-value>/WEB-INF/datasource.properties</param-value>
 	</context-param>
-	
+
 	<!-- Memory leak preventer listener -->
 	<listener>
-	  <listener-class>se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventor</listener-class>
+		<listener-class>se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventor</listener-class>
 	</listener>
 
 	<!-- Spring startup listener -->
@@ -66,7 +66,7 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-    <filter>
+	<filter>
 		<filter-name>encodingFilter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
 		<init-param>
@@ -110,28 +110,17 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
-	<!-- Admin servlet -->
-	<servlet>
-		<servlet-name>Admin</servlet-name>
-		<servlet-class>org.n52.iceland.service.admin.AdminService</servlet-class>
-	</servlet>
-
 	<!-- SOS servlet -->
 	<servlet>
 		<servlet-name>Service</servlet-name>
 		<servlet-class>org.n52.iceland.service.Service</servlet-class>
 	</servlet>
 
-	<!-- mappings of endpoints -->
-	<servlet-mapping>
-		<servlet-name>Admin</servlet-name>
-		<url-pattern>/adm</url-pattern>
-	</servlet-mapping>
-
 	<servlet-mapping>
 		<servlet-name>Service</servlet-name>
 		<url-pattern>/sos/*</url-pattern>
 	</servlet-mapping>
+
 	<servlet-mapping>
 		<servlet-name>Service</servlet-name>
 		<url-pattern>/service/*</url-pattern>

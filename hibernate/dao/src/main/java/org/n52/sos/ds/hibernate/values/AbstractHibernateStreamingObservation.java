@@ -49,6 +49,7 @@ import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ogc.om.StreamingObservation;
 import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.service.profile.ProfileHandler;
 
 /**
  * Abstract class for streaming observations
@@ -86,7 +87,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
     public AbstractHibernateStreamingObservation(GetObservationRequest request) {
         this.request = request;
         showMetadataOfEmptyObservation =
-                Configurator.getInstance().getProfileHandler().getActiveProfile().isShowMetadataOfEmptyObservations();
+                ProfileHandler.getInstance().getActiveProfile().isShowMetadataOfEmptyObservations();
     }
 
     @Override

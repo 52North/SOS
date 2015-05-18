@@ -90,7 +90,6 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.service.Configurator;
-import org.n52.iceland.service.profile.Profile;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.JavaHelper;
@@ -99,6 +98,8 @@ import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.encode.streaming.StreamingEncoder;
+import org.n52.sos.service.profile.Profile;
+import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GmlHelper;
 
 import com.google.common.collect.ImmutableMap;
@@ -407,7 +408,7 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
         Set<EncoderKey> encoderKeyType = getEncoderKeyType();
         for (EncoderKey encoderKey : encoderKeyType) {
             if (encoderKey instanceof XmlEncoderKey) {
-                if (Configurator.getInstance().getProfileHandler().getActiveProfile()
+                if (ProfileHandler.getInstance().getActiveProfile()
                         .isEncodeProcedureInObservation(((XmlEncoderKey) encoderKey).getNamespace())) {
                     return true;
                 }
@@ -512,7 +513,7 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
     private XmlObject addFeatureOfInterest(AbstractFeature feature) throws OwsExceptionReport {
         Map<HelperValues, String> additionalValues =
                 new EnumMap<SosConstants.HelperValues, String>(HelperValues.class);
-        Profile activeProfile = Configurator.getInstance().getProfileHandler().getActiveProfile();
+        Profile activeProfile = ProfileHandler.getInstance().getActiveProfile();
         additionalValues.put(HelperValues.ENCODE,
                 Boolean.toString(activeProfile.isEncodeFeatureOfInterestInObservations()));
         if (StringHelper.isNotEmpty(activeProfile.getEncodingNamespaceForFeatureOfInterest())) {

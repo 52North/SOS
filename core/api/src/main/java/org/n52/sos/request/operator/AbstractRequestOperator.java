@@ -66,12 +66,13 @@ import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
-import org.n52.iceland.service.profile.Profile;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.exception.ows.concrete.InvalidValueReferenceException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
 import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.response.AbstractObservationResponse;
+import org.n52.sos.service.profile.Profile;
+import org.n52.sos.service.profile.ProfileHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -249,7 +250,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     }
 
     protected Profile getActiveProfile() {
-        return Configurator.getInstance().getProfileHandler().getActiveProfile();
+        return ProfileHandler.getInstance().getActiveProfile();
     }
 
     /**

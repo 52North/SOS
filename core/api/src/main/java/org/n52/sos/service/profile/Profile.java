@@ -26,31 +26,54 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.response;
+package org.n52.sos.service.profile;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.AbstractStreaming;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * Interface to indicate that the response may contain streaming data.
+ * @since 4.0.0
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.3.0
- *
  */
-public interface StreamingDataResponse {
+public interface Profile {
 
-    /**
-     *  Check if the response contains streaming data {@link AbstractStreaming}
-     * 
-     * @return <code>true</code> if the response contains streaming data
-     */
-    boolean hasStreamingData();
+    String getIdentifier();
 
-    /**
-     * Merge the streaming data.
-     * 
-     * @throws OwsExceptionReport If an error occurs.
-     */
-    void mergeStreamingData() throws OwsExceptionReport;
+    boolean isActiveProfile();
+
+    String getObservationResponseFormat();
+
+    boolean isEncodeFeatureOfInterestInObservations();
+
+    String getEncodingNamespaceForFeatureOfInterest();
+
+    boolean isShowMetadataOfEmptyObservations();
+
+    boolean isAllowSubsettingForSOS20OM20();
+
+    boolean isMergeValues();
+
+    boolean isSetEncodeFeatureOfInterestNamespace();
+
+    boolean isEncodeProcedureInObservation();
+
+    boolean isEncodeProcedureInObservation(String namespace);
+
+    boolean isReturnLatestValueIfTemporalFilterIsMissingInGetObservation();
+
+    Map<String, String> getDefaultObservationTypesForEncoding();
+
+    boolean isListFeatureOfInterestsInOfferings();
+
+    boolean isEncodeChildProcedureDescriptions();
+
+    boolean isShowFullOperationsMetadata();
+
+    boolean isShowFullOperationsMetadataForObservations();
+
+    String getResponseNoDataPlaceholder();
+
+    Set<String> getNoDataPlaceholder();
+
+    boolean isSetNoDataPlaceholder();
 }

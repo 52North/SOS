@@ -45,7 +45,6 @@ import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.AbstractStreaming;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.om.features.FeatureCollection;
@@ -60,6 +59,7 @@ import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.aqd.v1.AqdGetObservationResponseXmlStreamWriter;
 import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.ogc.om.StreamingValue;
+import org.n52.sos.ogc.sos.AbstractStreaming;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.Referenceable;
 

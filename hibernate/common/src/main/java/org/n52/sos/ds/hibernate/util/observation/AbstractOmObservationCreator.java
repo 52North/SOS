@@ -48,7 +48,6 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.service.profile.Profile;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
@@ -56,6 +55,8 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
 import org.n52.sos.request.AbstractObservationRequest;
+import org.n52.sos.service.profile.Profile;
+import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -93,7 +94,7 @@ public abstract class AbstractOmObservationCreator {
     }
 
     protected Profile getActiveProfile() {
-        return Configurator.getInstance().getProfileHandler().getActiveProfile();
+        return ProfileHandler.getInstance().getActiveProfile();
     }
 
     protected String getTokenSeparator() {
@@ -123,7 +124,7 @@ public abstract class AbstractOmObservationCreator {
         if (request.isSetResponseFormat()) {
             return request.getResponseFormat();
         }
-        return Configurator.getInstance().getProfileHandler().getActiveProfile().getObservationResponseFormat();
+        return ProfileHandler.getInstance().getActiveProfile().getObservationResponseFormat();
     }
 
     public Session getSession() {

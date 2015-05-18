@@ -95,7 +95,6 @@ import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.ogc.swe.SweDataArray;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
-import org.n52.iceland.service.profile.Profile;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
@@ -107,6 +106,8 @@ import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.response.GetObservationByIdResponse;
 import org.n52.sos.response.GetObservationResponse;
+import org.n52.sos.service.profile.Profile;
+import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GmlHelper;
 import org.n52.sos.util.N52XmlHelper;
 import org.n52.sos.util.OMHelper;
@@ -560,7 +561,7 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
     private void addFeatureOfInterest(ObservationType observation, AbstractFeature feature) throws OwsExceptionReport {
         Map<HelperValues, String> additionalValues =
                 new EnumMap<SosConstants.HelperValues, String>(HelperValues.class);
-        Profile activeProfile = Configurator.getInstance().getProfileHandler().getActiveProfile();
+        Profile activeProfile = ProfileHandler.getInstance().getActiveProfile();
         additionalValues.put(HelperValues.ENCODE,
                 Boolean.toString(activeProfile.isEncodeFeatureOfInterestInObservations()));
         XmlObject encodeObjectToXml = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, feature, additionalValues);

@@ -47,12 +47,13 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.service.Configurator;
-import org.n52.iceland.service.profile.Profile;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.response.InsertObservationResponse;
+import org.n52.sos.service.profile.Profile;
+import org.n52.sos.service.profile.ProfileHandler;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -193,7 +194,7 @@ public class SplitMergeObservations implements
     }
     
     protected Profile getActiveProfile() {
-        return Configurator.getInstance().getProfileHandler().getActiveProfile();
+        return ProfileHandler.getInstance().getActiveProfile();
     }
 
     @Override

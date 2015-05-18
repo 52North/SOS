@@ -30,8 +30,8 @@ package org.n52.sos.profile;
 
 import java.util.Set;
 
-import org.n52.iceland.service.profile.Profile;
 import org.n52.iceland.util.Constants;
+import org.n52.sos.service.profile.Profile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Sets;

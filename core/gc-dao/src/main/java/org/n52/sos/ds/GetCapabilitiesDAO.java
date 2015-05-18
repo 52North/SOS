@@ -97,6 +97,7 @@ import org.n52.iceland.util.MultiMaps;
 import org.n52.iceland.util.SetMultiMap;
 import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosObservationOffering;
+import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.I18NHelper;
 import org.n52.sos.util.OMHelper;
@@ -339,7 +340,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
             profiles.addAll(operationDAO.getConformanceClasses(service, version));
         }
         // FIXME additional profiles
-        if ("hydrology".equalsIgnoreCase(Configurator.getInstance().getProfileHandler().getActiveProfile()
+        if ("hydrology".equalsIgnoreCase(ProfileHandler.getInstance().getActiveProfile()
                 .getIdentifier())) {
             profiles.add("http://www.opengis.net/spec/SOS_application-profile_hydrology/1.0/req/hydrosos");
         }
@@ -536,7 +537,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
                 setUpTimeForOffering(offering, sosObservationOffering);
 
                 // add feature of interests
-                if (getConfigurator().getProfileHandler().getActiveProfile().isListFeatureOfInterestsInOfferings()) {
+                if (ProfileHandler.getInstance().getActiveProfile().isListFeatureOfInterestsInOfferings()) {
                     sosObservationOffering.setFeatureOfInterest(getFOI4offering(offering));
                 }
 
@@ -795,7 +796,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     private Set<String> getFOI4offering(final String offering) throws OwsExceptionReport {
         final Set<String> featureIDs = new HashSet<String>(0);
         final Set<String> features = getConfigurator().getCache().getFeaturesOfInterestForOffering(offering);
-        if (!getConfigurator().getProfileHandler().getActiveProfile().isListFeatureOfInterestsInOfferings()
+        if (!ProfileHandler.getInstance().getActiveProfile().isListFeatureOfInterestsInOfferings()
                 || features == null) {
             featureIDs.add(OGCConstants.UNKNOWN);
         } else {

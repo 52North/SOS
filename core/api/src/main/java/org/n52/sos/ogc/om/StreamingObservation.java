@@ -29,13 +29,13 @@
 package org.n52.sos.ogc.om;
 
 import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.om.AbstractStreaming;
 import org.n52.iceland.ogc.om.NamedValue;
 import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.om.values.Value;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OWSConstants.AdditionalRequestParams;
 import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.sos.ogc.sos.AbstractStreaming;
 import org.n52.sos.util.GeometryHandler;
 
 import com.vividsolutions.jts.geom.Geometry;

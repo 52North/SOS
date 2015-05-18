@@ -22,5 +22,6 @@
 		<module>json</module>
 		<module>json-common</module>
 		<module>exi</module>
+		<module>kvp</module>
     </modules>
 </project>

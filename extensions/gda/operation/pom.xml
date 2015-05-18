@@ -17,7 +17,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>binding-kvp</artifactId>
+            <artifactId>coding-kvp</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

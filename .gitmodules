@@ -1,0 +1,3 @@
+[submodule "iceland"]
+	path = iceland
+	url = https://github.com/52North/iceland.git

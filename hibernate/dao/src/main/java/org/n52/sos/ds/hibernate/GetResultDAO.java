@@ -47,6 +47,7 @@ import org.n52.iceland.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.iceland.ogc.filter.TemporalFilter;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
+import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
@@ -138,17 +139,19 @@ public class GetResultDAO extends AbstractGetResultHandler {
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        try {
-            Session session = sessionHolder.getSession();
-            if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
-                return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
+    public Set<String> getConformanceClasses(String service, String version) {
+        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+            try {
+                Session session = sessionHolder.getSession();
+                if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
+                    return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
+                }
+                sessionHolder.returnSession(session);
+            } catch (OwsExceptionReport owse) {
+                LOGGER.error("Error while getting Spatial Filtering Profile conformance class!", owse);
             }
-            sessionHolder.returnSession(session);
-        } catch (OwsExceptionReport owse) {
-            LOGGER.error("Error while getting Spatial Filtering Profile conformance class!", owse);
         }
-        return super.getConformanceClasses();
+        return super.getConformanceClasses(service, version);
     }
 
     /**

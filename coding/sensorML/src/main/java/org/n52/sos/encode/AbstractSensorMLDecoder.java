@@ -28,6 +28,7 @@
  */
 package org.n52.sos.encode;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
@@ -80,5 +81,10 @@ public abstract class AbstractSensorMLDecoder implements Decoder<AbstractSensorM
     private boolean checkDefinitionStartsWithAndContains(final String definition) {
         return definition.startsWith(OGCConstants.URN_UNIQUE_IDENTIFIER_START)
                 && definition.contains(OGCConstants.URN_UNIQUE_IDENTIFIER_END);
+    }
+    
+    @Override
+    public Set<String> getConformanceClasses(String service, String version) {
+        return Collections.emptySet();
     }
 }

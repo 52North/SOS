@@ -28,6 +28,9 @@
  */
 package org.n52.sos.request.operator;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
@@ -95,5 +98,10 @@ public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q e
         } else if (!service.equals(AqdConstants.AQD)) {
             throw new InvalidServiceParameterException(service);
         }
+    }
+    
+    @Override
+    public Set<String> getConformanceClasses(String service, String version) {
+            return Collections.emptySet();
     }
 }

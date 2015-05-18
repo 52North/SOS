@@ -50,6 +50,7 @@ import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
@@ -169,11 +170,13 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
-            return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
+    public Set<String> getConformanceClasses(String service, String version) {
+        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+            if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
+                return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
+            }
         }
-        return super.getConformanceClasses();
+        return super.getConformanceClasses(service, version);
     }
 
     /**

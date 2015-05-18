@@ -36,6 +36,6 @@ import java.util.Set;
  */
 public interface ConformanceClass {
 
-    Set<String> getConformanceClasses();
+    Set<String> getConformanceClasses(String service, String version);
 
 }

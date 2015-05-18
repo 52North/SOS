@@ -136,7 +136,7 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
 

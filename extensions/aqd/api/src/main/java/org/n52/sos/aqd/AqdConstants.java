@@ -33,6 +33,7 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.iso.GcoConstants;
 import org.n52.sos.iso.gmd.GmdConstants;
@@ -63,6 +64,8 @@ public interface AqdConstants {
     String NS_AQD_SCHEMA = "http://dd.eionet.europa.eu/schemas/id2011850eu-1.0/AirQualityReporting.xsd";
 
     SchemaLocation NS_AQD_SCHEMA_LOCATION = new SchemaLocation(NS_AQD, NS_AQD_SCHEMA);
+    
+    MediaType AQD_CONTENT_TYPE = new MediaType("text", "xml", "subtype", "id2011850eu/1.0");;
 
     String NS_AD = "urn:x-inspire:specification:gmlas:Addresses:3.0";
 
@@ -335,7 +338,7 @@ public interface AqdConstants {
     String VAR = "var";
 
     String EXTENSION_FLOW = "flow";
-    
+
     enum PrimaryObservation {
         Hourly(HOUR),
         Daily(DAY),

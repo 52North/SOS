@@ -33,7 +33,6 @@ import static org.n52.iceland.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -57,6 +56,8 @@ import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionCode;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.util.http.HTTPStatus;
@@ -85,6 +86,8 @@ import org.n52.sos.binding.rest.resources.sensors.SensorsRequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
@@ -97,13 +100,15 @@ public class RestBinding extends Binding {
 
     public RestBinding() {
         bindingConstants = Constants.getInstance();
-        conformanceClasses = new HashSet<String>(0);
-        conformanceClasses.add(bindingConstants.getConformanceClass());
+        conformanceClasses = Sets.newHashSet(bindingConstants.getConformanceClass());
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.unmodifiableSet(conformanceClasses);
+    public Set<String> getConformanceClasses(String service, String version) {
+        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+            return Collections.unmodifiableSet(conformanceClasses);
+        }
+        return Collections.emptySet();
     }
 
     @Override

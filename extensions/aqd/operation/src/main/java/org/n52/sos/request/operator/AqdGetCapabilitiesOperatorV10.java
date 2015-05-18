@@ -62,11 +62,6 @@ public class AqdGetCapabilitiesOperatorV10 extends
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.emptySet();
-    }
-
-    @Override
     public GetCapabilitiesResponse receive(GetCapabilitiesRequest request) throws OwsExceptionReport {
         return modifyCapabilities((GetCapabilitiesResponse) changeResponseServiceVersion(getDao().getCapabilities(
                 (GetCapabilitiesRequest) changeRequestServiceVersion(request))));

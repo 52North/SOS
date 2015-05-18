@@ -50,6 +50,8 @@ import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.util.CodingHelper;
@@ -86,8 +88,11 @@ public class EXIBinding extends SimpleBinding {
     private static final Logger LOGGER = LoggerFactory.getLogger(EXIBinding.class);
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return CONFORMANCE_CLASSES;
+    public Set<String> getConformanceClasses(String service, String version) {
+        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+            return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+        }
+        return Collections.emptySet();
     }
 
     @Override

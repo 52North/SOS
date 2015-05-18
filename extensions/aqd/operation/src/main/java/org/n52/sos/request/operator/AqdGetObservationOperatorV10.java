@@ -83,11 +83,6 @@ public class AqdGetObservationOperatorV10 extends
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.emptySet();
-    }
-
-    @Override
     public GetObservationResponse receive(GetObservationRequest request) throws OwsExceptionReport {
         ReportObligationType flow = AqdHelper.getInstance().getFlow(request.getExtensions());
         checkReportingHeader(flow);

@@ -130,7 +130,7 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> imple
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
 

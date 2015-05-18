@@ -41,7 +41,9 @@ import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.NS_SO
 import java.util.Set;
 
 
+
 import net.opengis.sosdo.x10.DeleteObservationDocument;
+
 
 
 import org.apache.xmlbeans.XmlObject;
@@ -51,6 +53,7 @@ import org.junit.Test;
 import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -109,9 +112,9 @@ public class DeleteObservationDecoderTest {
 
     @Test
     public void testGetConformanceClasses() {
-        assertNotNull("ConformanceClasses is null", instance.getConformanceClasses());
+        assertNotNull("ConformanceClasses is null", instance.getConformanceClasses(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
         assertTrue("ConformanceClasses contains " + CONFORMANCE_CLASSES,
-                instance.getConformanceClasses().equals(CONFORMANCE_CLASSES));
+                instance.getConformanceClasses(SosConstants.SOS, Sos2Constants.SERVICEVERSION).equals(CONFORMANCE_CLASSES));
     }
 
     @Test

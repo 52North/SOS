@@ -80,7 +80,7 @@ public class WsaDecoder implements Decoder<List<WsaHeader>, List<SOAPHeaderEleme
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
 

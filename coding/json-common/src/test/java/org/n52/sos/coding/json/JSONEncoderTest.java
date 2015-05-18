@@ -46,6 +46,8 @@ import org.junit.rules.ExpectedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.encode.json.JSONEncoderKey;
@@ -118,6 +120,6 @@ public class JSONEncoderTest {
 
     @Test
     public void testConformaceClasses() throws OwsExceptionReport {
-        assertThat(encoder.getConformanceClasses(), is(empty()));
+        assertThat(encoder.getConformanceClasses(SosConstants.SOS, Sos2Constants.SERVICEVERSION), is(empty()));
     }
 }

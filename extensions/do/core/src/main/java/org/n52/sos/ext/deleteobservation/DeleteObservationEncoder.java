@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
+import java.util.Collections;
 import java.util.Set;
 
 import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
@@ -63,8 +64,11 @@ public class DeleteObservationEncoder extends AbstractResponseEncoder<DeleteObse
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return DeleteObservationConstants.CONFORMANCE_CLASSES;
+    public Set<String> getConformanceClasses(String service, String version) {
+        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+            return Collections.unmodifiableSet(DeleteObservationConstants.CONFORMANCE_CLASSES);
+        }
+        return Collections.emptySet();
     }
 
     @Override

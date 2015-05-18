@@ -395,14 +395,17 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH));
             config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH));
             config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH));
+            break;
         case EREPORTING_CONCEPT:
             config.addDirectory(resource(HIBERNATE_MAPPING_EREPORTING_CONCEPT_BASE_PATH));
             config.addDirectory(resource(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH));
             config.addDirectory(resource(HIBERNATE_MAPPING_EREPORTING_CONCEPT_VALUE_PATH));
+            break;
         case OLD_CONCEPT:
             config.addDirectory(resource(HIBERNATE_MAPPING_OLD_CONCEPT_BASE_PATH));
             config.addDirectory(resource(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH));
             config.addDirectory(resource(HIBERNATE_MAPPING_OLD_CONCEPT_VALUE_PATH));
+            break;
         default:
             config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH));
             config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH));

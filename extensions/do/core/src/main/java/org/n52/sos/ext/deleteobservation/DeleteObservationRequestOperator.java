@@ -31,12 +31,14 @@ package org.n52.sos.ext.deleteobservation;
 import static org.n52.iceland.ogc.sos.SosConstants.SOS;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.CONFORMANCE_CLASSES;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.ogc.ows.CompositeOwsException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.iceland.service.Configurator;
 import org.n52.sos.request.operator.AbstractTransactionalRequestOperator;
@@ -90,8 +92,11 @@ public class DeleteObservationRequestOperator
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return CONFORMANCE_CLASSES;
+    public Set<String> getConformanceClasses(String service, String version) {
+        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+            return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+        }
+        return Collections.emptySet();
     }
 
 }

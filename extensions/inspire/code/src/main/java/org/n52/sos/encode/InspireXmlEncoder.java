@@ -86,7 +86,7 @@ public class InspireXmlEncoder extends AbstractXmlEncoder<Object> {
                         InspireSupportedCRS.class));
 
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
 

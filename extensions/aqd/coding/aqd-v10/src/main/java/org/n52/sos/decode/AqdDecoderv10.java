@@ -65,7 +65,7 @@ public class AqdDecoderv10 implements Decoder<AbstractServiceCommunicationObject
 	}
 
 	@Override
-	public Set<String> getConformanceClasses() {
+	public Set<String> getConformanceClasses(String service, String version) {
 		 return Collections.emptySet();
 	}
 

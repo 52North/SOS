@@ -97,8 +97,8 @@ public class DescribeSensorResponseEncoderTest {
 
     @Test
     public void should_return_emptySet_for_conformanceClasses() {
-        assertThat(new DescribeSensorResponseEncoder().getConformanceClasses(), is(not(nullValue())));
-        assertThat(new DescribeSensorResponseEncoder().getConformanceClasses().isEmpty(), is(TRUE));
+        assertThat(new DescribeSensorResponseEncoder().getConformanceClasses(SosConstants.SOS, Sos2Constants.SERVICEVERSION), is(not(nullValue())));
+        assertThat(new DescribeSensorResponseEncoder().getConformanceClasses(SosConstants.SOS, Sos2Constants.SERVICEVERSION).isEmpty(), is(TRUE));
     }
 
     @Test

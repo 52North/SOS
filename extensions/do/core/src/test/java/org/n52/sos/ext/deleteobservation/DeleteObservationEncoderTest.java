@@ -119,10 +119,10 @@ public class DeleteObservationEncoderTest {
     public void testGetConformanceClasses() {
         final Set<String> conformanceClasses = new HashSet<String>(1);
         conformanceClasses.add(DeleteObservationConstants.CONFORMANCE_CLASS);
-        assertNotNull("ConformanceClasses is null", instance.getConformanceClasses());
-        assertEquals("ConformanceClasses size", conformanceClasses.size(), instance.getConformanceClasses().size());
+        assertNotNull("ConformanceClasses is null", instance.getConformanceClasses(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
+        assertEquals("ConformanceClasses size", conformanceClasses.size(), instance.getConformanceClasses(SosConstants.SOS, Sos2Constants.SERVICEVERSION).size());
         assertTrue("ConformanceClasses contains " + DeleteObservationConstants.CONFORMANCE_CLASS, instance
-                .getConformanceClasses().contains(DeleteObservationConstants.CONFORMANCE_CLASS));
+                .getConformanceClasses(SosConstants.SOS, Sos2Constants.SERVICEVERSION).contains(DeleteObservationConstants.CONFORMANCE_CLASS));
     }
 
     @Test

@@ -152,7 +152,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
 

@@ -101,8 +101,8 @@ public class DeleteSensorResponseEncoderTest {
 
     @Test
     public void should_return_emptySet_for_conformanceClasses() {
-        assertThat(new DeleteSensorResponseEncoder().getConformanceClasses(), is(not(nullValue())));
-        assertThat(new DeleteSensorResponseEncoder().getConformanceClasses().isEmpty(), is(TRUE));
+        assertThat(new DeleteSensorResponseEncoder().getConformanceClasses(SosConstants.SOS, Sos2Constants.SERVICEVERSION), is(not(nullValue())));
+        assertThat(new DeleteSensorResponseEncoder().getConformanceClasses(SosConstants.SOS, Sos2Constants.SERVICEVERSION).isEmpty(), is(TRUE));
     }
 
     @Test

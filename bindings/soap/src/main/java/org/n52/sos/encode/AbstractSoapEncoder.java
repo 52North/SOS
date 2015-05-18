@@ -102,7 +102,7 @@ public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Consta
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
 

@@ -28,10 +28,9 @@
  */
 package org.n52.iceland.ds;
 
-import java.util.Set;
-
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
+import org.n52.iceland.service.ConformanceClass;
 
 /**
  * Interface for all operation Handlers.
@@ -40,7 +39,7 @@ import org.n52.iceland.ogc.ows.OwsOperation;
  * 
  * @since 1.0.0
  */
-public interface OperationHandler extends DatasourceDaoIdentifier {
+public interface OperationHandler extends DatasourceDaoIdentifier, ConformanceClass{
 
     /**
      * Get the operation and service key this Handler supports
@@ -80,7 +79,5 @@ public interface OperationHandler extends DatasourceDaoIdentifier {
     // * @throws OwsExceptionReport
     // */
     // // SosCapabilitiesExtension getExtension() throws OwsExceptionReport;
-
-    Set<String> getConformanceClasses();
     
 }

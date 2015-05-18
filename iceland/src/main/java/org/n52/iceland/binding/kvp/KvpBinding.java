@@ -48,7 +48,9 @@ import org.n52.iceland.exception.ows.concrete.MissingRequestParameterException;
 import org.n52.iceland.exception.ows.concrete.NoDecoderForKeyException;
 import org.n52.iceland.exception.ows.concrete.VersionNotSupportedException;
 import org.n52.iceland.ogc.ows.OWSConstants.RequestParams;
+import org.n52.iceland.ogc.ows.OWSConstants;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
@@ -60,7 +62,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * SOS operator for Key-Value-Pair (HTTP-Get) requests
+ * OWS binding for Key-Value-Pair (HTTP-Get) requests
  * 
  * @since 4.0.0
  */
@@ -71,8 +73,11 @@ public class KvpBinding extends SimpleBinding {
             .singleton(ConformanceClasses.SOS_V2_KVP_CORE_BINDING);
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+    public Set<String> getConformanceClasses(String service, String version) {
+        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+            return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+        }
+        return Collections.emptySet();
     }
 
     @Override
@@ -134,7 +139,7 @@ public class KvpBinding extends SimpleBinding {
     }
 
     protected boolean isGetCapabilities(Map<String, String> map) throws OwsExceptionReport {
-        return SosConstants.Operations.GetCapabilities.name().equals(getRequestParameterValue(map));
+        return OWSConstants.Operations.GetCapabilities.name().equals(getRequestParameterValue(map));
     }
 
     public String getRequestParameterValue(Map<String, String> map) throws OwsExceptionReport {

@@ -41,7 +41,7 @@ import org.n52.iceland.util.http.MediaTypes;
 public class TestBinding extends SimpleBinding {
 
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
 

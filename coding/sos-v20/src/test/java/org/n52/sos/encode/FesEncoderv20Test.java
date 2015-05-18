@@ -55,6 +55,7 @@ import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.iceland.ogc.filter.SpatialFilter;
 import org.n52.iceland.ogc.filter.TemporalFilter;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.http.MediaTypes;
@@ -103,8 +104,8 @@ public class FesEncoderv20Test {
 
     @Test
     public final void should_return_emptySet_for_conformanceClasses() {
-        assertThat(fesEncoder.getConformanceClasses(), is(not(nullValue())));
-        assertThat(fesEncoder.getConformanceClasses().isEmpty(), is(TRUE));
+        assertThat(fesEncoder.getConformanceClasses(SosConstants.SOS, Sos2Constants.SERVICEVERSION), is(not(nullValue())));
+        assertThat(fesEncoder.getConformanceClasses(SosConstants.SOS, Sos2Constants.SERVICEVERSION).isEmpty(), is(TRUE));
     }
 
     @Test

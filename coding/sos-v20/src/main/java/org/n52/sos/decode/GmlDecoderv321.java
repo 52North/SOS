@@ -135,7 +135,7 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
 

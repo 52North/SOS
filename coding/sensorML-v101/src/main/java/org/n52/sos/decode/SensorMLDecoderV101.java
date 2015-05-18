@@ -160,11 +160,6 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.emptySet();
-    }
-
-    @Override
     public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
         return Collections.singletonMap(SupportedTypeKey.ProcedureDescriptionFormat,
                 SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS);

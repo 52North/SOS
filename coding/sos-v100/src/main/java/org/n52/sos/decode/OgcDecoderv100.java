@@ -95,8 +95,8 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return new HashSet<String>(0);
+    public Set<String> getConformanceClasses(String service, String version) {
+        return Collections.emptySet();
     }
 
     @Override

@@ -89,7 +89,7 @@ public class WsaEncoder implements Encoder<XmlObject, WsaHeader> {
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
 

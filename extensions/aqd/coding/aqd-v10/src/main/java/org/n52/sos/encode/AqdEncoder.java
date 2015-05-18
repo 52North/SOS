@@ -57,6 +57,8 @@ import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.om.features.FeatureCollection;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.w3c.SchemaLocation;
@@ -119,6 +121,9 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
 
     @Override
     public Set<String> getSupportedResponseFormats(String service, String version) {
+        if (SosConstants.SOS.equals(service) && Sos1Constants.VERSION.equals(version)) {
+          return Sets.newHashSet(AqdConstants.AQD_CONTENT_TYPE.toString());
+        } 
         return Sets.newHashSet(AqdConstants.NS_AQD);
     }
 

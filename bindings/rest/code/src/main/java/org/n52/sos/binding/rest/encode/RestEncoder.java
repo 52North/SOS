@@ -199,7 +199,7 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
     }
     
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return emptySet();
     }
 

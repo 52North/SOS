@@ -50,10 +50,6 @@ public class AqdDescribeSensorOperatorV10
 		super(OPERATION_NAME, DescribeSensorRequest.class);
 	}
 
-	@Override
-	public Set<String> getConformanceClasses() {
-		return Collections.emptySet();
-	}
 
 	@Override
 	public DescribeSensorResponse receive(DescribeSensorRequest request)

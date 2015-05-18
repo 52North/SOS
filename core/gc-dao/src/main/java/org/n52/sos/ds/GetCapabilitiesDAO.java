@@ -316,27 +316,27 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         OwsServiceIdentification serviceIdentification = getConfigurator()
                 .getServiceIdentification(locale);
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
-            serviceIdentification.setProfiles(getProfiles());
+            serviceIdentification.setProfiles(getProfiles(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
         }
         return serviceIdentification;
     }
 
-    private Set<String> getProfiles() {
+    private Set<String> getProfiles(String service, String version) {
         final List<String> profiles = new LinkedList<String>();
         for (final Binding bindig : BindingRepository.getInstance().getBindings().values()) {
-            profiles.addAll(bindig.getConformanceClasses());
+            profiles.addAll(bindig.getConformanceClasses(service, version));
         }
         for (final RequestOperatorKey k : RequestOperatorRepository.getInstance().getActiveRequestOperatorKeys()) {
-            profiles.addAll(RequestOperatorRepository.getInstance().getRequestOperator(k).getConformanceClasses());
+            profiles.addAll(RequestOperatorRepository.getInstance().getRequestOperator(k).getConformanceClasses(service, version));
         }
         for (final Decoder<?, ?> decoder : CodingRepository.getInstance().getDecoders()) {
-            profiles.addAll(decoder.getConformanceClasses());
+            profiles.addAll(decoder.getConformanceClasses(service, version));
         }
         for (final Encoder<?, ?> encoder : CodingRepository.getInstance().getEncoders()) {
-            profiles.addAll(encoder.getConformanceClasses());
+            profiles.addAll(encoder.getConformanceClasses(service, version));
         }
         for (final OperationHandler operationDAO : OperationHandlerRepository.getInstance().getOperationDAOs().values()) {
-            profiles.addAll(operationDAO.getConformanceClasses());
+            profiles.addAll(operationDAO.getConformanceClasses(service, version));
         }
         // FIXME additional profiles
         if ("hydrology".equalsIgnoreCase(Configurator.getInstance().getProfileHandler().getActiveProfile()
@@ -1025,5 +1025,10 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     @Override
     public String getDatasourceDaoIdentifier() {
         return IDEPENDET_IDENTIFIER;
+    }
+
+    @Override
+    public Set<String> getConformanceClasses(String service, String version) {
+        return Collections.emptySet();
     }
 }

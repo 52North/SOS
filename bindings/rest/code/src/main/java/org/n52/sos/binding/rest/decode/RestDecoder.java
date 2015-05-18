@@ -217,7 +217,7 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
 

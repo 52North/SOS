@@ -50,7 +50,7 @@ public abstract class AbstractXmlDecoder<S> implements Decoder<S, XmlObject> {
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
 }

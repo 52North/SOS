@@ -82,7 +82,7 @@ public class SwesExtensionDecoderv20 implements Decoder<SwesExtension<?>, XmlObj
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
 

@@ -101,8 +101,8 @@ public class InsertSensorResponseEncoderTest {
 
     @Test
     public void should_return_emptySet_for_conformanceClasses() {
-        assertThat(new InsertSensorResponseEncoder().getConformanceClasses(), is(not(nullValue())));
-        assertThat(new InsertSensorResponseEncoder().getConformanceClasses().isEmpty(), is(TRUE));
+        assertThat(new InsertSensorResponseEncoder().getConformanceClasses(SosConstants.SOS, Sos2Constants.SERVICEVERSION), is(not(nullValue())));
+        assertThat(new InsertSensorResponseEncoder().getConformanceClasses(SosConstants.SOS, Sos2Constants.SERVICEVERSION).isEmpty(), is(TRUE));
     }
 
     @Test

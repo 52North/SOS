@@ -99,7 +99,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
     private int defaultResponse3DEPSG;
 
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
 

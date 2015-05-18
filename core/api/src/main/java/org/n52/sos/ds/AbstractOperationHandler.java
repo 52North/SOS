@@ -110,7 +110,7 @@ public abstract class AbstractOperationHandler implements OperationHandler {
     // }
 
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
 

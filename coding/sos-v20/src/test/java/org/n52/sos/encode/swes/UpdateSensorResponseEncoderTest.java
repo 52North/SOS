@@ -103,8 +103,8 @@ public class UpdateSensorResponseEncoderTest {
 
     @Test
     public void should_return_emptySet_for_conformanceClasses() {
-        assertThat(new UpdateSensorResponseEncoder().getConformanceClasses(), is(not(nullValue())));
-        assertThat(new UpdateSensorResponseEncoder().getConformanceClasses().isEmpty(), is(TRUE));
+        assertThat(new UpdateSensorResponseEncoder().getConformanceClasses(SosConstants.SOS, Sos2Constants.SERVICEVERSION), is(not(nullValue())));
+        assertThat(new UpdateSensorResponseEncoder().getConformanceClasses(SosConstants.SOS, Sos2Constants.SERVICEVERSION).isEmpty(), is(TRUE));
     }
 
     @Test

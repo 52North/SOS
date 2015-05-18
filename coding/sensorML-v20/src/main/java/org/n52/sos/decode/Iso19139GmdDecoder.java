@@ -84,7 +84,7 @@ public class Iso19139GmdDecoder implements Decoder<Object, Object> {
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
 

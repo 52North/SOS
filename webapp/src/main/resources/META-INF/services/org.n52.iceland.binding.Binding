@@ -1,2 +1,3 @@
 org.n52.iceland.binding.kvp.KvpBinding
 org.n52.iceland.binding.pox.PoxBinding
+org.n52.iceland.binding.json.JSONBinding

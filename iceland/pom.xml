@@ -11,46 +11,46 @@
     <inceptionYear>2015</inceptionYear>
     <packaging>jar</packaging>
     <organization>
-		<name>52°North Initiative for Geospatial Open Source Software GmbH</name>
-		<url>http://52north.org</url>
-	</organization>
+        <name>52°North Initiative for Geospatial Open Source Software GmbH</name>
+        <url>http://52north.org</url>
+    </organization>
 
-	<developers>
-		<developer>
-			<name>Carsten Hollmann</name>
-			<email>c.hollmann@52north.org</email>
-			<organization>${project.organization.name}</organization>
-			<organizationUrl>${project.organization.url}</organizationUrl>
-			<timezone>GMT+1</timezone>
-		</developer>
-		<developer>
+    <developers>
+        <developer>
+            <name>Carsten Hollmann</name>
+            <email>c.hollmann@52north.org</email>
+            <organization>${project.organization.name}</organization>
+            <organizationUrl>${project.organization.url}</organizationUrl>
+            <timezone>GMT+1</timezone>
+        </developer>
+        <developer>
             <name>Christian Autermann</name>
             <email>c.autermann@52north.org</email>
             <organization>${project.organization.name}</organization>
             <organizationUrl>${project.organization.url}</organizationUrl>
             <timezone>GMT+1</timezone>
         </developer>
-	</developers>
+    </developers>
 
-	<mailingLists>
-		<mailingList>
-			<name>Sensor Web Community Mailing List</name>
-			<subscribe>http://list.52north.org/mailman/listinfo/swe</subscribe>
-			<unsubscribe>http://list.52north.org/mailman/listinfo/swe</unsubscribe>
-			<post>swe@52north.org</post>
-			<archive>http://list.52north.org/pipermail/swe</archive>
-			<otherArchives>
-				<otherArchive>http://sensorweb.forum.52north.org</otherArchive>
-			</otherArchives>
-		</mailingList>
-	</mailingLists>
-	
-	<scm>
+    <mailingLists>
+        <mailingList>
+            <name>Sensor Web Community Mailing List</name>
+            <subscribe>http://list.52north.org/mailman/listinfo/swe</subscribe>
+            <unsubscribe>http://list.52north.org/mailman/listinfo/swe</unsubscribe>
+            <post>swe@52north.org</post>
+            <archive>http://list.52north.org/pipermail/swe</archive>
+            <otherArchives>
+                <otherArchive>http://sensorweb.forum.52north.org</otherArchive>
+            </otherArchives>
+        </mailingList>
+    </mailingLists>
+
+    <scm>
         <connection>scm:git:git://github.com/52North/iceland.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/52North/iceland.git</developerConnection>
         <url>https://github.com/52North/iceland</url>
     </scm>
-    
+
     <issueManagement>
         <system>GitHub issues</system>
         <url>https://github.com/52North/iceland/issues?state=open</url>
@@ -60,366 +60,126 @@
         <url>http://build.dev.52north.org/jenkins/job/iceland-dev/</url>
     </ciManagement>
 
-	<licenses>
-		<license>
-			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-			<comments>A business-friendly OSS license</comments>
-		</license>
-	</licenses>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
     <properties>
         <timestamp>${maven.build.timestamp}</timestamp>
         <!-- Source encoding during build process ** !!! DO NOT CHANGE !!! ** -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-
-        <!-- Logger configuration -->
-        <config.logger.fileappender.filepath>${catalina.base}/logs</config.logger.fileappender.filepath>
-        <config.logger.fileappender.filename>${conf.sos.name}</config.logger.fileappender.filename>
-        <config.logger.level>INFO</config.logger.level>
-        <config.logger.level.test.n52>ERROR</config.logger.level.test.n52>
-        <config.logger.level.test.global>ERROR</config.logger.level.test.global>
-        <config.logger.history.max>30</config.logger.history.max>
-        <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
-       
-        <logback.version>1.0.13</logback.version>
-        <slf4j.version>1.7.2</slf4j.version>
-        <jackson.version>2.5.1</jackson.version>
-
     </properties>
-    <dependencyManagement>
-        <dependencies>
-            
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>2.5</version>
-                <scope>provided</scope>
-            </dependency>
-            
-            <dependency>
-                <groupId>javax.servlet.jsp</groupId>
-                <artifactId>javax.servlet.jsp-api</artifactId>
-                <version>2.3.1</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>2.4</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>2.6</version>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.12</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.hamcrest</groupId>
-                        <artifactId>hamcrest-core</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.testng</groupId>
-                <artifactId>testng</artifactId>
-                <version>6.8.21</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>1.10.19</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-all</artifactId>
-                <version>1.3</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>${slf4j.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jul-to-slf4j</artifactId>
-                <version>${slf4j.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>log4j-over-slf4j</artifactId>
-                <version>${slf4j.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-            <!-- Have to be excluded from Iceland LGPL is not compatible with ASL 2.0 -->
-            <dependency>
-                <groupId>com.vividsolutions</groupId>
-                <artifactId>jts</artifactId>
-                <version>1.13</version>
-            </dependency>
-            <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>2.7</version>
-            </dependency>
-            <dependency>
-                <groupId>xerces</groupId>
-                <artifactId>xercesImpl</artifactId>
-                <version>2.9.1</version>
-            </dependency>
-            
-            
-            <dependency>
-                <groupId>org.apache.xmlbeans</groupId>
-                <artifactId>xmlbeans</artifactId>
-                <version>2.6.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.xmlbeans</groupId>
-                <artifactId>xmlbeans-xpath</artifactId>
-                <version>2.6.0</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>net.sf.saxon</groupId>
-                        <artifactId>saxon</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>net.sourceforge.saxon</groupId>
-                <artifactId>saxon</artifactId>
-                <version>${saxon.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sourceforge.saxon</groupId>
-                <artifactId>saxon</artifactId>
-                <version>${saxon.version}</version>
-                <classifier>xpath</classifier>
-            </dependency>
-            <dependency>
-                <groupId>net.sourceforge.saxon</groupId>
-                <artifactId>saxon</artifactId>
-                <version>${saxon.version}</version>
-                <classifier>dom</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${org.springframework.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jettison</groupId>
-                <artifactId>jettison</artifactId>
-                <version>1.3.2</version>
-            </dependency>
-            <dependency>
-                <groupId>jstl</groupId>
-                <artifactId>jstl</artifactId>
-                <version>1.3.7</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>jstl</artifactId>
-                <version>1.2</version>
-            </dependency>
-            <dependency>
-                <groupId>com.thetransactioncompany</groupId>
-                <artifactId>cors-filter</artifactId>
-                <version>2.3</version>
-                <scope>runtime</scope>
-            </dependency>
-            <!-- required for common test classes -->
-            <dependency>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.5</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>4.4</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.github.fge</groupId>
-                <artifactId>json-schema-validator</artifactId>
-                <version>2.2.6</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.fge</groupId>
-                <artifactId>json-schema-core</artifactId>
-                <version>1.2.5</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>18.0</version>
-            </dependency>
-            <dependency>
-			  <groupId>se.jiderhamn</groupId>
-			  <artifactId>classloader-leak-prevention</artifactId>
-			  <version>1.11.0</version>
-			</dependency>
-            <!-- third party dialects -->
-            <!-- Remove third party ncname resolver from SOS and use OXF instead -->
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>third-party-ncname-resolver</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>xmlunit</groupId>
-                <artifactId>xmlunit</artifactId>
-                <version>1.5</version>
-            </dependency>
-	         
-			<dependency>
-				<groupId>org.reflections</groupId>
-				<artifactId>reflections</artifactId>
-				<version>0.9.9</version>
-				<!-- check if it still works -->
-				<exclusions>
-					<exclusion>
-						<groupId>com.google.code.findbugs</groupId>
-						<artifactId>annotations</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<!-- EXI - Efficient XML Interchange -->
-			<dependency>
-				<groupId>com.siemens.ct.exi</groupId>
-				<artifactId>exificient</artifactId>
-				<version>0.9.4</version>
-			</dependency>
-			<dependency>
-                <groupId>xerces</groupId>
-                <artifactId>xercesImpl</artifactId>
-                <version>2.11.0</version>
-            </dependency>
-			<dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>binding-exi</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>coding-exi</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+
     <dependencies>
-    	<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-		</dependency>
-		<dependency>
-	        <groupId>com.google.guava</groupId>
-	        <artifactId>guava</artifactId>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-	       <groupId>junit</groupId>
-	       <artifactId>junit</artifactId>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
         </dependency>
         <dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.vividsolutions</groupId>
-			<artifactId>jts</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>se.jiderhamn</groupId>
-			<artifactId>classloader-leak-prevention</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-		</dependency>
-    	<dependency>
-    		<groupId>org.mockito</groupId>
-    		<artifactId>mockito-core</artifactId>
-    		<version>1.9.0</version>
-    		<exclusions>
-    			<exclusion>
-    				<artifactId>hamcrest-core</artifactId>
-    				<groupId>org.hamcrest</groupId>
-    			</exclusion>
-    		</exclusions>
-    	</dependency>
-    	<dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vividsolutions</groupId>
+            <artifactId>jts</artifactId>
+            <version>1.13</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.7</version>
+        </dependency>
+        <dependency>
+            <groupId>se.jiderhamn</groupId>
+            <artifactId>classloader-leak-prevention</artifactId>
+            <version>1.11.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.9</version>
+            <!-- check if it still works -->
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>annotations</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.5.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.5.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.9.0</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>hamcrest-core</artifactId>
+                    <groupId>org.hamcrest</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
+            <version>1.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-        	<groupId>org.mockito</groupId>
-        	<artifactId>mockito-all</artifactId>
-        	<scope>test</scope>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-	        <groupId>org.apache.xmlbeans</groupId>
-	        <artifactId>xmlbeans-xpath</artifactId>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+            <version>2.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans-xpath</artifactId>
+            <version>2.6.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.sf.saxon</groupId>
+                    <artifactId>saxon</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
     <build>
@@ -430,7 +190,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <preparationGoals>clean install</preparationGoals>
-   
+
                 </configuration>
             </plugin>
             <plugin>
@@ -439,7 +199,7 @@
                 <configuration>
                     <show>private</show>
                     <nohelp>true</nohelp>
-                     <!-- see http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html -->
+                    <!-- see http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html -->
                     <additionalJOption>-Xdoclint:none</additionalJOption>
                 </configuration>
                 <executions>
@@ -465,26 +225,26 @@
                     </execution>
                 </executions>
             </plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-						<configuration>
-							<classifier>without</classifier>
-							<excludes>
-								<exclude>**/*Test.*</exclude>
-								<exclude>**/*$.*</exclude>
-								<exclude>**/decode/*</exclude>
-								<exclude>**/encode/*</exclude>
-							</excludes>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>without</classifier>
+                            <excludes>
+                                <exclude>**/*Test.*</exclude>
+                                <exclude>**/*$.*</exclude>
+                                <exclude>**/decode/*</exclude>
+                                <exclude>**/encode/*</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.groovy.maven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
@@ -518,25 +278,17 @@
                         <exclude>**/log4j*</exclude>
                         <exclude>**/*.xml</exclude>
                         <exclude>**/*.html</exclude>
-                        <exclude>**/webapp/static/lib/*</exclude>
-                        <exclude>**/webapp/WEB-INF/web.xml</exclude>
                         <exclude>**/buildNumber.properties</exclude>
                         <exclude>**/src/**/NcNameResolver.java</exclude>
-                        <exclude>**/src/**/PGGeometryTypeDescriptor52N.java</exclude>
-                        <exclude>**/src/**/PGGeometryValueExtractor52N.java</exclude>
-                        <exclude>**/src/**/PostgisDialect52N.java</exclude>
                     </excludes>
                     <includes>
                         <include>**/*.java</include>
-                        <include>**/*.jsp</include>
-                        <include>**/*.js</include>
-                        <include>**/*.xsl</include>
-                        <include>**/*.sql</include>
                     </includes>
                     <strictCheck>true</strictCheck>
                     <properties>
-                        <inceptionYear>2012</inceptionYear>
-                        <latestYearOfContribution>${currentYearDynamic}</latestYearOfContribution>
+                            <!-- TODO for 2016: -->
+                            <!--<year>${project.inceptionYear}-${currentYearDynamic}</year>-->
+                            <year>${project.inceptionYear}</year>
                     </properties>
                 </configuration>
                 <executions>
@@ -630,16 +382,16 @@
                     </configuration>
                 </plugin>
                 <plugin>
-	                <groupId>pl.project13.maven</groupId>
-	                <artifactId>git-commit-id-plugin</artifactId>
-	                <version>2.1.9</version>
+                    <groupId>pl.project13.maven</groupId>
+                    <artifactId>git-commit-id-plugin</artifactId>
+                    <version>2.1.9</version>
                 </plugin>
-                <!-- 
+                <!--
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>buildnumber-maven-plugin</artifactId>
                     <version>1.3</version>
-                </plugin> 
+                </plugin>
                 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -768,10 +520,10 @@
             </snapshots>
         </repository>
         <repository>
-			<id>boundless</id>
-			<name>Boundless, formerly OpenGeo</name>
-			<url>http://repo.boundlessgeo.com/main/</url>
-		</repository>
+            <id>boundless</id>
+            <name>Boundless, formerly OpenGeo</name>
+            <url>http://repo.boundlessgeo.com/main/</url>
+        </repository>
     </repositories>
     <profiles>
         <profile>

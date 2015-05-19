@@ -42,11 +42,11 @@ import org.n52.iceland.service.Service;
  * @since 4.0.0
  */
 @RunWith(ComplianceSuiteRunner.class)
-public class SOS40ComplianceTestSuite extends MockHttpExecutor
+public class SosComplianceTestSuite extends MockHttpExecutor
         implements ComplianceSuite {
     private final H2Database datasource = new H2Database();
 
-    public SOS40ComplianceTestSuite() {
+    public SosComplianceTestSuite() {
         super(Service.class);
     }
 

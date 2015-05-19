@@ -81,6 +81,7 @@ import org.n52.sos.ds.hibernate.values.series.HibernateSeriesStreamingValue;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
+import org.n52.sos.service.profile.ProfileHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -243,13 +244,13 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
 
         List<OmObservation> result = HibernateGetObservationHelper.toSosObservation(observations, request, LocaleHelper.fromRequest(request), session);
         Set<OmObservationConstellation> timeSeries = Sets.newHashSet();
-        if (getConfigurator().getProfileHandler().getActiveProfile().isShowMetadataOfEmptyObservations()
+        if (ProfileHandler.getInstance().getActiveProfile().isShowMetadataOfEmptyObservations()
                 || ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries() > 0) {
             for (OmObservation omObservation : result) {
                 timeSeries.add(omObservation.getObservationConstellation());
             }
         }
-        if (getConfigurator().getProfileHandler().getActiveProfile().isShowMetadataOfEmptyObservations()) {
+        if (ProfileHandler.getInstance().getActiveProfile().isShowMetadataOfEmptyObservations()) {
             // create a map of series to check by id, so we don't need to fetch
             // each observation's series from the database
             for (ObservationConstellation oc : HibernateGetObservationHelper.getAndCheckObservationConstellationSize(
@@ -339,7 +340,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         // TODO does this apply for indeterminate time first/latest filters?
         // Yes.
         int metadataObservationsCount = 0;
-        if (getConfigurator().getProfileHandler().getActiveProfile().isShowMetadataOfEmptyObservations()) {
+        if (ProfileHandler.getInstance().getActiveProfile().isShowMetadataOfEmptyObservations()) {
             // create a map of series to check by id, so we don't need to fetch
             // each observation's series from the database
             Map<Long, Series> seriesToCheckMap = Maps.newHashMap();

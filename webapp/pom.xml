@@ -159,10 +159,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>admin</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>cache</artifactId>
         </dependency>
         <dependency>
@@ -200,9 +196,13 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-json</artifactId>
         </dependency>
-                <dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-wml-v20</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-kvp</artifactId>
         </dependency>
 
         <!-- OPERATIONS -->
@@ -268,13 +268,8 @@
 		    <groupId>${project.groupId}</groupId>
 		    <artifactId>hibernate-datasource-h2</artifactId>
 		</dependency>
-
-        <!-- BINDINGS -->
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-kvp</artifactId>
-        </dependency>
+        
+         <!-- BINDINGS -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>binding-soap</artifactId>
@@ -366,7 +361,6 @@
             <artifactId>test</artifactId>
             <scope>test</scope>
         </dependency>
-
 
         <!-- #### Spring dependencies #### -->
         <dependency>

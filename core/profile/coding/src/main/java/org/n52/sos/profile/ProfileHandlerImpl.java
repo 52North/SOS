@@ -42,10 +42,10 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.profile.DefaultProfile;
-import org.n52.iceland.service.profile.Profile;
-import org.n52.iceland.service.profile.ProfileHandler;
 import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.service.profile.DefaultProfile;
+import org.n52.sos.service.profile.Profile;
+import org.n52.sos.service.profile.ProfileHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +55,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @since 4.0.0
  * 
  */
-public class ProfileHandlerImpl implements ProfileHandler {
+public class ProfileHandlerImpl extends ProfileHandler {
 
     /**
      * logger

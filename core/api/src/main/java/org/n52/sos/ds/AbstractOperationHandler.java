@@ -55,6 +55,7 @@ import org.n52.iceland.util.SetMultiMap;
 import org.n52.iceland.util.http.HTTPHeaders;
 import org.n52.iceland.util.http.HTTPMethods;
 import org.n52.iceland.util.http.MediaType;
+import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,7 +177,7 @@ public abstract class AbstractOperationHandler implements OperationHandler {
     }
 
     protected void addProcedureParameter(OwsOperation opsMeta, Collection<String> procedures) {
-        if (getConfigurator().getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
+        if (ProfileHandler.getInstance().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
             opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.procedure, procedures);
         } else {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.procedure);
@@ -188,7 +189,7 @@ public abstract class AbstractOperationHandler implements OperationHandler {
     }
 
     protected void addFeatureOfInterestParameter(OwsOperation opsMeta, Collection<String> featuresOfInterest) {
-        if (getConfigurator().getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
+        if (ProfileHandler.getInstance().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.featureOfInterest, featuresOfInterest);
         } else {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.featureOfInterest);
@@ -200,7 +201,7 @@ public abstract class AbstractOperationHandler implements OperationHandler {
     }
 
     protected void addObservablePropertyParameter(OwsOperation opsMeta, Collection<String> observedProperties) {
-        if (getConfigurator().getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
+        if (ProfileHandler.getInstance().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.observedProperty, observedProperties);
         } else {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.observedProperty);
@@ -212,7 +213,7 @@ public abstract class AbstractOperationHandler implements OperationHandler {
     }
 
     protected void addOfferingParameter(OwsOperation opsMeta, Collection<String> offerings) {
-        if (getConfigurator().getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
+        if (ProfileHandler.getInstance().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.offering, offerings);
         } else {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.offering);

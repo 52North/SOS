@@ -46,7 +46,6 @@ import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.om.AbstractStreaming;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.om.features.FeatureCollection;
@@ -66,6 +65,7 @@ import org.n52.sos.encode.XmlStreamWriter;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.iso.GcoConstants;
 import org.n52.sos.iso.gmd.GmdConstants;
+import org.n52.sos.ogc.sos.AbstractStreaming;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -50,7 +50,6 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.service.Configurator;
-import org.n52.iceland.service.profile.Profile;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdHelper;
@@ -58,6 +57,8 @@ import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.encode.AbstractResponseEncoder;
 import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
+import org.n52.sos.service.profile.Profile;
+import org.n52.sos.service.profile.ProfileHandler;
 
 import com.google.common.collect.Sets;
 
@@ -79,7 +80,7 @@ public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceRespon
 	}
 
     protected Profile getActiveProfile() {
-        return Configurator.getInstance().getProfileHandler().getActiveProfile();
+        return ProfileHandler.getInstance().getActiveProfile();
     }
     
     protected AqdHelper getAqdHelper() {

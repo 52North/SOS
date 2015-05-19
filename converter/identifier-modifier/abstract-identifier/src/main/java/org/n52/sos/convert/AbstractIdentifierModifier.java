@@ -65,7 +65,6 @@ import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.response.GetCapabilitiesResponse;
 import org.n52.iceland.service.Configurator;
-import org.n52.iceland.service.profile.Profile;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.sos.gda.GetDataAvailabilityRequest;
@@ -91,6 +90,8 @@ import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.response.GetResultTemplateResponse;
+import org.n52.sos.service.profile.Profile;
+import org.n52.sos.service.profile.ProfileHandler;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -615,7 +616,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     }
 
     protected Profile getActiveProfile() {
-        return Configurator.getInstance().getProfileHandler().getActiveProfile();
+        return ProfileHandler.getInstance().getActiveProfile();
     }
 
     protected ContentCache getCache() {

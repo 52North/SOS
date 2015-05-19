@@ -47,7 +47,6 @@ import org.geotools.referencing.factory.DeferredAuthorityFactory;
 import org.geotools.util.WeakCollectionCleaner;
 import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Instantiatable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.ds.FeatureQuerySettingsProvider;
 import org.n52.iceland.exception.CodedException;
@@ -92,7 +91,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * 
  */
 @Configurable
-public class GeometryHandler implements Instantiatable, Cleanupable, EpsgConstants {
+public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /*
      * longitude = east-west latitude = north-south
@@ -130,11 +129,6 @@ public class GeometryHandler implements Instantiatable, Cleanupable, EpsgConstan
      * Private constructor
      */
     private GeometryHandler() {
-    }
-
-    @Override
-    public void createInstance() {
-        init();
     }
 
     /**

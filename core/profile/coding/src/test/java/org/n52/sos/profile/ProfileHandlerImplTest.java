@@ -29,7 +29,7 @@
 package org.n52.sos.profile;
 
 import org.junit.Test;
-import org.n52.iceland.service.profile.Profile;
+import org.n52.sos.service.profile.Profile;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;

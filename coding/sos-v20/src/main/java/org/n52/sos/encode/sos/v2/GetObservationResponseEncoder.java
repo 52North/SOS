@@ -40,7 +40,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.encode.ObservationEncoder;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.om.AbstractStreaming;
 import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
@@ -52,6 +51,7 @@ import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.sos.v2.GetObservationResponseXmlStreamWriter;
 import org.n52.sos.ogc.om.StreamingObservation;
 import org.n52.sos.ogc.om.StreamingValue;
+import org.n52.sos.ogc.sos.AbstractStreaming;
 import org.n52.sos.response.GetObservationResponse;
 
 import com.google.common.collect.Sets;

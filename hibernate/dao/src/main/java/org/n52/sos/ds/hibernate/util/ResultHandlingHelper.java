@@ -60,6 +60,7 @@ import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
+import org.n52.sos.service.profile.ProfileHandler;
 
 import com.vividsolutions.jts.io.WKTWriter;
 
@@ -248,12 +249,12 @@ public class ResultHandlingHelper {
         if (resultTime != null) {
             return DateTimeHelper.formatDateTime2IsoString(new DateTime(resultTime, DateTimeZone.UTC));
         }
-        return Configurator.getInstance().getProfileHandler().getActiveProfile().getResponseNoDataPlaceholder();
+        return ProfileHandler.getInstance().getActiveProfile().getResponseNoDataPlaceholder();
     }
 
     private static Object getTimeStringForPhenomenonTime(final Date phenomenonTimeStart, final Date phenomenonTimeEnd) {
         if (phenomenonTimeStart == null && phenomenonTimeEnd == null) {
-            return Configurator.getInstance().getProfileHandler().getActiveProfile().getResponseNoDataPlaceholder();
+            return ProfileHandler.getInstance().getActiveProfile().getResponseNoDataPlaceholder();
         }
 
         final StringBuilder builder = new StringBuilder();
@@ -355,7 +356,7 @@ public class ResultHandlingHelper {
             // return builder.toString();
             // }
         }
-        return Configurator.getInstance().getProfileHandler().getActiveProfile().getResponseNoDataPlaceholder();
+        return ProfileHandler.getInstance().getActiveProfile().getResponseNoDataPlaceholder();
     }
 
     private ResultHandlingHelper() {

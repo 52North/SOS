@@ -151,10 +151,16 @@ public class SettingDefinitionEncoder {
     }
 
     private JsonNode encodeDefaultValue(SettingDefinition def) throws JSONException {
+        if (def == null) {
+            return nodeFactory.nullNode();
+        }
         return encodeValue(def.getType(), def.getDefaultValue());
     }
 
     public JsonNode encodeValue(SettingValue def) throws JSONException {
+        if (def == null) {
+            return nodeFactory.nullNode();
+        }
         return encodeValue(def.getType(), def.getValue());
     }
 

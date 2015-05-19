@@ -12,7 +12,6 @@
     <name>52°North SOS - Core Modules</name>
     <description>52°North SOS Core Modules</description>
     <modules>
-        <module>admin</module>
         <module>api</module>
         <module>cache</module>
         <module>gc-dao</module>

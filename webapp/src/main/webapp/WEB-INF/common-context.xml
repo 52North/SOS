@@ -24,7 +24,7 @@
          the ApplicationContext is refreshed. -->
     <bean id="contextSwitcherSwapper" class="org.springframework.aop.target.HotSwappableTargetSource">
         <constructor-arg>
-            <bean class="org.n52.iceland.spring.ContextSwitcherDummy" />
+            <bean class="org.n52.sos.context.ContextSwitcherDummy" />
         </constructor-arg>
     </bean>
 

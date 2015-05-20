@@ -41,9 +41,9 @@ import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.om.features.FeatureCollection;
+import org.n52.iceland.ogc.ows.Extension;
+import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.swe.simpleType.SweText;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.JavaHelper;
@@ -78,16 +78,16 @@ public class AqdHelper {
 
     }
 
-    public boolean hasFlowExtension(SwesExtensions extensions) {
+    public boolean hasFlowExtension(Extensions extensions) {
         if (extensions != null) {
             return extensions.containsExtension(AqdConstants.EXTENSION_FLOW);
         }
         return false;
     }
 
-    public ReportObligationType getFlow(SwesExtensions extensions) throws InvalidParameterValueException {
+    public ReportObligationType getFlow(Extensions extensions) throws InvalidParameterValueException {
         if (hasFlowExtension(extensions)) {
-            SwesExtension<?> extension = extensions.getExtension(AqdConstants.EXTENSION_FLOW);
+            Extension<?> extension = extensions.getExtension(AqdConstants.EXTENSION_FLOW);
             if (extension.getValue() instanceof SweText) {
                 try {
                     return ReportObligationType.from(((SweText) extension.getValue()).getValue());

@@ -30,17 +30,17 @@ package org.n52.sos.inspire.offering;
 
 import java.util.Set;
 
+import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swes.OfferingExtensionKey;
 import org.n52.iceland.ogc.swes.OfferingExtensionProvider;
-import org.n52.iceland.ogc.swes.SwesExtensionImpl;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.sos.inspire.AbstractInspireProvider;
 import org.n52.sos.inspire.InspireConstants;
 import org.n52.sos.inspire.InspireHelper;
 import org.n52.sos.inspire.InspireSupportedCRS;
 import org.n52.sos.inspire.InspireSupportedLanguages;
+import org.n52.sos.ogc.swes.SwesExtensionImpl;
 
 import com.google.common.collect.Sets;
 
@@ -64,11 +64,11 @@ public class InspireOfferingExtensionProvider extends AbstractInspireProvider im
     }
 
     @Override
-    public SwesExtensions getOfferingExtensions(String identifier) {
-        SwesExtensions extensions = new SwesExtensions();
-        extensions.addSwesExtension(new SwesExtensionImpl<InspireSupportedLanguages>().setValue(
+    public Extensions getOfferingExtensions(String identifier) {
+        Extensions extensions = new Extensions();
+        extensions.addExtension(new SwesExtensionImpl<InspireSupportedLanguages>().setValue(
                 getSupportedLanguages()).setNamespace(InspireConstants.NS_INSPIRE_COMMON));
-        extensions.addSwesExtension(new SwesExtensionImpl<InspireSupportedCRS>().setValue(getSupportedCRS())
+        extensions.addExtension(new SwesExtensionImpl<InspireSupportedCRS>().setValue(getSupportedCRS())
                 .setNamespace(InspireConstants.NS_INSPIRE_COMMON));
         return extensions;
     }

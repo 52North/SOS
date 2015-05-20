@@ -45,9 +45,9 @@ import org.n52.iceland.ogc.om.TimeValuePair;
 import org.n52.iceland.ogc.om.values.QuantityValue;
 import org.n52.iceland.ogc.om.values.UnknownValue;
 import org.n52.iceland.ogc.om.values.Value;
+import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweDataArray;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.XmlHelper;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
@@ -103,7 +103,7 @@ public abstract class AbstractValue extends AbstractObservationTime implements H
     
     protected abstract void addValueSpecificDataToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport;
     
-    public abstract void addValueSpecificDataToObservation(OmObservation observation, Session session, SwesExtensions swesExtensions) throws OwsExceptionReport;
+    public abstract void addValueSpecificDataToObservation(OmObservation observation, Session session, Extensions extensions) throws OwsExceptionReport;
     
     protected abstract void addObservationValueToObservation(OmObservation observation, Value<?> value, String responseFormat) throws OwsExceptionReport;
     

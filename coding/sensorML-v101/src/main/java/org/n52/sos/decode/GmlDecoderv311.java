@@ -58,7 +58,7 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.JTSHelper;
+import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

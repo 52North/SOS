@@ -39,13 +39,14 @@ import org.joda.time.DateTime;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
 import org.n52.sos.ogc.om.StreamingValue;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GmlHelper;
 import org.slf4j.Logger;
@@ -94,14 +95,14 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         return observations.values();
     }
 
-    private void addSpecificValuesToObservation(OmObservation observation, AbstractValue value, SwesExtensions swesExtensions) {
+    private void addSpecificValuesToObservation(OmObservation observation, AbstractValue value, Extensions extensions) {
         boolean newSession = false;
         try {
             if (session == null) {
                 session = sessionHolder.getSession();
                 newSession = true;
             }
-            value.addValueSpecificDataToObservation(observation, session, swesExtensions);
+            value.addValueSpecificDataToObservation(observation, session, extensions);
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying times", owse);
         } finally {

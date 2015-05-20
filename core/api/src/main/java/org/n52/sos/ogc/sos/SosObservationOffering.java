@@ -41,6 +41,7 @@ import java.util.TreeSet;
 import javax.xml.namespace.QName;
 
 import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.ogc.ows.Extension;
 import org.n52.iceland.ogc.sos.SosEnvelope;
 import org.n52.iceland.ogc.sos.SosOffering;
 import org.n52.iceland.util.CollectionHelper;

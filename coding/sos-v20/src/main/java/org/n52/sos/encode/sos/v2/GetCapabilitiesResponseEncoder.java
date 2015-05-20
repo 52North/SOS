@@ -50,6 +50,7 @@ import org.n52.iceland.exception.ows.concrete.XmlDecodingException;
 import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.ows.Extension;
 import org.n52.iceland.ogc.ows.OfferingExtension;
 import org.n52.iceland.ogc.ows.OwsCapabilities;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
@@ -58,7 +59,6 @@ import org.n52.iceland.ogc.sos.CapabilitiesExtension;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.sos.SosOffering;
-import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.iceland.response.GetCapabilitiesResponse;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.w3c.SchemaLocation;
@@ -348,16 +348,16 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     private void encodeOfferingExtension(SosObservationOffering sosOffering, ObservationOfferingType xbObsOff) throws OwsExceptionReport {
         if (sosOffering.isSetExtensions()) {
-            for (SwesExtension<?> swesExtention : sosOffering.getExtensions().getExtensions()) {
-                if (swesExtention.getValue() instanceof OfferingExtension) {
-                    OfferingExtension extension = (OfferingExtension) swesExtention.getValue();
+            for (Extension<?> extention : sosOffering.getExtensions().getExtensions()) {
+                if (extention.getValue() instanceof OfferingExtension) {
+                    OfferingExtension extension = (OfferingExtension) extention.getValue();
                     try {
                         xbObsOff.addNewExtension().set(XmlObject.Factory.parse(extension.getExtension()));
                     } catch (XmlException ex) {
                             throw new XmlDecodingException("SwesExtension", extension.getExtension(), ex);
                     }
                 } else {
-                    xbObsOff.addNewExtension().set(CodingHelper.encodeObjectToXml(swesExtention.getNamespace(), swesExtention));
+                    xbObsOff.addNewExtension().set(CodingHelper.encodeObjectToXml(extention.getNamespace(), extention));
                 }
                 
             }

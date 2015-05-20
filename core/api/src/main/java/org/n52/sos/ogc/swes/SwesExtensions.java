@@ -26,16 +26,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.request;
+package org.n52.sos.ogc.swes;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
-import org.junit.Test;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
-import org.n52.sos.ogc.swes.SwesExtensions;
+import org.n52.iceland.ogc.ows.Extensions;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -43,25 +36,7 @@ import org.n52.sos.ogc.swes.SwesExtensions;
  * 
  * @since 4.0.0
  */
-public class GetObservationRequestTest {
+public class SwesExtensions extends Extensions {
 
-    @Test
-    public void isSetExtensions_should_return_false_if_no_extension_is_set() {
-        final GetObservationRequest request = new GetObservationRequest();
-        request.setExtensions(new SwesExtensions());
-
-        assertThat(new GetObservationRequest().isSetExtensions(), is(FALSE));
-        assertThat(request.isSetExtensions(), is(FALSE));
-    }
-
-    @Test
-    public void isSetExtensions_should_return_true_if_a_extension_is_set() {
-        final GetObservationRequest request = new GetObservationRequest();
-        final SwesExtensions extensions = new SwesExtensions();
-        extensions.addExtension(new SwesExtensionImpl<Boolean>());
-        request.setExtensions(extensions);
-
-        assertThat(request.isSetExtensions(), is(TRUE));
-    }
 
 }

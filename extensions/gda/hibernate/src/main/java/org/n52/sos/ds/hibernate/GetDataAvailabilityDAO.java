@@ -53,11 +53,11 @@ import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.ReferenceType;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.ows.Extension;
+import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
@@ -637,9 +637,9 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
      * @return <code>true</code>, if extensions contains a temporal filter with
      *         valueReference phenomenonTime
      */
-    private boolean hasPhenomenonTimeFilter(SwesExtensions extensions) {
+    private boolean hasPhenomenonTimeFilter(Extensions extensions) {
         boolean hasFilter = false;
-        for (SwesExtension<?> extension : extensions.getExtensions()) {
+        for (Extension<?> extension : extensions.getExtensions()) {
             if (extension.getValue() instanceof TemporalFilter) {
                 TemporalFilter filter = (TemporalFilter) extension.getValue();
                 if (TemporalRestrictions.PHENOMENON_TIME_VALUE_REFERENCE.equals(filter.getValueReference())) {
@@ -658,8 +658,8 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
      *            To get filter from
      * @return Temporal filter with valueReference phenomenonTime
      */
-    private TemporalFilter getPhenomenonTimeFilter(SwesExtensions extensions) {
-        for (SwesExtension<?> extension : extensions.getExtensions()) {
+    private TemporalFilter getPhenomenonTimeFilter(Extensions extensions) {
+        for (Extension<?> extension : extensions.getExtensions()) {
             if (extension.getValue() instanceof TemporalFilter) {
                 TemporalFilter filter = (TemporalFilter) extension.getValue();
                 if (TemporalRestrictions.PHENOMENON_TIME_VALUE_REFERENCE.equals(filter.getValueReference())) {

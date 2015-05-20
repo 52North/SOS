@@ -35,9 +35,9 @@ import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.ogc.ows.Extension;
+import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.iceland.util.JavaHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,10 +136,10 @@ public class FlexibleIdentifierHelper {
         return includeFeatureOfInterest;
     }
 
-    public boolean checkIsReturnHumanReadableIdentifierFlagExtensionSet(SwesExtensions swesExtensions)
+    public boolean checkIsReturnHumanReadableIdentifierFlagExtensionSet(Extensions extensions)
             throws InvalidParameterValueException {
-        if (swesExtensions != null && swesExtensions.containsExtension(RETURN_HUMAN_READABLE_IDENTIFIER)) {
-            SwesExtension<?> extension = swesExtensions.getExtension(RETURN_HUMAN_READABLE_IDENTIFIER);
+        if (extensions != null && extensions.containsExtension(RETURN_HUMAN_READABLE_IDENTIFIER)) {
+           Extension<?> extension = extensions.getExtension(RETURN_HUMAN_READABLE_IDENTIFIER);
             if (extension.getValue() instanceof SweBoolean) {
                 return true;
             } else {
@@ -150,10 +150,10 @@ public class FlexibleIdentifierHelper {
         return false;
     }
 
-    public boolean checkForReturnHumanReadableIdentifierFlagExtension(SwesExtensions swesExtensions)
+    public boolean checkForReturnHumanReadableIdentifierFlagExtension(Extensions extensions)
             throws InvalidParameterValueException {
-        if (checkIsReturnHumanReadableIdentifierFlagExtensionSet(swesExtensions)) {
-            return ((SweBoolean) swesExtensions.getExtension(RETURN_HUMAN_READABLE_IDENTIFIER).getValue()).getValue();
+        if (checkIsReturnHumanReadableIdentifierFlagExtensionSet(extensions)) {
+            return ((SweBoolean) extensions.getExtension(RETURN_HUMAN_READABLE_IDENTIFIER).getValue()).getValue();
         }
         return false;
     }

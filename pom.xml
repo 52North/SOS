@@ -1194,6 +1194,7 @@
                         <exclude>**/src/**/PGGeometryTypeDescriptor52N.java</exclude>
                         <exclude>**/src/**/PGGeometryValueExtractor52N.java</exclude>
                         <exclude>**/src/**/PostgisDialect52N.java</exclude>
+                        <exclude>iceland/**</exclude>
                     </excludes>
                     <includes>
                         <include>**/*.java</include>

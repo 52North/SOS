@@ -55,6 +55,7 @@ import org.n52.iceland.ogc.om.values.QuantityValue;
 import org.n52.iceland.ogc.om.values.SweDataArrayValue;
 import org.n52.iceland.ogc.om.values.TextValue;
 import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos2Constants;
@@ -62,7 +63,6 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweDataRecord;
 import org.n52.iceland.ogc.swe.SweField;
 import org.n52.iceland.ogc.swe.simpleType.SweAbstractUomType;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.DateTimeHelper;
@@ -375,10 +375,10 @@ public class SosInsertObservationOperatorV20 extends
         }
     }
 
-    private boolean isSplitObservations(final SwesExtensions swesExtensions) {
-        return swesExtensions != null
-                && !swesExtensions.isEmpty()
-                && swesExtensions
+    private boolean isSplitObservations(final Extensions extensions) {
+        return extensions != null
+                && !extensions.isEmpty()
+                && extensions
                         .isBooleanExtensionSet(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
     }
 

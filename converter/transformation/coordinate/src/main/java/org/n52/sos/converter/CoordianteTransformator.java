@@ -66,7 +66,6 @@ import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.EpsgConstants;
-import org.n52.iceland.util.JTSHelper;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ogc.sensorML.AbstractComponent;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
@@ -103,6 +102,7 @@ import org.n52.sos.response.InsertObservationResponse;
 import org.n52.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SweHelper;
 
 import com.google.common.base.Joiner;

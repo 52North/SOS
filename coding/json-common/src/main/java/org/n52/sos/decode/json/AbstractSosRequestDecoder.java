@@ -45,12 +45,12 @@ import org.n52.iceland.ogc.filter.ComparisonFilter;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
 import org.n52.iceland.ogc.swe.simpleType.SweText;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.ogc.swes.SwesExtensionImpl;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.coding.json.JSONValidator;
+import org.n52.sos.ogc.swes.SwesExtension;
+import org.n52.sos.ogc.swes.SwesExtensionImpl;
+import org.n52.sos.ogc.swes.SwesExtensions;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
@@ -110,7 +110,7 @@ public abstract class AbstractSosRequestDecoder<T extends AbstractServiceRequest
             for (JsonNode n : node) {
             	SwesExtension extension = parseExtension(n);
             	if (extension != null) {
-            		extensions.addSwesExtension(extension);
+            		extensions.addExtension(extension);
             	}
             }
         }

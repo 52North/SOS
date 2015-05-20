@@ -37,10 +37,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.opengis.gml.x32.CodeWithAuthorityType;
 import net.opengis.om.x20.OMObservationType;
-
 import net.opengis.sosREST.x10.LinkType;
 import net.opengis.sosREST.x10.ObservationDocument;
 import net.opengis.sosREST.x10.ObservationType;
+
+
 
 
 import org.apache.xmlbeans.XmlObject;
@@ -49,11 +50,9 @@ import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OperationNotSupportedException;
 import org.n52.iceland.exception.ows.concrete.DateTimeException;
 import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.ogc.swes.SwesExtensionImpl;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.XmlHelper;
@@ -63,6 +62,8 @@ import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
 import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
+import org.n52.sos.ogc.swes.SwesExtension;
+import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.InsertObservationRequest;
@@ -334,20 +335,20 @@ public class ObservationsDecoder extends ResourceDecoder {
         request.setObservationIdentifier(observationIds);
         request.setService(bindingConstants.getSosService());
         request.setVersion(bindingConstants.getSosVersion());
-		SwesExtensions extensions = createSubsettingExtension(true);
+		Extensions extensions = createSubsettingExtension(true);
 		request.setExtensions(extensions);
         return request;
     }
 
-	private SwesExtensions createSubsettingExtension(boolean enabled)
+	private Extensions createSubsettingExtension(boolean enabled)
 	{
 		Boolean value = enabled?Boolean.TRUE:Boolean.FALSE;
 		
-		SwesExtensions extensions = new SwesExtensions();
+		Extensions extensions = new Extensions();
         SwesExtension<Boolean> antiSubsettingExtension = new SwesExtensionImpl<Boolean>();
         antiSubsettingExtension.setDefinition(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name());
         antiSubsettingExtension.setValue(value);
-        extensions.addSwesExtension(antiSubsettingExtension);
+        extensions.addExtension(antiSubsettingExtension);
 		
 		return extensions;
 	}

@@ -42,7 +42,7 @@ import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.om.values.GeometryValue;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.JTSHelper;
+import org.n52.sos.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 

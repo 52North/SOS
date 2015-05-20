@@ -32,11 +32,11 @@ import net.opengis.swes.x20.ExtensibleRequestType;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.ogc.swes.SwesExtensionImpl;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.ogc.swes.SwesExtension;
+import org.n52.sos.ogc.swes.SwesExtensionImpl;
+import org.n52.sos.ogc.swes.SwesExtensions;
 
 public class AbstractSwesDecoderv20 {
     
@@ -51,9 +51,9 @@ public class AbstractSwesDecoderv20 {
 
                 final Object obj = CodingHelper.decodeXmlElement(xbSwesExtension);
                 if (obj instanceof SwesExtension<?>) {
-                    extensions.addSwesExtension((SwesExtension<?>) obj);
+                    extensions.addExtension((SwesExtension<?>) obj);
                 } else {
-                    extensions.addSwesExtension(new SwesExtensionImpl<Object>().setValue(obj));
+                    extensions.addExtension(new SwesExtensionImpl<Object>().setValue(obj));
                 }
             }
             return extensions;

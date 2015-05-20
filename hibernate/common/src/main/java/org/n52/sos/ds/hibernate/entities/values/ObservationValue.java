@@ -33,8 +33,8 @@ import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.om.SingleObservationValue;
 import org.n52.iceland.ogc.om.values.Value;
+import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservableProperty;
@@ -115,7 +115,7 @@ public class ObservationValue extends AbstractValue implements HasProcedure, Has
     }
 
     @Override
-    public void addValueSpecificDataToObservation(OmObservation observation, Session session, SwesExtensions swesExtensions)
+    public void addValueSpecificDataToObservation(OmObservation observation, Session session, Extensions extensions)
             throws OwsExceptionReport {
         // nothing to do
 

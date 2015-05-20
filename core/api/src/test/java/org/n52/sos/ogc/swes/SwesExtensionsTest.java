@@ -35,9 +35,8 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
+import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
-import org.n52.iceland.ogc.swes.SwesExtensionImpl;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -65,29 +64,29 @@ public class SwesExtensionsTest {
 
     @Test
     public void isEmpty_should_return_false_if_extensions_are_null_or_empty() {
-        assertThat(new SwesExtensions().isEmpty(), is(TRUE));
+        assertThat(new Extensions().isEmpty(), is(TRUE));
     }
 
     @Test
     public void isEmpty_should_return_false_if_at_least_one_extension_is_set() {
-        final SwesExtensions extensions = new SwesExtensions();
-        extensions.addSwesExtension(new SwesExtensionImpl<Boolean>().setDefinition(DEFINITION_1));
+        final Extensions extensions = new Extensions();
+        extensions.addExtension(new SwesExtensionImpl<Boolean>().setDefinition(DEFINITION_1));
         assertThat(extensions.isEmpty(), is(FALSE));
     }
     
     @Test
     public void isBooleanExtensionSet_should_return_true_if_set_to_true() {
-        final SwesExtensions extensions = new SwesExtensions();
-        extensions.addSwesExtension(new SwesExtensionImpl<SweBoolean>().setDefinition(DEFINITION_1).setValue(new SweBoolean().setValue(TRUE)));
+        final Extensions extensions = new Extensions();
+        extensions.addExtension(new SwesExtensionImpl<SweBoolean>().setDefinition(DEFINITION_1).setValue(new SweBoolean().setValue(TRUE)));
         assertThat(extensions.isBooleanExtensionSet(DEFINITION_1), is(TRUE));
     }
     
    @Test
    public void containsExtension_for_string_schould_return_true() {
-       final SwesExtensions extensions = new SwesExtensions();
-       extensions.addSwesExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_1).setValue(new String()));
-       extensions.addSwesExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_2).setValue(new String()));
-       extensions.addSwesExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_3).setValue(new String()));
+       final Extensions extensions = new Extensions();
+       extensions.addExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_1).setValue(new String()));
+       extensions.addExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_2).setValue(new String()));
+       extensions.addExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_3).setValue(new String()));
        assertThat(extensions.containsExtension(DEFINITION_1), is(TRUE));
        assertThat(extensions.containsExtension(DEFINITION_2), is(TRUE));
        assertThat(extensions.containsExtension(DEFINITION_3), is(TRUE));
@@ -95,10 +94,10 @@ public class SwesExtensionsTest {
    
    @Test
    public void containsExtension_for_enum_schould_return_true() {
-       final SwesExtensions extensions = new SwesExtensions();
-       extensions.addSwesExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_1).setValue(new String()));
-       extensions.addSwesExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_2).setValue(new String()));
-       extensions.addSwesExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_3).setValue(new String()));
+       final Extensions extensions = new Extensions();
+       extensions.addExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_1).setValue(new String()));
+       extensions.addExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_2).setValue(new String()));
+       extensions.addExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_3).setValue(new String()));
        assertThat(extensions.containsExtension(DEFINITION_1), is(TRUE));
        assertThat(extensions.containsExtension(DEFINITION_2), is(TRUE));
        assertThat(extensions.containsExtension(DEFINITION_3), is(TRUE));
@@ -106,10 +105,10 @@ public class SwesExtensionsTest {
    
    @Test
    public void containsExtension_for_enum_created_with_string_schould_return_true() {
-       final SwesExtensions extensions = new SwesExtensions();
-       extensions.addSwesExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_1).setValue(new String()));
-       extensions.addSwesExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_2).setValue(new String()));
-       extensions.addSwesExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_3).setValue(new String()));
+       final Extensions extensions = new Extensions();
+       extensions.addExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_1).setValue(new String()));
+       extensions.addExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_2).setValue(new String()));
+       extensions.addExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_3).setValue(new String()));
        assertThat(extensions.containsExtension(DEFINITION_1), is(TRUE));
        assertThat(extensions.containsExtension(DEFINITION_2), is(TRUE));
        assertThat(extensions.containsExtension(DEFINITION_3), is(TRUE));
@@ -117,10 +116,10 @@ public class SwesExtensionsTest {
    
    @Test
    public void containsExtension_for_string_created_with_enum_schould_return_true() {
-       final SwesExtensions extensions = new SwesExtensions();
-       extensions.addSwesExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_1).setValue(new String()));
-       extensions.addSwesExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_2).setValue(new String()));
-       extensions.addSwesExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_3).setValue(new String()));
+       final Extensions extensions = new Extensions();
+       extensions.addExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_1).setValue(new String()));
+       extensions.addExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_2).setValue(new String()));
+       extensions.addExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_3).setValue(new String()));
        assertThat(extensions.containsExtension(DEFINITION_1), is(TRUE));
        assertThat(extensions.containsExtension(DEFINITION_2), is(TRUE));
        assertThat(extensions.containsExtension(DEFINITION_3), is(TRUE));
@@ -129,10 +128,10 @@ public class SwesExtensionsTest {
    
    @Test
    public void getExtension_for_string_schould_return_true() {
-       final SwesExtensions extensions = new SwesExtensions();
-       extensions.addSwesExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_1).setValue(VALUE_1));
-       extensions.addSwesExtension(new SwesExtensionImpl<Integer>().setDefinition(DEFINITION_2).setValue(VALUE_2));
-       extensions.addSwesExtension(new SwesExtensionImpl<Boolean>().setDefinition(DEFINITION_3).setValue(VALUE_3));
+       final Extensions extensions = new Extensions();
+       extensions.addExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_1).setValue(VALUE_1));
+       extensions.addExtension(new SwesExtensionImpl<Integer>().setDefinition(DEFINITION_2).setValue(VALUE_2));
+       extensions.addExtension(new SwesExtensionImpl<Boolean>().setDefinition(DEFINITION_3).setValue(VALUE_3));
        assertThat(extensions.getExtension(DEFINITION_1).getValue(), instanceOf(VALUE_1.getClass()));
        assertThat(extensions.getExtension(DEFINITION_2).getValue(), instanceOf(VALUE_2.getClass()));
        assertThat(extensions.getExtension(DEFINITION_3).getValue(), instanceOf(VALUE_3.getClass()));
@@ -140,10 +139,10 @@ public class SwesExtensionsTest {
    
    @Test
    public void getExtension_for_enum_schould_return_true() {
-       final SwesExtensions extensions = new SwesExtensions();
-       extensions.addSwesExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_1).setValue(VALUE_1));
-       extensions.addSwesExtension(new SwesExtensionImpl<Integer>().setDefinition(DEFINITION_2).setValue(VALUE_2));
-       extensions.addSwesExtension(new SwesExtensionImpl<Boolean>().setDefinition(DEFINITION_3).setValue(VALUE_3));
+       final Extensions extensions = new Extensions();
+       extensions.addExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_1).setValue(VALUE_1));
+       extensions.addExtension(new SwesExtensionImpl<Integer>().setDefinition(DEFINITION_2).setValue(VALUE_2));
+       extensions.addExtension(new SwesExtensionImpl<Boolean>().setDefinition(DEFINITION_3).setValue(VALUE_3));
        assertThat(extensions.getExtension(DEFINITION_1).getValue(), instanceOf(VALUE_1.getClass()));
        assertThat(extensions.getExtension(DEFINITION_2).getValue(), instanceOf(VALUE_2.getClass()));
        assertThat(extensions.getExtension(DEFINITION_3).getValue(), instanceOf(VALUE_3.getClass()));
@@ -151,10 +150,10 @@ public class SwesExtensionsTest {
    
    @Test
    public void getExtension_for_enum_created_with_string_schould_return_true() {
-       final SwesExtensions extensions = new SwesExtensions();
-       extensions.addSwesExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_1).setValue(VALUE_1));
-       extensions.addSwesExtension(new SwesExtensionImpl<Integer>().setDefinition(DEFINITION_2).setValue(VALUE_2));
-       extensions.addSwesExtension(new SwesExtensionImpl<Boolean>().setDefinition(DEFINITION_3).setValue(VALUE_3));
+       final Extensions extensions = new Extensions();
+       extensions.addExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_1).setValue(VALUE_1));
+       extensions.addExtension(new SwesExtensionImpl<Integer>().setDefinition(DEFINITION_2).setValue(VALUE_2));
+       extensions.addExtension(new SwesExtensionImpl<Boolean>().setDefinition(DEFINITION_3).setValue(VALUE_3));
        assertThat(extensions.getExtension(DEFINITION_1).getValue(), instanceOf(VALUE_1.getClass()));
        assertThat(extensions.getExtension(DEFINITION_2).getValue(), instanceOf(VALUE_2.getClass()));
        assertThat(extensions.getExtension(DEFINITION_3).getValue(), instanceOf(VALUE_3.getClass()));
@@ -162,10 +161,10 @@ public class SwesExtensionsTest {
    
    @Test
    public void getExtension_for_string_created_with_enum_schould_return_true() {
-       final SwesExtensions extensions = new SwesExtensions();
-       extensions.addSwesExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_1).setValue(VALUE_1));
-       extensions.addSwesExtension(new SwesExtensionImpl<Integer>().setDefinition(DEFINITION_2).setValue(VALUE_2));
-       extensions.addSwesExtension(new SwesExtensionImpl<Boolean>().setDefinition(DEFINITION_3).setValue(VALUE_3));
+       final Extensions extensions = new Extensions();
+       extensions.addExtension(new SwesExtensionImpl<String>().setDefinition(DEFINITION_1).setValue(VALUE_1));
+       extensions.addExtension(new SwesExtensionImpl<Integer>().setDefinition(DEFINITION_2).setValue(VALUE_2));
+       extensions.addExtension(new SwesExtensionImpl<Boolean>().setDefinition(DEFINITION_3).setValue(VALUE_3));
        assertThat(extensions.getExtension(DEFINITION_1).getValue(), instanceOf(VALUE_1.getClass()));
        assertThat(extensions.getExtension(DEFINITION_2).getValue(), instanceOf(VALUE_2.getClass()));
        assertThat(extensions.getExtension(DEFINITION_3).getValue(), instanceOf(VALUE_3.getClass()));

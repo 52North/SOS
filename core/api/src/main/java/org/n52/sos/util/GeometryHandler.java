@@ -61,7 +61,6 @@ import org.n52.iceland.util.Cleanupable;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.EpsgConstants;
-import org.n52.iceland.util.JTSHelper;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.util.Range;
 import org.n52.iceland.util.StringHelper;

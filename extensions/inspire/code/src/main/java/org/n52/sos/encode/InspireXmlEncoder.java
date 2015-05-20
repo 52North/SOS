@@ -45,7 +45,6 @@ import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.http.MediaType;
@@ -58,6 +57,7 @@ import org.n52.sos.inspire.InspireSupportedLanguages;
 import org.n52.sos.inspire.capabilities.FullInspireExtendedCapabilities;
 import org.n52.sos.inspire.capabilities.InspireExtendedCapabilities;
 import org.n52.sos.inspire.capabilities.MinimalInspireExtendedCapabilities;
+import org.n52.sos.ogc.swes.SwesExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

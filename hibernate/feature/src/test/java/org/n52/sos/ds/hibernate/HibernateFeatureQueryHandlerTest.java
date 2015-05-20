@@ -45,10 +45,10 @@ import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.JTSHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.JTSHelperForTesting;
 import org.n52.sos.util.builder.SamplingFeatureBuilder;
 

@@ -44,12 +44,12 @@ import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swes.SwesConstants;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.ogc.swes.SwesExtensionImpl;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.XmlHelper;
+import org.n52.sos.ogc.swes.SwesExtension;
+import org.n52.sos.ogc.swes.SwesExtensionImpl;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -221,7 +221,7 @@ public class GetDataAvailabilityXmlDecoder extends AbstractXmlDecoder<GetDataAva
                     } else {
                         extension = (SwesExtension<?>) obj;
                     }
-                    extensions.addSwesExtension(extension);
+                    extensions.addExtension(extension);
                 }
             } catch (XmlException xmle) {
                 throw new XmlDecodingException("extension", xmle);

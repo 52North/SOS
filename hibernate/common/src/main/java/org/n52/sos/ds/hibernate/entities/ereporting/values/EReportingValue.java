@@ -35,9 +35,9 @@ import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.om.values.Value;
+import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweDataArray;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.aqd.AqdConstants;
@@ -258,7 +258,7 @@ public abstract class EReportingValue extends SeriesValue implements EReportingV
     }
 
     @Override
-    public void addValueSpecificDataToObservation(OmObservation observation, Session session, SwesExtensions extensions)
+    public void addValueSpecificDataToObservation(OmObservation observation, Session session, Extensions extensions)
             throws OwsExceptionReport {
         if (AqdHelper.getInstance().hasFlowExtension(extensions)) {
             ReportObligationType flow = AqdHelper.getInstance().getFlow(extensions);

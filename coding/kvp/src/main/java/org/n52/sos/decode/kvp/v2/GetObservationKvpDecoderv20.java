@@ -47,12 +47,12 @@ import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants.Extensions;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
-import org.n52.iceland.ogc.swes.SwesExtensionImpl;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.KvpHelper;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.decode.kvp.AbstractKvpDecoder;
+import org.n52.sos.ogc.swes.SwesExtensionImpl;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.GetObservationRequest;
 
 /**
@@ -161,14 +161,14 @@ public class GetObservationKvpDecoderv20 extends AbstractKvpDecoder {
         return request;
     }
 
-    private SwesExtensions parseExtension(final Extensions extension, final String parameterValues,
-            SwesExtensions extensions) {
+    private org.n52.iceland.ogc.ows.Extensions parseExtension(final Extensions extension, final String parameterValues,
+           org.n52.iceland.ogc.ows.Extensions extensions) {
         if (extensions == null || extensions.isEmpty()) {
             extensions = new SwesExtensions();
         }
         switch (extension) {
         case MergeObservationsIntoDataArray:
-            extensions.addSwesExtension(
+            extensions.addExtension(
             		new SwesExtensionImpl<SweBoolean>()
             		.setDefinition(extension.name())
             		.setValue(

@@ -77,9 +77,6 @@ import org.n52.iceland.ogc.swe.encoding.SweTextEncoding;
 import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
 import org.n52.iceland.ogc.swe.simpleType.SweCount;
 import org.n52.iceland.ogc.swe.simpleType.SweTime;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.ogc.swes.SwesExtensionImpl;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
@@ -100,6 +97,9 @@ import org.n52.sos.ogc.sos.SosInsertionMetadata;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
+import org.n52.sos.ogc.swes.SwesExtension;
+import org.n52.sos.ogc.swes.SwesExtensionImpl;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.DeleteSensorRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.InsertObservationRequest;
@@ -512,7 +512,7 @@ public class InsertDAOTest extends HibernateTestCase {
         splitExt.setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
         splitExt.setValue(new SweBoolean().setValue(Boolean.TRUE));
         SwesExtensions swesExtensions = new SwesExtensions();
-        swesExtensions.addSwesExtension(splitExt);
+        swesExtensions.addExtension(splitExt);
         req.setExtensions(swesExtensions);
 
         req.setAssignedSensorId(PROCEDURE3);

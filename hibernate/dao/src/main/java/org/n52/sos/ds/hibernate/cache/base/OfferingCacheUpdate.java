@@ -55,7 +55,6 @@ import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.TOffering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
-import org.n52.sos.util.CacheHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,18 +118,17 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
 //            try {
                 String offeringId = offering.getIdentifier();
                 if (shouldOfferingBeProcessed(offeringId)) {
-                    String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
-                    cache.addOffering(prefixedOfferingId);
+                    cache.addOffering(offeringId);
 
                     if (offering instanceof TOffering) {
                         TOffering tOffering = (TOffering) offering;
                         // Related features
-                        cache.setRelatedFeaturesForOffering(prefixedOfferingId,
+                        cache.setRelatedFeaturesForOffering(offeringId,
                                                              getRelatedFeatureIdentifiersFrom(tOffering));
-                        cache.setAllowedObservationTypeForOffering(prefixedOfferingId,
+                        cache.setAllowedObservationTypeForOffering(offeringId,
                                                                     getObservationTypesFromObservationType(tOffering.getObservationTypes()));
                         // featureOfInterestTypes
-                        cache.setAllowedFeatureOfInterestTypeForOffering(prefixedOfferingId,
+                        cache.setAllowedFeatureOfInterestTypeForOffering(offeringId,
                                                                           getFeatureOfInterestTypesFromFeatureOfInterestType(tOffering.getFeatureOfInterestTypes()));
                     }
                 }

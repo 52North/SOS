@@ -40,6 +40,7 @@ import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.SweHelper;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -132,7 +133,7 @@ public class SweEnvelope extends SweAbstractDataComponent {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(getClass())
+        return MoreObjects.toStringHelper(getClass())
                 .add("upperCorner", getUpperCorner())
                 .add("lowerCorner", getLowerCorner())
                 .add("time", getTime())

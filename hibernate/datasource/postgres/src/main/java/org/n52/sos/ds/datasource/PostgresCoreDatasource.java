@@ -28,8 +28,16 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.util.Properties;
+import java.util.Set;
+
+import org.n52.sos.config.SettingDefinition;
+
+import com.google.common.collect.ImmutableSet;
+
 
 /**
+ * ProstgreSQL datasource for core mapping
  * @author Christian Autermann <c.autermann@52north.org>
  * 
  * @since 4.0.0
@@ -40,23 +48,26 @@ public class PostgresCoreDatasource extends AbstractPostgresDatasource {
 
     public PostgresCoreDatasource() {
         super();
-        setUsernameDefault(USERNAME_DEFAULT_VALUE);
-        setUsernameDescription(USERNAME_DESCRIPTION);
-        setPasswordDefault(PASSWORD_DEFAULT_VALUE);
-        setPasswordDescription(PASSWORD_DESCRIPTION);
-        setDatabaseDefault(DATABASE_DEFAULT_VALUE);
-        setDatabaseDescription(DATABASE_DESCRIPTION);
-        setHostDefault(HOST_DEFAULT_VALUE);
-        setHostDescription(HOST_DESCRIPTION);
-        setPortDefault(PORT_DEFAULT_VALUE);
-        setPortDescription(PORT_DESCRIPTION);
-        setSchemaDefault(SCHEMA_DEFAULT_VALUE);
-        setSchemaDescription(SCHEMA_DESCRIPTION);
         super.setTransactional(false);
     }
 
     @Override
     public String getDialectName() {
         return DIALECT_NAME;
+    }
+    
+    @Override
+    public boolean supportsClear() {
+        return false;
+    }
+    
+    @Override
+    public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties current) {
+        return filter(super.getChangableSettingDefinitions(current), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
+    }
+
+    @Override
+    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
+        return filter(super.getSettingDefinitions(), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
     }
 }

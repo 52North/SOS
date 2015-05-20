@@ -65,7 +65,6 @@ import org.n52.iceland.response.GetCapabilitiesResponse;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.EpsgConstants;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ogc.sensorML.AbstractComponent;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
@@ -127,6 +126,14 @@ public class CoordianteTransformator implements
         RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
 
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
+    
+    private static final int NOT_SET_EPSG = -1;
+    
+    private static final String EPSG = "EPSG";
+
+    private static final String EPSG_PREFIX = EPSG + Constants.COLON_STRING;
+    
+    private static final String EPSG_PREFIX_DOUBLE_COLON = EPSG_PREFIX + Constants.COLON_STRING;
 
     /**
      * Get the keys
@@ -601,7 +608,7 @@ public class CoordianteTransformator implements
      */
     private void checkRequestIfCrsIsSetAndSupported(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         int crsFrom = getCrsFrom(request);
-        if (EpsgConstants.NOT_SET_EPSG != crsFrom) {
+        if (NOT_SET_EPSG != crsFrom) {
             String requestedCrs = Integer.toString(crsFrom);
             if (!getGeomtryHandler().getSupportedCRS().contains(requestedCrs)) {
                 throw new InvalidParameterValueException(OWSConstants.AdditionalRequestParams.crs, requestedCrs);
@@ -611,11 +618,11 @@ public class CoordianteTransformator implements
 
     /**
      * Get the CRS from the request or if the CRS parameter is not set, return
-     * the {@link EpsgConstants.NOT_SET_EPSG}.
+     * the {@link NOT_SET_EPSG}.
      * 
      * @param request
      *            the request to check
-     * @return the requested CRS or {@link EpsgConstants.NOT_SET_EPSG}
+     * @return the requested CRS or {@link NOT_SET_EPSG}
      * @throws OwsExceptionReport
      *             If an error occurs when parsing the request
      */
@@ -628,7 +635,7 @@ public class CoordianteTransformator implements
         } else if (request instanceof SrsNameRequest && ((SrsNameRequest) request).isSetSrsName()) {
             return getCrs(((SrsNameRequest) request).getSrsName());
         }
-        return EpsgConstants.NOT_SET_EPSG;
+        return NOT_SET_EPSG;
     }
 
     /**
@@ -642,7 +649,7 @@ public class CoordianteTransformator implements
      */
     private int getRequestedCrs(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         int crsFrom = getCrsFrom(request);
-        if (crsFrom != EpsgConstants.NOT_SET_EPSG) {
+        if (crsFrom != NOT_SET_EPSG) {
             return crsFrom;
         }
         return getGeomtryHandler().getDefaultResponseEPSG();
@@ -667,7 +674,7 @@ public class CoordianteTransformator implements
         } else if (value instanceof String) {
             return getCrsFromString((String) value);
         }
-        return EpsgConstants.NOT_SET_EPSG;
+        return NOT_SET_EPSG;
     }
 
     /**
@@ -687,8 +694,8 @@ public class CoordianteTransformator implements
                                 getConfiguration().getSrsNamePrefixSosV2(), Constants.EMPTY_STRING);
             }
             crs =
-                    crs.replace(EpsgConstants.EPSG_PREFIX_DOUBLE_COLON, Constants.EMPTY_STRING).replace(
-                            EpsgConstants.EPSG_PREFIX, Constants.EMPTY_STRING);
+                    crs.replace(EPSG_PREFIX_DOUBLE_COLON, Constants.EMPTY_STRING).replace(
+                            EPSG_PREFIX, Constants.EMPTY_STRING);
             try {
                 return Integer.valueOf(crs);
             } catch (final NumberFormatException nfe) {
@@ -703,7 +710,7 @@ public class CoordianteTransformator implements
                                 "Error while parsing '%s' parameter! Parameter has to match "
                                         + "pattern '%s', '%s', '%s','%s', with appended EPSG code number", parameter,
                                 getConfiguration().getSrsNamePrefix(), getConfiguration().getSrsNamePrefixSosV2(),
-                                EpsgConstants.EPSG_PREFIX_DOUBLE_COLON, EpsgConstants.EPSG_PREFIX);
+                                EPSG_PREFIX_DOUBLE_COLON, EPSG_PREFIX);
             }
         }
         throw new MissingParameterValueException(OWSConstants.AdditionalRequestParams.crs);

@@ -60,7 +60,6 @@ import org.n52.iceland.service.ServiceContextListener;
 import org.n52.iceland.util.Cleanupable;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.EpsgConstants;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.util.Range;
 import org.n52.iceland.util.StringHelper;
@@ -90,7 +89,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * 
  */
 @Configurable
-public class GeometryHandler implements Cleanupable, EpsgConstants {
+public class GeometryHandler implements Cleanupable {
 
     /*
      * longitude = east-west latitude = north-south
@@ -122,7 +121,13 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     private CRSAuthorityFactory crsAuthority;
 
-    private Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();;
+    private Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();
+    
+    private static final String EPSG = "EPSG";
+
+    private static final String EPSG_PREFIX = EPSG + Constants.COLON_STRING;
+    
+
 
     /**
      * Private constructor

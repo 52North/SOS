@@ -144,7 +144,7 @@ public class ObservationsDecoder extends ResourceDecoder {
     {
         if(isContentOfPostRequestValid(httpRequest) && pathPayload == null){
             // 0 read xml encoded post content
-            XmlObject requestDoc = XmlHelper.parseXmlSosRequest(httpRequest);
+            XmlObject requestDoc = XmlHelper.parseXmlRequest(httpRequest);
             if (requestDoc instanceof ObservationDocument) {
                 ObservationDocument xb_ObservationRestDoc = (ObservationDocument) requestDoc;
                 ObservationType xb_ObservationRest = xb_ObservationRestDoc.getObservation();

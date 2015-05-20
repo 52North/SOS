@@ -137,7 +137,7 @@ public class SoapBinding extends SimpleBinding {
 
     private void parseSoapRequest(SoapChain soapChain) throws OwsExceptionReport {
         String soapAction = SoapHelper.checkSoapHeader(soapChain.getHttpRequest());
-        XmlObject doc = XmlHelper.parseXmlSosRequest(soapChain.getHttpRequest());
+        XmlObject doc = XmlHelper.parseXmlRequest(soapChain.getHttpRequest());
         LOGGER.debug("SOAP-REQUEST: {}", doc.xmlText());
         Decoder<SoapRequest, XmlObject> decoder = getDecoder(CodingHelper.getDecoderKey(doc));
         SoapRequest soapRequest = decoder.decode(doc);

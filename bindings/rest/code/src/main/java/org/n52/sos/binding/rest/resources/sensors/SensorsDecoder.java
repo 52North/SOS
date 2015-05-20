@@ -122,7 +122,7 @@ public class SensorsDecoder extends ResourceDecoder {
             insertSensorRequest.setProcedureDescriptionFormat(bindingConstants.getDefaultDescribeSensorOutputFormat());
 
             // parse request in xml object and get procedure description
-            XmlObject sensorPostContent = XmlHelper.parseXmlSosRequest(httpRequest);
+            XmlObject sensorPostContent = XmlHelper.parseXmlRequest(httpRequest);
             if (sensorPostContent instanceof SensorDocument)
             {
                 SensorDocument xb_SensorRestDoc = (SensorDocument) sensorPostContent;
@@ -268,7 +268,7 @@ public class SensorsDecoder extends ResourceDecoder {
             updateSensorRequest.setProcedureDescriptionFormat(bindingConstants.getDefaultDescribeSensorOutputFormat());
             updateSensorRequest.setProcedureIdentifier(pathPayload);
             
-            XmlObject sensorPostContent = XmlHelper.parseXmlSosRequest(httpRequest);
+            XmlObject sensorPostContent = XmlHelper.parseXmlRequest(httpRequest);
             if(sensorPostContent instanceof SensorDocument) {
                 SensorDocument xb_RestSensorDoc = (SensorDocument) sensorPostContent;
                 SensorType xb_RestSensor = xb_RestSensorDoc.getSensor();

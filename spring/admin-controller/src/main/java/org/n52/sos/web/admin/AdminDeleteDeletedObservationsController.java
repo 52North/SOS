@@ -32,7 +32,8 @@ import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.ServiceLoaderHelper;
 import org.n52.sos.ds.DeleteDeletedObservationDAO;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.common.ControllerConstants;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -30,7 +30,7 @@ package org.n52.sos.web.admin;
 
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
-import org.n52.sos.web.AbstractController;
+import org.n52.sos.web.common.AbstractController;
 
 /**
  * @since 4.0.0

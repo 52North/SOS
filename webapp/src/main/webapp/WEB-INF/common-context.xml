@@ -1,0 +1,43 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/mvc
+                           http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+                           http://www.springframework.org/schema/security
+                           http://www.springframework.org/schema/security/spring-security-3.1.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+    <ctx:annotation-config />
+
+    <!-- load controllers for client -->
+    <ctx:component-scan base-package="org.n52.sos.web.client" />
+
+    <!-- load controllers for pages that are always present -->
+    <ctx:component-scan base-package="org.n52.sos.web.common" />
+
+    <!-- Placeholder for the ContextSwitcher. This will be substituted as soon as
+         the ApplicationContext is refreshed. -->
+    <bean id="contextSwitcherSwapper" class="org.springframework.aop.target.HotSwappableTargetSource">
+        <constructor-arg>
+            <bean class="org.n52.iceland.spring.ContextSwitcherDummy" />
+        </constructor-arg>
+    </bean>
+
+
+    <!-- contextSwitcher proxy that can be injected before the real
+         contextSwitcher is created -->
+    <bean id="contextSwitcher" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="targetSource">
+            <ref local="contextSwitcherSwapper" />
+        </property>
+    </bean>
+
+    <!-- import security config -->
+    <import resource="security-context.xml" />
+
+</beans>

@@ -30,6 +30,18 @@ package org.n52.sos.web.admin.i18n.ajax;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.cache.ContentCacheUpdate;
 import org.n52.iceland.ds.I18NDAO;
@@ -42,19 +54,8 @@ import org.n52.iceland.i18n.metadata.AbstractI18NMetadata;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.n52.sos.web.common.AbstractController;
+import org.n52.sos.web.common.ControllerConstants;
 
 public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetadata> extends AbstractController {
 

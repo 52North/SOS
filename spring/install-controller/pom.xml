@@ -46,5 +46,11 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 		</dependency>
+	 <dependency>
+	  <groupId>javax.inject</groupId>
+	  <artifactId>javax.inject</artifactId>
+	  <version>1</version>
+	  <type>jar</type>
+	 </dependency>
 	</dependencies>
 </project>

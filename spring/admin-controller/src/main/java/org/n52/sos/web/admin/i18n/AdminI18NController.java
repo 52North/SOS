@@ -36,7 +36,8 @@ import java.util.TreeSet;
 import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.common.ControllerConstants;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

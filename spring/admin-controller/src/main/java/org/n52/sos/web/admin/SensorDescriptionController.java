@@ -33,6 +33,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.ModelAndView;
+
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.decode.OperationDecoderKey;
@@ -45,17 +56,7 @@ import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.ServiceLoaderHelper;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.ds.ProcedureFormatDAO;
-import org.n52.sos.web.ControllerConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.ModelAndView;
+import org.n52.sos.web.common.ControllerConstants;
 
 import com.google.common.collect.Lists;
 
@@ -79,8 +80,6 @@ public class SensorDescriptionController extends AbstractAdminController {
     private static final String IS_DELETE_SENSOR_SUPPORTED = "isDeleteSensorSupported";
 
     private static final String DESCRIBE_SENSOR_REQUEST_METHOD = "describeSensorRequestMethod";
-
-    private ProcedureFormatDAO dao;
 
     private static final OperationDecoderKey DESCRIBE_SENSOR_DECODER_KEY_SOAP = new OperationDecoderKey(
             SosConstants.SOS,
@@ -117,6 +116,8 @@ public class SensorDescriptionController extends AbstractAdminController {
             Sos2Constants.SERVICEVERSION,
             Sos2Constants.Operations.DeleteSensor.name(),
             MediaTypes.APPLICATION_SOAP_XML);
+
+    private ProcedureFormatDAO dao;
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() throws OwsExceptionReport {

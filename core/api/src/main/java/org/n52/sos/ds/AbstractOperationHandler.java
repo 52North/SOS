@@ -35,6 +35,9 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.cache.ContentCache;
@@ -57,12 +60,10 @@ import org.n52.iceland.util.http.HTTPMethods;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.SosHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Renamed, in version 4.x called AbstractOperationDAO
- * 
+ *
  * @since 5.0.0
  *
  */

@@ -76,7 +76,7 @@
         <!-- Remove third party ncname resolver from SOS and use OXF instead -->
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
         <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
-        <org.springframework.version>3.2.6.RELEASE</org.springframework.version>
+        <org.springframework.version>3.2.13.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
         <sos.test.suite.version>1.0.0-M6</sos.test.suite.version>
     </properties>
@@ -339,14 +339,14 @@
 	        	<artifactId>inspire-xml</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			
+
 			 <!-- EREPORTING -->
 			<dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>ereporting</artifactId>
                 <version>${project.version}</version>
             </dependency>
-			
+
 			<!-- AQD eReporting -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
@@ -495,7 +495,7 @@
                 <artifactId>xercesImpl</artifactId>
                 <version>2.9.1</version>
             </dependency>
-            
+
             <!-- Hibernate Core Dependencies -->
             <dependency>
                 <groupId>org.hibernate</groupId>
@@ -1001,7 +1001,7 @@
 	            <groupId>com.microsoft</groupId>
 	            <artifactId>sqljdbc4</artifactId>
 	            <version>${sqljdbc4.version}</version>
-	        </dependency>            
+	        </dependency>
             <!-- geotools -->
              <dependency>
 				<groupId>org.geotools</groupId>
@@ -1153,7 +1153,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>            
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.groovy.maven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
@@ -1194,6 +1194,7 @@
                         <exclude>**/src/**/PGGeometryTypeDescriptor52N.java</exclude>
                         <exclude>**/src/**/PGGeometryValueExtractor52N.java</exclude>
                         <exclude>**/src/**/PostgisDialect52N.java</exclude>
+                        <exclude>iceland/**</exclude>
                     </excludes>
                     <includes>
                         <include>**/*.java</include>
@@ -1303,12 +1304,12 @@
 	                <artifactId>git-commit-id-plugin</artifactId>
 	                <version>2.1.9</version>
                 </plugin>
-                <!-- 
+                <!--
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>buildnumber-maven-plugin</artifactId>
                     <version>1.3</version>
-                </plugin> 
+                </plugin>
                 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

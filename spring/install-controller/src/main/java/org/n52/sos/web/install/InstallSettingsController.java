@@ -36,8 +36,9 @@ import org.n52.iceland.config.SettingType;
 import org.n52.iceland.config.SettingValue;
 import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.exception.ConfigurationException;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.install.InstallConstants.Step;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;

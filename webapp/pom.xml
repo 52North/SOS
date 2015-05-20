@@ -120,6 +120,24 @@
     </build>
     <dependencies>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>3.2.6.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>3.2.6.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+        </dependency>
+
         <!-- LOGGING -->
 
         <dependency>
@@ -352,11 +370,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>test</artifactId>
             <scope>test</scope>
@@ -405,19 +418,19 @@
 			<groupId>org.n52.sensorweb.sos</groupId>
 			<artifactId>third-party-ncname-resolver</artifactId>
         </dependency>
-        
+
         <!-- EREPORTING -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ereporting</artifactId>
         </dependency>
-        
+
         <!-- INSPIRE -->
 		<dependency>
             <groupId>${project.groupId}</groupId>
         	<artifactId>inspire-code</artifactId>
         </dependency>
-        
+
         <!-- AQD eReporting -->
          <dependency>
             <groupId>${project.groupId}</groupId>

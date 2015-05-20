@@ -38,7 +38,8 @@ import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.ds.GeneralQueryDAO;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.common.ControllerConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

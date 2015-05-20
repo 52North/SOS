@@ -38,8 +38,9 @@ import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.settings.MultilingualStringSettingDefinition;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.common.AbstractController;
+import org.n52.sos.web.common.ControllerConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

@@ -31,6 +31,8 @@ package org.n52.sos.web.install;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -38,22 +40,22 @@ import javax.servlet.http.HttpSession;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.ds.Datasource;
-import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.service.Configurator;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.MetaDataHandler;
-import org.n52.sos.web.auth.UserService;
-import org.n52.sos.web.install.InstallConstants.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import org.n52.iceland.config.SettingValue;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.ds.Datasource;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.sos.context.ContextSwitcher;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.sos.web.common.MetaDataHandler;
+import org.n52.sos.web.common.auth.UserService;
+import org.n52.sos.web.install.InstallConstants.Step;
 
 /**
  * @since 4.0.0
@@ -64,7 +66,11 @@ import org.springframework.web.servlet.ModelAndView;
 public class InstallFinishController extends AbstractProcessingInstallationController {
     private static final Logger LOG = LoggerFactory.getLogger(InstallFinishController.class);
 
-    @Autowired
+    @Inject
+    @Named(ContextSwitcher.BEAN_NAME)
+    private ContextSwitcher contextSwitcher;
+
+    @Inject
     private UserService userService;
 
     @Override
@@ -130,7 +136,8 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
         datasource.checkPostCreation(properties);
         saveDatabaseProperties(properties, c);
         saveInstallationDate();
-        instantiateConfigurator(properties, c);
+
+        this.contextSwitcher.reloadContext();
     }
 
     protected void checkUsername(Map<String, String> param, InstallationConfiguration c)
@@ -149,21 +156,6 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
             throw new InstallationSettingsError(c, ErrorMessages.PASSWORD_IS_INVALID);
         }
         c.setPassword(password);
-    }
-
-    protected void instantiateConfigurator(Properties properties, InstallationConfiguration c)
-            throws InstallationSettingsError {
-        if (Configurator.getInstance() == null) {
-            LOG.info("Instantiating Configurator...");
-            try {
-                Configurator.createInstance(properties, getBasePath());
-            } catch (ConfigurationException ex) {
-                throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_INSTANTIATE_CONFIGURATOR,
-                        ex.getMessage()), ex);
-            }
-        } else {
-            LOG.error("Configurator seems to be already instantiated...");
-        }
     }
 
     protected void saveDatabaseProperties(Properties properties, InstallationConfiguration c)

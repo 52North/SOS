@@ -33,15 +33,16 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingValue;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.util.StringHelper;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.install.InstallConstants.Step;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.common.collect.Maps;
 
@@ -95,7 +96,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
                     }
                     if (!datasource.checkSchemaCreation(c.getDatabaseSettings())) {
                         throw new InstallationSettingsError(c, String.format(
-                                ErrorMessages.COULD_NOT_CREATE_SOS_TABLES, "schema creation test table"));                        
+                                ErrorMessages.COULD_NOT_CREATE_SOS_TABLES, "schema creation test table"));
                     }
                 } else if (!alreadyExistent) {
                     throw new InstallationSettingsError(c, ErrorMessages.NO_TABLES_AND_SHOULD_NOT_CREATE);
@@ -105,8 +106,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
                     } catch (ConfigurationException e) {
                         if (StringHelper.isNotEmpty(e.getMessage())
                                 && (e.getMessage().contains(ErrorMessages.TO_CHECK_ERROR_MESSAGE_FOI_COL_IN_OBS_TAB) || e
-                                        .getMessage().contains(
-                                                ErrorMessages.TO_CHECK_ERROR_MESSAGE_SERIES_COL_IN_OBS_TAB))) {
+                                        .getMessage().contains(ErrorMessages.TO_CHECK_ERROR_MESSAGE_SERIES_COL_IN_OBS_TAB))) {
                             throw new InstallationSettingsError(c, String.format(
                                     ErrorMessages.EXISTING_SCHEMA_DIFFERS_UPDATE_SCHEMA, e.getMessage()), e);
                         } else if (!forceUpdateTables) {
@@ -155,7 +155,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
         if (datasource.needsSchema()) {
             Boolean updateTablesParameter = parseBoolean(parameters, InstallConstants.UPDATE_TABLES_PARAMETER);
             if (updateTablesParameter != null) {
-                updateTables = (createTables) ? false : updateTablesParameter.booleanValue();
+                updateTables = (createTables) ? false : updateTablesParameter;
             }
         }
         parameters.remove(InstallConstants.UPDATE_TABLES_PARAMETER);
@@ -165,7 +165,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
 
     protected Map<String, Object> parseDatasourceSettings(Datasource datasource, Map<String, String> parameters) {
         Set<SettingDefinition<?, ?>> defs = datasource.getSettingDefinitions();
-        Map<String, Object> parsedSettings = new HashMap<String, Object>(parameters.size());
+        Map<String, Object> parsedSettings = new HashMap<>(parameters.size());
         for (SettingDefinition<?, ?> def : defs) {
             SettingValue<?> newValue =
                     getSettingsManager().getSettingFactory().newSettingValue(def, parameters.get(def.getKey()));

@@ -40,8 +40,9 @@ import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
 import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.JSONConstants;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.sos.web.common.JSONConstants;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;

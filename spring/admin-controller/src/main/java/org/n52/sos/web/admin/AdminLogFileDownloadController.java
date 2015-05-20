@@ -34,14 +34,13 @@ import java.io.InputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.n52.sos.service.AbstractLoggingConfigurator;
-import org.n52.sos.web.ControllerConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import org.n52.sos.web.common.ControllerConstants;
 
 /**
  * @since 4.0.0
@@ -51,25 +50,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = ControllerConstants.Paths.ADMIN_LOGGING_FILE_DOWNLOAD)
 public class AdminLogFileDownloadController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AdminLogFileDownloadController.class);
+    @Autowired
+    private AbstractLoggingConfigurator loggingConfigurator;
 
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(method = RequestMethod.GET,
+                    produces = MediaType.TEXT_PLAIN_VALUE)
     public void downloadFile(HttpServletResponse response) throws IOException {
-        InputStream is = null;
-        try {
-            is = AbstractLoggingConfigurator.getInstance().getLogFile();
-            if (is == null) {
-                throw new RuntimeException("Could not read log file.");
-            }
+        try (InputStream is = this.loggingConfigurator.getLogFile()) {
             IOUtils.copy(is, response.getOutputStream());
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    LOG.error("Can not close InputStream", e);
-                }
-            }
         }
     }
 }

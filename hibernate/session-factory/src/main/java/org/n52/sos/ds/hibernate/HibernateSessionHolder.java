@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate;
 
 import org.hibernate.Session;
+
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
@@ -37,7 +38,7 @@ import org.n52.iceland.service.Configurator;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class HibernateSessionHolder {
 
@@ -46,7 +47,7 @@ public class HibernateSessionHolder {
     public HibernateSessionHolder() {
         this(Configurator.getInstance().getDataConnectionProvider());
     }
-    
+
     public HibernateSessionHolder(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
     }

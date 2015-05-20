@@ -40,7 +40,8 @@ import org.n52.iceland.util.ServiceLoaderHelper;
 import org.n52.sos.ds.RenameDAO;
 import org.n52.sos.exception.AlreadyUsedIdentifierException;
 import org.n52.sos.exception.NoSuchObservablePropertyException;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.common.ControllerConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

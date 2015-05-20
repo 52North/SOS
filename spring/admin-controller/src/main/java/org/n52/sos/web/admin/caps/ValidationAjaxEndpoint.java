@@ -37,10 +37,12 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlValidationError;
+
 import org.n52.iceland.util.JSONUtils;
 import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.util.XmlHelper.LaxValidationCase;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.common.ControllerConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

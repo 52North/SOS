@@ -32,10 +32,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.n52.iceland.exception.ConfigurationException;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.MetaDataHandler;
-import org.n52.sos.web.auth.AdministratorUserPrinciple;
+import org.n52.sos.web.common.AbstractController;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.sos.web.common.MetaDataHandler;
+import org.n52.sos.web.common.auth.AdministratorUserPrinciple;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -90,7 +90,7 @@ public class OracleDatasourceTest extends TestCase {
 		passNoRights = props.getProperty(ORACLE_PASS_NO_RIGHTS);
 	}
 
-	private OracleDatasource ds;
+	private AbstractOracleDatasource ds;
 	private Connection conn, connNoRights;
 	private Statement stmt, stmtNoRights;
 

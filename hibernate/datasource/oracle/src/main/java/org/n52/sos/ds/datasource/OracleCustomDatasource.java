@@ -29,22 +29,26 @@
 package org.n52.sos.ds.datasource;
 
 /**
- * Oracle datasource
+ * Oracle datasource for custom mapping
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * @since 4.0.0
+ * @since 4.3.0
  *
  */
-public class OracleDatasource extends AbstractOracleDatasource {
-    
-    private static final String DIALECT_NAME = "Oracle Spatial";
+public class OracleCustomDatasource extends OracleCoreDatasource {
 
-    public OracleDatasource() {
+    private static final String DIALECT_NAME = "Oracle Spatial Custom Core";
+    
+    public OracleCustomDatasource() {
         super();
     }
-
+    
     @Override
     public String getDialectName() {
         return DIALECT_NAME;
     }
-
+    
+    @Override
+    public boolean needsSchema() {
+        return false;
+    }
 }

@@ -80,11 +80,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-sos-v20</artifactId>
             <scope>test</scope>

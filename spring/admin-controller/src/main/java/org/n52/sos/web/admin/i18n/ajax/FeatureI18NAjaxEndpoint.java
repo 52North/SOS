@@ -28,8 +28,8 @@
  */
 package org.n52.sos.web.admin.i18n.ajax;
 
-import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
+import org.n52.sos.cache.ContentCache;
 import org.n52.sos.web.ControllerConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

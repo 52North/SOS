@@ -35,7 +35,7 @@ import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swe.SweDataRecord;
 import org.n52.iceland.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.iceland.ogc.swe.encoding.SweTextEncoding;
-import org.n52.iceland.util.CodingHelper;
+import org.n52.sos.util.CodingHelper;
 
 /**
  * @since 4.0.0

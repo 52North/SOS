@@ -28,8 +28,8 @@
  */
 package org.n52.sos.encode;
 
-import static org.n52.iceland.util.CodingHelper.encoderKeysForElements;
 import static org.n52.iceland.util.CollectionHelper.union;
+import static org.n52.sos.util.CodingHelper.encoderKeysForElements;
 
 import java.util.Collections;
 import java.util.Map;

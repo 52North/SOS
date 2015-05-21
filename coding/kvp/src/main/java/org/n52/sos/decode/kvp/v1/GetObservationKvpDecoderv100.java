@@ -82,25 +82,7 @@ public class GetObservationKvpDecoderv100 extends AbstractKvpDecoder {
             String parameterValues = element.get(parameterName);
             try {
                 if (!parseDefaultParameter(request, parameterValues, parameterName)) {
-//                    // service (mandatory)
-//                    if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service.name())) {
-//                        request.setService(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-//                        foundService = true;
-//                    }
-//    
-//                    // version (mandatory)
-//                    else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.version.name())) {
-//                        request.setVersion(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-//                        foundVersion = true;
-//                    }
-//                    // request (mandatory)
-//                    else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
-//                        KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
-//                    }
-//    
-//                    // offering (mandatory)
-//                    else 
-                        if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.offering.name())) {
+                    if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.offering.name())) {
                         request.setOfferings(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
                         foundOffering = true;
                     }
@@ -161,12 +143,6 @@ public class GetObservationKvpDecoderv100 extends AbstractKvpDecoder {
                     // responseMode (optional)
                     else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.responseMode.name())) {
                         request.setResponseMode(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-//                     // language (optional)
-//                    } else if (parameterName.equalsIgnoreCase(SosConstants.InspireParams.language.name())) {
-//                        request.addExtension(getLanguageExtension(KvpHelper.checkParameterSingleValue(parameterValues, parameterName)));
-//                    // CRS (optional)
-//                    } else if (parameterName.equalsIgnoreCase(SosConstants.InspireParams.crs.name())) {
-//                        request.addExtension(getCrsExtension(KvpHelper.checkParameterSingleValue(parameterValues, parameterName)));
                     } else {
                         exceptions.add(new ParameterNotSupportedException(parameterName));
                     }

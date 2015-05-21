@@ -32,10 +32,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.n52.iceland.cache.ContentCacheUpdate;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.om.features.FeatureCollection;
-import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.cache.ContentCacheUpdate;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

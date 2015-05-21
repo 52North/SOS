@@ -28,8 +28,8 @@
  */
 package org.n52.sos.encode;
 
-import static org.n52.iceland.util.CodingHelper.encoderKeysForElements;
 import static org.n52.iceland.util.CollectionHelper.union;
+import static org.n52.sos.util.CodingHelper.encoderKeysForElements;
 
 import java.util.Collections;
 import java.util.List;
@@ -68,7 +68,6 @@ import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.w3c.SchemaLocation;
@@ -82,6 +81,7 @@ import org.n52.sos.iso.gmd.GmdQuantitativeResult;
 import org.n52.sos.iso.gmd.GmlBaseUnit;
 import org.n52.sos.ogc.sensorML.Role;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
+import org.n52.sos.util.CodingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

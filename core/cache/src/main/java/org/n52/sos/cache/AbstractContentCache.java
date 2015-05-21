@@ -42,10 +42,10 @@ import java.util.Set;
 import org.joda.time.DateTime;
 import org.n52.iceland.i18n.MultilingualString;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.sos.SosEnvelope;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.SetMultiMap;
+import org.n52.sos.ogc.sos.SosEnvelope;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.BiMap;

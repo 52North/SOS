@@ -67,16 +67,16 @@ import org.n52.iceland.ogc.ows.OWSConstants;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosEnvelope;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.response.GetCapabilitiesResponse;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.oxf.xml.NcNameResolver;
 import org.n52.sos.ogc.sos.SosCapabilities;
+import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.sos.SosObservationOffering;
+import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.N52XmlHelper;
 
 import com.google.common.collect.Sets;

@@ -30,11 +30,11 @@ package org.n52.sos.encode.json.impl;
 
 import java.util.Set;
 
-import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
+import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.response.AbstractObservationResponse;
 
 import com.fasterxml.jackson.databind.JsonNode;

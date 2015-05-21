@@ -43,7 +43,7 @@ import java.util.Collections;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.iceland.ogc.sos.SosEnvelope;
+import org.n52.sos.ogc.sos.SosEnvelope;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

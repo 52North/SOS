@@ -35,8 +35,8 @@ import org.junit.Test;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.om.OmObservableProperty;
 import org.n52.iceland.ogc.om.OmObservationConstellation;
-import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.sensorML.SensorML;
 
 public class OmObservationConstellationTest {

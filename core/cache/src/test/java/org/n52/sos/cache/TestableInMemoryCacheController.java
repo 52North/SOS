@@ -31,11 +31,10 @@ package org.n52.sos.cache;
 import java.io.File;
 import java.io.IOException;
 
-import org.n52.iceland.cache.WritableContentCache;
-import org.n52.iceland.ds.CacheFeederHandlerRepository;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.cache.ctrl.ContentCacheControllerImpl;
 import org.n52.sos.cache.ctrl.persistence.ImmediatePersistenceStrategy;
+import org.n52.sos.ds.CacheFeederHandlerRepository;
 import org.n52.sos.ds.MockCacheFeederDAO;
 
 

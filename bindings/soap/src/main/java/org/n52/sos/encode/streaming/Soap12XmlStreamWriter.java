@@ -42,7 +42,6 @@ import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.util.http.MediaTypes;
@@ -53,6 +52,7 @@ import org.n52.sos.encode.XmlStreamWriter;
 import org.n52.sos.soap.SoapConstants;
 import org.n52.sos.soap.SoapFault;
 import org.n52.sos.soap.SoapResponse;
+import org.n52.sos.util.CodingHelper;
 
 import com.google.common.collect.Sets;
 

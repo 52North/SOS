@@ -28,10 +28,10 @@
  */
 package org.n52.sos.web.admin;
 
-import org.n52.iceland.cache.ContentCachePersistenceStrategy;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.service.Configurator;
+import org.n52.sos.cache.ContentCachePersistenceStrategy;
 import org.n52.sos.web.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

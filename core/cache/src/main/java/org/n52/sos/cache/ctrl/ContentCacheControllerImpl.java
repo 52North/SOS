@@ -34,10 +34,10 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.n52.iceland.cache.ContentCachePersistenceStrategy;
-import org.n52.iceland.cache.ContentCacheUpdate;
-import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.sos.cache.ContentCachePersistenceStrategy;
+import org.n52.sos.cache.ContentCacheUpdate;
+import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.cache.ctrl.action.CompleteCacheUpdate;
 import org.n52.sos.cache.ctrl.persistence.CachePersistenceStrategyFactory;
 import org.slf4j.Logger;

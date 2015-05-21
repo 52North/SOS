@@ -72,7 +72,6 @@ import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.OGCConstants;
 import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.AbstractGeometry;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.gml.time.Time;
@@ -81,21 +80,22 @@ import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.gml.time.TimePosition;
 import org.n52.iceland.ogc.om.features.FeatureCollection;
-import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.iceland.ogc.om.values.CategoryValue;
-import org.n52.iceland.ogc.om.values.GeometryValue;
-import org.n52.iceland.ogc.om.values.QuantityValue;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosEnvelope;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.util.MinMax;
 import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.sos.ogc.gml.AbstractGeometry;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.GeometryValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SosHelper;
@@ -121,8 +121,8 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
 
     private static final Set<EncoderKey> ENCODER_KEY_TYPES = CodingHelper.encoderKeysForElements(
             GmlConstants.NS_GML_32, org.n52.iceland.ogc.gml.time.Time.class, com.vividsolutions.jts.geom.Geometry.class,
-            org.n52.iceland.ogc.om.values.CategoryValue.class, org.n52.iceland.ogc.gml.ReferenceType.class,
-            org.n52.iceland.ogc.om.values.QuantityValue.class, org.n52.iceland.ogc.gml.CodeWithAuthority.class,
+            org.n52.sos.ogc.om.values.CategoryValue.class, org.n52.iceland.ogc.gml.ReferenceType.class,
+            org.n52.sos.ogc.om.values.QuantityValue.class, org.n52.iceland.ogc.gml.CodeWithAuthority.class,
             org.n52.iceland.ogc.gml.CodeType.class, SamplingFeature.class, SosEnvelope.class, FeatureCollection.class,
             AbstractGeometry.class);
 

@@ -28,7 +28,7 @@
  */
 package org.n52.sos.encode.aqd.v1;
 
-import static org.n52.iceland.util.CodingHelper.encodeObjectToXml;
+import static org.n52.sos.util.CodingHelper.encodeObjectToXml;
 
 import java.util.Map;
 import java.util.Set;

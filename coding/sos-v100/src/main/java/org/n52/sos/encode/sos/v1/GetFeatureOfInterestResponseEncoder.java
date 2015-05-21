@@ -35,8 +35,8 @@ import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
+import org.n52.sos.util.CodingHelper;
 
 /**
  * TODO JavaDoc

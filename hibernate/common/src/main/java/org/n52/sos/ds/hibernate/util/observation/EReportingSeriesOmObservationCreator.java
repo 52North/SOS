@@ -33,9 +33,9 @@ import java.util.Locale;
 
 import org.hibernate.Session;
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
+import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.request.AbstractObservationRequest;
 
 public class EReportingSeriesOmObservationCreator extends SeriesOmObservationCreator {

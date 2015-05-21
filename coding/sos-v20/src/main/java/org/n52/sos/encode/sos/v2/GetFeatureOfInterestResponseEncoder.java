@@ -38,13 +38,13 @@ import net.opengis.sos.x20.GetFeatureOfInterestResponseType;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.om.features.FeatureCollection;
-import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.service.profile.Profile;
 

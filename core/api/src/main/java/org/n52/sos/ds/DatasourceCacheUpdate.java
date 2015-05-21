@@ -30,11 +30,10 @@ package org.n52.sos.ds;
 
 import java.util.List;
 
-import org.n52.iceland.cache.WritableContentCache;
-import org.n52.iceland.ds.FeatureQueryHandler;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.ThreadableAction;
+import org.n52.sos.cache.WritableContentCache;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

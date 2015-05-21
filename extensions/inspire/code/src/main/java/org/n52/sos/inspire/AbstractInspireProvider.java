@@ -30,8 +30,8 @@ package org.n52.sos.inspire;
 
 import java.util.Set;
 
-import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.service.Configurator;
+import org.n52.sos.cache.ContentCache;
 import org.n52.sos.inspire.capabilities.InspireExtendedCapabilitiesProvider;
 import org.n52.sos.inspire.offering.InspireOfferingExtensionProvider;
 import org.n52.sos.util.GeometryHandler;

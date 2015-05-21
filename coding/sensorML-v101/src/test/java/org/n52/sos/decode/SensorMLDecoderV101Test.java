@@ -67,7 +67,6 @@ import org.n52.iceland.ogc.sos.SosOffering;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
@@ -78,6 +77,7 @@ import org.n52.sos.ogc.sensorML.SmlContactList;
 import org.n52.sos.ogc.sensorML.SmlPerson;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
 import org.n52.sos.ogc.sensorML.System;
+import org.n52.sos.util.CodingHelper;
 
 /**
  * @author Shane StClair

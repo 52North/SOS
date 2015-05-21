@@ -34,8 +34,8 @@ import static org.junit.Assert.assertThat;
 import java.util.List;
 
 import org.junit.Test;
-import org.n52.iceland.ogc.sos.SosEnvelope;
 import org.n52.iceland.ogc.swe.SweConstants.SweCoordinateName;
+import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 
 import com.vividsolutions.jts.geom.Envelope;

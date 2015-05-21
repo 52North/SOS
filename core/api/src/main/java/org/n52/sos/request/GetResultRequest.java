@@ -31,7 +31,6 @@ package org.n52.sos.request;
 import java.util.List;
 import java.util.Map;
 
-import org.n52.iceland.ogc.filter.SpatialFilter;
 import org.n52.iceland.ogc.filter.TemporalFilter;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
@@ -39,6 +38,7 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.StringHelper;
+import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.response.GetResultResponse;
 
 /**

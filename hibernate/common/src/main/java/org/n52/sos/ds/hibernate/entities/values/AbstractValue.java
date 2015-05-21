@@ -38,17 +38,10 @@ import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.gml.ReferenceType;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.NamedValue;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.TimeValuePair;
-import org.n52.iceland.ogc.om.values.QuantityValue;
-import org.n52.iceland.ogc.om.values.UnknownValue;
-import org.n52.iceland.ogc.om.values.Value;
 import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweDataArray;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.XmlHelper;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCodespace;
@@ -64,6 +57,13 @@ import org.n52.sos.ds.hibernate.entities.interfaces.GeometryValue;
 import org.n52.sos.ds.hibernate.entities.interfaces.NumericValue;
 import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayValue;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextValue;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.TimeValuePair;
+import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.UnknownValue;
+import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.OMHelper;
 
@@ -195,7 +195,7 @@ public abstract class AbstractValue extends AbstractObservationTime implements H
      *         not supported
      * @throws OwsExceptionReport
      *             If an error occurs when creating
-     *             {@link org.n52.iceland.ogc.om.values.SweDataArrayValue}
+     *             {@link org.n52.sos.ogc.om.values.SweDataArrayValue}
      */
     protected Value<?> getValueFrom(AbstractValue abstractValue) throws OwsExceptionReport {
         Value<?> value = null;
@@ -203,21 +203,21 @@ public abstract class AbstractValue extends AbstractObservationTime implements H
             value = new QuantityValue(((NumericValue) abstractValue).getValue());
         } else if (abstractValue instanceof BooleanValue) {
             value =
-                    new org.n52.iceland.ogc.om.values.BooleanValue(Boolean.valueOf(((BooleanValue) abstractValue)
+                    new org.n52.sos.ogc.om.values.BooleanValue(Boolean.valueOf(((BooleanValue) abstractValue)
                             .getValue()));
         } else if (abstractValue instanceof CategoryValue) {
-            value = new org.n52.iceland.ogc.om.values.CategoryValue(((CategoryValue) abstractValue).getValue());
+            value = new org.n52.sos.ogc.om.values.CategoryValue(((CategoryValue) abstractValue).getValue());
         } else if (abstractValue instanceof CountValue) {
-            value = new org.n52.iceland.ogc.om.values.CountValue(Integer.valueOf(((CountValue) abstractValue).getValue()));
+            value = new org.n52.sos.ogc.om.values.CountValue(Integer.valueOf(((CountValue) abstractValue).getValue()));
         } else if (abstractValue instanceof TextValue) {
-            value = new org.n52.iceland.ogc.om.values.TextValue(((TextValue) abstractValue).getValue().toString());
+            value = new org.n52.sos.ogc.om.values.TextValue(((TextValue) abstractValue).getValue().toString());
         } else if (abstractValue instanceof GeometryValue) {
-            value = new org.n52.iceland.ogc.om.values.GeometryValue(((GeometryValue) abstractValue).getValue());
+            value = new org.n52.sos.ogc.om.values.GeometryValue(((GeometryValue) abstractValue).getValue());
         } else if (abstractValue instanceof BlobValue) {
             value = new UnknownValue(((BlobValue) abstractValue).getValue());
         } else if (abstractValue instanceof SweDataArrayValue) {
-            org.n52.iceland.ogc.om.values.SweDataArrayValue sweDataArrayValue =
-                    new org.n52.iceland.ogc.om.values.SweDataArrayValue();
+            org.n52.sos.ogc.om.values.SweDataArrayValue sweDataArrayValue =
+                    new org.n52.sos.ogc.om.values.SweDataArrayValue();
             final XmlObject xml = XmlHelper.parseXmlString(((SweDataArrayValue) abstractValue).getValue());
             sweDataArrayValue.setValue((SweDataArray) CodingHelper.decodeXmlElement(xml));
             value = sweDataArrayValue;
@@ -235,7 +235,7 @@ public abstract class AbstractValue extends AbstractObservationTime implements H
         namedValue.setName(referenceType);
         // TODO add lat/long version
         Geometry geometry = samplingGeometry;
-        namedValue.setValue(new org.n52.iceland.ogc.om.values.GeometryValue(GeometryHandler.getInstance()
+        namedValue.setValue(new org.n52.sos.ogc.om.values.GeometryValue(GeometryHandler.getInstance()
                 .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
         return namedValue;
     }

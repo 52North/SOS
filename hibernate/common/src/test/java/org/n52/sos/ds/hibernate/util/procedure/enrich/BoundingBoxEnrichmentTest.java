@@ -40,12 +40,12 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosEnvelope;
 import org.n52.iceland.ogc.sos.SosOffering;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.System;
+import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.swe.SweEnvelope;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 

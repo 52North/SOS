@@ -31,7 +31,7 @@ package org.n52.sos.util.builder;
 import org.n52.iceland.exception.ows.concrete.InvalidSridException;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.util.JTSHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

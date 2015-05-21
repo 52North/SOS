@@ -31,9 +31,9 @@ package org.n52.sos.web.admin;
 
 import org.joda.time.DateTime;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.sos.SosEnvelope;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.web.AbstractController;
 import org.n52.sos.web.ControllerConstants;
 import org.slf4j.Logger;

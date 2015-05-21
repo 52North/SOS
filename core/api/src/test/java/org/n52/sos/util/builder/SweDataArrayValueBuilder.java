@@ -28,9 +28,9 @@
  */
 package org.n52.sos.util.builder;
 
-import org.n52.iceland.ogc.om.MultiObservationValues;
-import org.n52.iceland.ogc.om.values.SweDataArrayValue;
 import org.n52.iceland.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.om.MultiObservationValues;
+import org.n52.sos.ogc.om.values.SweDataArrayValue;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

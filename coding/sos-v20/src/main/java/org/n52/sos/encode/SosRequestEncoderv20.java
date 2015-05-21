@@ -51,12 +51,12 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.request.GetResultRequest;
 import org.n52.sos.request.GetResultTemplateRequest;
+import org.n52.sos.util.CodingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,8 +164,8 @@ public class SosRequestEncoderv20 extends AbstractXmlEncoder<AbstractServiceRequ
     }
 
     private void createSpatialFilter(final SpatialFilter spatialFilter,
-            final org.n52.iceland.ogc.filter.SpatialFilter sosSpatialFilter) throws OwsExceptionReport {
-        final Encoder<XmlObject, org.n52.iceland.ogc.filter.SpatialFilter> encoder =
+            final org.n52.sos.ogc.filter.SpatialFilter sosSpatialFilter) throws OwsExceptionReport {
+        final Encoder<XmlObject, org.n52.sos.ogc.filter.SpatialFilter> encoder =
                 CodingRepository.getInstance().getEncoder(
                         CodingHelper.getEncoderKey(FilterConstants.NS_FES_2, sosSpatialFilter));
         final XmlObject encodedObject = encoder.encode(sosSpatialFilter);

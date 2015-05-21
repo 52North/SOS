@@ -36,10 +36,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.n52.iceland.cache.ContentCache;
-import org.n52.iceland.cache.ContentCachePersistenceStrategy;
-import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.service.Configurator;
+import org.n52.sos.cache.ContentCache;
+import org.n52.sos.cache.ContentCachePersistenceStrategy;
+import org.n52.sos.cache.WritableContentCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

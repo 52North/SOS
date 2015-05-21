@@ -37,10 +37,10 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.util.XmlHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.util.CodingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

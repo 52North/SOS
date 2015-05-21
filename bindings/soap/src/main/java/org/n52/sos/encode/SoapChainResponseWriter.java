@@ -41,10 +41,10 @@ import org.n52.iceland.encode.ResponseProxy;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.soap.SoapResponse;
+import org.n52.sos.util.CodingHelper;
 
 /**
  * Streaming SOAP response writer implementation.

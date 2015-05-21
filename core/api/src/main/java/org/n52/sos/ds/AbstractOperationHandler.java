@@ -37,7 +37,6 @@ import java.util.TreeSet;
 
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.ds.OperationHandlerKeyType;
@@ -55,6 +54,7 @@ import org.n52.iceland.util.SetMultiMap;
 import org.n52.iceland.util.http.HTTPHeaders;
 import org.n52.iceland.util.http.HTTPMethods;
 import org.n52.iceland.util.http.MediaType;
+import org.n52.sos.cache.ContentCache;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;

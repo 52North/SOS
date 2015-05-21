@@ -28,10 +28,10 @@
  */
 package org.n52.sos.cache.ctrl.action;
 
-import org.n52.iceland.cache.ContentCacheUpdate;
-import org.n52.iceland.ds.CacheFeederHandler;
-import org.n52.iceland.ds.CacheFeederHandlerRepository;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
+import org.n52.sos.cache.ContentCacheUpdate;
+import org.n52.sos.ds.CacheFeederHandler;
+import org.n52.sos.ds.CacheFeederHandlerRepository;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

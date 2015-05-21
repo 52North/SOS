@@ -32,9 +32,9 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.cache.WritableCache;
+import org.n52.sos.cache.WritableContentCache;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

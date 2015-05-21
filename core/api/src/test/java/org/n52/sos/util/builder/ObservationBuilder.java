@@ -29,9 +29,9 @@
 package org.n52.sos.util.builder;
 
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.om.ObservationValue;
-import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.om.OmObservationConstellation;
+import org.n52.sos.ogc.om.ObservationValue;
+import org.n52.sos.ogc.om.OmObservation;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

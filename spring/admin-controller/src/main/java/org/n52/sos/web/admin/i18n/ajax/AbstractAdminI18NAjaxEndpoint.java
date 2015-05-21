@@ -30,8 +30,6 @@ package org.n52.sos.web.admin.i18n.ajax;
 
 import java.io.IOException;
 
-import org.n52.iceland.cache.ContentCache;
-import org.n52.iceland.cache.ContentCacheUpdate;
 import org.n52.iceland.ds.I18NDAO;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.exception.NoSuchIdentifierException;
@@ -42,6 +40,8 @@ import org.n52.iceland.i18n.metadata.AbstractI18NMetadata;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.cache.ContentCache;
+import org.n52.sos.cache.ContentCacheUpdate;
 import org.n52.sos.web.AbstractController;
 import org.n52.sos.web.ControllerConstants;
 import org.slf4j.Logger;

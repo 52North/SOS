@@ -33,12 +33,12 @@ import java.util.Locale;
 
 import org.hibernate.Session;
 import org.n52.iceland.ogc.gml.ReferenceType;
-import org.n52.iceland.ogc.om.NamedValue;
-import org.n52.iceland.ogc.om.values.TextValue;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.wml.ObservationProcess;
 import org.n52.sos.ogc.wml.WaterMLConstants;
 

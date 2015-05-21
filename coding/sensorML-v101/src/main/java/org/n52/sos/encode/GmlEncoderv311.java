@@ -76,20 +76,20 @@ import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.gml.time.TimePosition;
 import org.n52.iceland.ogc.om.features.FeatureCollection;
 import org.n52.iceland.ogc.om.features.SfConstants;
-import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.iceland.ogc.om.values.CategoryValue;
-import org.n52.iceland.ogc.om.values.QuantityValue;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosEnvelope;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.util.MinMax;
 import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;
@@ -113,8 +113,8 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
 
     private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(GmlConstants.NS_GML,
             org.n52.iceland.ogc.gml.time.Time.class, com.vividsolutions.jts.geom.Geometry.class,
-            org.n52.iceland.ogc.om.values.CategoryValue.class, org.n52.iceland.ogc.gml.ReferenceType.class,
-            org.n52.iceland.ogc.om.values.QuantityValue.class, org.n52.iceland.ogc.gml.CodeWithAuthority.class,
+            org.n52.sos.ogc.om.values.CategoryValue.class, org.n52.iceland.ogc.gml.ReferenceType.class,
+            org.n52.sos.ogc.om.values.QuantityValue.class, org.n52.iceland.ogc.gml.CodeWithAuthority.class,
             org.n52.iceland.ogc.gml.CodeType.class, AbstractFeature.class, SosEnvelope.class);
 
     public GmlEncoderv311() {

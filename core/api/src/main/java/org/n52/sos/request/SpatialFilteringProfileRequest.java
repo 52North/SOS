@@ -28,7 +28,7 @@
  */
 package org.n52.sos.request;
 
-import org.n52.iceland.ogc.filter.SpatialFilter;
+import org.n52.sos.ogc.filter.SpatialFilter;
 
 /**
  * Interface to define methods for requests that supports

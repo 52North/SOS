@@ -36,8 +36,8 @@ import java.util.Set;
 import org.joda.time.DateTime;
 import org.n52.iceland.i18n.LocalizedString;
 import org.n52.iceland.i18n.MultilingualString;
-import org.n52.iceland.ogc.sos.SosEnvelope;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.ogc.sos.SosEnvelope;
 
 /**
  * {@code ContentCache} implementation that offers a readable interface to the

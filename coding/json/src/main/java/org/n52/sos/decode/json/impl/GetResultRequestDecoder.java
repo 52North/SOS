@@ -30,7 +30,6 @@ package org.n52.sos.decode.json.impl;
 
 import java.util.List;
 
-import org.n52.iceland.ogc.filter.SpatialFilter;
 import org.n52.iceland.ogc.filter.TemporalFilter;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
@@ -38,6 +37,7 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
+import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.request.GetResultRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;

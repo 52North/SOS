@@ -34,21 +34,21 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.om.MultiObservationValues;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.SingleObservationValue;
-import org.n52.iceland.ogc.om.TimeValuePair;
-import org.n52.iceland.ogc.om.values.CountValue;
-import org.n52.iceland.ogc.om.values.QuantityValue;
-import org.n52.iceland.ogc.om.values.TVPValue;
-import org.n52.iceland.ogc.om.values.TextValue;
-import org.n52.iceland.ogc.om.values.Value;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.encode.EncodingValues;
+import org.n52.sos.ogc.om.MultiObservationValues;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
+import org.n52.sos.ogc.om.TimeValuePair;
+import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.TVPValue;
+import org.n52.sos.ogc.om.values.TextValue;
+import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.wml.WaterMLConstants;
 
 /**

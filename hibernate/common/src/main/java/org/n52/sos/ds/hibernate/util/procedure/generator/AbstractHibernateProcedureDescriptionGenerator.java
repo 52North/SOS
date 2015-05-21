@@ -34,7 +34,6 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.ds.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.LocalizedString;
@@ -46,6 +45,7 @@ import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.cache.ContentCache;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;

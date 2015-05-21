@@ -28,9 +28,9 @@
  */
 package org.n52.sos.cache.ctrl.action;
 
-import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.util.Action;
+import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.response.InsertResultTemplateResponse;
 import org.slf4j.Logger;

@@ -35,14 +35,14 @@ import java.util.Map;
 
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.iceland.ogc.om.AbstractObservationValue;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.values.Value;
 import org.n52.iceland.ogc.ows.OWSConstants.AdditionalRequestParams;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.ogc.om.AbstractObservationValue;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.service.profile.ProfileHandler;
 
 import com.google.common.base.Strings;

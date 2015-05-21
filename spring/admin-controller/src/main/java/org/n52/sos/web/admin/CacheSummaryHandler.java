@@ -32,8 +32,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.service.Configurator;
+import org.n52.sos.cache.ContentCache;
 
 /**
  * Class to get a summary of the cache objects.

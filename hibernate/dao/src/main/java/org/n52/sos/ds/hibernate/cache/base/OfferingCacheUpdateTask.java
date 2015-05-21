@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
-import org.n52.iceland.ds.FeatureQueryHandlerQueryObject;
 import org.n52.iceland.ds.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.LocaleHelper;
@@ -45,11 +44,11 @@ import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
 import org.n52.iceland.ogc.OGCConstants;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosEnvelope;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.cache.ProcedureFlag;
@@ -63,6 +62,7 @@ import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
+import org.n52.sos.ogc.sos.SosEnvelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

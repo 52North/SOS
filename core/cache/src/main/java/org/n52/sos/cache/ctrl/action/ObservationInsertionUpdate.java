@@ -30,15 +30,15 @@ package org.n52.sos.cache.ctrl.action;
 
 import java.util.List;
 
-import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.ogc.OGCConstants;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.om.NamedValue;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.util.Action;
+import org.n52.sos.cache.WritableContentCache;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.request.InsertObservationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

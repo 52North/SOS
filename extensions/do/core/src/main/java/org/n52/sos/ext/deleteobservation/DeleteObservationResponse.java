@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
-import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.sos.ogc.om.OmObservation;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

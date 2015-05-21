@@ -38,10 +38,10 @@ import org.n52.iceland.ogc.OGCConstants;
 import org.n52.iceland.ogc.gml.AbstractGML;
 import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 
 public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
 

@@ -33,14 +33,14 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
-import org.n52.iceland.ds.FeatureQueryHandler;
-import org.n52.iceland.ds.FeatureQueryHandlerQueryObject;
 import org.n52.iceland.ds.HibernateDatasourceConstants;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosEnvelope;
+import org.n52.sos.ds.FeatureQueryHandler;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.sos.SosEnvelope;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

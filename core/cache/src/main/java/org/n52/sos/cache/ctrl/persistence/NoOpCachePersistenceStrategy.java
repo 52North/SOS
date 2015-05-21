@@ -57,7 +57,7 @@ public class NoOpCachePersistenceStrategy implements ContentCachePersistenceStra
     }
 
     @Override
-    public void cleanup() {
+    public void remove() {
     }
 
 }

@@ -104,6 +104,7 @@ public class AbstractController {
         return Boolean.FALSE;
     }
 
+    @Deprecated
     protected SettingsManager getSettingsManager() throws ConfigurationException {
         return (sm == null) ? sm = SettingsManager.getInstance() : sm;
     }

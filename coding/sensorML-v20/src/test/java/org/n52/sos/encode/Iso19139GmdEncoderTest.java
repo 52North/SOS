@@ -72,8 +72,8 @@ public class Iso19139GmdEncoderTest {
             .add(GmdConstants.NS_GMD, GmdConstants.NS_GMD_PREFIX)
             .add(W3CConstants.NS_XLINK, W3CConstants.NS_XLINK_PREFIX)
             .build();
-    
-    
+
+
     @BeforeClass
     public static void initSettingsManager() {
         SettingsManager.getInstance();
@@ -81,7 +81,7 @@ public class Iso19139GmdEncoderTest {
 
     @AfterClass
     public static void cleanupSettingManager() {
-        SettingsManager.getInstance().cleanup();
+        SettingsManager.getInstance().destroy();
     }
 
     @Rule
@@ -101,7 +101,7 @@ public class Iso19139GmdEncoderTest {
         errors.checkThat(encoder.encode(qr, PROPERTY_TYPE), is(instanceOf(DQDomainConsistencyPropertyType.class)));
         errors.checkThat(encoder.encode(qr, TYPE), is(instanceOf(DQDomainConsistencyType.class)));
     }
-    
+
     @Test
     public void checkValidity() throws OwsExceptionReport {
         errors.checkThat(XmlHelper.validateDocument(encoder.encode(GmdDomainConsistency.dataCapture(GmlConstants.NilReason.unknown), DOCUMENT_TYPE)), is(true));

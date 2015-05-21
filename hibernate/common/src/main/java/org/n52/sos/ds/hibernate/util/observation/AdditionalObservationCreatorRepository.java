@@ -33,38 +33,36 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.util.AbstractConfiguringServiceLoaderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.util.repository.AbstractConfiguringServiceLoaderRepository;
+
 @SuppressWarnings("rawtypes")
 public class AdditionalObservationCreatorRepository extends AbstractConfiguringServiceLoaderRepository<AdditionalObservationCreator> {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(AdditionalObservationCreatorRepository.class);
-    
-    private static class LazyHolder {
-        private static final AdditionalObservationCreatorRepository INSTANCE = new AdditionalObservationCreatorRepository();
-        
-        private LazyHolder() {};
-    }
-    
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdditionalObservationCreatorRepository.class);
+
+    @Deprecated
+    private static AdditionalObservationCreatorRepository instance;
+
+    @Deprecated
     public static AdditionalObservationCreatorRepository getInstance() {
-        return LazyHolder.INSTANCE;
+        return AdditionalObservationCreatorRepository.instance;
     }
-    
-    private final Map<AdditionalObservationCreatorKey, AdditionalObservationCreator<?>> additionalObservationCreator =
-            new HashMap<AdditionalObservationCreatorKey, AdditionalObservationCreator<?>>(0);
+
+    private final Map<AdditionalObservationCreatorKey, AdditionalObservationCreator<?>> additionalObservationCreator = new HashMap<>(0);
 
     /**
      * private constructor for singleton
-     * 
+     *
      * @throws ConfigurationException
      */
     private AdditionalObservationCreatorRepository() throws ConfigurationException {
         super(AdditionalObservationCreator.class, false);
         load(false);
+        AdditionalObservationCreatorRepository.instance = this;
     }
 
 
@@ -80,7 +78,7 @@ public class AdditionalObservationCreatorRepository extends AbstractConfiguringS
         }
     }
 
-    
+
     public AdditionalObservationCreator get(AdditionalObservationCreatorKey key) {
         return additionalObservationCreator.get(key);
 }
@@ -92,13 +90,13 @@ public class AdditionalObservationCreatorRepository extends AbstractConfiguringS
     public boolean hasAdditionalObservationCreatorFor(String namespace, Class<?> type) {
         return hasAdditionalObservationCreatorFor(new AdditionalObservationCreatorKey(namespace, type));
     }
-    
+
     public boolean hasAdditionalObservationCreatorFor(AdditionalObservationCreatorKey key) {
             return additionalObservationCreator.containsKey(key);
     }
-    
+
     public static Set<AdditionalObservationCreatorKey> encoderKeysForElements(final String namespace, final Class<?>... elements) {
-        final HashSet<AdditionalObservationCreatorKey> keys = new HashSet<AdditionalObservationCreatorKey>(elements.length);
+        final HashSet<AdditionalObservationCreatorKey> keys = new HashSet<>(elements.length);
         for (final Class<?> x : elements) {
             keys.add(new AdditionalObservationCreatorKey(namespace, x));
         }

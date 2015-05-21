@@ -28,7 +28,10 @@
  */
 package org.n52.sos.inspire.aqd.persistence;
 
+import javax.inject.Inject;
+
 import org.hibernate.Session;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.JsonDecoderKey;
@@ -36,8 +39,9 @@ import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.util.Cleanupable;
+import org.n52.iceland.util.lifecycle.Destroyable;
 import org.n52.iceland.util.JSONUtils;
+import org.n52.iceland.util.lifecycle.Constructable;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.config.sqlite.SQLiteManager;
 import org.n52.sos.config.sqlite.SQLiteManager.ThrowingHibernateAction;
@@ -48,21 +52,32 @@ import org.n52.sos.inspire.aqd.ReportObligation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class ReportingHeaderSQLiteManager implements Cleanupable {
+public class ReportingHeaderSQLiteManager implements Constructable, Destroyable {
     protected static final String REPORTING_AUTHORITY_KEY = "reportingAuthority";
 
     protected static final String REPORT_OBLIGATION_KEY_PREFIX = "reportObligation_";
 
-    private final SQLiteManager manager = new SQLiteManager() {
-        @Override
-        protected ConnectionProvider createDefaultConnectionProvider() {
-            return new ReportingHeaderSQLiteSessionFactory();
-        }
-    };
+    private SQLiteManager manager;
+
+    @Inject
+    private CodingRepository codingRepository;
+
+    @Inject
+    private ReportingHeaderSQLiteSessionFactory sessionFactory;
 
     @Override
-    public void cleanup() {
-        this.manager.cleanup();
+    public void init() {
+        this.manager = new SQLiteManager() {
+            @Override
+            protected ConnectionProvider createDefaultConnectionProvider() {
+                return sessionFactory;
+            }
+        };
+    }
+
+    @Override
+    public void destroy() {
+        this.manager.destroy();
     }
 
     public void save(RelatedParty relatedParty) {
@@ -91,8 +106,7 @@ public class ReportingHeaderSQLiteManager implements Cleanupable {
 
     public ReportObligation loadReportObligation(ReportObligationType type) {
         try {
-            return manager.execute(new LoadJSONFragmentAction<>(REPORT_OBLIGATION_KEY_PREFIX + type,
-                    ReportObligation.class));
+            return manager.execute(new LoadJSONFragmentAction<>(REPORT_OBLIGATION_KEY_PREFIX + type, ReportObligation.class));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -102,7 +116,15 @@ public class ReportingHeaderSQLiteManager implements Cleanupable {
         manager.execute(new SaveAction(o, key));
     }
 
-    private static class SaveAction extends VoidHibernateAction {
+    private static class LoadReportingAuthorityAction extends LoadJSONFragmentAction<RelatedParty> {
+
+        LoadReportingAuthorityAction() {
+            super(REPORTING_AUTHORITY_KEY, RelatedParty.class);
+        }
+
+    }
+
+    private class SaveAction extends VoidHibernateAction {
         private final String key;
 
         private final Object o;
@@ -116,7 +138,7 @@ public class ReportingHeaderSQLiteManager implements Cleanupable {
         protected void run(Session session) {
             try {
                 Encoder<JsonNode, Object> encoder =
-                        CodingRepository.getInstance().getEncoder(new JSONEncoderKey(o.getClass()));
+                        codingRepository.getEncoder(new JSONEncoderKey(o.getClass()));
                 JsonNode node = encoder.encode(o);
                 String json = JSONUtils.print(node);
                 session.saveOrUpdate(new JSONFragment().setID(key).setJSON(json));
@@ -126,7 +148,7 @@ public class ReportingHeaderSQLiteManager implements Cleanupable {
         }
     }
 
-    private static class LoadJSONFragmentAction<T> implements ThrowingHibernateAction<T> {
+    private class LoadJSONFragmentAction<T> implements ThrowingHibernateAction<T> {
 
         private final String key;
 
@@ -144,17 +166,9 @@ public class ReportingHeaderSQLiteManager implements Cleanupable {
         }
 
         protected T decode(JSONFragment entity) throws OwsExceptionReport {
-            Decoder<T, JsonNode> decoder = CodingRepository.getInstance().getDecoder(new JsonDecoderKey(type));
+            Decoder<T, JsonNode> decoder = codingRepository.getDecoder(new JsonDecoderKey(type));
             JsonNode node = JSONUtils.loadString(entity.getJSON());
             return decoder.decode(node);
-        }
-
-    }
-
-    private static class LoadReportingAuthorityAction extends LoadJSONFragmentAction<RelatedParty> {
-
-        LoadReportingAuthorityAction() {
-            super(REPORTING_AUTHORITY_KEY, RelatedParty.class);
         }
 
     }

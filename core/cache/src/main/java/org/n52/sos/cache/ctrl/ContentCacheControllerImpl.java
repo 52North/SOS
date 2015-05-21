@@ -34,14 +34,16 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.cache.ContentCachePersistenceStrategy;
 import org.n52.iceland.cache.ContentCacheUpdate;
 import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.cache.ctrl.action.CompleteCacheUpdate;
-import org.n52.sos.cache.ctrl.persistence.CachePersistenceStrategyFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
@@ -61,16 +63,13 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
 
     private final ReentrantLock lock = new ReentrantLock();
 
-    private final ContentCachePersistenceStrategy persistenceStrategy;
+    @Inject
+    private ContentCachePersistenceStrategy persistenceStrategy;
 
-    public ContentCacheControllerImpl(
-            ContentCachePersistenceStrategy persistenceStrategy) {
-        this.persistenceStrategy = persistenceStrategy;
+    @Override
+    public void init() {
+        super.init();
         loadOrCreateCache();
-    }
-
-    public ContentCacheControllerImpl() {
-        this(CachePersistenceStrategyFactory.getInstance().create());
     }
 
     private void loadOrCreateCache() {
@@ -95,20 +94,20 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
         return this.cache;
     }
 
+    protected void setCache(WritableContentCache wcc) {
+        this.cache = wcc;
+    }
+
+
     @Override
-    public void cleanup() {
-        super.cleanup();
+    public void destroy() {
+        super.destroy();
         lock();
         try {
             persistenceStrategy.persistOnShutdown(getCache());
         } finally {
             unlock();
         }
-    }
-
-
-    protected void setCache(WritableContentCache wcc) {
-        this.cache = wcc;
     }
 
     @Override
@@ -264,7 +263,7 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
 
     private class CompleteUpdate extends Update {
         private final ConcurrentLinkedQueue<PartialUpdate> updates
-                = new ConcurrentLinkedQueue<PartialUpdate>();
+                = new ConcurrentLinkedQueue<>();
 
         private final Lock lock = new ReentrantLock();
 

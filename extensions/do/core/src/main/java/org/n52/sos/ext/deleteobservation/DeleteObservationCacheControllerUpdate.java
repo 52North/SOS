@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
-import static org.n52.iceland.util.ConfiguringSingletonServiceLoader.loadAndConfigure;
+import static org.n52.iceland.util.repository.ConfiguringSingletonServiceLoader.loadAndConfigure;
 
 import java.util.List;
 

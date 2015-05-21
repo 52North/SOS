@@ -143,12 +143,12 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
         } catch (HibernateException he) {
             String exceptionText = "An error occurs during instantiation of the database connection pool!";
             LOGGER.error(exceptionText, he);
-            cleanup();
+            destroy();
             throw new ConfigurationException(exceptionText, he);
         } catch (URISyntaxException urise) {
             String exceptionText = "An error occurs during instantiation of the database connection pool!";
             LOGGER.error(exceptionText, urise);
-            cleanup();
+            destroy();
             throw new ConfigurationException(exceptionText, urise);
         }
     }

@@ -1,0 +1,44 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+    <!--
+        org.n52.iceland.config.SettingDefinitionProvider
+    -->
+
+    <!-- SettingDefinitionProvider implementations from operations/core-v20 -->
+    <bean class="org.n52.sos.request.operator.CoreProfileOperatorSettings"/>
+    <!-- SettingDefinitionProvider implementations from bindings/rest/code -->
+    <bean class="org.n52.sos.binding.rest.RestSettings"/>
+    <!-- SettingDefinitionProvider implementations from converter/identifier-modifier/prefixed-identifier -->
+    <!-- SettingDefinitionProvider implementations from converter/identifier-modifier/flexible-identifier -->
+    <bean class="org.n52.sos.converter.util.FlexibleIdentifierSettings"/>
+    <!-- SettingDefinitionProvider implementations from coding/exi -->
+    <bean class="org.n52.sos.exi.EXISettings"/>
+    <!-- SettingDefinitionProvider implementations from coding/ows-v110 -->
+    <bean class="org.n52.sos.encode.OwsEncoderSettings"/>
+    <!-- SettingDefinitionProvider implementations from core/cache -->
+    <bean class="org.n52.sos.cache.ctrl.ScheduledContentCacheControllerSettings"/>
+    <bean class="org.n52.sos.cache.ctrl.persistence.AsyncCachePersistenceStrategySettings"/>
+    <!-- SettingDefinitionProvider implementations from core/api -->
+    <bean class="org.n52.iceland.ogc.ows.ServiceProviderFactorySettings"/>
+    <bean class="org.n52.iceland.ogc.ows.ServiceIdentificationFactorySettings"/>
+    <bean class="org.n52.iceland.service.MiscSettings"/>
+    <bean class="org.n52.iceland.service.ServiceSettings"/>
+    <bean class="org.n52.iceland.service.StreamingSettings"/>
+    <bean class="org.n52.sos.service.ProcedureDescriptionSettings"/>
+    <bean class="org.n52.sos.service.TransactionalSecuritySettings"/>
+    <bean class="org.n52.iceland.ds.FeatureQuerySettingsProvider"/>
+    <bean class="org.n52.iceland.i18n.I18NSettings"/>
+    <!-- SettingDefinitionProvider implementations from hibernate/dao -->
+    <bean class="org.n52.sos.ds.hibernate.values.HibernateStreamingSettings"/>
+    <!-- SettingDefinitionProvider implementations from hibernate/common -->
+    <bean class="org.n52.sos.ds.hibernate.CacheFeederSettingDefinitionProvider"/>
+    <!-- SettingDefinitionProvider implementations from extensions/inspire/code -->
+    <bean class="org.n52.sos.inspire.settings.InspireSettings"/>
+    <!-- SettingDefinitionProvider implementations from extensions/gda/operation -->
+    <bean class="org.n52.sos.gda.GetDataAvailabilitySettings"/>
+    <!-- SettingDefinitionProvider implementations from extensions/aqd/api -->
+    <bean class="org.n52.sos.settings.EReportingSetting"/>
+
+</beans>

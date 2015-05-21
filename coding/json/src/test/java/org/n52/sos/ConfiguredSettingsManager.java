@@ -33,15 +33,14 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.rules.ExternalResource;
-import org.n52.iceland.service.ServiceContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class ConfiguredSettingsManager extends ExternalResource {
@@ -63,7 +62,6 @@ public class ConfiguredSettingsManager extends ExternalResource {
         tempDir = File.createTempFile("sos-test-case", "");
         FileUtils.forceDelete(tempDir);
         FileUtils.forceMkdir(tempDir);
-        ServiceContextListener.setPath(tempDir.getAbsolutePath());
     }
 
     protected void deleteDirectory() {

@@ -54,7 +54,7 @@ public abstract class AbstractSessionFactoryProvider implements ConnectionProvid
      * @see org.n52.sos.ds.ConnectionProvider#cleanup()
      */
     @Override
-    public void cleanup() {
+    public void destroy() {
         lock.lock();
         SessionFactory sessionFactory = getSessionFactory();
         try {

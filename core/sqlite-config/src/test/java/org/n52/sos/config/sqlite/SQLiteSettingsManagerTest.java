@@ -122,7 +122,7 @@ public class SQLiteSettingsManagerTest {
     @AfterClass
     public static void tearDownClass() {
         if (connectionProvider != null) {
-            connectionProvider.cleanup();
+            connectionProvider.destroy();
         }
         if (databaseFile != null && databaseFile.exists()) {
             databaseFile.delete();

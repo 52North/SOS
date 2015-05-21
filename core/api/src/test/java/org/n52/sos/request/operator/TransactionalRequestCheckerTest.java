@@ -58,7 +58,7 @@ public class TransactionalRequestCheckerTest {
 
     @AfterClass
     public static void cleanUp() {
-        SettingsManager.getInstance().cleanup();
+        SettingsManager.getInstance().destroy();
     }
 
     @Test

@@ -28,19 +28,22 @@
  */
 package org.n52.sos.cache.ctrl.persistence;
 
-import java.io.File;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.cache.ContentCache;
+import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.util.GroupedAndNamedThreadFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Christian Autermann
@@ -48,27 +51,23 @@ import org.slf4j.LoggerFactory;
 @Configurable
 public class AsyncCachePersistenceStrategy
         extends AbstractPersistingCachePersistenceStrategy {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AsyncCachePersistenceStrategy.class);
 
     private static final TimeUnit WRITE_DELAY_UNITS = TimeUnit.SECONDS;
-    private long writeDelay
-            = AsyncCachePersistenceStrategySettings.CACHE_PERSISTENCE_DELAY_DEFINITION
-            .getDefaultValue();
-    private final ScheduledExecutorService executor = Executors
-            .newSingleThreadScheduledExecutor(
-                    new GroupedAndNamedThreadFactory("cache-persister"));
-    private final AtomicReference<ContentCache> cacheReference
-            = new AtomicReference<ContentCache>();
+    private long writeDelay = AsyncCachePersistenceStrategySettings.CACHE_PERSISTENCE_DELAY_DEFINITION.getDefaultValue();
+    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(new GroupedAndNamedThreadFactory("cache-persister"));
+    private final AtomicReference<ContentCache> cacheReference = new AtomicReference<>();
     private Updater updater;
+    @Inject
+    private SettingsManager settingsManager;
 
-    public AsyncCachePersistenceStrategy() {
-        this(null);
-    }
 
-    public AsyncCachePersistenceStrategy(File cacheFile) {
-        super(cacheFile);
-        updater = new Updater();
+    @Override
+    public void init() {
+        super.init();
+        this.settingsManager.configure(this);
+        this.updater = new Updater();
         this.executor.schedule(updater, writeDelay, WRITE_DELAY_UNITS);
     }
 
@@ -103,24 +102,24 @@ public class AsyncCachePersistenceStrategy
         persistCache(cache);
     }
 
-private class Updater implements Runnable {
-        
+    private class Updater implements Runnable {
+
         private boolean reschedule = true;
-        
+
         /**
          * @return the reschedule
          */
         public boolean isReschedule() {
             return reschedule;
         }
-        
+
         /**
          * @param reschedule the reschedule to set
          */
         public void setReschedule(boolean reschedule) {
             this.reschedule = reschedule;
         }
-        
+
         @Override
         public void run() {
             ContentCache cache = cacheReference.getAndSet(null);

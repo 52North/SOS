@@ -42,6 +42,7 @@ import javax.xml.soap.SOAPMessage;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.DecoderKey;
@@ -51,13 +52,14 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.service.SoapHeader;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.LinkedListMultiMap;
-import org.n52.iceland.util.ListMultiMap;
+import org.n52.iceland.util.collections.LinkedListMultiMap;
+import org.n52.iceland.util.collections.ListMultiMap;
 import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.sos.soap.SoapRequest;
 import org.n52.sos.util.W3cHelper;
 import org.n52.sos.wsa.WsaActionHeader;
 import org.n52.sos.wsa.WsaConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;

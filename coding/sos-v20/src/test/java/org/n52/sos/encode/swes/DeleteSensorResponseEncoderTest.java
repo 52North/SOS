@@ -66,9 +66,9 @@ import com.google.common.collect.Maps;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class DeleteSensorResponseEncoderTest {
@@ -79,7 +79,7 @@ public class DeleteSensorResponseEncoderTest {
 
     @AfterClass
     public static void cleanUp() {
-        SettingsManager.getInstance().cleanup();
+        SettingsManager.getInstance().destroy();
     }
 
     @Test

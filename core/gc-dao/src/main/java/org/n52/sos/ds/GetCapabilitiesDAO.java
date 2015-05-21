@@ -93,14 +93,15 @@ import org.n52.iceland.response.GetCapabilitiesResponse;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.MultiMaps;
-import org.n52.iceland.util.SetMultiMap;
+import org.n52.iceland.util.collections.MultiMaps;
+import org.n52.iceland.util.collections.SetMultiMap;
 import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosObservationOffering;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.I18NHelper;
 import org.n52.sos.util.OMHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

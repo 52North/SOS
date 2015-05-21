@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import geodb.GeoDB;
-
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -51,19 +49,21 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.jdbc.Work;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
-import org.n52.iceland.service.ServiceContextListener;
 import org.n52.sos.cache.ctrl.ScheduledContentCacheControllerSettings;
 import org.n52.sos.config.sqlite.SQLiteSessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
+import geodb.GeoDB;
 
 /**
  * @since 4.0.0
@@ -293,7 +293,7 @@ public class H2Configuration {
         try {
             final Configurator configurator = Configurator.getInstance();
             if (configurator != null) {
-                configurator.cleanup();
+                configurator.destroy();
             }
         } catch (final Exception ex) {
             throw new RuntimeException(ex);
@@ -329,7 +329,6 @@ public class H2Configuration {
         setTempDir(File.createTempFile("hibernate-test-case", ""));
         getTempDir().delete();
         FileUtils.forceMkdir(getTempDir());
-        ServiceContextListener.setPath(getTempDir().getAbsolutePath());
     }
 
     private void createConfigurator() throws ConfigurationException {
@@ -380,7 +379,7 @@ public class H2Configuration {
     }
 
     private String[] getCreateSrcipt(String[] generateSchemaCreationScript) {
-        List<String> finalScript = Lists.newArrayList(); 
+        List<String> finalScript = Lists.newArrayList();
         Set<String> nonDublicates = Sets.newHashSet();
         Set<String> nonDuplicateCreate = Sets.newHashSet();
         for (final String s : generateSchemaCreationScript) {

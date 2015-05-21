@@ -34,7 +34,8 @@ import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.iceland.util.Action;
+import org.n52.iceland.util.action.Action;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

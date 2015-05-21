@@ -40,4 +40,6 @@
     <!-- import security config -->
     <import resource="security-context.xml" />
 
+    <bean id="configLocationProvider" class="org.n52.iceland.service.ServletConfigLocationProvider" />
+
 </beans>

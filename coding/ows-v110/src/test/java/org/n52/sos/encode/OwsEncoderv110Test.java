@@ -57,9 +57,9 @@ import org.n52.iceland.util.CollectionHelper;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class OwsEncoderv110Test {
 
@@ -67,7 +67,7 @@ public class OwsEncoderv110Test {
 
     @AfterClass
     public static void cleanUp() {
-        SettingsManager.getInstance().cleanup();
+        SettingsManager.getInstance().destroy();
     }
 
     @Test

@@ -68,7 +68,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class FesEncoderv20Test {
@@ -82,7 +82,7 @@ public class FesEncoderv20Test {
 
     @AfterClass
     public static void cleanUp() {
-        SettingsManager.getInstance().cleanup();
+        SettingsManager.getInstance().destroy();
     }
 
     @Test

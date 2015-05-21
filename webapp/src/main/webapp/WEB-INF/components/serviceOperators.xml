@@ -1,0 +1,17 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+    <!--
+        org.n52.iceland.service.operator.ServiceOperator
+    -->
+
+    <!-- ServiceOperator implementations from operations/core-v100 -->
+    <bean class="org.n52.sos.service.operator.SosServiceOperatorV100"/>
+    <!-- ServiceOperator implementations from operations/core-v20 -->
+    <bean class="org.n52.sos.service.operator.SosServiceOperatorV20"/>
+    <!-- ServiceOperator implementations from extensions/aqd/operation -->
+    <bean class="org.n52.sos.service.operator.AqdServiceOperatorV10"/>
+
+</beans>

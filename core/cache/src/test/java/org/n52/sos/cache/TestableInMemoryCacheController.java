@@ -34,26 +34,35 @@ import java.io.IOException;
 import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.ds.CacheFeederHandlerRepository;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.ConfigLocationProvider;
 import org.n52.sos.cache.ctrl.ContentCacheControllerImpl;
+import org.n52.sos.cache.ctrl.persistence.AbstractPersistingCachePersistenceStrategy;
 import org.n52.sos.cache.ctrl.persistence.ImmediatePersistenceStrategy;
 import org.n52.sos.ds.MockCacheFeederDAO;
 
+import com.google.common.io.Files;
+
 
 public class TestableInMemoryCacheController extends ContentCacheControllerImpl {
+    private static File directory;
     private static File tempFile;
 
     public TestableInMemoryCacheController() {
-        super(new ImmediatePersistenceStrategy(tempFile));
+        tempFile = new File(directory, AbstractPersistingCachePersistenceStrategy.CACHE_FILE);
+        ImmediatePersistenceStrategy ps = new ImmediatePersistenceStrategy();
+        ps.setConfigLocationProvider(new ConfigLocationProvider() {
+            @Override
+            public String get() {
+                return directory.getAbsolutePath();
+            }
+        });
+        ps.init();
         setUpdateInterval(Integer.MAX_VALUE);
     }
 
     public static void setUp() {
-        try {
-            CacheFeederHandlerRepository.createInstance(MockCacheFeederDAO.DATASOURCE_DAO_IDENTIFIER);
-            tempFile = File.createTempFile("TestableInMemoryCacheController", "");
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+        CacheFeederHandlerRepository.createInstance(MockCacheFeederDAO.DATASOURCE_DAO_IDENTIFIER);
+        directory = Files.createTempDir();
     }
 
     public static void deleteTempFile() {

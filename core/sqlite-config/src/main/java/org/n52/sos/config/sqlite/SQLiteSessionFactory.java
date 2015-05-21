@@ -33,16 +33,19 @@ import java.net.URI;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
+
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.service.ServiceContextListener;
+import org.n52.iceland.service.ConfigLocationProvider;
 import org.n52.sos.config.sqlite.entities.AdminUser;
 import org.n52.sos.config.sqlite.entities.Binding;
 import org.n52.sos.config.sqlite.entities.BooleanSettingValue;
@@ -63,93 +66,47 @@ import org.n52.sos.config.sqlite.entities.StringSettingValue;
 import org.n52.sos.config.sqlite.entities.TimeInstantSettingValue;
 import org.n52.sos.config.sqlite.entities.UriSettingValue;
 import org.n52.sos.ds.hibernate.AbstractSessionFactoryProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
  */
 public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SQLiteSessionFactory.class);
-
     public static final String HIBERNATE_DIALECT = "hibernate.dialect";
-
     public static final String HIBERNATE_CONNECTION_URL = "hibernate.connection.url";
-
     public static final String HIBERNATE_CONNECTION_DRIVER_CLASS = "hibernate.connection.driver_class";
-
     public static final String HIBERNATE_UPDATE_SCHEMA = "hibernate.hbm2ddl.auto";
-
     public static final String HIBERNATE_CONNECTION_USERNAME = "hibernate.connection.username";
-
     public static final String HIBERNATE_CONNECTION_PASSWORD = "hibernate.connection.password";
-
     public static final String HIBERNATE_CONNECTION_POOL_SIZE = "hibernate.connection.pool_size";
-
     public static final String HIBERNATE_CONNECTION_RELEASE_MODE = "hibernate.connection.release_mode";
-
     public static final String HIBERNATE_CURRENT_SESSION_CONTEXT = "hibernate.current_session_context_class";
-
     public static final String RELEASE_MODE_AFTER_TRANSACTION = "after_transaction";
-
     public static final String RELEASE_MODE_AFTER_STATEMENT = "after_statement";
-
     public static final String RELEASE_MODE_ON_CLOSE = "on_close";
-
     public static final String RELEASE_MODE_AUTO = "auto";
-
     public static final String THREAD_LOCAL_SESSION_CONTEXT = "thread";
-
     public static final int SQLITE_CONNECTION_POOL_SIZE = 1;
-
     public static final String CONNECTION_URL_TEMPLATE = "jdbc:sqlite:%s.db";
-
-    protected static final String DEFAULT_DATABASE_NAME = "configuration";
-
     public static final String SQLITE_HIBERNATE_DIALECT = HibernateSQLiteDialect.class.getName();
-
     public static final String UPDATE_SCHEMA_VALUE = "update";
-
     public static final String SQLITE_JDBC_DRIVER = "org.sqlite.JDBC";
-
     public static final String EMPTY = "";
+    public static final String DEFAULT_DATABASE_NAME = "configuration";
 
-    private final Properties defaultProperties = new Properties() {
-        private static final long serialVersionUID = 3109256773218160485L;
-        {
-            put(HIBERNATE_CONNECTION_URL, getFilename());
-            put(HIBERNATE_UPDATE_SCHEMA, UPDATE_SCHEMA_VALUE);
-            put(HIBERNATE_DIALECT, SQLITE_HIBERNATE_DIALECT);
-            put(HIBERNATE_CONNECTION_DRIVER_CLASS, SQLITE_JDBC_DRIVER);
-            put(HIBERNATE_CONNECTION_USERNAME, EMPTY);
-            put(HIBERNATE_CONNECTION_PASSWORD, EMPTY);
-            put(HIBERNATE_CONNECTION_POOL_SIZE, String.valueOf(SQLITE_CONNECTION_POOL_SIZE));
-            put(HIBERNATE_CONNECTION_RELEASE_MODE, RELEASE_MODE_AFTER_TRANSACTION);
-            put(HIBERNATE_CURRENT_SESSION_CONTEXT, THREAD_LOCAL_SESSION_CONTEXT);
-        }
-    };
-
-    protected String getFilename() {
-        String path = null;
-        try {
-            path = ServiceContextListener.getPath();
-        } catch (Throwable t) {
-        }
-        if (path == null) {
-            path = System.getProperty("user.dir");
-            LOG.warn("Context path is not set; using {} instead", path);
-        } else {
-            path = new File(path).getAbsolutePath();
-        }
-        path = path + File.separator + DEFAULT_DATABASE_NAME;
-        return String.format(CONNECTION_URL_TEMPLATE, path);
-    }
+    @Inject
+    private ConfigLocationProvider configLocationProvider;
 
     private final ReentrantLock lock = new ReentrantLock();
 
     private SessionFactory sessionFactory;
 
+    protected String getFilename() {
+        String path = new File(configLocationProvider.get(), DEFAULT_DATABASE_NAME).getAbsolutePath();
+        return String.format(CONNECTION_URL_TEMPLATE, path);
+    }
+
+    @Override
     protected SessionFactory getSessionFactory() {
         lock.lock();
         try {
@@ -191,9 +148,26 @@ public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
         if (properties != null) {
             cfg.mergeProperties(properties);
         }
-        cfg.mergeProperties(defaultProperties);
+        cfg.mergeProperties(getDefaultProperties());
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(cfg.getProperties()).build();
         return cfg.buildSessionFactory(serviceRegistry);
+    }
+
+    private Properties getDefaultProperties() {
+        return new Properties() {
+            private static final long serialVersionUID = 3109256773218160485L;
+            {
+                put(HIBERNATE_CONNECTION_URL, getFilename());
+                put(HIBERNATE_UPDATE_SCHEMA, UPDATE_SCHEMA_VALUE);
+                put(HIBERNATE_DIALECT, SQLITE_HIBERNATE_DIALECT);
+                put(HIBERNATE_CONNECTION_DRIVER_CLASS, SQLITE_JDBC_DRIVER);
+                put(HIBERNATE_CONNECTION_USERNAME, EMPTY);
+                put(HIBERNATE_CONNECTION_PASSWORD, EMPTY);
+                put(HIBERNATE_CONNECTION_POOL_SIZE, String.valueOf(SQLITE_CONNECTION_POOL_SIZE));
+                put(HIBERNATE_CONNECTION_RELEASE_MODE, RELEASE_MODE_AFTER_TRANSACTION);
+                put(HIBERNATE_CURRENT_SESSION_CONTEXT, THREAD_LOCAL_SESSION_CONTEXT);
+            }
+        };
     }
 
     @Override

@@ -202,8 +202,8 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
     }
 
     @Override
-    public void cleanup() {
-        getConnectionProvider().cleanup();
+    public void destroy() {
+        getConnectionProvider().destroy();
     }
 
     @Override
@@ -236,7 +236,7 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
             throws ConnectionProviderException {
         return execute(new IsActiveAction<>(c, key));
     }
-    
+
     protected <K extends Serializable, T extends Activatable<K, T>> boolean isActive(Class<T> c, K key, boolean defaultActive)
             throws ConnectionProviderException {
         return execute(new IsActiveAction<K, T>(c, key, defaultActive)).booleanValue();
@@ -360,13 +360,13 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
         private final K key;
 
         private final Class<T> type;
-        
+
         private boolean defaultActive;
 
         IsActiveAction(Class<T> type, K key) {
             this(type, key, true);
         }
-        
+
         IsActiveAction(Class<T> type, K key, boolean defaultActive) {
             this.type = type;
             this.key = key;

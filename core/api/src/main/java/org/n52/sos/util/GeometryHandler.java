@@ -37,7 +37,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
+
+import javax.inject.Inject;
 
 import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.JTS;
@@ -45,6 +46,16 @@ import org.geotools.referencing.CRS;
 import org.geotools.referencing.factory.AbstractAuthorityFactory;
 import org.geotools.referencing.factory.DeferredAuthorityFactory;
 import org.geotools.util.WeakCollectionCleaner;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
@@ -56,8 +67,6 @@ import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.filter.SpatialFilter;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.service.ServiceContextListener;
-import org.n52.iceland.util.Cleanupable;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.EpsgConstants;
@@ -66,15 +75,8 @@ import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.util.Range;
 import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.util.Validation;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CRSAuthorityFactory;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.iceland.util.lifecycle.Constructable;
+import org.n52.iceland.util.lifecycle.Destroyable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -86,12 +88,12 @@ import com.vividsolutions.jts.geom.Geometry;
 /**
  * Class to provide some methods for JTS Geometry which is used by
  * {@link org.n52.sos.ds.FeatureQueryHandler}.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 @Configurable
-public class GeometryHandler implements Cleanupable, EpsgConstants {
+public class GeometryHandler implements Constructable, Destroyable, EpsgConstants {
 
     /*
      * longitude = east-west latitude = north-south
@@ -100,73 +102,42 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
     private static final Logger LOGGER = LoggerFactory.getLogger(GeometryHandler.class);
 
     private static GeometryHandler instance;
-
-    private static ReentrantLock creationLock = new ReentrantLock();
-
     private boolean datasoureUsesNorthingFirst;
-
-    private List<Range> epsgsWithNorthingFirstAxisOrder = Lists.newArrayList();
-
+    private final List<Range> epsgsWithNorthingFirstAxisOrder = Lists.newArrayList();
     private int storageEPSG;
-
     private int storage3DEPSG;
-
     private int defaultResponseEPSG;
-
     private int defaultResponse3DEPSG;
-
-    private Set<String> supportedCRS = Sets.newHashSet();
-
+    private final Set<String> supportedCRS = Sets.newHashSet();
     private boolean spatialDatasource;
-
     private String authority;
-
     private CRSAuthorityFactory crsAuthority;
+    private final Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();;
 
-    private Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();;
+    @Inject
+    private SettingsManager settingsManager;
 
-    /**
-     * Private constructor
-     */
-    private GeometryHandler() {
+    public GeometryHandler() {
+        GeometryHandler.instance = this;
     }
 
     /**
      * @return Returns a singleton instance of the GeometryHandler.
      */
     public static GeometryHandler getInstance() {
-        init();
         return instance;
-    }
-    
-    private static void init() {
-        if (instance == null) {
-            creationLock.lock();
-            try {
-                if (instance == null) {
-                    // don't set instance before configuring, or other threads
-                    // can get access to unconfigured instance!
-                    final GeometryHandler newInstance = new GeometryHandler();
-                    SettingsManager.getInstance().configure(newInstance);
-                    newInstance.initCrsAuthoritycrsAuthority();
-                    instance = newInstance;
-                    ServiceContextListener.registerShutdownHook(instance);
-                }
-            } finally {
-                creationLock.unlock();
-            }
-        }
-    }
-
-    private void initCrsAuthoritycrsAuthority() {
-        crsAuthority =
-                getCRSAuthorityFactory(authority, new Hints(FORCE_LONGITUDE_FIRST_AXIS_ORDER,
-                        isEastingFirstEpsgCode(getStorageEPSG())));
-
     }
 
     @Override
-    public void cleanup() {
+    public void init() {
+        settingsManager.configure(this);
+        crsAuthority = getCRSAuthorityFactory(
+                authority, new Hints(FORCE_LONGITUDE_FIRST_AXIS_ORDER,
+                        isEastingFirstEpsgCode(getStorageEPSG())));
+    }
+
+    @Override
+    public void destroy() {
         if (getCrsAuthorityFactory() != null) {
             if (getCrsAuthorityFactory() instanceof DeferredAuthorityFactory) {
                 DeferredAuthorityFactory.exit();
@@ -187,7 +158,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Get configured storage EPSG code
-     * 
+     *
      * @return Storage EPSG code
      */
     public int getStorageEPSG() {
@@ -196,7 +167,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Get configured storage 3D EPSG code
-     * 
+     *
      * @return Storage 3D EPSG code
      */
     public int getStorage3DEPSG() {
@@ -205,7 +176,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Get configured default response EPSG code
-     * 
+     *
      * @return Default response EPSG code
      */
     public int getDefaultResponseEPSG() {
@@ -214,7 +185,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Get configured default response 3D EPSG code
-     * 
+     *
      * @return Default response 3D EPSG code
      */
     public int getDefaultResponse3DEPSG() {
@@ -223,7 +194,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Set storage EPSG code from settings
-     * 
+     *
      * @param epsgCode
      *            EPSG code from settings
      * @throws ConfigurationException
@@ -238,7 +209,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Set storage 3D EPSG code from settings
-     * 
+     *
      * @param epsgCode3D
      *            3D EPSG code from settings
      * @throws ConfigurationException
@@ -253,7 +224,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Set default response EPSG code from settings
-     * 
+     *
      * @param epsgCode
      *            EPSG code from settings
      * @throws ConfigurationException
@@ -268,7 +239,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Set default response 3D EPSG code from settings
-     * 
+     *
      * @param epsgCode3D
      *            3D EPSG code from settings
      * @throws ConfigurationException
@@ -283,7 +254,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Set the supported EPSG codes
-     * 
+     *
      * @param supportedCRS
      *            Supported EPSG codes
      * @throws ConfigurationException
@@ -307,7 +278,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Add integer EPSG code to supported CRS set
-     * 
+     *
      * @param epsgCode
      *            Integer EPSG code
      */
@@ -317,7 +288,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Set the northing first indicator for the datasource
-     * 
+     *
      * @param datasoureUsesNorthingFirst
      *            Northing first indicator
      */
@@ -328,7 +299,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Check if the datasource uses northing first coordinates
-     * 
+     *
      * @return <code>true</code>, if the datasource uses northing first
      *         coordinates
      */
@@ -338,7 +309,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Set the EPSG code ranges for which the coordinates should be switched
-     * 
+     *
      * @param codes
      *            EPSG code ranges
      * @throws ConfigurationException
@@ -366,7 +337,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
     /**
      * Set flag if the used datasource is a spatial datasource (provides spatial
      * functions)
-     * 
+     *
      * @param spatialDatasource
      *            Flag if spatial datasource
      */
@@ -377,7 +348,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Check if the EPSG code is northing first
-     * 
+     *
      * @param epsgCode
      *            EPSG code to check
      * @return <code>true</code>, if the EPSG code is northing first
@@ -393,7 +364,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Check if the EPSG code is easting first
-     * 
+     *
      * @param epsgCode
      *            EPSG code to check
      * @return <code>true</code>, if the EPSG code is easting first
@@ -404,7 +375,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Is datasource a spatial datasource
-     * 
+     *
      * @return Spatial datasource or not
      */
     public boolean isSpatialDatasource() {
@@ -413,7 +384,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Switch the coordinate axis of geometry from or for datasource
-     * 
+     *
      * @param geom
      *            Geometry to switch coordinate axis
      * @return Geometry with switched coordinate axis if needed
@@ -450,7 +421,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Get filter geometry for BBOX spatial filter and non spatial datasource
-     * 
+     *
      * @param filter
      *            SpatialFilter
      * @return SpatialFilter geometry
@@ -470,7 +441,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Get WKT string from longitude and latitude
-     * 
+     *
      * @param longitude
      *            Longitude coordinate
      * @param latitude
@@ -494,7 +465,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
     /**
      * Get WKT string from longitude and latitude with axis order as defined by
      * EPSG code.
-     * 
+     *
      * @param longitude
      *            Longitude coordinate
      * @param latitude
@@ -512,7 +483,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Check if geometry is in SpatialFilter envelopes
-     * 
+     *
      * @param geometry
      *            Geometry to check
      * @param envelopes
@@ -532,7 +503,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Transforms the geometry to the storage EPSG code
-     * 
+     *
      * @param geometry
      *            Geometry to transform
      * @return Transformed geometry
@@ -554,7 +525,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Transform geometry to this EPSG code
-     * 
+     *
      * @param geometry
      *            Geometry to transform
      * @param targetSRID
@@ -576,7 +547,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Transform geometry
-     * 
+     *
      * @param geometry
      *            Geometry to transform
      * @param targetSRID
@@ -600,21 +571,14 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
             Geometry transformed = JTS.transform(switchedCoordiantes, transform);
             transformed.setSRID(targetSRID);
             return transformed;
-        } catch (FactoryException fe) {
-            throw new NoApplicableCodeException().causedBy(fe).withMessage("The EPSG code '%s' is not supported!",
-                    switchedCoordiantes.getSRID());
-        } catch (MismatchedDimensionException mde) {
-            throw new NoApplicableCodeException().causedBy(mde).withMessage("The EPSG code '%s' is not supported!",
-                    switchedCoordiantes.getSRID());
-        } catch (TransformException te) {
-            throw new NoApplicableCodeException().causedBy(te).withMessage("The EPSG code '%s' is not supported!",
-                    switchedCoordiantes.getSRID());
+        } catch (FactoryException | MismatchedDimensionException | TransformException fe) {
+            throw new NoApplicableCodeException().causedBy(fe).withMessage("The EPSG code '%s' is not supported!", switchedCoordiantes.getSRID());
         }
     }
 
     /**
      * Get CRS from EPSG code
-     * 
+     *
      * @param epsgCode
      *            EPSG code to get CRS for
      * @return CRS fro EPSG code
@@ -632,7 +596,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Create CRS for EPSG code
-     * 
+     *
      * @param epsgCode
      *            EPSG code to create CRS for
      * @return Created CRS
@@ -653,7 +617,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Get CSR authority
-     * 
+     *
      * @return CRS authority
      */
     private CRSAuthorityFactory getCrsAuthorityFactory() {
@@ -662,7 +626,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Get List of supported EPSG codes
-     * 
+     *
      * @return Supported EPSG codes
      */
     public Set<String> getSupportedCRS() {
@@ -682,7 +646,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     /**
      * Transform envelope from source to target EPSG code
-     * 
+     *
      * @param envelope
      *            Envelope to transform
      * @param sourceSRID

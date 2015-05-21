@@ -28,19 +28,11 @@
  */
 package org.n52.sos.cache.ctrl.persistence;
 
-import java.io.File;
 
 import org.n52.iceland.cache.ContentCache;
 
 public class ImmediatePersistenceStrategy
         extends AbstractPersistingCachePersistenceStrategy {
-
-    public ImmediatePersistenceStrategy() {
-    }
-
-    public ImmediatePersistenceStrategy(File cacheFile) {
-        super(cacheFile);
-    }
 
     @Override
     public void persistOnPartialUpdate(ContentCache cache) {

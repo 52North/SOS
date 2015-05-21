@@ -33,8 +33,9 @@ import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
-import org.n52.iceland.util.CompositeParallelAction;
+import org.n52.iceland.util.action.CompositeParallelAction;
 import org.n52.sos.ds.hibernate.ThreadLocalSessionFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

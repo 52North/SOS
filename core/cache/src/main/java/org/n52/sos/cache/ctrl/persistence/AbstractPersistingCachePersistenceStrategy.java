@@ -35,35 +35,37 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import javax.inject.Inject;
+
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.cache.ContentCachePersistenceStrategy;
 import org.n52.iceland.cache.WritableContentCache;
-import org.n52.iceland.service.Configurator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.iceland.service.ConfigLocationProvider;
+import org.n52.iceland.util.lifecycle.Constructable;
 
 import com.google.common.base.Optional;
 
 public abstract class AbstractPersistingCachePersistenceStrategy
-        implements ContentCachePersistenceStrategy {
+        implements ContentCachePersistenceStrategy, Constructable {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(AbstractPersistingCachePersistenceStrategy.class);
-    private static final String CACHE_FILE = "cache.tmp";
-    private final String cacheFile;
+    public static final String CACHE_FILE = "cache.tmp";
+    private String cacheFile;
 
-    public AbstractPersistingCachePersistenceStrategy() {
-        this(null);
+    private ConfigLocationProvider configLocationProvider;
+
+    @Inject
+    public void setConfigLocationProvider(ConfigLocationProvider configLocationProvider) {
+        this.configLocationProvider = configLocationProvider;
     }
 
-    public AbstractPersistingCachePersistenceStrategy(File cacheFile) {
-        if (cacheFile == null) {
-            String basePath = Configurator.getInstance().getBasePath();
-            this.cacheFile = new File(basePath, CACHE_FILE).getAbsolutePath();
-        } else {
-            this.cacheFile = cacheFile.getAbsolutePath();
-        }
-        LOGGER.debug("Cache file: {}", this.cacheFile);
+    @Override
+    public void init() {
+        this.cacheFile = new File(configLocationProvider.get(), CACHE_FILE).getAbsolutePath();
     }
 
     protected File getCacheFile() {
@@ -80,10 +82,7 @@ public abstract class AbstractPersistingCachePersistenceStrategy
             try {
                 in = new ObjectInputStream(new FileInputStream(f));
                 return Optional.of((WritableContentCache) in.readObject());
-            } catch (IOException t) {
-                LOGGER.error(String.format("Error reading cache file '%s'",
-                                           f.getAbsolutePath()), t);
-            } catch (ClassNotFoundException t) {
+            } catch (IOException | ClassNotFoundException t) {
                 LOGGER.error(String.format("Error reading cache file '%s'",
                                            f.getAbsolutePath()), t);
             } finally {
@@ -123,7 +122,7 @@ public abstract class AbstractPersistingCachePersistenceStrategy
     }
 
     @Override
-    public void cleanup() {
+    public void remove() {
         File f = getCacheFile();
         if (f != null && f.exists()) {
             f.delete();

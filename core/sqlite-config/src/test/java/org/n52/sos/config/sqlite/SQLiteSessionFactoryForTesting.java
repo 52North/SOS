@@ -33,9 +33,10 @@ import java.io.IOException;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.n52.iceland.ds.ConnectionProviderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProviderException;
 
 /**
  * When testing, make the sqlite config database a temp file and delete on cleanup.
@@ -91,8 +92,8 @@ public class SQLiteSessionFactoryForTesting extends SQLiteSessionFactory {
     }
 
     @Override
-    public void cleanup() {
-    	super.cleanup();
+    public void destroy() {
+    	super.destroy();
     	if (dbFile != null && dbFile.exists() && dbFile.canWrite()){
     		dbFile.delete();
     	}

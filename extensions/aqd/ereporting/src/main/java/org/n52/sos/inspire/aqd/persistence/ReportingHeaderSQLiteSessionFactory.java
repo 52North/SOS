@@ -32,19 +32,22 @@ import java.io.File;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.service.ServiceContextListener;
-import org.n52.sos.config.sqlite.SQLiteSessionFactory;
-import org.n52.sos.ds.hibernate.AbstractSessionFactoryProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.service.ConfigLocationProvider;
+import org.n52.sos.config.sqlite.SQLiteSessionFactory;
+import org.n52.sos.ds.hibernate.AbstractSessionFactoryProvider;
 
 /**
  * TODO JavaDoc
@@ -56,41 +59,15 @@ public class ReportingHeaderSQLiteSessionFactory extends AbstractSessionFactoryP
 
     protected static final String DEFAULT_DATABASE_NAME = "eReportingHeader";
 
-    private final Properties defaultProperties = new Properties() {
-        private static final long serialVersionUID = 3109256773218160485L;
-        {
-            put(SQLiteSessionFactory.HIBERNATE_CONNECTION_URL, getFilename());
-            put(SQLiteSessionFactory.HIBERNATE_UPDATE_SCHEMA, SQLiteSessionFactory.UPDATE_SCHEMA_VALUE);
-            put(SQLiteSessionFactory.HIBERNATE_DIALECT, SQLiteSessionFactory.SQLITE_HIBERNATE_DIALECT);
-            put(SQLiteSessionFactory.HIBERNATE_CONNECTION_DRIVER_CLASS, SQLiteSessionFactory.SQLITE_JDBC_DRIVER);
-            put(SQLiteSessionFactory.HIBERNATE_CONNECTION_USERNAME, SQLiteSessionFactory.EMPTY);
-            put(SQLiteSessionFactory.HIBERNATE_CONNECTION_PASSWORD, SQLiteSessionFactory.EMPTY);
-            put(SQLiteSessionFactory.HIBERNATE_CONNECTION_POOL_SIZE,
-                    String.valueOf(SQLiteSessionFactory.SQLITE_CONNECTION_POOL_SIZE));
-            put(SQLiteSessionFactory.HIBERNATE_CONNECTION_RELEASE_MODE,
-                    SQLiteSessionFactory.RELEASE_MODE_AFTER_TRANSACTION);
-            put(SQLiteSessionFactory.HIBERNATE_CURRENT_SESSION_CONTEXT,
-                    SQLiteSessionFactory.THREAD_LOCAL_SESSION_CONTEXT);
-        }
-    };
+    @Inject
+    private ConfigLocationProvider configLocationProvider;
 
     private final ReentrantLock lock = new ReentrantLock();
 
     private SessionFactory sessionFactory;
 
     private String getFilename() {
-        String path = null;
-        try {
-            path = ServiceContextListener.getPath();
-        } catch (Throwable t) {
-        }
-        if (path == null) {
-            path = System.getProperty("user.dir");
-            LOG.warn("Context path is not set; using {} instead", path);
-        } else {
-            path = new File(path).getAbsolutePath();
-        }
-        path = path + File.separator + DEFAULT_DATABASE_NAME;
+        String path = new File(configLocationProvider.get(), DEFAULT_DATABASE_NAME).getAbsolutePath();
         return String.format(SQLiteSessionFactory.CONNECTION_URL_TEMPLATE, path);
     }
 
@@ -112,10 +89,27 @@ public class ReportingHeaderSQLiteSessionFactory extends AbstractSessionFactoryP
         if (properties != null) {
             cfg.mergeProperties(properties);
         }
-        cfg.mergeProperties(defaultProperties);
+        cfg.mergeProperties(getDefaultProperties());
         ServiceRegistry serviceRegistry =
                 new StandardServiceRegistryBuilder().applySettings(cfg.getProperties()).build();
         return cfg.buildSessionFactory(serviceRegistry);
+    }
+
+    private Properties getDefaultProperties() {
+        return new Properties() {
+        private static final long serialVersionUID = 3109256773218160485L;
+        {
+            put(SQLiteSessionFactory.HIBERNATE_CONNECTION_URL, getFilename());
+            put(SQLiteSessionFactory.HIBERNATE_UPDATE_SCHEMA, SQLiteSessionFactory.UPDATE_SCHEMA_VALUE);
+            put(SQLiteSessionFactory.HIBERNATE_DIALECT, SQLiteSessionFactory.SQLITE_HIBERNATE_DIALECT);
+            put(SQLiteSessionFactory.HIBERNATE_CONNECTION_DRIVER_CLASS, SQLiteSessionFactory.SQLITE_JDBC_DRIVER);
+            put(SQLiteSessionFactory.HIBERNATE_CONNECTION_USERNAME, SQLiteSessionFactory.EMPTY);
+            put(SQLiteSessionFactory.HIBERNATE_CONNECTION_PASSWORD, SQLiteSessionFactory.EMPTY);
+            put(SQLiteSessionFactory.HIBERNATE_CONNECTION_POOL_SIZE, String.valueOf(SQLiteSessionFactory.SQLITE_CONNECTION_POOL_SIZE));
+            put(SQLiteSessionFactory.HIBERNATE_CONNECTION_RELEASE_MODE, SQLiteSessionFactory.RELEASE_MODE_AFTER_TRANSACTION);
+            put(SQLiteSessionFactory.HIBERNATE_CURRENT_SESSION_CONTEXT, SQLiteSessionFactory.THREAD_LOCAL_SESSION_CONTEXT);
+        }
+    };
     }
 
     @Override
@@ -145,9 +139,9 @@ public class ReportingHeaderSQLiteSessionFactory extends AbstractSessionFactoryP
     public String getConnectionProviderIdentifier() {
         return "SQLiteHibernateReportingHeader";
     }
-    
+
     @Override
-    public void cleanup() {
+    public void destroy() {
         try {
             Session session = getConnection();
             if (session.isOpen()) {
@@ -156,6 +150,6 @@ public class ReportingHeaderSQLiteSessionFactory extends AbstractSessionFactoryP
         } catch (ConnectionProviderException cpe) {
            LOG.error("Error while closing connection!", cpe);
         }
-        super.cleanup();
+        super.destroy();
     }
 }

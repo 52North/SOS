@@ -131,7 +131,7 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         } finally {
             returnSession(session);
         }
-        SettingsManager.getInstance().cleanup();
+        SettingsManager.getInstance().destroy();
     }
 
     @Test

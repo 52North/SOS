@@ -110,7 +110,7 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
 
         // reinitialize
         if (Configurator.getInstance() != null) {
-            Configurator.getInstance().cleanup();
+            Configurator.getInstance().destroy();
         }
 
         Configurator.createInstance(getDatabaseSettingsHandler().getAll(), getBasePath());

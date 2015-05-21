@@ -1,0 +1,103 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+    <bean id="icelandServlet" class="org.n52.iceland.service.Service" />
+
+    <bean id="configurator" class="org.n52.iceland.service.Configurator" />
+
+    <bean id="contentCacheController" class="org.n52.sos.cache.ctrl.ContentCacheControllerImpl" />
+    <bean id="cachePersistenceStrategy" class="org.n52.sos.cache.ctrl.persistence.AsyncCachePersistenceStrategy" />
+
+
+    <bean id="serviceProviderFactory" class="org.n52.iceland.ogc.ows.ServiceProviderFactory" />
+    <bean id="serviceIdentificationFactory" class="org.n52.iceland.ogc.ows.ServiceIdentificationFactory" />
+
+    <bean id="settingsManager" class="org.n52.sos.config.sqlite.ExtensionEnabledSQLiteSettingsManager" />
+
+    <bean id="bindingRepository"
+          class="org.n52.iceland.binding.BindingRepository" />
+    <bean id="operationHandlerRepository"
+          class="org.n52.iceland.ds.OperationHandlerRepository" />
+
+    <bean id="converterRepository"
+          class="org.n52.iceland.convert.ConverterRepository" />
+    <bean id="requestOperatorRepository"
+          class="org.n52.iceland.request.operator.RequestOperatorRepository" />
+    <bean id="requestResponseModifierRepository"
+          class="org.n52.iceland.convert.RequestResponseModifierRepository" />
+    <bean id="serviceOperatorRepository"
+          class="org.n52.iceland.service.operator.ServiceOperatorRepository" />
+    <bean id="i18nDaoRepository"
+          class="org.n52.iceland.i18n.I18NDAORepository" />
+    <bean id="owsExtendedCapabilitiesRepository"
+          class="org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesRepository" />
+    <bean id="offeringExtensionRepository"
+          class="org.n52.iceland.ogc.swes.OfferingExtensionRepository" />
+    <bean id="capabilitiesExtensionRepository"
+          class="org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository" />
+    <bean id="settingDefinitionProviderRepository"
+          class="org.n52.iceland.config.SettingDefinitionProviderRepository" />
+    <bean id="codingRepository"
+          class="org.n52.iceland.coding.CodingRepository" />
+
+    <bean id="reportObligationRepository"
+          class="org.n52.sos.inspire.aqd.ReportObligationRepository" />
+    <bean id="reportingHeaderSQLiteManager"
+          class="org.n52.sos.inspire.aqd.persistence.ReportingHeaderSQLiteManager" />
+    <bean id="reportingHeaderSQLiteSessionFactory"
+          class="org.n52.sos.inspire.aqd.persistence.ReportingHeaderSQLiteSessionFactory" />
+
+    <bean id="additionalObservationCreatorRepository"
+          class="org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository" />
+    <bean id="hibernateProcedureDescriptionGeneratorRepository"
+          class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorRepository" />
+    <bean id="geometryHandler" class="org.n52.sos.util.GeometryHandler" />
+
+
+    <!--
+    <bean id="contentCacheController" class="org.n52.sos.cache.ctrl.ContentCacheControllerImpl" />
+    <bean id="settingsManager" class="org.n52.sos.config.sqlite.ExtensionEnabledSQLiteSettingsManager" />
+    -->
+
+    <!--
+    <import resource="components/bindings.xml" />
+    <import resource="components/settings.xml" />
+    <import resource="components/decoders.xml" />
+    <import resource="components/encoders.xml" />
+    <import resource="components/cache.xml" />
+    <import resource="components/serviceOperators.xml" />
+    <import resource="components/requestOperators.xml" />
+    <import resource="components/converters.xml" />
+    <import resource="components/modifiers.xml" />
+    <import resource="components/handlers.xml" />
+    <import resource="components/daos.xml" />
+    <import resource="components/datasource.xml" />
+    <import resource="components/events.xml" />
+    <import resource="components/responseWriters.xml" />
+    -->
+
+    <!--
+        org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProvider
+    -->
+
+    <!-- OwsExtendedCapabilitiesProvider implementations from extensions/inspire/code -->
+    <!--    <bean class="org.n52.sos.inspire.capabilities.InspireExtendedCapabilitiesProvider"/>-->
+
+
+    <!--
+        org.n52.iceland.ogc.swes.OfferingExtensionProvider
+    -->
+
+    <!-- OfferingExtensionProvider implementations from extensions/inspire/code -->
+    <!--    <bean class="org.n52.sos.inspire.offering.InspireOfferingExtensionProvider"/>-->
+
+    <!--
+        org.n52.sos.service.profile.ProfileHandler
+    -->
+
+    <!-- ProfileHandler implementations from core/profile/coding -->
+    <!--    <bean class="org.n52.sos.profile.ProfileHandlerImpl"/>-->
+
+</beans>

@@ -31,6 +31,7 @@ package org.n52.sos.service.it;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
+
 import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.service.Service;
 
@@ -113,6 +114,6 @@ public class SosComplianceTestSuite extends MockHttpExecutor
 
     @AfterClass
     public static void cleanup() {
-        SettingsManager.getInstance().cleanup();
+        SettingsManager.getInstance().destroy();
     }
 }

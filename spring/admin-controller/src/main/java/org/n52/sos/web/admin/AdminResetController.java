@@ -28,11 +28,7 @@
  */
 package org.n52.sos.web.admin;
 
-import org.n52.iceland.cache.ContentCachePersistenceStrategy;
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.service.Configurator;
-import org.n52.sos.web.common.ControllerConstants;
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +38,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
+import org.n52.iceland.cache.ContentCachePersistenceStrategy;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.service.Configurator;
+import org.n52.sos.context.ContextSwitcher;
+import org.n52.sos.web.common.ControllerConstants;
+
 /**
  * @since 4.0.0
  *
@@ -50,6 +54,12 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping(ControllerConstants.Paths.ADMIN_RESET)
 public class AdminResetController extends AbstractAdminController {
     private static final Logger LOG = LoggerFactory.getLogger(AdminResetController.class);
+
+    @Inject
+    private ContextSwitcher contextSwitcher;
+
+    @Inject
+    private SettingsManager settingsManager;
 
     @RequestMapping(method = RequestMethod.GET)
     public String get() {
@@ -65,16 +75,18 @@ public class AdminResetController extends AbstractAdminController {
                     .getCacheController().getContentCachePersistenceStrategy();
             LOG.debug("Resetting configurator.");
             // this one also will persist the cache file
-            Configurator.getInstance().cleanup();
+            Configurator.getInstance().destroy();
         }
         getDatabaseSettingsHandler().delete();
+        this.settingsManager.deleteAll();
 
-        getSettingsManager().deleteAll();
 
         // delete a cache file if present
         if (persistenceStrategy != null) {
-            persistenceStrategy.cleanup();
+            persistenceStrategy.remove();
         }
+
+        this.contextSwitcher.reloadContext();
 
         return new RedirectView(ControllerConstants.Paths.LOGOUT, true);
     }

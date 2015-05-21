@@ -31,16 +31,17 @@ package org.n52.sos.config.sqlite;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.util.Cleanupable;
+import org.n52.iceland.util.lifecycle.Destroyable;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public abstract class SQLiteManager implements Cleanupable {
+public abstract class SQLiteManager implements Destroyable {
     private ConnectionProvider connectionProvider;
 
     public ConnectionProvider getConnectionProvider() {
@@ -63,10 +64,10 @@ public abstract class SQLiteManager implements Cleanupable {
     }
 
     @Override
-    public void cleanup() {
+    public void destroy() {
         synchronized (this) {
             if (this.connectionProvider != null) {
-                this.connectionProvider.cleanup();
+                this.connectionProvider.destroy();
             }
         }
     }

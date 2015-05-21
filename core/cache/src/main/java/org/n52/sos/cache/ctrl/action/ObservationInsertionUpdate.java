@@ -38,8 +38,9 @@ import org.n52.iceland.ogc.om.NamedValue;
 import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.util.Action;
+import org.n52.iceland.util.action.Action;
 import org.n52.sos.request.InsertObservationRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

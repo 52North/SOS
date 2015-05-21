@@ -12,4 +12,6 @@
     <!-- default logging backend configurator -->
     <bean class="org.n52.sos.web.admin.LogBackLoggingConfigurator" />
 
+    <import resource="sos-context.xml" />
+
 </beans>

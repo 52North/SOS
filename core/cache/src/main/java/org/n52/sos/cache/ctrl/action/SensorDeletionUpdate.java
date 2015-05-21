@@ -32,8 +32,9 @@ import java.util.Set;
 
 import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.util.Action;
+import org.n52.iceland.util.action.Action;
 import org.n52.sos.request.DeleteSensorRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

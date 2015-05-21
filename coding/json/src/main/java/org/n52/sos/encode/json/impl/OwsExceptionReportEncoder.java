@@ -92,7 +92,7 @@ public class OwsExceptionReportEncoder extends JSONEncoder<OwsExceptionReport> {
                 exception.put(TEXT, message);
             }
             if (log.isDebugEnabled()) {
-                exception.put(STACK_TRACE, encodeStackTrace(ce));
+                exception.set(STACK_TRACE, encodeStackTrace(ce));
             }
         }
         return exceptionReport;

@@ -141,7 +141,7 @@ public final class JSONValidator {
 
     public String encode(final ProcessingReport report, final JsonNode instance) {
         final ObjectNode objectNode = JSONUtils.nodeFactory().objectNode();
-        objectNode.put(JSONConstants.INSTANCE, instance);
+        objectNode.set(JSONConstants.INSTANCE, instance);
         final ArrayNode errors = objectNode.putArray(JSONConstants.ERRORS);
         for (final ProcessingMessage m : report) {
             errors.add(m.asJson());

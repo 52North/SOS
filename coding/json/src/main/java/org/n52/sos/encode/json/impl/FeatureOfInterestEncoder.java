@@ -91,7 +91,7 @@ public class FeatureOfInterestEncoder extends JSONEncoder<AbstractFeature> {
 
     private void encodeIdentifier(SamplingFeature sf, ObjectNode json) {
         if (sf.isSetIdentifier()) {
-            json.put(JSONConstants.IDENTIFIER, encodeCodeWithAuthority(sf.getIdentifierCodeWithAuthority()));
+            json.set(JSONConstants.IDENTIFIER, encodeCodeWithAuthority(sf.getIdentifierCodeWithAuthority()));
         }
 
     }
@@ -99,7 +99,7 @@ public class FeatureOfInterestEncoder extends JSONEncoder<AbstractFeature> {
     private void encodeNames(SamplingFeature samplingFeature, ObjectNode json) {
         if (samplingFeature.isSetName()) {
             if (samplingFeature.getName().size() == 1) {
-                json.put(JSONConstants.NAME, encodeCodeType(samplingFeature.getName().iterator().next()));
+                json.set(JSONConstants.NAME, encodeCodeType(samplingFeature.getName().iterator().next()));
             } else {
                 ArrayNode names = json.putArray(JSONConstants.NAME);
                 for (CodeType name : samplingFeature.getName()) {
@@ -112,7 +112,7 @@ public class FeatureOfInterestEncoder extends JSONEncoder<AbstractFeature> {
     private void encodeSampledFeatures(SamplingFeature sf, ObjectNode json) throws OwsExceptionReport {
         if (sf.isSetSampledFeatures()) {
             if (sf.getSampledFeatures().size() == 1) {
-                json.put(JSONConstants.SAMPLED_FEATURE, encodeObjectToJson(sf.getSampledFeatures().iterator().next()));
+                json.set(JSONConstants.SAMPLED_FEATURE, encodeObjectToJson(sf.getSampledFeatures().iterator().next()));
             } else {
                 ArrayNode sampledFeatures = json.putArray(JSONConstants.SAMPLED_FEATURE);
                 for (AbstractFeature sampledFeature : sf.getSampledFeatures()) {
@@ -124,7 +124,7 @@ public class FeatureOfInterestEncoder extends JSONEncoder<AbstractFeature> {
 
     private void encodeGeometry(SamplingFeature sf, ObjectNode json) throws OwsExceptionReport {
         if (sf.isSetGeometry()) {
-            json.put(JSONConstants.GEOMETRY, encodeObjectToJson(sf.getGeometry()));
+            json.set(JSONConstants.GEOMETRY, encodeObjectToJson(sf.getGeometry()));
         }
     }
 }

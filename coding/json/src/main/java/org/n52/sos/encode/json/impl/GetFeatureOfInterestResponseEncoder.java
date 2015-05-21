@@ -50,6 +50,6 @@ public class GetFeatureOfInterestResponseEncoder extends AbstractSosResponseEnco
 
     @Override
     protected void encodeResponse(ObjectNode json, GetFeatureOfInterestResponse t) throws OwsExceptionReport {
-        json.put(JSONConstants.FEATURE_OF_INTEREST, encodeObjectToJson(t.getAbstractFeature()));
+        json.set(JSONConstants.FEATURE_OF_INTEREST, encodeObjectToJson(t.getAbstractFeature()));
     }
 }

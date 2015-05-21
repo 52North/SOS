@@ -116,7 +116,7 @@ public class GeoJSONEncoder extends JSONEncoder<Geometry> {
         Preconditions.checkNotNull(geometry);
         ObjectNode json = jsonFactory.objectNode();
         json.put(TYPE, POINT);
-        json.put(COORDINATES, encodeCoordinates(geometry));
+        json.set(COORDINATES, encodeCoordinates(geometry));
         encodeCRS(json, geometry, parentSrid);
         return json;
     }
@@ -124,7 +124,7 @@ public class GeoJSONEncoder extends JSONEncoder<Geometry> {
     protected ObjectNode encode(LineString geometry, int parentSrid) {
         Preconditions.checkNotNull(geometry);
         ObjectNode json = jsonFactory.objectNode();
-        json.put(TYPE, LINE_STRING).put(COORDINATES, encodeCoordinates(geometry));
+        json.put(TYPE, LINE_STRING).set(COORDINATES, encodeCoordinates(geometry));
         encodeCRS(json, geometry, parentSrid);
         return json;
     }
@@ -132,7 +132,7 @@ public class GeoJSONEncoder extends JSONEncoder<Geometry> {
     protected ObjectNode encode(Polygon geometry, int parentSrid) {
         Preconditions.checkNotNull(geometry);
         ObjectNode json = jsonFactory.objectNode();
-        json.put(TYPE, POLYGON).put(COORDINATES, encodeCoordinates(geometry));
+        json.put(TYPE, POLYGON).set(COORDINATES, encodeCoordinates(geometry));
         encodeCRS(json, geometry, parentSrid);
         return json;
     }

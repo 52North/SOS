@@ -194,7 +194,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
 

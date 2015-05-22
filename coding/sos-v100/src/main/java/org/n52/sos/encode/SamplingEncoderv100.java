@@ -111,7 +111,7 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
 

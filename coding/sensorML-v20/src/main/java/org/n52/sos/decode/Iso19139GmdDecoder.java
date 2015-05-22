@@ -79,7 +79,7 @@ public class Iso19139GmdDecoder implements Decoder<Object, Object> {
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 

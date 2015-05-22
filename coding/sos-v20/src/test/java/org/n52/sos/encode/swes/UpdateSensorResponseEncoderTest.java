@@ -85,7 +85,7 @@ public class UpdateSensorResponseEncoderTest {
 
     @Test
     public void should_return_correct_encoder_keys() {
-        Set<EncoderKey> returnedKeySet = new UpdateSensorResponseEncoder().getEncoderKeyType();
+        Set<EncoderKey> returnedKeySet = new UpdateSensorResponseEncoder().getKeys();
         assertThat(returnedKeySet.size(), is(3));
         assertThat(returnedKeySet, hasItem(new XmlEncoderKey(SwesConstants.NS_SWES_20, UpdateSensorResponse.class)));
         assertThat(returnedKeySet, hasItem(new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,

@@ -101,7 +101,7 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implem
     public Soap12Encoder() {
         super(SoapConstants.NS_SOAP_12);
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
-                Joiner.on(", ").join(getEncoderKeyType()));
+                Joiner.on(", ").join(getKeys()));
     }
 
     @Override
@@ -111,8 +111,8 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
-        return Collections.unmodifiableSet(CollectionHelper.union(ENCODER_KEY_TYPES, super.getEncoderKeyType()));
+    public Set<EncoderKey> getKeys() {
+        return Collections.unmodifiableSet(CollectionHelper.union(ENCODER_KEY_TYPES, super.getKeys()));
     }
 
     @Override

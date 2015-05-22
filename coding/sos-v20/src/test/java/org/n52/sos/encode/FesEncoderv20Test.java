@@ -90,7 +90,7 @@ public class FesEncoderv20Test {
         final Set<EncoderKey> expectedKeySet =
                 CodingHelper.encoderKeysForElements(FilterConstants.NS_FES_2, TemporalFilter.class,
                         org.n52.iceland.ogc.filter.FilterCapabilities.class, SpatialFilter.class);
-        final Set<EncoderKey> returnedKeySet = fesEncoder.getEncoderKeyType();
+        final Set<EncoderKey> returnedKeySet = fesEncoder.getKeys();
 
         assertThat(returnedKeySet.size(), is(3));
         assertThat(returnedKeySet, is(expectedKeySet));

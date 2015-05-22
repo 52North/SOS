@@ -79,7 +79,7 @@ public class SosRequestEncoderv20 extends AbstractXmlEncoder<AbstractServiceRequ
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
 

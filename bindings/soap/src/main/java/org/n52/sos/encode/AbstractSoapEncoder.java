@@ -92,7 +92,7 @@ public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Consta
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(encoderKey);
     }
 

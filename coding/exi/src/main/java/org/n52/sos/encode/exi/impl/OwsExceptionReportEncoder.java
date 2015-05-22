@@ -73,7 +73,7 @@ public class OwsExceptionReportEncoder implements Encoder<EXIObject, OwsExceptio
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(encoderKeys);
     }
 

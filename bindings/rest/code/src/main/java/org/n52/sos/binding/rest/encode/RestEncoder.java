@@ -204,7 +204,7 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS) ;
     }
     

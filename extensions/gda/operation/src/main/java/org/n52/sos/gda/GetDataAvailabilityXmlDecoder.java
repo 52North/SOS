@@ -96,7 +96,7 @@ public class GetDataAvailabilityXmlDecoder extends AbstractXmlDecoder<GetDataAva
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 

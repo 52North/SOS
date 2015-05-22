@@ -135,7 +135,7 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> imple
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return encoderKeys;
     }
 

@@ -110,7 +110,7 @@ public abstract class JSONDecoder<T> implements Decoder<T, JsonNode> {
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(decoderKeys);
     }
 

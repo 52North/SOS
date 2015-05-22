@@ -80,7 +80,7 @@ public abstract class AbstractSoapDecoder implements Decoder<SoapRequest, XmlObj
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(decoderKeys);
     }
 

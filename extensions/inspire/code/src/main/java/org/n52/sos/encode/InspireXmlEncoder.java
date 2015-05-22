@@ -91,7 +91,7 @@ public class InspireXmlEncoder extends AbstractXmlEncoder<Object> {
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return ENCODER_KEYS;
     }
 

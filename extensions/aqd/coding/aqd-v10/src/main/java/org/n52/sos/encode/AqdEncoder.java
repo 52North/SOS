@@ -90,7 +90,7 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEY_TYPES);
     }
 

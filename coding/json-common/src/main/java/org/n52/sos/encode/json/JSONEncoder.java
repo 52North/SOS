@@ -76,7 +76,7 @@ public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(encoderKeys);
     }
 

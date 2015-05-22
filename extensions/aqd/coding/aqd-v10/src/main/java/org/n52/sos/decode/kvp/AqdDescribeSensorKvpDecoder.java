@@ -43,7 +43,7 @@ public class AqdDescribeSensorKvpDecoder  extends DescribeSensorKvpDecoderv20 {
     private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(AqdConstants.AQD, AqdConstants.VERSION, SosConstants.Operations.DescribeSensor, MediaTypes.APPLICATION_KVP);
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.singleton(KVP_DECODER_KEY_TYPE);
     }
 

@@ -634,7 +634,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
      * @return True or false
      */
     private boolean checkEncodProcedureForEncoderKeys(Encoder<?, ?> encoder) {
-        Set<EncoderKey> encoderKeyType = encoder.getEncoderKeyType();
+        Set<EncoderKey> encoderKeyType = encoder.getKeys();
         for (EncoderKey encoderKey : encoderKeyType) {
             if (encoderKey instanceof XmlEncoderKey) {
                 if (ProfileHandler.getInstance().getActiveProfile()

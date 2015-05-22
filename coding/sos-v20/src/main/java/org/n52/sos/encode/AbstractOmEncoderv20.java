@@ -405,7 +405,7 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
      * @return True or false
      */
     private boolean checkEncodProcedureForEncoderKeys() {
-        Set<EncoderKey> encoderKeyType = getEncoderKeyType();
+        Set<EncoderKey> encoderKeyType = getKeys();
         for (EncoderKey encoderKey : encoderKeyType) {
             if (encoderKey instanceof XmlEncoderKey) {
                 if (ProfileHandler.getInstance().getActiveProfile()

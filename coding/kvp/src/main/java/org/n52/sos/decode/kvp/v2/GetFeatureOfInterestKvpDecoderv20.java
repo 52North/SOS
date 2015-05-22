@@ -54,14 +54,14 @@ import org.n52.sos.request.GetFeatureOfInterestRequest;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GetFeatureOfInterestKvpDecoderv20 extends AbstractKvpDecoder {
     private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,
             Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetFeatureOfInterest, MediaTypes.APPLICATION_KVP);
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.singleton(KVP_DECODER_KEY_TYPE);
     }
 
@@ -80,7 +80,7 @@ public class GetFeatureOfInterestKvpDecoderv20 extends AbstractKvpDecoder {
 //                        request.setService(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
 //                        foundService = true;
 //                    }
-//    
+//
 //                    // version (mandatory)
 //                    else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.version.name())) {
 //                        request.setVersion(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
@@ -91,25 +91,25 @@ public class GetFeatureOfInterestKvpDecoderv20 extends AbstractKvpDecoder {
 //                        KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
 //                    }
 //                    // observedProperty (optional)
-//                    else 
+//                    else
                         if (parameterName.equalsIgnoreCase(Sos2Constants.GetFeatureOfInterestParams.observedProperty
                             .name())) {
                         request.setObservedProperties(KvpHelper.checkParameterMultipleValues(parameterValues,
                                 parameterName));
                     }
-    
+
                     // procedure (optional)
                     else if (parameterName.equalsIgnoreCase(Sos2Constants.GetFeatureOfInterestParams.procedure.name())) {
                         request.setProcedures(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
                     }
-    
+
                     // featureOfInterest (optional)
                     else if (parameterName.equalsIgnoreCase(Sos2Constants.GetFeatureOfInterestParams.featureOfInterest
                             .name())) {
                         request.setFeatureIdentifiers(KvpHelper.checkParameterMultipleValues(parameterValues,
                                 parameterName));
                     }
-    
+
                     // spatialFilter (optional)
                     else if (parameterName.equalsIgnoreCase(Sos2Constants.GetFeatureOfInterestParams.spatialFilter.name())) {
                         List<SpatialFilter> spatialFilters = new ArrayList<SpatialFilter>(1);
@@ -120,7 +120,7 @@ public class GetFeatureOfInterestKvpDecoderv20 extends AbstractKvpDecoder {
                         KvpHelper.checkParameterSingleValue(splittedParameterValues.get(0),
                                 SosConstants.Filter.ValueReference);
                         KvpHelper.checkParameterMultipleValues(splittedParameterValues, parameterName);
-    
+
                         spatialFilters.add(parseSpatialFilter(splittedParameterValues, parameterName));
                         request.setSpatialFilters(spatialFilters);
                     }

@@ -59,7 +59,7 @@ public class DescribeSensorKvpDecoderv20 extends AbstractKvpDecoder {
             Sos2Constants.SERVICEVERSION, SosConstants.Operations.DescribeSensor, MediaTypes.APPLICATION_KVP);
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.singleton(KVP_DECODER_KEY_TYPE);
     }
 

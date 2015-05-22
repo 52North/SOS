@@ -102,17 +102,17 @@ public class DeleteObservationEncoderTest {
 
     @Test
     public void testGetEncoderKey() {
-        assertNotNull("DecoderKeyTypes is null", instance.getEncoderKeyType());
+        assertNotNull("DecoderKeyTypes is null", instance.getKeys());
         EncoderKey key = new XmlEncoderKey(NS_SOSDO_1_0, DeleteObservationResponse.class);
-        assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getEncoderKeyType().contains(key));
+        assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getKeys().contains(key));
         key =
                 new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                         DeleteObservationConstants.Operations.DeleteObservation, MediaTypes.TEXT_XML);
-        assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getEncoderKeyType().contains(key));
+        assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getKeys().contains(key));
         key =
                 new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                         DeleteObservationConstants.Operations.DeleteObservation, MediaTypes.APPLICATION_XML);
-        assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getEncoderKeyType().contains(key));
+        assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getKeys().contains(key));
     }
 
     @Test

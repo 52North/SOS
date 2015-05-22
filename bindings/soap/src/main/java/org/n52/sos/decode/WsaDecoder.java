@@ -70,7 +70,7 @@ public class WsaDecoder implements Decoder<List<WsaHeader>, List<SOAPHeaderEleme
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 

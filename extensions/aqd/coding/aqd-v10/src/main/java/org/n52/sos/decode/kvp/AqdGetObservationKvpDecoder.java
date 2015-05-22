@@ -50,7 +50,7 @@ public class AqdGetObservationKvpDecoder extends GetObservationKvpDecoderv20 {
 			SosConstants.Operations.GetObservation, MediaTypes.APPLICATION_KVP);
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.singleton(KVP_DECODER_KEY_TYPE);
     }
     

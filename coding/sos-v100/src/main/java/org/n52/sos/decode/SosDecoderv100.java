@@ -107,7 +107,7 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 

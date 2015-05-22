@@ -141,7 +141,7 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 

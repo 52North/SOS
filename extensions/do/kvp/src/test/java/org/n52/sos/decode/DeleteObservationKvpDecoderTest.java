@@ -78,7 +78,7 @@ public class DeleteObservationKvpDecoderTest {
 
     @Test
     public void should_return_correct_set_of_decoder_keys() {
-        assertTrue(instance.getDecoderKeyTypes().equals(correctDecoderKey));
+        assertTrue(instance.getKeys().equals(correctDecoderKey));
     }
 
     @Test(expected = OwsExceptionReport.class)

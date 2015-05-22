@@ -58,7 +58,7 @@ public class GetResultKvpDecoderv20 extends AbstractKvpDecoder {
             Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetResult, MediaTypes.APPLICATION_KVP);
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.singleton(KVP_DECODER_KEY_TYPE);
     }
 

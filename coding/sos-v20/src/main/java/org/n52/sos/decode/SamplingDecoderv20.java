@@ -102,7 +102,7 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 

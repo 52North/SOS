@@ -65,7 +65,7 @@ public class DeleteObservationKvpDecoder extends AbstractKvpDecoder {
             Sos2Constants.SERVICEVERSION, DeleteObservationConstants.Operations.DeleteObservation,
             MediaTypes.APPLICATION_KVP);
 
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.singleton(KVP_DECODER_KEY_TYPE);
     }
 

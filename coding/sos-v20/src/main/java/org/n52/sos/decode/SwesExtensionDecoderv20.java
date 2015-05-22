@@ -72,7 +72,7 @@ public class SwesExtensionDecoderv20 implements Decoder<SwesExtension<?>, XmlObj
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 

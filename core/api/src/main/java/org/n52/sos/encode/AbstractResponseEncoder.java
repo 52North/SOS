@@ -141,7 +141,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(encoderKeys);
     }
 

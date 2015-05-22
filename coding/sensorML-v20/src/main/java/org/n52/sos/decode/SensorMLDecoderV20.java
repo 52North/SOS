@@ -165,7 +165,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 

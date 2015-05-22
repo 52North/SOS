@@ -115,7 +115,7 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 

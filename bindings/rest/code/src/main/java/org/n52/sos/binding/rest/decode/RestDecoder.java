@@ -209,7 +209,7 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 

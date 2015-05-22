@@ -51,7 +51,9 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
-import org.n52.iceland.config.SettingDefinitionProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.config.settings.BooleanSettingDefinition;
 import org.n52.iceland.config.settings.ChoiceSettingDefinition;
 import org.n52.iceland.config.settings.IntegerSettingDefinition;
@@ -63,8 +65,6 @@ import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.SessionFactoryProvider;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.util.SQLConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -184,7 +184,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return Username settings definition
      */
     protected StringSettingDefinition createUsernameDefinition() {
-        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
+        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(1)
                 .setKey(USERNAME_KEY).setTitle(USERNAME_TITLE);
     }
 
@@ -251,7 +251,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return Database schema settings definition
      */
     protected StringSettingDefinition createSchemaDefinition() {
-        return new StringSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
+        return new StringSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(1)
                 .setKey(SCHEMA_KEY).setTitle(SCHEMA_TITLE).setDescription(SCHEMA_DESCRIPTION)
                 .setDefaultValue(SCHMEA_DEFAULT_VALUE);
     }
@@ -271,7 +271,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected ChoiceSettingDefinition createDatabaseConceptDefinition() {
         ChoiceSettingDefinition choiceSettingDefinition = new ChoiceSettingDefinition();
         choiceSettingDefinition.setTitle(DATABASE_CONCEPT_TITLE).setDescription(DATABASE_CONCEPT_DESCRIPTION)
-                .setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_2).setKey(DATABASE_CONCEPT_KEY);
+                .setGroup(ADVANCED_GROUP).setOrder(2).setKey(DATABASE_CONCEPT_KEY);
         choiceSettingDefinition.addOption(DatabaseConcept.SERIES_CONCEPT.name(),
                 DatabaseConcept.SERIES_CONCEPT.getDisplayName());
         choiceSettingDefinition.addOption(DatabaseConcept.EREPORTING_CONCEPT.name(),
@@ -290,13 +290,13 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected BooleanSettingDefinition createTransactionalDefinition() {
         return new BooleanSettingDefinition().setDefaultValue(TRANSACTIONAL_DEFAULT_VALUE)
                 .setTitle(TRANSACTIONAL_TITLE).setDescription(TRANSACTIONAL_DESCRIPTION).setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_3).setKey(TRANSACTIONAL_KEY);
+                .setOrder(3).setKey(TRANSACTIONAL_KEY);
     }
 
     protected BooleanSettingDefinition createMultilingualismDefinition() {
         return new BooleanSettingDefinition().setDefaultValue(MULTILINGUALISM_DEFAULT_VALUE)
                 .setTitle(MULTILINGUALISM_TITLE).setDescription(MULTILINGUALISM_DESCRIPTION).setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_3).setKey(MULTILINGUALISM_KEY);
+                .setOrder(4).setKey(MULTILINGUALISM_KEY);
     }
 
     /**
@@ -308,7 +308,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         return new BooleanSettingDefinition().setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE)
                 .setTitle(PROVIDED_JDBC_DRIVER_TITLE).setDescription(PROVIDED_JDBC_DRIVER_DESCRIPTION)
                 .setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE).setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_5).setKey(PROVIDED_JDBC_DRIVER_KEY);
+                .setOrder(5).setKey(PROVIDED_JDBC_DRIVER_KEY);
     }
 
     // /**
@@ -341,7 +341,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return JDBC batch size settings definition
      */
     protected IntegerSettingDefinition createBatchSizeDefinition() {
-        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_8)
+        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(8)
                 .setKey(BATCH_SIZE_KEY).setTitle(BATCH_SIZE_TITLE).setDescription(BATCH_SIZE_DESCRIPTION)
                 .setDefaultValue(BATCH_SIZE_DEFAULT_VALUE);
     }
@@ -360,13 +360,13 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         addDatabaseConceptMappingDirectory(config, settings);
         if (isTransactionalDatasource()) {
             Boolean transactional = (Boolean) settings.get(this.transactionalDefiniton.getKey());
-            if (transactional != null && transactional.booleanValue()) {
+            if (transactional != null && transactional) {
                 config.addDirectory(resource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH));
             }
         }
         if (isMultiLanguageDatasource()) {
             Boolean multiLanguage = (Boolean) settings.get(this.multilingualismDefinition.getKey());
-            if (multiLanguage != null && multiLanguage.booleanValue()) {
+            if (multiLanguage != null && multiLanguage) {
                 config.addDirectory(resource(HIBERNATE_MAPPING_I18N_PATH));
             }
         }
@@ -382,7 +382,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     /**
      * Adds concept depending mapping file directories to the
      * {@link CustomConfiguration}.
-     * 
+     *
      * @param config
      *            Configuration to add mapping directories
      * @param settings

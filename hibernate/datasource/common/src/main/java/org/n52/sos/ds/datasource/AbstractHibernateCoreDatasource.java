@@ -33,7 +33,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingDefinitionProvider;
 import org.n52.iceland.config.settings.IntegerSettingDefinition;
 import org.n52.iceland.config.settings.StringSettingDefinition;
 import org.n52.iceland.ds.Datasource;
@@ -149,7 +148,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     protected StringSettingDefinition createUsernameDefinition() {
         return new StringSettingDefinition()
                 .setGroup(BASE_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_1)
+                .setOrder(1)
                 .setKey(USERNAME_KEY)
                 .setTitle(USERNAME_TITLE);
     }
@@ -162,7 +161,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     protected StringSettingDefinition createPasswordDefinition() {
         return new StringSettingDefinition()
                 .setGroup(BASE_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_2)
+                .setOrder(2)
                 .setKey(PASSWORD_KEY)
                 .setTitle(PASSWORD_TITLE);
     }
@@ -175,7 +174,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     protected StringSettingDefinition createDatabaseDefinition() {
         return new StringSettingDefinition()
                 .setGroup(BASE_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_3)
+                .setOrder(3)
                 .setKey(DATABASE_KEY)
                 .setTitle(DATABASE_TITLE)
                 .setDescription(DATABASE_DESCRIPTION)
@@ -190,7 +189,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     protected StringSettingDefinition createHostDefinition() {
         return new StringSettingDefinition()
                 .setGroup(BASE_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_4)
+                .setOrder(4)
                 .setKey(HOST_KEY)
                 .setTitle(HOST_TITLE)
                 .setDescription(HOST_DESCRIPTION)
@@ -205,7 +204,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     protected IntegerSettingDefinition createPortDefinition() {
         return new IntegerSettingDefinition()
                 .setGroup(BASE_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_5)
+                .setOrder(5)
                 .setKey(PORT_KEY)
                 .setTitle(PORT_TITLE);
     }
@@ -218,7 +217,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     protected IntegerSettingDefinition createMinPoolSizeDefinition() {
         return new IntegerSettingDefinition()
                 .setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_6)
+                .setOrder(6)
                 .setKey(MIN_POOL_SIZE_KEY)
                 .setTitle(MIN_POOL_SIZE_TITLE)
                 .setDescription(MIN_POOL_SIZE_DESCRIPTION)
@@ -233,7 +232,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     protected IntegerSettingDefinition createMaxPoolSizeDefinition() {
         return new IntegerSettingDefinition()
                 .setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_7)
+                .setOrder(7)
                 .setKey(MAX_POOL_SIZE_KEY)
                 .setTitle(MAX_POOL_SIZE_TITLE)
                 .setDescription(MAX_POOL_SIZE_DESCRIPTION)

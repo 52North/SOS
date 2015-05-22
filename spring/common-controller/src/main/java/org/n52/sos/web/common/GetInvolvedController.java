@@ -30,6 +30,7 @@ package org.n52.sos.web.common;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.logging.Level;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +60,12 @@ public class GetInvolvedController extends AbstractController {
     public ModelAndView view() {
         SettingValue<URI> setting = null;
         try {
-            setting = getSettingsManager().getSetting(ServiceSettings.SERVICE_URL_DEFINITION);
-        } catch (ConfigurationException | ConnectionProviderException ex) {
+            setting = getSettingsManager().getSetting(ServiceSettings.SERVICE_URL);
+        } catch (ConfigurationException ex) {
             LOG.error("Could not load service url", ex);
+        } catch (ConnectionProviderException ex) {
+            java.util.logging.Logger.getLogger(GetInvolvedController.class.getName())
+                    .log(Level.SEVERE, null, ex);
         }
         Serializable url = setting == null
                            ? ""

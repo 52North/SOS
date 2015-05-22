@@ -313,10 +313,6 @@ public class H2Configuration {
         }
     }
 
-    private void setDefaultSettings() {
-        ScheduledContentCacheControllerSettings.CACHE_UPDATE_INTERVAL_DEFINITION.setDefaultValue(0);
-    }
-
     private File getTempDir() {
         return tempDir;
     }
@@ -414,7 +410,6 @@ public class H2Configuration {
     }
 
     private void init() throws ConfigurationException, IOException {
-        setDefaultSettings();
         createTempDir();
         prepareDatabase();
         createConfigurator();

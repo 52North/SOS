@@ -10,11 +10,11 @@
  * the following licenses, the combination of the program with the linked
  * library is not considered a "derivative work" of the program:
  *
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
+ * - Apache License, version 2.0
+ * - Apache Software License, version 1.0
+ * - GNU Lesser General Public License, version 3
+ * - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ * - Common Development and Distribution License (CDDL), version 1.0
  *
  * Therefore the distribution of the program linked with libraries licensed
  * under the aforementioned licenses, is permitted by the copyright holders
@@ -28,35 +28,12 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.util.Collections;
-import java.util.Set;
-
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingDefinitionProvider;
-import org.n52.iceland.config.settings.IntegerSettingDefinition;
-import org.n52.iceland.service.ServiceSettings;
-
-import com.google.common.collect.ImmutableSet;
-
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
-public class CacheFeederSettingDefinitionProvider implements SettingDefinitionProvider {
+public interface CacheFeederSettingDefinitionProvider {
 
-    public static final String CACHE_THREAD_COUNT = "service.cacheThreadCount";
-
-    public static final IntegerSettingDefinition CACHE_THREAD_COUNT_DEFINITION = new IntegerSettingDefinition()
-            .setGroup(ServiceSettings.GROUP).setOrder(8).setKey(CACHE_THREAD_COUNT).setDefaultValue(5)
-            .setTitle("Cache Feeder Threads")
-            .setDescription("The number of threads used to fill the capabilities cache.");
-
-    private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet
-            .<SettingDefinition<?, ?>> of(CACHE_THREAD_COUNT_DEFINITION);
-
-    @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return Collections.unmodifiableSet(DEFINITIONS);
-    }
+    String CACHE_THREAD_COUNT = "service.cacheThreadCount";
 }

@@ -55,7 +55,7 @@ public class AsyncCachePersistenceStrategy
     private static final Logger LOGGER = LoggerFactory.getLogger(AsyncCachePersistenceStrategy.class);
 
     private static final TimeUnit WRITE_DELAY_UNITS = TimeUnit.SECONDS;
-    private long writeDelay = AsyncCachePersistenceStrategySettings.CACHE_PERSISTENCE_DELAY_DEFINITION.getDefaultValue();
+    private long writeDelay = 30;
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(new GroupedAndNamedThreadFactory("cache-persister"));
     private final AtomicReference<ContentCache> cacheReference = new AtomicReference<>();
     private Updater updater;

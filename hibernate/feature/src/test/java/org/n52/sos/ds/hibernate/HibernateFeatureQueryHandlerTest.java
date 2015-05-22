@@ -57,23 +57,19 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class HibernateFeatureQueryHandlerTest extends HibernateTestCase {
 
     @Before
     public void setUp() throws ConfigurationException {
-        GeometryHandler.getInstance().setStorageEpsg(
-                FeatureQuerySettingsProvider.STORAGE_EPSG_DEFINITION.getDefaultValue());
-        GeometryHandler.getInstance().setStorage3DEpsg(
-                FeatureQuerySettingsProvider.STORAGE_3D_EPSG_DEFINITION.getDefaultValue());
-        GeometryHandler.getInstance().setEpsgCodesWithNorthingFirstAxisOrder(
-                FeatureQuerySettingsProvider.EPSG_CODES_WITH_REVERSED_AXIS_ORDER_DEFINITION.getDefaultValue());
-        GeometryHandler.getInstance().setDatasourceNorthingFirst(
-                FeatureQuerySettingsProvider.DATASOURCE_NORTHING_FIRST_DEFINITION.getDefaultValue());
+        GeometryHandler.getInstance().setStorageEpsg(4326);
+        GeometryHandler.getInstance().setStorage3DEpsg(4979);
+        GeometryHandler.getInstance().setEpsgCodesWithNorthingFirstAxisOrder("2044-2045;2081-2083;2085-2086;2093;2096-2098;2105-2132;2169-2170;2176-2180;2193;2200;2206-2212;2319;2320-2462;2523-2549;2551-2735;2738-2758;2935-2941;2953;3006-3030;3034-3035;3058-3059;3068;3114-3118;3126-3138;3300-3301;3328-3335;3346;3350-3352;3366;3416;4001-4999;20004-20032;20064-20092;21413-21423;21473-21483;21896-21899;22171;22181-22187;22191-22197;25884;27205-27232;27391-27398;27492;28402-28432;28462-28492;30161-30179;30800;31251-31259;31275-31279;31281-31290;31466-31700");
+        GeometryHandler.getInstance().setDatasourceNorthingFirst(false);
     }
 
     @Test

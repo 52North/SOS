@@ -47,9 +47,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class DescribeSensorResponseEncoder extends AbstractSosResponseEncoder<DescribeSensorResponse> {
@@ -60,7 +60,7 @@ public class DescribeSensorResponseEncoder extends AbstractSosResponseEncoder<De
     @Override
     protected void encodeResponse(ObjectNode json, DescribeSensorResponse t) throws OwsExceptionReport {
         json.put(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT, t.getOutputFormat());
-        json.put(JSONConstants.PROCEDURE_DESCRIPTION,
+        json.set(JSONConstants.PROCEDURE_DESCRIPTION,
                 encodeDescriptions(t.getProcedureDescriptions(), t.getOutputFormat()));
 
     }
@@ -77,7 +77,7 @@ public class DescribeSensorResponseEncoder extends AbstractSosResponseEncoder<De
         String xml = toString(desc, format);
         if (desc.isSetValidTime()) {
             ObjectNode j = nodeFactory().objectNode();
-            j.put(JSONConstants.VALID_TIME, encodeObjectToJson(desc.getValidTime()));
+            j.set(JSONConstants.VALID_TIME, encodeObjectToJson(desc.getValidTime()));
             j.put(JSONConstants.DESCRIPTION, xml);
             return j;
         } else {

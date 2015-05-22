@@ -45,7 +45,7 @@ import org.n52.sos.request.GetObservationRequest;
 
 /**
  * Hibernate series streaming value implementation for chunk results
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.2
  *
@@ -63,10 +63,10 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     private boolean noChunk = false;
 
     private int currentResultSize = 0;
-    
+
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -95,14 +95,14 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         if (!next) {
             sessionHolder.returnSession(session);
         }
-        
+
 
         return next;
     }
 
     @Override
     public AbstractValue nextEntity() throws OwsExceptionReport {
-        return (AbstractValue) seriesValuesResult.next();
+        return seriesValuesResult.next();
     }
 
     @Override
@@ -143,7 +143,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
 
     /**
      * Get the next results from database
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs when querying the next results
      */
@@ -177,7 +177,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     /**
      * Check the queried {@link AbstractValue}s for null and set them as
      * iterator to local variable.
-     * 
+     *
      * @param seriesValuesResult
      *            Queried {@link AbstractValue}s
      */

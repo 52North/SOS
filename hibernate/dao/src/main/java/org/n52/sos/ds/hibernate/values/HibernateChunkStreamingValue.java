@@ -43,7 +43,7 @@ import org.n52.sos.request.GetObservationRequest;
 
 /**
  * Hibernate streaming value implementation for chunk results
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
@@ -57,12 +57,12 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     private int chunkSize;
 
     private int currentRow;
-    
+
     private boolean noChunk = false;
 
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param procedure
@@ -98,10 +98,10 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
 
         return next;
     }
-    
+
     @Override
 	public AbstractValue nextEntity() throws OwsExceptionReport {
-    	return (AbstractValue) valuesResult.next();
+    	return valuesResult.next();
 	}
 
     @Override
@@ -142,7 +142,7 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
 
     /**
      * Get the next results from database
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs when querying the next results
      */
@@ -176,7 +176,7 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     /**
      * Check the queried {@link AbstractValue}s for null and set them as
      * iterator to local variable.
-     * 
+     *
      * @param valuesResult
      *            Queried {@link AbstractValue}s
      */

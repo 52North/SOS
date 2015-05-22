@@ -28,7 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.dao.i18n;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.hibernate.Session;
+
+import org.n52.iceland.i18n.I18NDAOKey;
 import org.n52.iceland.i18n.LocalizedString;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
@@ -65,11 +70,6 @@ public class ProcedureI18NDAO extends AbstractHibernateI18NDAO<Procedure, I18NPr
     }
 
     @Override
-    public Class<I18NProcedureMetadata> getType() {
-        return I18NProcedureMetadata.class;
-    }
-
-    @Override
     protected void fillHibernateObject(I18NProcedureMetadata i18n,
                                        HibernateI18NProcedureMetadata h18n) {
         super.fillHibernateObject(i18n, h18n);
@@ -97,6 +97,12 @@ public class ProcedureI18NDAO extends AbstractHibernateI18NDAO<Procedure, I18NPr
             i18n.getShortName().addLocalization(h18n.getLocale(),
                                                 h18n.getShortname());
         }
+    }
+
+
+    @Override
+    public Set<I18NDAOKey> getKeys() {
+        return Collections.singleton(new I18NDAOKey(I18NProcedureMetadata.class));
     }
 
 }

@@ -36,6 +36,9 @@ import java.util.TreeSet;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.OGCConstants;
 import org.n52.iceland.ogc.om.OmConstants;
@@ -46,7 +49,6 @@ import org.n52.iceland.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
 import org.n52.iceland.ogc.swe.simpleType.SweCount;
 import org.n52.iceland.ogc.swe.simpleType.SweText;
-import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.util.StringHelper;
@@ -75,8 +77,6 @@ import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -84,7 +84,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * Abstract generator class for SensorML procedure descriptions
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.2.0
  *

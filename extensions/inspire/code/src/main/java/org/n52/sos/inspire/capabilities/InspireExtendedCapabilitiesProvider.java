@@ -28,6 +28,7 @@
  */
 package org.n52.sos.inspire.capabilities;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.n52.iceland.exception.CodedException;
@@ -37,7 +38,7 @@ import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.ows.OWSConstants;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilities;
-import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesKey;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderKey;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProvider;
 import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.iceland.ogc.sos.Sos2Constants;
@@ -65,6 +66,7 @@ import org.n52.sos.inspire.InspireTemporalReference;
 import org.n52.sos.inspire.InspireUniqueResourceIdentifier;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,20 +74,18 @@ import com.google.common.collect.Sets;
 
 /**
  * Provider for the INSPIRE ExtendedCapabilities
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
- * 
+ *
  */
 public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider implements
         OwsExtendedCapabilitiesProvider {
 
     @SuppressWarnings("unused")
     private static final Logger LOGGER = LoggerFactory.getLogger(InspireExtendedCapabilitiesProvider.class);
-
-    Set<OwsExtendedCapabilitiesKey> providerKeys = Sets.newHashSet(new OwsExtendedCapabilitiesKey(SosConstants.SOS,
-            Sos2Constants.SERVICEVERSION, InspireConstants.INSPIRE));
-
+    private final OwsExtendedCapabilitiesProviderKey key
+            = new OwsExtendedCapabilitiesProviderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, InspireConstants.INSPIRE);
     /**
      * constructor
      */
@@ -94,8 +94,15 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
     }
 
     @Override
-    public Set<OwsExtendedCapabilitiesKey> getExtendedCapabilitiesKeyType() {
-        return providerKeys;
+    public Set<OwsExtendedCapabilitiesProviderKey> getKeys() {
+        return Collections.singleton(key);
+    }
+
+
+    @Override
+    @Deprecated
+    public Set<OwsExtendedCapabilitiesProviderKey> getExtendedCapabilitiesKeyType() {
+        return getKeys();
     }
 
     @Override
@@ -118,7 +125,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
     /**
      * Get the SOS internal representation of the
      * {@link MinimalInspireExtendedCapabilities}
-     * 
+     *
      * @param language
      *            the requested language
      * @param crs
@@ -138,7 +145,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
     /**
      * Get the SOS internal representation of the
      * {@link FullInspireExtendedCapabilities}
-     * 
+     *
      * @param language
      *            the requested language
      * @param crs
@@ -207,7 +214,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
 
     /**
      * Get the resource locator
-     * 
+     *
      * @return the resource locator
      */
     private InspireResourceLocator getResourceLocator() {
@@ -218,7 +225,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
 
     /**
      * Get the metadata point of contact
-     * 
+     *
      * @return the metadata point of contact
      * @throws OwsExceptionReport
      *             If an error occurs when creating the metadata point of
@@ -231,7 +238,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
 
     /**
      * Get the conformity
-     * 
+     *
      * @return the conformity
      * @throws CodedException
      */
@@ -248,7 +255,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
 
     /**
      * Get the temporal reference
-     * 
+     *
      * @return the temporal reference
      */
     private InspireTemporalReference getTemporalReference() {
@@ -257,7 +264,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
 
     /**
      * Get the spatial dataset identifiers
-     * 
+     *
      * @param version
      *            the service version
      * @return the spatial dataset identifiers
@@ -275,7 +282,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
 
     /**
      * Get the coordinate reference system from the request
-     * 
+     *
      * @param request
      *            the request
      * @return the coordinate reference system

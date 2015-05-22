@@ -85,7 +85,6 @@ import static org.n52.sos.binding.rest.RestSettings.REST_SOS_ERRORMESSAGE_OPERAT
 import static org.n52.sos.binding.rest.RestSettings.REST_SOS_SERVICE;
 import static org.n52.sos.binding.rest.RestSettings.REST_SOS_TERMS_PROCEDUREIDENTIFIER;
 import static org.n52.sos.binding.rest.RestSettings.REST_SOS_VERSION;
-import static org.n52.sos.binding.rest.RestSettings.REST_URLPATTERN;
 import static org.n52.sos.binding.rest.RestSettings.REST_URL_ENCODING;
 
 import java.net.URI;
@@ -176,9 +175,8 @@ public final class Constants {
 	private String sosTermsProcedureidentifier;
 	private String sosVersion;
 	private String urlEncoding;
-	private String urlpattern;
 	private URI encodingSchemaUrl;
-    
+
 	private Constants() {
     }
 
@@ -192,12 +190,12 @@ public final class Constants {
     {
         return conformanceClass; //properties.getProperty("conformanceclass", "http://www.opengis.net/spec/SOS/2.0/conf/rest");
     }
-    
+
     public MediaType getContentTypeDefault()
     {
         return contentTypeDefault; // properties.getProperty("default.content.type", "application/gml+xml");
     }
-    
+
     public MediaType getContentTypeUndefined()
     {
         return contentTypeUndefined;//properties.getProperty("default.content.type.undefined", "unknown/unknown");
@@ -207,7 +205,7 @@ public final class Constants {
     {
         return SensorMLConstants.NS_SML;
     }
-    
+
     public String getDefaultUrlEncoding()
     {
 //        return properties.getProperty("default.url.encoding","UTF-8");
@@ -219,13 +217,13 @@ public final class Constants {
 		return restEncodingNamespace;
 //        return properties.getProperty("encoding.namespace", "http://www.opengis.net/sosREST/1.0");
     }
-    
+
     public String getEncodingPrefix()
     {
 //        return properties.getProperty("encoding.prefix", "sosREST");
 		return restEncodingPrefix;
     }
-    
+
     public String getErrorMessageBadGetRequest()
     {
 //        return properties.getProperty("error.message.badGetRequest", "Received GET request invalid for resource type \"%s\". Try ");
@@ -237,7 +235,7 @@ public final class Constants {
 //        return properties.getProperty("error.message.badGetRequestById", "\"../%s/$RESOURCE_ID\"");
 		return errorMessageBadGetRequestById;
     }
-    
+
 	public String getErrorMessageBadGetRequestGlobalResource()
     {
 //        return properties.getProperty("error.message.badGetRequestGlobalResource", "\"..%s\"");
@@ -261,7 +259,7 @@ public final class Constants {
 //		return properties.getProperty("error.message.HttpMethodNotAllowedForResource","HTTP method \"%s\" not allowed for \"%s\" resources.");
 		return errorMessageHttpMethodNotAllowedForResource;
 	}
-   
+
 	public String getErrorMessageWrongContentType()
     {
 //        return properties.getProperty("error.message.wrongContentType", "request with wrong content type received.");
@@ -273,7 +271,7 @@ public final class Constants {
 //        return properties.getProperty("error.message.wrongContentTypeInAcceptHeader", "Requested content type as specified in Accept header not supported.");
 		return errorMessageWrongContentTypeInAcceptHeader;
     }
-    
+
 	public String getHttpGetParameterNameFoi()
     {
 //        return properties.getProperty("http.get.parametername.foi", "feature");
@@ -351,7 +349,7 @@ public final class Constants {
 //        return properties.getProperty("resource.observableproperties", "properties");
     	return resourceObservableproperties;
     }
-    
+
     public String getResourceObservations()
     {
 //        return properties.getProperty("resource.observations", "observations");
@@ -399,7 +397,7 @@ public final class Constants {
 //        return properties.getProperty("resource.relation.observation.get", "observation-get");
     	return resourceRelationObservationGet;
     }
-    
+
     public String getResourceRelationObservationsGet()
     {
 //        return properties.getProperty("resource.relation.observations.get", "observations-get");
@@ -435,19 +433,19 @@ public final class Constants {
 //        return properties.getProperty("resource.relation.sensor.delete", "sensor-delete");
     	return resourceRelationSensorDelete;
     }
-    
+
     public String getResourceRelationSensorGet()
     {
 //        return properties.getProperty("resource.relation.sensor.get", "sensor-get");
     	return resourceRelationSensorGet;
     }
-    
+
     public String getResourceRelationSensorsGet()
     {
 //        return properties.getProperty("resource.relation.sensors.get", "sensors-get");
     	return resourceRelationSensorsGet;
     }
-    
+
     public String getResourceRelationSensorUpdate()
     {
 //        return properties.getProperty("resource.relation.sensor.update", "sensor-update");
@@ -482,7 +480,7 @@ public final class Constants {
 //        return properties.getProperty("sml.capability.insertionmetadata.name", "InsertionMetadata");
     	return smlCapabilityInsertionmetadataName;
     }
-    
+
     public String getSmlCapabilityObservationTypeName()
     {
 //        return properties.getProperty("sml.capability.observationtype.name", "sos:ObservationType");
@@ -531,7 +529,7 @@ public final class Constants {
 //        String entryKey = "default.spatialreferencesystem.epsgid";
 //        String idString = properties.getProperty(entryKey, "4326");
 //        try {
-//            result = Integer.parseInt(idString);    
+//            result = Integer.parseInt(idString);
 //        } catch (NumberFormatException nfe) {
 //            LOGGER.debug(String.format("Could not parse value \"%s\" of entry with key \"%s\". Using default EPSG:4326. Exception: %s",
 //                    idString,
@@ -542,12 +540,6 @@ public final class Constants {
 //        }
 //        return result;
 		return epsgCodeDefault;
-    }
-
-    public String getUrlPattern()
-    {
-//        return properties.getProperty("urlpattern", "/sos/rest");
-		return urlpattern;
     }
 
     @Setting(REST_BINDING_END_POINT_RESOURCE)
@@ -590,7 +582,7 @@ public final class Constants {
 		Validation.greaterZero(REST_EPSG_CODE_DEFAULT, epsgCodeDefault);
 		this.epsgCodeDefault = epsgCodeDefault;
 	}
-    
+
     @Setting(REST_ERROR_MSG_BAD_GET_REQUEST)
     public void setErrorMessageBadGetRequest(final String errorMessageBadGetRequest)
 	{
@@ -660,7 +652,7 @@ public final class Constants {
 		Validation.notNullOrEmpty(REST_HTTP_GET_PARAMETERNAME_NAMESPACES, httpGetParameternameNamespaces);
 		this.httpGetParameternameNamespaces = httpGetParameternameNamespaces;
 	}
-	
+
 	@Setting(REST_HTTP_GET_PARAMETERNAME_OBSERVEDPROPERTY)
 	public void setHttpGetParameternameObservedproperty(final String httpGetParameternameObservedproperty)
 	{
@@ -966,18 +958,11 @@ public final class Constants {
 		this.urlEncoding = urlEncoding;
 	}
 
-	@Setting(REST_URLPATTERN)
-	public void setUrlpattern(final String urlpattern)
-	{
-		Validation.notNullOrEmpty(REST_URLPATTERN, urlpattern);
-		this.urlpattern = urlpattern;
-	}
-	
 	@Setting(RestSettings.REST_ENCODING_SCHEMA_URL)
 	public void setEncodingSchemaUrl(final URI encodingSchemaUrl)
 	{
 		Validation.notNull(REST_ENCODING_SCHEMA_URL, encodingSchemaUrl);
-		this.encodingSchemaUrl = encodingSchemaUrl; 
+		this.encodingSchemaUrl = encodingSchemaUrl;
 	}
 
 	public URI getEncodingSchemaUrl()

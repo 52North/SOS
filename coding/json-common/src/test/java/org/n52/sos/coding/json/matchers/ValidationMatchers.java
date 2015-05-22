@@ -48,9 +48,9 @@ import com.github.fge.jsonschema.main.JsonSchema;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <autermann@uni-muenster.de>
- * 
+ *
  * @since 4.0.0
  */
 public class ValidationMatchers {
@@ -94,7 +94,7 @@ public class ValidationMatchers {
                 Description mismatchDescription) throws JsonProcessingException {
             if (!report.isSuccess()) {
                 ObjectNode objectNode = JacksonUtils.nodeFactory().objectNode();
-                objectNode.put(JSONConstants.INSTANCE, item);
+                objectNode.set(JSONConstants.INSTANCE, item);
                 ArrayNode errors = objectNode.putArray(JSONConstants.ERRORS);
                 for (ProcessingMessage m : report) {
                     errors.add(m.asJson());

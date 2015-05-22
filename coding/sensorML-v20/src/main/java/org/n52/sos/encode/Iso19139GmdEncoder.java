@@ -92,7 +92,7 @@ import com.google.common.collect.Sets;
 /**
  * {@link AbstractXmlEncoder} class to decode ISO TC211 Geographic MetaData
  * (GMD) extensible markup language.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.2.0
  *
@@ -115,7 +115,7 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
     @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = union(
             encoderKeysForElements(GmdConstants.NS_GMD, SmlResponsibleParty.class, GmdQuantitativeResult.class,
-                    GmdConformanceResult.class), 
+                    GmdConformanceResult.class),
             encoderKeysForElements(null, GmdQuantitativeResult.class, GmdConformanceResult.class));
 
     public Iso19139GmdEncoder() {
@@ -260,18 +260,18 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
             DQDomainConsistencyDocument document =
                     DQDomainConsistencyDocument.Factory.newInstance(getXmlOptions());
             DQResultPropertyType addNewResult = document.addNewDQDomainConsistency().addNewResult();
-            encodeGmdDomainConsistency(addNewResult, (GmdDomainConsistency) element);
+            encodeGmdDomainConsistency(addNewResult, element);
             return document;
         } else if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
             DQDomainConsistencyPropertyType propertyType =
                     DQDomainConsistencyPropertyType.Factory.newInstance(getXmlOptions());
             DQResultPropertyType addNewResult = propertyType.addNewDQDomainConsistency().addNewResult();
-            encodeGmdDomainConsistency(addNewResult, (GmdDomainConsistency) element);
+            encodeGmdDomainConsistency(addNewResult, element);
             return propertyType;
         } else {
             DQDomainConsistencyType type = DQDomainConsistencyType.Factory.newInstance(getXmlOptions());
             DQResultPropertyType addNewResult = type.addNewResult();
-            encodeGmdDomainConsistency(addNewResult, (GmdDomainConsistency) element);
+            encodeGmdDomainConsistency(addNewResult, element);
             return type;
         }
     }

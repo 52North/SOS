@@ -47,11 +47,12 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
+
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.ds.FeatureQueryHandler;
 import org.n52.iceland.ds.FeatureQueryHandlerQueryObject;
 import org.n52.iceland.ds.HibernateDatasourceConstants;
-import org.n52.iceland.ds.I18NDAO;
+import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.iceland.i18n.I18NDAORepository;
@@ -81,6 +82,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

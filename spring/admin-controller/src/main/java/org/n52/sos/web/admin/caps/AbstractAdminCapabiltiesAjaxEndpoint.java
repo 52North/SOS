@@ -28,6 +28,8 @@
  */
 package org.n52.sos.web.admin.caps;
 
+import javax.inject.Inject;
+
 import org.apache.xmlbeans.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +58,12 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
     protected static final String ERRORS_PROPERTY = "errors";
     protected static final String VALID_PROPERTY = "valid";
 
+
+    @Inject
+    private CapabilitiesExtensionManager capabilitiesExtensionManager;
+
     protected CapabilitiesExtensionManager getDao() {
-        return getSettingsManager();
+        return capabilitiesExtensionManager;
     }
 
     protected ContentCache getCache() {

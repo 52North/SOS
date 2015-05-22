@@ -51,13 +51,13 @@ public class ContactJSONEncoder extends JSONEncoder<Contact> {
     public JsonNode encodeJSON(Contact t)
             throws OwsExceptionReport {
         ObjectNode j = nodeFactory().objectNode();
-        j.put(AQDJSONConstants.ADDRESS, encodeObjectToJson(t.getAddress()));
-        j.put(AQDJSONConstants.CONTACT_INSTRUCTIONS, encodeObjectToJson(t.getContactInstructions()));
-        j.put(AQDJSONConstants.ELECTRONIC_MAIL_ADDRESS, encodeObjectToJson(t.getElectronicMailAddress()));
-        j.put(AQDJSONConstants.HOURS_OF_SERVICE, encodeObjectToJson(t.getHoursOfService()));
-        j.put(AQDJSONConstants.TELEPHONE_FACSIMILE, encodeObjectToJson(t.getTelephoneFacsimile()));
-        j.put(AQDJSONConstants.TELEPHONE_VOICE, encodeObjectToJson(t.getTelephoneVoice()));
-        j.put(AQDJSONConstants.WEBSITE, encodeObjectToJson(t.getWebsite()));
+        j.set(AQDJSONConstants.ADDRESS, encodeObjectToJson(t.getAddress()));
+        j.set(AQDJSONConstants.CONTACT_INSTRUCTIONS, encodeObjectToJson(t.getContactInstructions()));
+        j.set(AQDJSONConstants.ELECTRONIC_MAIL_ADDRESS, encodeObjectToJson(t.getElectronicMailAddress()));
+        j.set(AQDJSONConstants.HOURS_OF_SERVICE, encodeObjectToJson(t.getHoursOfService()));
+        j.set(AQDJSONConstants.TELEPHONE_FACSIMILE, encodeObjectToJson(t.getTelephoneFacsimile()));
+        j.set(AQDJSONConstants.TELEPHONE_VOICE, encodeObjectToJson(t.getTelephoneVoice()));
+        j.set(AQDJSONConstants.WEBSITE, encodeObjectToJson(t.getWebsite()));
         return j;
     }
 

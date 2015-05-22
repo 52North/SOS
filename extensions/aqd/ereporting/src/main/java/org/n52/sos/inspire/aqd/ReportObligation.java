@@ -32,6 +32,7 @@ import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.sos.util.Nillable;
 import org.n52.sos.util.Referenceable;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
@@ -81,9 +82,9 @@ public class ReportObligation {
         this.reportingPeriod = Preconditions.checkNotNull(reportingPeriod);
         return this;
     }
-    
+
     public boolean isValid() {
-    	return isSetInspireID() && isSetChange(); 
+    	return isSetInspireID() && isSetChange();
     }
 
     @Override
@@ -105,7 +106,7 @@ public class ReportObligation {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("inspireID", getInspireID())
                 .add("change", getChange())
                 .add("reportingPeriod", getReportingPeriod())

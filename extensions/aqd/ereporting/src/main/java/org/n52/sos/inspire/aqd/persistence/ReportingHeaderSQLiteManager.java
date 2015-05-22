@@ -39,9 +39,9 @@ import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.util.lifecycle.Destroyable;
 import org.n52.iceland.util.JSONUtils;
-import org.n52.iceland.util.lifecycle.Constructable;
+import org.n52.iceland.lifecycle.Constructable;
+import org.n52.iceland.lifecycle.Destroyable;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.config.sqlite.SQLiteManager;
 import org.n52.sos.config.sqlite.SQLiteManager.ThrowingHibernateAction;
@@ -116,7 +116,7 @@ public class ReportingHeaderSQLiteManager implements Constructable, Destroyable 
         manager.execute(new SaveAction(o, key));
     }
 
-    private static class LoadReportingAuthorityAction extends LoadJSONFragmentAction<RelatedParty> {
+    private class LoadReportingAuthorityAction extends LoadJSONFragmentAction<RelatedParty> {
 
         LoadReportingAuthorityAction() {
             super(REPORTING_AUTHORITY_KEY, RelatedParty.class);

@@ -117,20 +117,19 @@ import com.vividsolutions.jts.geom.Point;
  * Class that transforms geometries in the requests to the stored EPSG code and
  * transforms geometries in the responses to the default response or requested
  * EPSG code.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
- * 
+ *
  * @since 4.1.0
- * 
+ *
  */
-public class CoordianteTransformator implements
-        RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+public class CoordianteTransformator implements RequestResponseModifier {
 
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
     /**
      * Get the keys
-     * 
+     *
      * @return Set of keys
      */
     private static Set<RequestResponseModifierKeyType> getKeyTypes() {
@@ -159,7 +158,7 @@ public class CoordianteTransformator implements
     }
 
     @Override
-    public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
+    public Set<RequestResponseModifierKeyType> getKeys() {
         return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
     }
 
@@ -201,7 +200,7 @@ public class CoordianteTransformator implements
 
     /**
      * Modify the GetFeatureOfInterest request
-     * 
+     *
      * @param request
      *            the GetFeatureOfInterest request
      * @return Modified the GetFeatureOfInterest request
@@ -218,7 +217,7 @@ public class CoordianteTransformator implements
 
     /**
      * Modify the GetObservation request
-     * 
+     *
      * @param request
      *            the GetObservation request
      * @return Modified the GetObservation request
@@ -235,7 +234,7 @@ public class CoordianteTransformator implements
 
     /**
      * Modify the GetResult request
-     * 
+     *
      * @param request
      *            the GetResult request
      * @return Modified the GetResult request
@@ -251,7 +250,7 @@ public class CoordianteTransformator implements
 
     /**
      * Modify the InsertObservation request
-     * 
+     *
      * @param request
      *            the InsertObservation request
      * @return Modified the InsertObservation request
@@ -268,7 +267,7 @@ public class CoordianteTransformator implements
 
     /**
      * Modify the InsertResultTemplate request
-     * 
+     *
      * @param request
      *            the InsertResultTemplate request
      * @return Modified the InsertResultTemplate request
@@ -286,7 +285,7 @@ public class CoordianteTransformator implements
 
     /**
      * Modify the GetFeatureOfInterest response
-     * 
+     *
      * @param request
      *            the GetFeatureOfInterest request
      * @return Modified the GetFeatureOfInterest request
@@ -304,7 +303,7 @@ public class CoordianteTransformator implements
 
     /**
      * Modify the GetObservation response
-     * 
+     *
      * @param request
      *            the GetObservation request
      * @return Modified the GetObservation request
@@ -323,7 +322,7 @@ public class CoordianteTransformator implements
 
     /**
      * Modify the GetObservationById response
-     * 
+     *
      * @param request
      *            the GetObservationById request
      * @return Modified the GetObservationById request
@@ -341,7 +340,7 @@ public class CoordianteTransformator implements
 
     /**
      * Modify the GetCapabilities response
-     * 
+     *
      * @param request
      *            the GetCapabilities request
      * @return Modified the GetCapabilities request
@@ -372,7 +371,7 @@ public class CoordianteTransformator implements
 
     /**
      * Modify the DescribeSensor response
-     * 
+     *
      * @param request
      *            the DescribeSensor request
      * @return Modified the DescribeSensor request
@@ -397,7 +396,7 @@ public class CoordianteTransformator implements
 
     /**
      * Check the {@link AbstractSensorML} if modifications are required
-     * 
+     *
      * @param abstractSensorML
      *            {@link AbstractSensorML} to check
      * @param targetCrs
@@ -421,7 +420,7 @@ public class CoordianteTransformator implements
 
     /**
      * Check the {@link AbstractProcess} if modifications are required
-     * 
+     *
      * @param abstractProcess
      *            {@link AbstractProcess} to check
      * @param targetCrs
@@ -454,7 +453,7 @@ public class CoordianteTransformator implements
 
     /**
      * Check the {@link SmlPosition} if modifications are required
-     * 
+     *
      * @param position
      *            {@link SmlPosition} to check
      * @param targetCrs
@@ -481,7 +480,7 @@ public class CoordianteTransformator implements
 
     /**
      * Transform coordinates
-     * 
+     *
      * @param position
      *            {@link SweCoordinate}s to transform
      * @param sourceCrs
@@ -539,7 +538,7 @@ public class CoordianteTransformator implements
 
     /**
      * Check the {@link SmlLocation} if modifications are required
-     * 
+     *
      * @param location
      *            {@link SmlLocation} to check
      * @param targetCrs
@@ -554,7 +553,7 @@ public class CoordianteTransformator implements
     /**
      * Check if the {@link AbstractSensorML} contains {@link SmlCapabilities}
      * with observed area
-     * 
+     *
      * @param abstractSensorML
      *            {@link AbstractSensorML} to check
      * @param targetCrs
@@ -593,7 +592,7 @@ public class CoordianteTransformator implements
 
     /**
      * Check if the the CRS parameter is contained in the request and supported
-     * 
+     *
      * @param request
      *            Request to check
      * @throws OwsExceptionReport
@@ -612,7 +611,7 @@ public class CoordianteTransformator implements
     /**
      * Get the CRS from the request or if the CRS parameter is not set, return
      * the {@link EpsgConstants.NOT_SET_EPSG}.
-     * 
+     *
      * @param request
      *            the request to check
      * @return the requested CRS or {@link EpsgConstants.NOT_SET_EPSG}
@@ -634,7 +633,7 @@ public class CoordianteTransformator implements
     /**
      * Get the target EPSG code. If set, the request CRS, else the default
      * response EPSG code.
-     * 
+     *
      * @param request
      *            the request to get CRS from
      * @return Requested, if set, or the default response EPSG code
@@ -650,7 +649,7 @@ public class CoordianteTransformator implements
 
     /**
      * Get the EPSG code as integer from value
-     * 
+     *
      * @param value
      *            EPSG code
      * @return integer representation of EPSG code
@@ -672,7 +671,7 @@ public class CoordianteTransformator implements
 
     /**
      * Get EPSG code as integer from String value
-     * 
+     *
      * @param crs
      *            String EPSG code
      * @return integer representation of EPSG code
@@ -712,7 +711,7 @@ public class CoordianteTransformator implements
     /**
      * Check if the spatial filters geometries EPSG code are the same as the
      * stored EPSG code. If not a coordinate transformation is performed.
-     * 
+     *
      * @param spatialFilters
      *            Spatial filters to check
      * @throws OwsExceptionReport
@@ -727,7 +726,7 @@ public class CoordianteTransformator implements
     /**
      * Check if the spatial filter geometry EPSG code is the same as the stored
      * EPSG code. If not a coordinate transformation is performed.
-     * 
+     *
      * @param spatialFilter
      *            Spatial filter to check
      * @throws OwsExceptionReport
@@ -741,7 +740,7 @@ public class CoordianteTransformator implements
     /**
      * Check all geometries in the requested {@link OmObservation}s and
      * transform to storage EPSG code if necessary
-     * 
+     *
      * @param observations
      *            Requested {@link OmObservation}s
      * @throws OwsExceptionReport
@@ -766,7 +765,7 @@ public class CoordianteTransformator implements
     /**
      * Check all geometries in the response {@link OmObservation}s and transform
      * to requested or default response EPSG code if necessary
-     * 
+     *
      * @param observations
      *            Response {@link OmObservation}s
      * @param targetCrs
@@ -794,7 +793,7 @@ public class CoordianteTransformator implements
     /**
      * Check and transform the {@link SamplingFeature} geometry to storage EPSG
      * code if necessary
-     * 
+     *
      * @param samplingFeature
      *            the {@link SamplingFeature}
      * @throws OwsExceptionReport
@@ -809,7 +808,7 @@ public class CoordianteTransformator implements
     /**
      * Check and transform the {@link SamplingFeature} geometry to requested or
      * default response EPSG code if necessary
-     * 
+     *
      * @param samplingFeature
      *            the {@link SamplingFeature}
      * @param targetCrs
@@ -829,7 +828,7 @@ public class CoordianteTransformator implements
     /**
      * Check all geometries in the response {@link AbstractFeature}s and
      * transform to requested or default response EPSG code if necessary
-     * 
+     *
      * @param feature
      *            the response {@link AbstractFeature}s
      * @param targetCrs
@@ -855,7 +854,7 @@ public class CoordianteTransformator implements
     /**
      * Check if the O&M parameter contains a geometry and transform to target
      * EPSG code, e.g. SOS 2.0 Spatial Filtering Profile
-     * 
+     *
      * @param parameters
      *            O&M parameter to check
      * @param targetCrs

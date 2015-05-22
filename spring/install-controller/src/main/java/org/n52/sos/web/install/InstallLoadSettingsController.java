@@ -31,6 +31,7 @@ package org.n52.sos.web.install;
 import java.io.IOException;
 import java.util.Iterator;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -53,6 +54,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import org.n52.iceland.config.SettingsManager;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 
@@ -65,6 +68,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class InstallLoadSettingsController extends AbstractController {
 
     private static final Logger LOG = LoggerFactory.getLogger(InstallLoadSettingsController.class);
+
+    @Inject
+    private SettingsManager settingsManager;
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -86,15 +92,15 @@ public class InstallLoadSettingsController extends AbstractController {
                 LOG.warn("Value for setting with key {} is null", key);
                 continue;
             }
-            SettingDefinition<?, ?> def = getSettingsManager().getDefinitionByKey(key);
+            SettingDefinition<?, ?> def = settingsManager.getDefinitionByKey(key);
             if (def == null) {
                 LOG.warn("No definition for setting with key {}", key);
                 continue;
             }
             if (def instanceof MultilingualStringSettingDefinition) {
-                c.setSetting(def, getSettingsManager().getSettingFactory().newMultiLingualStringValue((MultilingualStringSettingDefinition)def, value));
+                c.setSetting(def, settingsManager.getSettingFactory().newMultiLingualStringValue((MultilingualStringSettingDefinition)def, value));
             } else {
-                c.setSetting(def, getSettingsManager().getSettingFactory().newSettingValue(def, value));
+                c.setSetting(def, settingsManager.getSettingFactory().newSettingValue(def, value));
             }
         }
         AbstractInstallController.setSettings(session, c);

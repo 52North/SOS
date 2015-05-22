@@ -62,7 +62,7 @@ import com.google.common.collect.Maps;
 /**
  * Factory methods to create {@link Criterion Criterions} for
  * {@link TemporalFilter TemporalFilters}.
- * 
+ *
  * @see AfterRestriction
  * @see BeforeRestriction
  * @see BeginsRestriction
@@ -82,35 +82,35 @@ import com.google.common.collect.Maps;
 public class TemporalRestrictions {
     /**
      * Marker for a value reference referencing the phenomenon time ({@value} ).
-     * 
+     *
      * @see #PHENOMENON_TIME_FIELDS
      */
     public static final String PHENOMENON_TIME_VALUE_REFERENCE = "phenomenonTime";
 
     /**
      * Marker for a value reference referencing the result time ({@value} ).
-     * 
+     *
      * @see #RESULT_TIME_FIELDS
      */
     public static final String RESULT_TIME_VALUE_REFERENCE = "resultTime";
 
     /**
      * Marker for a value reference referencing the valid time ({@value} ).
-     * 
+     *
      * @see #VALID_TIME_FIELDS
      */
     public static final String VALID_TIME_VALUE_REFERENCE = "validTime";
 
     /**
      * Marker for a value reference referencing the valid time ({@value} ).
-     * 
+     *
      * @see #VALID_TIME_FIELDS
      */
     public static final String VALID_DESCRIBE_SENSOR_TIME_VALUE_REFERENCE = "validDescribeSensorTime";
 
     /**
      * Fields describing the phenomenon time of a <tt>Observation</tt>.
-     * 
+     *
      * @see Observation#PHENOMENON_TIME_START
      * @see Observation#PHENOMENON_TIME_END
      */
@@ -119,7 +119,7 @@ public class TemporalRestrictions {
 
     /**
      * Fields describing the result time of a <tt>Observation</tt>.
-     * 
+     *
      * @see Observation#RESULT_TIME
      */
     public static final TimePrimitiveFieldDescriptor RESULT_TIME_FIELDS = new TimePrimitiveFieldDescriptor(
@@ -127,7 +127,7 @@ public class TemporalRestrictions {
 
     /**
      * Fields describing the valid time of a <tt>Observation</tt>.
-     * 
+     *
      * @see Observation#VALID_TIME_START
      * @see Observation#VALID_TIME_END
      */
@@ -136,7 +136,7 @@ public class TemporalRestrictions {
 
     /**
      * Fields describing the valid time of a <tt>ValidProcedureTime</tt>.
-     * 
+     *
      * @see ValidProcedureTime#START_TIME
      * @see ValidProcedureTime#END_TIME
      */
@@ -145,16 +145,16 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param begin
      *            the begin property name
      * @param end
      *            the end property name
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see BeforeRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -166,14 +166,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see BeforeRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -185,14 +185,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see BeforeRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -204,16 +204,16 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param begin
      *            the begin property name
      * @param end
      *            the end property name
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see AfterRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -225,14 +225,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see AfterRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -244,14 +244,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>-
-     * 
+     *
      * @see AfterRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -263,16 +263,16 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param begin
      *            the begin property name
      * @param end
      *            the end property name
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see BeginsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -284,14 +284,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see BeginsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -303,14 +303,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see BeginsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -322,16 +322,16 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param begin
      *            the begin property name
      * @param end
      *            the end property name
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see EndsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -343,14 +343,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see EndsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -362,14 +362,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see EndsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -381,16 +381,16 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param begin
      *            the begin property name
      * @param end
      *            the end property name
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see EndedByRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -402,14 +402,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see EndedByRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -421,14 +421,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see EndedByRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -440,16 +440,16 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param begin
      *            the begin property name
      * @param end
      *            the end property name
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see BegunByRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -461,14 +461,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see BegunByRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -480,14 +480,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see BegunByRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -499,16 +499,16 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param begin
      *            the begin property name
      * @param end
      *            the end property name
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see DuringRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -520,14 +520,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see DuringRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -539,14 +539,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see DuringRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -558,16 +558,16 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param begin
      *            the begin property name
      * @param end
      *            the end property name
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see TEqualsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -579,14 +579,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see TEqualsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -598,14 +598,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see TEqualsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -617,16 +617,16 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param begin
      *            the begin property name
      * @param end
      *            the end property name
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see ContainsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -638,14 +638,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see ContainsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -657,14 +657,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see ContainsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -677,16 +677,16 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param begin
      *            the begin property name
      * @param end
      *            the end property name
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see OverlapsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -698,14 +698,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see OverlapsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -717,14 +717,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see OverlapsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -737,16 +737,16 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param begin
      *            the begin property name
      * @param end
      *            the end property name
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see MeetsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -758,14 +758,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see MeetsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -777,14 +777,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see MeetsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -796,16 +796,16 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param begin
      *            the begin property name
      * @param end
      *            the end property name
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see MetByRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -817,14 +817,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see MetByRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -836,14 +836,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see MetByRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -855,16 +855,16 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param begin
      *            the begin property name
      * @param end
      *            the end property name
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see OverlappedByRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -876,14 +876,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see OverlappedByRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -895,14 +895,14 @@ public class TemporalRestrictions {
 
     /**
      * Creates a temporal restriction for the specified time and property.
-     * 
+     *
      * @param property
      *            the property
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @see OverlappedByRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -916,7 +916,7 @@ public class TemporalRestrictions {
     /**
      * Create a new <tt>Criterion</tt> using the specified property, restricion
      * and value.
-     * 
+     *
      * @param restriction
      *            the restriction
      * @param begin
@@ -925,9 +925,9 @@ public class TemporalRestrictions {
      *            the end property field name
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
      *             this restriction
@@ -940,16 +940,16 @@ public class TemporalRestrictions {
     /**
      * Create a new <tt>Criterion</tt> using the specified property, restricion
      * and value.
-     * 
+     *
      * @param restriction
      *            the restriction
      * @param property
      *            the property field name
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
      *             this restriction
@@ -962,16 +962,16 @@ public class TemporalRestrictions {
     /**
      * Create a new <tt>Criterion</tt> using the specified property, restricion
      * and value.
-     * 
+     *
      * @param restriction
      *            the restriction
      * @param property
      *            the property field name(s)
      * @param value
      *            the value
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
      *             this restriction
@@ -983,12 +983,12 @@ public class TemporalRestrictions {
 
     /**
      * Create a new <tt>Criterion</tt> using the specified filter.
-     * 
+     *
      * @param filter
      *            the filter
-     * 
+     *
      * @return the <tt>Criterion</tt>
-     * 
+     *
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
      *             this restriction
@@ -1037,12 +1037,12 @@ public class TemporalRestrictions {
 
     /**
      * Creates a {@link Conjunction} for the specified temporal filters.
-     * 
+     *
      * @param temporalFilters
      *            the filters
-     * 
+     *
      * @return Hibernate temporal filter criterion
-     * 
+     *
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
      *             this restriction
@@ -1069,7 +1069,7 @@ public class TemporalRestrictions {
     /**
      * Creates {@link Disjunction}s for the specified temporal filters with the
      * same valueReference.
-     * 
+     *
      * @param temporalFilters
      *            the filters
      * @return {@link Collection} of {@link Disjunction}
@@ -1095,24 +1095,24 @@ public class TemporalRestrictions {
                 map.put(temporalFilter.getValueReference(), disjunction);
             }
         }
-        return (Collection<Disjunction>) map.values();
+        return map.values();
     }
 
     /**
      * Gets the field descriptor for the specified value reference.
-     * 
+     *
      * @param valueReference
      *            the value reference
-     * 
+     *
      * @return the property descriptor
-     * 
+     *
      * @see #PHENOMENON_TIME_VALUE_REFERENCE
      * @see #RESULT_TIME_VALUE_REFERENCE
      * @see #VALID_TIME_VALUE_REFERENCE
      * @see #PHENOMENON_TIME_FIELDS
      * @see #RESULT_TIME_FIELDS
      * @see #VALID_TIME_FIELDS
-     * 
+     *
      * @throws UnsupportedValueReferenceException
      *             if the <tt>valueReference</tt> can not be decoded
      */

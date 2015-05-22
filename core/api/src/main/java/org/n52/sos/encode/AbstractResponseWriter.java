@@ -28,6 +28,9 @@
  */
 package org.n52.sos.encode;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.encode.EncoderKey;
@@ -35,19 +38,17 @@ import org.n52.iceland.encode.ResponseWriter;
 import org.n52.iceland.request.ResponseFormat;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract {@link ResponseWriter} class for response streaming
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
  * @param <T>
  *            generic for the element to write
  */
-public abstract class AbstractResponseWriter<T> implements ResponseWriter<T> {   
+public abstract class AbstractResponseWriter<T> implements ResponseWriter<T> {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(AbstractResponseWriter.class);
     private MediaType contentType;
@@ -61,9 +62,9 @@ public abstract class AbstractResponseWriter<T> implements ResponseWriter<T> {
     public void setContentType(MediaType contentType) {
         this.contentType = contentType;
     }
-    
+
     /**
-     * Check if contentType is set 
+     * Check if contentType is set
      * @return <code>true</code>, if contentType is set
      */
     protected boolean isSetContentType() {
@@ -72,7 +73,7 @@ public abstract class AbstractResponseWriter<T> implements ResponseWriter<T> {
 
     /**
      * Getter for encoder, encapsulates the instance call
-     * 
+     *
      * @param key
      *            Encoder key
      * @return Matching encoder
@@ -81,7 +82,7 @@ public abstract class AbstractResponseWriter<T> implements ResponseWriter<T> {
         return CodingRepository.getInstance().getEncoder(key);
     }
 
-    
+
 	@Override
 	public MediaType getEncodedContentType(ResponseFormat responseFormat) {
 		if (responseFormat.isSetResponseFormat()) {

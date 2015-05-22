@@ -35,8 +35,8 @@ import java.util.Map;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesKey;
-import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesRepository;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderKey;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderRepository;
 import org.n52.iceland.ogc.swes.OfferingExtensionKey;
 import org.n52.iceland.ogc.swes.OfferingExtensionRepository;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
@@ -102,9 +102,9 @@ public class AdminExtensionController extends AbstractAdminController {
             ServiceOperatorKey sokt =
                     new ServiceOperatorKey(json.path(JSONConstants.SERVICE_KEY).asText(),
                             json.path(JSONConstants.VERSION_KEY).asText());
-            OwsExtendedCapabilitiesKey oeckt = new OwsExtendedCapabilitiesKey(sokt, json.path(JSONConstants.EXTENDED_CAPABILITIES_DOMAIN_KEY).asText());
+            OwsExtendedCapabilitiesProviderKey oeckt = new OwsExtendedCapabilitiesProviderKey(sokt, json.path(JSONConstants.EXTENDED_CAPABILITIES_DOMAIN_KEY).asText());
             if (json.path(JSONConstants.ACTIVE_KEY).asBoolean()) {
-                for (OwsExtendedCapabilitiesKey key : OwsExtendedCapabilitiesRepository.getInstance().getAllExtendedCapabilitiesProviders().keySet()) {
+                for (OwsExtendedCapabilitiesProviderKey key : OwsExtendedCapabilitiesProviderRepository.getInstance().getAllExtendedCapabilitiesProviders().keySet()) {
                     if (key.getServiceOperatorKey().equals(sokt)) {
                         getSettingsManager().setActive(key, false);
                     }
@@ -128,10 +128,10 @@ public class AdminExtensionController extends AbstractAdminController {
             JSONException {
         ArrayNode jeces = JSONUtils.nodeFactory().arrayNode();
         final Map<ServiceOperatorKey, Collection<String>> oes =
-                OwsExtendedCapabilitiesRepository.getInstance().getAllDomains();
+                OwsExtendedCapabilitiesProviderRepository.getInstance().getAllDomains();
         for (ServiceOperatorKey sokt : oes.keySet()) {
             for (String name : oes.get(sokt)) {
-                OwsExtendedCapabilitiesKey oeckt = new OwsExtendedCapabilitiesKey(sokt, name);
+                OwsExtendedCapabilitiesProviderKey oeckt = new OwsExtendedCapabilitiesProviderKey(sokt, name);
                 jeces.addObject()
                         .put(JSONConstants.SERVICE_KEY, oeckt.getService())
                         .put(JSONConstants.VERSION_KEY, oeckt.getVersion())

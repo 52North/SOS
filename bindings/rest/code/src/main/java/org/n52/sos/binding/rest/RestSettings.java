@@ -46,12 +46,12 @@ import com.google.common.collect.ImmutableSet;
  *
  */
 public class RestSettings implements SettingDefinitionProvider {
-	
+
 	private static final SettingDefinitionGroup SETTINGS_GROUP = new SettingDefinitionGroup().
 			setTitle("RESTful Binding").
 			setDescription("Configuration for the RESTful binding").
 			setOrder(4.2f);
-	
+
 	public static final String REST_CONFORMANCE_CLASS = "rest.conformanceClass";
 	public static final String REST_CONTENT_TYPE_DEFAULT = "rest.contentType.default";
 	public static final String REST_CONTENT_TYPE_UNDEFINED = "rest.contentType.undefined";
@@ -109,9 +109,8 @@ public class RestSettings implements SettingDefinitionProvider {
 	public static final String REST_SOS_SERVICE = "rest.sos.service";
 	public static final String REST_SOS_TERMS_PROCEDUREIDENTIFIER = "rest.sos.terms.procedureidentifier";
 	public static final String REST_SOS_VERSION = "rest.sos.version";
-	public static final String REST_URLPATTERN = "rest.urlpattern";
 	public static final String REST_ENCODING_SCHEMA_URL = "rest.encodingSchemaUrl";
-	
+
 	private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet.<SettingDefinition<?,?>>of(
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
@@ -121,7 +120,7 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDescription("The conformance class for the RESTful binding.").
 			setOptional(false).
 			setOrder(0),
-			
+
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_CONTENT_TYPE_DEFAULT).
@@ -130,7 +129,7 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDescription("Default content type returned by this binding").
 			setOptional(false).
 			setOrder(1),
-			
+
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_CONTENT_TYPE_UNDEFINED).
@@ -139,7 +138,7 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDescription("Content type used in the case of not knowing the content type of a externally linked resource.").
 			setOptional(false).
 			setOrder(2),
-			
+
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_BINDING_END_POINT_RESOURCE).
@@ -148,7 +147,7 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDescription("The resource any client is redirected to when accessing the binding endpoint.").
 			setOptional(false).
 			setOrder(3),
-			
+
 			new IntegerSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_EPSG_CODE_DEFAULT).
@@ -157,7 +156,7 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDescription("The default value of the EPSG code.").
 			setOptional(false).
 			setOrder(4),
-			
+
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_URL_ENCODING).
@@ -166,7 +165,7 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDescription("The default value fo the URL encoding.").
 			setOptional(false).
 			setOrder(5),
-			
+
 			new UriSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_ENCODING_NAMESPACE).
@@ -175,7 +174,7 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDescription("The URI of the RESTful encoding namespace.").
 			setOptional(false).
 			setOrder(6),
-			
+
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_ENCODING_PREFIX).
@@ -184,7 +183,7 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDescription("The prefix of the RESTful encoding used within XML documents.").
 			setOptional(false).
 			setOrder(7),
-			
+
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_ERROR_MSG_BAD_GET_REQUEST).
@@ -202,7 +201,7 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDescription("The bad GET request by id error message").
 			setOptional(false).
 			setOrder(9),
-			
+
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_ERROR_MSG_BAD_GET_REQUEST_GLOBAL_RESOURCE).
@@ -211,7 +210,7 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDescription("The bad GET request global resource error message").
 			setOptional(false).
 			setOrder(10),
-			
+
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_ERROR_MSG_BAD_GET_REQUEST_NO_VALID_KVP_PARAMETER).
@@ -220,7 +219,7 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDescription("The bad GET request error message when no valid KVP paramter is found.").
 			setOptional(false).
 			setOrder(11),
-			
+
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_ERROR_MSG_BAD_GET_REQUEST_SEARCH).
@@ -229,7 +228,7 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDescription("The bad GET request error message when the search request is not valid").
 			setOptional(false).
 			setOrder(12),
-			
+
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_ERROR_MSG_HTTP_METHOD_NOT_ALLOWED_FOR_RESOURCE).
@@ -238,7 +237,7 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDescription("The error message when the used HTTP method is not allowed for the requested resource type.").
 			setOptional(false).
 			setOrder(13),
-			
+
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_ERROR_MSG_WRONG_CONTENT_TYPE).
@@ -247,7 +246,7 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDescription("The error message when using the wrong content type in the request body.").
 			setOptional(false).
 			setOrder(14),
-			
+
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_ERROR_MSG_WRONG_CONTENT_TYPE_IN_ACCEPT_HEADER).
@@ -256,7 +255,7 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDescription("The content type requested could not be supported.").
 			setOptional(false).
 			setOrder(15),
-			
+
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_HTTP_GET_PARAMETERNAME_FOI).
@@ -626,15 +625,6 @@ public class RestSettings implements SettingDefinitionProvider {
 			setOptional(false).
 			setOrder(65),
 
-			new StringSettingDefinition().
-			setGroup(SETTINGS_GROUP).
-			setKey(REST_URLPATTERN).
-			setDefaultValue("/rest").
-			setTitle("Urlpattern").
-			setDescription("The URL identifier of the RESTful binding.").
-			setOptional(false).
-			setOrder(66),
-			
 			new UriSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_ENCODING_SCHEMA_URL).
@@ -642,11 +632,11 @@ public class RestSettings implements SettingDefinitionProvider {
 			setTitle("Encoding Schema URL").
 			setDescription("The URL to the encoding schema. Should be a web accessible URL returning a XSD file").
 			setOptional(false).
-			setOrder(67)
-			
+			setOrder(66)
+
 			);
 
-	
+
 	@Override
 	public Set<SettingDefinition<?, ?>> getSettingDefinitions()
 	{

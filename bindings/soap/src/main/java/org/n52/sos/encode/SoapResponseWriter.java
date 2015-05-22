@@ -30,21 +30,30 @@ package org.n52.sos.encode;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Set;
 
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import org.n52.iceland.encode.ResponseProxy;
+import org.n52.iceland.encode.ResponseWriterKey;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
 
 /**
  * Writer for {@link SOAPMessage} objects
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
 public class SoapResponseWriter extends AbstractResponseWriter<SOAPMessage> {
+    public static final ResponseWriterKey KEY = new ResponseWriterKey(SOAPMessage.class);
+
+    @Override
+    public Set<ResponseWriterKey> getKeys() {
+        return Collections.singleton(KEY);
+    }
 
     @Override
     public void write(SOAPMessage t, OutputStream out, ResponseProxy responseProxy) throws IOException {

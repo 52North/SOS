@@ -55,6 +55,11 @@
           class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorRepository" />
     <bean id="geometryHandler" class="org.n52.sos.util.GeometryHandler" />
 
+    <bean class="org.n52.sos.service.DriverCleanupListener" />
+
+    <bean class="org.n52.sos.ds.hibernate.InsertSensorCapabilitiesExtensionProvider" />
+    <bean class="org.n52.sos.ds.hibernate.InsertResultCapabiltiesExtensionProvider" />
+    <bean class="org.n52.sos.ds.hibernate.InsertResultTemplateCapabilitiesExtensionProvider" />
 
     <!--
     <bean id="contentCacheController" class="org.n52.sos.cache.ctrl.ContentCacheControllerImpl" />

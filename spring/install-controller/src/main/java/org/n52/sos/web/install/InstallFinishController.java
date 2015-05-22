@@ -48,6 +48,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import org.n52.iceland.config.SettingValue;
+import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.exception.ConfigurationException;
@@ -65,6 +66,9 @@ import org.n52.sos.web.install.InstallConstants.Step;
 @RequestMapping(ControllerConstants.Paths.INSTALL_FINISH)
 public class InstallFinishController extends AbstractProcessingInstallationController {
     private static final Logger LOG = LoggerFactory.getLogger(InstallFinishController.class);
+
+    @Inject
+    private SettingsManager settingsManager;
 
     @Inject
     @Named(ContextSwitcher.BEAN_NAME)
@@ -186,12 +190,9 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
     protected void saveServiceSettings(InstallationConfiguration c) throws InstallationSettingsError {
         try {
             for (SettingValue<?> e : c.getSettings().values()) {
-                getSettingsManager().changeSetting(e);
+                this.settingsManager.changeSetting(e);
             }
-        } catch (ConfigurationException e) {
-            throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_INSERT_SETTINGS,
-                    e.getMessage()), e);
-        } catch (ConnectionProviderException e) {
+        } catch (ConfigurationException | ConnectionProviderException e) {
             throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_INSERT_SETTINGS,
                     e.getMessage()), e);
         }
@@ -208,7 +209,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
 
     protected void clearSettings(InstallationConfiguration c) throws InstallationSettingsError {
         try {
-            getSettingsManager().deleteAll();
+            this.settingsManager.deleteAll();
         } catch (Throwable e) {
             throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_DELETE_PREVIOUS_SETTINGS,
                     e.getMessage()));

@@ -44,9 +44,9 @@ import org.n52.sos.response.GetResultResponse;
 
 /**
  * Renamed, in version 4.x called AbstractGetResultDAO
- * 
+ *
  * @since 5.0.0
- * 
+ *
  */
 public abstract class AbstractGetResultHandler extends AbstractOperationHandler {
     public AbstractGetResultHandler(String service) {
@@ -57,9 +57,9 @@ public abstract class AbstractGetResultHandler extends AbstractOperationHandler 
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
         Set<String> resultTemplateIdentifier = getCache().getResultTemplates();
-        Set<String> offerings = new HashSet<String>(0);
-        Collection<String> observableProperties = new ArrayList<String>(0);
-        Collection<String> featureOfInterest = new ArrayList<String>(0);
+        Set<String> offerings = new HashSet<>(0);
+        Collection<String> observableProperties = new ArrayList<>(0);
+        Collection<String> featureOfInterest = new ArrayList<>(0);
         if (resultTemplateIdentifier != null && !resultTemplateIdentifier.isEmpty()) {
             offerings = getCache().getOfferingsWithResultTemplate();
             observableProperties = getCache().getObservablePropertiesWithResultTemplate();

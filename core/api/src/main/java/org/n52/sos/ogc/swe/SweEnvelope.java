@@ -40,13 +40,14 @@ import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.SweHelper;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SweEnvelope extends SweAbstractDataComponent {
     private String referenceFrame;
@@ -66,7 +67,7 @@ public class SweEnvelope extends SweAbstractDataComponent {
     }
 
     public SweEnvelope(SosEnvelope sosEnvelope, String uom) {
-        this(String.valueOf(sosEnvelope.getSrid()), 
+        this(String.valueOf(sosEnvelope.getSrid()),
              createUpperCorner(sosEnvelope, uom),
              createLowerCorner(sosEnvelope, uom));
     }
@@ -132,7 +133,7 @@ public class SweEnvelope extends SweAbstractDataComponent {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(getClass())
+        return MoreObjects.toStringHelper(getClass())
                 .add("upperCorner", getUpperCorner())
                 .add("lowerCorner", getLowerCorner())
                 .add("time", getTime())
@@ -210,7 +211,7 @@ public class SweEnvelope extends SweAbstractDataComponent {
     }
 
     private Double extractDouble(SweCoordinate<?> coord) {
-        if (coord != null && 
+        if (coord != null &&
             coord.getValue() != null &&
             coord.getValue().getValue() instanceof Number) {
             return ((Number) coord.getValue().getValue()).doubleValue();

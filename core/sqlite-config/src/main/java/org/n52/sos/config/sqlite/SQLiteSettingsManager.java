@@ -38,6 +38,9 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.config.AbstractSettingValueFactory;
 import org.n52.iceland.config.AbstractSettingsManager;
@@ -51,7 +54,7 @@ import org.n52.iceland.encode.ResponseFormatKey;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.i18n.MultilingualString;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesKey;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderKey;
 import org.n52.iceland.ogc.swes.OfferingExtensionKey;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.sos.config.sqlite.SQLiteManager.HibernateAction;
@@ -80,8 +83,6 @@ import org.n52.sos.config.sqlite.entities.ProcedureEncodingKey;
 import org.n52.sos.config.sqlite.entities.StringSettingValue;
 import org.n52.sos.config.sqlite.entities.TimeInstantSettingValue;
 import org.n52.sos.config.sqlite.entities.UriSettingValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
     private static final Logger LOG = LoggerFactory.getLogger(SQLiteSettingsManager.class);
@@ -239,12 +240,12 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
 
     protected <K extends Serializable, T extends Activatable<K, T>> boolean isActive(Class<T> c, K key, boolean defaultActive)
             throws ConnectionProviderException {
-        return execute(new IsActiveAction<K, T>(c, key, defaultActive)).booleanValue();
+        return execute(new IsActiveAction<K, T>(c, key, defaultActive));
     }
 
     @Override
     protected void setBindingStatus(BindingKey bk, boolean active) throws ConnectionProviderException {
-        setActive(Binding.class, new Binding(bk.getServletPath()), active);
+        setActive(Binding.class, new Binding(bk.getKeyAsString()), active);
     }
 
     @Override
@@ -259,7 +260,7 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
 
     @Override
     public boolean isActive(BindingKey bk) throws ConnectionProviderException {
-        return isActive(Binding.class, bk.getServletPath());
+        return isActive(Binding.class, bk.getKeyAsString());
     }
 
     @Override
@@ -268,7 +269,7 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
     }
 
     @Override
-    public boolean isActive(OwsExtendedCapabilitiesKey oeck) throws ConnectionProviderException {
+    public boolean isActive(OwsExtendedCapabilitiesProviderKey oeck) throws ConnectionProviderException {
         return isActive(DynamicOwsExtendedCapabilities.class, new DynamicOwsExtendedCapabilitiesKey(oeck));
     }
 
@@ -277,7 +278,7 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
         setActive(DynamicOfferingExtension.class, new DynamicOfferingExtension(oek), active);
     }
     @Override
-    protected void setOwsExtendedCapabilitiesStatus(OwsExtendedCapabilitiesKey oeck, boolean active) throws ConnectionProviderException {
+    protected void setOwsExtendedCapabilitiesStatus(OwsExtendedCapabilitiesProviderKey oeck, boolean active) throws ConnectionProviderException {
         setActive(DynamicOwsExtendedCapabilities.class, new DynamicOwsExtendedCapabilities(oeck), active);
     }
 

@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -65,6 +66,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import org.n52.iceland.config.SettingsManager;
+
 
 
 
@@ -72,8 +75,11 @@ import org.springframework.web.servlet.ModelAndView;
 public class AdminSettingsController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(AdminSettingsController.class);
 
-    @Autowired
+    @Inject
     private UserService userService;
+
+    @Inject
+    private SettingsManager settingsManager;
 
     public UserService getUserService() {
         return userService;
@@ -125,7 +131,7 @@ public class AdminSettingsController extends AbstractController {
     private String getSettingsJsonString()
             throws ConfigurationException, JSONException,
                    ConnectionProviderException {
-        return JSONUtils.print(toJSONValueMap(getSettingsManager().getSettings()));
+        return JSONUtils.print(toJSONValueMap(settingsManager.getSettings()));
     }
 
     private void logSettings(Collection<SettingValue<?>> values) {
@@ -137,16 +143,15 @@ public class AdminSettingsController extends AbstractController {
     }
 
     private void updateSettings(HttpServletRequest request) throws ConnectionProviderException {
-        Map<SettingDefinition<?, ?>, SettingValue<?>> changedSettings =
-                new HashMap<SettingDefinition<?, ?>, SettingValue<?>>();
-        for (SettingDefinition<?, ?> def : getSettingsManager().getSettingDefinitions()) {
+        Map<SettingDefinition<?, ?>, SettingValue<?>> changedSettings = new HashMap<>();
+        for (SettingDefinition<?, ?> def : settingsManager.getSettingDefinitions()) {
             SettingValue<?> newValue =
-                    getSettingsManager().getSettingFactory().newSettingValue(def, request.getParameter(def.getKey()));
+                    settingsManager.getSettingFactory().newSettingValue(def, request.getParameter(def.getKey()));
             changedSettings.put(def, newValue);
         }
         logSettings(changedSettings.values());
         for (SettingValue<?> e : changedSettings.values()) {
-            getSettingsManager().changeSetting(e);
+            settingsManager.changeSetting(e);
         }
     }
 

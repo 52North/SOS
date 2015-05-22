@@ -51,8 +51,8 @@ public class PronunciationJSONEncoder extends JSONEncoder<Pronunciation> {
     public JsonNode encodeJSON(Pronunciation t)
             throws OwsExceptionReport {
         ObjectNode j = nodeFactory().objectNode();
-        j.put(AQDJSONConstants.IPA, encodeObjectToJson(t.getIPA()));
-        j.put(AQDJSONConstants.SOUND_LINK, encodeObjectToJson(t.getSoundLink()));
+        j.set(AQDJSONConstants.IPA, encodeObjectToJson(t.getIPA()));
+        j.set(AQDJSONConstants.SOUND_LINK, encodeObjectToJson(t.getSoundLink()));
         return j;
     }
 

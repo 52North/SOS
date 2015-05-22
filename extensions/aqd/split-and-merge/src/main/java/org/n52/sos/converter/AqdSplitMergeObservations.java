@@ -48,14 +48,13 @@ import org.n52.sos.response.GetObservationResponse;
 
 import com.google.common.collect.Sets;
 
-public class AqdSplitMergeObservations implements
-        RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+public class AqdSplitMergeObservations implements RequestResponseModifier {
 
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
     /**
      * Get the keys
-     * 
+     *
      * @return Set of keys
      */
     private static Set<RequestResponseModifierKeyType> getKeyTypes() {
@@ -68,7 +67,7 @@ public class AqdSplitMergeObservations implements
     }
 
     @Override
-    public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
+    public Set<RequestResponseModifierKeyType> getKeys() {
         return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
     }
 
@@ -99,7 +98,7 @@ public class AqdSplitMergeObservations implements
 
     private List<OmObservation> mergeObservations(List<OmObservation> observationCollection) {
         if (observationCollection != null) {
-            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
+            final List<OmObservation> mergedObservations = new LinkedList<>();
             int obsIdCounter = 1;
             for (final OmObservation sosObservation : observationCollection) {
                 if (mergedObservations.isEmpty()) {
@@ -140,7 +139,7 @@ public class AqdSplitMergeObservations implements
 
     /**
      * Merge result time with passed observation result time
-     * 
+     *
      * @param sosObservation
      *            Observation to merge
      * @param sosObservation2
@@ -154,7 +153,7 @@ public class AqdSplitMergeObservations implements
             combinedSosObs.setResultTime(sosObservation.getResultTime());
         }
     }
-    
+
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {
         return new RequestResponseModifierFacilitator().setMerger(true).setSplitter(true);

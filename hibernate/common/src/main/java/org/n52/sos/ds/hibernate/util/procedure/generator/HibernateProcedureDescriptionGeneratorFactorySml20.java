@@ -28,10 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.Locale;
+import java.util.Set;
 
 import org.hibernate.Session;
+
 import org.n52.iceland.ogc.OGCConstants;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
@@ -49,30 +51,30 @@ import org.n52.sos.ogc.sensorML.v20.SimpleProcess;
 
 /**
  * Generator class for SensorML 2.0 procedure descriptions
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.2.0
  *
  */
 public class HibernateProcedureDescriptionGeneratorFactorySml20 implements HibernateProcedureDescriptionGeneratorFactory {
 
-    private static final List<HibernateProcedureDescriptionGeneratorFactoryKeyType> GENERATOR_KEY_TYPES = CollectionHelper.list(
-            new HibernateProcedureDescriptionGeneratorFactoryKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE), 
-            new HibernateProcedureDescriptionGeneratorFactoryKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL));
+    private static final Set<HibernateProcedureDescriptionGeneratorFactoryKey> GENERATOR_KEY_TYPES = CollectionHelper.set(
+            new HibernateProcedureDescriptionGeneratorFactoryKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE),
+            new HibernateProcedureDescriptionGeneratorFactoryKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL));
 
     @Override
-    public List<HibernateProcedureDescriptionGeneratorFactoryKeyType> getHibernateProcedureDescriptionGeneratorFactoryKeyTypes() {
-        return GENERATOR_KEY_TYPES;
+    public Set<HibernateProcedureDescriptionGeneratorFactoryKey> getKeys() {
+        return Collections.unmodifiableSet(GENERATOR_KEY_TYPES);
     }
-    
+
     @Override
     public SosProcedureDescription create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
         return new HibernateProcedureDescriptionGeneratorSml20().generateProcedureDescription(procedure, i18n, session);
     }
-        
+
     private class HibernateProcedureDescriptionGeneratorSml20 extends AbstractHibernateProcedureDescriptionGeneratorSml {
-        
-    
+
+
         @Override
         public SosProcedureDescription generateProcedureDescription(Procedure procedure, Locale i18n, Session session)
                 throws OwsExceptionReport {
@@ -110,14 +112,14 @@ public class HibernateProcedureDescriptionGeneratorFactorySml20 implements Hiber
             physicalSystem.setPosition(createPosition(procedure));
             return physicalSystem;
         }
-    
+
         private SosProcedureDescription createSimpleProcess(Procedure procedure, Session session) throws OwsExceptionReport {
             SimpleProcess simpleProcess = new SimpleProcess();
             setIdentifier(simpleProcess, procedure);
             setCommonValues(procedure, simpleProcess, session);
             return simpleProcess;
         }
-    
+
         private SosProcedureDescription createAggregateProcess(Procedure procedure, Session session) throws OwsExceptionReport {
             AggregateProcess aggregateProcess = new AggregateProcess();
             setIdentifier(aggregateProcess, procedure);

@@ -78,35 +78,27 @@ public class ClientController extends AbstractController {
             final String version = rokt.getServiceOperatorKey().getVersion();
             final String operation = rokt.getOperationName();
             final OperationKey ok = new OperationKey(service, version, operation);
-            for (Entry<String, Binding> b : BindingRepository.getInstance().getBindings().entrySet()) {
+            for (Entry<String, Binding> b : BindingRepository.getInstance().getBindingsByPath().entrySet()) {
                 try {
                     final Binding binding = b.getValue();
                     if (binding.checkOperationHttpDeleteSupported(ok)) {
                         for (MediaType contentType : binding.getSupportedEncodings()) {
-                            ops.add(new AvailableOperation(
-                                    service, version, operation,
-                                    contentType.toString(), HTTPMethods.DELETE));
+                            ops.add(new AvailableOperation(service, version, operation, contentType.toString(), HTTPMethods.DELETE));
                         }
                     }
                     if (binding.checkOperationHttpGetSupported(ok)) {
                         for (MediaType contentType : binding.getSupportedEncodings()) {
-                            ops.add(new AvailableOperation(
-                                    service, version, operation,
-                                    contentType.toString(), HTTPMethods.GET));
+                            ops.add(new AvailableOperation(service, version, operation, contentType.toString(), HTTPMethods.GET));
                         }
                     }
                     if (binding.checkOperationHttpOptionsSupported(ok)) {
                         for (MediaType contentType : binding.getSupportedEncodings()) {
-                            ops.add(new AvailableOperation(
-                                    service, version, operation,
-                                    contentType.toString(), HTTPMethods.OPTIONS));
+                            ops.add(new AvailableOperation(service, version, operation, contentType.toString(), HTTPMethods.OPTIONS));
                         }
                     }
                     if (binding.checkOperationHttpPostSupported(ok)) {
                         for (MediaType contentType : binding.getSupportedEncodings()) {
-                            ops.add(new AvailableOperation(
-                                    service, version, operation,
-                                    contentType.toString(), HTTPMethods.POST));
+                            ops.add(new AvailableOperation(service, version, operation, contentType.toString(), HTTPMethods.POST));
                         }
                     }
                     if (binding.checkOperationHttpPutSupported(ok)) {

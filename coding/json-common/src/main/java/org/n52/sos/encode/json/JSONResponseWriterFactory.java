@@ -28,28 +28,31 @@
  */
 package org.n52.sos.encode.json;
 
+import org.n52.iceland.encode.ResponseWriter;
 import org.n52.iceland.encode.ResponseWriterFactory;
+import org.n52.iceland.encode.ResponseWriterKey;
+import org.n52.iceland.component.SingleTypeComponentFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * {@link ResponseWriterFactory} implementation for {@link JsonNode} and
  * {@link JSONResponseWriter}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
  */
-public class JSONResponseWriterFactory implements
-		ResponseWriterFactory<JsonNode, JSONResponseWriter> {
+public class JSONResponseWriterFactory
+        extends SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>>
+        implements ResponseWriterFactory {
+
+    public JSONResponseWriterFactory() {
+        super(new ResponseWriterKey(JsonNode.class));
+    }
 
 	@Override
-	public Class<JsonNode> getType() {
-		return JsonNode.class;
-	}
-
-	@Override
-	public JSONResponseWriter getResponseWriter() {
+	public JSONResponseWriter create() {
 		return new JSONResponseWriter();
 	}
 

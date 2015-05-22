@@ -36,8 +36,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
+
 import org.n52.iceland.ds.FeatureQueryHandlerQueryObject;
-import org.n52.iceland.ds.I18NDAO;
+import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.i18n.MultilingualString;
@@ -64,6 +65,7 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 import org.n52.sos.util.CacheHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

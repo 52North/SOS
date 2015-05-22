@@ -93,6 +93,11 @@ public abstract class AbstractOmObservationCreator {
         return Configurator.getInstance().getFeatureQueryHandler();
     }
 
+    protected AdditionalObservationCreatorRepository getAdditionalObservationCreatorRepository() {
+        return AdditionalObservationCreatorRepository.getInstance();
+    }
+
+
     protected Profile getActiveProfile() {
         return ProfileHandler.getInstance().getActiveProfile();
     }
@@ -104,7 +109,7 @@ public abstract class AbstractOmObservationCreator {
     protected String getTupleSeparator() {
         return ServiceConfiguration.getInstance().getTupleSeparator();
     }
-    
+
     protected String getDecimalSeparator() {
         return ServiceConfiguration.getInstance().getDecimalSeparator();
     }
@@ -119,7 +124,7 @@ public abstract class AbstractOmObservationCreator {
     public String getVersion() {
         return request.getVersion();
     }
-    
+
     public String getResponseFormat() {
         if (request.isSetResponseFormat()) {
             return request.getResponseFormat();
@@ -135,10 +140,10 @@ public abstract class AbstractOmObservationCreator {
         return i18n;
     }
 
-    
+
     protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
             throws OwsExceptionReport {
-        final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
+        final NamedValue<Geometry> namedValue = new NamedValue<>();
         final ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
         namedValue.setName(referenceType);
         // TODO add lat/long version
@@ -147,8 +152,8 @@ public abstract class AbstractOmObservationCreator {
                 .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
         return namedValue;
     }
-    
-    
+
+
     protected OmObservableProperty createObservableProperty(ObservableProperty observableProperty) {
         String phenID = observableProperty.getIdentifier();
         String description = observableProperty.getDescription();
@@ -159,10 +164,10 @@ public abstract class AbstractOmObservationCreator {
         }
         return omObservableProperty;
     }
-    
+
     /**
      * Get procedure object from series
-     * @param encodeProcedureInObservation 
+     * @param identifier
      *
      * @return Procedure object
      * @throws ConverterException
@@ -185,7 +190,7 @@ public abstract class AbstractOmObservationCreator {
             return sosProcedure;
         }
     }
-    
+
     /**
      * Get featureOfInterest object from series
      *
@@ -200,21 +205,22 @@ public abstract class AbstractOmObservationCreator {
                 getFeatureQueryHandler().getFeatureByID(queryObject);
         return feature;
     }
-    
+
     protected void checkForAdditionalObservationCreator(AbstractObservation hObservation, OmObservation sosObservation) {
         AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass());
-        if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
-            AdditionalObservationCreator<?> creator = AdditionalObservationCreatorRepository.getInstance().get(key);
+
+        if (getAdditionalObservationCreatorRepository().hasAdditionalObservationCreatorFor(key)) {
+            AdditionalObservationCreator creator = getAdditionalObservationCreatorRepository().get(key);
             creator.create(sosObservation, hObservation);
         } else {
             AdditionalObservationCreatorKey key2 = new AdditionalObservationCreatorKey(null, hObservation.getClass());
-            if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key2)) {
-                AdditionalObservationCreator<?> creator = AdditionalObservationCreatorRepository.getInstance().get(key2);
+            if (getAdditionalObservationCreatorRepository().hasAdditionalObservationCreatorFor(key2)) {
+                AdditionalObservationCreator creator = getAdditionalObservationCreatorRepository().get(key2);
                 creator.add(sosObservation, hObservation);
             }
         }
     }
-    
+
     public static String checkVersion(AbstractObservationRequest request) {
         if (request != null) {
             return request.getVersion();

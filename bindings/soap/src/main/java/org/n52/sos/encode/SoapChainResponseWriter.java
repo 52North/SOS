@@ -30,14 +30,18 @@ package org.n52.sos.encode;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Set;
 
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.encode.EncoderKey;
 import org.n52.iceland.encode.ResponseProxy;
+import org.n52.iceland.encode.ResponseWriterKey;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.ServiceConfiguration;
@@ -46,14 +50,21 @@ import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.soap.SoapResponse;
 
+
 /**
  * Streaming SOAP response writer implementation.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
  */
 public class SoapChainResponseWriter extends AbstractResponseWriter<SoapChain> {
+    public static final ResponseWriterKey KEY = new ResponseWriterKey(SoapChain.class);
+
+    @Override
+    public Set<ResponseWriterKey> getKeys() {
+        return Collections.singleton(KEY);
+    }
 
     @Override
     public void write(SoapChain chain, OutputStream out, ResponseProxy responseProxy) throws IOException {

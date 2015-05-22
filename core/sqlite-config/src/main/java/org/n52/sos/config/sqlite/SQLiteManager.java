@@ -34,7 +34,7 @@ import org.hibernate.Transaction;
 
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.util.lifecycle.Destroyable;
+import org.n52.iceland.lifecycle.Destroyable;
 
 /**
  * TODO JavaDoc

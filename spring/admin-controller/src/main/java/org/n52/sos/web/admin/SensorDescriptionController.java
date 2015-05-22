@@ -53,7 +53,7 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.Configurator;
-import org.n52.iceland.util.ServiceLoaderHelper;
+import org.n52.iceland.component.ServiceLoaderHelper;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.ds.ProcedureFormatDAO;
 import org.n52.sos.web.common.ControllerConstants;

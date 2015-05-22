@@ -40,6 +40,7 @@ import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.util.Nillable;
 import org.n52.sos.util.Referenceable;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
@@ -52,7 +53,7 @@ public class EReportingHeader extends AbstractEReportingHeader {
     private Referenceable<Time> reportingPeriod = Referenceable.of(Nillable.<Time>missing());
     private final List<Referenceable<AbstractFeature>> delete= new LinkedList<>();
     private final List<Referenceable<AbstractFeature>> content= new LinkedList<>();
-    
+
     public EReportingHeader() {
     	setDefaultElementEncoding(AqdConstants.NS_AQD);
     }
@@ -148,7 +149,7 @@ public class EReportingHeader extends AbstractEReportingHeader {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("inspireID", getInspireID())
                 .add("reportingAuthority", getReportingAuthority())
                 .add("change", getChange())

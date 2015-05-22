@@ -63,21 +63,10 @@ public class WSDLFactory implements Producer<String> {
         }
     }
 
-    @Override
-    public String get(Locale language) {
-        // No language support
-        return get();
-    }
-
-    @Override
-    public String get(String identification) {
-        return get();
-    }
-
     private String getWSDL() throws Exception {
         final WSDLBuilder builder = new WSDLBuilder();
         if (Configurator.getInstance() != null) {
-            final Map<String, Binding> bindings = BindingRepository.getInstance().getBindings();
+            final Map<String, Binding> bindings = BindingRepository.getInstance().getBindingsByPath();
             final RequestOperatorRepository repo = RequestOperatorRepository.getInstance();
 
             final Set<RequestOperatorKey> requestOperators = repo.getActiveRequestOperatorKeys();

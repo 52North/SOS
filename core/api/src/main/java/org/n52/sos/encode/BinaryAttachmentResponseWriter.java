@@ -30,27 +30,29 @@ package org.n52.sos.encode;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
 import org.n52.iceland.encode.ResponseProxy;
+import org.n52.iceland.encode.ResponseWriterKey;
 import org.n52.sos.response.BinaryAttachmentResponse;
 
 import com.google.common.base.Strings;
 
 /**
  * Writer for ServiceResponse (containing ByteArrayOutputStream)
- * 
+ *
  * @author Shane StClair <shane@axiomalaska.com>
- * 
+ *
  * @since 4.1.0
  */
 public class BinaryAttachmentResponseWriter extends AbstractResponseWriter<BinaryAttachmentResponse> {
-    public class HeaderCode {
-        public static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
-        public static final String CONTENT_TRANSFER_ENCODING_BINARY = "binary";
+    public static final ResponseWriterKey KEY = new ResponseWriterKey(BinaryAttachmentResponse.class);
 
-        public static final String CONTENT_DISPOSITION = "Content-Disposition";
-        public static final String CONTENT_ATTACHMENT_FILENAME_FORMAT = "attachment; filename=\"%s\"";
+    @Override
+    public Set<ResponseWriterKey> getKeys() {
+        return Collections.singleton(KEY);
     }
 
 //    @Override
@@ -82,5 +84,12 @@ public class BinaryAttachmentResponseWriter extends AbstractResponseWriter<Binar
     @Override
     public boolean supportsGZip(BinaryAttachmentResponse t) {
         return false;
+    }
+
+    public class HeaderCode {
+        public static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
+        public static final String CONTENT_TRANSFER_ENCODING_BINARY = "binary";
+        public static final String CONTENT_DISPOSITION = "Content-Disposition";
+        public static final String CONTENT_ATTACHMENT_FILENAME_FORMAT = "attachment; filename=\"%s\"";
     }
 }

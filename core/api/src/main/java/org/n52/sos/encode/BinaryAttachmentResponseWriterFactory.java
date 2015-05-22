@@ -28,28 +28,32 @@
  */
 package org.n52.sos.encode;
 
+import org.n52.iceland.encode.ResponseWriter;
 import org.n52.iceland.encode.ResponseWriterFactory;
+import org.n52.iceland.encode.ResponseWriterKey;
+import org.n52.iceland.component.SingleTypeComponentFactory;
 import org.n52.sos.response.BinaryAttachmentResponse;
 
 /**
- * {@link ResponseWriterFactory} implementation for {@link BinaryAttachmentResponse} and
+ * {@link ResponseWriterFactory} implementation for
+ * {@link BinaryAttachmentResponse} and
  * {@link BinaryAttachmentResponseWriter}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
  */
-public class BinaryAttachmentResponseWriterFactory implements
-		ResponseWriterFactory<BinaryAttachmentResponse, BinaryAttachmentResponseWriter> {
+public class BinaryAttachmentResponseWriterFactory
+        extends SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>>
+        implements ResponseWriterFactory {
 
-	@Override
-	public Class<BinaryAttachmentResponse> getType() {
-		return BinaryAttachmentResponse.class;
-	}
+    public BinaryAttachmentResponseWriterFactory() {
+        super(new ResponseWriterKey(BinaryAttachmentResponse.class));
+    }
 
-	@Override
-	public BinaryAttachmentResponseWriter getResponseWriter() {
-		return new BinaryAttachmentResponseWriter();
-	}
+    @Override
+    public BinaryAttachmentResponseWriter create() {
+        return new BinaryAttachmentResponseWriter();
+    }
 
 }

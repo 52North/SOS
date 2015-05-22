@@ -80,7 +80,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
 
     /**
      * Get the keys
-     * 
+     *
      * @return Set of keys
      */
     private Set<RequestResponseModifierKeyType> getKeyTypes() {
@@ -109,13 +109,13 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     }
 
     @Override
-    public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
+    public Set<RequestResponseModifierKeyType> getKeys() {
         if (REQUEST_RESPONSE_MODIFIER_KEY_TYPES == null) {
             REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
         }
         return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
     }
-    
+
     @Override
     protected AbstractServiceResponse changeAbstractObservationResponseIdentifier(AbstractObservationResponse response) {
         return changeOmParameterValues(super.changeAbstractObservationResponseIdentifier(response));
@@ -129,7 +129,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
                 checkOmParameterForEReporting(omObservation.getParameter());
             }
         }
-        
+
         return null;
     }
 
@@ -172,7 +172,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
         }
         return identifier;
     }
-    
+
     private String checkOmParameterForMonitoringStation(NamedValue<?> namedValue, String identifier) {
         if (ProcessParameter.MonitoringStation.getConceptURI().equals(namedValue.getName().getHref())) {
             if (getEReportingPrefixedIdentifierHelper().isSetStationPrefix()) {
@@ -192,7 +192,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
         }
         return identifier;
     }
-    
+
     @Override
     protected boolean checkForFlag(AbstractServiceRequest<?> request, AbstractServiceResponse response)
             throws InvalidParameterValueException {
@@ -248,7 +248,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
 //        }
         return parameterValue;
     }
-    
+
     private String checkNamespacePrefix(String identifier) {
         if (getEReportingPrefixedIdentifierHelper().isSetNamespacePrefix()) {
                StringBuilder builder = new StringBuilder();
@@ -301,7 +301,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     protected void checkAndChangeFeatureOfInterestIdentifier(AbstractFeature abstractFeature) {
             checkAndChangeIdentifierOfAbstractFeature(abstractFeature);
     }
-    
+
     private void checkAndChangeIdentifierOfAbstractFeature(AbstractFeature abstractFeature) {
         abstractFeature.setIdentifier(checkFeatureOfInterestIdentifier(abstractFeature
                     .getIdentifier()));
@@ -332,7 +332,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     protected EReportingPrefixedIdentifierHelper getEReportingPrefixedIdentifierHelper() {
         return EReportingPrefixedIdentifierHelper.getInstance();
     }
-    
+
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {
         return super.getFacilitator();

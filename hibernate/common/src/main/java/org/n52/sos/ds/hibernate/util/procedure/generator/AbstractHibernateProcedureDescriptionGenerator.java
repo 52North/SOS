@@ -34,8 +34,9 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+
 import org.n52.iceland.cache.ContentCache;
-import org.n52.iceland.ds.I18NDAO;
+import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.LocalizedString;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
@@ -53,6 +54,7 @@ import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.service.ProcedureDescriptionSettings;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

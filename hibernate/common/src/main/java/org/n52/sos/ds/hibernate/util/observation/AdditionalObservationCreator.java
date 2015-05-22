@@ -28,19 +28,16 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import java.util.Set;
-
 import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.component.Component;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 
-public interface AdditionalObservationCreator<T extends Series> {
+public interface AdditionalObservationCreator extends Component<AdditionalObservationCreatorKey> {
 
-    Set<AdditionalObservationCreatorKey> getKeys();
-    
     OmObservation create(OmObservation omObservation, AbstractObservation observation);
-    
-    OmObservation create(OmObservation omObservation, T series);
+
+    OmObservation create(OmObservation omObservation, Series series);
 
     OmObservation add(OmObservation sosObservation, AbstractObservation hObservation);
 

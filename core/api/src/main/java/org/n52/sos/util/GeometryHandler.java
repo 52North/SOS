@@ -75,8 +75,8 @@ import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.util.Range;
 import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.util.Validation;
-import org.n52.iceland.util.lifecycle.Constructable;
-import org.n52.iceland.util.lifecycle.Destroyable;
+import org.n52.iceland.lifecycle.Constructable;
+import org.n52.iceland.lifecycle.Destroyable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;

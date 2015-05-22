@@ -30,26 +30,30 @@ package org.n52.sos.encode;
 
 import javax.xml.soap.SOAPMessage;
 
+import org.n52.iceland.encode.ResponseWriter;
 import org.n52.iceland.encode.ResponseWriterFactory;
+import org.n52.iceland.encode.ResponseWriterKey;
+import org.n52.iceland.component.SingleTypeComponentFactory;
 
 /**
  * {@link ResponseWriterFactory} implementation for {@link SOAPMessage} and
  * {@link SoapResponseWriter}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
  */
-public class SoapResponseWriterFactory implements ResponseWriterFactory<SOAPMessage, SoapResponseWriter>{
+public class SoapResponseWriterFactory
+        extends SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>>
+        implements ResponseWriterFactory {
 
-	@Override
-	public Class<SOAPMessage> getType() {
-		return SOAPMessage.class;
-	}
+    public SoapResponseWriterFactory() {
+        super(new ResponseWriterKey(SOAPMessage.class));
+    }
 
-	@Override
-	public SoapResponseWriter getResponseWriter() {
-		return new SoapResponseWriter();
-	}
+    @Override
+    public SoapResponseWriter create() {
+        return new SoapResponseWriter();
+    }
 
 }

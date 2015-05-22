@@ -45,7 +45,7 @@ import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.cache.ContentCachePersistenceStrategy;
 import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.service.ConfigLocationProvider;
-import org.n52.iceland.util.lifecycle.Constructable;
+import org.n52.iceland.lifecycle.Constructable;
 
 import com.google.common.base.Optional;
 

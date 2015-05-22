@@ -28,24 +28,23 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
-import java.util.List;
 import java.util.Locale;
 
 import org.hibernate.Session;
+
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
+import org.n52.iceland.component.Component;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 
 /**
  * Interface for procedure description generator factories
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.2.0
  *
  */
-public interface HibernateProcedureDescriptionGeneratorFactory {
-
-    List<HibernateProcedureDescriptionGeneratorFactoryKeyType> getHibernateProcedureDescriptionGeneratorFactoryKeyTypes();
+public interface HibernateProcedureDescriptionGeneratorFactory extends Component<HibernateProcedureDescriptionGeneratorFactoryKey> {
 
     SosProcedureDescription create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport;
 

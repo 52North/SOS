@@ -36,7 +36,7 @@ import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
-import org.n52.iceland.util.ServiceLoaderHelper;
+import org.n52.iceland.component.ServiceLoaderHelper;
 import org.n52.sos.ds.RenameDAO;
 import org.n52.sos.exception.AlreadyUsedIdentifierException;
 import org.n52.sos.exception.NoSuchObservablePropertyException;

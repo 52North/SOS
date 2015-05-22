@@ -38,9 +38,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class GetFeatureOfInterestResponseEncoder extends AbstractSosResponseEncoder<GetFeatureOfInterestResponse> {
@@ -50,6 +50,6 @@ public class GetFeatureOfInterestResponseEncoder extends AbstractSosResponseEnco
 
     @Override
     protected void encodeResponse(ObjectNode json, GetFeatureOfInterestResponse t) throws OwsExceptionReport {
-        json.put(JSONConstants.FEATURE_OF_INTEREST, encodeObjectToJson(t.getAbstractFeature()));
+        json.set(JSONConstants.FEATURE_OF_INTEREST, encodeObjectToJson(t.getAbstractFeature()));
     }
 }

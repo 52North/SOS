@@ -31,9 +31,13 @@ package org.n52.sos.request.operator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.convert.RequestResponseModifier;
@@ -73,8 +77,6 @@ import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -89,7 +91,7 @@ import com.google.common.collect.Sets;
  * @param <A>
  *            the response type
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class AbstractRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
@@ -104,18 +106,18 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     private final String operationName;
 
-    private final RequestOperatorKey requestOperatorKeyType;
+    private final RequestOperatorKey requestOperatorKey;
 
     private final Class<Q> requestType;
 
     public AbstractRequestOperator(String service, String version, String operationName, Class<Q> requestType) {
         this(service, version, operationName, true, requestType);
     }
-    
+
     @SuppressWarnings("unchecked")
     public AbstractRequestOperator(String service, String version, String operationName, boolean defaultActive, Class<Q> requestType) {
         this.operationName = operationName;
-        this.requestOperatorKeyType = new RequestOperatorKey(service, version, operationName, defaultActive);
+        this.requestOperatorKey = new RequestOperatorKey(service, version, operationName, defaultActive);
         this.requestType = requestType;
         this.dao = initDAO(service, operationName);
         LOGGER.info("{} initialized successfully!", getClass().getSimpleName());
@@ -151,8 +153,14 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     }
 
     @Override
+    @Deprecated
     public RequestOperatorKey getRequestOperatorKeyType() {
-        return requestOperatorKeyType;
+        return requestOperatorKey;
+    }
+
+    @Override
+    public Set<RequestOperatorKey> getKeys() {
+        return Collections.singleton(requestOperatorKey);
     }
 
     @Override
@@ -172,13 +180,10 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     private void checkForModifierAndProcess(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         if (RequestResponseModifierRepository.getInstance().hasRequestResponseModifier(request)) {
-            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> splitter =
-                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
-            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> remover =
-                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
-            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> defaultMofifier =
-                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : RequestResponseModifierRepository
+            List<RequestResponseModifier> splitter = new ArrayList<>();
+            List<RequestResponseModifier> remover = new ArrayList<>();
+            List<RequestResponseModifier> defaultMofifier = new ArrayList<>();
+            for (RequestResponseModifier modifier : RequestResponseModifierRepository
                     .getInstance().getRequestResponseModifier(request)) {
                 if (modifier.getFacilitator().isSplitter()) {
                     splitter.add(modifier);
@@ -189,15 +194,15 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
                 }
             }
             // execute adder/remover
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : remover) {
+            for (RequestResponseModifier modifier : remover) {
                 modifier.modifyRequest(request);
             }
             // execute default
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : defaultMofifier) {
+            for (RequestResponseModifier modifier : defaultMofifier) {
                 modifier.modifyRequest(request);
             }
             // execute splitter
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : splitter) {
+            for (RequestResponseModifier modifier : splitter) {
                 modifier.modifyRequest(request);
             }
         }
@@ -206,13 +211,10 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     private AbstractServiceResponse checkForModifierAndProcess(AbstractServiceRequest<?> request,
             AbstractServiceResponse response) throws OwsExceptionReport {
         if (RequestResponseModifierRepository.getInstance().hasRequestResponseModifier(request, response)) {
-            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> defaultMofifier =
-                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
-            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> remover =
-                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
-            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> merger =
-                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : RequestResponseModifierRepository
+            List<RequestResponseModifier> defaultMofifier = new ArrayList<>();
+            List<RequestResponseModifier> remover = new ArrayList<>();
+            List<RequestResponseModifier> merger = new ArrayList<>();
+            for (RequestResponseModifier modifier : RequestResponseModifierRepository
                     .getInstance().getRequestResponseModifier(request, response)) {
                 if (modifier.getFacilitator().isMerger()) {
                     merger.add(modifier);
@@ -224,16 +226,16 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
             }
             // execute merger
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : merger) {
+            for (RequestResponseModifier modifier : merger) {
                 modifier.modifyResponse(request, response);
             }
             // execute default
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : defaultMofifier) {
+            for (RequestResponseModifier modifier : defaultMofifier) {
                 modifier.modifyResponse(request, response);
             }
 
             // execute adder/remover
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : remover) {
+            for (RequestResponseModifier modifier : remover) {
                 modifier.modifyResponse(request, response);
             }
             return response;
@@ -255,13 +257,13 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     /**
      * method checks whether this SOS supports the requested versions
-     * 
+     *
      * @param service
      *            requested service
-     * 
+     *
      * @param versions
      *            the requested versions of the SOS
-     * 
+     *
      * @throws OwsExceptionReport
      *             * if this SOS does not support the requested versions
      */
@@ -290,11 +292,11 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     /**
      * method checks whether this SOS supports the single requested version
-     * 
+     *
      * @param request
      *            the request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if this SOS does not support the requested versions
      */
@@ -315,13 +317,13 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     /**
      * method checks, whether the passed string containing the requested
      * versions of the SOS contains the versions, the 52n SOS supports
-     * 
+     *
      * @param service
      *            requested service
      * @param versionsString
      *            comma seperated list of requested service versions
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if the versions list is empty or no matching version is *
      *             contained
@@ -339,11 +341,11 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     /**
      * checks whether the required service parameter is correct
-     * 
+     *
      * @param service
      *            service parameter of the request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             if service parameter is incorrect
      */
@@ -358,13 +360,13 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     /**
      * checks whether the requested sensor ID is valid
-     * 
+     *
      * @param procedureID
      *            the sensor ID which should be checked
      * @param parameterName
      *            the parameter name
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if the value of the sensor ID parameter is incorrect
      */

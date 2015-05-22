@@ -40,7 +40,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.soap.SOAPConstants;
 
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.binding.BindingConstants;
+import org.n52.iceland.binding.BindingKey;
+import org.n52.iceland.binding.MediaTypeBindingKey;
+import org.n52.iceland.binding.PathBindingKey;
 import org.n52.iceland.binding.SimpleBinding;
 import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.decode.Decoder;
@@ -75,14 +81,13 @@ import org.n52.sos.soap.SoapResponse;
 import org.n52.sos.wsa.WsaMessageIDHeader;
 import org.n52.sos.wsa.WsaReplyToHeader;
 import org.n52.sos.wsa.WsaToHeader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SoapBinding extends SimpleBinding {
     private static final Logger LOGGER = LoggerFactory.getLogger(SoapBinding.class);
@@ -90,9 +95,14 @@ public class SoapBinding extends SimpleBinding {
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton(ConformanceClasses.SOS_V2_SOAP_BINDING);
 
+     private static final ImmutableSet<BindingKey> KEYS = ImmutableSet.<BindingKey>builder()
+            .add(new PathBindingKey(BindingConstants.SOAP_BINDING_ENDPOINT))
+            .add(new MediaTypeBindingKey(MediaTypes.APPLICATION_SOAP_XML))
+            .build();
+
     @Override
-    public String getUrlPattern() {
-        return BindingConstants.SOAP_BINDING_ENDPOINT;
+    public Set<BindingKey> getKeys() {
+        return Collections.unmodifiableSet(KEYS);
     }
 
     @Override
@@ -106,11 +116,6 @@ public class SoapBinding extends SimpleBinding {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();
-    }
-
-    @Override
-    public Set<MediaType> getSupportedEncodings() {
-        return Collections.singleton(MediaTypes.APPLICATION_SOAP_XML);
     }
 
     @Override
@@ -231,7 +236,7 @@ public class SoapBinding extends SimpleBinding {
 
     /**
      * Check the {@link MediaType}
-     * 
+     *
      * @param chain
      *            SoapChain to check
      * @return the valid {@link MediaType}
@@ -249,7 +254,7 @@ public class SoapBinding extends SimpleBinding {
     /**
      * Check if SoapHeader information is contained in the body response and add
      * the header information to the {@link SoapResponse}
-     * 
+     *
      * @param chain
      *            SoapChain to check
      */
@@ -274,8 +279,8 @@ public class SoapBinding extends SimpleBinding {
                     responseHeader.add(((WsaMessageIDHeader) header).getRelatesToHeader());
                 } else if (header instanceof WsaReplyToHeader) {
                     responseHeader.add(((WsaReplyToHeader) header).getToHeader());
-                } else if (header instanceof WsaToHeader) { 
-                    
+                } else if (header instanceof WsaToHeader) {
+
                 } else {
                     responseHeader.add(header);
                 }
@@ -283,6 +288,16 @@ public class SoapBinding extends SimpleBinding {
             return responseHeader;
         }
         return null;
+    }
+
+    @Override
+    public String getUrlPattern() {
+        return BindingConstants.SOAP_BINDING_ENDPOINT;
+    }
+
+    @Override
+    public Set<MediaType> getSupportedEncodings() {
+        return Collections.singleton(MediaTypes.APPLICATION_SOAP_XML);
     }
 
 }

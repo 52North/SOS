@@ -30,17 +30,17 @@ package org.n52.sos.ds.hibernate.util.procedure.generator;
 
 /**
  * Key class for {@link HibernateProcedureDescriptionGeneratorFactory}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.2.0
  *
  */
-public class HibernateProcedureDescriptionGeneratorFactoryKeyType implements
-        Comparable<HibernateProcedureDescriptionGeneratorFactoryKeyType> {
+public class HibernateProcedureDescriptionGeneratorFactoryKey implements
+        Comparable<HibernateProcedureDescriptionGeneratorFactoryKey> {
 
-    private String procedureDescriptionFormat;
+    private final String procedureDescriptionFormat;
 
-    public HibernateProcedureDescriptionGeneratorFactoryKeyType(String procedureDescriptionFormat) {
+    public HibernateProcedureDescriptionGeneratorFactoryKey(String procedureDescriptionFormat) {
         this.procedureDescriptionFormat = procedureDescriptionFormat;
     }
 
@@ -49,8 +49,8 @@ public class HibernateProcedureDescriptionGeneratorFactoryKeyType implements
     }
 
     @Override
-    public int compareTo(HibernateProcedureDescriptionGeneratorFactoryKeyType o) {
-        if (o instanceof HibernateProcedureDescriptionGeneratorFactoryKeyType) {
+    public int compareTo(HibernateProcedureDescriptionGeneratorFactoryKey o) {
+        if (o instanceof HibernateProcedureDescriptionGeneratorFactoryKey) {
             if (checkParameter(getDescriptionFormat(), o.getDescriptionFormat())) {
                 return 0;
             }
@@ -61,9 +61,9 @@ public class HibernateProcedureDescriptionGeneratorFactoryKeyType implements
 
     @Override
     public boolean equals(Object paramObject) {
-        if (paramObject instanceof HibernateProcedureDescriptionGeneratorFactoryKeyType) {
-            HibernateProcedureDescriptionGeneratorFactoryKeyType toCheck =
-                    (HibernateProcedureDescriptionGeneratorFactoryKeyType) paramObject;
+        if (paramObject instanceof HibernateProcedureDescriptionGeneratorFactoryKey) {
+            HibernateProcedureDescriptionGeneratorFactoryKey toCheck =
+                    (HibernateProcedureDescriptionGeneratorFactoryKey) paramObject;
             return (checkParameter(getDescriptionFormat(), toCheck.getDescriptionFormat()));
         }
         return false;

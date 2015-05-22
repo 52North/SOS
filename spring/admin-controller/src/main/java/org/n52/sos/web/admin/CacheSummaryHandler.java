@@ -64,7 +64,7 @@ public class CacheSummaryHandler {
 
     public static Map<String, String> getCacheValues() {
         ContentCache cache = Configurator.getInstance().getCache();
-        Map<String, String> values = new TreeMap<String, String>();
+        Map<String, String> values = new TreeMap<>();
         values.put(MIN_PHENOMENON_TIME, nullSafeToString(cache.getMinPhenomenonTime()));
         values.put(MAX_PHENOMENON_TIME, nullSafeToString(cache.getMaxPhenomenonTime()));
         values.put(MIN_RESULT_TIME, nullSafeToString(cache.getMinResultTime()));

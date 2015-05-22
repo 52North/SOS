@@ -31,6 +31,7 @@ package org.n52.sos.convert;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
@@ -41,7 +42,6 @@ import org.n52.iceland.ogc.om.values.TextValue;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.ogc.swe.SweField;
 import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.ProcessModel;
@@ -60,14 +60,16 @@ import org.n52.sos.ogc.sensorML.elements.SmlIo;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.sos.ogc.wml.ObservationProcess;
 import org.n52.sos.ogc.wml.WaterMLConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class WaterMLv20SensorMLv101Converter implements Converter<SosProcedureDescription, SosProcedureDescription> {
 
@@ -77,11 +79,12 @@ public class WaterMLv20SensorMLv101Converter implements Converter<SosProcedureDe
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WaterMLv20SensorMLv101Converter.class);
 
-    private static final List<ConverterKeyType> CONVERTER_KEY_TYPES = CollectionHelper.list(
-            new ConverterKeyType(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL), 
-            new ConverterKeyType(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE),
-            new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING),
-            new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING));
+    private static final Set<ConverterKeyType> CONVERTER_KEY_TYPES = ImmutableSet.<ConverterKeyType>builder()
+            .add(new ConverterKeyType(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
+            .add(new ConverterKeyType(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
+            .add(new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
+            .add(new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
+            .build();
 
     public WaterMLv20SensorMLv101Converter() {
         LOGGER.debug("Converter for the following keys initialized successfully: {}!",
@@ -89,8 +92,8 @@ public class WaterMLv20SensorMLv101Converter implements Converter<SosProcedureDe
     }
 
     @Override
-    public List<ConverterKeyType> getConverterKeyTypes() {
-        return Collections.unmodifiableList(CONVERTER_KEY_TYPES);
+    public Set<ConverterKeyType> getKeys() {
+        return Collections.unmodifiableSet(CONVERTER_KEY_TYPES);
     }
 
     @Override

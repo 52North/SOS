@@ -52,9 +52,9 @@ public class ReportObligationJSONEncoder extends JSONEncoder<ReportObligation> {
     public JsonNode encodeJSON(ReportObligation header)
             throws OwsExceptionReport {
         ObjectNode j = JSONUtils.nodeFactory().objectNode();
-        j.put(AQDJSONConstants.CHANGE, encodeObjectToJson(header.getChange()));
-        j.put(AQDJSONConstants.INSPIRE_ID, encodeObjectToJson(header.getInspireID()));
-        j.put(AQDJSONConstants.REPORTING_PERIOD, encodeObjectToJson(header.getReportingPeriod()));
+        j.set(AQDJSONConstants.CHANGE, encodeObjectToJson(header.getChange()));
+        j.set(AQDJSONConstants.INSPIRE_ID, encodeObjectToJson(header.getInspireID()));
+        j.set(AQDJSONConstants.REPORTING_PERIOD, encodeObjectToJson(header.getReportingPeriod()));
         return j;
     }
 }

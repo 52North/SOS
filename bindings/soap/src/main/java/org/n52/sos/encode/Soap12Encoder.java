@@ -86,9 +86,9 @@ import com.google.common.collect.Sets;
 
 /**
  * Encoder implementation for SOAP 1.2
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implements
         StreamingEncoder<XmlObject, Object> {
@@ -103,7 +103,7 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implem
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
                 Joiner.on(", ").join(getEncoderKeyType()));
     }
-    
+
     @Override
     public boolean forceStreaming() {
     	return false;
@@ -147,7 +147,7 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implem
             new Soap12XmlStreamWriter().write((SoapResponse) element, outputStream);
         } else {
             try {
-                ((XmlObject) encode(element, encodingValues.getAdditionalValues())).save(outputStream, XmlOptionsHelper.getInstance().getXmlOptions());
+                encode(element, encodingValues.getAdditionalValues()).save(outputStream, XmlOptionsHelper.getInstance().getXmlOptions());
             } catch (IOException ioe) {
                 throw new NoApplicableCodeException().causedBy(ioe).withMessage("Error while writing element to stream!");
             }

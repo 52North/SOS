@@ -73,7 +73,7 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
 
     /**
      * Get the keys
-     * 
+     *
      * @return Set of keys
      */
     private Set<RequestResponseModifierKeyType> getKeyTypes() {
@@ -102,7 +102,7 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
     }
 
     @Override
-    public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
+    public Set<RequestResponseModifierKeyType> getKeys() {
         if (REQUEST_RESPONSE_MODIFIER_KEY_TYPES == null) {
             REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
         }
@@ -164,7 +164,7 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
         }
         return globalModified;
     }
-    
+
     private String checkGlobalPrefix(String identifier) {
         if (getPrefixedIdentifierHelper().isSetGlobalPrefix()) {
                StringBuilder builder = new StringBuilder();
@@ -218,7 +218,7 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
             checkAndChangeIdentifierOfAbstractFeature(abstractFeature);
         }
     }
-    
+
     private void checkAndChangeIdentifierOfAbstractFeature(AbstractFeature abstractFeature) {
         if (getPrefixedIdentifierHelper().isSetFeatureOfInterestPrefix()) {
             abstractFeature.setIdentifier(checkFeatureOfInterestIdentifier(abstractFeature
@@ -259,7 +259,7 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
     protected PrefixedIdentifierHelper getPrefixedIdentifierHelper() {
         return PrefixedIdentifierHelper.getInstance();
     }
-    
+
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {
         return super.getFacilitator();

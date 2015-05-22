@@ -44,7 +44,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.cache.ContentCacheUpdate;
-import org.n52.iceland.ds.I18NDAO;
+import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.exception.NoSuchIdentifierException;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;

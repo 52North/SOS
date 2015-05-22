@@ -70,9 +70,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class ObservationEncoder extends JSONEncoder<OmObservation> {
@@ -98,7 +98,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
 
     private void encodeIdentifier(OmObservation o, ObjectNode json) {
         if (o.isSetIdentifier()) {
-            json.put(JSONConstants.IDENTIFIER, encodeCodeWithAuthority(o.getIdentifierCodeWithAuthority()));
+            json.set(JSONConstants.IDENTIFIER, encodeCodeWithAuthority(o.getIdentifierCodeWithAuthority()));
         }
     }
 
@@ -132,27 +132,27 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
 
     private void encodeFeatureOfInterest(OmObservation o, ObjectNode json) throws OwsExceptionReport {
         OmObservationConstellation oc = o.getObservationConstellation();
-        json.put(JSONConstants.FEATURE_OF_INTEREST, encodeObjectToJson(oc.getFeatureOfInterest()));
+        json.set(JSONConstants.FEATURE_OF_INTEREST, encodeObjectToJson(oc.getFeatureOfInterest()));
     }
 
     private void encodeResultTime(OmObservation o, ObjectNode json) throws OwsExceptionReport {
         if (o.isSetResultTime()) {
-            json.put(JSONConstants.RESULT_TIME, encodeObjectToJson(o.getResultTime()));
+            json.set(JSONConstants.RESULT_TIME, encodeObjectToJson(o.getResultTime()));
         }
     }
 
     private void encodeValidTime(OmObservation o, ObjectNode json) throws OwsExceptionReport {
         if (o.isSetValidTime()) {
-            json.put(JSONConstants.VALID_TIME, encodeObjectToJson(o.getValidTime()));
+            json.set(JSONConstants.VALID_TIME, encodeObjectToJson(o.getValidTime()));
         }
     }
 
     private void encodePhenomenonTime(OmObservation o, ObjectNode json) throws OwsExceptionReport {
-        json.put(JSONConstants.PHENOMENON_TIME, encodeObjectToJson(o.getPhenomenonTime()));
+        json.set(JSONConstants.PHENOMENON_TIME, encodeObjectToJson(o.getPhenomenonTime()));
     }
 
     private void encodeResult(OmObservation o, ObjectNode json) throws OwsExceptionReport {
-        json.put(JSONConstants.RESULT, encodeResult(o));
+        json.set(JSONConstants.RESULT, encodeResult(o));
     }
 
     private JsonNode encodeResult(OmObservation o) throws OwsExceptionReport {

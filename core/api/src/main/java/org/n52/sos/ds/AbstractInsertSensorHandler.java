@@ -38,9 +38,9 @@ import org.n52.sos.response.InsertSensorResponse;
 
 /**
  * Renamed, in version 4.x called AbstractInsertSensorDAO
- * 
+ *
  * @since 5.0.0
- * 
+ *
  */
 public abstract class AbstractInsertSensorHandler extends AbstractOperationHandler {
 
@@ -57,12 +57,16 @@ public abstract class AbstractInsertSensorHandler extends AbstractOperationHandl
         } else {
             opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.procedureDescription);
             opsMeta.addPossibleValuesParameter(Sos2Constants.InsertSensorParams.procedureDescriptionFormat,
-                    CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(service, version));
+                    getCodingRepository().getSupportedProcedureDescriptionFormats(service, version));
             opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.observableProperty);
             opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.metadata);
             opsMeta.addDataTypeParameter(Sos2Constants.InsertSensorParams.metadata,
                     Sos2Constants.SCHEMA_LOCATION_URL_SOS_INSERTION_CAPABILITIES);
         }
+    }
+
+    public CodingRepository getCodingRepository() {
+        return CodingRepository.getInstance();
     }
 
     public abstract InsertSensorResponse insertSensor(InsertSensorRequest request) throws OwsExceptionReport;

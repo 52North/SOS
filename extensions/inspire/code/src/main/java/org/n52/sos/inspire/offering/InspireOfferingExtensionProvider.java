@@ -28,6 +28,7 @@
  */
 package org.n52.sos.inspire.offering;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.n52.iceland.ogc.sos.Sos2Constants;
@@ -46,10 +47,10 @@ import com.google.common.collect.Sets;
 
 /**
  * Implementation of {@link OfferingExtensionProvider} for INSPIRE
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
- * 
+ *
  */
 public class InspireOfferingExtensionProvider extends AbstractInspireProvider implements OfferingExtensionProvider {
 
@@ -59,8 +60,14 @@ public class InspireOfferingExtensionProvider extends AbstractInspireProvider im
     }
 
     @Override
+    @Deprecated
     public Set<OfferingExtensionKey> getOfferingExtensionKeyTypes() {
-        return providerKeys;
+        return getKeys();
+    }
+
+    @Override
+    public Set<OfferingExtensionKey> getKeys() {
+        return Collections.unmodifiableSet(this.providerKeys);
     }
 
     @Override

@@ -67,14 +67,14 @@ import com.google.common.collect.Sets;
 
 /**
  * Modifier for flexible identifier.
- * 
+ *
  * If the requests contain flexible identifier, the identifier would be replaced
  * with the default identifier.
- * 
+ *
  * If the global setting for flexible identifier is enabled or the request
  * contains the flexible identifier flag, the identifiers in the responses would
  * be replaced with the flexible identifier.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.3.0
  *
@@ -85,7 +85,7 @@ public class FlexibleIdentifierModifier extends AbstractIdentifierModifier {
 
     /**
      * Get the keys
-     * 
+     *
      * @return Set of keys
      */
     private static Set<RequestResponseModifierKeyType> getKeyTypes() {
@@ -114,7 +114,7 @@ public class FlexibleIdentifierModifier extends AbstractIdentifierModifier {
     }
 
     @Override
-    public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
+    public Set<RequestResponseModifierKeyType> getKeys() {
         return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
     }
 
@@ -386,7 +386,7 @@ public class FlexibleIdentifierModifier extends AbstractIdentifierModifier {
         return FlexibleIdentifierHelper.getInstance().isSetReturnHumanReadableIdentifier();
     }
 
-    
+
 
     private boolean checkResponseForReturnHumanReadableIdentifierFlag(AbstractServiceResponse response)
             throws InvalidParameterValueException {
@@ -506,7 +506,7 @@ public class FlexibleIdentifierModifier extends AbstractIdentifierModifier {
     protected FlexibleIdentifierHelper getFlexibleIdentifierHelper() {
         return FlexibleIdentifierHelper.getInstance();
     }
-    
+
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {
         return super.getFacilitator().setAdderRemover(false);

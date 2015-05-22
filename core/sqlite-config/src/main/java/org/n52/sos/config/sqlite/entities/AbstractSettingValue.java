@@ -45,7 +45,8 @@ import org.n52.iceland.config.SettingValue;
 @Entity(name = "settings")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class AbstractSettingValue<T> implements SettingValue<T>, Serializable {
-    
+    private static final long serialVersionUID = 6198638340795737858L;
+
     @Id
     private String identifier;
 

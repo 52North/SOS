@@ -30,12 +30,12 @@ package org.n52.sos.convert;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKeyType;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
-import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ogc.sensorML.Component;
 import org.n52.sos.ogc.sensorML.ProcessChain;
 import org.n52.sos.ogc.sensorML.ProcessModel;
@@ -47,46 +47,54 @@ import org.n52.sos.ogc.sensorML.v20.AggregateProcess;
 import org.n52.sos.ogc.sensorML.v20.PhysicalComponent;
 import org.n52.sos.ogc.sensorML.v20.PhysicalSystem;
 import org.n52.sos.ogc.sensorML.v20.SimpleProcess;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * {@link Converter} class to convert SensorML 2.0 to SensorML 1.0.1 and the
  * other way round.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.2.0
  *
  */
 public class SensorML20SensorML101Converter implements Converter<SosProcedureDescription, SosProcedureDescription> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SensorML20UrlMimeTypeConverter.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(SensorML20UrlMimeTypeConverter.class);
 
-    private static final List<ConverterKeyType> CONVERTER_KEY_TYPES = CollectionHelper.list(new ConverterKeyType(
-            SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
-            SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE), new ConverterKeyType(
-            SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL, SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE),
-            new ConverterKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
-                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL), new ConverterKeyType(
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL, SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL),
-            new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE), new ConverterKeyType(
-                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE), new ConverterKeyType(
-                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL), new ConverterKeyType(
-                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL));
+    private static final Set<ConverterKeyType> CONVERTER_KEY_TYPES
+            = ImmutableSet.<ConverterKeyType>builder()
+            .add(new ConverterKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
+                                      SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
+            .add(new ConverterKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL,
+                                      SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
+            .add(new ConverterKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
+                                      SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
+            .add(new ConverterKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL,
+                                      SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
+            .add(new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
+                                      SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE))
+            .add(new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,
+                                      SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE))
+            .add(new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
+                                      SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL))
+            .add(new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,
+                                      SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL))
+            .build();
 
     public SensorML20SensorML101Converter() {
         LOGGER.debug("Converter for the following keys initialized successfully: {}!",
-                Joiner.on(", ").join(CONVERTER_KEY_TYPES));
+                       Joiner.on(", ").join(CONVERTER_KEY_TYPES));
     }
 
     @Override
-    public List<ConverterKeyType> getConverterKeyTypes() {
-        return Collections.unmodifiableList(CONVERTER_KEY_TYPES);
+    public Set<ConverterKeyType> getKeys() {
+        return Collections.unmodifiableSet(CONVERTER_KEY_TYPES);
     }
 
     @Override

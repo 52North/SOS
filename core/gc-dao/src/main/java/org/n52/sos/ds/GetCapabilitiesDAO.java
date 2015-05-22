@@ -68,7 +68,7 @@ import org.n52.iceland.ogc.ows.OfferingExtension;
 import org.n52.iceland.ogc.ows.OwsDomainType;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProvider;
-import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesRepository;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderRepository;
 import org.n52.iceland.ogc.ows.OwsNoValues;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.ows.OwsOperationsMetadata;
@@ -398,9 +398,9 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
          * service and check if this provider provides OwsExtendedCapabilities
          * for the request
          */
-        if (OwsExtendedCapabilitiesRepository.getInstance().hasExtendedCapabilitiesProvider(request)) {
+        if (OwsExtendedCapabilitiesProviderRepository.getInstance().hasExtendedCapabilitiesProvider(request)) {
             OwsExtendedCapabilitiesProvider extendedCapabilitiesProvider =
-                    OwsExtendedCapabilitiesRepository.getInstance().getExtendedCapabilitiesProvider(request);
+                    OwsExtendedCapabilitiesProviderRepository.getInstance().getExtendedCapabilitiesProvider(request);
             if (extendedCapabilitiesProvider != null && extendedCapabilitiesProvider.hasExtendedCapabilitiesFor(request)) {
                 operationsMetadata.setExtendedCapabilities(extendedCapabilitiesProvider
                         .getOwsExtendedCapabilities(request));

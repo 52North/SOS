@@ -106,11 +106,11 @@ import com.google.common.collect.Sets;
 
 /**
  * Implementation of the abstract class AbstractInsertResultDAO
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
-public class InsertResultDAO extends AbstractInsertResultHandler implements CapabilitiesExtensionProvider {
+public class InsertResultDAO extends AbstractInsertResultHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InsertResultDAO.class);
 
@@ -124,7 +124,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
     public InsertResultDAO() {
         super(SosConstants.SOS);
     }
-    
+
     @Override
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
@@ -137,10 +137,10 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
         response.setVersion(request.getVersion());
         Session session = null;
         Transaction transaction = null;
-        
+
         Map<String,Codespace> codespaceCache = Maps.newHashMap();
         Map<String,Unit> unitCache = Maps.newHashMap();
-        
+
         try {
             session = sessionHolder.getSession();
             final ResultTemplate resultTemplate =
@@ -188,7 +188,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Create OmObservation from result values
-     * 
+     *
      * @param version
      *            Service version
      * @param resultTemplate
@@ -217,7 +217,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Get internal feature from FeatureOfInterest entity
-     * 
+     *
      * @param featureOfInterest
      * @param version
      *            Service version
@@ -240,7 +240,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
     /**
      * Unfold internal observation from result values to single internal
      * observations
-     * 
+     *
      * @param observation
      *            Internal observaiton to unfold
      * @return List with single interal observations
@@ -262,7 +262,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Get internal ObservationConstellation from result template
-     * 
+     *
      * @param resultTemplate
      * @param session
      *            Hibernate session
@@ -300,7 +300,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Create internal ProcedureDescription from Procedure entity
-     * 
+     *
      * @param hProcedure
      *            Procedure entity
      * @return Internal ProcedureDescription
@@ -313,7 +313,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Get internal observation
-     * 
+     *
      * @param resultTemplate
      *            Associated ResultTemplate
      * @param blockValues
@@ -374,7 +374,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Create internal observation value
-     * 
+     *
      * @param blockValues
      *            Block values from result values
      * @param recordFromResultStructure
@@ -405,7 +405,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
                 dataArrayValue.addBlock(Arrays.asList(singleValues));
             }
         }
-        final MultiObservationValues<SweDataArray> sosValues = new MultiObservationValues<SweDataArray>();
+        final MultiObservationValues<SweDataArray> sosValues = new MultiObservationValues<>();
         sosValues.setValue(dataArrayValue);
         return sosValues;
     }
@@ -413,7 +413,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
     // TODO move to helper class
     /**
      * Get internal time object from time String
-     * 
+     *
      * @param timeString
      *            Time String to parse
      * @return Internal time object
@@ -440,7 +440,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Get single values from a block value
-     * 
+     *
      * @param block
      *            Block value
      * @param encoding
@@ -457,7 +457,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Get block values from result values
-     * 
+     *
      * @param resultValues
      *            Result values
      * @param encoding
@@ -476,7 +476,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
     /**
      * Check if the block values from result values contains a preceding count
      * value
-     * 
+     *
      * @param blockValues
      *            Block values from result values
      * @param tokenSeparator
@@ -498,7 +498,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Separate values from String with separator
-     * 
+     *
      * @param values
      *            Value String
      * @param separator
@@ -507,33 +507,6 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
      */
     private String[] separateValues(final String values, final String separator) {
         return values.split(separator);
-    }
-
-    @Override
-    public CapabilitiesExtension getExtension() {
-        final SosInsertionCapabilities insertionCapabilities = new SosInsertionCapabilities();
-        insertionCapabilities.addFeatureOfInterestTypes(getCache().getFeatureOfInterestTypes());
-        insertionCapabilities.addObservationTypes(getCache().getObservationTypes());
-        insertionCapabilities.addProcedureDescriptionFormats(CodingRepository.getInstance()
-                .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
-        // TODO dynamic
-        insertionCapabilities.addSupportedEncoding(SweConstants.ENCODING_TEXT);
-        return insertionCapabilities;
-    }
-
-    @Override
-    public CapabilitiesExtensionKey getCapabilitiesExtensionKey() {
-        return new CapabilitiesExtensionKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
-    }
-
-    @Override
-    public boolean hasRelatedOperation() {
-        return true;
-    }
-
-    @Override
-    public String getRelatedOperation() {
-        return getOperationName();
     }
 
 }

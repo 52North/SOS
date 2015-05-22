@@ -31,13 +31,14 @@ package org.n52.sos.encode.json;
 import org.n52.iceland.encode.EncoderKey;
 import org.n52.iceland.util.ClassHelper;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class JSONEncoderKey implements EncoderKey {
@@ -77,7 +78,7 @@ public class JSONEncoderKey implements EncoderKey {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(getClass()).add("type", getType()).toString();
+        return MoreObjects.toStringHelper(getClass()).add("type", getType()).toString();
     }
 
 }

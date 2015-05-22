@@ -37,6 +37,9 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.exception.HTTPException;
@@ -50,6 +53,7 @@ import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.iceland.util.http.HTTPUtils;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.sos.binding.rest.Constants;
+import org.n52.sos.binding.rest.RestBinding;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.ServiceEndpointDecoder;
 import org.n52.sos.binding.rest.resources.capabilities.CapabilitiesDecoder;
@@ -57,8 +61,6 @@ import org.n52.sos.binding.rest.resources.features.FeaturesDecoder;
 import org.n52.sos.binding.rest.resources.observations.ObservationsDecoder;
 import org.n52.sos.binding.rest.resources.offerings.OfferingsDecoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsDecoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
@@ -68,7 +70,7 @@ import com.google.common.base.Joiner;
  *
  */
 public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(RestDecoder.class);
 
     @SuppressWarnings("unchecked")
@@ -94,16 +96,16 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
     	LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
                     Joiner.on(", ").join(DECODER_KEYS));
     }
-    
+
     @Override
     public RestRequest decode(final HttpServletRequest httpRequest)
             throws OwsExceptionReport{
-        
+
         // check requested content type
         if (!isAcceptHeaderOk(httpRequest))
         {
             throw new ContentTypeNotSupportedException(
-            		httpRequest.getContentType(), 
+            		httpRequest.getContentType(),
             		bindingConstants().getContentTypeDefault().toString());
         }
 
@@ -132,7 +134,7 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
         }
         return false;
     }
-    
+
     protected String getResourceTypeFromPathInfoWithWorkingUrl(String pathInfo)
     {
         /*
@@ -143,7 +145,7 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
             pathInfo = pathInfo.replaceAll("http:/", "http://");
             // use part from second slash "/" till end
             final int indexOfPotentialSecondSlash = pathInfo.indexOf("/", 1);
-            
+
             if (indexOfPotentialSecondSlash > 1) {
                 return pathInfo.substring(indexOfPotentialSecondSlash + 1);
             } else {
@@ -178,7 +180,7 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
 
     private boolean isServiceDefaultEndpoint(final String pathInfo) {
         return ((pathInfo != null) && pathInfo.isEmpty()) || ("/" + pathInfo)
-                .startsWith(Constants.getInstance().getUrlPattern());
+                .startsWith(RestBinding.URI_PATTERN);
     }
 
     private boolean isOfferingsRequest(final String pathInfo) {

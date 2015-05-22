@@ -30,11 +30,14 @@ package org.n52.sos.encode;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Set;
 
 import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.encode.OperationEncoderKey;
 import org.n52.iceland.encode.ResponseProxy;
 import org.n52.iceland.encode.ResponseWriter;
+import org.n52.iceland.encode.ResponseWriterKey;
 import org.n52.iceland.encode.ResponseWriterRepository;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
@@ -48,12 +51,14 @@ import org.n52.sos.response.StreamingDataResponse;
 
 /**
  * {@link ResponseWriter} for {@link AbstractServiceResponse}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.2
  *
  */
 public class AbstractServiceResponseWriter extends AbstractResponseWriter<AbstractServiceResponse> {
+    private static final ResponseWriterKey KEY
+            = new ResponseWriterKey(AbstractServiceResponse.class);
 
     // @Override
     // public Class<AbstractServiceResponse> getType() {
@@ -99,7 +104,7 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
     /**
      * Get the {@link Encoder} for the {@link AbstractServiceResponse} and the
      * requested contentType
-     * 
+     *
      * @param asr
      *            {@link AbstractServiceResponse} to get {@link Encoder} for
      * @return {@link Encoder} for the {@link AbstractServiceResponse}
@@ -124,7 +129,7 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
     /**
      * Check if streaming encoding is forced and the {@link Encoder} for the
      * {@link AbstractServiceResponse} is a {@link StreamingEncoder}
-     * 
+     *
      * @param asr
      *            {@link AbstractServiceResponse} to check the {@link Encoder}
      *            for
@@ -138,5 +143,10 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
                     || ((StreamingEncoder<?, ?>) getEncoder(asr)).forceStreaming();
         }
         return false;
+    }
+
+    @Override
+    public Set<ResponseWriterKey> getKeys() {
+        return Collections.singleton(KEY);
     }
 }

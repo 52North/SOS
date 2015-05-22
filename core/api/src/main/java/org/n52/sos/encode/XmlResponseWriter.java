@@ -30,27 +30,32 @@ package org.n52.sos.encode;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.encode.ResponseProxy;
+import org.n52.iceland.encode.ResponseWriterKey;
 import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.util.http.MediaType;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class XmlResponseWriter extends AbstractResponseWriter<XmlObject> {
-    
+    public static final ResponseWriterKey KEY = new ResponseWriterKey(XmlObject.class);
+
     private MediaType contentType;
 
-//    @Override
-//    public Class<XmlObject> getType() {
-//        return XmlObject.class;
-//    }
+    @Override
+    public Set<ResponseWriterKey> getKeys() {
+        return Collections.singleton(KEY);
+    }
 
     @Override
     public void write(XmlObject xml, OutputStream out, ResponseProxy responseProxy) throws IOException {

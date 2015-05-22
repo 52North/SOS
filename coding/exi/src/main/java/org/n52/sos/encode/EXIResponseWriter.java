@@ -32,6 +32,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Set;
 
 import org.n52.iceland.encode.ResponseProxy;
 import org.n52.iceland.util.XmlOptionsHelper;
@@ -40,10 +42,13 @@ import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.exi.EXIObject;
 import org.n52.sos.exi.EXISettings;
 import org.n52.sos.utils.EXIUtils;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
+
+import org.n52.iceland.encode.ResponseWriterKey;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
@@ -51,25 +56,34 @@ import com.siemens.ct.exi.exceptions.EXIException;
 
 /**
  * Writer class for {@link EXIObject}
- * 
+ *
  * Converts XML documents via EXI encoding using {@link EXISettings}.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.2.0
  *
  */
 public class EXIResponseWriter extends AbstractResponseWriter<EXIObject> {
-	
-	private final static EXIUtils EXI_UTILS = EXIUtils.getInstance(); 
+
+
+
+	private final static EXIUtils EXI_UTILS = EXIUtils.getInstance();
+
+    public static final ResponseWriterKey KEY = new ResponseWriterKey(EXIObject.class);
+
+    @Override
+    public Set<ResponseWriterKey> getKeys() {
+        return Collections.singleton(KEY);
+    }
 
     @Override
     public void write(EXIObject exiObject, OutputStream out, ResponseProxy responseProxy) throws IOException {
         try (InputStream is =
                 new ByteArrayInputStream(exiObject.getDoc().xmlText(XmlOptionsHelper.getInstance().getXmlOptions())
                         .getBytes("UTF-8"))) {
-        	
+
         	EXIFactory ef = EXI_UTILS.newEXIFactory();
-            
+
             EXIResult exiResult = new EXIResult(ef);
             exiResult.setOutputStream(out);
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();

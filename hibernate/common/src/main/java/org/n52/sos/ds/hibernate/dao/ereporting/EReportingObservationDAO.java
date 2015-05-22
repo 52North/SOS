@@ -183,7 +183,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
                     .getSamplingPoint());
         }
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
-        Series series = (Series) seriesDAO.getOrInsertSeries(identifiers, session);
+        Series series = seriesDAO.getOrInsertSeries(identifiers, session);
         ((SeriesObservation) observation).setSeries(series);
         seriesDAO.updateSeriesWithFirstLatestValues(series, observation, session);
     }

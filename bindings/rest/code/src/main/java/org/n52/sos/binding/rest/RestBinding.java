@@ -40,7 +40,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.binding.Binding;
+import org.n52.iceland.binding.BindingKey;
+import org.n52.iceland.binding.PathBindingKey;
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.encode.Encoder;
@@ -83,8 +88,6 @@ import org.n52.sos.binding.rest.resources.offerings.OfferingsRequest;
 import org.n52.sos.binding.rest.resources.offerings.OfferingsRequestHandler;
 import org.n52.sos.binding.rest.resources.sensors.ISensorsRequest;
 import org.n52.sos.binding.rest.resources.sensors.SensorsRequestHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -97,10 +100,22 @@ public class RestBinding extends Binding {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestBinding.class);
     private final Set<String> conformanceClasses;
     private final Constants bindingConstants;
+    public static final String URI_PATTERN = "/rest";
+    private static final Set<BindingKey> KEYS = Collections.<BindingKey>singleton(new PathBindingKey(URI_PATTERN));
 
     public RestBinding() {
         bindingConstants = Constants.getInstance();
         conformanceClasses = Sets.newHashSet(bindingConstants.getConformanceClass());
+    }
+
+     @Override
+    public Set<BindingKey> getKeys() {
+        return KEYS;
+    }
+
+    @Override
+    public String getUrlPattern() {
+        return URI_PATTERN;
     }
 
     @Override
@@ -109,11 +124,6 @@ public class RestBinding extends Binding {
             return Collections.unmodifiableSet(conformanceClasses);
         }
         return Collections.emptySet();
-    }
-
-    @Override
-    public String getUrlPattern() {
-        return bindingConstants.getUrlPattern();
     }
 
     @Override
@@ -212,7 +222,7 @@ public class RestBinding extends Binding {
         return owsE.hasMessage() &&
                owsE.getMessage().contains(bindingConstants.getHttpOperationNotAllowedForResourceTypeMessagePart());
     }
-    
+
     private RestRequest decodeHttpRequest(final HttpServletRequest request) throws OwsExceptionReport
     {
         final Decoder<RestRequest, HttpServletRequest> decoder = getDecoder();
@@ -246,7 +256,7 @@ public class RestBinding extends Binding {
             LOGGER.debug(exceptionText);
             throw new NoApplicableCodeException().withMessage(exceptionText);
         }
-        
+
         response = encoder.encode(restResponse);
 
         if (response == null) {
@@ -360,7 +370,7 @@ public class RestBinding extends Binding {
     }
 
     private ServiceResponse handleRequest(HttpServletRequest request,
-                                          HttpServletResponse response) 
+                                          HttpServletResponse response)
             throws OwsExceptionReport {
         ServiceResponse serviceResponse;
         LOGGER.debug("Start handling of REST request. URI:{}",
@@ -377,8 +387,9 @@ public class RestBinding extends Binding {
         serviceResponse = encodeRestResponse(restResponse);
         LOGGER.debug("Rest response encoded. DeleteObservationResponse received: {}",
                      response != null ? response.getClass().getName() : null);
-        
+
         LOGGER.debug("Handling of REST request finished. Returning response to web tier");
         return serviceResponse;
     }
+
 }

@@ -29,27 +29,31 @@
 package org.n52.sos.encode;
 
 import org.apache.xmlbeans.XmlObject;
+
+import org.n52.iceland.encode.ResponseWriter;
 import org.n52.iceland.encode.ResponseWriterFactory;
+import org.n52.iceland.encode.ResponseWriterKey;
+import org.n52.iceland.component.SingleTypeComponentFactory;
 
 /**
  * {@link ResponseWriterFactory} implementation for {@link XmlObject} and
  * {@link XmlResponseWriter}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
  */
-public class XmlResponseWriterFactory implements
-		ResponseWriterFactory<XmlObject, XmlResponseWriter> {
+public class XmlResponseWriterFactory
+        extends SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>>
+        implements ResponseWriterFactory {
 
-	@Override
-	public Class<XmlObject> getType() {
-		return XmlObject.class;
-	}
+    public XmlResponseWriterFactory() {
+        super(new ResponseWriterKey(XmlObject.class));
+    }
 
-	@Override
-	public XmlResponseWriter getResponseWriter() {
-		return new XmlResponseWriter();
-	}
+    @Override
+    public XmlResponseWriter create() {
+        return new XmlResponseWriter();
+    }
 
 }

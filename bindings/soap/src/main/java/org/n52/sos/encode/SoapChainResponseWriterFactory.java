@@ -28,27 +28,30 @@
  */
 package org.n52.sos.encode;
 
+import org.n52.iceland.encode.ResponseWriter;
 import org.n52.iceland.encode.ResponseWriterFactory;
+import org.n52.iceland.encode.ResponseWriterKey;
+import org.n52.iceland.component.SingleTypeComponentFactory;
 
 /**
  * {@link ResponseWriterFactory} implementation for {@link SoapChain} and
  * {@link SoapChainResponseWriter}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
  */
-public class SoapChainResponseWriterFactory implements
-		ResponseWriterFactory<SoapChain, SoapChainResponseWriter> {
+public class SoapChainResponseWriterFactory
+        extends SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>>
+        implements ResponseWriterFactory {
 
-	@Override
-	public Class<SoapChain> getType() {
-		return SoapChain.class;
-	}
+    public SoapChainResponseWriterFactory(ResponseWriterKey key) {
+        super(new ResponseWriterKey(SoapChain.class));
+    }
 
-	@Override
-	public SoapChainResponseWriter getResponseWriter() {
-		return new SoapChainResponseWriter();
-	}
+    @Override
+    public SoapChainResponseWriter create() {
+        return new SoapChainResponseWriter();
+    }
 
 }

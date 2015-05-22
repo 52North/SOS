@@ -84,14 +84,14 @@ public class AdminEReportingHeaderController extends AbstractController {
         CodingRepository codingRepository = CodingRepository.getInstance();
         Encoder<JsonNode, ReportObligation> reportObligationEncoder = codingRepository.getEncoder(new JSONEncoderKey(ReportObligation.class));
         Encoder<JsonNode, RelatedParty> relatedPartyEncoder = codingRepository.getEncoder(new JSONEncoderKey(RelatedParty.class));
-        node.put(AQDJSONConstants.REPORTING_AUTHORITY, relatedPartyEncoder.encode(reportObligationRepository.getReportingAuthority()));
+        node.set(AQDJSONConstants.REPORTING_AUTHORITY, relatedPartyEncoder.encode(reportObligationRepository.getReportingAuthority()));
         ArrayNode ros = node.putArray(AQDJSONConstants.REPORT_OBLIGATIONS);
         for (ReportObligationType reportObligationType : ReportObligationType.values()) {
             ReportObligation reportObligation = reportObligationRepository.getReportObligation(reportObligationType);
             ros.addObject().put(AQDJSONConstants.ID, reportObligationType.name())
                     .put(AQDJSONConstants.NAME, reportObligationType.getTitle())
                     .put(AQDJSONConstants.DESCRIPTION, reportObligationType.getDescription())
-                    .put(AQDJSONConstants.VALUE, reportObligationEncoder.encode(reportObligation));
+                    .set(AQDJSONConstants.VALUE, reportObligationEncoder.encode(reportObligation));
         }
         return JSONUtils.print(node);
     }

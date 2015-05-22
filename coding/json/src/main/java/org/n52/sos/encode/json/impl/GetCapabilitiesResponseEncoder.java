@@ -270,7 +270,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
             address.put(EMAIL, sp.getMailAddress());
         }
         if (address.size() > 0) {
-            contact.put(ADDRESS, address);
+            contact.set(ADDRESS, address);
         }
     }
 
@@ -287,7 +287,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
         }
         encodeAdress(sp, contact);
         if (contact.size() > 0) {
-            jsp.put(CONTACT, contact);
+            jsp.set(CONTACT, contact);
         }
     }
 
@@ -346,7 +346,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
         encodeSpatialOperands(fc, sfc);
         encodeSpatialOperators(fc, sfc);
         if (sfc.size() > 0) {
-            jfc.put(SPATIAL, sfc);
+            jfc.set(SPATIAL, sfc);
         }
     }
 
@@ -355,7 +355,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
         if (sos != null && !sos.isEmpty()) {
             ObjectNode operators = sfc.putObject(OPERATORS);
             for (Entry<SpatialOperator, SortedSet<QName>> so : sos.entrySet()) {
-                operators.put(stringify(so.getKey()), encodeOperands(so.getValue()));
+                operators.set(stringify(so.getKey()), encodeOperands(so.getValue()));
             }
         }
     }
@@ -363,7 +363,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
     private void encodeSpatialOperands(FilterCapabilities fc, ObjectNode sfc) {
         SortedSet<QName> so = fc.getSpatialOperands();
         if (so != null && !so.isEmpty()) {
-            sfc.put(OPERANDS, encodeOperands(so));
+            sfc.set(OPERANDS, encodeOperands(so));
         }
     }
 
@@ -401,7 +401,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
         encodeTemporalOperands(fc, tfc);
         encodeTemporalOperators(fc, tfc);
         if (tfc.size() > 0) {
-            jfc.put(TEMPORAL, tfc);
+            jfc.set(TEMPORAL, tfc);
         }
     }
 
@@ -410,7 +410,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
         if (tos != null && !tos.isEmpty()) {
             ObjectNode operators = tfc.putObject(OPERATORS);
             for (Entry<TimeOperator, SortedSet<QName>> to : tos.entrySet()) {
-                operators.put(stringify(to.getKey()), encodeOperands(to.getValue()));
+                operators.set(stringify(to.getKey()), encodeOperands(to.getValue()));
             }
         }
     }
@@ -418,7 +418,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
     private void encodeTemporalOperands(FilterCapabilities fc, ObjectNode tfc) {
         SortedSet<QName> so = fc.getTemporalOperands();
         if (so != null && !so.isEmpty()) {
-            tfc.put(OPERANDS, encodeOperands(so));
+            tfc.set(OPERANDS, encodeOperands(so));
         }
     }
 
@@ -460,7 +460,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
         ObjectNode sfc = jfc.objectNode();
         // FIXME scalar filter capabilities
         if (sfc.size() > 0) {
-            jfc.put(SCALAR, sfc);
+            jfc.set(SCALAR, sfc);
         }
     }
 
@@ -547,13 +547,13 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     private void encodePhenomenonTime(SosObservationOffering soo, ObjectNode jsoo) throws OwsExceptionReport {
         if (soo.isSetPhenomenonTime()) {
-            jsoo.put(PHENOMENON_TIME, encodeObjectToJson(soo.getPhenomenonTime()));
+            jsoo.set(PHENOMENON_TIME, encodeObjectToJson(soo.getPhenomenonTime()));
         }
     }
 
     private void encodeResultTime(SosObservationOffering soo, ObjectNode jsoo) throws OwsExceptionReport {
         if (soo.isSetResultTime()) {
-            jsoo.put(RESULT_TIME, encodeObjectToJson(soo.getResultTime()));
+            jsoo.set(RESULT_TIME, encodeObjectToJson(soo.getResultTime()));
         }
     }
 
@@ -601,11 +601,11 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
         if (param != null && !param.isEmpty()) {
             ObjectNode jcv = jo.putObject(PARAMETERS);
             for (Entry<String, List<OwsParameterValue>> e : param.entrySet()) {
-                jcv.put(e.getKey(), encodeParameterValues(e.getValue()));
+                jcv.set(e.getKey(), encodeParameterValues(e.getValue()));
             }
         }
         if (dcp != null && !dcp.isEmpty()) {
-            jo.put(DCP, encodeDcp(dcp));
+            jo.set(DCP, encodeDcp(dcp));
         }
         return jo;
     }
@@ -637,7 +637,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
                 if (constraints != null && !constraints.isEmpty()) {
                     ObjectNode jc = jdcp.putObject(CONSTRAINTS);
                     for (Constraint c : constraints) {
-                        jc.put(c.getName(), encodeParameterValues(c.getValues()));
+                        jc.set(c.getName(), encodeParameterValues(c.getValues()));
                     }
                 }
             }
@@ -702,7 +702,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
         if (om.isSetCommonValues()) {
             ObjectNode jcv = jom.putObject(COMMON_PARAMETERS);
             for (Entry<String, List<OwsParameterValue>> e : om.getCommonValues().entrySet()) {
-                jcv.put(e.getKey(), encodeParameterValues(e.getValue()));
+                jcv.set(e.getKey(), encodeParameterValues(e.getValue()));
             }
         }
     }
@@ -711,7 +711,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
         if (om.isSetOperations()) {
             ObjectNode jo = jom.putObject(OPERATIONS);
             for (OwsOperation o : om.getOperations()) {
-                jo.put(o.getOperationName(), encodeOperation(o));
+                jo.set(o.getOperationName(), encodeOperation(o));
             }
         }
     }

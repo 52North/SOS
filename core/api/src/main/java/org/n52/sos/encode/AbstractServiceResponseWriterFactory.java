@@ -28,28 +28,32 @@
  */
 package org.n52.sos.encode;
 
+import org.n52.iceland.encode.ResponseWriter;
 import org.n52.iceland.encode.ResponseWriterFactory;
+import org.n52.iceland.encode.ResponseWriterKey;
 import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.iceland.component.SingleTypeComponentFactory;
 
 /**
- * {@link ResponseWriterFactory} implementation for {@link AbstractServiceResponse} and
+ * {@link ResponseWriterFactory} implementation for
+ * {@link AbstractServiceResponse} and
  * {@link AbstractServiceResponseWriter}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
  */
-public class AbstractServiceResponseWriterFactory implements
-		ResponseWriterFactory<AbstractServiceResponse, AbstractServiceResponseWriter> {
+public class AbstractServiceResponseWriterFactory
+        extends SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>>
+        implements ResponseWriterFactory {
 
-	@Override
-	public Class<AbstractServiceResponse> getType() {
-		return AbstractServiceResponse.class;
-	}
+    public AbstractServiceResponseWriterFactory() {
+        super(new ResponseWriterKey(AbstractServiceResponse.class));
+    }
 
-	@Override
-	public AbstractServiceResponseWriter getResponseWriter() {
-		return new AbstractServiceResponseWriter();
-	}
+    @Override
+    public AbstractServiceResponseWriter create() {
+        return new AbstractServiceResponseWriter();
+    }
 
 }

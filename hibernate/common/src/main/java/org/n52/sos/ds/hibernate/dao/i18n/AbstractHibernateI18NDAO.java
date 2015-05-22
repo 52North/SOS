@@ -40,7 +40,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.n52.iceland.ds.I18NDAO;
+
+import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.LocalizedString;
 import org.n52.iceland.i18n.metadata.AbstractI18NMetadata;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;

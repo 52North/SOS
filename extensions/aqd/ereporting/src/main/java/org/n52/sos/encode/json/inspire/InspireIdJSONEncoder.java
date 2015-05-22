@@ -53,7 +53,7 @@ public class InspireIdJSONEncoder extends JSONEncoder<InspireID> {
         ObjectNode j = nodeFactory().objectNode();
         j.put(AQDJSONConstants.LOCAL_ID, t.getLocalId());
         j.put(AQDJSONConstants.NAMESPACE, t.getNamespace());
-        j.put(AQDJSONConstants.VERSION_ID, encodeObjectToJson(t.getVersionId()));
+        j.set(AQDJSONConstants.VERSION_ID, encodeObjectToJson(t.getVersionId()));
         return j;
     }
 

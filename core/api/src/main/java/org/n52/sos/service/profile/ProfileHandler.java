@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public abstract class ProfileHandler {
 
@@ -54,7 +54,7 @@ public abstract class ProfileHandler {
     private static final ReentrantLock creationLock = new ReentrantLock();
 
     private static ProfileHandler instance;
-    
+
     /**
      * Gets the singleton instance of the ProfileHandler.
      * <p/>
@@ -64,6 +64,7 @@ public abstract class ProfileHandler {
      * @throws ConfigurationException
      *             if no implementation can be found
      */
+    @Deprecated
     public static ProfileHandler getInstance() throws ConfigurationException {
         if (instance == null) {
             creationLock.lock();
@@ -108,7 +109,7 @@ public abstract class ProfileHandler {
             }
         }
     }
-    
+
     public abstract Profile getActiveProfile();
 
     public abstract Map<String, Profile> getAvailableProfiles();

@@ -99,27 +99,27 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public abstract class AbstractIdentifierModifier implements RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
-    
-    
+public abstract class AbstractIdentifierModifier implements RequestResponseModifier {
+
+
     protected abstract  boolean checkForFlag(AbstractServiceRequest<?> request, AbstractServiceResponse response) throws InvalidParameterValueException;
-    
+
     protected abstract String checkOfferingParameterValue(String parameterValue);
-    
+
     protected abstract String checkFeatureOfInterestParameterValue(String parameterValue);
-    
+
     protected abstract String checkProcedureParameterValue(String parameterValue);
-    
+
     protected abstract String checkObservablePropertyParameterValue(String parameterValue);
-    
+
     protected abstract String checkFeatureOfInterestIdentifier(String identifier);
 
     protected abstract String checkObservablePropertyIdentifier(String identifier);
-    
+
     protected abstract String checkProcedureIdentifier(String identifier);
 
     protected abstract String checkOfferingIdentifier(String identifier);
-    
+
     protected abstract void checkAndChangeFeatureOfInterestIdentifier(AbstractFeature abstractFeature);
 
     protected abstract void checkAndChangeProcedureIdentifier(AbstractFeature abstractFeature);
@@ -127,7 +127,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     protected abstract void checkAndChangeObservablePropertyIdentifier(AbstractFeature abstractFeature);
 
     protected abstract void checkAndChangOfferingIdentifier(SosOffering offering);
-    
+
     @Override
     public AbstractServiceRequest<?> modifyRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         if (request instanceof GetObservationRequest) {
@@ -220,7 +220,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         }
         return request;
     }
-    
+
     @Override
     public AbstractServiceResponse modifyResponse(AbstractServiceRequest<?> request, AbstractServiceResponse response)
             throws OwsExceptionReport {
@@ -382,7 +382,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         }
         return response;
     }
-    
+
     private void checkAndChangeProcedure(SosProcedureDescription procedure) {
         checkAndChangeProcedureIdentifier(procedure);
         if (procedure.isSetFeaturesOfInterest()) {
@@ -550,7 +550,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         return definition.startsWith(OGCConstants.URN_UNIQUE_IDENTIFIER_START)
                 && definition.contains(OGCConstants.URN_UNIQUE_IDENTIFIER_END);
     }
-    
+
     private List<String> checkOfferingParameterValues(Collection<String> requestedParameterValues) {
         List<String> checkedParameterValues = Lists.newArrayListWithCapacity(requestedParameterValues.size());
         for (String parameterValue : requestedParameterValues) {
@@ -558,7 +558,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         }
         return checkedParameterValues;
     }
-    
+
     private List<String> checkFeatureOfInterestParameterValues(Collection<String> requestedParameterValues) {
         List<String> checkedParameterValues = Lists.newArrayListWithCapacity(requestedParameterValues.size());
         for (String parameterValue : requestedParameterValues) {
@@ -566,7 +566,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         }
         return checkedParameterValues;
     }
-    
+
     private List<String> checkObservablePropertyParameterValues(Collection<String> requestedParameterValues) {
         List<String> checkedParameterValues = Lists.newArrayListWithCapacity(requestedParameterValues.size());
         for (String parameterValue : requestedParameterValues) {
@@ -574,7 +574,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         }
         return checkedParameterValues;
     }
-    
+
     private List<String> checkProcedureParameterValues(Collection<String> requestedParameterValues) {
         List<String> checkedParameterValues = Lists.newArrayListWithCapacity(requestedParameterValues.size());
         for (String parameterValue : requestedParameterValues) {
@@ -582,7 +582,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         }
         return checkedParameterValues;
     }
-    
+
     private Collection<String> checkFeatureOfInterestIdentifier(Collection<String> identifiers) {
         List<String> checkedIdentifiers = Lists.newArrayListWithCapacity(identifiers.size());
         for (String identifier : identifiers) {
@@ -590,7 +590,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         }
         return checkedIdentifiers;
     }
-    
+
     private Collection<String> checkObservablePropertyIdentifier(SortedSet<String> identifiers) {
         List<String> checkedIdentifiers = Lists.newArrayListWithCapacity(identifiers.size());
         for (String identifier : identifiers) {
@@ -598,7 +598,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         }
         return checkedIdentifiers;
     }
-    
+
     private Collection<String> checkProcedureIdentifier(Set<String> identifiers) {
         List<String> checkedIdentifiers = Lists.newArrayListWithCapacity(identifiers.size());
         for (String identifier : identifiers) {
@@ -622,10 +622,10 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     protected ContentCache getCache() {
         return Configurator.getInstance().getCache();
     }
-    
+
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {
         return new RequestResponseModifierFacilitator().setAdderRemover(true);
     }
-    
+
 }

@@ -28,7 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.dao.i18n;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.hibernate.Session;
+
+import org.n52.iceland.i18n.I18NDAOKey;
 import org.n52.iceland.i18n.metadata.I18NObservablePropertyMetadata;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
@@ -62,8 +67,10 @@ public class ObservablePropertyI18NDAO extends AbstractHibernateI18NDAO<Observab
         return new HibernateI18NObservablePropertyMetadata();
     }
 
+
     @Override
-    public Class<I18NObservablePropertyMetadata> getType() {
-        return I18NObservablePropertyMetadata.class;
+    public Set<I18NDAOKey> getKeys() {
+        return Collections.singleton(new I18NDAOKey(I18NObservablePropertyMetadata.class));
     }
+
 }

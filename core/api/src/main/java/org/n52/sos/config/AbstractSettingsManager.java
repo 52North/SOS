@@ -229,7 +229,12 @@ public abstract class AbstractSettingsManager extends SettingsManager {
         HashSet<SettingDefinition<?, ?>> nullValues = new HashSet<SettingDefinition<?, ?>>(getSettingDefinitions());
         nullValues.removeAll(settingsByDefinition.keySet());
         for (SettingDefinition<?, ?> s : nullValues) {
-            settingsByDefinition.put(s, null);
+            if (s.hasDefaultValue()) {
+                settingsByDefinition.put(s, getSettingFactory().newSettingValue(s, s.getDefaultValue().toString()));
+            } else {
+                LOG.warn("No value or default value for '{}' found; using null.", s.getKey());
+                settingsByDefinition.put(s, getSettingFactory().newSettingValue(s, null));
+            }
         }
         return settingsByDefinition;
     }

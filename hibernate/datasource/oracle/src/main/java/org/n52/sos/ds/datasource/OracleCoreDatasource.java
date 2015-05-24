@@ -28,29 +28,46 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.util.Properties;
+import java.util.Set;
+
+import org.n52.sos.config.SettingDefinition;
+
+import com.google.common.collect.ImmutableSet;
+
 /**
- * MS SQL Server datasource for custom mapping
- * 
+ * Oracle datasource for core mapping
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * @since 4.2.0
+ * @since 4.3.0
  *
  */
-public class SqlServerCustomDatasource extends SqlServerCoreDatasource {
+public class OracleCoreDatasource extends AbstractOracleDatasource {
 
-    private static final String DIALECT_NAME = "SQL Server Custom Core";
-
-    public SqlServerCustomDatasource() {
+    private static final String DIALECT_NAME = "Oracle Spatial Core";
+    
+    public OracleCoreDatasource() {
         super();
+        super.setTransactional(false);
     }
-
+    
     @Override
     public String getDialectName() {
         return DIALECT_NAME;
     }
+    
+    @Override
+    public boolean supportsClear() {
+        return false;
+    }
+    
+    @Override
+    public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties current) {
+        return filter(super.getChangableSettingDefinitions(current), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
+    }
 
     @Override
-    public boolean needsSchema() {
-        return false;
+    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
+        return filter(super.getSettingDefinitions(), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
     }
 
 }

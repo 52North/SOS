@@ -43,7 +43,6 @@ import org.hibernate.criterion.Subqueries;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.OptionNotSupportedException;
 import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.gml.ReferenceType;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.w3c.xlink.W3CHrefAttribute;
@@ -73,6 +72,7 @@ import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSweDataArrayObserv
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingTextObservation;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;

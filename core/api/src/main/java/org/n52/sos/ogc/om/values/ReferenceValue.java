@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ogc.om.values;
 
-import org.n52.iceland.ogc.gml.ReferenceType;
 import org.n52.iceland.util.StringHelper;
+import org.n52.sos.ogc.gml.ReferenceType;
 
 public class ReferenceValue implements Value<ReferenceType> {
     

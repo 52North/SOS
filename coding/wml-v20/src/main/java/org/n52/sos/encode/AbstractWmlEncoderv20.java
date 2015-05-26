@@ -59,7 +59,6 @@ import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.ReferenceType;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
@@ -71,6 +70,7 @@ import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.util.http.MediaType;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.FeatureCollection;
@@ -525,7 +525,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
     private void addInput(ObservationProcessType observationProcess, ObservationProcess procedure)
             throws OwsExceptionReport {
         if (procedure.isSetInputs()) {
-            for (org.n52.iceland.ogc.gml.ReferenceType sosReferenceType : procedure.getInputs()) {
+            for (org.n52.sos.ogc.gml.ReferenceType sosReferenceType : procedure.getInputs()) {
                 XmlObject referenceType = encodeReferenceType(sosReferenceType);
                 if (referenceType != null) {
                     observationProcess.addNewInput().set(referenceType);

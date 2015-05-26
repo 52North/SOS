@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.sensorML;
 
-import org.n52.iceland.ogc.gml.AbstractReferenceType;
+import org.n52.sos.ogc.gml.AbstractReferenceType;
 import org.n52.sos.ogc.sensorML.v20.AbstractAlgorithm;
 
 import com.google.common.base.Strings;

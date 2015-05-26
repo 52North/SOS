@@ -114,7 +114,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
 
     private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(GmlConstants.NS_GML,
             org.n52.iceland.ogc.gml.time.Time.class, com.vividsolutions.jts.geom.Geometry.class,
-            org.n52.sos.ogc.om.values.CategoryValue.class, org.n52.iceland.ogc.gml.ReferenceType.class,
+            org.n52.sos.ogc.om.values.CategoryValue.class, org.n52.sos.ogc.gml.ReferenceType.class,
             org.n52.sos.ogc.om.values.QuantityValue.class, org.n52.iceland.ogc.gml.CodeWithAuthority.class,
             org.n52.iceland.ogc.gml.CodeType.class, AbstractFeature.class, SosEnvelope.class);
 
@@ -147,8 +147,8 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
             encodedObject = createPosition((Geometry) element, additionalValues.get(HelperValues.GMLID));
         } else if (element instanceof CategoryValue) {
             encodedObject = createReferenceTypeForCategroyValue((CategoryValue) element);
-        } else if (element instanceof org.n52.iceland.ogc.gml.ReferenceType) {
-            encodedObject = createReferencType((org.n52.iceland.ogc.gml.ReferenceType) element);
+        } else if (element instanceof org.n52.sos.ogc.gml.ReferenceType) {
+            encodedObject = createReferencType((org.n52.sos.ogc.gml.ReferenceType) element);
         } else if (element instanceof CodeWithAuthority) {
             encodedObject = createCodeWithAuthorityType((CodeWithAuthority) element);
         } else if (element instanceof QuantityValue) {
@@ -411,7 +411,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
         return xbRef;
     }
 
-    private XmlObject createReferencType(org.n52.iceland.ogc.gml.ReferenceType sosReferenceType) {
+    private XmlObject createReferencType(org.n52.sos.ogc.gml.ReferenceType sosReferenceType) {
         if (sosReferenceType.isSetHref()) {
             ReferenceType referenceType =
                     ReferenceType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());

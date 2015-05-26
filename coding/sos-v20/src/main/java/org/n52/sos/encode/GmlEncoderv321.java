@@ -122,7 +122,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
 
     private static final Set<EncoderKey> ENCODER_KEY_TYPES = CodingHelper.encoderKeysForElements(
             GmlConstants.NS_GML_32, org.n52.iceland.ogc.gml.time.Time.class, com.vividsolutions.jts.geom.Geometry.class,
-            org.n52.sos.ogc.om.values.CategoryValue.class, org.n52.iceland.ogc.gml.ReferenceType.class,
+            org.n52.sos.ogc.om.values.CategoryValue.class, org.n52.sos.ogc.gml.ReferenceType.class,
             org.n52.sos.ogc.om.values.QuantityValue.class, org.n52.iceland.ogc.gml.CodeWithAuthority.class,
             org.n52.iceland.ogc.gml.CodeType.class, SamplingFeature.class, SosEnvelope.class, FeatureCollection.class,
             AbstractGeometry.class);
@@ -157,8 +157,8 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
             encodedObject = createPosition((Geometry) element, additionalValues);
         } else if (element instanceof CategoryValue) {
             encodedObject = createReferenceTypeForCategroyValue((CategoryValue) element);
-        } else if (element instanceof org.n52.iceland.ogc.gml.ReferenceType) {
-            encodedObject = createReferencType((org.n52.iceland.ogc.gml.ReferenceType) element);
+        } else if (element instanceof org.n52.sos.ogc.gml.ReferenceType) {
+            encodedObject = createReferencType((org.n52.sos.ogc.gml.ReferenceType) element);
         } else if (element instanceof CodeWithAuthority) {
             encodedObject = createCodeWithAuthorityType((CodeWithAuthority) element);
         } else if (element instanceof QuantityValue) {
@@ -657,7 +657,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
         return xbRef;
     }
 
-    private ReferenceType createReferencType(final org.n52.iceland.ogc.gml.ReferenceType sosReferenceType) {
+    private ReferenceType createReferencType(final org.n52.sos.ogc.gml.ReferenceType sosReferenceType) {
         if (!sosReferenceType.isSetHref()) {
             final String exceptionText =
                     String.format("The required 'href' parameter is empty for encoding %s!",

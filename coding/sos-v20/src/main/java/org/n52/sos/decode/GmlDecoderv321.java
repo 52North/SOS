@@ -322,16 +322,16 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
         return ti;
     }
 
-    private org.n52.iceland.ogc.gml.ReferenceType parseReferenceType(ReferenceType referenceType) {
+    private org.n52.sos.ogc.gml.ReferenceType parseReferenceType(ReferenceType referenceType) {
         if (referenceType.isSetHref() && !referenceType.getHref().isEmpty()) {
-            org.n52.iceland.ogc.gml.ReferenceType sosReferenceType =
-                    new org.n52.iceland.ogc.gml.ReferenceType(referenceType.getHref());
+            org.n52.sos.ogc.gml.ReferenceType sosReferenceType =
+                    new org.n52.sos.ogc.gml.ReferenceType(referenceType.getHref());
             if (referenceType.isSetTitle() && !referenceType.getTitle().isEmpty()) {
                 sosReferenceType.setTitle(referenceType.getTitle());
             }
             return sosReferenceType;
         }
-        return new org.n52.iceland.ogc.gml.ReferenceType("UNKNOWN");
+        return new org.n52.sos.ogc.gml.ReferenceType("UNKNOWN");
     }
 
     private GmlMeasureType parseMeasureType(MeasureType measureType) {

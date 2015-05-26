@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.om;
 
-import org.n52.iceland.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.values.Value;
 
 /**

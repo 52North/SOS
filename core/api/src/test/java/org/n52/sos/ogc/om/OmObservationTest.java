@@ -35,10 +35,10 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.n52.iceland.ogc.gml.ReferenceType;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.Constants;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.util.JTSHelper;
 

@@ -44,6 +44,7 @@ import net.opengis.sosREST.x10.SensorType;
 
 
 
+
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
@@ -52,7 +53,6 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.util.XmlHelper;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
@@ -65,6 +65,7 @@ import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.request.UpdateSensorRequest;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

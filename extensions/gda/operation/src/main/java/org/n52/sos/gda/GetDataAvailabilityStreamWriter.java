@@ -48,8 +48,8 @@ import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.w3c.W3CConstants;
-import org.n52.sos.encode.EncodingValues;
-import org.n52.sos.encode.XmlEventWriter;
+import org.n52.sos.coding.encode.EncodingValues;
+import org.n52.sos.coding.encode.XmlEventWriter;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 
 /**

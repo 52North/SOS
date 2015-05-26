@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode;
+package org.n52.sos.coding.encode;
 
 import java.io.OutputStream;
 import java.util.Set;
@@ -44,10 +44,10 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.util.N52XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.base.StandardSystemProperty;
 

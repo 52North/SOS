@@ -53,6 +53,7 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +92,7 @@ public class DeleteObservationDecoder implements Decoder<DeleteObservationReques
             LOGGER.debug(String.format("Decoded request: %s", decodedRequest));
             return decodedRequest;
         } else {
-            throw new UnsupportedDecoderInputException(this, xmlObject);
+            throw new UnsupportedDecoderXmlInputException(this, xmlObject);
         }
     }
 

@@ -54,7 +54,7 @@ import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
-import org.n52.sos.encode.AbstractResponseEncoder;
+import org.n52.sos.coding.encode.AbstractResponseEncoder;
 import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
 import org.n52.sos.service.profile.Profile;

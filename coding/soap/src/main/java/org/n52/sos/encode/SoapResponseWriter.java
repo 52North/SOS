@@ -37,6 +37,7 @@ import javax.xml.soap.SOAPMessage;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
+import org.n52.sos.coding.encode.AbstractResponseWriter;
 
 /**
  * Writer for {@link SOAPMessage} objects

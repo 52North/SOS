@@ -26,18 +26,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode.json;
+package org.n52.sos.coding.encode;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.coding.encode.ResponseProxy;
-import org.n52.iceland.util.JSONUtils;
 import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.coding.encode.AbstractResponseWriter;
-
-import com.fasterxml.jackson.databind.JsonNode;
+import org.n52.sos.util.XmlOptionsHelper;
 
 /**
  * TODO JavaDoc
@@ -46,25 +43,33 @@ import com.fasterxml.jackson.databind.JsonNode;
  * 
  * @since 4.0.0
  */
-public class JSONResponseWriter extends AbstractResponseWriter<JsonNode> {
+public class XmlResponseWriter extends AbstractResponseWriter<XmlObject> {
+    
+    private MediaType contentType;
+
+//    @Override
+//    public Class<XmlObject> getType() {
+//        return XmlObject.class;
+//    }
 
     @Override
-    public void write(JsonNode t, OutputStream out, ResponseProxy responseProxy) throws IOException {
-        JSONUtils.print(out, t);
+    public void write(XmlObject xml, OutputStream out, ResponseProxy responseProxy) throws IOException {
+        xml.save(out, XmlOptionsHelper.getInstance().getXmlOptions());
     }
 
     @Override
     public MediaType getContentType() {
-        return MediaTypes.APPLICATION_JSON;
+        return contentType;
     }
 
     @Override
     public void setContentType(MediaType contentType) {
-        
+        this.contentType = contentType;
     }
 
     @Override
-    public boolean supportsGZip(JsonNode t) {
+    public boolean supportsGZip(XmlObject t) {
         return true;
     }
+
 }

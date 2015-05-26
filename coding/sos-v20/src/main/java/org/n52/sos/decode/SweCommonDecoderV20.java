@@ -93,8 +93,7 @@ import org.n52.iceland.ogc.swe.simpleType.SweTime;
 import org.n52.iceland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.XmlHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
@@ -102,6 +101,8 @@ import org.n52.sos.ogc.swe.simpleType.SweCountRange;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -173,6 +174,9 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
         } else if (element instanceof BooleanPropertyType) {
             return parseAbstractDataComponent(((BooleanPropertyType)element).getBoolean());
         } else {
+            if (element instanceof XmlObject) {
+                throw new UnsupportedDecoderXmlInputException(this, (XmlObject)element);
+            }
             throw new UnsupportedDecoderInputException(this, element);
         }
     }
@@ -217,7 +221,7 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
             sosDataArray.setXml(dataArrayDoc.xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
             sosAbstractDataComponent = sosDataArray;
         } else {
-            throw new UnsupportedDecoderInputException(this, abstractDataComponent);
+            throw new UnsupportedDecoderXmlInputException(this, abstractDataComponent);
         }
         if (sosAbstractDataComponent != null) {
             if (abstractDataComponent.isSetDefinition()) {

@@ -39,6 +39,7 @@ import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.iso.GcoConstants;
 import org.n52.sos.ogc.sensorML.Role;
 import org.n52.sos.util.CodingHelper;
@@ -87,7 +88,7 @@ public class Iso19139GcoDecoder implements Decoder<Object, XmlObject> {
         if (element instanceof CodeListValueType) {
             return encodeCodeListValue((CodeListValueType) element);
         } else {
-            throw new UnsupportedDecoderInputException(this, element);
+            throw new UnsupportedDecoderXmlInputException(this, element);
         }
     }
 

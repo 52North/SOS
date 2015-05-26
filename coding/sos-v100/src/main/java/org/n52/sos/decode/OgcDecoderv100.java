@@ -62,9 +62,10 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
-import org.n52.iceland.util.XmlHelper;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.NodeList;
@@ -128,7 +129,7 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
         if (xmlObject instanceof BBOXTypeImpl) {
             return parseBBOXFilterType((BBOXTypeImpl) xmlObject);
         } else {
-            throw new UnsupportedDecoderInputException(this, xmlObject);
+            throw new UnsupportedDecoderXmlInputException(this, xmlObject);
         }
         // TODO more spatial filters (contains, intersects, overlaps Point
         // Linestring Polygon, not supported by this SOS yet

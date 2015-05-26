@@ -39,9 +39,9 @@ import org.hibernate.Session;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
-import org.n52.iceland.util.XmlHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
+import org.n52.sos.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -93,9 +93,8 @@ import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swe.SweField;
 import org.n52.iceland.ogc.swe.simpleType.SweText;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
-import org.n52.iceland.util.XmlHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.sos.encode.AbstractSensorMLDecoder;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.ogc.sensorML.AbstractComponent;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
@@ -119,6 +118,8 @@ import org.n52.sos.ogc.sensorML.elements.SmlIo;
 import org.n52.sos.ogc.sensorML.elements.SmlLocation;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -176,7 +177,7 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
         } else if (element instanceof ProcessModelType) {
             return parseProcessModel((ProcessModelType) element);
         } else {
-            throw new UnsupportedDecoderInputException(this, element);
+            throw new UnsupportedDecoderXmlInputException(this, element);
         }
     }
 
@@ -516,12 +517,12 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
                 if (sosSweText.isSetValue()) {
                     map.put(sosSweText.getValue(), sosSweField.getName().getValue());
                 } else {
-                    throw new UnsupportedDecoderInputException(this, xbCapabilities).withMessage(
+                    throw new UnsupportedDecoderXmlInputException(this, xbCapabilities).withMessage(
                             "Removable capabilities element %s contains a field with no value",
                             xbCapabilities.getName());
                 }
             } else {
-                throw new UnsupportedDecoderInputException(this, xbCapabilities).withMessage(
+                throw new UnsupportedDecoderXmlInputException(this, xbCapabilities).withMessage(
                         "Removable capabilities element %s contains a non-Text field", xbCapabilities.getName());
             }
 

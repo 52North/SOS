@@ -39,7 +39,6 @@ import javax.xml.soap.SOAPHeaderElement;
 
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.XmlNamespaceDecoderKey;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.w3c.wsa.WsaActionHeader;
 import org.n52.iceland.w3c.wsa.WsaConstants;
@@ -47,6 +46,7 @@ import org.n52.iceland.w3c.wsa.WsaHeader;
 import org.n52.iceland.w3c.wsa.WsaMessageIDHeader;
 import org.n52.iceland.w3c.wsa.WsaReplyToHeader;
 import org.n52.iceland.w3c.wsa.WsaToHeader;
+import org.n52.sos.coding.decode.XmlNamespaceDecoderKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

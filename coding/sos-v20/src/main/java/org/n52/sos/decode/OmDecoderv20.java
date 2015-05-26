@@ -71,6 +71,7 @@ import org.n52.iceland.ogc.swe.SweDataArray;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.w3c.xlink.W3CHrefAttribute;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.ogc.gml.GmlMeasureType;
 import org.n52.sos.ogc.om.NamedValue;
@@ -155,8 +156,12 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
             return parseNamedValueType((NamedValuePropertyType) object);
         } else if (object instanceof NamedValuePropertyType[]) {
             return parseNamedValueTypeArray((NamedValuePropertyType[]) object);
+        } else {
+            if (object instanceof XmlObject) {
+                throw new UnsupportedDecoderXmlInputException(this, (XmlObject)object);
+            }
+            throw new UnsupportedDecoderInputException(this, object);
         }
-        throw new UnsupportedDecoderInputException(this, object);
     }
 
     private OmObservation parseOmObservation(OMObservationType omObservation) throws OwsExceptionReport {
@@ -226,7 +231,7 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
             sosNamedValue.setName(referenceType);
             return sosNamedValue;
         } else {
-            throw new UnsupportedDecoderInputException(this, namedValueProperty);
+            throw new UnsupportedDecoderXmlInputException(this, namedValueProperty);
         }
     }
 
@@ -276,7 +281,7 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
             namedValue.setValue(new HrefAttributeValue((W3CHrefAttribute)value));
             return namedValue;
         } else {
-            throw new UnsupportedDecoderInputException(this, xmlObject);
+            throw new UnsupportedDecoderXmlInputException(this, xmlObject);
         }
     }
 

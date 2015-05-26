@@ -49,6 +49,7 @@ import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.sos.coding.encode.AbstractXmlEncoder;
 import org.n52.sos.inspire.InspireConstants;
 import org.n52.sos.inspire.InspireObject;
 import org.n52.sos.inspire.InspireSupportedCRS;

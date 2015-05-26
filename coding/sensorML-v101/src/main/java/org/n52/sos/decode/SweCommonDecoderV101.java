@@ -74,6 +74,7 @@ import net.opengis.swe.x101.VectorPropertyType;
 import net.opengis.swe.x101.VectorType;
 import net.opengis.swe.x101.VectorType.Coordinate;
 
+import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
@@ -99,8 +100,7 @@ import org.n52.iceland.ogc.swe.simpleType.SweTime;
 import org.n52.iceland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.XmlHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweEnvelope;
@@ -111,6 +111,8 @@ import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -190,6 +192,9 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
         } else if (element instanceof AbstractDataRecordDocument) {
             return parseAbstractDataComponentType(((AbstractDataRecordDocument) element).getAbstractDataRecord());
         } else {
+            if (element instanceof XmlObject) {
+                throw new UnsupportedDecoderXmlInputException(this, (XmlObject)element);
+            }
             throw new UnsupportedDecoderInputException(this, element);
         }
     }

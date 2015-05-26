@@ -32,7 +32,7 @@ import java.io.OutputStream;
 
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.sos.encode.EncodingValues;
+import org.n52.sos.coding.encode.EncodingValues;
 
 /**
  * Generic interface for StreamingEncoders.

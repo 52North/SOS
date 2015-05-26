@@ -59,9 +59,9 @@ import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.ogc.swe.SweDataArray;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.encode.streaming.OmV20XmlStreamWriter;
 import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.MultiObservationValues;
@@ -79,6 +79,7 @@ import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SweHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

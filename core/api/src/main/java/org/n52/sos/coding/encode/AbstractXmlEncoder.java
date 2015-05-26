@@ -26,50 +26,58 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode;
+package org.n52.sos.coding.encode;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.encode.ResponseProxy;
-import org.n52.iceland.util.XmlOptionsHelper;
+import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.http.MediaType;
+import org.n52.iceland.util.http.MediaTypes;
+import org.n52.iceland.w3c.SchemaLocation;
+
+import com.google.common.collect.Sets;
 
 /**
- * TODO JavaDoc
- * 
- * @author Christian Autermann <c.autermann@52north.org>
- * 
  * @since 4.0.0
+ * 
+ * @param <S>
  */
-public class XmlResponseWriter extends AbstractResponseWriter<XmlObject> {
-    
-    private MediaType contentType;
-
-//    @Override
-//    public Class<XmlObject> getType() {
-//        return XmlObject.class;
-//    }
+public abstract class AbstractXmlEncoder<S> implements Encoder<XmlObject, S> {
 
     @Override
-    public void write(XmlObject xml, OutputStream out, ResponseProxy responseProxy) throws IOException {
-        xml.save(out, XmlOptionsHelper.getInstance().getXmlOptions());
+    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
+    }
+
+    @Override
+    public XmlObject encode(S element) throws OwsExceptionReport {
+        return encode(element, new EnumMap<HelperValues, String>(HelperValues.class));
     }
 
     @Override
     public MediaType getContentType() {
-        return contentType;
+        return MediaTypes.TEXT_XML;
     }
 
     @Override
-    public void setContentType(MediaType contentType) {
-        this.contentType = contentType;
+    public Set<SchemaLocation> getSchemaLocations() {
+        return Sets.newHashSet();
     }
 
     @Override
-    public boolean supportsGZip(XmlObject t) {
-        return true;
+    public Set<String> getConformanceClasses(String service, String version) {
+        return Collections.emptySet();
     }
 
 }

@@ -45,7 +45,7 @@ import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.encode.AbstractResponseEncoder;
+import org.n52.sos.coding.encode.AbstractResponseEncoder;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 

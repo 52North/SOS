@@ -40,6 +40,7 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.w3c.W3CConstants;
 import org.n52.iceland.w3c.xlink.W3CHrefAttribute;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.util.CodingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +83,7 @@ public class XlinkDecoderv1999 implements Decoder<Object, XmlObject> {
         if (xmlObject instanceof HrefAttribute) {
             return encodeHrefAttribute((HrefAttribute) xmlObject);
         } else {
-            throw new UnsupportedDecoderInputException(this, xmlObject);
+            throw new UnsupportedDecoderXmlInputException(this, xmlObject);
         }
     }
 

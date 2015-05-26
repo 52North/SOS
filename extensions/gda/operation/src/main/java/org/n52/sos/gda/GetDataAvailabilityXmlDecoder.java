@@ -36,7 +36,6 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
-import org.n52.iceland.coding.decode.AbstractXmlDecoder;
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
@@ -44,12 +43,14 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swes.SwesConstants;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.XmlHelper;
+import org.n52.sos.coding.decode.AbstractXmlDecoder;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;
 import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XPathConstants;
+import org.n52.sos.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +67,7 @@ public class GetDataAvailabilityXmlDecoder extends AbstractXmlDecoder<GetDataAva
 
     private static final Logger LOG = LoggerFactory.getLogger(GetDataAvailabilityXmlDecoder.class);
 
-    private static final String BASE_PATH_SOS = getBasePath(Sos2Constants.XPATH_PREFIX_SOS_20,
+    private static final String BASE_PATH_SOS = getBasePath(XPathConstants.XPATH_PREFIX_SOS_20,
             SosConstants.NS_SOS_PREFIX);
 
     private static final String BASE_PATH_GDA = getBasePath(GetDataAvailabilityConstants.XPATH_PREFIXES_GDA,
@@ -117,7 +118,7 @@ public class GetDataAvailabilityXmlDecoder extends AbstractXmlDecoder<GetDataAva
     public GetDataAvailabilityRequest parseGetDataAvailability(XmlObject xml) throws OwsExceptionReport {
         XmlObject[] roots = xml.selectPath(BASE_PATH_SOS);
         if (roots != null && roots.length > 0) {
-            return parseGetDataAvailability(xml, BASE_PATH_SOS, Sos2Constants.XPATH_PREFIX_SOS_20,
+            return parseGetDataAvailability(xml, BASE_PATH_SOS, XPathConstants.XPATH_PREFIX_SOS_20,
                     SosConstants.NS_SOS_PREFIX, Sos2Constants.NS_SOS_20);
         } else {
             roots = xml.selectPath(BASE_PATH_GDA);
@@ -205,7 +206,7 @@ public class GetDataAvailabilityXmlDecoder extends AbstractXmlDecoder<GetDataAva
      */
     private SwesExtensions parseExtensions(XmlObject xml) throws OwsExceptionReport {
         SwesExtensions extensions = new SwesExtensions();
-        for (XmlObject x : xml.selectPath(getPath(SwesConstants.XPATH_PREFIXES_SWES, SwesConstants.NS_SWES_PREFIX,
+        for (XmlObject x : xml.selectPath(getPath(XPathConstants.XPATH_PREFIXES_SWES, SwesConstants.NS_SWES_PREFIX,
                 "extension"))) {
             try {
                 if (x.getDomNode().hasChildNodes()) {

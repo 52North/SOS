@@ -26,45 +26,32 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode.json;
+package org.n52.sos.exception.ows.concrete;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import org.apache.xmlbeans.XmlObject;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.w3c.dom.Node;
 
-import org.n52.iceland.coding.encode.ResponseProxy;
-import org.n52.iceland.util.JSONUtils;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.coding.encode.AbstractResponseWriter;
+public class UnsupportedDecoderXmlInputException extends UnsupportedDecoderInputException {
 
-import com.fasterxml.jackson.databind.JsonNode;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7244575661954080973L;
 
-/**
- * TODO JavaDoc
- * 
- * @author Christian Autermann <c.autermann@52north.org>
- * 
- * @since 4.0.0
- */
-public class JSONResponseWriter extends AbstractResponseWriter<JsonNode> {
-
-    @Override
-    public void write(JsonNode t, OutputStream out, ResponseProxy responseProxy) throws IOException {
-        JSONUtils.print(out, t);
+    public UnsupportedDecoderXmlInputException(Decoder<?, ?> decoder, XmlObject o) {
+        super(decoder, o);
     }
 
     @Override
-    public MediaType getContentType() {
-        return MediaTypes.APPLICATION_JSON;
+    protected String getObjectName(Object o) {
+        if (o != null && o instanceof XmlObject) {
+            final Node n = ((XmlObject) o).getDomNode();
+            return n.getPrefix() != null ? n.getPrefix() + ":" + n.getLocalName() : n.getLocalName();
+        } else {
+            return super.getObjectName(o);
+        }
     }
 
-    @Override
-    public void setContentType(MediaType contentType) {
-        
-    }
-
-    @Override
-    public boolean supportsGZip(JsonNode t) {
-        return true;
-    }
 }

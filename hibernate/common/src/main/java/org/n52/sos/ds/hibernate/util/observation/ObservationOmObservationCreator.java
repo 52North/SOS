@@ -54,7 +54,6 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.ogc.swe.SweDataArray;
 import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.util.XmlHelper;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -75,6 +74,7 @@ import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
+import org.n52.sos.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

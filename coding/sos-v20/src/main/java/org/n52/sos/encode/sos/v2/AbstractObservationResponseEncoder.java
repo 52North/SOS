@@ -37,7 +37,7 @@ import org.n52.iceland.coding.encode.ObservationEncoder;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.sos.encode.EncodingValues;
+import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.response.AbstractObservationResponse;

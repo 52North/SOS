@@ -26,30 +26,30 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode;
+package org.n52.sos.coding.encode;
 
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.sos.response.BinaryAttachmentResponse;
 
 /**
- * {@link ResponseWriterFactory} implementation for {@link AbstractServiceResponse} and
- * {@link AbstractServiceResponseWriter}
+ * {@link ResponseWriterFactory} implementation for {@link BinaryAttachmentResponse} and
+ * {@link BinaryAttachmentResponseWriter}
  * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
  */
-public class AbstractServiceResponseWriterFactory implements
-		ResponseWriterFactory<AbstractServiceResponse, AbstractServiceResponseWriter> {
+public class BinaryAttachmentResponseWriterFactory implements
+		ResponseWriterFactory<BinaryAttachmentResponse, BinaryAttachmentResponseWriter> {
 
 	@Override
-	public Class<AbstractServiceResponse> getType() {
-		return AbstractServiceResponse.class;
+	public Class<BinaryAttachmentResponse> getType() {
+		return BinaryAttachmentResponse.class;
 	}
 
 	@Override
-	public AbstractServiceResponseWriter getResponseWriter() {
-		return new AbstractServiceResponseWriter();
+	public BinaryAttachmentResponseWriter getResponseWriter() {
+		return new BinaryAttachmentResponseWriter();
 	}
 
 }

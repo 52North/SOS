@@ -42,7 +42,6 @@ import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweDataArray;
-import org.n52.iceland.util.XmlHelper;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCodespace;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescription;
@@ -66,6 +65,7 @@ import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.OMHelper;
+import org.n52.sos.util.XmlHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 

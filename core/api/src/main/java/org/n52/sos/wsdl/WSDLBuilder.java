@@ -40,7 +40,7 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.util.XmlHelper;
+import org.n52.sos.util.XmlHelper;
 import org.n52.sos.wsdl.WSDLConstants.Operations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

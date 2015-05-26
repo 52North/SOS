@@ -53,7 +53,7 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.aqd.ReportObligationType;
-import org.n52.sos.encode.EncodingValues;
+import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.aqd.v1.AqdGetObservationResponseXmlStreamWriter;
 import org.n52.sos.inspire.aqd.EReportingHeader;

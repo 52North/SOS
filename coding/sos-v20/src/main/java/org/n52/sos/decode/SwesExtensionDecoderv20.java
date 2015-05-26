@@ -43,6 +43,7 @@ import org.n52.iceland.ogc.swes.SwesConstants;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.w3c.W3CConstants;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.util.CodingHelper;
@@ -102,7 +103,7 @@ public class SwesExtensionDecoderv20 implements Decoder<SwesExtension<?>, XmlObj
                 return extension;
             }
         }
-        throw new UnsupportedDecoderInputException(this, xmlObject);
+        throw new UnsupportedDecoderXmlInputException(this, xmlObject);
     }
 
     private boolean isSweAbstractDataComponent(final Object xmlObj) {

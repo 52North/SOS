@@ -31,7 +31,7 @@ package org.n52.sos.encode.streaming;
 import javax.xml.stream.XMLStreamException;
 
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.sos.encode.EncodingValues;
+import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.ogc.om.OmObservation;
 
 /**

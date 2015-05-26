@@ -98,9 +98,8 @@ import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.iceland.ogc.swe.simpleType.SweText;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.XmlHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.sos.encode.AbstractSensorMLDecoder;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.SensorML20Constants;
@@ -128,6 +127,8 @@ import org.n52.sos.ogc.sensorML.v20.SmlFeatureOfInterest;
 import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -203,7 +204,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         } else if (element instanceof AggregateProcessPropertyType) {
             sml = parseAggregateProcess((AggregateProcessType) element);
         } else {
-            throw new UnsupportedDecoderInputException(this, element);
+            throw new UnsupportedDecoderXmlInputException(this, element);
         }
         if (sml != null) {
             setXmlDescription(element, sml);
@@ -609,7 +610,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
             // Object decodeXmlElement =
             // CodingHelper.decodeXmlElement(pupt.getText());
         } else {
-            throw new UnsupportedDecoderInputException(this, pupt);
+            throw new UnsupportedDecoderXmlInputException(this, pupt);
         }
         return position;
     }

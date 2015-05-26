@@ -43,9 +43,8 @@ import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.encode.EncodingValues;
+import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.sos.v2.GetObservationResponseXmlStreamWriter;
 import org.n52.sos.ogc.om.OmObservation;
@@ -53,6 +52,7 @@ import org.n52.sos.ogc.om.StreamingObservation;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.sos.AbstractStreaming;
 import org.n52.sos.response.GetObservationResponse;
+import org.n52.sos.util.XmlHelper;
 
 import com.google.common.collect.Sets;
 

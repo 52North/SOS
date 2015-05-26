@@ -56,7 +56,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.XmlNamespaceDecoderKey;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.concrete.DecoderResponseUnsupportedException;
@@ -75,7 +74,8 @@ import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.service.AbstractServiceCommunicationObject;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.XmlHelper;
+import org.n52.sos.coding.decode.XmlNamespaceDecoderKey;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.sos.SosInsertionMetadata;
 import org.n52.sos.ogc.swes.SwesFeatureRelationship;
@@ -85,6 +85,7 @@ import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.request.UpdateSensorRequest;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
+import org.n52.sos.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -142,7 +143,7 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
         } else if (xmlObject instanceof DeleteSensorDocument) {
             return parseDeleteSensor((DeleteSensorDocument) xmlObject);
         } else {
-            throw new UnsupportedDecoderInputException(this, xmlObject);
+            throw new UnsupportedDecoderXmlInputException(this, xmlObject);
         }
     }
 

@@ -90,9 +90,9 @@ import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.service.AbstractServiceCommunicationObject;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.exception.ows.concrete.MissingResultValuesException;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.sos.SosResultEncoding;
@@ -108,6 +108,7 @@ import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.response.GetResultResponse;
 import org.n52.sos.response.GetResultTemplateResponse;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -184,7 +185,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
         } else if (xml instanceof GetResultResponseDocument) {
             return parseGetResultResponse((GetResultResponseDocument) xml);
         } else {
-            throw new UnsupportedDecoderInputException(this, xml);
+            throw new UnsupportedDecoderXmlInputException(this, xml);
         }
     }
 

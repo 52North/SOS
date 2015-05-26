@@ -59,7 +59,6 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.response.ServiceResponse;
-import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.iceland.util.http.HTTPUtils;
 import org.n52.iceland.util.http.MediaTypes;
@@ -83,6 +82,7 @@ import org.n52.sos.binding.rest.resources.offerings.OfferingsRequest;
 import org.n52.sos.binding.rest.resources.offerings.OfferingsRequestHandler;
 import org.n52.sos.binding.rest.resources.sensors.ISensorsRequest;
 import org.n52.sos.binding.rest.resources.sensors.SensorsRequestHandler;
+import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

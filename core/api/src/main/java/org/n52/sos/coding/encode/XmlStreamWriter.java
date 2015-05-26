@@ -26,97 +26,97 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode;
+package org.n52.sos.coding.encode;
 
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventFactory;
-import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.n52.iceland.util.Constants;
+import org.n52.iceland.w3c.W3CConstants;
 
 import com.google.common.xml.XmlEscapers;
 
 /**
- * Abstract {@link XmlWriter} class for {@link XMLEventWriter}
+ * Abstract {@link XmlWriter} class for {@link XMLStreamWriter}
  *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.2
  *
  */
-public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
-    private final Map<String,String> prefixes = new HashMap<>();
-    private XMLEventWriter w;
-    private final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
+public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
+
+    private final Map<String, String> prefixes = new HashMap<>();
+
+    private XMLStreamWriter w;
 
     @Override
     protected void init(OutputStream out, String encoding, EncodingValues encodingValues) throws XMLStreamException {
-        this.w = getXmlOutputFactory().createXMLEventWriter(out, encoding);
+        this.w = getXmlOutputFactory().createXMLStreamWriter(out, encoding);
         this.out = out;
         indent = encodingValues.getIndent();
     }
 
     @Override
-    protected XMLEventWriter getXmlWriter() {
+    protected XMLStreamWriter getXmlWriter() {
         return w;
     }
 
     @Override
     protected void attr(QName name, String value) throws XMLStreamException {
-        getXmlWriter().add(getXmlEventFactory().createAttribute(name, value));
+        getXmlWriter().writeAttribute(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart(), value);
     }
 
     @Override
     protected void attr(String name, String value) throws XMLStreamException {
-        getXmlWriter().add(getXmlEventFactory().createAttribute(name, value));
+        getXmlWriter().writeAttribute(name, value);
     }
 
     @Override
     protected void attr(String namespace, String localName, String value) throws XMLStreamException {
-        attr(new QName(namespace, localName), value);
+        getXmlWriter().writeAttribute(W3CConstants.NS_XSI, W3CConstants.SCHEMA_LOCATION, value);
     }
 
     @Override
     protected void namespace(String prefix, String namespace) throws XMLStreamException {
         String ns = prefixes.get(prefix);
         if (ns == null) {
-            getXmlWriter().add(getXmlEventFactory().createNamespace(prefix, namespace));
+            getXmlWriter().writeNamespace(prefix, namespace);
             prefixes.put(prefix, namespace);
         } else {
             if (!ns.equals(namespace)) {
-                throw new XMLStreamException(
-                        "Prefix <" + prefix + "> is already bound to <" + ns + ">");
+                throw new XMLStreamException("Prefix <" + prefix + "> is already bound to <" + ns + ">");
             }
         }
     }
 
     @Override
     protected void start(QName name) throws XMLStreamException {
-        getXmlWriter()
-                .add(getXmlEventFactory().createStartElement(name.getPrefix(), name.getNamespaceURI(),
-                        name.getLocalPart()));
+        writeIndent(indent++);
+        getXmlWriter().writeStartElement(name.getPrefix(), name.getLocalPart(), name.getNamespaceURI());
     }
 
     @Override
     protected void start(boolean embedded) throws XMLStreamException {
         if (!embedded) {
-            getXmlWriter().add(getXmlEventFactory().createStartDocument(Constants.DEFAULT_ENCODING, XML_VERSION));
+            getXmlWriter().writeStartDocument(Constants.DEFAULT_ENCODING, XML_VERSION);
+            writeNewLine();
         }
     }
 
     @Override
     protected void empty(QName name) throws XMLStreamException {
-        start(name);
-        end(name);
+        writeIndent(indent);
+        getXmlWriter().writeEmptyElement(name.getPrefix(), name.getLocalPart(), name.getNamespaceURI());
     }
 
     @Override
     protected void chars(String chars) throws XMLStreamException {
-        getXmlWriter().add(getXmlEventFactory().createCharacters(chars));
+        chars(chars, true);
     }
 
     @Override
@@ -124,24 +124,27 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
         if (escape) {
             chars = XmlEscapers.xmlContentEscaper().escape(chars);
         }
-        getXmlWriter().add(getXmlEventFactory().createCharacters(chars));
+        getXmlWriter().writeCharacters(chars);
     }
 
     @Override
     protected void end(QName name) throws XMLStreamException {
-        getXmlWriter().add(
-                getXmlEventFactory().createEndElement(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart()));
+        writeIndent(--indent);
+        getXmlWriter().writeEndElement();
+        flush();
     }
 
     @Override
     protected void endInline(QName name) throws XMLStreamException {
-        getXmlWriter().add(
-                getXmlEventFactory().createEndElement(name.getPrefix(), name.getNamespaceURI(), name.getLocalPart()));
+        --indent;
+        getXmlWriter().writeEndElement();
+        flush();
     }
 
     @Override
     protected void end() throws XMLStreamException {
-        getXmlWriter().add(getXmlEventFactory().createEndDocument());
+        getXmlWriter().writeEndDocument();
+        flush();
     }
 
     @Override
@@ -155,10 +158,4 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
         getXmlWriter().flush();
     }
 
-    /**
-     * @return
-     */
-    protected XMLEventFactory getXmlEventFactory() {
-        return this.eventFactory;
-    }
 }

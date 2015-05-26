@@ -99,12 +99,14 @@ import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.iceland.ogc.ows.OwsValuesRererence;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.JavaHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.util.http.HTTPMethods;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.sos.coding.encode.AbstractXmlEncoder;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.N52XmlHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.x1999.xlink.ActuateType;
@@ -188,80 +190,80 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
     /**
      * Set the service identification information
      *
-     * @param sosServiceIdentification
+     * @param serviceIdentification
      *            SOS representation of ServiceIdentification.
      *
      * @throws OwsExceptionReport
      *             * if the file is invalid.
      */
-    private XmlObject encodeServiceIdentification(final OwsServiceIdentification sosServiceIdentification)
+    private XmlObject encodeServiceIdentification(final OwsServiceIdentification serviceIdentification)
             throws OwsExceptionReport {
         ServiceIdentification serviceIdent;
-        if (sosServiceIdentification.getServiceIdentification() != null) {
-
-            if (sosServiceIdentification.getServiceIdentification() instanceof ServiceIdentificationDocument) {
+        if (serviceIdentification.isSetServiceIdentification()) {
+            XmlObject xmlObject = XmlHelper.parseXmlString(serviceIdentification.getServiceIdentification());
+            if (xmlObject instanceof ServiceIdentificationDocument) {
                 serviceIdent =
-                        ((ServiceIdentificationDocument) sosServiceIdentification.getServiceIdentification())
+                        ((ServiceIdentificationDocument) xmlObject)
                                 .getServiceIdentification();
-            } else if (sosServiceIdentification.getServiceIdentification() instanceof ServiceIdentification) {
-                serviceIdent = (ServiceIdentification) sosServiceIdentification.getServiceIdentification();
+            } else if (xmlObject instanceof ServiceIdentification) {
+                serviceIdent = (ServiceIdentification) xmlObject;
             } else {
                 throw new NoApplicableCodeException()
                         .withMessage("The service identification file is not a ServiceIdentificationDocument, ServiceIdentification or invalid! Check the file in the Tomcat webapps: /SOS_webapp/WEB-INF/conf/capabilities/.");
             }
-            if (sosServiceIdentification.hasAbstract()) {
+            if (serviceIdentification.hasAbstract()) {
                 clearAbstracts(serviceIdent);
-                for (LocalizedString ls : sosServiceIdentification.getAbstract()) {
+                for (LocalizedString ls : serviceIdentification.getAbstract()) {
                     serviceIdent.addNewAbstract().set(encodeOwsLanguageString(ls));
                 }
             }
-            if (sosServiceIdentification.hasTitle()) {
+            if (serviceIdentification.hasTitle()) {
                 clearTitles(serviceIdent);
-                for (LocalizedString ls : sosServiceIdentification.getTitle()) {
+                for (LocalizedString ls : serviceIdentification.getTitle()) {
                     serviceIdent.addNewTitle().set(encodeOwsLanguageString(ls));
                 }
             }
         } else {
             /* TODO check for required fields and fail on missing ones */
             serviceIdent = ServiceIdentification.Factory.newInstance();
-            for (String accessConstraint : sosServiceIdentification.getAccessConstraints()) {
+            for (String accessConstraint : serviceIdentification.getAccessConstraints()) {
                 serviceIdent.addAccessConstraints(accessConstraint);
             }
-            if (sosServiceIdentification.hasFees()) {
-            	serviceIdent.setFees(sosServiceIdentification.getFees());
+            if (serviceIdentification.hasFees()) {
+            	serviceIdent.setFees(serviceIdentification.getFees());
             }
             CodeType xbServiceType = serviceIdent.addNewServiceType();
-            xbServiceType.setStringValue(sosServiceIdentification.getServiceType());
-            if (sosServiceIdentification.getServiceTypeCodeSpace() != null) {
-                xbServiceType.setCodeSpace(sosServiceIdentification.getServiceTypeCodeSpace());
+            xbServiceType.setStringValue(serviceIdentification.getServiceType());
+            if (serviceIdentification.getServiceTypeCodeSpace() != null) {
+                xbServiceType.setCodeSpace(serviceIdentification.getServiceTypeCodeSpace());
             }
-            if (sosServiceIdentification.hasAbstract()) {
-                for (LocalizedString ls : sosServiceIdentification.getAbstract()) {
+            if (serviceIdentification.hasAbstract()) {
+                for (LocalizedString ls : serviceIdentification.getAbstract()) {
                     serviceIdent.addNewAbstract().set(encodeOwsLanguageString(ls));
                 }
             }
-            if (sosServiceIdentification.hasTitle()) {
-                for (LocalizedString ls : sosServiceIdentification.getTitle()) {
+            if (serviceIdentification.hasTitle()) {
+                for (LocalizedString ls : serviceIdentification.getTitle()) {
                     serviceIdent.addNewTitle().set(encodeOwsLanguageString(ls));
                 }
             }
         }
         // set service type versions
-        if (sosServiceIdentification.hasVersions()) {
-            serviceIdent.setServiceTypeVersionArray(sosServiceIdentification.getVersions().toArray(
-                    new String[sosServiceIdentification.getVersions().size()]));
+        if (serviceIdentification.hasVersions()) {
+            serviceIdent.setServiceTypeVersionArray(serviceIdentification.getVersions().toArray(
+                    new String[serviceIdentification.getVersions().size()]));
         }
 
         // set Profiles
-        if (sosServiceIdentification.hasProfiles()) {
-            serviceIdent.setProfileArray(sosServiceIdentification.getProfiles().toArray(
-                    new String[sosServiceIdentification.getProfiles().size()]));
+        if (serviceIdentification.hasProfiles()) {
+            serviceIdent.setProfileArray(serviceIdentification.getProfiles().toArray(
+                    new String[serviceIdentification.getProfiles().size()]));
         }
         // set keywords if they're not already in the service identification
         // doc
-        if (sosServiceIdentification.hasKeywords() && serviceIdent.getKeywordsArray().length == 0) {
+        if (serviceIdentification.hasKeywords() && serviceIdent.getKeywordsArray().length == 0) {
             final KeywordsType keywordsType = serviceIdent.addNewKeywords();
-            for (final String keyword : sosServiceIdentification.getKeywords()) {
+            for (final String keyword : serviceIdentification.getKeywords()) {
                 keywordsType.addNewKeyword().setStringValue(keyword.trim());
             }
         }
@@ -294,11 +296,12 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
      *             * if the file is invalid.
      */
     private XmlObject encodeServiceProvider(final OwsServiceProvider sosServiceProvider) throws OwsExceptionReport {
-        if (sosServiceProvider.getServiceProvider() != null) {
-            if (sosServiceProvider.getServiceProvider() instanceof ServiceProviderDocument) {
-                return ((ServiceProviderDocument) sosServiceProvider.getServiceProvider()).getServiceProvider();
-            } else if (sosServiceProvider.getServiceProvider() instanceof ServiceProvider) {
-                return sosServiceProvider.getServiceProvider();
+        if (sosServiceProvider.isSetServiceProvider()) {
+            XmlObject xmlObject = XmlHelper.parseXmlString(sosServiceProvider.getServiceProvider());
+            if (xmlObject instanceof ServiceProviderDocument) {
+                return ((ServiceProviderDocument) xmlObject).getServiceProvider();
+            } else if (xmlObject instanceof ServiceProvider) {
+                return (ServiceProvider)xmlObject;
             } else {
                 throw new NoApplicableCodeException()
                         .withMessage("The service identification file is not a ServiceProviderDocument, "

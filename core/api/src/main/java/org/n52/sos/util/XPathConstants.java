@@ -26,30 +26,16 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode;
+package org.n52.sos.util;
 
-import org.n52.iceland.coding.encode.ResponseWriterFactory;
-import org.n52.sos.response.BinaryAttachmentResponse;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.swes.SwesConstants;
 
-/**
- * {@link ResponseWriterFactory} implementation for {@link BinaryAttachmentResponse} and
- * {@link BinaryAttachmentResponseWriter}
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.1.0
- *
- */
-public class BinaryAttachmentResponseWriterFactory implements
-		ResponseWriterFactory<BinaryAttachmentResponse, BinaryAttachmentResponseWriter> {
-
-	@Override
-	public Class<BinaryAttachmentResponse> getType() {
-		return BinaryAttachmentResponse.class;
-	}
-
-	@Override
-	public BinaryAttachmentResponseWriter getResponseWriter() {
-		return new BinaryAttachmentResponseWriter();
-	}
+public interface XPathConstants {
+    
+    String XPATH_PREFIX_SOS_20 = XmlHelper.getXPathPrefix(SosConstants.NS_SOS_PREFIX, Sos2Constants.NS_SOS_20);
+    
+    String XPATH_PREFIXES_SWES = XmlHelper.getXPathPrefix(SwesConstants.NS_SWES_PREFIX, SwesConstants.NS_SWES_20);
 
 }

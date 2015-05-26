@@ -41,9 +41,9 @@ import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.encode.AbstractResponseEncoder;
+import org.n52.sos.coding.encode.AbstractResponseEncoder;
+import org.n52.sos.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

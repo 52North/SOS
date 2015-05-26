@@ -26,30 +26,24 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode;
+package org.n52.sos.coding.decode;
 
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.iceland.w3c.SchemaLocation;
-
-import com.google.common.collect.Sets;
 
 /**
- * @since 4.0.0
+ * TODO JavaDoc
  * 
- * @param <S>
+ * @author Christian Autermann <c.autermann@52north.org>
+ * 
+ * @since 4.0.0
  */
-public abstract class AbstractXmlEncoder<S> implements Encoder<XmlObject, S> {
+public abstract class AbstractXmlDecoder<S> implements Decoder<S, XmlObject> {
 
     @Override
     public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
@@ -57,27 +51,7 @@ public abstract class AbstractXmlEncoder<S> implements Encoder<XmlObject, S> {
     }
 
     @Override
-    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
-    }
-
-    @Override
-    public XmlObject encode(S element) throws OwsExceptionReport {
-        return encode(element, new EnumMap<HelperValues, String>(HelperValues.class));
-    }
-
-    @Override
-    public MediaType getContentType() {
-        return MediaTypes.TEXT_XML;
-    }
-
-    @Override
-    public Set<SchemaLocation> getSchemaLocations() {
-        return Sets.newHashSet();
-    }
-
-    @Override
     public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
-
 }

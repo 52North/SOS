@@ -65,6 +65,7 @@ import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.encode.streaming.WmlTDREncoderv20XmlStreamWriter;
 import org.n52.sos.ogc.gmlcov.GmlCoverageConstants;
 import org.n52.sos.ogc.om.AbstractObservationValue;

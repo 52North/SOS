@@ -109,7 +109,6 @@ import org.n52.iceland.ogc.swe.simpleType.SweText;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.JavaHelper;
-import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.oxf.xml.NcNameResolver;
@@ -147,6 +146,7 @@ import org.n52.sos.ogc.sensorML.v20.SimpleProcess;
 import org.n52.sos.ogc.sensorML.v20.SmlFeatureOfInterest;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

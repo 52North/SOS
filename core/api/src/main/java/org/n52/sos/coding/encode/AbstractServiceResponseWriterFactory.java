@@ -26,30 +26,30 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode;
+package org.n52.sos.coding.encode;
 
-import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
+import org.n52.iceland.response.AbstractServiceResponse;
 
 /**
- * {@link ResponseWriterFactory} implementation for {@link XmlObject} and
- * {@link XmlResponseWriter}
+ * {@link ResponseWriterFactory} implementation for {@link AbstractServiceResponse} and
+ * {@link AbstractServiceResponseWriter}
  * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
  */
-public class XmlResponseWriterFactory implements
-		ResponseWriterFactory<XmlObject, XmlResponseWriter> {
+public class AbstractServiceResponseWriterFactory implements
+		ResponseWriterFactory<AbstractServiceResponse, AbstractServiceResponseWriter> {
 
 	@Override
-	public Class<XmlObject> getType() {
-		return XmlObject.class;
+	public Class<AbstractServiceResponse> getType() {
+		return AbstractServiceResponse.class;
 	}
 
 	@Override
-	public XmlResponseWriter getResponseWriter() {
-		return new XmlResponseWriter();
+	public AbstractServiceResponseWriter getResponseWriter() {
+		return new AbstractServiceResponseWriter();
 	}
 
 }

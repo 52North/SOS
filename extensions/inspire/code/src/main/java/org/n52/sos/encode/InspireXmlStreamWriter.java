@@ -41,6 +41,8 @@ import org.n52.iceland.ogc.gml.time.TimePosition;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.http.MediaType;
+import org.n52.sos.coding.encode.EncodingValues;
+import org.n52.sos.coding.encode.XmlStreamWriter;
 import org.n52.sos.inspire.InspireCitation;
 import org.n52.sos.inspire.InspireConformity;
 import org.n52.sos.inspire.InspireConformity.InspireDegreeOfConformity;

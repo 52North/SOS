@@ -35,7 +35,7 @@ import java.util.Set;
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.ds.DatasourceCallback;
-import org.n52.iceland.ds.HibernateDatasourceConstants;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 
 public class MockDatasource implements Datasource {
 

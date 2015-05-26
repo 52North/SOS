@@ -33,7 +33,6 @@ import java.util.Locale;
 
 import org.hibernate.Session;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ogc.sensorML.ProcessMethod;
@@ -43,6 +42,7 @@ import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.System;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
 
 /**

@@ -28,9 +28,9 @@
  */
 package org.n52.sos.ogc.sensorML.v20;
 
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
-import org.n52.iceland.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweDataRecord;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

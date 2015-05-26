@@ -41,13 +41,13 @@ import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.Extension;
 import org.n52.iceland.ogc.ows.Extensions;
-import org.n52.iceland.ogc.swe.simpleType.SweText;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.FeatureCollection;
+import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.settings.EReportingSetting;
 
 @Configurable

@@ -35,7 +35,6 @@ import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swe.SweDataArray;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.aqd.AqdConstants;
@@ -50,6 +49,7 @@ import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
 import org.n52.sos.ds.hibernate.util.observation.EReportingHelper;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.swe.SweDataArray;
 
 public abstract class EReportingValue extends SeriesValue implements EReportingValues {
 

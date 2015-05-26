@@ -37,7 +37,7 @@ import java.util.Set;
 
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;

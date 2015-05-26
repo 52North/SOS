@@ -30,9 +30,9 @@ package org.n52.sos.ds;
 
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
-import org.n52.iceland.ogc.swe.SweDataArray;
-import org.n52.iceland.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swe.SweDataRecord;
 
 /**
  * Abstract class for Result Handling operation Handlers to provide common methods

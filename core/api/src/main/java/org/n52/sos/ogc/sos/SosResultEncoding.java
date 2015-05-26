@@ -36,9 +36,9 @@ import org.n52.iceland.exception.ows.concrete.DecoderResponseUnsupportedExceptio
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;
+import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;

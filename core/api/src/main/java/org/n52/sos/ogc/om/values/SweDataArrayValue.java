@@ -36,13 +36,13 @@ import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.swe.SweDataArray;
-import org.n52.iceland.ogc.swe.SweDataRecord;
-import org.n52.iceland.ogc.swe.SweField;
-import org.n52.iceland.ogc.swe.simpleType.SweTime;
-import org.n52.iceland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.DateTimeHelper;
+import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.simpleType.SweTime;
+import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

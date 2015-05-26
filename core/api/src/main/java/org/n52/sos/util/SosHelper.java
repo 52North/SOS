@@ -54,9 +54,7 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.ogc.swe.simpleType.SweTime;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
@@ -69,7 +67,9 @@ import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterExceptio
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
+import org.n52.sos.ogc.swe.simpleType.SweTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

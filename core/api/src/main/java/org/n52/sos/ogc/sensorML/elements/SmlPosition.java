@@ -31,10 +31,10 @@ package org.n52.sos.ogc.sensorML.elements;
 import java.util.List;
 
 import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.StringHelper;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweVector;
 

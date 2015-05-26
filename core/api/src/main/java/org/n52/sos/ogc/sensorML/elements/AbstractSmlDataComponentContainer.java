@@ -31,12 +31,12 @@ package org.n52.sos.ogc.sensorML.elements;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.ogc.swe.DataRecord;
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
-import org.n52.iceland.ogc.swe.SweField;
-import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.ogc.swe.DataRecord;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.SweSimpleDataRecord;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 
 import com.google.common.collect.Sets;
 

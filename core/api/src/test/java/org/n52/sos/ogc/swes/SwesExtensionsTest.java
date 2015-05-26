@@ -36,7 +36,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.n52.iceland.ogc.ows.Extensions;
-import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

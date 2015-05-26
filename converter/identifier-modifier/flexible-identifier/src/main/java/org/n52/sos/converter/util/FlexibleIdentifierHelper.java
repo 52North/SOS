@@ -37,8 +37,8 @@ import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.ogc.ows.Extension;
 import org.n52.iceland.ogc.ows.Extensions;
-import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
 import org.n52.iceland.util.JavaHelper;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

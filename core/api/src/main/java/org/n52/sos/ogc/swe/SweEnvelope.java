@@ -29,13 +29,12 @@
 package org.n52.sos.ogc.swe;
 
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
-import org.n52.iceland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
+import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.SweHelper;

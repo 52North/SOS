@@ -29,7 +29,7 @@
 package org.n52.sos.util.builder;
 
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.swe.simpleType.SweTime;
+import org.n52.sos.ogc.swe.simpleType.SweTime;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

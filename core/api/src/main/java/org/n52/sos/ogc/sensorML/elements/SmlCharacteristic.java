@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 
 public class SmlCharacteristic extends AbstractDataComponentContainer<SmlCharacteristic> {
 

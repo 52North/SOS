@@ -29,7 +29,6 @@
 package org.n52.sos.ogc.swe.simpleType;
 
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
-import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
 
 /**
  * SOS internal representation of SWE simpleType observableProperty

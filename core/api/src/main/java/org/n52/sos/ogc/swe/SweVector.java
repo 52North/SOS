@@ -31,7 +31,6 @@ package org.n52.sos.ogc.swe;
 import java.util.Arrays;
 import java.util.List;
 
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.iceland.util.StringHelper;
 

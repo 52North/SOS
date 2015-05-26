@@ -39,9 +39,9 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swe.SweDataRecord;
 import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
 import org.n52.sos.ogc.sensorML.v20.SmlDataInterface;
+import org.n52.sos.ogc.swe.SweDataRecord;
 
 
 /**

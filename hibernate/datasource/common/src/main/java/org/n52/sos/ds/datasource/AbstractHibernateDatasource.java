@@ -652,6 +652,16 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         }
         return false;
     }
+    
+    protected Set<SettingDefinition<?,?>> filter(Set<SettingDefinition<?,?>> definitions, Set<String> keysToExclude) {
+        Iterator<SettingDefinition<?, ?>> iterator = definitions.iterator();
+        while(iterator.hasNext()) {
+            if (keysToExclude.contains(iterator.next().getKey())) {
+                iterator.remove();
+            }
+        }
+        return definitions;
+    }
 
     /**
      * Get internal Hibernate dialect

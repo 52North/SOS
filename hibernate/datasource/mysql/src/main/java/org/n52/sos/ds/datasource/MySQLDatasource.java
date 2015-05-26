@@ -31,7 +31,7 @@ package org.n52.sos.ds.datasource;
 /**
  * Hibernate datasource implementation for MySQL databases.
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  *
  * @since 4.0.0
  *
@@ -42,16 +42,6 @@ public class MySQLDatasource extends AbstractMySQLDatasource {
 
     public MySQLDatasource() {
         super(false);
-        setUsernameDefault(USERNAME_DEFAULT_VALUE);
-        setUsernameDescription(USERNAME_DESCRIPTION);
-        setPasswordDefault(PASSWORD_DEFAULT_VALUE);
-        setPasswordDescription(PASSWORD_DESCRIPTION);
-        setDatabaseDefault(DATABASE_DEFAULT_VALUE);
-        setDatabaseDescription(DATABASE_DESCRIPTION);
-        setHostDefault(HOST_DEFAULT_VALUE);
-        setHostDescription(HOST_DESCRIPTION);
-        setPortDefault(PORT_DEFAULT_VALUE);
-        setPortDescription(PORT_DESCRIPTION);
     }
 
     @Override

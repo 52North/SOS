@@ -28,47 +28,27 @@
  */
 package org.n52.sos.ds.datasource;
 
-import java.util.Properties;
-import java.util.Set;
-
-import org.n52.iceland.config.SettingDefinition;
-
-import com.google.common.collect.ImmutableSet;
-
 /**
- * Hibernate datasource implementation for MySQL databases without transactional mapping.
- *
+ * Oracle datasource for custom mapping
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- *
  * @since 4.3.0
  *
  */
-public class MySQLCoreDatasource extends AbstractMySQLDatasource {
+public class OracleCustomDatasource extends OracleCoreDatasource {
 
-    protected static final String DIALECT_NAME = "MySQL/MariaDB Core";
-
-    public MySQLCoreDatasource() {
-        super(false);
-        super.setTransactional(false);
+    private static final String DIALECT_NAME = "Oracle Spatial Custom Core";
+    
+    public OracleCustomDatasource() {
+        super();
     }
-
+    
     @Override
     public String getDialectName() {
         return DIALECT_NAME;
     }
-
+    
     @Override
-    public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties current) {
-        return filter(super.getChangableSettingDefinitions(current), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
-    }
-
-    @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return filter(super.getSettingDefinitions(), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
-    }
-
-    @Override
-    public boolean supportsClear() {
+    public boolean needsSchema() {
         return false;
     }
 }

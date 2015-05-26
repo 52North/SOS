@@ -28,9 +28,9 @@
  */
 package org.n52.sos.decode.json.impl;
 
-import org.n52.iceland.decode.DecoderKey;
-import org.n52.iceland.decode.JsonDecoderKey;
-import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.coding.decode.JsonDecoderKey;
+import org.n52.iceland.coding.decode.OperationDecoderKey;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;

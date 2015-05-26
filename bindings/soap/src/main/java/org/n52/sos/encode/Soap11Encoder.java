@@ -39,7 +39,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.encode.Encoder;
+import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
@@ -47,13 +47,13 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.SoapHeader;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.iceland.w3c.W3CConstants;
-import org.n52.sos.soap.SoapHelper;
-import org.n52.sos.soap.SoapResponse;
+import org.n52.iceland.w3c.soap.SoapHelper;
+import org.n52.iceland.w3c.soap.SoapResponse;
+import org.n52.iceland.w3c.wsa.WsaActionHeader;
+import org.n52.iceland.w3c.wsa.WsaConstants;
+import org.n52.iceland.w3c.wsa.WsaHeader;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.N52XmlHelper;
-import org.n52.sos.wsa.WsaActionHeader;
-import org.n52.sos.wsa.WsaConstants;
-import org.n52.sos.wsa.WsaHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

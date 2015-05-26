@@ -29,7 +29,7 @@
 package org.n52.sos.encode;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.encode.ResponseWriterFactory;
+import org.n52.iceland.coding.encode.ResponseWriterFactory;
 
 /**
  * {@link ResponseWriterFactory} implementation for {@link XmlObject} and

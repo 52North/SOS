@@ -46,7 +46,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.binding.SimpleBinding;
 import org.n52.iceland.coding.OperationKey;
-import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;

@@ -42,10 +42,12 @@ import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweConstants;
+import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.util.XmlHelper;
-import org.n52.sos.soap.SoapFault;
-import org.n52.sos.soap.SoapHelper;
-import org.n52.sos.soap.SoapRequest;
+import org.n52.iceland.w3c.soap.SoapFault;
+import org.n52.iceland.w3c.soap.SoapHelper;
+import org.n52.iceland.w3c.soap.SoapRequest;
+import org.n52.sos.util.CodingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.x2003.x05.soapEnvelope.Body;
@@ -123,7 +125,7 @@ public class Soap12Decoder extends AbstractSoapDecoder {
         return r;
     }
 
-    private XmlObject getBodyContent(EnvelopeDocument doc) throws CodedException {
+    private AbstractServiceRequest<?> getBodyContent(EnvelopeDocument doc) throws CodedException {
         Body body = doc.getEnvelope().getBody();
         try {
             Node domNode = body.getDomNode();
@@ -138,11 +140,11 @@ public class Soap12Decoder extends AbstractSoapDecoder {
                         Map<?, ?> namespaces = XmlHelper.getNamespaces(doc.getEnvelope());
                         XmlHelper.fixNamespaceForXsiType(content, namespaces);
                         XmlHelper.fixNamespaceForXsiType(content, SweConstants.QN_DATA_ARRAY_PROPERTY_TYPE_SWE_200);
-                        return content;
+                        return (AbstractServiceRequest<?>) CodingHelper.decodeXmlElement(content);
                     }
                 }
             }
-            return body;
+            return  (AbstractServiceRequest<?>) CodingHelper.decodeXmlElement(body);
         } catch (XmlException xmle) {
             throw new NoApplicableCodeException().causedBy(xmle).withMessage("Error while parsing SOAP body element!");
         }

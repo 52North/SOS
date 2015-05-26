@@ -46,7 +46,7 @@ import net.opengis.watermlDr.x20.TimePositionListDocument;
 import net.opengis.watermlDr.x20.TimePositionListType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.encode.EncoderKey;
+import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.OGCConstants;

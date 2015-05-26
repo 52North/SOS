@@ -35,7 +35,7 @@ import java.util.Map;
 
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.coding.decode.OperationDecoderKey;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;

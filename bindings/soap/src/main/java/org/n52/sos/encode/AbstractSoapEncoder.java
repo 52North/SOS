@@ -44,10 +44,10 @@ import javax.xml.soap.SOAPMessage;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.encode.Encoder;
-import org.n52.iceland.encode.EncoderKey;
-import org.n52.iceland.encode.OperationEncoderKey;
-import org.n52.iceland.encode.XmlEncoderKey;
+import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.coding.encode.OperationEncoderKey;
+import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.OwsExceptionCode;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
@@ -62,10 +62,11 @@ import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.iceland.w3c.W3CConstants;
+import org.n52.iceland.w3c.soap.SoapFault;
+import org.n52.iceland.w3c.soap.SoapHelper;
+import org.n52.iceland.w3c.soap.SoapResponse;
 import org.n52.sos.ogc.sos.SosSoapConstants;
-import org.n52.sos.soap.SoapFault;
-import org.n52.sos.soap.SoapHelper;
-import org.n52.sos.soap.SoapResponse;
+import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.N52XmlHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -186,9 +187,6 @@ public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Consta
      *             supported or an error occurs during the encoding
      */
     protected XmlObject getBodyContent(SoapResponse response) throws OwsExceptionReport {
-        if (response.isSetXmlBodyContent()) {
-            return response.getSoapBodyContent();
-        }
         OperationEncoderKey key =
                 new OperationEncoderKey(response.getBodyContent().getOperationKey(), MediaTypes.APPLICATION_XML);
         Encoder<Object, AbstractServiceResponse> encoder = CodingRepository.getInstance().getEncoder(key);

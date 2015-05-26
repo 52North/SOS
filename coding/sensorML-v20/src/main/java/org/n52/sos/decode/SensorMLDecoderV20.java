@@ -82,7 +82,7 @@ import net.opengis.swe.x20.DataStreamPropertyType;
 
 import org.apache.xmlbeans.XmlObject;
 import org.isotc211.x2005.gmd.CIResponsiblePartyPropertyType;
-import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.OGCConstants;

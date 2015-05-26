@@ -40,9 +40,9 @@ import java.util.RandomAccess;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;

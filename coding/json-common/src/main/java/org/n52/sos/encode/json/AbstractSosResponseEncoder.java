@@ -28,7 +28,7 @@
  */
 package org.n52.sos.encode.json;
 
-import org.n52.iceland.encode.OperationEncoderKey;
+import org.n52.iceland.coding.encode.OperationEncoderKey;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;

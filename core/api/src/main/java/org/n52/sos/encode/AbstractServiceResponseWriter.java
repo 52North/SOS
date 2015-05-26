@@ -31,11 +31,11 @@ package org.n52.sos.encode;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.n52.iceland.encode.Encoder;
-import org.n52.iceland.encode.OperationEncoderKey;
-import org.n52.iceland.encode.ResponseProxy;
-import org.n52.iceland.encode.ResponseWriter;
-import org.n52.iceland.encode.ResponseWriterRepository;
+import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.coding.encode.OperationEncoderKey;
+import org.n52.iceland.coding.encode.ResponseProxy;
+import org.n52.iceland.coding.encode.ResponseWriter;
+import org.n52.iceland.coding.encode.ResponseWriterRepository;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.request.ResponseFormat;

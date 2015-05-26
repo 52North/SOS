@@ -55,7 +55,7 @@ import net.opengis.sos.x10.FilterCapabilitiesDocument.FilterCapabilities;
 import net.opengis.sos.x10.ObservationOfferingType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.encode.Encoder;
+import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.filter.FilterConstants.ComparisonOperator;
 import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;

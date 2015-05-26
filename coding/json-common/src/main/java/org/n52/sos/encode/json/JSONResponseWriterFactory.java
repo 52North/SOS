@@ -28,7 +28,7 @@
  */
 package org.n52.sos.encode.json;
 
-import org.n52.iceland.encode.ResponseWriterFactory;
+import org.n52.iceland.coding.encode.ResponseWriterFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

@@ -34,7 +34,7 @@ import static org.n52.sos.coding.json.JSONConstants.LOCATOR;
 import static org.n52.sos.coding.json.JSONConstants.TEXT;
 import static org.n52.sos.coding.json.JSONConstants.VERSION;
 
-import org.n52.iceland.encode.ExceptionEncoderKey;
+import org.n52.iceland.coding.encode.ExceptionEncoderKey;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.OwsExceptionCode;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;

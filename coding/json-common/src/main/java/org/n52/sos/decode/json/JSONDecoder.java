@@ -37,9 +37,9 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.decode.DecoderKey;
-import org.n52.iceland.decode.JsonDecoderKey;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.coding.decode.JsonDecoderKey;
 import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
 import org.n52.iceland.exception.ows.concrete.NoDecoderForKeyException;
 import org.n52.iceland.ogc.OGCConstants;

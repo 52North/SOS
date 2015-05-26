@@ -37,7 +37,7 @@ import net.opengis.sos.x20.GetObservationResponseDocument;
 import net.opengis.sos.x20.GetObservationResponseType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.encode.ObservationEncoder;
+import org.n52.iceland.coding.encode.ObservationEncoder;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;

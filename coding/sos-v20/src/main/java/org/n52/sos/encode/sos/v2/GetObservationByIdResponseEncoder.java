@@ -38,7 +38,7 @@ import net.opengis.sos.x20.GetObservationByIdResponseDocument;
 import net.opengis.sos.x20.GetObservationByIdResponseType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.encode.ObservationEncoder;
+import org.n52.iceland.coding.encode.ObservationEncoder;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;

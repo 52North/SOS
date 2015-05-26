@@ -47,9 +47,9 @@ import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.n52.iceland.encode.EncoderKey;
-import org.n52.iceland.encode.OperationEncoderKey;
-import org.n52.iceland.encode.XmlEncoderKey;
+import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.coding.encode.OperationEncoderKey;
+import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;

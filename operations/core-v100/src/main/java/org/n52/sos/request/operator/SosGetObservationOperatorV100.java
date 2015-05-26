@@ -36,8 +36,8 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.encode.Encoder;
-import org.n52.iceland.encode.ObservationEncoder;
+import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.coding.encode.ObservationEncoder;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.sos.ResponseExceedsSizeLimitException;
 import org.n52.iceland.ogc.om.OmConstants;

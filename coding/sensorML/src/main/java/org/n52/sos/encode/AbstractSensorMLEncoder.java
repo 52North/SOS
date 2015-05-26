@@ -41,7 +41,7 @@ import org.apache.xmlbeans.XmlOptions;
 import org.custommonkey.xmlunit.Diff;
 import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.encode.ProcedureEncoder;
+import org.n52.iceland.coding.encode.ProcedureEncoder;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.gml.AbstractFeature;

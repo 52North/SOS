@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.n52.iceland.encode.ResponseProxy;
+import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;

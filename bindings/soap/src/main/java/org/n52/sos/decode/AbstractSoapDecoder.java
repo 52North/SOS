@@ -48,16 +48,18 @@ import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.decode.XmlNamespaceDecoderKey;
 import org.n52.iceland.exception.swes.InvalidRequestException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.service.SoapHeader;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.LinkedListMultiMap;
 import org.n52.iceland.util.ListMultiMap;
 import org.n52.iceland.util.XmlOptionsHelper;
-import org.n52.sos.soap.SoapRequest;
+import org.n52.iceland.w3c.soap.SoapRequest;
+import org.n52.iceland.w3c.wsa.WsaActionHeader;
+import org.n52.iceland.w3c.wsa.WsaConstants;
+import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.W3cHelper;
-import org.n52.sos.wsa.WsaActionHeader;
-import org.n52.sos.wsa.WsaConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -117,12 +119,12 @@ public abstract class AbstractSoapDecoder implements Decoder<SoapRequest, XmlObj
      * @throws OwsExceptionReport
      *             * if an error occurs.
      */
-    protected XmlObject getSOAPBodyContent(SOAPMessage message) throws OwsExceptionReport {
+    protected AbstractServiceRequest<?> getSOAPBodyContent(SOAPMessage message) throws OwsExceptionReport {
         try {
             Document bodyRequestDoc = message.getSOAPBody().extractContentAsDocument();
             XmlOptions options = XmlOptionsHelper.getInstance().getXmlOptions();
             String xmlString = W3cHelper.nodeToXmlString(bodyRequestDoc.getDocumentElement());
-            return XmlObject.Factory.parse(xmlString, options);
+            return (AbstractServiceRequest<?>)CodingHelper.decodeXmlElement(XmlObject.Factory.parse(xmlString, options));
         } catch (SOAPException soape) {
             throw new InvalidRequestException().causedBy(soape).withMessage(
                     "Error while parsing SOAPMessage body content!");

@@ -34,7 +34,7 @@ import java.io.OutputStream;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
-import org.n52.iceland.encode.ResponseProxy;
+import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
 

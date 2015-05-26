@@ -39,9 +39,9 @@ import javax.xml.soap.SOAPMessage;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.sos.soap.SoapFault;
-import org.n52.sos.soap.SoapHelper;
-import org.n52.sos.soap.SoapRequest;
+import org.n52.iceland.w3c.soap.SoapFault;
+import org.n52.iceland.w3c.soap.SoapHelper;
+import org.n52.iceland.w3c.soap.SoapRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

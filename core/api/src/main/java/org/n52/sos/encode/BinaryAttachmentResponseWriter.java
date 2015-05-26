@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
 
-import org.n52.iceland.encode.ResponseProxy;
+import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.sos.response.BinaryAttachmentResponse;
 
 import com.google.common.base.Strings;

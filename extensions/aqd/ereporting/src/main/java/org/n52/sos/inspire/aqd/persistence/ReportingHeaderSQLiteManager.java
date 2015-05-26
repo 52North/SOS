@@ -30,11 +30,11 @@ package org.n52.sos.inspire.aqd.persistence;
 
 import org.hibernate.Session;
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.decode.JsonDecoderKey;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.JsonDecoderKey;
+import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.Cleanupable;
 import org.n52.iceland.util.JSONUtils;

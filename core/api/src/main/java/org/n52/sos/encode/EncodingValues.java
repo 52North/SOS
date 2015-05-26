@@ -30,7 +30,7 @@ package org.n52.sos.encode;
 
 import java.util.Map;
 
-import org.n52.iceland.encode.Encoder;
+import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.StringHelper;

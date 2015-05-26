@@ -35,9 +35,9 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.encode.Encoder;
-import org.n52.iceland.encode.EncoderKey;
-import org.n52.iceland.encode.OperationEncoderKey;
+import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.coding.encode.OperationEncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
@@ -47,11 +47,11 @@ import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.iceland.w3c.W3CConstants;
+import org.n52.iceland.w3c.soap.SoapConstants;
+import org.n52.iceland.w3c.soap.SoapFault;
+import org.n52.iceland.w3c.soap.SoapResponse;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.XmlStreamWriter;
-import org.n52.sos.soap.SoapConstants;
-import org.n52.sos.soap.SoapFault;
-import org.n52.sos.soap.SoapResponse;
 import org.n52.sos.util.CodingHelper;
 
 import com.google.common.collect.Sets;

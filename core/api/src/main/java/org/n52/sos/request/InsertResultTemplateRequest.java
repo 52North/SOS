@@ -29,12 +29,12 @@
 package org.n52.sos.request;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.ogc.om.OmObservationConstellation;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.util.StringHelper;
+import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
 import org.n52.sos.response.InsertResultTemplateResponse;

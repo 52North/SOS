@@ -34,13 +34,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ogc.sensorML.elements.AbstractSmlDocumentation;
 import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.sos.ogc.sensorML.elements.SmlCharacteristics;
 import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;

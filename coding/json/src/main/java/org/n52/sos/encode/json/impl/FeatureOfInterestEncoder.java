@@ -31,10 +31,10 @@ package org.n52.sos.encode.json.impl;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.om.features.FeatureCollection;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
+import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 
 import com.fasterxml.jackson.databind.JsonNode;

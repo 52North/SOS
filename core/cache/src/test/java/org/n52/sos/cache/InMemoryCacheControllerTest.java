@@ -38,7 +38,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.n52.iceland.ogc.om.OmConstants.OBS_TYPE_MEASUREMENT;
 import static org.n52.iceland.ogc.om.OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION;
-import static org.n52.iceland.ogc.om.features.SfConstants.FT_SAMPLINGPOINT;
+import static org.n52.sos.ogc.om.features.SfConstants.FT_SAMPLINGPOINT;
 import static org.n52.sos.util.builder.DataRecordBuilder.aDataRecord;
 import static org.n52.sos.util.builder.InsertObservationRequestBuilder.aInsertObservationRequest;
 import static org.n52.sos.util.builder.InsertResultTemplateRequestBuilder.anInsertResultTemplateRequest;

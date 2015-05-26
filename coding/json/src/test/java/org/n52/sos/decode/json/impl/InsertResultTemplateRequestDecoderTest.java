@@ -42,7 +42,6 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.ogc.om.OmObservationConstellation;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweDataRecord;
 import org.n52.iceland.ogc.swe.SweField;
@@ -50,6 +49,7 @@ import org.n52.iceland.ogc.swe.encoding.SweTextEncoding;
 import org.n52.iceland.ogc.swe.simpleType.SweTime;
 import org.n52.iceland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.ConfiguredSettingsManager;
+import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.request.InsertResultTemplateRequest;
 

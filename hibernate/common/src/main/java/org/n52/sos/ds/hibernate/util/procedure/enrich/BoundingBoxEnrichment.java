@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
 
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosOffering;
 import org.n52.iceland.ogc.swe.DataRecord;
 import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swe.SweDataRecord;
@@ -40,6 +39,7 @@ import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.sos.ogc.sensorML.elements.SmlCapabilitiesPredicates;
 import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.swe.SweEnvelope;
 import org.n52.sos.util.GeometryHandler;
 

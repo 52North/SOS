@@ -31,8 +31,8 @@ package org.n52.sos.ds.hibernate.util.procedure.enrich;
 import java.util.Collection;
 
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosOffering;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.ogc.sos.SosOffering;
 
 /**
  * TODO JavaDoc

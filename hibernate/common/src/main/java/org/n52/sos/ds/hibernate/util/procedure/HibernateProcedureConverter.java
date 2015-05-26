@@ -41,7 +41,6 @@ import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.entities.DescriptionXmlEntity;
@@ -58,6 +57,7 @@ import org.n52.sos.ds.hibernate.util.procedure.enrich.ProcedureDescriptionEnrich
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorRepository;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
 import org.n52.sos.ogc.sensorML.SensorML;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;

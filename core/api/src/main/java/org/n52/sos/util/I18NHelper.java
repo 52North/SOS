@@ -33,11 +33,11 @@ import java.util.Locale;
 import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.i18n.LocalizedString;
 import org.n52.iceland.i18n.MultilingualString;
-import org.n52.iceland.ogc.sos.SosOffering;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.sos.cache.ContentCache;
+import org.n52.sos.ogc.sos.SosOffering;
 
 import com.google.common.base.Optional;
 

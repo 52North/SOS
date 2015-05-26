@@ -46,7 +46,6 @@ import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.om.features.FeatureCollection;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
@@ -59,6 +58,7 @@ import org.n52.sos.encode.streaming.aqd.v1.AqdGetObservationResponseXmlStreamWri
 import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.StreamingValue;
+import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.sos.AbstractStreaming;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.Referenceable;

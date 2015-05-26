@@ -36,7 +36,6 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 
 /**

@@ -34,9 +34,9 @@ import java.util.List;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKeyType;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ogc.sensorML.SensorML20Constants;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

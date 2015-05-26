@@ -38,7 +38,6 @@ import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.om.OmObservationConstellation;
 import org.n52.iceland.ogc.om.quality.OmResultQuality;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.StringHelper;

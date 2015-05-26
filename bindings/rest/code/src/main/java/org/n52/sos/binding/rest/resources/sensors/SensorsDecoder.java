@@ -45,12 +45,12 @@ import net.opengis.sosREST.x10.SensorType;
 
 
 
+
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OperationNotSupportedException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.sos.binding.rest.Constants;
@@ -61,6 +61,7 @@ import org.n52.sos.binding.rest.resources.OptionsRestRequest;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sos.SosInsertionMetadata;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.request.UpdateSensorRequest;

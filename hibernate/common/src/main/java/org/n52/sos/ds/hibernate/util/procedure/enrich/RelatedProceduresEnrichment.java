@@ -38,13 +38,13 @@ import java.util.Set;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;

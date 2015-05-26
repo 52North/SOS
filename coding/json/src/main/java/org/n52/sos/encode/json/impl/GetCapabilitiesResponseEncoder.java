@@ -142,12 +142,12 @@ import org.n52.iceland.ogc.ows.OwsParameterValueRange;
 import org.n52.iceland.ogc.ows.OwsServiceIdentification;
 import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosOffering;
 import org.n52.iceland.response.GetCapabilitiesResponse;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosObservationOffering;
+import org.n52.sos.ogc.sos.SosOffering;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -26,69 +26,32 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.soap;
+package org.n52.sos.decode;
 
-import java.util.Locale;
+import javax.xml.soap.SOAPConstants;
 
-import javax.xml.namespace.QName;
+import org.n52.iceland.coding.decode.Decoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
 
 /**
- * @since 4.0.0
+ * SOAP 1.2 {@link Decoder} for {@link String} XML representation
  * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 1.0.0
+ *
  */
-public class SoapFault {
+public class Soap12StringDecoder extends AbstractSoapStringDecoder {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(Soap12StringDecoder.class);
 
-    private QName faultCode;
-
-    private QName faultSubcode;
-
-    private String faultReason;
-
-    private Locale locale;
-
-    private String detailText;
-
-    public void setFaultCode(QName faultCode) {
-        this.faultCode = faultCode;
+    public Soap12StringDecoder(String namespace) {
+        super(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE);
+        LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
+                Joiner.on(", ").join(getDecoderKeyTypes()));
     }
 
-    public void setFaultReason(String faultReason) {
-        this.faultReason = faultReason;
-    }
-
-    public void setLocale(Locale locale) {
-        this.locale = locale;
-    }
-
-    public void setDetailText(String detailText) {
-        this.detailText = detailText;
-    }
-
-    public QName getFaultCode() {
-        return faultCode;
-    }
-
-    public Locale getLocale() {
-        return locale;
-    }
-
-    public String getFaultReason() {
-        return faultReason;
-    }
-
-    public String getDetailText() {
-        return detailText;
-    }
-
-    public void setFaultSubcode(QName faultSubcode) {
-        this.faultSubcode = faultSubcode;
-    }
-
-    /**
-     * @return the faultSubcode
-     */
-    public QName getFaultSubcode() {
-        return faultSubcode;
-    }
 
 }

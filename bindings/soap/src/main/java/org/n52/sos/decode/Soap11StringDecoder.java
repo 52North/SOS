@@ -26,13 +26,31 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.wsa;
+package org.n52.sos.decode;
 
-public class WsaRelatesToHeader extends WsaHeader {
+import javax.xml.soap.SOAPConstants;
 
-    public WsaRelatesToHeader(String value) {
-        super(value);
+import org.n52.iceland.coding.decode.Decoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
+
+/**
+ * SOAP 1.1 {@link Decoder} for {@link String} XML representation
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 1.0.0
+ *
+ */
+public class Soap11StringDecoder extends AbstractSoapStringDecoder {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(Soap11StringDecoder.class);
+
+    public Soap11StringDecoder() {
+        super(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE);
+        LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
+                Joiner.on(", ").join(getDecoderKeyTypes()));
     }
-
 
 }

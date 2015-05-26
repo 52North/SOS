@@ -3,14 +3,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
-        <artifactId>bindings</artifactId>
+        <artifactId>coding</artifactId>
         <version>5.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>binding-soap</artifactId>
+    <artifactId>coding-soap</artifactId>
     <packaging>jar</packaging>
-    <name>52°North SOS - SOAP Binding</name>
-    <description>52°North Sensor Observation Service SOAP binding</description>
+    <name>52°North SOS - SOAP coding</name>
+    <description>52°North Sensor Observation Service SOAP coding</description>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

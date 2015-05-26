@@ -204,6 +204,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-kvp</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-soap</artifactId>
+        </dependency>
 
         <!-- OPERATIONS -->
 
@@ -270,10 +274,6 @@
 		</dependency>
         
          <!-- BINDINGS -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>binding-soap</artifactId>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>binding-exi</artifactId>

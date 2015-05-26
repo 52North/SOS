@@ -93,6 +93,7 @@ import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.MultiMaps;
 import org.n52.iceland.util.SetMultiMap;
+import org.n52.sos.config.CapabilitiesExtensionManager;
 import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.sos.SosObservationOffering;
@@ -200,13 +201,14 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         final GetCapabilitiesResponse response = request.getResponse();
 
         final String scId = request.getCapabilitiesId();
-        if (scId == null) {
-            if (getSettingsManager().isStaticCapabilitiesActive()) {
-                response.setXmlString(getSettingsManager().getActiveStaticCapabilitiesDocument());
+        if (scId == null && getSettingsManager() instanceof CapabilitiesExtensionManager) {
+            CapabilitiesExtensionManager settingsManager = (CapabilitiesExtensionManager)getSettingsManager();
+            if (settingsManager.isStaticCapabilitiesActive()) {
+                response.setXmlString(settingsManager.getActiveStaticCapabilitiesDocument());
                 return response;
             }
         } else if (!scId.equals(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.DYNAMIC_CAPABILITIES_IDENTIFIER)) {
-            final StaticCapabilities sc = getSettingsManager().getStaticCapabilities(scId);
+            final StaticCapabilities sc = settingsManager.getStaticCapabilities(scId);
             if (sc == null) {
                 throw new InvalidParameterValueException(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.CapabilitiesId, scId);
             }
@@ -868,8 +870,11 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
             }
             extensions.addAll(map.values());
         }
-        if (getSettingsManager().getActiveCapabilitiesExtensions() != null && !getSettingsManager().getActiveCapabilitiesExtensions().isEmpty()) {
-            extensions.addAll(getSettingsManager().getActiveCapabilitiesExtensions().values());
+        if (getSettingsManager() instanceof CapabilitiesExtensionManager) {
+            CapabilitiesExtensionManager settingsManager = (CapabilitiesExtensionManager)getSettingsManager();
+            if (settingsManager.getActiveCapabilitiesExtensions() != null && !settingsManager.getActiveCapabilitiesExtensions().isEmpty()) {
+                extensions.addAll(settingsManager.getActiveCapabilitiesExtensions().values());
+            }
         }
         return extensions;
     }

@@ -40,7 +40,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.hibernate.Session;
-import org.n52.iceland.config.CapabilitiesExtensionManager;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.NoSuchExtensionException;
 import org.n52.iceland.exception.NoSuchOfferingException;
@@ -51,6 +50,7 @@ import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.LinkedListMultiMap;
 import org.n52.iceland.util.ListMultiMap;
 import org.n52.sos.cache.ContentCache;
+import org.n52.sos.config.CapabilitiesExtensionManager;
 import org.n52.sos.config.sqlite.SQLiteManager.HibernateAction;
 import org.n52.sos.config.sqlite.SQLiteManager.ThrowingHibernateAction;
 import org.n52.sos.config.sqlite.SQLiteManager.ThrowingVoidHibernateAction;

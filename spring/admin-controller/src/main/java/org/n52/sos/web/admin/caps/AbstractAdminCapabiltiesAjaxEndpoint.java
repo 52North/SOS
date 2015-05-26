@@ -29,7 +29,6 @@
 package org.n52.sos.web.admin.caps;
 
 import org.apache.xmlbeans.XmlException;
-import org.n52.iceland.config.CapabilitiesExtensionManager;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.exception.NoSuchExtensionException;
@@ -37,6 +36,7 @@ import org.n52.iceland.exception.NoSuchOfferingException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
 import org.n52.sos.cache.ContentCache;
+import org.n52.sos.config.CapabilitiesExtensionManager;
 import org.n52.sos.web.AbstractController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +56,9 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
     protected static final String VALID_PROPERTY = "valid";
 
     protected CapabilitiesExtensionManager getDao() {
-        return getSettingsManager();
+        return (CapabilitiesExtensionManager)getSettingsManager();
     }
-
+    
     protected ContentCache getCache() {
         return Configurator.getInstance().getCache();
     }
@@ -107,7 +107,10 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
     }
 
     protected String getSelectedStaticCapabilities() throws OwsExceptionReport {
-        return getSettingsManager().getActiveStaticCapabilities();
+        if (getSettingsManager() instanceof CapabilitiesExtensionManager) {
+            return ((CapabilitiesExtensionManager)getSettingsManager()).getActiveStaticCapabilities();
+        }
+        return null;
     }
 
     protected void setSelectedStaticCapabilities(String id) throws ConfigurationException,

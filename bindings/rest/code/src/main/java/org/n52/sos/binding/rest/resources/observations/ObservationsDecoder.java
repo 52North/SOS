@@ -47,13 +47,14 @@ import net.opengis.sosREST.x10.ObservationType;
 
 
 
+
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OperationNotSupportedException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.DateTimeException;
 import org.n52.iceland.ogc.ows.Extensions;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;

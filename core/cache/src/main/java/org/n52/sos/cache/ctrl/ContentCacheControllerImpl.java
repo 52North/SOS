@@ -34,7 +34,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.cache.ContentCachePersistenceStrategy;
 import org.n52.sos.cache.ContentCacheUpdate;
 import org.n52.sos.cache.WritableContentCache;

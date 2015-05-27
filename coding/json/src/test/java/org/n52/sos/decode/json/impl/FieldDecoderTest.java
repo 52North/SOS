@@ -42,7 +42,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.ConfiguredSettingsManager;

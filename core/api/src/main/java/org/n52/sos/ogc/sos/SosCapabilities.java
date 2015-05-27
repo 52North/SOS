@@ -36,11 +36,11 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.n52.iceland.ogc.filter.FilterCapabilities;
 import org.n52.iceland.ogc.ows.OwsCapabilities;
 import org.n52.iceland.ogc.sos.CapabilitiesExtension;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.ogc.filter.FilterCapabilities;
 
 /**
  * Class which represents the Capabilities.

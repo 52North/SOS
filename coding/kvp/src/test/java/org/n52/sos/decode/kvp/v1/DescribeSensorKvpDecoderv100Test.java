@@ -37,9 +37,9 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OWSConstants.RequestParams;
 import org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;

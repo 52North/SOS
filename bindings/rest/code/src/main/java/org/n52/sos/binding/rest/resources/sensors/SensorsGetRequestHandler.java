@@ -43,7 +43,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionCode;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.Configurator;
 import org.n52.sos.binding.rest.requests.ResourceNotFoundResponse;

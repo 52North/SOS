@@ -36,9 +36,9 @@ import java.util.Set;
 
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForResponseException;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.http.MediaType;

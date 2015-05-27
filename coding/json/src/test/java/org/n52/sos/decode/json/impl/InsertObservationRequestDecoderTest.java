@@ -42,7 +42,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.ConfiguredSettingsManager;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.request.InsertObservationRequest;

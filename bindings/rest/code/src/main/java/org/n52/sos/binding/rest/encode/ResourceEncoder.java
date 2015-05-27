@@ -38,10 +38,11 @@ import net.opengis.sosREST.x10.ResourceCollectionType;
 
 
 
+
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.EncoderResponseUnsupportedException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.iceland.util.http.HTTPHeaders;
 import org.n52.iceland.util.http.HTTPMethods;

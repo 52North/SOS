@@ -34,7 +34,7 @@ import static org.junit.Assert.assertThat;
 
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweText;

@@ -33,14 +33,14 @@ import java.util.Map;
 import net.opengis.om.x20.OMObservationType;
 import net.opengis.sampling.x20.SFSamplingFeatureDocument;
 import net.opengis.sampling.x20.SFSamplingFeatureType;
-
 import net.opengis.sosREST.x10.LinkType;
 import net.opengis.sosREST.x10.ObservationDocument;
 import net.opengis.sosREST.x10.ObservationType;
 
 
+
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.binding.rest.encode.ResourceEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

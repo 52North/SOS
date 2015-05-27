@@ -29,8 +29,8 @@
 package org.n52.sos.util;
 
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.InvalidSridException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

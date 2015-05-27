@@ -35,8 +35,8 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.values.BooleanValue;

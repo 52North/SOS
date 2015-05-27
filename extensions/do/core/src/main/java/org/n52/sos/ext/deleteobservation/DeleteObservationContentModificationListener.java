@@ -33,7 +33,7 @@ import java.util.Set;
 
 import org.n52.iceland.event.ServiceEvent;
 import org.n52.iceland.event.ServiceEventListener;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

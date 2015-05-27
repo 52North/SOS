@@ -31,7 +31,7 @@ package org.n52.sos.ds.hibernate.values;
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
 import org.n52.sos.ogc.om.OmObservation;

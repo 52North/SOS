@@ -32,9 +32,9 @@ import static org.n52.iceland.util.ConfiguringSingletonServiceLoader.loadAndConf
 
 import java.util.List;
 
+import org.n52.iceland.exception.ows.CompositeOwsException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.cache.ContentCacheUpdate;
 import org.n52.sos.ogc.om.OmObservation;

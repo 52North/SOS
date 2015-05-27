@@ -31,8 +31,8 @@ package org.n52.sos.ds.hibernate.cache.base;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;

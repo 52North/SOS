@@ -30,7 +30,7 @@ package org.n52.sos.ds;
 
 import java.util.List;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.ThreadableAction;
 import org.n52.sos.cache.WritableContentCache;

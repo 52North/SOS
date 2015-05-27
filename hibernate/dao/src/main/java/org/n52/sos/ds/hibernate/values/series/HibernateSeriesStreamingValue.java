@@ -30,8 +30,8 @@ package org.n52.sos.ds.hibernate.values.series;
 
 import org.hibernate.Session;
 import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesValueTimeDAO;

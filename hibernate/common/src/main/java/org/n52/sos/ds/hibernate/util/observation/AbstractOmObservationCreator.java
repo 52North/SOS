@@ -33,10 +33,10 @@ import java.util.Locale;
 
 import org.hibernate.Session;
 import org.n52.iceland.convert.ConverterException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.sos.cache.ContentCache;

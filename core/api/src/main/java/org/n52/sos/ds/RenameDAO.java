@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.exception.NoSuchObservablePropertyException;
 
 /**

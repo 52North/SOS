@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.iceland.service.Configurator;
 import org.n52.sos.iso.CodeList;

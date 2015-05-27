@@ -29,11 +29,11 @@
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
 import org.n52.iceland.ds.I18NDAO;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.LocalizedString;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;

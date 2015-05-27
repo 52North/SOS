@@ -46,11 +46,12 @@ import net.opengis.sosREST.x10.SensorType;
 
 
 
+
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OperationNotSupportedException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.sos.binding.rest.Constants;

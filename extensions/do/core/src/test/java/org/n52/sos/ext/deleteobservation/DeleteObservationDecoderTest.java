@@ -44,7 +44,9 @@ import java.util.Set;
 
 
 
+
 import net.opengis.sosdo.x10.DeleteObservationDocument;
+
 
 
 
@@ -55,7 +57,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 

@@ -124,15 +124,12 @@ import java.util.SortedSet;
 
 import javax.xml.namespace.QName;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.i18n.LocalizedString;
-import org.n52.iceland.ogc.filter.FilterCapabilities;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.ows.Constraint;
 import org.n52.iceland.ogc.ows.DCP;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.ows.OwsOperationsMetadata;
 import org.n52.iceland.ogc.ows.OwsParameterDataType;
@@ -145,6 +142,9 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.response.GetCapabilitiesResponse;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
+import org.n52.sos.ogc.filter.FilterCapabilities;
+import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosObservationOffering;
 import org.n52.sos.ogc.sos.SosOffering;

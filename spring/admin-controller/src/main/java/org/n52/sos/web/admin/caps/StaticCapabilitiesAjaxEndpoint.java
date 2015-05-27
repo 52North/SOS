@@ -38,7 +38,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.NoSuchExtensionException;
 import org.n52.iceland.exception.NoSuchIdentifierException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.StaticCapabilities;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.web.ControllerConstants;

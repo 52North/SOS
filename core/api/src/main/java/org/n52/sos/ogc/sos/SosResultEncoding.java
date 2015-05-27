@@ -32,9 +32,9 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject.Factory;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.DecoderResponseUnsupportedException;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;

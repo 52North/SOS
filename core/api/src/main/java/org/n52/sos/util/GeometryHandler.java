@@ -52,7 +52,7 @@ import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.service.ServiceContextListener;
 import org.n52.iceland.util.Cleanupable;

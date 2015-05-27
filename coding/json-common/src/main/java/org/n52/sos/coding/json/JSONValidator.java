@@ -35,7 +35,7 @@ import java.io.Reader;
 import java.net.URI;
 import java.net.URL;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.decode.json.JSONDecodingException;
 import org.slf4j.Logger;

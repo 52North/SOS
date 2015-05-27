@@ -28,7 +28,7 @@
  */
 package org.n52.sos.decode.json;
 
-import org.n52.iceland.exception.swes.InvalidRequestException;
+import org.n52.sos.exception.swes.InvalidRequestException;
 
 /**
  * TODO JavaDoc

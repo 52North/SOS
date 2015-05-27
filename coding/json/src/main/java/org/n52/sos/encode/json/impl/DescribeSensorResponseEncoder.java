@@ -31,7 +31,7 @@ package org.n52.sos.encode.json.impl;
 import java.util.List;
 
 import org.apache.xmlbeans.XmlOptions;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;

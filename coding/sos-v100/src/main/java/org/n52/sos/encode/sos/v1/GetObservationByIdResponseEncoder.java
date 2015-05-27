@@ -30,8 +30,8 @@ package org.n52.sos.encode.sos.v1;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForResponseException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.response.GetObservationByIdResponse;
 import org.n52.sos.util.CodingHelper;

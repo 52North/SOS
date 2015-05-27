@@ -32,7 +32,7 @@ import java.net.URI;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.decode.xml.stream.XmlReader;
 import org.n52.sos.util.Reference;

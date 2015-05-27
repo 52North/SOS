@@ -34,9 +34,9 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.w3c.W3CConstants;
 import org.n52.iceland.w3c.xlink.W3CHrefAttribute;
 import org.n52.sos.coding.encode.AbstractXmlEncoder;

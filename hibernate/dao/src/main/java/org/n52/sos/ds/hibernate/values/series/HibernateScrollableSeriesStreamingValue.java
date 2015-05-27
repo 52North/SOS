@@ -32,7 +32,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
 import org.n52.sos.ogc.om.OmObservation;

@@ -32,8 +32,8 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.n52.iceland.ds.DatasourceDaoIdentifier;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.sos.SosEnvelope;
 

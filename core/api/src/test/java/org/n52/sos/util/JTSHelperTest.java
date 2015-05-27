@@ -41,7 +41,7 @@ import static org.n52.sos.util.JTSHelperForTesting.randomCoordinates;
 import static org.n52.sos.util.ReverseOf.reverseOf;
 
 import org.junit.Test;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.Constants;
 
 import com.vividsolutions.jts.geom.Coordinate;

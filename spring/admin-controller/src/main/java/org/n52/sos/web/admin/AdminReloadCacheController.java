@@ -32,8 +32,8 @@ package org.n52.sos.web.admin;
 import javax.servlet.UnavailableException;
 
 import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.CompositeOwsException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.web.ControllerConstants;

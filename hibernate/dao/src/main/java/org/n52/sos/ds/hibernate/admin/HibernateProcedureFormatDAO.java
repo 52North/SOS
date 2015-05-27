@@ -31,7 +31,7 @@ package org.n52.sos.ds.hibernate.admin;
 import java.util.Map;
 
 import org.hibernate.Session;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.ds.ProcedureFormatDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;

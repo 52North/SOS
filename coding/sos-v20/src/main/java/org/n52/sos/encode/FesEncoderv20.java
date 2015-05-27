@@ -62,22 +62,22 @@ import net.opengis.fes.x20.impl.TemporalOperatorNameTypeImpl;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.filter.FilterConstants;
-import org.n52.iceland.ogc.filter.FilterConstants.ComparisonOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.iceland.ogc.filter.TemporalFilter;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.OWSConstants;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsDomainType;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.AbstractXmlEncoder;
+import org.n52.sos.ogc.filter.FilterConstants;
 import org.n52.sos.ogc.filter.SpatialFilter;
+import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.sos.ogc.filter.FilterConstants.ComparisonOperator;
+import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
@@ -98,7 +98,7 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
     private static final String TRUE = Boolean.TRUE.toString();
 
     private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(FilterConstants.NS_FES_2,
-            TemporalFilter.class, org.n52.iceland.ogc.filter.FilterCapabilities.class, SpatialFilter.class);
+            TemporalFilter.class, org.n52.sos.ogc.filter.FilterCapabilities.class, SpatialFilter.class);
 
     public FesEncoderv20() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -126,8 +126,8 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
     public XmlObject encode(final Object element, final Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
         XmlObject encodedObject = null;
-        if (element instanceof org.n52.iceland.ogc.filter.FilterCapabilities) {
-            encodedObject = encodeFilterCapabilities((org.n52.iceland.ogc.filter.FilterCapabilities) element);
+        if (element instanceof org.n52.sos.ogc.filter.FilterCapabilities) {
+            encodedObject = encodeFilterCapabilities((org.n52.sos.ogc.filter.FilterCapabilities) element);
             // LOGGER.debug("Encoded object {} is valid: {}",
             // encodedObject.schemaType().toString(),
             // XmlHelper.validateDocument(encodedObject));
@@ -213,7 +213,7 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
         return valueReferenceDoc;
     }
 
-    private XmlObject encodeFilterCapabilities(final org.n52.iceland.ogc.filter.FilterCapabilities sosFilterCaps)
+    private XmlObject encodeFilterCapabilities(final org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps)
             throws OwsExceptionReport {
         final FilterCapabilities filterCapabilities =
                 FilterCapabilities.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
@@ -266,7 +266,7 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
      *            SOS spatial filter information
      */
     private void setSpatialFilterCapabilities(final SpatialCapabilitiesType spatialCapabilitiesType,
-            final org.n52.iceland.ogc.filter.FilterCapabilities sosFilterCaps) throws UnsupportedEncoderInputException {
+            final org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps) throws UnsupportedEncoderInputException {
 
         // set GeometryOperands
         if (sosFilterCaps.getSpatialOperands() != null && !sosFilterCaps.getSpatialOperands().isEmpty()) {
@@ -302,7 +302,7 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
      *            SOS temporal filter information
      */
     private void setTemporalFilterCapabilities(final TemporalCapabilitiesType temporalCapabilitiesType,
-            final org.n52.iceland.ogc.filter.FilterCapabilities sosFilterCaps) throws UnsupportedEncoderInputException {
+            final org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps) throws UnsupportedEncoderInputException {
 
         // set TemporalOperands
         if (sosFilterCaps.getTemporalOperands() != null && !sosFilterCaps.getTemporalOperands().isEmpty()) {
@@ -338,7 +338,7 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
      *            SOS scalar filter information
      */
     private void setScalarFilterCapabilities(final ScalarCapabilitiesType scalarCapabilitiesType,
-            final org.n52.iceland.ogc.filter.FilterCapabilities sosFilterCaps) throws UnsupportedEncoderInputException {
+            final org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps) throws UnsupportedEncoderInputException {
 
         if (sosFilterCaps.getComparisonOperators() != null && !sosFilterCaps.getComparisonOperators().isEmpty()) {
             final ComparisonOperatorsType scalarOps = scalarCapabilitiesType.addNewComparisonOperators();

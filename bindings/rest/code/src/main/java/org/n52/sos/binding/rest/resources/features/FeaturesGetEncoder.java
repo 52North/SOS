@@ -35,7 +35,8 @@ import net.opengis.sosREST.x10.FeatureType;
 import net.opengis.sosREST.x10.ResourceCollectionType;
 
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.binding.rest.encode.ResourceEncoder;

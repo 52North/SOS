@@ -32,10 +32,10 @@ import java.util.Set;
 
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilities;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesKey;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProvider;

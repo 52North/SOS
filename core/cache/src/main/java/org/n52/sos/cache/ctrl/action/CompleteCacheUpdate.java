@@ -28,7 +28,7 @@
  */
 package org.n52.sos.cache.ctrl.action;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.cache.ctrl.CacheFactory;
 

@@ -32,8 +32,8 @@ package org.n52.sos.web.admin;
 import java.util.Collections;
 import java.util.List;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.ServiceLoaderHelper;
 import org.n52.sos.cache.ContentCache;

@@ -34,12 +34,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.sos.ResponseExceedsSizeLimitException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OWSConstants.AdditionalRequestParams;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
 import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.values.Value;

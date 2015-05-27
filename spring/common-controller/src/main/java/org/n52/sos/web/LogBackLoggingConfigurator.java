@@ -56,7 +56,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.FileIOHelper;
 import org.n52.sos.service.AbstractLoggingConfigurator;
 import org.slf4j.Logger;

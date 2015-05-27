@@ -39,7 +39,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.response.GetCapabilitiesResponse;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;
 import org.xml.sax.SAXException;

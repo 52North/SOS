@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.swe;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;

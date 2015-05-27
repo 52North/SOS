@@ -40,7 +40,7 @@ import org.joda.time.DateTimeZone;
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.CapabilitiesExtension;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionKey;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;

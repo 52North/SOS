@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.internal.util.collections.CollectionHelper;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;

@@ -32,8 +32,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.om.values.QuantityValue;
 
 /**

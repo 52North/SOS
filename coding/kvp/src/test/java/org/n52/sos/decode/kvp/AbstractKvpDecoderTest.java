@@ -37,15 +37,15 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator2;
-import org.n52.iceland.ogc.filter.TemporalFilter;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.sos.ogc.filter.FilterConstants.TimeOperator2;
 
 import com.google.common.collect.Lists;
 

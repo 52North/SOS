@@ -30,8 +30,8 @@ package org.n52.sos.encode.json.impl;
 
 import static org.n52.iceland.util.DateTimeHelper.formatDateTime2IsoString;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;

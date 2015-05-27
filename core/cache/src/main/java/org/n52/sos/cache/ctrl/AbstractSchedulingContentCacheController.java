@@ -35,7 +35,7 @@ import org.joda.time.DateTime;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.Validation;
 import org.n52.sos.cache.ContentCacheController;
 import org.slf4j.Logger;

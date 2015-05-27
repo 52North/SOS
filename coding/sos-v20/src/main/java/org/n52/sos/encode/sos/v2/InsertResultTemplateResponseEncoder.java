@@ -34,7 +34,7 @@ import net.opengis.sos.x20.InsertResultTemplateResponseDocument;
 import net.opengis.sos.x20.InsertResultTemplateResponseType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.response.InsertResultTemplateResponse;

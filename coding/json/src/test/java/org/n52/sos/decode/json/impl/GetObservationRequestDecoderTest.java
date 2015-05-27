@@ -44,12 +44,12 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.Constants;
 import org.n52.sos.ConfiguredSettingsManager;
+import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.request.GetObservationRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;

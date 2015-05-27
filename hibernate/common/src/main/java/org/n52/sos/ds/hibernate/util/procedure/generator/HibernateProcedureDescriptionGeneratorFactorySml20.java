@@ -32,9 +32,9 @@ import java.util.List;
 import java.util.Locale;
 
 import org.hibernate.Session;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.OGCConstants;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ogc.sensorML.SensorML20Constants;

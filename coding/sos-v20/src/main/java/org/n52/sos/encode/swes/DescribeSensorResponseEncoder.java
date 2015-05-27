@@ -35,8 +35,8 @@ import net.opengis.swes.x20.DescribeSensorResponseType;
 import net.opengis.swes.x20.SensorDescriptionType;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swes.SwesConstants;
 import org.n52.iceland.w3c.SchemaLocation;

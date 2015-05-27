@@ -36,8 +36,8 @@ import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
 import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.ows.OwsParameterValueRange;
 import org.n52.iceland.ogc.sos.Sos1Constants;

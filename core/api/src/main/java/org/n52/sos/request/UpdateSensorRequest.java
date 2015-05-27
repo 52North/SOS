@@ -31,7 +31,7 @@ package org.n52.sos.request;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.util.CollectionHelper;

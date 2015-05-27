@@ -36,7 +36,7 @@ import static org.junit.Assert.assertThat;
 import java.util.Map;
 
 import org.junit.Test;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.sos.request.GetObservationRequest;
 

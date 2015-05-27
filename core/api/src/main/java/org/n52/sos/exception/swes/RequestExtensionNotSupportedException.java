@@ -28,8 +28,6 @@
  */
 package org.n52.sos.exception.swes;
 
-import org.n52.iceland.exception.swes.CodedSwesException;
-import org.n52.iceland.exception.swes.SwesExceptionCode;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

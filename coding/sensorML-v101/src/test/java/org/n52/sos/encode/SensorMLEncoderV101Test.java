@@ -56,8 +56,8 @@ import net.opengis.swe.x101.SimpleDataRecordType;
 
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
 import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;

@@ -34,7 +34,7 @@ import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.JsonDecoderKey;
 import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.encode.json.JSONEncoderKey;

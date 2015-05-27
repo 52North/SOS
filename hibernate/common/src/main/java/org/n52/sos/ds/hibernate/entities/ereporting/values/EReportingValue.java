@@ -29,12 +29,12 @@
 package org.n52.sos.ds.hibernate.entities.ereporting.values;
 
 import org.hibernate.Session;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.ows.Extensions;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.aqd.AqdConstants;

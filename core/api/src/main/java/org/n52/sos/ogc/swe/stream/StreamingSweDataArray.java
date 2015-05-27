@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.swe.stream;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;

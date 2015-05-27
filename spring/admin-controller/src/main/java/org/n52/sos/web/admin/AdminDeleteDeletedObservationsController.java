@@ -28,8 +28,8 @@
  */
 package org.n52.sos.web.admin;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.ServiceLoaderHelper;
 import org.n52.sos.ds.DeleteDeletedObservationDAO;
 import org.n52.sos.web.ControllerConstants;

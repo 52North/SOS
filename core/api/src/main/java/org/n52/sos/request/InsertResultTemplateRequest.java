@@ -29,7 +29,7 @@
 package org.n52.sos.request;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.util.JavaHelper;

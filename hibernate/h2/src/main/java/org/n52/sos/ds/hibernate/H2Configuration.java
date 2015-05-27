@@ -54,7 +54,7 @@ import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
 import org.n52.iceland.service.ServiceContextListener;
 import org.n52.sos.cache.ctrl.ScheduledContentCacheControllerSettings;

@@ -33,9 +33,9 @@ import java.util.List;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.coding.encode.EncodingValues;

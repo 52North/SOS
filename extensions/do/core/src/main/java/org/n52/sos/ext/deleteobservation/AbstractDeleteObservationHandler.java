@@ -30,7 +30,7 @@ package org.n52.sos.ext.deleteobservation;
 
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.PARAMETER_NAME;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.ds.AbstractOperationHandler;

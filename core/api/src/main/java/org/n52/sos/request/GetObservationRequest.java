@@ -32,16 +32,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.n52.iceland.ogc.filter.Filter;
-import org.n52.iceland.ogc.filter.TemporalFilter;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.StringHelper;
+import org.n52.sos.ogc.filter.Filter;
 import org.n52.sos.ogc.filter.SpatialFilter;
+import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.response.GetObservationResponse;
 

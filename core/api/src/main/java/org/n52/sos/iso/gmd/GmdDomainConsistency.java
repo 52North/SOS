@@ -29,7 +29,7 @@
 package org.n52.sos.iso.gmd;
 
 import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.om.quality.OmResultQuality;
+import org.n52.sos.ogc.om.quality.OmResultQuality;
 
 public abstract class GmdDomainConsistency implements OmResultQuality {
 

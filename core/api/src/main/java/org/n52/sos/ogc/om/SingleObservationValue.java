@@ -31,8 +31,8 @@ package org.n52.sos.ogc.om;
 import java.util.Set;
 
 import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.om.quality.OmResultQuality;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.ogc.om.quality.OmResultQuality;
 import org.n52.sos.ogc.om.values.Value;
 
 import com.google.common.collect.Sets;

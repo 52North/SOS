@@ -33,6 +33,8 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.operator.AbstractServiceOperator;
 
 /**
+ * Implementation of {@link AbstractServiceOperator} for OGC SOS 2.0 requests.
+ * 
  * @since 4.0.0
  * 
  */

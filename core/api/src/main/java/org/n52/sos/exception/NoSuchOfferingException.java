@@ -32,11 +32,12 @@ package org.n52.sos.exception;
 /**
  * @author Christian Autermann <c.autermann@52north.org>
  */
-public class NoSuchObservablePropertyException extends NoSuchIdentifierException {
+public class NoSuchOfferingException extends NoSuchIdentifierException {
 
-    private static final long serialVersionUID = -8140046013207830590L;
+    private static final long serialVersionUID = -8631854165748464638L;
 
-    public NoSuchObservablePropertyException(String identifier) {
+    public NoSuchOfferingException(String identifier) {
         super(identifier);
     }
+
 }

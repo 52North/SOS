@@ -41,8 +41,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.NoSuchExtensionException;
-import org.n52.iceland.exception.NoSuchOfferingException;
 import org.n52.iceland.ogc.ows.OfferingExtension;
 import org.n52.iceland.ogc.ows.StaticCapabilities;
 import org.n52.iceland.ogc.ows.StringBasedCapabilitiesExtension;
@@ -60,6 +58,8 @@ import org.n52.sos.config.sqlite.entities.CapabilitiesExtensionImpl;
 import org.n52.sos.config.sqlite.entities.OfferingExtensionIdentifier;
 import org.n52.sos.config.sqlite.entities.OfferingExtensionImpl;
 import org.n52.sos.config.sqlite.entities.StaticCapabilitiesImpl;
+import org.n52.sos.exception.NoSuchExtensionException;
+import org.n52.sos.exception.NoSuchOfferingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

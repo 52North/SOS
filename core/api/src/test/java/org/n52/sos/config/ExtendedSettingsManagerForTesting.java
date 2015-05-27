@@ -46,13 +46,13 @@ import org.n52.iceland.config.SettingsManagerForTesting;
 import org.n52.iceland.config.StringSettingValueForTesting;
 import org.n52.iceland.config.TimeInstantSettingValueForTesting;
 import org.n52.iceland.config.UriSettingValueForTesting;
-import org.n52.iceland.exception.NoSuchExtensionException;
-import org.n52.iceland.exception.NoSuchOfferingException;
 import org.n52.iceland.i18n.MultilingualString;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.ows.OfferingExtension;
 import org.n52.iceland.ogc.ows.StaticCapabilities;
 import org.n52.iceland.ogc.ows.StringBasedCapabilitiesExtension;
+import org.n52.sos.exception.NoSuchExtensionException;
+import org.n52.sos.exception.NoSuchOfferingException;
 
 public class ExtendedSettingsManagerForTesting extends SettingsManagerForTesting implements CapabilitiesExtensionManager {
     

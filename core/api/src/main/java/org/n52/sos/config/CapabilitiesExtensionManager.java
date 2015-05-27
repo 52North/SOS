@@ -31,11 +31,11 @@ package org.n52.sos.config;
 import java.util.List;
 import java.util.Map;
 
-import org.n52.iceland.exception.NoSuchExtensionException;
-import org.n52.iceland.exception.NoSuchOfferingException;
 import org.n52.iceland.ogc.ows.OfferingExtension;
 import org.n52.iceland.ogc.ows.StaticCapabilities;
 import org.n52.iceland.ogc.ows.StringBasedCapabilitiesExtension;
+import org.n52.sos.exception.NoSuchExtensionException;
+import org.n52.sos.exception.NoSuchOfferingException;
 
 public interface CapabilitiesExtensionManager {
 

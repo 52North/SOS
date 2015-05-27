@@ -33,12 +33,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.encode.EncoderKey;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.util.http.MediaType;
@@ -51,6 +52,7 @@ import org.n52.sos.wsa.WsaMessageIDHeader;
 import org.n52.sos.wsa.WsaRelatesToHeader;
 import org.n52.sos.wsa.WsaReplyToHeader;
 import org.n52.sos.wsa.WsaToHeader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.x2005.x08.addressing.ActionDocument;
@@ -64,7 +66,7 @@ import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class WsaEncoder implements Encoder<XmlObject, WsaHeader> {
 
@@ -84,8 +86,8 @@ public class WsaEncoder implements Encoder<XmlObject, WsaHeader> {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override

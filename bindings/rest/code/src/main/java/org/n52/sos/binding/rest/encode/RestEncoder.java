@@ -40,7 +40,7 @@ import org.n52.iceland.exception.ows.concrete.NoEncoderForResponseException;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.response.ServiceResponse;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.w3c.SchemaLocation;
@@ -73,6 +73,7 @@ import org.n52.sos.binding.rest.resources.sensors.SensorsPostEncoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPostResponse;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPutEncoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPutResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,18 +85,18 @@ import com.google.common.collect.Sets;
  *
  */
 public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
-    
+
     protected Constants bindingConstants = Constants.getInstance();
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(RestEncoder.class);
-    
+
     private final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(bindingConstants.getEncodingNamespace(),
     		RestResponse.class);
 
     public RestEncoder() {
     	LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(ENCODER_KEYS));
     }
-    
+
     @Override
     public ServiceResponse encode(final RestResponse restResponse)
             throws OwsExceptionReport{
@@ -112,7 +113,7 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
         // 3 return the results
         return encodedResponse;
     }
-    
+
     private ResourceEncoder getRestEncoderForBindingResponse(final RestResponse restResponse) throws OwsExceptionReport
     {
         if (restResponse != null) {
@@ -120,34 +121,34 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
             {
                 return new SensorsGetEncoder();
             }
-            else if (isObservationsGetResponse(restResponse)) 
+            else if (isObservationsGetResponse(restResponse))
             {
                 return new ObservationsGetEncoder();
             }
-            else if (restResponse instanceof CapabilitiesGetResponse) 
+            else if (restResponse instanceof CapabilitiesGetResponse)
             {
                 return new CapabilitiesGetEncoder();
-            } 
-            else if (restResponse instanceof ObservationsPostResponse) 
+            }
+            else if (restResponse instanceof ObservationsPostResponse)
             {
                 return new ObservationsPostEncoder();
-            } 
+            }
             else if (restResponse instanceof SensorsPostResponse)
             {
                 return new SensorsPostEncoder();
-            } 
-            else if (restResponse instanceof SensorsPutResponse) 
+            }
+            else if (restResponse instanceof SensorsPutResponse)
             {
                 return new SensorsPutEncoder();
-            } 
+            }
             else if (isOfferingsGetResponse(restResponse))
             {
                 return new OfferingsGetEncoder();
-            } 
+            }
             else if (isFeatureResponse(restResponse))
             {
                 return new FeaturesGetEncoder();
-            } 
+            }
             else if (restResponse instanceof ObservationsDeleteRespone)
             {
                 return new ObservationsDeleteEncoder();
@@ -197,7 +198,7 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
     {
         return encode(objectToEncode);
     }
-    
+
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
         return emptySet();
@@ -207,7 +208,7 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
     public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS) ;
     }
-    
+
     @Override
 	public void addNamespacePrefixToMap(final Map<String, String> nameSpacePrefixMap){
     	if (nameSpacePrefixMap != null)
@@ -215,12 +216,12 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
     		nameSpacePrefixMap.put(bindingConstants.getEncodingNamespace(), bindingConstants.getEncodingPrefix());
     	}
     }
-    
+
     @Override
-	public Map<SupportedTypeKey, Set<String>> getSupportedTypes() { 
-    	return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
-    
+
     @Override
 	public MediaType getContentType()
     {
@@ -234,5 +235,5 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
         				bindingConstants.getEncodingNamespace(),
         				bindingConstants.getEncodingSchemaUrl().toString()));
     }
-    
+
 }

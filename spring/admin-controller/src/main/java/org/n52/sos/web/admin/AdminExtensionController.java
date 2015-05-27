@@ -136,7 +136,7 @@ public class AdminExtensionController extends AbstractAdminController {
                         .put(JSONConstants.SERVICE_KEY, oeckt.getService())
                         .put(JSONConstants.VERSION_KEY, oeckt.getVersion())
                         .put(JSONConstants.EXTENDED_CAPABILITIES_DOMAIN_KEY, oeckt.getDomain())
-                        .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isActive(oeckt));
+                        .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isOwsExtendedCapabilitiesProviderActive(oeckt));
             }
         }
         return jeces;
@@ -154,7 +154,7 @@ public class AdminExtensionController extends AbstractAdminController {
                         .put(JSONConstants.SERVICE_KEY, oekt.getService())
                         .put(JSONConstants.VERSION_KEY, oekt.getVersion())
                         .put(JSONConstants.OFFERING_EXTENSION_DOMAIN_KEY, oekt.getDomain())
-                        .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isActive(oekt));
+                        .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isOfferingExtensionActive(oekt));
             }
         }
         return joes;

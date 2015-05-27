@@ -1,31 +1,3 @@
-/**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
- * Software GmbH
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
- *
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
- *
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
- *
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- */
 package org.n52.sos.config.sqlite;
 
 import static org.hibernate.criterion.Restrictions.and;
@@ -39,34 +11,41 @@ import java.util.Map.Entry;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import javax.inject.Inject;
+
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.cache.ContentCache;
-import org.n52.iceland.config.CapabilitiesExtensionManager;
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.config.CapabilitiesExtensionService;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.NoSuchExtensionException;
 import org.n52.iceland.exception.NoSuchOfferingException;
 import org.n52.iceland.ogc.ows.OfferingExtension;
 import org.n52.iceland.ogc.ows.StaticCapabilities;
 import org.n52.iceland.ogc.ows.StringBasedCapabilitiesExtension;
-import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.collections.LinkedListMultiMap;
 import org.n52.iceland.util.collections.ListMultiMap;
-import org.n52.sos.config.sqlite.SQLiteManager.HibernateAction;
-import org.n52.sos.config.sqlite.SQLiteManager.ThrowingHibernateAction;
-import org.n52.sos.config.sqlite.SQLiteManager.ThrowingVoidHibernateAction;
-import org.n52.sos.config.sqlite.SQLiteManager.VoidHibernateAction;
+import org.n52.sos.config.sqlite.SQLiteSessionManager.HibernateAction;
+import org.n52.sos.config.sqlite.SQLiteSessionManager.ThrowingHibernateAction;
+import org.n52.sos.config.sqlite.SQLiteSessionManager.ThrowingVoidHibernateAction;
+import org.n52.sos.config.sqlite.SQLiteSessionManager.VoidHibernateAction;
 import org.n52.sos.config.sqlite.entities.Activatable;
 import org.n52.sos.config.sqlite.entities.CapabilitiesExtensionImpl;
 import org.n52.sos.config.sqlite.entities.OfferingExtensionIdentifier;
 import org.n52.sos.config.sqlite.entities.OfferingExtensionImpl;
 import org.n52.sos.config.sqlite.entities.StaticCapabilitiesImpl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager implements CapabilitiesExtensionManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExtensionEnabledSQLiteSettingsManager.class);
+/**
+ * TODO JavaDoc
+ * @author Christian Autermann
+ */
+public class SQLiteCapabilitiesExtensionManager
+        extends AbstractSQLiteDao
+        implements CapabilitiesExtensionService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SQLiteCapabilitiesExtensionManager.class);
     private final ReadWriteLock scLock = new ReentrantReadWriteLock();
     private final ReadWriteLock ceLock = new ReentrantReadWriteLock();
     private final ReadWriteLock oeLock = new ReentrantReadWriteLock();
@@ -75,6 +54,18 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
     private Map<String, StringBasedCapabilitiesExtension> cachedCe;
     private Map<String, Map<String, String>> cachedOe;
 
+    private ContentCacheController contentCacheController;
+
+
+    @Inject
+    public void setContentCacheController(ContentCacheController contentCacheController) {
+        this.contentCacheController = contentCacheController;
+    }
+
+    protected ContentCache getCache() {
+        return this.contentCacheController.getCache();
+    }
+
     private void checkOffering(final String offering) throws NoSuchOfferingException {
         if (!getCache().hasOffering(offering)) {
             throw new NoSuchOfferingException(offering);
@@ -82,7 +73,7 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
     }
 
     @Override
-    protected <T> T execute(final HibernateAction<T> action) {
+    protected <T> T execute(HibernateAction<T> action) {
         try {
             return super.execute(action);
         } catch (ConnectionProviderException ex) {
@@ -91,8 +82,7 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
     }
 
     @Override
-    protected <T> T throwingExecute(ThrowingHibernateAction<T> action)
-            throws NoSuchExtensionException {
+    protected <T> T throwingExecute(ThrowingHibernateAction<T> action) throws NoSuchExtensionException {
         try {
             return super.throwingExecute(action);
         } catch (Exception ex) {
@@ -103,7 +93,6 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
             }
         }
     }
-
 
     @Override
     public void setActiveStaticCapabilities(final String identifier) throws NoSuchExtensionException {
@@ -210,10 +199,6 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
         return map;
     }
 
-    protected ContentCache getCache() {
-        return Configurator.getInstance().getCache();
-    }
-
     @Override
     public void saveOfferingExtension(final String offering, final String identifier, final String value) throws
             NoSuchOfferingException {
@@ -258,18 +243,17 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
     }
 
     @Override
-    public void deleteOfferingExtension(final String offering, final String identifier) throws
-            NoSuchOfferingException, NoSuchExtensionException {
+    public void deleteOfferingExtension(final String offering, final String identifier) throws NoSuchOfferingException, NoSuchExtensionException {
         checkOffering(offering);
         throwingExecute(new DeleteOfferingExtensionAction(offering, identifier));
         oeLock.writeLock().lock();
         try {
             if (cachedOe != null && cachedOe.get(offering) != null) {
-            	if (cachedOe.get(offering).remove(identifier)!=null) {
-            		LOGGER.debug("Removed extension '{}' for offering '{}' from offering extension cache.",identifier,offering);
-            	} else {
-            		LOGGER.debug("Removing failed for extension '{}' for offering '{}' from offering extension cache.",identifier,offering);
-            	}
+                if (cachedOe.get(offering).remove(identifier)!=null) {
+                    LOGGER.debug("Removed extension '{}' for offering '{}' from offering extension cache.",identifier,offering);
+                } else {
+                    LOGGER.debug("Removing failed for extension '{}' for offering '{}' from offering extension cache.",identifier,offering);
+                }
             }
         } finally {
             oeLock.writeLock().unlock();
@@ -292,7 +276,7 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
             if (load) {
                 if (cachedCe == null) {
                     final Map<String, StringBasedCapabilitiesExtension> ext =
-                                                                  execute(new GetActiveCapabilitiesExtensionAction());
+                            execute(new GetActiveCapabilitiesExtensionAction());
                     cachedCe = new HashMap<>(ext.size());
                     for (final Entry<String, StringBasedCapabilitiesExtension> e : ext.entrySet()) {
                         cachedCe.put(e.getKey(), new CapabilitiesExtensionImpl(
@@ -325,8 +309,7 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
     }
 
     @Override
-    public void disableCapabilitiesExtension(final String identifier, final boolean disabled) throws
-            NoSuchExtensionException {
+    public void disableCapabilitiesExtension(final String identifier, final boolean disabled) throws NoSuchExtensionException {
         throwingExecute(new DisableCapabiliesExtensionAction(identifier, disabled));
         ceLock.writeLock().lock();
         try {

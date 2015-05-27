@@ -45,8 +45,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+
 import org.n52.iceland.cache.ContentCache;
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.ogc.filter.FilterConstants;
@@ -223,7 +223,6 @@ public class InsertDAOTest extends HibernateTestCase {
     @AfterClass
     public static void cleanUp() {
         H2Configuration.recreate();
-        SettingsManager.getInstance().destroy();
     }
 
     private void insertSensor(String procedure, String offering, String obsProp, String parentProcedure)

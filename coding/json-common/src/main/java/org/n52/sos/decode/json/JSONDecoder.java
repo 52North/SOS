@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.DecoderKey;
@@ -51,7 +52,7 @@ import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.sos.coding.json.JSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -60,9 +61,9 @@ import com.google.common.collect.Lists;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class JSONDecoder<T> implements Decoder<T, JsonNode> {
@@ -120,8 +121,8 @@ public abstract class JSONDecoder<T> implements Decoder<T, JsonNode> {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override

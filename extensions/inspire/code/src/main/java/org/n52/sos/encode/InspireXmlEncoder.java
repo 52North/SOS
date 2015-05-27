@@ -39,6 +39,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.encode.EncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
@@ -46,7 +47,7 @@ import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
@@ -58,6 +59,7 @@ import org.n52.sos.inspire.InspireSupportedLanguages;
 import org.n52.sos.inspire.capabilities.FullInspireExtendedCapabilities;
 import org.n52.sos.inspire.capabilities.InspireExtendedCapabilities;
 import org.n52.sos.inspire.capabilities.MinimalInspireExtendedCapabilities;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,10 +67,10 @@ import com.google.common.collect.Sets;
 
 /**
  * XML encoder class for the INSPIRE schema
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
- * 
+ *
  */
 public class InspireXmlEncoder extends AbstractXmlEncoder<Object> {
 
@@ -77,12 +79,12 @@ public class InspireXmlEncoder extends AbstractXmlEncoder<Object> {
 
     private static final Set<EncoderKey> ENCODER_KEYS = Sets.union(
             CodingHelper.encoderKeysForElements(
-                    InspireConstants.NS_INSPIRE_DLS, 
-                        InspireExtendedCapabilities.class), 
+                    InspireConstants.NS_INSPIRE_DLS,
+                        InspireExtendedCapabilities.class),
             CodingHelper.encoderKeysForElements(
                     InspireConstants.NS_INSPIRE_COMMON,
                         SwesExtension.class,
-                        InspireSupportedLanguages.class, 
+                        InspireSupportedLanguages.class,
                         InspireSupportedCRS.class));
 
     @Override
@@ -137,7 +139,7 @@ public class InspireXmlEncoder extends AbstractXmlEncoder<Object> {
     }
 
     private void checkIfSupported(InspireObject objectToEncode) throws UnsupportedEncoderInputException {
-        if (!(objectToEncode instanceof InspireSupportedLanguages) 
+        if (!(objectToEncode instanceof InspireSupportedLanguages)
          && !(objectToEncode instanceof InspireSupportedCRS)
          && !(objectToEncode instanceof FullInspireExtendedCapabilities)
          && !(objectToEncode instanceof MinimalInspireExtendedCapabilities)) {
@@ -152,8 +154,8 @@ public class InspireXmlEncoder extends AbstractXmlEncoder<Object> {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override

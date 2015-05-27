@@ -28,11 +28,9 @@
  */
 package org.n52.sos.service.it;
 
-import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.service.Service;
 
 /**
@@ -110,10 +108,5 @@ public class SosComplianceTestSuite extends MockHttpExecutor
             org.n52.sos.service.it.v2.rest.ServiceEndpointTest.class,
             org.n52.sos.service.it.ContentNegotiationEndpointTest.class
         };
-    }
-
-    @AfterClass
-    public static void cleanup() {
-        SettingsManager.getInstance().destroy();
     }
 }

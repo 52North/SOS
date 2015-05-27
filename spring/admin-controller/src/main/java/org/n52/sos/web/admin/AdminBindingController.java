@@ -105,7 +105,7 @@ public class AdminBindingController extends AbstractAdminController {
             String path = e.getKey();
             a.addObject()
                     .put(JSONConstants.BINDING_KEY, path)
-                    .put(JSONConstants.ACTIVE_KEY, settingsManager.isActive(new PathBindingKey(path)));
+                    .put(JSONConstants.ACTIVE_KEY, settingsManager.isBindingActive(new PathBindingKey(path)));
         }
         return a;
     }

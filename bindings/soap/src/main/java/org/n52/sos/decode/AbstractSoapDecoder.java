@@ -49,7 +49,7 @@ import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.decode.XmlNamespaceDecoderKey;
 import org.n52.iceland.exception.swes.InvalidRequestException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.service.SoapHeader;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.collections.LinkedListMultiMap;
@@ -85,8 +85,8 @@ public abstract class AbstractSoapDecoder implements Decoder<SoapRequest, XmlObj
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override
@@ -109,13 +109,13 @@ public abstract class AbstractSoapDecoder implements Decoder<SoapRequest, XmlObj
 
     /**
      * Parses the SOAPBody content to a text representation
-     * 
+     *
      * @param message
      *            SOAP message
-     * 
+     *
      * @return SOAPBody content as text
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs.
      */

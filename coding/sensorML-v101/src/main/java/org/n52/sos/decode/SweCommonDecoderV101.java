@@ -75,6 +75,7 @@ import net.opengis.swe.x101.VectorType;
 import net.opengis.swe.x101.VectorType.Coordinate;
 
 import org.joda.time.DateTime;
+
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.exception.CodedException;
@@ -97,7 +98,7 @@ import org.n52.iceland.ogc.swe.simpleType.SweQuality;
 import org.n52.iceland.ogc.swe.simpleType.SweText;
 import org.n52.iceland.ogc.swe.simpleType.SweTime;
 import org.n52.iceland.ogc.swe.simpleType.SweTimeRange;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.XmlHelper;
@@ -111,6 +112,7 @@ import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,8 +153,8 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override
@@ -625,14 +627,14 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
         }
         return sosFields;
     }
-    
+
     private SweCount parseElementCount(final ElementCount elementCount) throws OwsExceptionReport {
         if (elementCount.isSetCount()) {
             return (SweCount) parseCount(elementCount.getCount());
         }
         return null;
     }
-    
+
     private SweAbstractEncoding parseEncoding(final BlockEncodingPropertyType abstractEncodingType) throws OwsExceptionReport {
         assert abstractEncodingType != null;
         if (abstractEncodingType.isSetTextBlock()) {
@@ -641,7 +643,7 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
         throw new NotYetSupportedException(SweConstants.EN_ENCODING_TYPE, abstractEncodingType,
                 TextBlock.type.getName());
     }
-    
+
     private SweTextEncoding parseTextEncoding(final TextBlock textEncoding) {
         final SweTextEncoding sosTextEncoding = new SweTextEncoding();
         sosTextEncoding.setBlockSeparator(textEncoding.getBlockSeparator());

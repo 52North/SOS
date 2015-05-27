@@ -34,6 +34,7 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
+
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
@@ -42,10 +43,11 @@ import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swes.SwesConstants;
 import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.iceland.ogc.swes.SwesExtensionImpl;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.w3c.W3CConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +56,7 @@ import com.google.common.base.Joiner;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class SwesExtensionDecoderv20 implements Decoder<SwesExtension<?>, XmlObject> {
@@ -77,8 +79,8 @@ public class SwesExtensionDecoderv20 implements Decoder<SwesExtension<?>, XmlObj
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override

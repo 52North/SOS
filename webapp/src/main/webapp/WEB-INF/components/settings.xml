@@ -6,4 +6,48 @@
     <bean id="settingsManager" class="org.n52.sos.config.sqlite.ExtensionEnabledSQLiteSettingsManager" />
 
     <import resource="settingDefinitions.xml" />
+    <import resource="../sos-context.xml" />
+
+    <bean class="org.n52.iceland.util.activation.ActivationRegistrator">
+        <property name="listeners">
+            <map>
+                <entry key-ref="procedureDescriptionFormatRepository">
+                    <value>
+                        <list>
+                            <ref bean="settingsManager"/>
+                        </list>
+                    </value>
+                </entry>
+            </map>
+        </property>
+        <property name="initializers">
+            <map>
+                <entry key-ref="procedureDescriptionFormatRepository">
+                    <bean class="org.n52.iceland.util.activation.DefaultActivationInitializer">
+                        <property name="provider" ref="settingsManager" />
+                    </bean>
+                </entry>
+                <entry key-ref="requestOperatorRepository">
+                    <bean class="org.n52.iceland.util.activation.DefaultActivationInitializer">
+                        <property name="provider" ref="settingsManager" />
+                    </bean>
+                </entry>
+                <entry key-ref="bindingRepository">
+                    <bean class="org.n52.iceland.util.activation.DefaultActivationInitializer">
+                        <property name="provider" ref="settingsManager" />
+                    </bean>
+                </entry>
+                <entry key-ref="offeringExtensionRepository">
+                    <bean class="org.n52.iceland.util.activation.DefaultActivationInitializer">
+                        <property name="provider" ref="settingsManager" />
+                    </bean>
+                </entry>
+                <entry key-ref="owsExtendedCapabilitiesRepository">
+                    <bean class="org.n52.iceland.util.activation.DefaultActivationInitializer">
+                        <property name="provider" ref="settingsManager" />
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
 </beans>

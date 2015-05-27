@@ -92,6 +92,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.encode.EncoderKey;
@@ -117,7 +118,7 @@ import org.n52.iceland.ogc.swe.SweDataArray;
 import org.n52.iceland.ogc.swe.SweDataRecord;
 import org.n52.iceland.ogc.swe.SweField;
 import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.XmlHelper;
@@ -151,8 +152,11 @@ import org.n52.sos.ogc.sensorML.elements.SmlPosition;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweSimpleDataRecord;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.service.ServiceConstants.ProcedureDescriptionFormat;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -163,14 +167,16 @@ import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorMLEncoderv101.class);
 
-    private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = singletonMap(
-            SupportedTypeKey.ProcedureDescriptionFormat, (Set<String>) ImmutableSet.of(
-                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL, SensorMLConstants.SENSORML_CONTENT_TYPE.toString()));
+    private static final ImmutableSet<SupportedType> SUPPORTED_TYPES
+            = ImmutableSet.<SupportedType>builder()
+                    .add(new ProcedureDescriptionFormat(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
+                    .add(new ProcedureDescriptionFormat(SensorMLConstants.SENSORML_CONTENT_TYPE.toString()))
+                    .build();
 
     private static final Map<String, ImmutableMap<String, Set<String>>> SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS =
             ImmutableMap.of(
@@ -181,7 +187,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
                                     ImmutableSet.of(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
                             .put(Sos1Constants.SERVICEVERSION,
                                     ImmutableSet.of(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE)).build());
-    
+
     @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = union(
             encoderKeysForElements(SensorMLConstants.NS_SML, SosProcedureDescription.class, AbstractSensorML.class),
@@ -199,8 +205,8 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.unmodifiableMap(SUPPORTED_TYPES);
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
 
     @Override
@@ -252,13 +258,13 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     /**
      * creates sml:System
-     * 
+     *
      * @param sensorDesc
      *            SensorML encoded system description
-     * 
+     *
      * @return Returns XMLBeans representation of sml:System
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      */
     private XmlObject createSensorDescription(final AbstractSensorML sensorDesc) throws OwsExceptionReport {
@@ -791,7 +797,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     /**
      * Creates the valueentification section of the SensorML description.
-     * 
+     *
      * @param identifications
      *            SOS valueentifications
      * @return XML Identification array
@@ -814,7 +820,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     /**
      * Creates the classification section of the SensorML description.
-     * 
+     *
      * @param classifications
      *            SOS classifications
      * @return XML Classification array
@@ -843,7 +849,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     /**
      * Creates the characteristics section of the SensorML description.
-     * 
+     *
      * @param smlCharacteristics
      *            SOS characteristics list
      * @return XML Characteristics array
@@ -891,7 +897,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     /**
      * Create XML Documentation array from SOS documentations
-     * 
+     *
      * @param sosDocumentation
      *            SOS documentation list
      * @return XML Documentation array
@@ -913,7 +919,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     /**
      * Create a XML Documentation element from SOS documentation
-     * 
+     *
      * @param sosDocumentation
      *            SOS documentation
      * @return XML Documentation element
@@ -942,7 +948,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     /**
      * Create a XML DocuemntList from SOS documentList
-     * 
+     *
      * @param sosDocumentationList
      *            SOS documentList
      * @return XML DocumentList element
@@ -965,7 +971,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     /**
      * Creates the position section of the SensorML description.
-     * 
+     *
      * @param position
      *            SOS position
      * @return XML Position element
@@ -995,7 +1001,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     /**
      * Creates the location section of the SensorML description.
-     * 
+     *
      * @param location
      *            SOS location representation.
      * @return XML SmlLocation2 element
@@ -1016,11 +1022,11 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     /**
      * Creates the inputs section of the SensorML description.
-     * 
+     *
      * @param inputs
      *            SOS SWE representation.
      * @return XML Inputs element
-     * 
+     *
      * @throws OwsExceptionReport
      *             if an error occurs
      */
@@ -1039,11 +1045,11 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     /**
      * Creates the outputs section of the SensorML description.
-     * 
+     *
      * @param sosOutputs
      *            SOS SWE representation.
      * @return XML Outputs element
-     * 
+     *
      * @throws OwsExceptionReport
      */
     private Outputs createOutputs(final List<SmlIo<?>> sosOutputs) throws OwsExceptionReport {
@@ -1067,7 +1073,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     /**
      * Creates the components section of the SensorML description.
-     * 
+     *
      * @param sosComponents
      *            SOS SWE representation.
      * @return encoded sml:components
@@ -1131,7 +1137,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     /**
      * Adds a SOS SWE simple type to a XML SWE field.
-     * 
+     *
      * @param xbField
      *            XML SWE field
      * @param sosSweData
@@ -1185,12 +1191,12 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     /**
      * Adds a SOS SWE simple type to a XML SML IO component.
-     * 
+     *
      * @param ioComponentPropertyType
      *            SML IO component
      * @param sosSMLIO
      *            SOS SWE simple type.
-     * 
+     *
      * @throws OwsExceptionReport
      */
     private void addIoComponentPropertyType(final IoComponentPropertyType ioComponentPropertyType,
@@ -1246,7 +1252,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     /**
      * Get the QName for the SchemaType
-     * 
+     *
      * @param type
      *            Schema type
      * @return Related QName
@@ -1260,5 +1266,5 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
         return SensorMLConstants.ABSTRACT_PROCESS_QNAME;
     }
 
-   
+
 }

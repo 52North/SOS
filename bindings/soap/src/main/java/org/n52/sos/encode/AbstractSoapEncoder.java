@@ -43,6 +43,7 @@ import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.encode.EncoderKey;
@@ -57,7 +58,7 @@ import org.n52.iceland.ogc.ows.ExceptionCode;
 import org.n52.iceland.ogc.ows.OWSConstants;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
@@ -67,6 +68,7 @@ import org.n52.sos.soap.SoapFault;
 import org.n52.sos.soap.SoapHelper;
 import org.n52.sos.soap.SoapResponse;
 import org.n52.sos.util.N52XmlHelper;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -97,8 +99,8 @@ public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Consta
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override
@@ -122,16 +124,16 @@ public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Consta
 
     /**
      * Creates a SOAPBody element from SOS response
-     * 
+     *
      * @param soapResponseMessage
      *            SOAPBody element
      * @param sosResponse
      *            SOS response
      * @param actionURI
      *            the action URI
-     * 
+     *
      * @return the action URI
-     * 
+     *
      * @throws SOAPException
      *             if an error occurs.
      */
@@ -157,7 +159,7 @@ public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Consta
 
     /**
      * Create and add the SOAPBody content
-     * 
+     *
      * @param soapResponseMessage
      *            SOAPMessage to add the body
      * @param soapResponse
@@ -177,7 +179,7 @@ public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Consta
 
     /**
      * Get the content for the SOAPBody as {@link XmlObject}
-     * 
+     *
      * @param response
      *            SOAP response
      * @return SOAPBody content as {@link XmlObject}
@@ -201,11 +203,11 @@ public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Consta
     /**
      * Check SOS response for xsi:schemaLocation, remove attribute and add
      * attribute to SOAP message
-     * 
+     *
      * @param xmlObject
      * @param soapResponseMessage
      *            SOAP response message
-     * 
+     *
      * @throws SOAPException
      *             If an error occurs
      */
@@ -238,12 +240,12 @@ public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Consta
 
     /**
      * Creates a SOAPFault element from SOS internal fault
-     * 
+     *
      * @param fault
      *            SOAPFault element
      * @param soapFault
      *            SOS internal fault
-     * 
+     *
      * @throws SOAPException
      *             if an error occurs.
      */
@@ -257,14 +259,14 @@ public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Consta
 
     /**
      * Creates a SOAPFault element from SOS exception
-     * 
+     *
      * @param soapFault
      *            SOAPFault element
      * @param owsExceptionReport
      *            SOS exception
-     * 
+     *
      * @return SOAP action URI.
-     * 
+     *
      * @throws SOAPException
      *             if an error occurs.
      */
@@ -306,10 +308,10 @@ public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Consta
 
     /**
      * Get SOAP action URI depending on Exception code
-     * 
+     *
      * @param exceptionCode
      *            Exception code
-     * 
+     *
      * @return SOAP action URI
      */
     protected String getExceptionActionURI(ExceptionCode exceptionCode) {
@@ -326,12 +328,12 @@ public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Consta
 
     /**
      * Creates a SOAPDetail element from SOS exception document.
-     * 
+     *
      * @param detail
      *            SOAPDetail
      * @param exception
      *            SOS Exception document
-     * 
+     *
      * @throws SOAPException
      *             if an error occurs.
      */

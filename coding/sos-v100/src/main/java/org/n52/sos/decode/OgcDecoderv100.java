@@ -45,6 +45,7 @@ import net.opengis.ogc.impl.BBOXTypeImpl;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
@@ -62,9 +63,10 @@ import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.XmlHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.NodeList;
@@ -74,7 +76,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
 
@@ -136,19 +138,19 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     /**
      * parses a single temporal filter of the requests and returns SOS temporal
      * filter
-     * 
+     *
      * @param xbBinaryTemporalOp
      *            XmlObject representing the temporal filter
      * @return Returns SOS representation of temporal filter
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             if parsing of the element failed
      */
@@ -212,14 +214,14 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
 
     /**
      * Parses the spatial filter of a request.
-     * 
+     *
      * @param xbBBOX
      *            XmlBean representing the feature of interest parameter of the
      *            request
      * @return Returns SpatialFilter created from the passed foi request
      *         parameter
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if creation of the SpatialFilter failed
      */

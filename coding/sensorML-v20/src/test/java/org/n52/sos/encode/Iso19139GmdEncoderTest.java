@@ -38,12 +38,11 @@ import javax.xml.namespace.NamespaceContext;
 import org.isotc211.x2005.gmd.DQDomainConsistencyDocument;
 import org.isotc211.x2005.gmd.DQDomainConsistencyPropertyType;
 import org.isotc211.x2005.gmd.DQDomainConsistencyType;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.config.SettingsManager;
+import org.w3c.dom.Node;
+
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
@@ -55,7 +54,6 @@ import org.n52.sos.iso.gmd.GmdConstants;
 import org.n52.sos.iso.gmd.GmdDomainConsistency;
 import org.n52.sos.iso.gmd.GmdQuantitativeResult;
 import org.n52.sos.util.NamespaceContextBuilder;
-import org.w3c.dom.Node;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -73,16 +71,6 @@ public class Iso19139GmdEncoderTest {
             .add(W3CConstants.NS_XLINK, W3CConstants.NS_XLINK_PREFIX)
             .build();
 
-
-    @BeforeClass
-    public static void initSettingsManager() {
-        SettingsManager.getInstance();
-    }
-
-    @AfterClass
-    public static void cleanupSettingManager() {
-        SettingsManager.getInstance().destroy();
-    }
 
     @Rule
     public final ErrorCollector errors = new ErrorCollector();

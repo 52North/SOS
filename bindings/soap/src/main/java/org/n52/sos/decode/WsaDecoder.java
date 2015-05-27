@@ -40,13 +40,14 @@ import javax.xml.soap.SOAPHeaderElement;
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.decode.XmlNamespaceDecoderKey;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.sos.wsa.WsaActionHeader;
 import org.n52.sos.wsa.WsaConstants;
 import org.n52.sos.wsa.WsaHeader;
 import org.n52.sos.wsa.WsaMessageIDHeader;
 import org.n52.sos.wsa.WsaReplyToHeader;
 import org.n52.sos.wsa.WsaToHeader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class WsaDecoder implements Decoder<List<WsaHeader>, List<SOAPHeaderElement>> {
 
@@ -75,8 +76,8 @@ public class WsaDecoder implements Decoder<List<WsaHeader>, List<SOAPHeaderEleme
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override

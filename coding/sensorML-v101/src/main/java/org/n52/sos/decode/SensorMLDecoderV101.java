@@ -79,6 +79,7 @@ import net.opengis.sensorML.x101.ValidTimeDocument.ValidTime;
 
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
@@ -92,7 +93,7 @@ import org.n52.iceland.ogc.swe.DataRecord;
 import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swe.SweField;
 import org.n52.iceland.ogc.swe.simpleType.SweText;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.util.XmlOptionsHelper;
@@ -119,11 +120,15 @@ import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
 import org.n52.sos.ogc.sensorML.elements.SmlLocation;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.service.ServiceConstants.ProcedureDescriptionFormat;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -131,7 +136,7 @@ import com.vividsolutions.jts.geom.Point;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
@@ -140,14 +145,16 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
     private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.decoderKeysForElements(SensorMLConstants.NS_SML,
             SensorMLDocument.class, SystemDocument.class, SystemType.class, ProcessModelType.class);
 
-    private static final Set<String> SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS = Collections
-            .singleton(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL);
-
     private static final Set<String> REMOVABLE_CAPABILITIES_NAMES = Sets.newHashSet(
             SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES, SensorMLConstants.ELEMENT_NAME_OFFERINGS);
 
     private static final Set<String> REMOVABLE_COMPONENTS_ROLES = Collections
             .singleton(SensorMLConstants.ELEMENT_NAME_CHILD_PROCEDURES);
+
+    private static final ImmutableSet<SupportedType> SUPPORTED_TYPES
+            = ImmutableSet.<SupportedType>builder()
+            .add(new ProcedureDescriptionFormat(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
+            .build();
 
     public SensorMLDecoderV101() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -160,9 +167,8 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.singletonMap(SupportedTypeKey.ProcedureDescriptionFormat,
-                SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS);
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
 
     @Override
@@ -379,7 +385,7 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
     /**
      * Parses the identifications and sets the AbstractProcess' identifiers
-     * 
+     *
      * @param abstractProcess
      *            The AbstractProcess to which identifiers are added
      * @param identificationArray
@@ -405,7 +411,7 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
     /**
      * Parses the classification
-     * 
+     *
      * @param classificationArray
      *            XML classification
      * @return SOS classification
@@ -427,12 +433,12 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
     /**
      * Parses the characteristics
-     * 
+     *
      * @param characteristicsArray
      *            XML characteristics
      * @return SOS characteristics
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs
      */
@@ -459,13 +465,13 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
     /**
      * Parses the capabilities, processing and removing special insertion
      * metadata
-     * 
+     *
      * @param abstractProcess
      *            The AbstractProcess to which capabilities and insertion
      *            metadata are added
      * @param capabilitiesArray
      *            XML capabilities
-     * 
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs
      */
@@ -497,7 +503,7 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
     /**
      * Process standard formatted capabilities insertion metadata into a map
      * (key=identifier, value=name)
-     * 
+     *
      * @param dataRecord
      *            The DataRecord to examine
      * @param xbCapabilities
@@ -528,15 +534,15 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
         }
         return map;
     }
-    
+
     /**
      * Parses the position
-     * 
+     *
      * @param position
      *            XML position
      * @return SOS position
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs
      */
@@ -559,12 +565,12 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
     /**
      * Parses the location
-     * 
+     *
      * @param location
      *            XML location
      * @return SOS location
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs
      */
@@ -753,12 +759,12 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
     /**
      * Parses the inputs
-     * 
+     *
      * @param inputs
      *            XML inputs
      * @return SOS inputs
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs
      */
@@ -772,12 +778,12 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
     /**
      * Parses the outputs
-     * 
+     *
      * @param outputs
      *            XML outputs
      * @return SOS outputs
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs
      */
@@ -818,12 +824,12 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
     /**
      * Parses the components
-     * 
+     *
      * @param xbIoCompPropType
      *            XML components
      * @return SOS components
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs
      */

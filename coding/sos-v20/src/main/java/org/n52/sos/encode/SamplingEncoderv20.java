@@ -39,6 +39,7 @@ import net.opengis.samplingSpatial.x20.ShapeType;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.encode.EncoderKey;
@@ -56,7 +57,7 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.JavaHelper;
@@ -64,10 +65,14 @@ import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.util.SosHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.service.ServiceConstants.FeatureType;
+
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Geometry;
@@ -77,7 +82,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
 
@@ -92,11 +97,13 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
             ConformanceClasses.OM_V2_SAMPLING_POINT, ConformanceClasses.OM_V2_SAMPLING_CURVE,
             ConformanceClasses.OM_V2_SAMPLING_SURFACE);
 
-    private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
-            SupportedTypeKey.FeatureType, (Set<String>) Sets.newHashSet(OGCConstants.UNKNOWN,
-                    SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_POINT,
-                    SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_CURVE,
-                    SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_SURFACE));
+    private static final Set<SupportedType> SUPPORTED_TYPES = ImmutableSet
+            .<SupportedType>builder()
+            .add(new FeatureType(OGCConstants.UNKNOWN))
+            .add(new FeatureType(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_POINT))
+            .add(new FeatureType(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_CURVE))
+            .add(new FeatureType(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_SURFACE))
+            .build();
 
     public SamplingEncoderv20() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -109,9 +116,10 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.unmodifiableMap(SUPPORTED_TYPES);
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
+
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
@@ -196,7 +204,7 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
                     addFeatureTypeForGeometry(xbSampFeature, sampFeat.getGeometry());
                 }
             }
-            
+
             addNameDescription(xbSampFeature, sampFeat);
 
             // set sampledFeatures
@@ -281,7 +289,7 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
             }
         }
     }
-    
+
     private void addNameDescription(SFSpatialSamplingFeatureType xbSamplingFeature, SamplingFeature samplingFeature) throws OwsExceptionReport {
         if (xbSamplingFeature != null) {
                 if (samplingFeature.isSetName()) {
@@ -298,7 +306,7 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
                 }
         }
     }
-    
+
     private void removeExitingNames(SFSpatialSamplingFeatureType xbSamplingFeature) {
         if (CollectionHelper.isNotNullOrEmpty(xbSamplingFeature.getNameArray())) {
             for (int i = 0; i < xbSamplingFeature.getNameArray().length; i++) {

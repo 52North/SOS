@@ -45,6 +45,7 @@ import net.opengis.gml.TimePeriodType;
 import net.opengis.gml.TimePositionType;
 
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
@@ -55,11 +56,12 @@ import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +70,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
     private static final Logger LOGGER = LoggerFactory.getLogger(GmlDecoderv311.class);
@@ -94,8 +96,8 @@ public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override
@@ -225,7 +227,7 @@ public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
 
     /**
      * parses XmlBeans DirectPosition to a String with coordinates for WKT.
-     * 
+     *
      * @param xbPos
      *            XmlBeans generated DirectPosition.
      * @return Returns String with coordinates for WKT.
@@ -237,7 +239,7 @@ public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
     /**
      * parses XmlBeans Coordinates to a String with coordinates for WKT.
      * Replaces cs, decimal and ts if different from default.
-     * 
+     *
      * @param xbCoordinates
      *            XmlBeans generated Coordinates.
      * @return Returns String with coordinates for WKT.

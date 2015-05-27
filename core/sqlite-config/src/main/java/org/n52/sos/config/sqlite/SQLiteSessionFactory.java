@@ -65,6 +65,10 @@ import org.n52.sos.config.sqlite.entities.StaticCapabilitiesImpl;
 import org.n52.sos.config.sqlite.entities.StringSettingValue;
 import org.n52.sos.config.sqlite.entities.TimeInstantSettingValue;
 import org.n52.sos.config.sqlite.entities.UriSettingValue;
+import org.n52.sos.config.sqlite.hibernate.HibernateFileType;
+import org.n52.sos.config.sqlite.hibernate.HibernateSQLiteDialect;
+import org.n52.sos.config.sqlite.hibernate.HibernateTimeInstantType;
+import org.n52.sos.config.sqlite.hibernate.HibernateUriType;
 import org.n52.sos.ds.hibernate.AbstractSessionFactoryProvider;
 
 /**
@@ -149,7 +153,8 @@ public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
             cfg.mergeProperties(properties);
         }
         cfg.mergeProperties(getDefaultProperties());
-        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(cfg.getProperties()).build();
+        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                .applySettings(cfg.getProperties()).build();
         return cfg.buildSessionFactory(serviceRegistry);
     }
 

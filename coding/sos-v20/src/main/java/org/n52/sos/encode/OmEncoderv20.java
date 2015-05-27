@@ -44,6 +44,7 @@ import org.apache.xmlbeans.XmlBoolean;
 import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
+
 import org.n52.iceland.encode.EncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
@@ -69,7 +70,7 @@ import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.ogc.swe.SweDataArray;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.util.XmlOptionsHelper;
@@ -79,38 +80,53 @@ import org.n52.sos.encode.streaming.OmV20XmlStreamWriter;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SweHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.service.ServiceConstants.ObservationType;
+
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
-    /**
-     * logger, used for logging while initializing the constants from config
-     * file
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(OmEncoderv20.class);
-    
-    private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(OmConstants.NS_OM_2,
-            OmObservation.class, NamedValue.class, SingleObservationValue.class, MultiObservationValues.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(OmEncoderv20.class);
+
+    private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper
+            .encoderKeysForElements(OmConstants.NS_OM_2,
+                                    OmObservation.class,
+                                    NamedValue.class,
+                                    SingleObservationValue.class,
+                                    MultiObservationValues.class);
 
     // TODO: change to correct conformance class
-    private static final Set<String> CONFORMANCE_CLASSES = Sets.newHashSet(ConformanceClasses.OM_V2_MEASUREMENT,
-            ConformanceClasses.OM_V2_CATEGORY_OBSERVATION, ConformanceClasses.OM_V2_COUNT_OBSERVATION,
-            ConformanceClasses.OM_V2_TRUTH_OBSERVATION, ConformanceClasses.OM_V2_GEOMETRY_OBSERVATION,
+    private static final Set<String> CONFORMANCE_CLASSES = Sets.newHashSet(
+            ConformanceClasses.OM_V2_MEASUREMENT,
+            ConformanceClasses.OM_V2_CATEGORY_OBSERVATION,
+            ConformanceClasses.OM_V2_COUNT_OBSERVATION,
+            ConformanceClasses.OM_V2_TRUTH_OBSERVATION,
+            ConformanceClasses.OM_V2_GEOMETRY_OBSERVATION,
             ConformanceClasses.OM_V2_TEXT_OBSERVATION);
 
-    private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
-            SupportedTypeKey.ObservationType, (Set<String>) Sets.newHashSet(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION,
-                    OmConstants.OBS_TYPE_COUNT_OBSERVATION, OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION,
-                    OmConstants.OBS_TYPE_MEASUREMENT, OmConstants.OBS_TYPE_TEXT_OBSERVATION,
-                    OmConstants.OBS_TYPE_TRUTH_OBSERVATION, OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION));
+    private static final Set<SupportedType> SUPPORTED_TYPES = ImmutableSet
+            .<SupportedType>builder()
+            .add(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION_TYPE)
+//            .add(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_COUNT_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_MEASUREMENT_TYPE)
+            .add(OmConstants.OBS_TYPE_TEXT_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_TRUTH_OBSERVATION_TYPE)
+            .build();
+
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
@@ -128,8 +144,8 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.unmodifiableMap(SUPPORTED_TYPES);
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
 
     @Override
@@ -174,7 +190,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
     public Set<SchemaLocation> getSchemaLocations() {
         return Sets.newHashSet(OmConstants.OM_20_SCHEMA_LOCATION);
     }
-    
+
     @Override
     public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
             UnsupportedEncoderInputException {
@@ -186,7 +202,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         }
         return encodedObject;
     }
-    
+
     @Override
     public void encode(Object objectToEncode, OutputStream outputStream, EncodingValues encodingValues)
             throws OwsExceptionReport {
@@ -219,8 +235,8 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         }
 //        return null;
     }
-    
-    
+
+
 
     @Override
     protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {

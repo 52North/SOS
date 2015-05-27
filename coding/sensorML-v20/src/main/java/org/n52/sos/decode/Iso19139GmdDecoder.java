@@ -42,16 +42,18 @@ import org.isotc211.x2005.gmd.CIResponsiblePartyDocument;
 import org.isotc211.x2005.gmd.CIResponsiblePartyPropertyType;
 import org.isotc211.x2005.gmd.CIResponsiblePartyType;
 import org.isotc211.x2005.gmd.CITelephoneType;
+
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.iso.gmd.GmdConstants;
 import org.n52.sos.ogc.sensorML.Role;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +63,7 @@ import com.google.common.collect.Lists;
 /**
  * {@link Decoder} class to decode ISO TC211 Geographic MetaData (GMD)
  * extensible markup language.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.2.0
  *
@@ -89,8 +91,8 @@ public class Iso19139GmdDecoder implements Decoder<Object, Object> {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override

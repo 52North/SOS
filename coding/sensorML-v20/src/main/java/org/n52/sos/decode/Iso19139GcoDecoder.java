@@ -34,14 +34,16 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.isotc211.x2005.gco.CodeListValueType;
+
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.sos.iso.GcoConstants;
 import org.n52.sos.ogc.sensorML.Role;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +52,7 @@ import com.google.common.base.Joiner;
 /**
  * {@link Decoder} class to decode ISO TC211 Geographic COmmon (GCO) extensible
  * markup language.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.2.0
  *
@@ -78,8 +80,8 @@ public class Iso19139GcoDecoder implements Decoder<Object, XmlObject> {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override

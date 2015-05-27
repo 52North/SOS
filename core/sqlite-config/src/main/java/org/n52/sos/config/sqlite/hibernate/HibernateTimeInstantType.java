@@ -26,10 +26,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.config.sqlite;
+package org.n52.sos.config.sqlite.hibernate;
 
 import org.hibernate.HibernateException;
 import org.hibernate.TypeMismatchException;
+
 import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;

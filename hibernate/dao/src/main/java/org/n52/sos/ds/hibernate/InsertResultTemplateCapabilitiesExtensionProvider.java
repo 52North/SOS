@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
 import org.n52.iceland.ogc.sos.CapabilitiesExtension;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionKey;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
@@ -70,7 +71,7 @@ public class InsertResultTemplateCapabilitiesExtensionProvider
         ContentCache cache = getCache();
         insertionCapabilities.addFeatureOfInterestTypes(cache.getFeatureOfInterestTypes());
         insertionCapabilities.addObservationTypes(cache.getObservationTypes());
-        insertionCapabilities.addProcedureDescriptionFormats(getCodingRepository()
+        insertionCapabilities.addProcedureDescriptionFormats(ProcedureDescriptionFormatRepository.getInstance()
                 .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
         // TODO dynamic
         insertionCapabilities.addSupportedEncoding(SweConstants.ENCODING_TEXT);

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
 import org.n52.iceland.ogc.sos.CapabilitiesExtension;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
@@ -51,7 +52,7 @@ public class InsertSensorCapabilitiesExtensionProvider extends AbstractCapabilit
         SosInsertionCapabilities insertionCapabilities = new SosInsertionCapabilities();
         insertionCapabilities.addFeatureOfInterestTypes(getCache().getFeatureOfInterestTypes());
         insertionCapabilities.addObservationTypes(getCache().getObservationTypes());
-        insertionCapabilities.addProcedureDescriptionFormats(getCodingRepository()
+        insertionCapabilities.addProcedureDescriptionFormats(ProcedureDescriptionFormatRepository.getInstance()
                 .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
         return insertionCapabilities;
     }

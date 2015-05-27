@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.config.sqlite;
+package org.n52.sos.config.sqlite.hibernate;
 
 import java.sql.Types;
 
@@ -37,8 +37,10 @@ import org.hibernate.dialect.function.VarArgsSQLFunction;
 import org.hibernate.dialect.unique.UniqueDelegate;
 import org.hibernate.type.StandardBasicTypes;
 
+
+
 public class HibernateSQLiteDialect extends Dialect {
-    
+
     private final UniqueDelegate sqliteUniqueDelegate;
 
     public HibernateSQLiteDialect() {
@@ -68,7 +70,7 @@ public class HibernateSQLiteDialect extends Dialect {
         registerFunction("mod", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "?1 % ?2"));
         registerFunction("substr", new StandardSQLFunction("substr", StandardBasicTypes.STRING));
         registerFunction("substring", new StandardSQLFunction("substr", StandardBasicTypes.STRING));
-        
+
         sqliteUniqueDelegate = new SQLiteUniqueDelegate( this );
     }
 
@@ -93,11 +95,13 @@ public class HibernateSQLiteDialect extends Dialect {
     }
 
     @Override
+    @Deprecated
     public boolean supportsLimit() {
         return true;
     }
 
     @Override
+    @Deprecated
     protected String getLimitString(String query, boolean hasOffset) {
         return new StringBuffer(query.length() + 20).append(query).
                 append(hasOffset ? " limit ? offset ?" : " limit ?").toString();
@@ -140,7 +144,7 @@ public class HibernateSQLiteDialect extends Dialect {
 
     @Override
     public boolean hasAlterTable() {
-        return false; // As specify in NHibernate dialect
+        return false;
     }
 
     @Override
@@ -165,19 +169,19 @@ public class HibernateSQLiteDialect extends Dialect {
 
     @Override
     public String getDropForeignKeyString() {
-        throw new UnsupportedOperationException("No drop foreign key syntax supported by SQLiteDialect");
+        throw new UnsupportedOperationException("No drop foreign key syntax supported by HibernateSQLiteDialect");
     }
 
     @Override
     public String getAddForeignKeyConstraintString(String constraintName,
             String[] foreignKey, String referencedTable, String[] primaryKey,
             boolean referencesPrimaryKey) {
-        throw new UnsupportedOperationException("No add foreign key syntax supported by SQLiteDialect");
+        throw new UnsupportedOperationException("No add foreign key syntax supported by HibernateSQLiteDialect");
     }
 
     @Override
     public String getAddPrimaryKeyConstraintString(String constraintName) {
-        throw new UnsupportedOperationException("No add primary key syntax supported by SQLiteDialect");
+        throw new UnsupportedOperationException("No add primary key syntax supported by HibernateSQLiteDialect");
     }
 
     @Override
@@ -189,9 +193,9 @@ public class HibernateSQLiteDialect extends Dialect {
     public boolean supportsCascadeDelete() {
         return false;
     }
-    
+
     @Override
     public UniqueDelegate getUniqueDelegate() {
-            return sqliteUniqueDelegate;
+        return sqliteUniqueDelegate;
     }
 }

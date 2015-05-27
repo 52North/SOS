@@ -14,31 +14,28 @@
     <bean id="serviceProviderFactory" class="org.n52.iceland.ogc.ows.ServiceProviderFactory" />
     <bean id="serviceIdentificationFactory" class="org.n52.iceland.ogc.ows.ServiceIdentificationFactory" />
 
-    <bean id="bindingRepository"
-          class="org.n52.iceland.binding.BindingRepository" />
-    <bean id="operationHandlerRepository"
-          class="org.n52.iceland.ds.OperationHandlerRepository" />
+    <bean id="bindingRepository" class="org.n52.iceland.binding.BindingRepository" />
+    <bean id="operationHandlerRepository" class="org.n52.iceland.ds.OperationHandlerRepository" />
 
-    <bean id="converterRepository"
-          class="org.n52.iceland.convert.ConverterRepository" />
-    <bean id="requestOperatorRepository"
-          class="org.n52.iceland.request.operator.RequestOperatorRepository" />
-    <bean id="requestResponseModifierRepository"
-          class="org.n52.iceland.convert.RequestResponseModifierRepository" />
-    <bean id="serviceOperatorRepository"
-          class="org.n52.iceland.service.operator.ServiceOperatorRepository" />
-    <bean id="i18nDaoRepository"
-          class="org.n52.iceland.i18n.I18NDAORepository" />
-    <bean id="owsExtendedCapabilitiesRepository"
-          class="org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesRepository" />
-    <bean id="offeringExtensionRepository"
-          class="org.n52.iceland.ogc.swes.OfferingExtensionRepository" />
-    <bean id="capabilitiesExtensionRepository"
-          class="org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository" />
-    <bean id="settingDefinitionProviderRepository"
-          class="org.n52.iceland.config.SettingDefinitionProviderRepository" />
-    <bean id="codingRepository"
-          class="org.n52.iceland.coding.CodingRepository" />
+    <bean id="converterRepository" class="org.n52.iceland.convert.ConverterRepository" />
+    <bean id="requestOperatorRepository" class="org.n52.iceland.request.operator.RequestOperatorRepository" />
+    <bean id="requestResponseModifierRepository" class="org.n52.iceland.convert.RequestResponseModifierRepository" />
+    <bean id="serviceOperatorRepository" class="org.n52.iceland.service.operator.ServiceOperatorRepository" />
+    <bean id="i18nDaoRepository" class="org.n52.iceland.i18n.I18NDAORepository" />
+    <bean id="owsExtendedCapabilitiesRepository" class="org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesRepository" />
+    <bean id="offeringExtensionRepository" class="org.n52.iceland.ogc.swes.OfferingExtensionRepository" />
+    <bean id="capabilitiesExtensionRepository" class="org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository" />
+    <bean id="settingDefinitionProviderRepository" class="org.n52.iceland.config.SettingDefinitionProviderRepository" />
+
+    <bean id="codingRepository" class="org.n52.iceland.coding.CodingRepository" />
+
+    <!--<bean id="encoderRepository" class="org.n52.iceland.coding.EncoderRepository" />-->
+    <bean id="encoderRepository" class="org.n52.iceland.coding.SosEncoderRepository" />
+    <bean id="decoderRepository" class="org.n52.iceland.coding.DecoderRepository" />
+    <bean id="procedureDescriptionFormatRepository" class="org.n52.iceland.coding.ProcedureDescriptionFormatRepository" />
+    <bean id="responseFormatRepository" class="org.n52.iceland.coding.ResponseFormatRepository"/>
+    <bean id="schemaRepository"  class="org.n52.iceland.coding.SchemaRepository"/>
+    <bean id="supportedTypeRepository" class="org.n52.iceland.coding.SupportedTypeRepository"/>
 
     <bean id="reportObligationRepository"
           class="org.n52.sos.inspire.aqd.ReportObligationRepository" />

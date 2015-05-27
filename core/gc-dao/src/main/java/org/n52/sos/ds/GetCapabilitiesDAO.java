@@ -105,6 +105,9 @@ import org.n52.sos.util.OMHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
+import org.n52.iceland.coding.ResponseFormatRepository;
+
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -501,7 +504,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
             final SosEnvelope envelopeForOffering = getCache().getEnvelopeForOffering(offering);
             final Set<String> featuresForoffering = getFOI4offering(offering);
             final Collection<String> responseFormats =
-                    CodingRepository.getInstance().getSupportedResponseFormats(SosConstants.SOS,
+                    ResponseFormatRepository.getInstance().getSupportedResponseFormats(SosConstants.SOS,
                             Sos1Constants.SERVICEVERSION);
             if (checkOfferingValues(envelopeForOffering, featuresForoffering, responseFormats)) {
                 final SosObservationOffering sosObservationOffering = new SosObservationOffering();
@@ -808,7 +811,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
 
     private Collection<String> getObservationTypes(final String offering) {
         final Collection<String> allObservationTypes = getCache().getObservationTypesForOffering(offering);
-        final List<String> observationTypes = new ArrayList<String>(allObservationTypes.size());
+        final List<String> observationTypes = new ArrayList<>(allObservationTypes.size());
 
         for (final String observationType : allObservationTypes) {
             if (!observationType.equals(SosConstants.NOT_DEFINED)) {
@@ -972,7 +975,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     protected void setUpResponseFormatForOffering(final String version, final SosObservationOffering sosOffering) {
         // initialize as new HashSet so that collection is modifiable
         final Collection<String> responseFormats =
-                new HashSet<String>(CodingRepository.getInstance().getSupportedResponseFormats(SosConstants.SOS,
+                new HashSet<String>(ResponseFormatRepository.getInstance().getSupportedResponseFormats(SosConstants.SOS,
                         version));
         sosOffering.setResponseFormats(responseFormats);
         // TODO set as property
@@ -981,7 +984,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     protected void setUpProcedureDescriptionFormatForOffering(final SosObservationOffering sosOffering,
             final String version) {
         // TODO: set procDescFormat <-- what is required here?
-        sosOffering.setProcedureDescriptionFormat(CodingRepository.getInstance()
+        sosOffering.setProcedureDescriptionFormat(ProcedureDescriptionFormatRepository.getInstance()
                 .getSupportedProcedureDescriptionFormats(SosConstants.SOS, version));
     }
 

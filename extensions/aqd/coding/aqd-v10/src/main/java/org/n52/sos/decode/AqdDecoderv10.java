@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.DecoderKey;
@@ -41,24 +42,25 @@ import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.AbstractServiceCommunicationObject;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.XmlHelper;
 import org.n52.sos.aqd.AqdConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
 public class AqdDecoderv10 implements Decoder<AbstractServiceCommunicationObject, XmlObject> {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(AqdDecoderv10.class);
-	
-	  private static final Set<DecoderKey> DECODER_KEYS = 
+
+	  private static final Set<DecoderKey> DECODER_KEYS =
 	            CodingHelper.xmlDecoderKeysForOperation(AqdConstants.AQD, AqdConstants.VERSION,
 	                    SosConstants.Operations.GetCapabilities, SosConstants.Operations.GetObservation,
 	                    SosConstants.Operations.DescribeSensor);
-	
+
 	public AqdDecoderv10() {
 		  LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
 	                .join(DECODER_KEYS));
@@ -74,10 +76,10 @@ public class AqdDecoderv10 implements Decoder<AbstractServiceCommunicationObject
 			return Collections.unmodifiableSet(DECODER_KEYS);
 	}
 
-	@Override
-	public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-		 return Collections.emptyMap();
-	}
+    @Override
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
+    }
 
 	@Override
 	public AbstractServiceCommunicationObject decode(XmlObject objectToDecode)

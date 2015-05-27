@@ -88,7 +88,7 @@ public class AdminOperationController extends AbstractAdminController {
                     .put(JSONConstants.SERVICE_KEY, key.getServiceOperatorKey().getService())
                     .put(JSONConstants.VERSION_KEY, key.getServiceOperatorKey().getVersion())
                     .put(JSONConstants.OPERATION_KEY, key.getOperationName())
-                    .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isActive(key));
+                    .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isRequestOperatorActive(key));
         }
 
         return JSONUtils.print(json);

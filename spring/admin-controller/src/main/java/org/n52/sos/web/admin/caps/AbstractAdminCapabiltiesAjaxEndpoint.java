@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.n52.iceland.cache.ContentCache;
-import org.n52.iceland.config.CapabilitiesExtensionManager;
+import org.n52.iceland.config.CapabilitiesExtensionService;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.exception.NoSuchExtensionException;
@@ -60,9 +60,9 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
 
 
     @Inject
-    private CapabilitiesExtensionManager capabilitiesExtensionManager;
+    private CapabilitiesExtensionService capabilitiesExtensionManager;
 
-    protected CapabilitiesExtensionManager getDao() {
+    protected CapabilitiesExtensionService getDao() {
         return capabilitiesExtensionManager;
     }
 

@@ -43,11 +43,8 @@ import java.util.Set;
 import net.opengis.fes.x20.BBOXType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.config.SettingsManager;
+
 import org.n52.iceland.encode.EncoderKey;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.filter.FilterConstants;
@@ -71,19 +68,10 @@ import com.vividsolutions.jts.geom.GeometryFactory;
  *
  * @since 4.0.0
  */
+@Deprecated
 public class FesEncoderv20Test {
 
     FesEncoderv20 fesEncoder = new FesEncoderv20();
-
-    @BeforeClass
-    public final static void initDecoders() {
-        CodingRepository.getInstance();
-    }
-
-    @AfterClass
-    public static void cleanUp() {
-        SettingsManager.getInstance().destroy();
-    }
 
     @Test
     public final void should_return_correct_encoder_keys() {

@@ -32,16 +32,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.encode.ProcedureDescriptionFormatKey;
-import org.n52.iceland.encode.ResponseFormatKey;
-import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.service.operator.ServiceOperatorKey;
-import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.web.common.ControllerConstants;
-import org.n52.sos.web.common.JSONConstants;
+import javax.inject.Inject;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -51,6 +42,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
+import org.n52.iceland.coding.ResponseFormatRepository;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.encode.ProcedureDescriptionFormatKey;
+import org.n52.iceland.encode.ResponseFormatKey;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.sos.web.common.JSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -62,6 +66,16 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 @Controller
 public class AdminEncodingController extends AbstractAdminController {
+
+    @Inject
+    private ResponseFormatRepository responseFormatRepository;
+
+    @Inject
+    private SettingsManager settingsManager;
+
+    @Inject
+    private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
+
     @ResponseBody
     @ExceptionHandler(ConnectionProviderException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -93,7 +107,7 @@ public class AdminEncodingController extends AbstractAdminController {
                     new ServiceOperatorKey(json.path(JSONConstants.SERVICE_KEY).asText(),
                             json.path(JSONConstants.VERSION_KEY).asText());
             ResponseFormatKey rfkt = new ResponseFormatKey(sokt, json.path(JSONConstants.RESPONSE_FORMAT_KEY).asText());
-            getSettingsManager().setActive(rfkt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
+            this.settingsManager.setActive(rfkt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else if (json.has(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT_KEY)) {
             ServiceOperatorKey sokt =
                     new ServiceOperatorKey(json.path(JSONConstants.SERVICE_KEY).asText(),
@@ -101,7 +115,7 @@ public class AdminEncodingController extends AbstractAdminController {
             ProcedureDescriptionFormatKey pdfkt =
                     new ProcedureDescriptionFormatKey(sokt,
                             json.path(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT_KEY).asText());
-            getSettingsManager().setActive(pdfkt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
+            this.settingsManager.setActive(pdfkt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else {
             throw new JSONException("Invalid JSON");
         }
@@ -110,7 +124,7 @@ public class AdminEncodingController extends AbstractAdminController {
     protected ArrayNode getObservationEncodings() throws ConnectionProviderException, ConfigurationException {
         ArrayNode joes = JSONUtils.nodeFactory().arrayNode();
         final Map<ServiceOperatorKey, Set<String>> oes =
-                CodingRepository.getInstance().getAllSupportedResponseFormats();
+                this.responseFormatRepository.getAllSupportedResponseFormats();
         for (ServiceOperatorKey sokt : oes.keySet()) {
             for (String responseFormat : oes.get(sokt)) {
                 ResponseFormatKey rfkt = new ResponseFormatKey(sokt, responseFormat);
@@ -118,7 +132,7 @@ public class AdminEncodingController extends AbstractAdminController {
                         .put(JSONConstants.SERVICE_KEY, rfkt.getService())
                         .put(JSONConstants.VERSION_KEY, rfkt.getVersion())
                         .put(JSONConstants.RESPONSE_FORMAT_KEY, rfkt.getResponseFormat())
-                        .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isActive(rfkt));
+                        .put(JSONConstants.ACTIVE_KEY, this.settingsManager.isResponseFormatActive(rfkt));
             }
         }
         return joes;
@@ -128,7 +142,7 @@ public class AdminEncodingController extends AbstractAdminController {
             ConfigurationException {
         ArrayNode jpes = JSONUtils.nodeFactory().arrayNode();
         final Map<ServiceOperatorKey, Set<String>> oes =
-                CodingRepository.getInstance().getAllProcedureDescriptionFormats();
+                this.procedureDescriptionFormatRepository.getAllProcedureDescriptionFormats();
         for (ServiceOperatorKey sokt : oes.keySet()) {
             for (String procedureDescriptionFormat : oes.get(sokt)) {
                 ProcedureDescriptionFormatKey rfkt =
@@ -137,7 +151,7 @@ public class AdminEncodingController extends AbstractAdminController {
                         .put(JSONConstants.SERVICE_KEY, rfkt.getService())
                         .put(JSONConstants.VERSION_KEY, rfkt.getVersion())
                         .put(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT_KEY, rfkt.getProcedureDescriptionFormat())
-                        .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isActive(rfkt));
+                        .put(JSONConstants.ACTIVE_KEY, this.settingsManager.isProcedureDescriptionFormatActive(rfkt));
             }
         }
         return jpes;

@@ -35,6 +35,7 @@ import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.util.Validation;
 import org.n52.sos.exi.EXISettings;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.encode.EncoderKey;
@@ -41,7 +42,7 @@ import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.iceland.w3c.SchemaLocation;
@@ -52,7 +53,7 @@ import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * Response encoder for {@link EXIObject} and {@link OwsExceptionReport}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.2.0
  *
@@ -78,8 +79,8 @@ public class OwsExceptionReportEncoder implements Encoder<EXIObject, OwsExceptio
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override
@@ -125,7 +126,7 @@ public class OwsExceptionReportEncoder implements Encoder<EXIObject, OwsExceptio
 
     /**
      * Getter for encoder, encapsulates the instance call
-     * 
+     *
      * @param key
      *            Encoder key
      * @return Matching encoder

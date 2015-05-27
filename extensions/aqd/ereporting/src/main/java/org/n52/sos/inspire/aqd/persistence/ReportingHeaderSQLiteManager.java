@@ -38,14 +38,14 @@ import org.n52.iceland.decode.JsonDecoderKey;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.encode.Encoder;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.util.JSONUtils;
 import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.lifecycle.Destroyable;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.aqd.ReportObligationType;
-import org.n52.sos.config.sqlite.SQLiteManager;
-import org.n52.sos.config.sqlite.SQLiteManager.ThrowingHibernateAction;
-import org.n52.sos.config.sqlite.SQLiteManager.VoidHibernateAction;
+import org.n52.sos.config.sqlite.SQLiteSessionManager;
+import org.n52.sos.config.sqlite.SQLiteSessionManager.ThrowingHibernateAction;
+import org.n52.sos.config.sqlite.SQLiteSessionManager.VoidHibernateAction;
 import org.n52.sos.encode.json.JSONEncoderKey;
 import org.n52.sos.inspire.aqd.RelatedParty;
 import org.n52.sos.inspire.aqd.ReportObligation;
@@ -57,7 +57,7 @@ public class ReportingHeaderSQLiteManager implements Constructable, Destroyable 
 
     protected static final String REPORT_OBLIGATION_KEY_PREFIX = "reportObligation_";
 
-    private SQLiteManager manager;
+    private SQLiteSessionManager manager;
 
     @Inject
     private CodingRepository codingRepository;
@@ -67,7 +67,7 @@ public class ReportingHeaderSQLiteManager implements Constructable, Destroyable 
 
     @Override
     public void init() {
-        this.manager = new SQLiteManager() {
+        this.manager = new SQLiteSessionManager() {
             @Override
             protected ConnectionProvider createDefaultConnectionProvider() {
                 return sessionFactory;

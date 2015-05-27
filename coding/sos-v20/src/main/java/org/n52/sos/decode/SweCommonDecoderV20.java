@@ -68,6 +68,7 @@ import net.opengis.swe.x20.VectorType.Coordinate;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
+
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.exception.CodedException;
@@ -91,7 +92,7 @@ import org.n52.iceland.ogc.swe.simpleType.SweQuality;
 import org.n52.iceland.ogc.swe.simpleType.SweText;
 import org.n52.iceland.ogc.swe.simpleType.SweTime;
 import org.n52.iceland.ogc.swe.simpleType.SweTimeRange;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.XmlHelper;
@@ -102,6 +103,7 @@ import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCountRange;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,7 +111,7 @@ import com.google.common.base.Joiner;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SweCommonDecoderV20 implements Decoder<Object, Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SweCommonDecoderV20.class);
@@ -131,8 +133,8 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override
@@ -371,7 +373,7 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
         }
         return sosCount;
     }
-    
+
     private SweCountRange parseCountRange(final CountRangeType countRange) throws OwsExceptionReport {
         throw new NotYetSupportedException(SweConstants.EN_COUNT_RANGE);
     }

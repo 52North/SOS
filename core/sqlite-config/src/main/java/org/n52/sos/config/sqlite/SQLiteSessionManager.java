@@ -41,22 +41,15 @@ import org.n52.iceland.lifecycle.Destroyable;
  *
  * @author Christian Autermann
  */
-public abstract class SQLiteManager implements Destroyable {
+public class SQLiteSessionManager implements Destroyable {
     private ConnectionProvider connectionProvider;
 
-    public ConnectionProvider getConnectionProvider() {
-        synchronized (this) {
-            if (!isSetConnectionProvider()) {
-                this.connectionProvider = createDefaultConnectionProvider();
-            }
-        }
-        return connectionProvider;
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.connectionProvider = connectionProvider;
     }
 
-    public void setConnectionProvider(ConnectionProvider connectionProvider) {
-        synchronized (this) {
-            this.connectionProvider = connectionProvider;
-        }
+    public ConnectionProvider getConnectionProvider() {
+        return connectionProvider;
     }
 
     protected boolean isSetConnectionProvider() {
@@ -97,7 +90,7 @@ public abstract class SQLiteManager implements Destroyable {
         }
     }
 
-    public <T> T execute(final ThrowingHibernateAction<T> action)
+    public <T> T execute(ThrowingHibernateAction<T> action)
             throws Exception {
         synchronized (this) {
             Session session = null;
@@ -125,7 +118,9 @@ public abstract class SQLiteManager implements Destroyable {
         }
     }
 
-    protected abstract ConnectionProvider createDefaultConnectionProvider();
+    protected ConnectionProvider createDefaultConnectionProvider() {
+        return new SQLiteSessionFactory();
+    }
 
     public static interface HibernateAction<T> {
         T call(Session session);

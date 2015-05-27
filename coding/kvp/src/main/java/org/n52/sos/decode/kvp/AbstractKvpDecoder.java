@@ -40,6 +40,7 @@ import java.util.RandomAccess;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.decode.Decoder;
@@ -76,12 +77,15 @@ import org.n52.iceland.util.JTSHelper;
 import org.n52.iceland.util.KvpHelper;
 import org.n52.iceland.util.Validation;
 import org.n52.sos.util.SosHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.service.ServiceConstants.SupportedType;
+
 /**
  * @since 4.0.0
- * 
+ *
  */
 @Configurable
 public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceRequest<?>, Map<String, String>> {
@@ -104,8 +108,8 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
     }
 
     @Override
-    public Map<ServiceConstants.SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     public int getStorageEPSG() {
@@ -126,7 +130,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
 
     /**
      * Set storage EPSG code from settings
-     * 
+     *
      * @param epsgCode
      *            EPSG code from settings
      * @throws ConfigurationException
@@ -140,7 +144,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
 
     /**
      * Set storage 3D EPSG code from settings
-     * 
+     *
      * @param epsgCode3D
      *            3D EPSG code from settings
      * @throws ConfigurationException
@@ -154,7 +158,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
 
     /**
      * Set default response EPSG code from settings
-     * 
+     *
      * @param epsgCode
      *            EPSG code from settings
      * @throws ConfigurationException
@@ -168,7 +172,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
 
     /**
      * Set default response 3D EPSG code from settings
-     * 
+     *
      * @param epsgCode3D
      *            3D EPSG code from settings
      * @throws ConfigurationException
@@ -226,7 +230,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
 
     /**
      * Check if service and version are contained in the request
-     * 
+     *
      * @param request
      *            Parsed request
      * @param exceptions
@@ -336,14 +340,14 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
         // order: valueReference, time
         if (parameterValues.size() == 2) {
             filterList.add(createTemporalFilterFromValue(parameterValues.get(1), parameterValues.get(0)));
-        } 
+        }
         // order: valueReference, temporal operator, time
         else if (parameterValues.size() == 3) {
             filterList.add(createTemporalFilterFromValue(parameterValues.get(2), parameterValues.get(1), parameterValues.get(0)));
         } else {
             throw new InvalidParameterValueException().withMessage("The parameter value is not valid!");
         }
-        
+
         return filterList;
     }
 
@@ -371,7 +375,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
             throw new InvalidParameterValueException().withMessage("The paramter value '%s' is invalid!", value);
         }
     }
-    
+
     private TemporalFilter createTemporalFilterFromValue(String value, String operator, String valueReference)
             throws OwsExceptionReport, DateTimeParseException {
         TemporalFilter temporalFilter = new TemporalFilter();

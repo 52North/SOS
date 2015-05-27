@@ -34,13 +34,14 @@ import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.service.spi.Stoppable;
-import org.n52.iceland.ds.ConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.ds.ConnectionProvider;
+
 /**
  * @since 4.0.0
- * 
+ *
  */
 public abstract class AbstractSessionFactoryProvider implements ConnectionProvider {
 
@@ -50,7 +51,7 @@ public abstract class AbstractSessionFactoryProvider implements ConnectionProvid
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.n52.sos.ds.ConnectionProvider#cleanup()
      */
     @Override

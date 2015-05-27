@@ -82,6 +82,7 @@ import net.opengis.swe.x20.DataStreamPropertyType;
 
 import org.apache.xmlbeans.XmlObject;
 import org.isotc211.x2005.gmd.CIResponsiblePartyPropertyType;
+
 import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
@@ -96,7 +97,7 @@ import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swe.SweDataRecord;
 import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.iceland.ogc.swe.simpleType.SweText;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.XmlHelper;
@@ -128,16 +129,20 @@ import org.n52.sos.ogc.sensorML.v20.SmlDataStreamPropertyType;
 import org.n52.sos.ogc.sensorML.v20.SmlFeatureOfInterest;
 import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.service.ServiceConstants.ProcedureDescriptionFormat;
+
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
  * {@link AbstractSensorMLDecoder} class to decode OGC SensorML 2.0
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.2.0
  *
@@ -150,14 +155,16 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
             SensorML20Constants.NS_SML_20, DescribedObjectDocument.class, SimpleProcessDocument.class,
             PhysicalComponentDocument.class, PhysicalSystemDocument.class, AbstractProcessDocument.class);
 
-    private static final Set<String> SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS = Collections
-            .singleton(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL);
-
     private static final Set<String> REMOVABLE_CAPABILITIES_NAMES = Sets
             .newHashSet(SensorMLConstants.ELEMENT_NAME_OFFERINGS);
 
     private static final Set<String> REMOVABLE_COMPONENTS_ROLES = Collections
             .singleton(SensorMLConstants.ELEMENT_NAME_CHILD_PROCEDURES);
+
+    private static final ImmutableSet<SupportedType> SUPPORTED_TYPES
+            = ImmutableSet.<SupportedType>builder()
+            .add(new ProcedureDescriptionFormat(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL))
+            .build();
 
     public SensorMLDecoderV20() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -170,10 +177,10 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.singletonMap(SupportedTypeKey.ProcedureDescriptionFormat,
-                SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS);
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
+
 
     @Override
     public AbstractSensorML decode(XmlObject element) throws OwsExceptionReport, UnsupportedDecoderInputException {
@@ -405,7 +412,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
 
     /**
      * Parses the classification
-     * 
+     *
      * @param classificationArray
      *            XML classification
      * @return SOS classification
@@ -426,12 +433,12 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
 
     /**
      * Parses the characteristics
-     * 
+     *
      * @param characteristicsArray
      *            XML characteristics
      * @return SOS characteristics
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs
      */
@@ -466,13 +473,13 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
     /**
      * Parses the capabilities, processing and removing special insertion
      * metadata
-     * 
+     *
      * @param abstractProcess
      *            The AbstractProcess to which capabilities and insertion
      *            metadata are added
      * @param capabilitiesArray
      *            XML capabilities
-     * 
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs
      */
@@ -719,7 +726,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         }
         return removeComponents;
     }
-    
+
     @SuppressWarnings({ "rawtypes" })
     private SmlIo<?> parseInput(Input xbInput) throws OwsExceptionReport {
         final SmlIo<?> sosIo = new SmlIo();
@@ -727,7 +734,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         sosIo.setIoValue(parseDataComponentOrObservablePropertyType(xbInput));
         return sosIo;
     }
-    
+
     @SuppressWarnings({ "rawtypes" })
     private SmlIo<?> parseOutput(Output xbOutput) throws OwsExceptionReport {
         final SmlIo<?> sosIo = new SmlIo();
@@ -738,12 +745,12 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
 
     /**
      * Parses the components
-     * 
+     *
      * @param adcpt
      *            XML components
      * @return SOS component
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs
      */
@@ -768,7 +775,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
                     "An 'DataComponentOrObservablePropertyType' is not supported");
         }
     }
-    
+
     protected SmlDataInterface parseDataInterfaceType(DataInterfaceType xbDataInterface) throws OwsExceptionReport {
 		SmlDataInterface dataInterface = new SmlDataInterface();
 		// TODO implement- no funding at the moment available
@@ -790,7 +797,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
 	}
 
 	/**
-     * Parse {@link ObservablePropertyType} 
+     * Parse {@link ObservablePropertyType}
      * @param opt Object to parse
      * @return Parsed {@link SweObservableProperty}
      */

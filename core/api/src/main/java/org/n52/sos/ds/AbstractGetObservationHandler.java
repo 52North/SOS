@@ -35,7 +35,9 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
+
 import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.coding.ResponseFormatRepository;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
@@ -53,11 +55,11 @@ import org.n52.sos.util.SosHelper;
 /**
  * interface for getting observations for a passed getObservation request from
  * the data source
- * 
+ *
  * Renamed, in version 4.x called AbstractGetObservationDAO
- * 
+ *
  * @since 5.0.0
- * 
+ *
  */
 public abstract class AbstractGetObservationHandler extends AbstractOperationHandler {
 
@@ -72,7 +74,7 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
         final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version);
         addOfferingParameter(opsMeta);
         addProcedureParameter(opsMeta);
-        opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.responseFormat, CodingRepository
+        opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.responseFormat, ResponseFormatRepository
                 .getInstance().getSupportedResponseFormats(SosConstants.SOS, version));
 
         addObservablePropertyParameter(opsMeta);
@@ -103,10 +105,10 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
 
     /**
      * Get the min/max phenomenon time of contained observations
-     * 
+     *
      * @return min/max phenomenon time
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * If an error occurs.
      */
@@ -120,10 +122,10 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
 
     /**
      * Get the min/max result time of contained observations
-     * 
+     *
      * @return min/max result time
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * If an error occurs.
      */
@@ -145,14 +147,14 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
 
     /**
      * process the GetObservation query
-     * 
+     *
      * @param request
      *            GetObservation object which represents the getObservation
      *            request
-     * 
+     *
      * @return ObservationDocument representing the requested values in an OGC
      *         conform O&M observation document
-     * 
+     *
      * @throws OwsExceptionReport
      *             * if query of the database or creating the O&M document
      *             failed

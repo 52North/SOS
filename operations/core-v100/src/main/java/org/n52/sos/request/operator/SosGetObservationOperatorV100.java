@@ -35,7 +35,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.CodingRepository;
+
+import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
+import org.n52.iceland.coding.ResponseFormatRepository;
 import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.encode.ObservationEncoder;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
@@ -67,7 +69,7 @@ import com.google.common.collect.Lists;
 /**
  * class and forwards requests to the GetObservationDAO; after query of
  * Database, class encodes the ObservationResponse (thru using the IOMEncoder)
- * 
+ *
  * @since 4.0.0
  */
 public class SosGetObservationOperatorV100 extends
@@ -182,10 +184,10 @@ public class SosGetObservationOperatorV100 extends
 
     /**
      * checks if mandatory parameter observed property is correct
-     * 
+     *
      * @param observedProperties
      *            List containing the observed properties of the request
-     * 
+     *
      * @throws OwsExceptionReport
      *             if the parameter does not containing any matching
      *             observedProperty for the requested offering
@@ -214,10 +216,10 @@ public class SosGetObservationOperatorV100 extends
 
     /**
      * checks if the passed offeringId is supported
-     * 
+     *
      * @param offeringIds
      *            the offeringIds to be checked
-     * 
+     *
      * @throws OwsExceptionReport
      *             if the passed offeringId is not supported
      */
@@ -269,7 +271,7 @@ public class SosGetObservationOperatorV100 extends
             throw new MissingResponseFormatParameterException();
         } else {
             Collection<String> supportedResponseFormats =
-                    CodingRepository.getInstance().getSupportedResponseFormats(request.getService(),
+                    ResponseFormatRepository.getInstance().getSupportedResponseFormats(request.getService(),
                             request.getVersion());
             if (!supportedResponseFormats.contains(request.getResponseFormat())) {
                 throw new InvalidResponseFormatParameterException(request.getResponseFormat());

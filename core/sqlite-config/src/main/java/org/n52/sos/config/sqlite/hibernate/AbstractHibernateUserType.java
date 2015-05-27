@@ -26,28 +26,64 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.config.sqlite;
+package org.n52.sos.config.sqlite.hibernate;
 
-import java.io.File;
+import java.io.Serializable;
+
+import org.hibernate.HibernateException;
+import org.hibernate.usertype.UserType;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann <c.autermann@52north.org>
  */
-public class HibernateFileType extends AbstractStringBasedHibernateUserType<File> {
+public abstract class AbstractHibernateUserType implements UserType {
 
-    public HibernateFileType() {
-        super(File.class);
+    private final Class<?> clazz;
+
+    public AbstractHibernateUserType(Class<?> clazz) {
+        this.clazz = clazz;
     }
 
     @Override
-    protected File decode(String s) {
-        return new File(s);
+    public Class<?> returnedClass() {
+        return this.clazz;
     }
 
     @Override
-    protected String encode(File t) {
-        return t.getPath();
+    public Object assemble(Serializable cached, Object owner) throws HibernateException {
+        return (Serializable) deepCopy(cached);
+    }
+
+    @Override
+    public Serializable disassemble(Object value) throws HibernateException {
+        return (Serializable) deepCopy(value);
+    }
+
+    @Override
+    public boolean equals(Object x, Object y) throws HibernateException {
+        if (x == y) {
+            return true;
+        } else if (x == null || y == null) {
+            return false;
+        } else {
+            return x.equals(y);
+        }
+    }
+
+    @Override
+    public int hashCode(Object x) throws HibernateException {
+        return (x != null) ? x.hashCode() : 0;
+    }
+
+    @Override
+    public boolean isMutable() {
+        return false;
+    }
+
+    @Override
+    public Object replace(Object original, Object target, Object owner) throws HibernateException {
+        return original;
     }
 }

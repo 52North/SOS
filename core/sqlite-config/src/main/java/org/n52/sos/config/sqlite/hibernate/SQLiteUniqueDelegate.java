@@ -26,36 +26,26 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.config.sqlite;
+package org.n52.sos.config.sqlite.hibernate;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.unique.DefaultUniqueDelegate;
+import org.hibernate.metamodel.relational.Column;
 
-import org.hibernate.HibernateException;
-import org.hibernate.TypeMismatchException;
+public class SQLiteUniqueDelegate extends DefaultUniqueDelegate {
 
-/**
- * TODO JavaDoc
- *
- * @author Christian Autermann <c.autermann@52north.org>
- */
-public class HibernateUriType extends AbstractStringBasedHibernateUserType<URI> {
-
-    public HibernateUriType() {
-        super(URI.class);
+    public SQLiteUniqueDelegate(Dialect dialect) {
+        super(dialect);
     }
-
+    
     @Override
-    protected URI decode(String s) throws HibernateException {
-        try {
-            return new URI(s);
-        } catch (URISyntaxException e) {
-            throw new TypeMismatchException(String.format("Error while creating URL from %s", s));
-        }
+    public String getColumnDefinitionUniquenessFragment(Column column) {
+            return " UNIQUE";
+    }
+    
+    @Override
+    public String getColumnDefinitionUniquenessFragment(org.hibernate.mapping.Column column) {
+        return " UNIQUE";
     }
 
-    @Override
-    protected String encode(URI t) throws HibernateException {
-        return t.toString();
-    }
 }

@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds;
 
-import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.sos.Sos2Constants;
@@ -37,9 +37,9 @@ import org.n52.sos.response.UpdateSensorResponse;
 
 /**
  * Renamed, in version 4.x called AbstractUpdateSensorDescriptionDAO
- * 
+ *
  * @since 5.0.0
- * 
+ *
  */
 public abstract class AbstractUpdateSensorDescriptionHandler extends AbstractOperationHandler {
 
@@ -53,7 +53,7 @@ public abstract class AbstractUpdateSensorDescriptionHandler extends AbstractOpe
         addProcedureParameter(opsMeta);
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
             opsMeta.addPossibleValuesParameter(Sos2Constants.UpdateSensorDescriptionParams.procedureDescriptionFormat,
-                    CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(service, version));
+                    ProcedureDescriptionFormatRepository.getInstance().getSupportedProcedureDescriptionFormats(service, version));
         }
         opsMeta.addAnyParameterValue(Sos2Constants.UpdateSensorDescriptionParams.description);
     }

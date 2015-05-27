@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.encode.Encoder;
@@ -45,13 +46,14 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.ResponseFormat;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.exi.EXIObject;
 import org.n52.sos.response.StreamingDataResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +62,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Abstract response encoder class for {@link EXIObject}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.2.0
  *
@@ -75,7 +77,7 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> imple
 
     /**
      * Constructor
-     * 
+     *
      * @param type
      *            Concrete {@link AbstractServiceResponse} class
      * @param operation
@@ -91,7 +93,7 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> imple
 
     /**
      * Constructor
-     * 
+     *
      * @param type
      *            Concrete {@link AbstractServiceResponse} class
      * @param operation
@@ -125,8 +127,8 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> imple
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override
@@ -157,7 +159,7 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> imple
     /**
      * Get the {@link Encoder} for the {@link AbstractServiceResponse} and the
      * requested contentType
-     * 
+     *
      * @param asr
      *            {@link AbstractServiceResponse} to get {@link Encoder} for
      * @return {@link Encoder} for the {@link AbstractServiceResponse}
@@ -174,7 +176,7 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> imple
 
     /**
      * Getter for encoder, encapsulates the instance call
-     * 
+     *
      * @param key
      *            Encoder key
      * @return Matching encoder
@@ -185,7 +187,7 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> imple
 
     /**
      * Get encoding {@link MediaType} from {@link AbstractServiceResponse}
-     * 
+     *
      * @param asr
      *            {@link AbstractServiceResponse} to get content type from
      * @return Encoding {@link MediaType}
@@ -199,7 +201,7 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> imple
 
     /**
      * Get encoding {@link MediaType} from {@link ResponseFormat}
-     * 
+     *
      * @param responseFormat
      *            {@link ResponseFormat} to get content type from
      * @return Encoding {@link MediaType}

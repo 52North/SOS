@@ -67,6 +67,7 @@ import net.opengis.sos.x20.ResultTemplateType.ObservationTemplate;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
+
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
@@ -90,7 +91,7 @@ import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.service.AbstractServiceCommunicationObject;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.XmlHelper;
@@ -108,6 +109,7 @@ import org.n52.sos.request.InsertResultRequest;
 import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.response.GetResultResponse;
 import org.n52.sos.response.GetResultTemplateResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -147,8 +149,8 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override

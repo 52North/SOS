@@ -47,6 +47,7 @@ import org.joda.time.DateTime;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.CodedException;
@@ -58,6 +59,7 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.HibernateObservationBuilder;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,7 +133,6 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         } finally {
             returnSession(session);
         }
-        SettingsManager.getInstance().destroy();
     }
 
     @Test

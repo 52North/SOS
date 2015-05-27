@@ -45,13 +45,13 @@ import org.n52.iceland.ogc.swes.SwesExtensionImpl;
 @MappedSuperclass
 public class Activatable<K extends Serializable, T extends Activatable<K, T>> extends SwesExtensionImpl<String> implements Serializable{
     private static final long serialVersionUID = -1470828735015412115L;
-	
+
 	public static final String ACTIVE = "active";
 	public static final String COMPOSITE_KEY = "id";
-	
+
     @Id
     private K key;
-	
+
 	@Column(name = ACTIVE)
     private boolean active;
 

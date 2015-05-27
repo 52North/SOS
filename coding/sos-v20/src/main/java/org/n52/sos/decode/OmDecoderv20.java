@@ -43,6 +43,7 @@ import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
+
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.exception.CodedException;
@@ -83,17 +84,19 @@ import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.ogc.swe.SweDataArray;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.w3c.xlink.W3CHrefAttribute;
 import org.n52.sos.ogc.gml.GmlMeasureType;
 import org.n52.sos.ogc.sensorML.SensorML;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.service.ServiceConstants.ObservationType;
+
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -101,23 +104,34 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class OmDecoderv20 implements Decoder<Object, Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OmDecoderv20.class);
 
-    private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.decoderKeysForElements(OmConstants.NS_OM_2,
-            OMObservationType.class, NamedValuePropertyType.class, NamedValuePropertyType[].class);
+    private static final Set<DecoderKey> DECODER_KEYS = CodingHelper
+            .decoderKeysForElements(OmConstants.NS_OM_2,
+                                    OMObservationType.class,
+                                    NamedValuePropertyType.class,
+                                    NamedValuePropertyType[].class);
 
-    private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = ImmutableMap.of(
-            SupportedTypeKey.ObservationType, (Set<String>) ImmutableSet.of(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION,
-                    OmConstants.OBS_TYPE_CATEGORY_OBSERVATION, OmConstants.OBS_TYPE_COUNT_OBSERVATION,
-                    OmConstants.OBS_TYPE_MEASUREMENT, OmConstants.OBS_TYPE_TEXT_OBSERVATION,
-                    OmConstants.OBS_TYPE_TRUTH_OBSERVATION, OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION));
+    private static final Set<SupportedType> SUPPORTED_TYPES = ImmutableSet
+            .<SupportedType>builder()
+            .add(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION_TYPE)
+            //.add(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_COUNT_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_MEASUREMENT_TYPE)
+            .add(OmConstants.OBS_TYPE_TEXT_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_TRUTH_OBSERVATION_TYPE)
+            .build();
 
-    private static final Set<String> CONFORMANCE_CLASSES = ImmutableSet.of(ConformanceClasses.OM_V2_MEASUREMENT,
-            ConformanceClasses.OM_V2_CATEGORY_OBSERVATION, ConformanceClasses.OM_V2_COUNT_OBSERVATION,
+    private static final Set<String> CONFORMANCE_CLASSES = ImmutableSet.of(
+            ConformanceClasses.OM_V2_MEASUREMENT,
+            ConformanceClasses.OM_V2_CATEGORY_OBSERVATION,
+            ConformanceClasses.OM_V2_COUNT_OBSERVATION,
             ConformanceClasses.OM_V2_TRUTH_OBSERVATION,
             // ConformanceClasses.OM_V2_GEOMETRY_OBSERVATION,
             ConformanceClasses.OM_V2_TEXT_OBSERVATION);
@@ -133,8 +147,8 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.unmodifiableMap(SUPPORTED_TYPES);
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
 
     @Override

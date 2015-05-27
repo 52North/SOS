@@ -45,11 +45,8 @@ import java.util.Set;
 import net.opengis.swes.x20.InsertSensorResponseDocument;
 
 import org.apache.xmlbeans.XmlObject;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.config.SettingsManager;
+
 import org.n52.iceland.encode.EncoderKey;
 import org.n52.iceland.encode.OperationEncoderKey;
 import org.n52.iceland.encode.XmlEncoderKey;
@@ -72,15 +69,6 @@ import com.google.common.collect.Maps;
  * @since 4.0.0
  */
 public class InsertSensorResponseEncoderTest {
-    @BeforeClass
-    public static void initDecoders() {
-        CodingRepository.getInstance();
-    }
-
-    @AfterClass
-    public static void cleanUp() {
-        SettingsManager.getInstance().destroy();
-    }
 
     @Test
     public void should_return_correct_encoder_keys() {

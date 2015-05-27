@@ -26,64 +26,37 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.config.sqlite;
+package org.n52.sos.config.sqlite.hibernate;
 
-import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.hibernate.HibernateException;
-import org.hibernate.usertype.UserType;
+import org.hibernate.TypeMismatchException;
+
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann <c.autermann@52north.org>
  */
-public abstract class AbstractHibernateUserType implements UserType {
+public class HibernateUriType extends AbstractStringBasedHibernateUserType<URI> {
 
-    private Class<?> clazz;
-
-    public AbstractHibernateUserType(Class<?> clazz) {
-        this.clazz = clazz;
+    public HibernateUriType() {
+        super(URI.class);
     }
 
     @Override
-    public Class<?> returnedClass() {
-        return this.clazz;
-    }
-
-    @Override
-    public Object assemble(Serializable cached, Object owner) throws HibernateException {
-        return (Serializable) deepCopy(cached);
-    }
-
-    @Override
-    public Serializable disassemble(Object value) throws HibernateException {
-        return (Serializable) deepCopy(value);
-    }
-
-    @Override
-    public boolean equals(Object x, Object y) throws HibernateException {
-        if (x == y) {
-            return true;
-        } else if (x == null || y == null) {
-            return false;
-        } else {
-            return x.equals(y);
+    protected URI decode(String s) throws HibernateException {
+        try {
+            return new URI(s);
+        } catch (URISyntaxException e) {
+            throw new TypeMismatchException(String.format("Error while creating URL from %s", s));
         }
     }
 
     @Override
-    public int hashCode(Object x) throws HibernateException {
-        return (x != null) ? x.hashCode() : 0;
-    }
-
-    @Override
-    public boolean isMutable() {
-        return false;
-    }
-
-    @Override
-    public Object replace(Object original, Object target, Object owner) throws HibernateException {
-        return original;
+    protected String encode(URI t) throws HibernateException {
+        return t.toString();
     }
 }

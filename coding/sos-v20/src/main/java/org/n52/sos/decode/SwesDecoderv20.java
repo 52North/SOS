@@ -53,6 +53,7 @@ import net.opengis.swes.x20.UpdateSensorDescriptionType.Description;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.DecoderKey;
@@ -74,7 +75,7 @@ import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.ogc.swes.SwesConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.service.AbstractServiceCommunicationObject;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.XmlHelper;
@@ -85,6 +86,7 @@ import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.request.UpdateSensorRequest;
 import org.n52.sos.util.SosHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -95,7 +97,7 @@ import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<AbstractServiceCommunicationObject, XmlObject> {
 
@@ -120,8 +122,8 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override
@@ -149,12 +151,12 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
     /**
      * parses the passes XmlBeans document and creates a SOS describeSensor
      * request
-     * 
+     *
      * @param xbDescSenDoc
      *            XmlBeans document representing the describeSensor request
      * @return Returns SOS describeSensor request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if validation of the request failed
      */
@@ -243,12 +245,12 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
 
     /**
      * parses the Xmlbeans UpdateSensorDescription document to a SOS request.
-     * 
+     *
      * @param xbUpSenDoc
      *            UpdateSensorDescription document
      * @return SOS UpdateSensor request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs.
      */

@@ -54,6 +54,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.n52.iceland.config.AdministratorUser;
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingValue;
@@ -84,6 +85,7 @@ import org.n52.sos.config.sqlite.entities.MultilingualStringSettingValue;
 import org.n52.sos.config.sqlite.entities.NumericSettingValue;
 import org.n52.sos.config.sqlite.entities.StringSettingValue;
 import org.n52.sos.config.sqlite.entities.UriSettingValue;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,7 +134,7 @@ public class SQLiteSettingsManagerTest {
 
     @Before
     public void setUp() throws ConfigurationException {
-        SQLiteSettingsManager manager = new ExtensionEnabledSQLiteSettingsManager();
+        SQLiteSettingsManagerDao manager = new ExtensionEnabledSQLiteSettingsManager();
         manager.setConnectionProvider(connectionProvider);
         this.settingsManager = manager;
     }
@@ -255,30 +257,30 @@ public class SQLiteSettingsManagerTest {
     public void testActiveOperations() throws ConnectionProviderException {
 
 
-        assertThat(settingsManager.isActive(ROKT), is(true));
+        assertThat(settingsManager.isRequestOperatorActive(ROKT), is(true));
         settingsManager.setActive(ROKT, true);
-        assertThat(settingsManager.isActive(ROKT), is(true));
+        assertThat(settingsManager.isRequestOperatorActive(ROKT), is(true));
         settingsManager.setActive(ROKT, false);
-        assertThat(settingsManager.isActive(ROKT), is(false));
+        assertThat(settingsManager.isRequestOperatorActive(ROKT), is(false));
 
     }
 
     @Test
     public void testActiveResponseFormats() throws ConnectionProviderException {
-        assertThat(settingsManager.isActive(RFKT), is(true));
+        assertThat(settingsManager.isResponseFormatActive(RFKT), is(true));
         settingsManager.setActive(RFKT, true);
-        assertThat(settingsManager.isActive(RFKT), is(true));
+        assertThat(settingsManager.isResponseFormatActive(RFKT), is(true));
         settingsManager.setActive(RFKT, false);
-        assertThat(settingsManager.isActive(RFKT), is(false));
+        assertThat(settingsManager.isResponseFormatActive(RFKT), is(false));
     }
 
     @Test
     public void testActiveProcedureDescriptionFormats() throws ConnectionProviderException {
-        assertThat(settingsManager.isActive(PDFKT), is(true));
+        assertThat(settingsManager.isProcedureDescriptionFormatActive(PDFKT), is(true));
         settingsManager.setActive(PDFKT, true);
-        assertThat(settingsManager.isActive(PDFKT), is(true));
+        assertThat(settingsManager.isProcedureDescriptionFormatActive(PDFKT), is(true));
         settingsManager.setActive(PDFKT, false);
-        assertThat(settingsManager.isActive(PDFKT), is(false));
+        assertThat(settingsManager.isProcedureDescriptionFormatActive(PDFKT), is(false));
 
 //        assertThat(settingsManager.isActive(PROCEDURE_DESCRIPTION_FORMAT), is(true));
 //        settingsManager.setActive(PROCEDURE_DESCRIPTION_FORMAT, true);

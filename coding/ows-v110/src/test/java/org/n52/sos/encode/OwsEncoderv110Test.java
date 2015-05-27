@@ -41,9 +41,8 @@ import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.ows.x11.ServiceIdentificationDocument.ServiceIdentification;
 
 import org.apache.xmlbeans.XmlObject;
-import org.junit.AfterClass;
 import org.junit.Test;
-import org.n52.iceland.config.SettingsManager;
+
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OWSConstants;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
@@ -64,11 +63,6 @@ import org.n52.iceland.util.CollectionHelper;
 public class OwsEncoderv110Test {
 
     private final OwsEncoderv110 encoder = new OwsEncoderv110();
-
-    @AfterClass
-    public static void cleanUp() {
-        SettingsManager.getInstance().destroy();
-    }
 
     @Test
     public final void should_encode_Exception_into_owsExceptionReport_by_default() throws OwsExceptionReport {

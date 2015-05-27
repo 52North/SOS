@@ -62,12 +62,13 @@ import org.isotc211.x2005.gmd.DQDomainConsistencyPropertyType;
 import org.isotc211.x2005.gmd.DQDomainConsistencyType;
 import org.isotc211.x2005.gmd.DQQuantitativeResultType;
 import org.isotc211.x2005.gmd.DQResultPropertyType;
+
 import org.n52.iceland.encode.EncoderKey;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.util.XmlOptionsHelper;
@@ -82,6 +83,7 @@ import org.n52.sos.iso.gmd.GmdQuantitativeResult;
 import org.n52.sos.iso.gmd.GmlBaseUnit;
 import org.n52.sos.ogc.sensorML.Role;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,8 +131,8 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override

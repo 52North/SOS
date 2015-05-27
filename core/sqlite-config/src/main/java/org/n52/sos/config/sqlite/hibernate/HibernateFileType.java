@@ -26,26 +26,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.config.sqlite;
+package org.n52.sos.config.sqlite.hibernate;
 
-import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.unique.DefaultUniqueDelegate;
-import org.hibernate.metamodel.relational.Column;
+import java.io.File;
 
-public class SQLiteUniqueDelegate extends DefaultUniqueDelegate {
 
-    public SQLiteUniqueDelegate(Dialect dialect) {
-        super(dialect);
+/**
+ * TODO JavaDoc
+ *
+ * @author Christian Autermann <c.autermann@52north.org>
+ */
+public class HibernateFileType extends AbstractStringBasedHibernateUserType<File> {
+
+    public HibernateFileType() {
+        super(File.class);
     }
-    
+
     @Override
-    public String getColumnDefinitionUniquenessFragment(Column column) {
-            return " UNIQUE";
-    }
-    
-    @Override
-    public String getColumnDefinitionUniquenessFragment(org.hibernate.mapping.Column column) {
-        return " UNIQUE";
+    protected File decode(String s) {
+        return new File(s);
     }
 
+    @Override
+    protected String encode(File t) {
+        return t.getPath();
+    }
 }

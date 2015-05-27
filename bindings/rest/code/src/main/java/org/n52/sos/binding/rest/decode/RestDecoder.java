@@ -47,7 +47,7 @@ import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.OperationNotSupportedException;
 import org.n52.iceland.exception.ows.concrete.ContentTypeNotSupportedException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.http.HTTPHeaders;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.iceland.util.http.HTTPUtils;
@@ -214,8 +214,8 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override

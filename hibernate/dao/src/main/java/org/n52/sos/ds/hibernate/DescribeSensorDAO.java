@@ -37,7 +37,8 @@ import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.n52.iceland.coding.CodingRepository;
+
+import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
@@ -89,7 +90,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler {
     public DescribeSensorDAO() {
         super(SosConstants.SOS);
     }
-    
+
     @Override
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
@@ -212,7 +213,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler {
         Set<String> possibleFormats = checkForUrlVsMimeType(procedureDescriptionFormat);
         String procedureDescriptionFormatMatchingString =
                 getProcedureDescriptionFormatMatchingString(procedureDescriptionFormat);
-        for (Entry<ServiceOperatorKey, Set<String>> pdfByServiceOperatorKey : CodingRepository.getInstance()
+        for (Entry<ServiceOperatorKey, Set<String>> pdfByServiceOperatorKey : ProcedureDescriptionFormatRepository.getInstance()
                 .getAllProcedureDescriptionFormats().entrySet()) {
             for (String pdfFromRepository : pdfByServiceOperatorKey.getValue()) {
                 if (procedureDescriptionFormatMatchingString
@@ -238,7 +239,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler {
         // match against lowercase string, ignoring whitespace
         return procedureDescriptionFormat.toLowerCase().replaceAll("\\s", "");
     }
-    
+
     private Set<String> checkForUrlVsMimeType(String procedureDescriptionFormat) {
     	 Set<String> possibleFormats = Sets.newHashSet();
     	 possibleFormats.add(procedureDescriptionFormat);
@@ -249,7 +250,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler {
          }
          return possibleFormats;
     }
-    
+
 
     private SosProcedureDescription convertProcedureDescription(SosProcedureDescription procedureDescription,
             DescribeSensorRequest request) throws CodedException {

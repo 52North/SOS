@@ -31,12 +31,12 @@ package org.n52.sos.cache;
 import java.util.Set;
 
 import org.n52.iceland.cache.ContentCache;
-import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.coding.SupportedTypeRepository;
 
 /**
  * Readable content cache that gets static information from the configurator (or
  * its delegates).
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
@@ -45,11 +45,11 @@ public abstract class AbstractStaticContentCache implements ContentCache {
 
     @Override
     public Set<String> getObservationTypes() {
-        return CodingRepository.getInstance().getObservationTypes();
+        return SupportedTypeRepository.getInstance().getObservationTypesAsString();
     }
 
     @Override
     public Set<String> getFeatureOfInterestTypes() {
-        return CodingRepository.getInstance().getFeatureOfInterestTypes();
+        return SupportedTypeRepository.getInstance().getFeatureOfInterestTypesAsString();
     }
 }

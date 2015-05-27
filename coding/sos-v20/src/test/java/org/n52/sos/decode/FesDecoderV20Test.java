@@ -45,7 +45,7 @@ import org.n52.sos.ogc.filter.FilterConstants;
 /**
  * FES 2.0 decoder test class
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * 
  * @since 4.0.0
  * 

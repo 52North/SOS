@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract Hibernate streaming value class for old observation concept
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */

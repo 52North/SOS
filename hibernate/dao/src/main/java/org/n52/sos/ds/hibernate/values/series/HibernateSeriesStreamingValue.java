@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract Hibernate series streaming value class for the series concept
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.2
  *
  */

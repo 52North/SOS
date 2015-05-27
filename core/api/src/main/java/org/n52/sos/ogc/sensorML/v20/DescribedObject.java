@@ -34,7 +34,7 @@ package org.n52.sos.ogc.sensorML.v20;
  * super-/subclass is inverted in the API.
  * 
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

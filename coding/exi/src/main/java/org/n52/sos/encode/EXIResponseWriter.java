@@ -55,7 +55,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * 
  * Converts XML documents via EXI encoding using {@link EXISettings}.
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

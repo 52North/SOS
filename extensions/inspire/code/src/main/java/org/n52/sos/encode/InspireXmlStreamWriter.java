@@ -74,7 +74,7 @@ import com.google.common.html.HtmlEscapers;
 /**
  * XML stream writer for INSPIRE DLS ExtendedCapabilities
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  * 
  */

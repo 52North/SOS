@@ -72,7 +72,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * Binding implementation for EXI - Efficient XML Interchange See See <a
  * href="http://www.w3.org/TR/exi/">http://www.w3.org/TR/exi/</a>
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

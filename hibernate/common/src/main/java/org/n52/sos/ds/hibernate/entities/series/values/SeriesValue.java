@@ -43,7 +43,7 @@ import org.n52.sos.ogc.om.values.Value;
  * Implementation of {@link AbstractValue} for series concept used in streaming
  * datasource
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */

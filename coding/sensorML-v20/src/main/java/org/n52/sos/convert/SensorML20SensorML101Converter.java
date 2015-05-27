@@ -56,7 +56,7 @@ import com.google.common.base.Joiner;
  * {@link Converter} class to convert SensorML 2.0 to SensorML 1.0.1 and the
  * other way round.
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

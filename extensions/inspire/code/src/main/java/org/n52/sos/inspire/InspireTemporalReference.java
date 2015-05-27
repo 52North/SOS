@@ -39,7 +39,7 @@ import com.google.common.collect.Lists;
 /**
  * Service internal representation of INSPIRE temporal reference
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  * 
  */

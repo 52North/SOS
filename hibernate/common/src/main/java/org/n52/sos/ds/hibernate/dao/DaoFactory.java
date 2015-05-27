@@ -56,7 +56,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 /**
  * Hibernate data access factory.
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  *
  */

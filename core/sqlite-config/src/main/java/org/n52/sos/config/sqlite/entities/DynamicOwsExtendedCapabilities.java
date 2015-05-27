@@ -35,7 +35,7 @@ import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesKey;
 /**
  * Entity to store the active/inactive dynamic OWS ExtendedCapabilities extensions
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  * 
  */

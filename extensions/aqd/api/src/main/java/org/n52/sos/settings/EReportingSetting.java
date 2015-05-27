@@ -40,7 +40,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Setting definition provider for AQD e-Reporting definitions
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */

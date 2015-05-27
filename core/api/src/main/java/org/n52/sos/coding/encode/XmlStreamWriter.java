@@ -44,7 +44,7 @@ import com.google.common.xml.XmlEscapers;
 /**
  * Abstract {@link XmlWriter} class for {@link XMLStreamWriter}
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.2
  *
  */

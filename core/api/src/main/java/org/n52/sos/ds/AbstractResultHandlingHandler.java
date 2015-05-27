@@ -39,7 +39,7 @@ import org.n52.sos.ogc.swe.SweDataRecord;
  * 
  * Renamed, in version 4.x called AbstractResultHandlingDAO
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 5.0.0
  * 
  */

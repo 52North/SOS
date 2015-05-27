@@ -52,7 +52,7 @@ import com.google.common.base.Joiner;
  * {@link Decoder} class to decode ISO TC211 Geographic COmmon (GCO) extensible
  * markup language.
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

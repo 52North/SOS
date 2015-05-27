@@ -45,7 +45,7 @@ import com.google.common.base.Joiner;
 /**
  * String request {@link Decoder} for SOS 2.0 requests
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 5.0.0
  *
  */

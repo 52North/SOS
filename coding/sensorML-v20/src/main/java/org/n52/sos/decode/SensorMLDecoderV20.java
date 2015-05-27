@@ -139,7 +139,7 @@ import com.google.common.collect.Sets;
 /**
  * {@link AbstractSensorMLDecoder} class to decode OGC SensorML 2.0
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

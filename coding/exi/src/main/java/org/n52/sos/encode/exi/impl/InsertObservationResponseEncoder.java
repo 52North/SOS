@@ -35,7 +35,7 @@ import org.n52.sos.response.InsertObservationResponse;
 /**
  * Response encoder for {@link InsertObservationResponse}
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

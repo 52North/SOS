@@ -36,7 +36,7 @@ import org.apache.xmlbeans.XmlObject;
  * Class to hold the {@link XmlObject} which should be encoded and written to
  * the {@link OutputStream}.
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

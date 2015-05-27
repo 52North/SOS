@@ -75,7 +75,7 @@ import com.google.common.collect.Sets;
  * contains the flexible identifier flag, the identifiers in the responses would
  * be replaced with the flexible identifier.
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */

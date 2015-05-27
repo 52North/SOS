@@ -33,7 +33,7 @@ import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 /**
  * Implementation of {@link AbstractHibernateI18NMetadata} for {@link ObservableProperty}
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  *
  */

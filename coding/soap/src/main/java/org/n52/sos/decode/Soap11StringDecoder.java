@@ -39,7 +39,7 @@ import com.google.common.base.Joiner;
 /**
  * SOAP 1.1 {@link Decoder} for {@link String} XML representation
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 1.0.0
  *
  */

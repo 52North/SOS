@@ -35,7 +35,7 @@ import org.n52.iceland.coding.encode.ResponseWriterFactory;
  * {@link ResponseWriterFactory} implementation for {@link XmlObject} and
  * {@link XmlResponseWriter}
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */

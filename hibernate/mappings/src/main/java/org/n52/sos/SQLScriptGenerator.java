@@ -50,7 +50,7 @@ import com.google.common.collect.Lists;
  * Currently supported spatial databases to create scripts - PostgreSQL/PostGIS
  * - Oracle - H2/GeoDB
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  * 
  */

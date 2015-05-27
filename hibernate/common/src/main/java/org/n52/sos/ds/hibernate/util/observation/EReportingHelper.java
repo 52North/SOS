@@ -70,7 +70,7 @@ import com.google.common.collect.Sets;
 /**
  * Helper class for eReporting.
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */

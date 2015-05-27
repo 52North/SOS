@@ -45,7 +45,7 @@ import org.n52.sos.request.GetObservationRequest;
 /**
  * Streaming observation class for series concept
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.2
  *
  */

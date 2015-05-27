@@ -47,7 +47,7 @@ import org.n52.sos.inspire.InspireUniqueResourceIdentifier;
 /**
  * Super interface for INSPIRE capabilities
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  * 
  */
@@ -56,7 +56,7 @@ public interface InspireCapabilities {
     /**
      * INSPIRE capabilities resource locator interface
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.1.0
      * 
      */
@@ -99,7 +99,7 @@ public interface InspireCapabilities {
     /**
      * INSPIRE capabilities metadata URL interface
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.1.0
      * 
      */
@@ -131,7 +131,7 @@ public interface InspireCapabilities {
     /**
      * INSPIRE capabilities supported languages interface
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.1.0
      * 
      */
@@ -163,7 +163,7 @@ public interface InspireCapabilities {
     /**
      * INSPIRE capabilities response language interface
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.1.0
      * 
      */
@@ -195,7 +195,7 @@ public interface InspireCapabilities {
     /**
      * INSPIRE capabilities spatial dataset identifier interface
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.1.0
      * 
      */
@@ -238,7 +238,7 @@ public interface InspireCapabilities {
     /**
      * INSPIRE capabilities resource type interface
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.1.0
      * 
      */
@@ -270,7 +270,7 @@ public interface InspireCapabilities {
     /**
      * INSPIRE capabilities temporal reference interface
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.1.0
      * 
      */
@@ -311,7 +311,7 @@ public interface InspireCapabilities {
     /**
      * INSPIRE capabilities conformity interface
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.1.0
      * 
      */
@@ -352,7 +352,7 @@ public interface InspireCapabilities {
     /**
      * INSPIRE capabilities metadata point of contact interface
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.1.0
      * 
      */
@@ -395,7 +395,7 @@ public interface InspireCapabilities {
     /**
      * INSPIRE capabilities metadata date interface
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.1.0
      * 
      */
@@ -427,7 +427,7 @@ public interface InspireCapabilities {
     /**
      * INSPIRE capabilities spatial data service type interface
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.1.0
      * 
      */
@@ -455,7 +455,7 @@ public interface InspireCapabilities {
     /**
      * INSPIRE capabilities mandatory keywords interface
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.1.0
      * 
      */
@@ -497,7 +497,7 @@ public interface InspireCapabilities {
     /**
      * INSPIRE capabilities keywords interface
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.1.0
      * 
      */
@@ -538,7 +538,7 @@ public interface InspireCapabilities {
     /**
      * INSPIRE capabilities supported CRSes interface
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.1.0
      * 
      */
@@ -569,7 +569,7 @@ public interface InspireCapabilities {
     /**
      * INSPIRE capabilities spatial data service type
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.1.0
      * 
      */
@@ -580,7 +580,7 @@ public interface InspireCapabilities {
     /**
      * INSPIRE capabilities service spatial data resource type
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.1.0
      * 
      */

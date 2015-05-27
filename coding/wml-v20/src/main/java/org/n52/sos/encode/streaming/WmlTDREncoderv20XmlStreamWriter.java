@@ -38,7 +38,7 @@ import org.n52.sos.ogc.om.OmObservation;
  * Implementation of {@link AbstractOmV20XmlStreamWriter} to write WaterML 2.0
  * Domain Range encoded {@link OmObservation}s to stream
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */

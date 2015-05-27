@@ -34,7 +34,7 @@ import org.n52.sos.ef.EfEnvironmentalMonitoringFacility;
 /**
  * Class represents an AQD_SamplingPoint
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */

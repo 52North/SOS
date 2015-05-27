@@ -41,7 +41,7 @@ import org.n52.sos.request.GetObservationRequest;
 /**
  * Hibernate streaming value implementation for {@link ScrollableResults}
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  */
 public class HibernateScrollableStreamingValue extends HibernateStreamingValue {

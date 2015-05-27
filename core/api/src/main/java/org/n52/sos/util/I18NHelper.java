@@ -44,7 +44,7 @@ import com.google.common.base.Optional;
 /**
  * Helper class for I18N support
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */

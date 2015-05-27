@@ -61,7 +61,7 @@ import com.google.common.collect.Sets;
 /**
  * Abstract response encoder class for {@link EXIObject}
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  * @param <T>

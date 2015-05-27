@@ -107,7 +107,7 @@ import com.vividsolutions.jts.geom.Geometry;
 /**
  * Abstract Hibernate data access class for observations.
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  *
  */
@@ -1227,7 +1227,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * Inner class to carry observation identifiers (featureOfInterest,
      * observableProperty, procedure)
      *
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.0.0
      *
      */

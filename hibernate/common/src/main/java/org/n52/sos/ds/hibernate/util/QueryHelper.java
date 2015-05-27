@@ -38,6 +38,7 @@ import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
@@ -49,7 +50,6 @@ import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.request.SpatialFeatureQueryRequest;
 
 import com.google.common.collect.Lists;

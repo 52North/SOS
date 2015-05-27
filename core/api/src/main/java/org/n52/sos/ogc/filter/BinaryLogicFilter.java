@@ -30,7 +30,7 @@ package org.n52.sos.ogc.filter;
 
 import java.util.Set;
 
-import org.n52.sos.ogc.filter.FilterConstants.BinaryLogicOperator;
+import org.n52.iceland.ogc.filter.FilterConstants.BinaryLogicOperator;
 
 import com.google.common.collect.Sets;
 

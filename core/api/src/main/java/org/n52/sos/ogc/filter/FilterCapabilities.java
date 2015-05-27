@@ -39,12 +39,12 @@ import java.util.TreeSet;
 
 import javax.xml.namespace.QName;
 
+import org.n52.iceland.ogc.filter.FilterConstants.ComparisonOperator;
+import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.iceland.ogc.ows.OwsDomainType;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.QNameComparator;
-import org.n52.sos.ogc.filter.FilterConstants.ComparisonOperator;
-import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 
 import com.google.common.collect.Lists;
 

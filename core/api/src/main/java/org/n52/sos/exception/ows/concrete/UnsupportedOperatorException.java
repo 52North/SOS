@@ -29,8 +29,8 @@
 package org.n52.sos.exception.ows.concrete;
 
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

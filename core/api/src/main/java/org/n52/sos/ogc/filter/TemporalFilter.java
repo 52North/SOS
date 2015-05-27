@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ogc.filter;
 
+import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 
 /**
  * Temporal filter class

@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.filter;
 
-import org.n52.sos.ogc.filter.FilterConstants.SortOrder;
+import org.n52.iceland.ogc.filter.FilterConstants.SortOrder;
 
 /**
  * SOS class for FES SortProperty element

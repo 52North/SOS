@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.filter;
 
-import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
 
 import com.vividsolutions.jts.geom.Geometry;
 

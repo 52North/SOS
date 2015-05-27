@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.filter;
 
-import org.n52.sos.ogc.filter.FilterConstants.UnaryLogicOperator;
+import org.n52.iceland.ogc.filter.FilterConstants.UnaryLogicOperator;
 
 /**
  * SOS class for unary logic filter "NOT"

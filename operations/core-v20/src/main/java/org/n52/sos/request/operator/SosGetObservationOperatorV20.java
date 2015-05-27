@@ -37,6 +37,7 @@ import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
@@ -51,7 +52,6 @@ import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterExcept
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
 import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.SosHelper;

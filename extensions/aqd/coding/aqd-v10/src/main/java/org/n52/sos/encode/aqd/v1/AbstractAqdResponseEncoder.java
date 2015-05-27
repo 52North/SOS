@@ -41,6 +41,7 @@ import org.n52.iceland.coding.encode.OperationEncoderKey;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
+import org.n52.iceland.ogc.filter.FilterConstants;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.ows.OWSConstants;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
@@ -56,7 +57,6 @@ import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.coding.encode.AbstractResponseEncoder;
 import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
-import org.n52.sos.ogc.filter.FilterConstants;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 

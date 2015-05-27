@@ -30,8 +30,8 @@ package org.n52.sos.ogc.filter;
 
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.filter.FilterConstants.ComparisonOperator;
 import org.n52.iceland.util.StringHelper;
-import org.n52.sos.ogc.filter.FilterConstants.ComparisonOperator;
 
 /**
  * SOS class for result filter

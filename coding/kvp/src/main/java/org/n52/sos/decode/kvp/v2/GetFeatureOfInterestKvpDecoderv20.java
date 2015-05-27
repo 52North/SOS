@@ -43,6 +43,7 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
 import org.n52.iceland.exception.ows.concrete.ParameterNotSupportedException;
+import org.n52.iceland.ogc.filter.FilterConstants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.CollectionHelper;
@@ -101,7 +102,7 @@ public class GetFeatureOfInterestKvpDecoderv20 extends AbstractKvpDecoder {
                             throw new MissingParameterValueException(parameterName);
                         }
                         KvpHelper.checkParameterSingleValue(splittedParameterValues.get(0),
-                                SosConstants.Filter.ValueReference);
+                                FilterConstants.Expression.ValueReference);
                         KvpHelper.checkParameterMultipleValues(splittedParameterValues, parameterName);
     
                         spatialFilters.add(parseSpatialFilter(splittedParameterValues, parameterName));

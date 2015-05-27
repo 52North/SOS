@@ -29,7 +29,7 @@
 package org.n52.sos.exception.ows.concrete;
 
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.filter.FilterConstants;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -40,6 +40,6 @@ public class InvalidValueReferenceException extends InvalidParameterValueExcepti
     private static final long serialVersionUID = 4751250325590494752L;
 
     public InvalidValueReferenceException(String value) {
-        super(SosConstants.Filter.ValueReference, value);
+        super(FilterConstants.Expression.ValueReference, value);
     }
 }

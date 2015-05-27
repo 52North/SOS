@@ -38,8 +38,8 @@ import org.n52.iceland.util.StringHelper;
  * 
  * @param <T>
  *            operator type, e.g.
- *            {@link org.n52.sos.ogc.filter.FilterConstants.TimeOperator},
- *            {@link org.n52.sos.ogc.filter.FilterConstants.SpatialOperator}
+ *            {@link org.n52.iceland.ogc.filter.FilterConstants.TimeOperator},
+ *            {@link org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator}
  */
 public abstract class Filter<T> implements AbstractSelectionClause {
 

@@ -3,17 +3,17 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
-    <bean id="sqliteSettingValueFactory" class="org.n52.sos.config.sqlite.SQLiteSettingValueFactory" />
+    <bean id="settingValueFactory" class="org.n52.sos.config.sqlite.SQLiteSettingValueFactory" />
 
-    <bean class="org.n52.sos.config.sqlite.SosSQLiteActivationDao">
+    <bean id="activationDao" class="org.n52.sos.config.sqlite.SosSQLiteActivationDao">
         <property name="sessionFactory" ref="configurationSQLiteSessionFactory" />
     </bean>
 
-    <bean class="org.n52.sos.config.sqlite.SQLiteCapabilitiesExtensionService">
+    <bean id="settingsManagerDao" class="org.n52.sos.config.sqlite.SQLiteSettingsManagerDao">
         <property name="sessionFactory" ref="configurationSQLiteSessionFactory" />
     </bean>
 
-    <bean class="org.n52.sos.config.sqlite.SQLiteSettingsManagerDao">
+    <bean id="adminUserDao" class="org.n52.sos.config.sqlite.SQLiteAdminUserDao">
         <property name="sessionFactory" ref="configurationSQLiteSessionFactory" />
     </bean>
 

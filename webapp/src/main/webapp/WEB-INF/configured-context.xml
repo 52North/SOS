@@ -14,4 +14,8 @@
 
     <import resource="sos-context.xml" />
 
+    <bean class="org.n52.sos.config.sqlite.SQLiteCapabilitiesExtensionService">
+        <property name="sessionFactory" ref="configurationSQLiteSessionFactory" />
+    </bean>
+
 </beans>

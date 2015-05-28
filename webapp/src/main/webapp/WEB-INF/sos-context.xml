@@ -3,6 +3,40 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
+    <bean class="org.n52.iceland.util.activation.ActivationRegistrator">
+        <property name="listeners">
+            <map>
+                <entry key-ref="bindingRepository" value="#{activationService.bindingListener}" />
+                <entry key-ref="owsExtendedCapabilitiesRepository" value="#{activationService.owsExtendedCapabiltiesListener}"/>
+                <entry key-ref="requestOperatorRepository" value="#{activationService.requestOperatorListener}"/>
+            </map>
+        </property>
+        <property name="initializers">
+            <map>
+                <entry key-ref="bindingRepository" value="#{activationService.bindingInitializer}" />
+                <entry key-ref="owsExtendedCapabilitiesRepository" value="#{activationService.owsExtendedCapabiltiesInitializer}"/>
+                <entry key-ref="requestOperatorRepository" value="#{activationService.requestOperatorInitializer}" />
+            </map>
+        </property>
+    </bean>
+
+     <bean class="org.n52.iceland.util.activation.ActivationRegistrator">
+        <property name="listeners">
+            <map>
+                <entry key-ref="offeringExtensionRepository" value="#{activationService.offeringExtensionListener}" />
+                <entry key-ref="procedureDescriptionFormatRepository" value="#{activationService.procedureDescriptionFormatListener}"/>
+                <entry key-ref="responseFormatRepository" value="#{activationService.responseFormatListener}" />
+            </map>
+        </property>
+        <property name="initializers">
+            <map>
+                <entry key-ref="offeringExtensionRepository" value="#{activationService.offeringExtensionInitializer}" />
+                <entry key-ref="procedureDescriptionFormatRepository" value="#{activationService.procedureDescriptionFormatInitializer}" />
+                <entry key-ref="responseFormatRepository" value="#{activationService.responseFormatInitializer}" />
+            </map>
+        </property>
+    </bean>
+
     <bean id="icelandServlet" class="org.n52.iceland.service.Service" />
 
     <bean id="configurator" class="org.n52.iceland.service.Configurator" />
@@ -22,10 +56,9 @@
     <bean id="requestResponseModifierRepository" class="org.n52.iceland.convert.RequestResponseModifierRepository" />
     <bean id="serviceOperatorRepository" class="org.n52.iceland.service.operator.ServiceOperatorRepository" />
     <bean id="i18nDaoRepository" class="org.n52.iceland.i18n.I18NDAORepository" />
-    <bean id="owsExtendedCapabilitiesRepository" class="org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesRepository" />
+    <bean id="owsExtendedCapabilitiesRepository" class="org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderRepository" />
     <bean id="offeringExtensionRepository" class="org.n52.iceland.ogc.swes.OfferingExtensionRepository" />
     <bean id="capabilitiesExtensionRepository" class="org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository" />
-    <bean id="settingDefinitionProviderRepository" class="org.n52.iceland.config.SettingDefinitionProviderRepository" />
 
     <bean id="codingRepository" class="org.n52.iceland.coding.CodingRepository" />
 
@@ -46,8 +79,8 @@
 
     <bean id="additionalObservationCreatorRepository"
           class="org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository" />
-    <bean id="hibernateProcedureDescriptionGeneratorRepository"
-          class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorRepository" />
+    <bean id="hibernateProcedureDescriptionGeneratorFactoryRepository"
+          class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository" />
     <bean id="geometryHandler" class="org.n52.sos.util.GeometryHandler" />
 
     <bean class="org.n52.sos.service.DriverCleanupListener" />

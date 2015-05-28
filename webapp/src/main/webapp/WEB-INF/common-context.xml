@@ -14,12 +14,6 @@
 
     <ctx:annotation-config />
 
-    <!-- load controllers for client -->
-    <ctx:component-scan base-package="org.n52.sos.web.client" />
-
-    <!-- load controllers for pages that are always present -->
-    <ctx:component-scan base-package="org.n52.sos.web.common" />
-
     <!-- Placeholder for the ContextSwitcher. This will be substituted as soon as
          the ApplicationContext is refreshed. -->
     <bean id="contextSwitcherSwapper" class="org.springframework.aop.target.HotSwappableTargetSource">
@@ -41,5 +35,17 @@
     <import resource="security-context.xml" />
 
     <bean id="configLocationProvider" class="org.n52.iceland.service.ServletConfigLocationProvider" />
+
+    <bean id="settingsService" class="org.n52.iceland.config.SettingsManager" />
+    <bean id="activationService" class="org.n52.iceland.config.SosActivationService" />
+
+    <import resource="components/common/settings-definitions.xml" />
+    <import resource="components/common/settings-sqlite.xml" />
+
+    <!-- load controllers for client -->
+    <ctx:component-scan base-package="org.n52.sos.web.client" />
+
+    <!-- load controllers for pages that are always present -->
+    <ctx:component-scan base-package="org.n52.sos.web.common" />
 
 </beans>

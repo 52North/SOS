@@ -46,7 +46,6 @@ import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.ds.OperationHandlerKey;
-import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.Constraint;
 import org.n52.iceland.ogc.ows.DCP;

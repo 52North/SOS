@@ -80,7 +80,7 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      * Set of offering identifiers to keep track for which offerings we already
      * updated the spatial bounding box.
      */
-    private final Set<String> updatedOfferingBoundingBoxes = new HashSet<String>(0);
+    private final Set<String> updatedOfferingBoundingBoxes = new HashSet<>(0);
 
     public void setDeletedObservation(OmObservation deletedObservation) {
         this.o = deletedObservation;
@@ -103,7 +103,7 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      *             if the FeatureQueryHandler fails
      */
     protected SosEnvelope getEnvelope(Set<String> features) throws OwsExceptionReport {
-        final Set<String> dbFeatures = new HashSet<String>(features.size());
+        final Set<String> dbFeatures = new HashSet<>(features.size());
         for (String feature : features) {
             dbFeatures.add(CacheHelper.removePrefixAndGetFeatureIdentifier(feature));
         }

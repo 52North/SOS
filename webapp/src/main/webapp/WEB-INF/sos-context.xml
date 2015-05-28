@@ -3,6 +3,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
+    <bean id="cacheFeederDao" class="org.n52.sos.ds.hibernate.SosCacheFeederDAO" />
+    <bean id="procedureFormatDao" class="org.n52.sos.ds.hibernate.admin.HibernateProcedureFormatDAO" />
+
     <bean class="org.n52.iceland.util.activation.ActivationRegistrator">
         <property name="listeners">
             <map>

@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -46,14 +48,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.decode.OperationDecoderKey;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.Configurator;
-import org.n52.iceland.component.ServiceLoaderHelper;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.ds.ProcedureFormatDAO;
 import org.n52.sos.web.common.ControllerConstants;
@@ -117,14 +118,19 @@ public class SensorDescriptionController extends AbstractAdminController {
             Sos2Constants.Operations.DeleteSensor.name(),
             MediaTypes.APPLICATION_SOAP_XML);
 
+    @Inject
     private ProcedureFormatDAO dao;
+    @Inject
+    private ContentCacheController contentCacheController;
+    @Inject
+    private BindingRepository bindingRepository;
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() throws OwsExceptionReport {
         Map<String, Object> model = new HashMap<String, Object>(5);
 		boolean getKvp = false, getSoap = false, update = false, delete = false;
         try {
-			for (Binding b : BindingRepository.getInstance().getBindings().values()) {
+			for (Binding b : this.bindingRepository.getBindings().values()) {
 				if (b.checkOperationHttpGetSupported(DESCRIBE_SENSOR_DECODER_KEY_KVP)) {
 					getKvp = true;
 				}
@@ -156,18 +162,11 @@ public class SensorDescriptionController extends AbstractAdminController {
         model.put(IS_DELETE_SENSOR_SUPPORTED, delete);
         model.put(IS_UPDATE_SENSOR_SUPPORTED, update);
         model.put(IS_DESCRIBE_SENSOR_SUPPORTED, getKvp||getSoap);
-        List<String> procedures = Lists.newArrayList(Configurator.getInstance().getCache().getProcedures());
+        List<String> procedures = Lists.newArrayList(this.contentCacheController.getCache().getProcedures());
         Collections.sort(procedures);
         model.put(SENSORS, procedures);
-        model.put(PROCEDURE_FORMAT_MAP, getProcedureFormatDao().getProcedureFormatMap());
+        model.put(PROCEDURE_FORMAT_MAP, this.dao.getProcedureFormatMap());
         return new ModelAndView(ControllerConstants.Views.ADMIN_SENSOR_DESCRIPTIONS, model);
-    }
-
-    private ProcedureFormatDAO getProcedureFormatDao() throws NoImplementationFoundException {
-        if (this.dao == null) {
-            this.dao = ServiceLoaderHelper.loadImplementation(ProcedureFormatDAO.class);
-        }
-        return this.dao;
     }
 
     @ResponseBody

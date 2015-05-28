@@ -32,15 +32,7 @@ package org.n52.sos.web.admin;
 import java.util.Collections;
 import java.util.List;
 
-import org.n52.iceland.cache.ContentCache;
-import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.Configurator;
-import org.n52.iceland.component.ServiceLoaderHelper;
-import org.n52.sos.ds.RenameDAO;
-import org.n52.sos.exception.AlreadyUsedIdentifierException;
-import org.n52.sos.exception.NoSuchObservablePropertyException;
-import org.n52.sos.web.common.ControllerConstants;
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +46,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import org.n52.iceland.cache.ContentCache;
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ds.RenameDAO;
+import org.n52.sos.exception.AlreadyUsedIdentifierException;
+import org.n52.sos.exception.NoSuchObservablePropertyException;
+import org.n52.sos.web.common.ControllerConstants;
+
 import com.google.common.collect.Lists;
 
 /**
@@ -65,11 +66,15 @@ public class AdminRenameObservablePropertyController extends AbstractAdminContro
     public static final String OLD_IDENTIFIER_REQUEST_PARAM = "old";
     public static final String NEW_IDENTIFIER_REQUEST_PARAM = "new";
     private static final Logger log = LoggerFactory.getLogger(AdminRenameObservablePropertyController.class);
+    @Inject
     private RenameDAO dao;
+    @Inject
+    private ContentCacheController contentCacheController;
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() {
-        List<String> observableProperties = Lists.newArrayList(getCache().getObservableProperties());
+        ContentCache cache = this.contentCacheController.getCache();
+        List<String> observableProperties = Lists.newArrayList(cache.getObservableProperties());
         Collections.sort(observableProperties);
         return new ModelAndView(ControllerConstants.Views.ADMIN_RENAME_OBSERVABLE_PROPERTIES,
                                 "observableProperties", observableProperties);
@@ -82,22 +87,17 @@ public class AdminRenameObservablePropertyController extends AbstractAdminContro
             throws NoSuchObservablePropertyException, OwsExceptionReport, NoImplementationFoundException,
                    AlreadyUsedIdentifierException {
         log.info("Changing observable property: {} -> {}", oldName, newName);
-        if (!getCache().hasObservableProperty(oldName)) {
+        ContentCache cache = this.contentCacheController.getCache();
+        if (!cache.hasObservableProperty(oldName)) {
             throw new NoSuchObservablePropertyException(oldName);
         }
-        if (getCache().hasObservableProperty(newName)) {
+        if (cache.hasObservableProperty(newName)) {
             throw new AlreadyUsedIdentifierException(newName);
         }
-        getRenameDao().renameObservableProperty(oldName, newName);
+        this.dao.renameObservableProperty(oldName, newName);
         updateCache();
 }
 
-    private RenameDAO getRenameDao() throws NoImplementationFoundException {
-        if (this.dao == null) {
-            this.dao = ServiceLoaderHelper.loadImplementation(RenameDAO.class);
-        }
-        return this.dao;
-    }
 
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -127,8 +127,5 @@ public class AdminRenameObservablePropertyController extends AbstractAdminContro
         return String.format("The identifier %s is not assigned!", e.getIdentifier());
     }
 
-    protected ContentCache getCache() {
-        return Configurator.getInstance().getCache();
-    }
 
 }

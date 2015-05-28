@@ -28,13 +28,14 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import javax.inject.Inject;
+
 import org.hibernate.Session;
 
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.Configurator;
 
 /**
  * @since 4.0.0
@@ -42,21 +43,11 @@ import org.n52.iceland.service.Configurator;
  */
 public class HibernateSessionHolder {
 
-    private final ConnectionProvider connectionProvider;
+    private ConnectionProvider connectionProvider;
 
-    public HibernateSessionHolder() {
-        this(Configurator.getInstance().getDataConnectionProvider());
-    }
-
-    public HibernateSessionHolder(ConnectionProvider connectionProvider) {
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
-    }
-
-    public static Session getSession(Object connection) throws OwsExceptionReport {
-        if (!(connection instanceof Session)) {
-            throw new NoApplicableCodeException().withMessage("The parameter connection is not an Hibernate Session!");
-        }
-        return (Session) connection;
     }
 
     public Session getSession() throws OwsExceptionReport {
@@ -69,5 +60,12 @@ public class HibernateSessionHolder {
 
     public void returnSession(Session session) {
         this.connectionProvider.returnConnection(session);
+    }
+
+    public static Session getSession(Object connection) throws OwsExceptionReport {
+        if (!(connection instanceof Session)) {
+            throw new NoApplicableCodeException().withMessage("The parameter connection is not an Hibernate Session!");
+        }
+        return (Session) connection;
     }
 }

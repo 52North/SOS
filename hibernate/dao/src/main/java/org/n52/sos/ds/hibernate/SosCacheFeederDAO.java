@@ -37,6 +37,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
@@ -49,12 +52,10 @@ import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Validation;
 import org.n52.sos.ds.hibernate.cache.InitialCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.OfferingCacheUpdate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of the interface CacheFeederDAO
- * 
+ *
  * @since 4.0.0
  */
 @Configurable
@@ -119,7 +120,7 @@ public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFe
         update.setCache(cache);
         update.setErrors(errors);
         update.setSession(session);
-        
+
         LOGGER.info("Starting offering cache update for {} offering(s)", offeringsNeedingUpdate.size());
         long cacheUpdateStartTime = System.currentTimeMillis();
 
@@ -141,14 +142,14 @@ public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFe
     private void checkCacheNotNull(WritableContentCache cache) {
         if (cache == null) {
             throw new NullPointerException("cache is null");
-        }        
+        }
     }
 
     private void logCacheLoadTime(long startTime) {
         Period cacheLoadPeriod = new Period(startTime, System.currentTimeMillis());
         LOGGER.info("Cache load finished in {} ({} seconds)",
                 PeriodFormat.getDefault().print(cacheLoadPeriod.normalizedStandard()),
-                cacheLoadPeriod.toStandardSeconds());         
+                cacheLoadPeriod.toStandardSeconds());
     }
 
     @Override

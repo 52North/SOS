@@ -28,10 +28,16 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
+import javax.inject.Inject;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
@@ -39,8 +45,6 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Updates the cache after a Observation was deleted. Uses the deleted
@@ -54,15 +58,16 @@ public class HibernateDeleteObservationCacheFeederDAO extends DeleteObservationC
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateDeleteObservationCacheFeederDAO.class);
 
-    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
-
+    private HibernateSessionHolder sessionHolder;
     private Session session;
-
     private AbstractObservationDAO observationDAO = null;
-
     private final OfferingDAO offeringDAO = new OfferingDAO();
-
     private final ProcedureDAO procedureDAO = new ProcedureDAO();
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder();
+    }
 
     @Override
     protected boolean isLastForProcedure(String feature, String procedure) throws OwsExceptionReport {

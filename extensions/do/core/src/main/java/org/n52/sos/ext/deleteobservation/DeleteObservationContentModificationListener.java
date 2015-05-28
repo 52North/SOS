@@ -31,12 +31,15 @@ package org.n52.sos.ext.deleteobservation;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.event.ServiceEvent;
 import org.n52.iceland.event.ServiceEventListener;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.Configurator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -48,6 +51,19 @@ public class DeleteObservationContentModificationListener implements ServiceEven
     private static final Set<Class<? extends ServiceEvent>> TYPES = Collections
             .<Class<? extends ServiceEvent>> singleton(DeleteObservationEvent.class);
 
+    private ContentCacheController contentCacheController;
+    private DeleteObservationCacheFeederDAO cacheFeederDAO;
+
+    @Inject
+    public void setCacheFeederDAO(DeleteObservationCacheFeederDAO cacheFeederDAO) {
+        this.cacheFeederDAO = cacheFeederDAO;
+    }
+
+    @Inject
+    public void setContentCacheController(ContentCacheController contentCacheController) {
+        this.contentCacheController = contentCacheController;
+    }
+
     @Override
     public Set<Class<? extends ServiceEvent>> getTypes() {
         return Collections.unmodifiableSet(TYPES);
@@ -58,10 +74,10 @@ public class DeleteObservationContentModificationListener implements ServiceEven
         if (event instanceof DeleteObservationEvent) {
             DeleteObservationEvent e = (DeleteObservationEvent) event;
             DeleteObservationCacheControllerUpdate update =
-                    new DeleteObservationCacheControllerUpdate(e.getDeletedObservation());
+                    new DeleteObservationCacheControllerUpdate(this.cacheFeederDAO, e.getDeletedObservation());
             LOGGER.debug("Updating Cache after content modification: {}", update);
             try {
-                Configurator.getInstance().getCacheController().update(update);
+                this.contentCacheController.update(update);
             } catch (OwsExceptionReport ex) {
                 LOGGER.error("Error processing Event", ex);
             }

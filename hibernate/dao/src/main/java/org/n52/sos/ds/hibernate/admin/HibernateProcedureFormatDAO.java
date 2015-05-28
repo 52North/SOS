@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.admin;
 import java.util.Map;
 
 import org.hibernate.Session;
+
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.ProcedureFormatDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
@@ -39,19 +40,18 @@ import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 /**
  * @author Shane StClair <shane@axiomalaska.com>
  */
-public class HibernateProcedureFormatDAO implements ProcedureFormatDAO {
-    private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+public class HibernateProcedureFormatDAO extends HibernateSessionHolder implements ProcedureFormatDAO {
 
     @Override
     public Map<String, String> getProcedureFormatMap() throws OwsExceptionReport {
-        Session s = null;
+        Session session = null;
         Map<String,String> procedureFormatMap = null;
         try {
-            s = sessionHolder.getSession();
-            procedureFormatMap = new ProcedureDAO().getProcedureFormatMap(s);
+            session = getSession();
+            procedureFormatMap = new ProcedureDAO().getProcedureFormatMap(session);
         } finally {
-            sessionHolder.returnSession(s);
-        }        
+            returnSession(session);
+        }
         return procedureFormatMap;
     }
 }

@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
-import static org.n52.iceland.component.ConfiguringSingletonServiceLoader.loadAndConfigure;
-
 import java.util.List;
 
 import org.n52.iceland.cache.ContentCacheUpdate;
@@ -41,7 +39,7 @@ import org.n52.iceland.util.CollectionHelper;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 1.0.0
  */
 public class DeleteObservationCacheControllerUpdate extends ContentCacheUpdate {
@@ -49,17 +47,12 @@ public class DeleteObservationCacheControllerUpdate extends ContentCacheUpdate {
 
     private DeleteObservationCacheFeederDAO cacheFeederDAO;
 
-    public DeleteObservationCacheControllerUpdate(OmObservation o) {
+    public DeleteObservationCacheControllerUpdate(DeleteObservationCacheFeederDAO dao, OmObservation o) {
+        this.cacheFeederDAO = dao;
         this.o = o;
     }
 
     protected DeleteObservationCacheFeederDAO getDao() throws NoImplementationFoundException {
-        if (cacheFeederDAO == null) {
-            cacheFeederDAO = loadAndConfigure(DeleteObservationCacheFeederDAO.class, false);
-            if (cacheFeederDAO == null) {
-                throw new NoImplementationFoundException(DeleteObservationCacheFeederDAO.class);
-            }
-        }
         return cacheFeederDAO;
     }
 

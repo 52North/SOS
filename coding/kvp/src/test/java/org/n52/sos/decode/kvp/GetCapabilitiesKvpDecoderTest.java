@@ -46,7 +46,7 @@ import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;
 
 /**
- * @author Shane StClair <shane@axiomalaska.com>
+ * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  * @since 4.0.0
  */
 public class GetCapabilitiesKvpDecoderTest extends DeleteSensorKvpDecoderv20 {

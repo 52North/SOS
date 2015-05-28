@@ -61,7 +61,7 @@ import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import com.google.common.collect.Lists;
 
 /**
- * @author Carsten Hollmann
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * 
  * @since 4.0.0
  */

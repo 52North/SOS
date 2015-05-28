@@ -46,7 +46,7 @@ import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;
 import org.n52.sos.request.DescribeSensorRequest;
 
 /**
- * @author Shane StClair <shane@axiomalaska.com>
+ * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  * @since 4.0.0
  */
 public class DescribeSensorKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 {

@@ -40,7 +40,7 @@ import com.google.common.base.Objects;
  * Interface for the SOS internal representation of SWE simpleTypes
  * 
  * @param <T>
- * @author Carsten Hollmann
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  */
 public abstract class SweAbstractSimpleType<T> extends SweAbstractDataComponent implements Value<T, SweAbstractSimpleType<T>> {

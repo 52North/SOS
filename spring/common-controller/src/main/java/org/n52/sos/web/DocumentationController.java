@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 /**
  * {@link AbstractController} for documentaion JSP.
  * 
- * @author Carsten Hollmann
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * 
  * @since 4.3.0
  * 

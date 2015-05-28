@@ -40,7 +40,7 @@ import org.n52.iceland.config.settings.StringSettingDefinition;
 import com.google.common.collect.Sets;
 
 /**
- * @author Shane StClair <shane@axiomalaska.com>
+ * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  * 
  * @since 4.0.0
  */

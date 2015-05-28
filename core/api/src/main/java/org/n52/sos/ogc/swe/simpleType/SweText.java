@@ -35,7 +35,7 @@ import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 /**
  * SOS internal representation of SWE simpleType text
  * 
- * @author Carsten Hollmann
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  */
 public class SweText extends SweAbstractSimpleType<String> implements Comparable<SweText>, SweQuality {

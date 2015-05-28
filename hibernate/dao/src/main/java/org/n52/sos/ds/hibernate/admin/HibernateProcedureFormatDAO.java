@@ -37,7 +37,7 @@ import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 
 /**
- * @author Shane StClair <shane@axiomalaska.com>
+ * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  */
 public class HibernateProcedureFormatDAO implements ProcedureFormatDAO {
     private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();

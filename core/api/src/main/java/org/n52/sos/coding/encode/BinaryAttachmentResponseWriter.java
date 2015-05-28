@@ -40,7 +40,7 @@ import com.google.common.base.Strings;
 /**
  * Writer for ServiceResponse (containing ByteArrayOutputStream)
  * 
- * @author Shane StClair <shane@axiomalaska.com>
+ * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  * 
  * @since 4.1.0
  */

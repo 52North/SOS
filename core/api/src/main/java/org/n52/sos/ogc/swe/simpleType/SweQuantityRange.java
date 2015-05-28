@@ -34,7 +34,7 @@ import org.n52.sos.ogc.swe.RangeValue;
 /**
  * SOS internal representation of SWE simpleType quantity
  * 
- * @author Carsten Hollmann
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  */
 public class SweQuantityRange extends SweAbstractUomType<RangeValue<Double>> implements SweQuality {

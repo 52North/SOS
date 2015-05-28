@@ -34,7 +34,7 @@ import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
 import org.n52.iceland.util.ServiceLoaderHelper;
 
 /**
- * @author Shane StClair <shane@axiomalaska.com>
+ * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  * 
  * @since 4.0.2
  */

@@ -33,7 +33,7 @@ import java.util.Map;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 
 /**
- * @author Shane StClair <shane@axiomalaska.com>
+ * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  */
 public interface ProcedureFormatDAO {
     Map<String,String> getProcedureFormatMap() throws OwsExceptionReport;

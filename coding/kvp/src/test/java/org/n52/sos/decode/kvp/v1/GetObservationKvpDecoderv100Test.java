@@ -52,7 +52,7 @@ import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.request.GetObservationRequest;
 
 /**
- * @author Shane StClair <shane@axiomalaska.com>
+ * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  * @since 4.0.0
  */
 public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 {

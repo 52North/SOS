@@ -211,8 +211,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
         try {
             this.settingsManager.deleteAll();
         } catch (Throwable e) {
-            throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_DELETE_PREVIOUS_SETTINGS,
-                    e.getMessage()));
+            throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_DELETE_PREVIOUS_SETTINGS, e.getMessage()), e);
         }
     }
 }

@@ -31,11 +31,6 @@ package org.n52.sos.ds.hibernate;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.inject.Inject;
-
-import org.n52.iceland.cache.ContentCache;
-import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionKey;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
 
@@ -44,10 +39,6 @@ import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
  * @author Christian Autermann
  */
 public abstract class AbstractCapabilitiesExtensionProvider implements CapabilitiesExtensionProvider {
-    @Inject
-    private CodingRepository codingRepository;
-    @Inject
-    private ContentCacheController contentCacheController;
     private final String operation;
     private final CapabilitiesExtensionKey key;
 
@@ -57,7 +48,6 @@ public abstract class AbstractCapabilitiesExtensionProvider implements Capabilit
         this.operation = operation;
         this.key = new CapabilitiesExtensionKey(service, version);
     }
-
 
     @Override
     @Deprecated
@@ -78,14 +68,6 @@ public abstract class AbstractCapabilitiesExtensionProvider implements Capabilit
     @Override
     public Set<CapabilitiesExtensionKey> getKeys() {
         return Collections.singleton(this.key);
-    }
-
-    protected ContentCache getCache() {
-        return this.contentCacheController.getCache();
-    }
-
-    protected CodingRepository getCodingRepository() {
-        return this.codingRepository;
     }
 
 }

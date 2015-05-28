@@ -32,6 +32,8 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.logging.Level;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -40,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import org.n52.iceland.config.SettingValue;
+import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.service.ServiceSettings;
@@ -56,23 +59,18 @@ public class GetInvolvedController extends AbstractController {
 
     public static final String SERVICE_URL_MODEL_ATTRIBUTE = "serviceUrl";
 
+    @Inject
+    private SettingsManager settingsManager;
+
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() {
         SettingValue<URI> setting = null;
         try {
-            setting = getSettingsManager().getSetting(ServiceSettings.SERVICE_URL);
-        } catch (ConfigurationException ex) {
+            setting = this.settingsManager.getSetting(ServiceSettings.SERVICE_URL);
+        } catch (ConfigurationException | ConnectionProviderException ex) {
             LOG.error("Could not load service url", ex);
-        } catch (ConnectionProviderException ex) {
-            java.util.logging.Logger.getLogger(GetInvolvedController.class.getName())
-                    .log(Level.SEVERE, null, ex);
         }
-        Serializable url = setting == null
-                           ? ""
-                           : setting.getValue() == null
-                             ? ""
-                             : setting.getValue();
-
+        Serializable url = setting == null ? "" : setting.getValue() == null ? "" : setting.getValue();
         return new ModelAndView(ControllerConstants.Views.GET_INVOLVED, SERVICE_URL_MODEL_ATTRIBUTE, url);
     }
 }

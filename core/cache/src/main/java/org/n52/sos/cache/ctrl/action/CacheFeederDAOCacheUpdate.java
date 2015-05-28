@@ -10,11 +10,11 @@
  * the following licenses, the combination of the program with the linked
  * library is not considered a "derivative work" of the program:
  *
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
+ * - Apache License, version 2.0
+ * - Apache Software License, version 1.0
+ * - GNU Lesser General Public License, version 3
+ * - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ * - Common Development and Distribution License (CDDL), version 1.0
  *
  * Therefore the distribution of the program linked with libraries licensed
  * under the aforementioned licenses, is permitted by the copyright holders
@@ -30,24 +30,21 @@ package org.n52.sos.cache.ctrl.action;
 
 import org.n52.iceland.cache.ContentCacheUpdate;
 import org.n52.iceland.ds.CacheFeederHandler;
-import org.n52.iceland.ds.CacheFeederHandlerRepository;
-import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class CacheFeederDAOCacheUpdate extends ContentCacheUpdate {
-    private CacheFeederHandler cacheFeederDAO;
+    private final CacheFeederHandler cacheFeederDAO;
 
-    protected CacheFeederHandler getDao() throws NoImplementationFoundException {
-        if (this.cacheFeederDAO == null) {
-            this.cacheFeederDAO = CacheFeederHandlerRepository.getInstance().getCacheFeederHandler();
-            if (this.cacheFeederDAO == null) {
-                throw new NoImplementationFoundException(CacheFeederHandler.class);
-            }
-        }
-        return this.cacheFeederDAO;
+    public CacheFeederDAOCacheUpdate(CacheFeederHandler cacheFeederDAO) {
+        this.cacheFeederDAO = cacheFeederDAO;
     }
+
+    public CacheFeederHandler getCacheFeederDAO() {
+        return cacheFeederDAO;
+    }
+
 }

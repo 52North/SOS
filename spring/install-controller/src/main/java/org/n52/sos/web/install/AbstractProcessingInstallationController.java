@@ -50,7 +50,7 @@ import org.n52.iceland.exception.JSONException;
  * @since 4.0.0
  */
 @Controller
-public abstract class AbstractProcessingInstallationController extends AbstractInstallController {
+public abstract class AbstractProcessingInstallationController extends AbstractInstallStepController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView get(HttpServletRequest req)

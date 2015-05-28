@@ -34,6 +34,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingDefinitionGroup;
+import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.util.CollectionHelper;
@@ -68,12 +71,15 @@ public class SettingDefinitonController extends AbstractController {
     private static final SettingDefinitionGroup DEFAULT_SETTINGS_GROUP = new SettingDefinitionGroup()
             .setTitle("Settings");
 
+    @Inject
+    private SettingsManager settingsManager;
+
     private final SettingDefinitionEncoder encoder = new SettingDefinitionEncoder();
 
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.SETTING_DEFINITIONS, method = RequestMethod.GET, produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public String get(@RequestParam(value = "showAll", defaultValue="true") boolean showAll , @RequestParam(value = "only", required=false) String only) throws ConfigurationException, JSONException {
-        Set<SettingDefinition<?, ?>> defs = getSettingsManager().getSettingDefinitions();
+        Set<SettingDefinition<?, ?>> defs = this.settingsManager.getSettingDefinitions();
         Map<SettingDefinitionGroup, Set<SettingDefinition>> grouped;
         if (StringHelper.isNotEmpty(only)) {
             grouped = sortByGroup(defs, false, StringHelper.splitToSet(only));

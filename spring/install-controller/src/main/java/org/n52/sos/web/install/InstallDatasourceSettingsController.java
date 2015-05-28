@@ -63,11 +63,11 @@ import com.google.common.collect.Maps;
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.INSTALL_DATASOURCE_DIALECTS)
-public class InstallDatasourceSettingsController extends AbstractController {
+public class InstallDatasourceSettingsController extends AbstractInstallController {
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
     public String get(HttpSession session) throws JSONException {
-        InstallationConfiguration c = AbstractInstallController.getSettings(session);
+        InstallationConfiguration c = getSettings(session);
         Map<String, Datasource> datasources = getDatasources();
         return JSONUtils.print(encode(c, datasources));
     }

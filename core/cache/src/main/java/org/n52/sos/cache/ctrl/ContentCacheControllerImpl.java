@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.cache.ContentCachePersistenceStrategy;
 import org.n52.iceland.cache.ContentCacheUpdate;
 import org.n52.iceland.cache.WritableContentCache;
+import org.n52.iceland.ds.CacheFeederHandler;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.cache.ctrl.action.CompleteCacheUpdate;
 
@@ -62,6 +63,9 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
     private volatile WritableContentCache cache;
 
     private final ReentrantLock lock = new ReentrantLock();
+
+    @Inject
+    private CacheFeederHandler cacheFeederHandler;
 
     @Inject
     private ContentCachePersistenceStrategy persistenceStrategy;
@@ -212,7 +216,7 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
 
     @Override
     public void update() throws OwsExceptionReport {
-        update(new CompleteCacheUpdate());
+        update(new CompleteCacheUpdate(this.cacheFeederHandler));
     }
 
     @Override

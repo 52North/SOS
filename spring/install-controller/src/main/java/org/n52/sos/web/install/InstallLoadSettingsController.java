@@ -65,7 +65,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.INSTALL_LOAD_CONFIGURATION)
-public class InstallLoadSettingsController extends AbstractController {
+public class InstallLoadSettingsController extends AbstractInstallController {
 
     private static final Logger LOG = LoggerFactory.getLogger(InstallLoadSettingsController.class);
 
@@ -76,7 +76,7 @@ public class InstallLoadSettingsController extends AbstractController {
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void post(@RequestBody String config, HttpServletRequest req) throws ConfigurationException, IOException {
         final HttpSession session = req.getSession();
-        InstallationConfiguration c = AbstractInstallController.getSettings(session);
+        InstallationConfiguration c = getSettings(session);
         JsonNode settings = JSONUtils.loadString(config);
         Iterator<String> i = settings.fieldNames();
         while (i.hasNext()) {
@@ -103,7 +103,7 @@ public class InstallLoadSettingsController extends AbstractController {
                 c.setSetting(def, settingsManager.getSettingFactory().newSettingValue(def, value));
             }
         }
-        AbstractInstallController.setSettings(session, c);
+        setSettings(session, c);
     }
 
     @ResponseBody

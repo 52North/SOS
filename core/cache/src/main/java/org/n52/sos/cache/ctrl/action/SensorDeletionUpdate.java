@@ -30,13 +30,14 @@ package org.n52.sos.cache.ctrl.action;
 
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.cache.WritableContentCache;
+import org.n52.iceland.ds.CacheFeederHandler;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.action.Action;
 import org.n52.sos.request.DeleteSensorRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -47,7 +48,7 @@ import com.google.common.collect.Sets;
  * <li>Result template</li>
  * <li>Offering &rarr; Result template</li>
  * </ul>
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @since 4.0.0
@@ -57,13 +58,14 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
 
     private final DeleteSensorRequest request;
 
-    public SensorDeletionUpdate(DeleteSensorRequest response) {
-        if (response == null) {
-            String msg = String.format("Missing argument: '%s': %s", DeleteSensorRequest.class.getName(), response);
+    public SensorDeletionUpdate(CacheFeederHandler cacheFeederDAO,DeleteSensorRequest request) {
+        super(cacheFeederDAO);
+        if (request == null) {
+            String msg = String.format("Missing argument: '%s': %s", DeleteSensorRequest.class.getName(), request);
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }
-        this.request = response;
+        this.request = request;
     }
 
     @Override
@@ -118,11 +120,11 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
         }
 
         try {
-            getDao().updateCacheOfferings(cache, offeringsNeedingReload);
+            getCacheFeederDAO().updateCacheOfferings(cache, offeringsNeedingReload);
         } catch (OwsExceptionReport ex) {
             fail(ex);
         }
-        
+
         cache.removeRolesForRelatedFeatureNotIn(cache.getRelatedFeatures());
         cache.setFeaturesOfInterest(cache.getFeaturesOfInterestWithOffering());
 

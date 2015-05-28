@@ -31,6 +31,8 @@ package org.n52.sos.web.admin;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
@@ -50,7 +52,8 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 @Controller
-@RequestMapping({ ControllerConstants.Paths.ADMIN_INDEX, ControllerConstants.Paths.ADMIN_ROOT })
+@RequestMapping({ ControllerConstants.Paths.ADMIN_INDEX,
+                  ControllerConstants.Paths.ADMIN_ROOT })
 public class AdminIndexController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(AdminIndexController.class);
 
@@ -64,7 +67,7 @@ public class AdminIndexController extends AbstractController {
                 warn = true;
             }
         }
-        Map<String, String> metadata = new HashMap<String, String>(MetaDataHandler.Metadata.values().length);
+        Map<String, String> metadata = new HashMap<>(MetaDataHandler.Metadata.values().length);
         try {
             for (MetaDataHandler.Metadata m : MetaDataHandler.Metadata.values()) {
                 metadata.put(m.name(), getMetaDataHandler().get(m));
@@ -72,7 +75,7 @@ public class AdminIndexController extends AbstractController {
         } catch (ConfigurationException ex) {
             LOG.error("Error reading metadata properties", ex);
         }
-        Map<String, Object> model = new HashMap<String, Object>(2);
+        Map<String, Object> model = new HashMap<>(2);
         model.put("metadata", metadata);
         model.put("warning", warn);
         return new ModelAndView(ControllerConstants.Views.ADMIN_INDEX, model);

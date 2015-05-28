@@ -33,5 +33,8 @@ package org.n52.sos.context;
  */
 public interface ContextSwitcher {
     public static final String BEAN_NAME = "contextSwitcher";
+
     void reloadContext();
+
+    boolean isConfigured();
 }

@@ -28,6 +28,10 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import javax.inject.Inject;
+
+import org.n52.iceland.cache.ContentCache;
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
 import org.n52.iceland.ogc.sos.CapabilitiesExtension;
 import org.n52.iceland.ogc.sos.Sos2Constants;
@@ -41,21 +45,36 @@ import org.n52.sos.ogc.sos.SosInsertionCapabilities;
  */
 public class InsertSensorCapabilitiesExtensionProvider extends AbstractCapabilitiesExtensionProvider {
 
+    private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
+    private ContentCacheController contentCacheController;
+
     public InsertSensorCapabilitiesExtensionProvider() {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
               Sos2Constants.Operations.InsertSensor.name());
     }
 
+    @Inject
+    public void setContentCacheController(ContentCacheController contentCacheController) {
+        this.contentCacheController = contentCacheController;
+    }
+
+    @Inject
+    public void setProcedureDescriptionFormatRepository(ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository) {
+        this.procedureDescriptionFormatRepository = procedureDescriptionFormatRepository;
+    }
 
     @Override
     public CapabilitiesExtension getExtension() {
+        ContentCache cache = this.contentCacheController.getCache();
         SosInsertionCapabilities insertionCapabilities = new SosInsertionCapabilities();
-        insertionCapabilities.addFeatureOfInterestTypes(getCache().getFeatureOfInterestTypes());
-        insertionCapabilities.addObservationTypes(getCache().getObservationTypes());
-        insertionCapabilities.addProcedureDescriptionFormats(ProcedureDescriptionFormatRepository.getInstance()
+        insertionCapabilities.addFeatureOfInterestTypes(cache.getFeatureOfInterestTypes());
+        insertionCapabilities.addObservationTypes(cache.getObservationTypes());
+        insertionCapabilities.addProcedureDescriptionFormats(this.procedureDescriptionFormatRepository
                 .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
         return insertionCapabilities;
     }
+
+
 
 
 }

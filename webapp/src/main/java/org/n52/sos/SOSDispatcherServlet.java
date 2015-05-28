@@ -47,11 +47,15 @@ import org.n52.sos.context.ContextSwitcher;
  *
  * @author Christian Autermann
  */
-public class SOSDispatcherServlet extends DispatcherServlet implements ContextSwitcher {
+public class SOSDispatcherServlet
+        extends DispatcherServlet
+        implements ContextSwitcher {
     private static final long serialVersionUID = -5390564503165988702L;
     private static final String CONTEXT_SWITCHER_BEAN_NAME = "contextSwitcherSwapper";
     public static final String UNCONFIGURED_CONFIG_LOCATION_PARAM = "unconfiguredConfigLocations";
     public static final String CONFIGURED_CONFIG_LOCATION_PARAM = "configuredConfigLocations";
+
+    private boolean configured;
 
     private String getConfigLocation(ServletContext servletContext) {
         String def = getDefaultConfigLocations();
@@ -86,7 +90,9 @@ public class SOSDispatcherServlet extends DispatcherServlet implements ContextSw
     }
 
     protected boolean isConfigured(ServletContext servletContext) {
-        return DatabaseSettingsHandler.getInstance(servletContext).exists();
+        boolean exists = DatabaseSettingsHandler.getInstance(servletContext).exists();
+        this.configured = exists;
+        return exists;
     }
 
     @Override
@@ -116,5 +122,10 @@ public class SOSDispatcherServlet extends DispatcherServlet implements ContextSw
             throw new IllegalStateException("WebApplicationContext does not support refresh: " + applicationContext);
         }
         this.configureAndRefreshWebApplicationContext((ConfigurableWebApplicationContext) applicationContext);
+    }
+
+    @Override
+    public boolean isConfigured() {
+        return this.configured;
     }
 }

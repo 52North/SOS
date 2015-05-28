@@ -43,7 +43,7 @@ import org.n52.sos.web.install.InstallConstants.Step;
  */
 @Controller
 @RequestMapping({ ControllerConstants.Paths.INSTALL_ROOT, ControllerConstants.Paths.INSTALL_INDEX })
-public class InstallIndexController extends AbstractInstallController {
+public class InstallIndexController extends AbstractInstallStepController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String get(HttpServletRequest req) {

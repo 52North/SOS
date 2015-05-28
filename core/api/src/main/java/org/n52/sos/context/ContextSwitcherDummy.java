@@ -34,4 +34,9 @@ public class ContextSwitcherDummy implements ContextSwitcher {
     public void reloadContext() {
     }
 
+    @Override
+    public boolean isConfigured() {
+        return false;
+    }
+
 }

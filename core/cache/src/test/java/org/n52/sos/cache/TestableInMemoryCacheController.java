@@ -29,16 +29,13 @@
 package org.n52.sos.cache;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.n52.iceland.cache.WritableContentCache;
-import org.n52.iceland.ds.CacheFeederHandlerRepository;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.ConfigLocationProvider;
 import org.n52.sos.cache.ctrl.ContentCacheControllerImpl;
 import org.n52.sos.cache.ctrl.persistence.AbstractPersistingCachePersistenceStrategy;
 import org.n52.sos.cache.ctrl.persistence.ImmediatePersistenceStrategy;
-import org.n52.sos.ds.MockCacheFeederDAO;
 
 import com.google.common.io.Files;
 
@@ -61,7 +58,6 @@ public class TestableInMemoryCacheController extends ContentCacheControllerImpl 
     }
 
     public static void setUp() {
-        CacheFeederHandlerRepository.createInstance(MockCacheFeederDAO.DATASOURCE_DAO_IDENTIFIER);
         directory = Files.createTempDir();
     }
 

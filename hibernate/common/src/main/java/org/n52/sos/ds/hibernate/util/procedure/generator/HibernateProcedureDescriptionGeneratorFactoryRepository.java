@@ -30,9 +30,9 @@ package org.n52.sos.ds.hibernate.util.procedure.generator;
 
 import java.util.Map;
 
+import org.n52.iceland.component.AbstractUniqueKeyComponentRepository;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.util.Producer;
-import org.n52.iceland.component.AbstractUniqueKeyComponentRepository;
 
 import com.google.common.collect.Maps;
 

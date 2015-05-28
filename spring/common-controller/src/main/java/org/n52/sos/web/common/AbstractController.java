@@ -28,14 +28,11 @@
  */
 package org.n52.sos.web.common;
 
-import java.io.File;
-import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,14 +40,9 @@ import org.springframework.stereotype.Controller;
 
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.i18n.MultilingualString;
-import org.n52.iceland.i18n.json.I18NJsonEncoder;
-import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.service.DatabaseSettingsHandler;
-import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.JSONUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -65,8 +57,6 @@ public class AbstractController {
 
     @Autowired
     private ServletContext context;
-
-    private SettingsManager sm;
 
     public ServletContext getContext() {
         return this.context;
@@ -103,11 +93,6 @@ public class AbstractController {
             }
         }
         return Boolean.FALSE;
-    }
-
-    @Deprecated
-    protected SettingsManager getSettingsManager() throws ConfigurationException {
-        return (sm == null) ? sm = SettingsManager.getInstance() : sm;
     }
 
     protected ObjectNode toJSONValueMap(Map<SettingDefinition<?, ?>, SettingValue<?>> settings)

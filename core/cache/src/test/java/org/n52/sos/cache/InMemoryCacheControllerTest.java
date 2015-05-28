@@ -63,6 +63,7 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
@@ -79,6 +80,7 @@ import org.n52.sos.cache.ctrl.action.ResultInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultTemplateInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorDeletionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorInsertionUpdate;
+import org.n52.sos.ds.MockCacheFeederDAO;
 import org.n52.sos.ogc.swes.SwesFeatureRelationship;
 import org.n52.sos.request.DeleteSensorRequest;
 import org.n52.sos.request.InsertObservationRequest;
@@ -97,7 +99,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a> Test after DeleteObservation => not possible with
  *         InMemory because of bounding box issues, for example.
- * 
+ *
  * @since 4.0.0
  */
 public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
@@ -111,7 +113,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     private static final String OBSERVATION_TYPE_2 = "test-observation-type-2";
 
     private static final String OBSERVATION_TYPE = "test-observation-type";
-    
+
     private static final String FEATURE_OF_INTEREST_TYPE = "test-featureOfInterest-type";
 
     private static final String OFFERING_NAME_EXTENSION = "-offering-name";
@@ -841,7 +843,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
     private void updateCacheWithDeleteSensor() throws OwsExceptionReport {
         request = DeleteSensorRequestBuilder.aDeleteSensorRequest().setProcedure(PROCEDURE).build();
-        controller.update(new SensorDeletionUpdate(((DeleteSensorRequest) request)));
+        controller.update(new SensorDeletionUpdate(new MockCacheFeederDAO(), (DeleteSensorRequest) request));
     }
 
     private void updateCacheWithSingleObservation(String procedure) throws OwsExceptionReport {

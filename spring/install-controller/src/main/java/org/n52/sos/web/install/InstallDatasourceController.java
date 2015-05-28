@@ -33,11 +33,14 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingValue;
+import org.n52.iceland.config.SettingValueFactory;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.util.StringHelper;
@@ -53,6 +56,9 @@ import com.google.common.collect.Maps;
 @Controller
 @RequestMapping(ControllerConstants.Paths.INSTALL_DATASOURCE)
 public class InstallDatasourceController extends AbstractProcessingInstallationController {
+
+    @Inject
+    private SettingValueFactory settingValueFactory;
 
     @Override
     protected Step getStep() {
@@ -168,7 +174,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
         Map<String, Object> parsedSettings = new HashMap<>(parameters.size());
         for (SettingDefinition<?, ?> def : defs) {
             SettingValue<?> newValue =
-                    getSettingsManager().getSettingFactory().newSettingValue(def, parameters.get(def.getKey()));
+                    this.settingValueFactory.newSettingValue(def, parameters.get(def.getKey()));
             parsedSettings.put(def.getKey(), newValue.getValue());
         }
         return parsedSettings;

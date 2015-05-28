@@ -31,11 +31,17 @@ package org.n52.sos.cache.ctrl;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.cache.ContentCacheUpdate;
+import org.n52.iceland.ds.CacheFeederHandler;
 import org.n52.iceland.event.ServiceEvent;
 import org.n52.iceland.event.ServiceEventListener;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.Configurator;
 import org.n52.sos.cache.ctrl.action.ObservationInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultTemplateInsertionUpdate;
@@ -46,8 +52,6 @@ import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.event.events.SensorInsertion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -59,9 +63,16 @@ public class DefaultContentModificationListener implements ServiceEventListener 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultContentModificationListener.class);
 
     @SuppressWarnings("unchecked")
-    private static final Set<Class<? extends ServiceEvent>> TYPES = Sets.<Class<? extends ServiceEvent>> newHashSet(
-            SensorInsertion.class, ObservationInsertion.class, ResultTemplateInsertion.class, SensorDeletion.class,
-            ResultInsertion.class);
+    private static final Set<Class<? extends ServiceEvent>> TYPES = Sets
+            .<Class<? extends ServiceEvent>> newHashSet(
+                    SensorInsertion.class,
+                    ObservationInsertion.class,
+                    ResultTemplateInsertion.class,
+                    SensorDeletion.class,
+                    ResultInsertion.class);
+
+    private CacheFeederHandler handler;
+    private ContentCacheController controller;
 
     @Override
     public Set<Class<? extends ServiceEvent>> getTypes() {
@@ -81,7 +92,7 @@ public class DefaultContentModificationListener implements ServiceEventListener 
             handle(new ResultTemplateInsertionUpdate(e.getRequest(), e.getResponse()));
         } else if (event instanceof SensorDeletion) {
             SensorDeletion e = (SensorDeletion) event;
-            handle(new SensorDeletionUpdate(e.getRequest()));
+            handle(new SensorDeletionUpdate(this.handler, e.getRequest()));
         } else if (event instanceof ResultInsertion) {
             ResultInsertion e = (ResultInsertion) event;
             handle(new ResultInsertionUpdate(e.getRequest().getTemplateIdentifier(), e.getResponse().getObservation()));
@@ -93,9 +104,19 @@ public class DefaultContentModificationListener implements ServiceEventListener 
     protected void handle(ContentCacheUpdate update) {
         LOGGER.debug("Updating Cache after content modification: {}", update);
         try {
-            Configurator.getInstance().getCacheController().update(update);
+            this.controller.update(update);
         } catch (OwsExceptionReport ex) {
             LOGGER.error("Error processing Event", ex);
         }
+    }
+
+    @Inject
+    public void setHandler(CacheFeederHandler handler) {
+        this.handler = handler;
+    }
+
+    @Inject
+    public void setController(ContentCacheController controller) {
+        this.controller = controller;
     }
 }

@@ -32,6 +32,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,9 +46,9 @@ import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
-import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.http.HTTPMethods;
 import org.n52.iceland.util.http.MediaType;
+import org.n52.sos.context.ContextSwitcher;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
 
@@ -62,9 +65,18 @@ public class ClientController extends AbstractController {
     public static final String VERSIONS = "versions";
     public static final String OPERATIONS = "operations";
 
+    @Inject
+    private ContextSwitcher contextSwitcher;
+
+    @Autowired(required = false)
+    private RequestOperatorRepository requestOperatorRepository;
+
+    @Autowired(required = false)
+    private BindingRepository bindingRepository;
+
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView get() {
-        if (Configurator.getInstance() != null) {
+        if (contextSwitcher.isConfigured()) {
             return new ModelAndView(ControllerConstants.Views.CLIENT, OPERATIONS, getAvailableOperations());
         } else {
             return new ModelAndView(ControllerConstants.Views.CLIENT);
@@ -72,13 +84,13 @@ public class ClientController extends AbstractController {
     }
 
     private List<AvailableOperation> getAvailableOperations() {
-        final List<AvailableOperation> ops = new LinkedList<AvailableOperation>();
-        for (RequestOperatorKey rokt : RequestOperatorRepository.getInstance().getActiveRequestOperatorKeys()) {
+        final List<AvailableOperation> ops = new LinkedList<>();
+        for (RequestOperatorKey rokt : this.requestOperatorRepository.getActiveRequestOperatorKeys()) {
             final String service = rokt.getServiceOperatorKey().getService();
             final String version = rokt.getServiceOperatorKey().getVersion();
             final String operation = rokt.getOperationName();
             final OperationKey ok = new OperationKey(service, version, operation);
-            for (Entry<String, Binding> b : BindingRepository.getInstance().getBindingsByPath().entrySet()) {
+            for (Entry<String, Binding> b : this.bindingRepository.getBindingsByPath().entrySet()) {
                 try {
                     final Binding binding = b.getValue();
                     if (binding.checkOperationHttpDeleteSupported(ok)) {

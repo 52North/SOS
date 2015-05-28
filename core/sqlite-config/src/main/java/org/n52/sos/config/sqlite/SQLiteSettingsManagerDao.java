@@ -42,11 +42,9 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.config.SettingValue;
 import org.n52.iceland.config.SettingsManagerDao;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.sos.config.sqlite.SQLiteSessionManager.HibernateAction;
-import org.n52.sos.config.sqlite.SQLiteSessionManager.VoidHibernateAction;
 import org.n52.sos.config.sqlite.entities.AbstractSettingValue;
 
-public abstract class SQLiteSettingsManagerDao
+public class SQLiteSettingsManagerDao
         extends AbstractSQLiteDao
         implements SettingsManagerDao {
     private static final Logger LOG = LoggerFactory.getLogger(SQLiteSettingsManagerDao.class);

@@ -44,20 +44,19 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.cache.ContentCacheUpdate;
-import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.exception.NoSuchIdentifierException;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
+import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.json.I18NJsonEncoder;
 import org.n52.iceland.i18n.metadata.AbstractI18NMetadata;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.web.common.AbstractController;
+import org.n52.sos.web.admin.AbstractAdminController;
 import org.n52.sos.web.common.ControllerConstants;
 
-public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetadata> extends AbstractController {
+public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetadata> extends AbstractAdminController {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(AbstractAdminI18NAjaxEndpoint.class);
@@ -138,12 +137,12 @@ public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetada
         LOGGER.debug("Saving I18N: {}", i18n);
         getDao().saveMetadata(i18n);
         ContentCacheUpdate update = getContentCacheUpdate(i18n);
-        Configurator.getInstance().getCacheController().update(update);
+        getContentCacheController().update(update);
     }
 
     private void checkIdentifier(String id)
             throws NoSuchIdentifierException {
-        ContentCache cache = Configurator.getInstance().getCache();
+        ContentCache cache = getContentCacheController().getCache();
         if (!isValid(cache, id)) {
             throw new NoSuchIdentifierException(id);
         }

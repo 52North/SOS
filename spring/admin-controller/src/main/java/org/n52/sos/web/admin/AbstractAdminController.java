@@ -28,20 +28,25 @@
  */
 package org.n52.sos.web.admin;
 
+import javax.inject.Inject;
+
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.Configurator;
 import org.n52.sos.web.common.AbstractController;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public abstract class AbstractAdminController extends AbstractController {
 
+    @Inject
+    private ContentCacheController contentCacheController;
+
     protected boolean cacheIsLoading() {
-        return Configurator.getInstance().getCacheController().isUpdateInProgress();
-    }    
-    
+        return contentCacheController.isUpdateInProgress();
+    }
+
     protected void updateCache() throws OwsExceptionReport {
         //don't wait for cache update to complete since it can take much longer than browser timeouts.
         //instead, start it and then check loading status from the client using cacheIsLoading().
@@ -49,12 +54,16 @@ public abstract class AbstractAdminController extends AbstractController {
             @Override
             public void run() {
                 try {
-                    Configurator.getInstance().getCacheController().update();
+                    contentCacheController.update();
                 } catch (OwsExceptionReport e) {
                     //NOOP
                     //TODO should the last cache loading error be stored and accessible to the client?
-                }                
-            }            
-        }).start();        
+                }
+            }
+        }).start();
+    }
+
+    public ContentCacheController getContentCacheController() {
+        return contentCacheController;
     }
 }

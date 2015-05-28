@@ -39,13 +39,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.n52.iceland.cache.ContentCache;
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.config.CapabilitiesExtensionService;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.exception.NoSuchExtensionException;
 import org.n52.iceland.exception.NoSuchOfferingException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.Configurator;
 import org.n52.sos.web.common.AbstractController;
 
 public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
@@ -60,14 +60,17 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
 
 
     @Inject
-    private CapabilitiesExtensionService capabilitiesExtensionManager;
+    private CapabilitiesExtensionService capabilitiesExtensionService;
 
-    protected CapabilitiesExtensionService getDao() {
-        return capabilitiesExtensionManager;
+    @Inject
+    private ContentCacheController contentCacheController;
+
+    protected CapabilitiesExtensionService getCapabilitiesExtensionService() {
+        return capabilitiesExtensionService;
     }
 
     protected ContentCache getCache() {
-        return Configurator.getInstance().getCache();
+        return this.contentCacheController.getCache();
     }
 
     @ResponseBody
@@ -114,7 +117,7 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
     }
 
     protected String getSelectedStaticCapabilities() throws OwsExceptionReport {
-        return getSettingsManager().getActiveStaticCapabilities();
+        return this.capabilitiesExtensionService.getActiveStaticCapabilities();
     }
 
     protected void setSelectedStaticCapabilities(String id) throws ConfigurationException,
@@ -139,7 +142,7 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
         }
 
         if (change) {
-            getDao().setActiveStaticCapabilities(id);
+            this.capabilitiesExtensionService.setActiveStaticCapabilities(id);
         }
     }
 

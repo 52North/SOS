@@ -105,7 +105,7 @@ public class AdminBindingController extends AbstractAdminController {
             String path = e.getKey();
             a.addObject()
                     .put(JSONConstants.BINDING_KEY, path)
-                    .put(JSONConstants.ACTIVE_KEY, settingsManager.isBindingActive(new PathBindingKey(path)));
+                    .put(JSONConstants.ACTIVE_KEY, this.bindingRepository.isActive(new PathBindingKey(path)));
         }
         return a;
     }
@@ -116,7 +116,7 @@ public class AdminBindingController extends AbstractAdminController {
         JsonNode json = JSONUtils.loadString(request);
         if (json.has(JSONConstants.BINDING_KEY)) {
             BindingKey key = new PathBindingKey(json.path(JSONConstants.BINDING_KEY).asText());
-            this.settingsManager.setActive(key, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
+            this.bindingRepository.setActive(key, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else {
             throw new JSONException("Invalid JSON");
         }

@@ -80,26 +80,32 @@ public abstract class AbstractOperationHandler implements OperationHandler {
         this.key = new OperationHandlerKey(service, operationName);
     }
 
+    @Deprecated
     protected ContentCacheController getCacheController() {
         // FIXME use @Inject
         return getConfigurator().getCacheController();
     }
 
+    @Deprecated
     protected Configurator getConfigurator() {
         // FIXME use @Inject
         return Configurator.getInstance();
     }
 
+
+    @Deprecated
     protected BindingRepository getBindingRepository() {
         // FIXME use @Inject
         return BindingRepository.getInstance();
     }
 
+    @Deprecated
     protected ProfileHandler getProfileHandler() {
         // FIXME use @Inject
         return ProfileHandler.getInstance();
     }
 
+    @Deprecated
     protected ServiceConfiguration getServiceConfiguration() {
         // FIXME use @Inject
         return ServiceConfiguration.getInstance();

@@ -1,3 +1,31 @@
+/**
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ *
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+ *
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+ *
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ */
 package org.n52.sos.config.sqlite;
 
 import static org.hibernate.criterion.Restrictions.and;
@@ -28,10 +56,6 @@ import org.n52.iceland.ogc.ows.StaticCapabilities;
 import org.n52.iceland.ogc.ows.StringBasedCapabilitiesExtension;
 import org.n52.iceland.util.collections.LinkedListMultiMap;
 import org.n52.iceland.util.collections.ListMultiMap;
-import org.n52.sos.config.sqlite.SQLiteSessionManager.HibernateAction;
-import org.n52.sos.config.sqlite.SQLiteSessionManager.ThrowingHibernateAction;
-import org.n52.sos.config.sqlite.SQLiteSessionManager.ThrowingVoidHibernateAction;
-import org.n52.sos.config.sqlite.SQLiteSessionManager.VoidHibernateAction;
 import org.n52.sos.config.sqlite.entities.Activatable;
 import org.n52.sos.config.sqlite.entities.CapabilitiesExtensionImpl;
 import org.n52.sos.config.sqlite.entities.OfferingExtensionIdentifier;
@@ -42,10 +66,10 @@ import org.n52.sos.config.sqlite.entities.StaticCapabilitiesImpl;
  * TODO JavaDoc
  * @author Christian Autermann
  */
-public class SQLiteCapabilitiesExtensionManager
+public class SQLiteCapabilitiesExtensionService
         extends AbstractSQLiteDao
         implements CapabilitiesExtensionService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SQLiteCapabilitiesExtensionManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SQLiteCapabilitiesExtensionService.class);
     private final ReadWriteLock scLock = new ReentrantReadWriteLock();
     private final ReadWriteLock ceLock = new ReentrantReadWriteLock();
     private final ReadWriteLock oeLock = new ReentrantReadWriteLock();

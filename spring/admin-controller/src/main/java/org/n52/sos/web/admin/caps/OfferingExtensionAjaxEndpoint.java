@@ -37,14 +37,6 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-
-import org.n52.iceland.exception.NoSuchExtensionException;
-import org.n52.iceland.exception.NoSuchOfferingException;
-import org.n52.iceland.ogc.ows.OfferingExtension;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.web.common.ControllerConstants;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -55,6 +47,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import org.n52.iceland.exception.NoSuchExtensionException;
+import org.n52.iceland.exception.NoSuchOfferingException;
+import org.n52.iceland.ogc.ows.OfferingExtension;
+import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.web.common.ControllerConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -89,7 +88,7 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getOfferingExtensions() throws OwsExceptionReport {
-		final Map<String, List<OfferingExtension>> offeringExtensions = getDao().getOfferingExtensions();
+		final Map<String, List<OfferingExtension>> offeringExtensions = getCapabilitiesExtensionService().getOfferingExtensions();
 		final List<String> offerings = Lists.newArrayList(getCache().getOfferings());
 		Collections.sort(offerings);
         ObjectNode response = JSONUtils.nodeFactory().objectNode();
@@ -117,7 +116,7 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
 		final String extensionContent = request.path(EXTENSION_PROPERTY).asText();
 		checkOffering(offeringId);
 		XmlObject.Factory.parse(extensionContent);
-		getDao().saveOfferingExtension(offeringId, extensionId, extensionContent);
+		getCapabilitiesExtensionService().saveOfferingExtension(offeringId, extensionId, extensionContent);
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
@@ -130,7 +129,7 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
 		final String extensionId = request.path(IDENTIFIER).asText();
 
 		if (request.has(DISABLED_PROPERTY)) {
-			getDao().disableOfferingExtension(offeringId, extensionId, request.path(DISABLED_PROPERTY).asBoolean());
+			getCapabilitiesExtensionService().disableOfferingExtension(offeringId, extensionId, request.path(DISABLED_PROPERTY).asBoolean());
 		}
 	}
 
@@ -142,6 +141,6 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
         JsonNode request = JSONUtils.loadString(requestJson);
 		final String offeringId = request.path(OFFERING).asText();
 		final String extensionId = request.path(IDENTIFIER).asText();
-		getDao().deleteOfferingExtension(offeringId, extensionId);
+		getCapabilitiesExtensionService().deleteOfferingExtension(offeringId, extensionId);
 	}
 }

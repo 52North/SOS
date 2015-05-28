@@ -107,7 +107,7 @@ public class AdminEncodingController extends AbstractAdminController {
                     new ServiceOperatorKey(json.path(JSONConstants.SERVICE_KEY).asText(),
                             json.path(JSONConstants.VERSION_KEY).asText());
             ResponseFormatKey rfkt = new ResponseFormatKey(sokt, json.path(JSONConstants.RESPONSE_FORMAT_KEY).asText());
-            this.settingsManager.setActive(rfkt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
+            this.responseFormatRepository.setActive(rfkt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else if (json.has(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT_KEY)) {
             ServiceOperatorKey sokt =
                     new ServiceOperatorKey(json.path(JSONConstants.SERVICE_KEY).asText(),
@@ -115,7 +115,7 @@ public class AdminEncodingController extends AbstractAdminController {
             ProcedureDescriptionFormatKey pdfkt =
                     new ProcedureDescriptionFormatKey(sokt,
                             json.path(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT_KEY).asText());
-            this.settingsManager.setActive(pdfkt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
+            this.procedureDescriptionFormatRepository.setActive(pdfkt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else {
             throw new JSONException("Invalid JSON");
         }
@@ -132,7 +132,7 @@ public class AdminEncodingController extends AbstractAdminController {
                         .put(JSONConstants.SERVICE_KEY, rfkt.getService())
                         .put(JSONConstants.VERSION_KEY, rfkt.getVersion())
                         .put(JSONConstants.RESPONSE_FORMAT_KEY, rfkt.getResponseFormat())
-                        .put(JSONConstants.ACTIVE_KEY, this.settingsManager.isResponseFormatActive(rfkt));
+                        .put(JSONConstants.ACTIVE_KEY, this.responseFormatRepository.isActive(rfkt));
             }
         }
         return joes;
@@ -151,7 +151,7 @@ public class AdminEncodingController extends AbstractAdminController {
                         .put(JSONConstants.SERVICE_KEY, rfkt.getService())
                         .put(JSONConstants.VERSION_KEY, rfkt.getVersion())
                         .put(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT_KEY, rfkt.getProcedureDescriptionFormat())
-                        .put(JSONConstants.ACTIVE_KEY, this.settingsManager.isProcedureDescriptionFormatActive(rfkt));
+                        .put(JSONConstants.ACTIVE_KEY, this.procedureDescriptionFormatRepository.isActive(rfkt));
             }
         }
         return jpes;

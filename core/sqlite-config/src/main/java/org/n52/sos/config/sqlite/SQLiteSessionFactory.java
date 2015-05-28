@@ -40,77 +40,108 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.spi.Stoppable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.lifecycle.Constructable;
+import org.n52.iceland.lifecycle.Destroyable;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.service.ConfigLocationProvider;
-import org.n52.sos.config.sqlite.entities.AdminUser;
-import org.n52.sos.config.sqlite.entities.Binding;
-import org.n52.sos.config.sqlite.entities.BooleanSettingValue;
-import org.n52.sos.config.sqlite.entities.CapabilitiesExtensionImpl;
-import org.n52.sos.config.sqlite.entities.ChoiceSettingValue;
-import org.n52.sos.config.sqlite.entities.DynamicOfferingExtension;
-import org.n52.sos.config.sqlite.entities.DynamicOwsExtendedCapabilities;
-import org.n52.sos.config.sqlite.entities.FileSettingValue;
-import org.n52.sos.config.sqlite.entities.IntegerSettingValue;
-import org.n52.sos.config.sqlite.entities.MultilingualStringSettingValue;
-import org.n52.sos.config.sqlite.entities.NumericSettingValue;
-import org.n52.sos.config.sqlite.entities.ObservationEncoding;
-import org.n52.sos.config.sqlite.entities.OfferingExtensionImpl;
-import org.n52.sos.config.sqlite.entities.Operation;
-import org.n52.sos.config.sqlite.entities.ProcedureEncoding;
-import org.n52.sos.config.sqlite.entities.StaticCapabilitiesImpl;
-import org.n52.sos.config.sqlite.entities.StringSettingValue;
-import org.n52.sos.config.sqlite.entities.TimeInstantSettingValue;
-import org.n52.sos.config.sqlite.entities.UriSettingValue;
 import org.n52.sos.config.sqlite.hibernate.HibernateFileType;
 import org.n52.sos.config.sqlite.hibernate.HibernateSQLiteDialect;
 import org.n52.sos.config.sqlite.hibernate.HibernateTimeInstantType;
 import org.n52.sos.config.sqlite.hibernate.HibernateUriType;
-import org.n52.sos.ds.hibernate.AbstractSessionFactoryProvider;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
  */
-public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
+public class SQLiteSessionFactory implements Constructable, Destroyable {
+    private static final Logger LOG = LoggerFactory
+            .getLogger(SQLiteSessionFactory.class);
 
     public static final String HIBERNATE_DIALECT = "hibernate.dialect";
-    public static final String HIBERNATE_CONNECTION_URL = "hibernate.connection.url";
-    public static final String HIBERNATE_CONNECTION_DRIVER_CLASS = "hibernate.connection.driver_class";
-    public static final String HIBERNATE_UPDATE_SCHEMA = "hibernate.hbm2ddl.auto";
-    public static final String HIBERNATE_CONNECTION_USERNAME = "hibernate.connection.username";
-    public static final String HIBERNATE_CONNECTION_PASSWORD = "hibernate.connection.password";
-    public static final String HIBERNATE_CONNECTION_POOL_SIZE = "hibernate.connection.pool_size";
-    public static final String HIBERNATE_CONNECTION_RELEASE_MODE = "hibernate.connection.release_mode";
-    public static final String HIBERNATE_CURRENT_SESSION_CONTEXT = "hibernate.current_session_context_class";
-    public static final String RELEASE_MODE_AFTER_TRANSACTION = "after_transaction";
+    public static final String HIBERNATE_CONNECTION_URL
+            = "hibernate.connection.url";
+    public static final String HIBERNATE_CONNECTION_DRIVER_CLASS
+            = "hibernate.connection.driver_class";
+    public static final String HIBERNATE_UPDATE_SCHEMA
+            = "hibernate.hbm2ddl.auto";
+    public static final String HIBERNATE_CONNECTION_USERNAME
+            = "hibernate.connection.username";
+    public static final String HIBERNATE_CONNECTION_PASSWORD
+            = "hibernate.connection.password";
+    public static final String HIBERNATE_CONNECTION_POOL_SIZE
+            = "hibernate.connection.pool_size";
+    public static final String HIBERNATE_CONNECTION_RELEASE_MODE
+            = "hibernate.connection.release_mode";
+    public static final String HIBERNATE_CURRENT_SESSION_CONTEXT
+            = "hibernate.current_session_context_class";
+    public static final String RELEASE_MODE_AFTER_TRANSACTION
+            = "after_transaction";
     public static final String RELEASE_MODE_AFTER_STATEMENT = "after_statement";
     public static final String RELEASE_MODE_ON_CLOSE = "on_close";
     public static final String RELEASE_MODE_AUTO = "auto";
     public static final String THREAD_LOCAL_SESSION_CONTEXT = "thread";
     public static final int SQLITE_CONNECTION_POOL_SIZE = 1;
     public static final String CONNECTION_URL_TEMPLATE = "jdbc:sqlite:%s.db";
-    public static final String SQLITE_HIBERNATE_DIALECT = HibernateSQLiteDialect.class.getName();
+    public static final String SQLITE_HIBERNATE_DIALECT
+            = HibernateSQLiteDialect.class.getName();
     public static final String UPDATE_SCHEMA_VALUE = "update";
     public static final String SQLITE_JDBC_DRIVER = "org.sqlite.JDBC";
     public static final String EMPTY = "";
     public static final String DEFAULT_DATABASE_NAME = "configuration";
 
-    @Inject
-    private ConfigLocationProvider configLocationProvider;
-
     private final ReentrantLock lock = new ReentrantLock();
 
+    @Inject
+    private ConfigLocationProvider configLocationProvider;
+    private String databaseName = DEFAULT_DATABASE_NAME;
+    private String path;
     private SessionFactory sessionFactory;
+    private Class<?>[] annotatedClasses;
+    private Properties properties;
 
-    protected String getFilename() {
-        String path = new File(configLocationProvider.get(), DEFAULT_DATABASE_NAME).getAbsolutePath();
-        return String.format(CONNECTION_URL_TEMPLATE, path);
+    public void setPath(String path) {
+        this.path = path;
     }
 
-    @Override
+    private String getPath() {
+        return this.path == null ? this.configLocationProvider.get() : this.path;
+    }
+
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+    }
+
+    public Properties getProperties() {
+        return properties;
+    }
+
+    public void setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
+    }
+
+    public String getDatabaseName() {
+        return this.databaseName;
+    }
+
+    public void setAnnotatedClasses(Class<?>[] annotatedClasses) {
+        this.annotatedClasses = annotatedClasses;
+    }
+
+    public Class<?>[] getAnnotatedClasses() {
+        return annotatedClasses;
+    }
+
+    protected String getConnectionURL() {
+        String file = new File(getPath(), getDatabaseName()).getAbsolutePath();
+        return String.format(CONNECTION_URL_TEMPLATE, file);
+    }
+
     protected SessionFactory getSessionFactory() {
         lock.lock();
         try {
@@ -123,31 +154,54 @@ public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
         return this.sessionFactory;
     }
 
-    private SessionFactory createSessionFactory(Properties properties) {
-        Configuration cfg = new Configuration()
-                .addAnnotatedClass(BooleanSettingValue.class)
-                .addAnnotatedClass(FileSettingValue.class)
-                .addAnnotatedClass(IntegerSettingValue.class)
-                .addAnnotatedClass(NumericSettingValue.class)
-                .addAnnotatedClass(StringSettingValue.class)
-                .addAnnotatedClass(UriSettingValue.class)
-                .addAnnotatedClass(ChoiceSettingValue.class)
-                .addAnnotatedClass(AdminUser.class)
-                .addAnnotatedClass(CapabilitiesExtensionImpl.class)
-                .addAnnotatedClass(OfferingExtensionImpl.class)
-                .addAnnotatedClass(StaticCapabilitiesImpl.class)
-                .addAnnotatedClass(Operation.class)
-                .addAnnotatedClass(ProcedureEncoding.class)
-                .addAnnotatedClass(Binding.class)
-                .addAnnotatedClass(ObservationEncoding.class)
-                .addAnnotatedClass(DynamicOfferingExtension.class)
-                .addAnnotatedClass(DynamicOwsExtendedCapabilities.class)
-                .addAnnotatedClass(TimeInstantSettingValue.class)
-                .addAnnotatedClass(MultilingualStringSettingValue.class);
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.n52.sos.ds.ConnectionProvider#cleanup()
+     */
+    @Override
+    public void destroy() {
+        lock.lock();
+        try {
+            if (this.sessionFactory != null) {
+                try {
+                    if (SessionFactoryImpl.class.isInstance(this.sessionFactory) &&
+                             Stoppable.class
+                        .isInstance(((SessionFactoryImpl) this.sessionFactory)
+                                .getConnectionProvider())) {
+                        ((Stoppable) ((SessionFactoryImpl) this.sessionFactory)
+                                .getConnectionProvider()).stop();
+                    }
+                    this.sessionFactory.close();
+                    LOG.info("Connection provider closed successfully!");
+                } catch (HibernateException he) {
+                    LOG.error("Error while closing connection provider!", he);
+                }
+            }
+        } finally {
+            sessionFactory = null;
+            lock.unlock();
+        }
+    }
 
-        cfg.registerTypeOverride(new HibernateFileType(), new String[] { "file", File.class.getName() });
-        cfg.registerTypeOverride(new HibernateUriType(), new String[] { "uri", URI.class.getName() });
-        cfg.registerTypeOverride(new HibernateTimeInstantType(), new String[] { "timeInstant", TimeInstant.class.getName() });
+    @Override
+    public void init() {
+        this.sessionFactory = createSessionFactory(getProperties());
+    }
+
+    private SessionFactory createSessionFactory(Properties properties) {
+        Configuration cfg = new Configuration();
+
+        for (Class<?> clazz : getAnnotatedClasses()) {
+            cfg.addAnnotatedClass(clazz);
+        }
+
+        cfg.registerTypeOverride(new HibernateFileType(),
+                                 new String[] { "file", File.class.getName() });
+        cfg.registerTypeOverride(new HibernateUriType(),
+                                 new String[] { "uri", URI.class.getName() });
+        cfg.registerTypeOverride(new HibernateTimeInstantType(),
+                                 new String[] { "timeInstant", TimeInstant.class.getName() });
 
         if (properties != null) {
             cfg.mergeProperties(properties);
@@ -162,7 +216,7 @@ public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
         return new Properties() {
             private static final long serialVersionUID = 3109256773218160485L;
             {
-                put(HIBERNATE_CONNECTION_URL, getFilename());
+                put(HIBERNATE_CONNECTION_URL, getConnectionURL());
                 put(HIBERNATE_UPDATE_SCHEMA, UPDATE_SCHEMA_VALUE);
                 put(HIBERNATE_DIALECT, SQLITE_HIBERNATE_DIALECT);
                 put(HIBERNATE_CONNECTION_DRIVER_CLASS, SQLITE_JDBC_DRIVER);
@@ -175,8 +229,8 @@ public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
         };
     }
 
-    @Override
-    public Session getConnection() throws ConnectionProviderException {
+    public Session getConnection()
+            throws ConnectionProviderException {
         try {
             return getSessionFactory().getCurrentSession();
         } catch (HibernateException e) {
@@ -184,22 +238,7 @@ public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
         }
     }
 
-    @Override
-    public void returnConnection(Object connection) {
-    }
-
-    @Override
-    public void initialize(Properties properties) throws ConfigurationException {
-        lock.lock();
-        try {
-            this.sessionFactory = createSessionFactory(properties);
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    @Override
-    public String getConnectionProviderIdentifier() {
-        return "sqLiteHibernate";
+    public void returnConnection(Session session) {
+        
     }
 }

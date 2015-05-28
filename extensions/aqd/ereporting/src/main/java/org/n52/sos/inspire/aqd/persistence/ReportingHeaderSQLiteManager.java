@@ -32,53 +32,36 @@ import javax.inject.Inject;
 
 import org.hibernate.Session;
 
-import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.coding.DecoderRepository;
+import org.n52.iceland.coding.EncoderRepository;
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.JsonDecoderKey;
-import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.encode.Encoder;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.lifecycle.Destroyable;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.aqd.ReportObligationType;
-import org.n52.sos.config.sqlite.SQLiteSessionManager;
-import org.n52.sos.config.sqlite.SQLiteSessionManager.ThrowingHibernateAction;
-import org.n52.sos.config.sqlite.SQLiteSessionManager.VoidHibernateAction;
+import org.n52.sos.config.sqlite.AbstractSQLiteDao;
+import org.n52.sos.config.sqlite.AbstractSQLiteDao.ThrowingHibernateAction;
+import org.n52.sos.config.sqlite.AbstractSQLiteDao.VoidHibernateAction;
 import org.n52.sos.encode.json.JSONEncoderKey;
 import org.n52.sos.inspire.aqd.RelatedParty;
 import org.n52.sos.inspire.aqd.ReportObligation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class ReportingHeaderSQLiteManager implements Constructable, Destroyable {
+public class ReportingHeaderSQLiteManager
+        extends AbstractSQLiteDao  {
     protected static final String REPORTING_AUTHORITY_KEY = "reportingAuthority";
 
     protected static final String REPORT_OBLIGATION_KEY_PREFIX = "reportObligation_";
 
-    private SQLiteSessionManager manager;
-
     @Inject
-    private CodingRepository codingRepository;
-
+    private DecoderRepository decoderRepository;
+    @Inject
+    private EncoderRepository encoderRepository;
     @Inject
     private ReportingHeaderSQLiteSessionFactory sessionFactory;
-
-    @Override
-    public void init() {
-        this.manager = new SQLiteSessionManager() {
-            @Override
-            protected ConnectionProvider createDefaultConnectionProvider() {
-                return sessionFactory;
-            }
-        };
-    }
-
-    @Override
-    public void destroy() {
-        this.manager.destroy();
-    }
 
     public void save(RelatedParty relatedParty) {
         try {
@@ -98,7 +81,7 @@ public class ReportingHeaderSQLiteManager implements Constructable, Destroyable 
 
     public RelatedParty loadRelatedParty() {
         try {
-            return manager.execute(new LoadReportingAuthorityAction());
+            return throwingExecute(new LoadReportingAuthorityAction());
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -106,14 +89,14 @@ public class ReportingHeaderSQLiteManager implements Constructable, Destroyable 
 
     public ReportObligation loadReportObligation(ReportObligationType type) {
         try {
-            return manager.execute(new LoadJSONFragmentAction<>(REPORT_OBLIGATION_KEY_PREFIX + type, ReportObligation.class));
+            return throwingExecute(new LoadJSONFragmentAction<>(REPORT_OBLIGATION_KEY_PREFIX + type, ReportObligation.class));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
     private void save(final String key, final Object o) throws ConnectionProviderException {
-        manager.execute(new SaveAction(o, key));
+        execute(new SaveAction(o, key));
     }
 
     private class LoadReportingAuthorityAction extends LoadJSONFragmentAction<RelatedParty> {
@@ -138,7 +121,7 @@ public class ReportingHeaderSQLiteManager implements Constructable, Destroyable 
         protected void run(Session session) {
             try {
                 Encoder<JsonNode, Object> encoder =
-                        codingRepository.getEncoder(new JSONEncoderKey(o.getClass()));
+                        encoderRepository.getEncoder(new JSONEncoderKey(o.getClass()));
                 JsonNode node = encoder.encode(o);
                 String json = JSONUtils.print(node);
                 session.saveOrUpdate(new JSONFragment().setID(key).setJSON(json));
@@ -166,7 +149,7 @@ public class ReportingHeaderSQLiteManager implements Constructable, Destroyable 
         }
 
         protected T decode(JSONFragment entity) throws OwsExceptionReport {
-            Decoder<T, JsonNode> decoder = codingRepository.getDecoder(new JsonDecoderKey(type));
+            Decoder<T, JsonNode> decoder = decoderRepository.getDecoder(new JsonDecoderKey(type));
             JsonNode node = JSONUtils.loadString(entity.getJSON());
             return decoder.decode(node);
         }

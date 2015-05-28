@@ -32,6 +32,17 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.JSONException;
@@ -43,15 +54,6 @@ import org.n52.iceland.service.operator.ServiceOperatorKey;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.JSONConstants;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -65,6 +67,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 @Controller
 public class AdminExtensionController extends AbstractAdminController {
+
+
+    @Inject
+    private OfferingExtensionRepository offeringExtensionRepository;
+
+    @Inject
+    private OwsExtendedCapabilitiesProviderRepository owsExtendedCapabilitiesProviderRepository;
+
     @ResponseBody
     @ExceptionHandler(JSONException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -104,13 +114,13 @@ public class AdminExtensionController extends AbstractAdminController {
                             json.path(JSONConstants.VERSION_KEY).asText());
             OwsExtendedCapabilitiesProviderKey oeckt = new OwsExtendedCapabilitiesProviderKey(sokt, json.path(JSONConstants.EXTENDED_CAPABILITIES_DOMAIN_KEY).asText());
             if (json.path(JSONConstants.ACTIVE_KEY).asBoolean()) {
-                for (OwsExtendedCapabilitiesProviderKey key : OwsExtendedCapabilitiesProviderRepository.getInstance().getAllExtendedCapabilitiesProviders().keySet()) {
+                for (OwsExtendedCapabilitiesProviderKey key : owsExtendedCapabilitiesProviderRepository.getKeys()) {
                     if (key.getServiceOperatorKey().equals(sokt)) {
-                        getSettingsManager().setActive(key, false);
+                        owsExtendedCapabilitiesProviderRepository.deactivate(key);
                     }
                 }
             }
-            getSettingsManager().setActive(oeckt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
+            this.owsExtendedCapabilitiesProviderRepository.setActive(oeckt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else if (json.has(JSONConstants.OFFERING_EXTENSION_DOMAIN_KEY)) {
             ServiceOperatorKey sokt =
                     new ServiceOperatorKey(json.path(JSONConstants.SERVICE_KEY).asText(),
@@ -118,7 +128,7 @@ public class AdminExtensionController extends AbstractAdminController {
             OfferingExtensionKey oekt =
                     new OfferingExtensionKey(sokt,
                             json.path(JSONConstants.OFFERING_EXTENSION_DOMAIN_KEY).asText());
-            getSettingsManager().setActive(oekt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
+            this.offeringExtensionRepository.setActive(oekt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else {
             throw new JSONException("Invalid JSON");
         }
@@ -127,8 +137,7 @@ public class AdminExtensionController extends AbstractAdminController {
     protected ArrayNode getExtendedCapabilitiesExtensions() throws ConnectionProviderException, ConfigurationException,
             JSONException {
         ArrayNode jeces = JSONUtils.nodeFactory().arrayNode();
-        final Map<ServiceOperatorKey, Collection<String>> oes =
-                OwsExtendedCapabilitiesProviderRepository.getInstance().getAllDomains();
+        Map<ServiceOperatorKey, Collection<String>> oes = this.owsExtendedCapabilitiesProviderRepository.getAllDomains();
         for (ServiceOperatorKey sokt : oes.keySet()) {
             for (String name : oes.get(sokt)) {
                 OwsExtendedCapabilitiesProviderKey oeckt = new OwsExtendedCapabilitiesProviderKey(sokt, name);
@@ -136,7 +145,7 @@ public class AdminExtensionController extends AbstractAdminController {
                         .put(JSONConstants.SERVICE_KEY, oeckt.getService())
                         .put(JSONConstants.VERSION_KEY, oeckt.getVersion())
                         .put(JSONConstants.EXTENDED_CAPABILITIES_DOMAIN_KEY, oeckt.getDomain())
-                        .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isOwsExtendedCapabilitiesProviderActive(oeckt));
+                        .put(JSONConstants.ACTIVE_KEY, this.owsExtendedCapabilitiesProviderRepository.isActive(oeckt));
             }
         }
         return jeces;
@@ -145,8 +154,7 @@ public class AdminExtensionController extends AbstractAdminController {
     protected ArrayNode getOfferingExtensionExtensions() throws JSONException, ConnectionProviderException,
             ConfigurationException {
         ArrayNode joes = JSONUtils.nodeFactory().arrayNode();
-        final Map<ServiceOperatorKey, Collection<String>> oes =
-                OfferingExtensionRepository.getInstance().getAllDomains();
+        final Map<ServiceOperatorKey, Collection<String>> oes = this.offeringExtensionRepository.getAllDomains();
         for (ServiceOperatorKey sokt : oes.keySet()) {
             for (String name : oes.get(sokt)) {
                 OfferingExtensionKey oekt = new OfferingExtensionKey(sokt, name);
@@ -154,7 +162,7 @@ public class AdminExtensionController extends AbstractAdminController {
                         .put(JSONConstants.SERVICE_KEY, oekt.getService())
                         .put(JSONConstants.VERSION_KEY, oekt.getVersion())
                         .put(JSONConstants.OFFERING_EXTENSION_DOMAIN_KEY, oekt.getDomain())
-                        .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isOfferingExtensionActive(oekt));
+                        .put(JSONConstants.ACTIVE_KEY, this.offeringExtensionRepository.isActive(oekt));
             }
         }
         return joes;

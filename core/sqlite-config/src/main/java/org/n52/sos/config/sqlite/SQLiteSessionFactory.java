@@ -91,6 +91,8 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
     public static final String SQLITE_HIBERNATE_DIALECT
             = HibernateSQLiteDialect.class.getName();
     public static final String UPDATE_SCHEMA_VALUE = "update";
+    public static final String VALIDATE_SCHEMA_VALUE = "validate";
+    public static final String CREATE_SCHEMA_VALUE = "create";
     public static final String SQLITE_JDBC_DRIVER = "org.sqlite.JDBC";
     public static final String EMPTY = "";
     public static final String DEFAULT_DATABASE_NAME = "configuration";
@@ -138,8 +140,11 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
     }
 
     protected String getConnectionURL() {
-        String file = new File(getPath(), getDatabaseName()).getAbsolutePath();
-        return String.format(CONNECTION_URL_TEMPLATE, file);
+        return String.format(CONNECTION_URL_TEMPLATE, getFile().getAbsolutePath());
+    }
+
+    protected File getFile() {
+        return new File(getPath(), getDatabaseName());
     }
 
     protected SessionFactory getSessionFactory() {
@@ -154,24 +159,19 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
         return this.sessionFactory;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.n52.sos.ds.ConnectionProvider#cleanup()
-     */
     @Override
     public void destroy() {
         lock.lock();
         try {
             if (this.sessionFactory != null) {
                 try {
-                    if (SessionFactoryImpl.class.isInstance(this.sessionFactory) &&
-                             Stoppable.class
-                        .isInstance(((SessionFactoryImpl) this.sessionFactory)
-                                .getConnectionProvider())) {
-                        ((Stoppable) ((SessionFactoryImpl) this.sessionFactory)
-                                .getConnectionProvider()).stop();
-                    }
+//                    if (this.sessionFactory instanceof SessionFactoryImpl) {
+//                        SessionFactoryImpl sessionFactoryImpl = (SessionFactoryImpl) this.sessionFactory;
+//                        if (sessionFactoryImpl.getConnectionProvider() instanceof Stoppable) {
+//                            Stoppable stoppable = (Stoppable) sessionFactoryImpl.getConnectionProvider();
+//                            stoppable.stop();
+//                        }
+//                    }
                     this.sessionFactory.close();
                     LOG.info("Connection provider closed successfully!");
                 } catch (HibernateException he) {
@@ -213,11 +213,18 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
     }
 
     private Properties getDefaultProperties() {
+        final String updateSchemaValue;
+        if (getFile().exists()) {
+            updateSchemaValue = VALIDATE_SCHEMA_VALUE;
+        } else {
+            updateSchemaValue = CREATE_SCHEMA_VALUE;
+        }
+
         return new Properties() {
             private static final long serialVersionUID = 3109256773218160485L;
             {
                 put(HIBERNATE_CONNECTION_URL, getConnectionURL());
-                put(HIBERNATE_UPDATE_SCHEMA, UPDATE_SCHEMA_VALUE);
+                put(HIBERNATE_UPDATE_SCHEMA, updateSchemaValue);
                 put(HIBERNATE_DIALECT, SQLITE_HIBERNATE_DIALECT);
                 put(HIBERNATE_CONNECTION_DRIVER_CLASS, SQLITE_JDBC_DRIVER);
                 put(HIBERNATE_CONNECTION_USERNAME, EMPTY);
@@ -239,6 +246,6 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
     }
 
     public void returnConnection(Session session) {
-        
+
     }
 }

@@ -63,6 +63,9 @@ public class HibernateSessionHolder {
     }
 
     public static Session getSession(Object connection) throws OwsExceptionReport {
+        if (connection == null) {
+            throw new NoApplicableCodeException().withMessage("The parameter connection is null!");
+        }
         if (!(connection instanceof Session)) {
             throw new NoApplicableCodeException().withMessage("The parameter connection is not an Hibernate Session!");
         }

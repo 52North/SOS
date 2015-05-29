@@ -38,11 +38,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.cache.ContentCachePersistenceStrategy;
 import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.service.Configurator;
 import org.n52.sos.context.ContextSwitcher;
 import org.n52.sos.web.common.ControllerConstants;
 
@@ -61,6 +61,9 @@ public class AdminResetController extends AbstractAdminController {
     @Inject
     private SettingsManager settingsManager;
 
+    @Inject
+    private ContentCacheController contentCacheController;
+
     @RequestMapping(method = RequestMethod.GET)
     public String get() {
         return ControllerConstants.Views.ADMIN_RESET;
@@ -69,17 +72,12 @@ public class AdminResetController extends AbstractAdminController {
     @RequestMapping(method = RequestMethod.POST)
     public View post() throws ConfigurationException, ConnectionProviderException {
         LOG.debug("Resetting Service.");
-        ContentCachePersistenceStrategy persistenceStrategy = null;
-        if (Configurator.getInstance() != null) {
-            persistenceStrategy = Configurator.getInstance()
-                    .getCacheController().getContentCachePersistenceStrategy();
-            LOG.debug("Resetting configurator.");
-            // this one also will persist the cache file
-            Configurator.getInstance().destroy();
-        }
+
         getDatabaseSettingsHandler().delete();
         this.settingsManager.deleteAll();
 
+        ContentCachePersistenceStrategy persistenceStrategy
+                = contentCacheController.getContentCachePersistenceStrategy();
 
         // delete a cache file if present
         if (persistenceStrategy != null) {

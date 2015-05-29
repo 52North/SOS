@@ -34,12 +34,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.cache.ContentCache;
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierRepository;
 import org.n52.iceland.ds.OperationHandler;
@@ -54,6 +58,7 @@ import org.n52.iceland.exception.ows.VersionNegotiationFailedException;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingValueReferenceException;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.filter.SpatialFilter;
 import org.n52.iceland.ogc.filter.TemporalFilter;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
@@ -95,53 +100,67 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public abstract class AbstractRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
-        implements RequestOperator {
+        implements RequestOperator, Constructable {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRequestOperator.class);
 
     // TODO make supported ValueReferences dynamic
     private static final Set<String> validTemporalFilterValueReferences = Sets.newHashSet("phenomenonTime",
             "om:phenomenonTime", "resultTime", "om:resultTime", "validTime", "om:validTime");
 
-    private final D dao;
-
     private final String operationName;
-
     private final RequestOperatorKey requestOperatorKey;
-
     private final Class<Q> requestType;
+    @Inject
+    private OperationHandlerRepository operationHandlerRepository;
+    @Inject
+    private RequestResponseModifierRepository requestResponseModifierRepository;
+    @Inject
+    private ContentCacheController contentCacheController;
+    @Inject
+    private ProfileHandler profileHandler;
+    @Inject
+    private ServiceOperatorRepository serviceOperatorRepository;
+    @Inject
+    private ServiceEventBus serviceEventBus;
+    private D operationHandler;
 
     public AbstractRequestOperator(String service, String version, String operationName, Class<Q> requestType) {
         this(service, version, operationName, true, requestType);
     }
 
-    @SuppressWarnings("unchecked")
     public AbstractRequestOperator(String service, String version, String operationName, boolean defaultActive, Class<Q> requestType) {
         this.operationName = operationName;
         this.requestOperatorKey = new RequestOperatorKey(service, version, operationName, defaultActive);
         this.requestType = requestType;
-        this.dao = initDAO(service, operationName);
         LOGGER.info("{} initialized successfully!", getClass().getSimpleName());
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
+    public void init() {
+        this.initOperationHandler(this.requestOperatorKey.getService(),
+                                  this.requestOperatorKey.getOperationName());
+    }
+
+    @Deprecated
     protected D initDAO(String service, String operationName) {
-        D dao = (D) OperationHandlerRepository.getInstance().getOperationDAO(service, operationName);
-        if (dao == null) {
-            throw new NullPointerException(String.format("OperationDAO for Operation %s has no implementation!",
-                    operationName));
-        }
-        return dao;
+        return initOperationHandler(service, operationName);
     }
 
+    @SuppressWarnings("unchecked")
+    protected D initOperationHandler(String service, String operationName1) {
+        D handler = (D) this.operationHandlerRepository.getOperationHandler(service, operationName1);
+        Objects.requireNonNull(handler, String.format("OperationDAO for Operation %s has no implementation!", operationName1));
+        return handler;
+    }
+
+    @Deprecated
     protected D getDao() {
-        return this.dao;
+        return getOperationHandler();
     }
 
-    // @Override
-    // public SosCapabilitiesExtension getExtension() throws OwsExceptionReport
-    // {
-    // return getDao().getExtension();
-    // }
+    protected D getOperationHandler() {
+        return this.operationHandler;
+    }
 
     @Override
     public OwsOperation getOperationMetadata(final String service, final String version) throws OwsExceptionReport {
@@ -166,7 +185,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     @Override
     public AbstractServiceResponse receiveRequest(final AbstractServiceRequest<?> abstractRequest)
             throws OwsExceptionReport {
-        ServiceEventBus.fire(new RequestEvent(abstractRequest));
+        this.serviceEventBus.submit(new RequestEvent(abstractRequest));
         if (requestType.isAssignableFrom(abstractRequest.getClass())) {
             Q request = requestType.cast(abstractRequest);
             checkForModifierAndProcess(request);
@@ -179,12 +198,11 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     }
 
     private void checkForModifierAndProcess(AbstractServiceRequest<?> request) throws OwsExceptionReport {
-        if (RequestResponseModifierRepository.getInstance().hasRequestResponseModifier(request)) {
+        if (this.requestResponseModifierRepository.hasRequestResponseModifier(request)) {
             List<RequestResponseModifier> splitter = new ArrayList<>();
             List<RequestResponseModifier> remover = new ArrayList<>();
             List<RequestResponseModifier> defaultMofifier = new ArrayList<>();
-            for (RequestResponseModifier modifier : RequestResponseModifierRepository
-                    .getInstance().getRequestResponseModifier(request)) {
+            for (RequestResponseModifier modifier : this.requestResponseModifierRepository.getRequestResponseModifier(request)) {
                 if (modifier.getFacilitator().isSplitter()) {
                     splitter.add(modifier);
                 } else if (modifier.getFacilitator().isAdderRemover()) {
@@ -210,12 +228,11 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     private AbstractServiceResponse checkForModifierAndProcess(AbstractServiceRequest<?> request,
             AbstractServiceResponse response) throws OwsExceptionReport {
-        if (RequestResponseModifierRepository.getInstance().hasRequestResponseModifier(request, response)) {
+        if (this.requestResponseModifierRepository.hasRequestResponseModifier(request, response)) {
             List<RequestResponseModifier> defaultMofifier = new ArrayList<>();
             List<RequestResponseModifier> remover = new ArrayList<>();
             List<RequestResponseModifier> merger = new ArrayList<>();
-            for (RequestResponseModifier modifier : RequestResponseModifierRepository
-                    .getInstance().getRequestResponseModifier(request, response)) {
+            for (RequestResponseModifier modifier : this.requestResponseModifierRepository.getRequestResponseModifier(request, response)) {
                 if (modifier.getFacilitator().isMerger()) {
                     merger.add(modifier);
                 } else if (modifier.getFacilitator().isAdderRemover()) {
@@ -248,11 +265,11 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     protected abstract void checkParameters(Q request) throws OwsExceptionReport;
 
     protected ContentCache getCache() {
-        return Configurator.getInstance().getCache();
+        return this.contentCacheController.getCache();
     }
 
     protected Profile getActiveProfile() {
-        return ProfileHandler.getInstance().getActiveProfile();
+        return this.profileHandler.getActiveProfile();
     }
 
     /**
@@ -270,10 +287,10 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     protected List<String> checkAcceptedVersionsParameter(final String service, final List<String> versions)
             throws OwsExceptionReport {
 
-        final List<String> validVersions = new LinkedList<String>();
+        final List<String> validVersions = new LinkedList<>();
         if (versions != null) {
             final Set<String> supportedVersions =
-                    ServiceOperatorRepository.getInstance().getSupportedVersions(service);
+                    this.serviceOperatorRepository.getSupportedVersions(service);
             for (final String version : versions) {
                 if (supportedVersions.contains(version)) {
                     validVersions.add(version);
@@ -304,13 +321,11 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
         // if version is incorrect, throw exception
         if (request.getVersion() == null
-                || !ServiceOperatorRepository.getInstance().isVersionSupported(request.getService(),
-                        request.getVersion())) {
+                || !this.serviceOperatorRepository.isVersionSupported(request.getService(), request.getVersion())) {
             throw new InvalidParameterValueException().at(OWSConstants.RequestParams.version).withMessage(
                     "The parameter '%s' does not contain version(s) supported by this Service: '%s'!",
                     OWSConstants.RequestParams.version.name(),
-                    Joiner.on(", ").join(
-                            ServiceOperatorRepository.getInstance().getSupportedVersions(request.getService())));
+                    Joiner.on(", ").join(this.serviceOperatorRepository.getSupportedVersions(request.getService())));
         }
     }
 

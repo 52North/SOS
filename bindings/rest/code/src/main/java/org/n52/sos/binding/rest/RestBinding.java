@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -60,6 +61,7 @@ import org.n52.iceland.exception.ows.MissingParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionCode;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
@@ -95,20 +97,25 @@ import com.google.common.collect.Sets;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  */
-public class RestBinding extends Binding {
+public class RestBinding extends Binding implements Constructable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestBinding.class);
-    private final Set<String> conformanceClasses;
-    private final Constants bindingConstants;
     public static final String URI_PATTERN = "/rest";
     private static final Set<BindingKey> KEYS = Collections.<BindingKey>singleton(new PathBindingKey(URI_PATTERN));
+    private Set<String> conformanceClasses;
+    private Constants bindingConstants;
 
-    public RestBinding() {
-        bindingConstants = Constants.getInstance();
-        conformanceClasses = Sets.newHashSet(bindingConstants.getConformanceClass());
+    @Inject
+    public void setBindingConstants(Constants bindingConstants) {
+        this.bindingConstants = bindingConstants;
     }
 
-     @Override
+    @Override
+    public void init() {
+        this.conformanceClasses = Sets.newHashSet(this.bindingConstants.getConformanceClass());
+    }
+
+    @Override
     public Set<BindingKey> getKeys() {
         return KEYS;
     }

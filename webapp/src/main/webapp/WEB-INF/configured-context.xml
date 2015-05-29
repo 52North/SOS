@@ -76,9 +76,6 @@
         </property>
     </bean>
 
-    <bean id="reportingHeaderSQLiteSessionFactory"
-          class="org.n52.sos.inspire.aqd.persistence.ReportingHeaderSQLiteSessionFactory" />
-
     <bean id="additionalObservationCreatorRepository"
           class="org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository" />
     <bean id="hibernateProcedureDescriptionGeneratorFactoryRepository"

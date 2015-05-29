@@ -35,8 +35,11 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.encode.EncoderKey;
@@ -54,8 +57,15 @@ import org.n52.iceland.util.http.MediaTypes;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.util.N52XmlHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.coding.SchemaRepository;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.lifecycle.Constructable;
+import org.n52.iceland.service.ServiceSettings;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
@@ -71,7 +81,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse> extends AbstractXmlEncoder<T>
-        implements StreamingEncoder<XmlObject, T> {
+        implements StreamingEncoder<XmlObject, T> , Constructable {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResponseEncoder.class);
 
     private final Set<EncoderKey> encoderKeys;
@@ -84,7 +94,11 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
 
     private final Class<T> responseType;
 
-    private final boolean validate;
+    private boolean validate;
+
+    private SchemaRepository schemaRepository;
+
+    private SettingsManager settingsManager;
 
     /**
      * constructor
@@ -104,8 +118,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
      * @param validate
      *            Indicator if the created/encoded object should be validated
      */
-    public AbstractResponseEncoder(String service, String version, String operation, String namespace, String prefix,
-            Class<T> responseType, boolean validate) {
+    public AbstractResponseEncoder(String service, String version, String operation, String namespace, String prefix, Class<T> responseType, boolean validate) {
         OperationKey key = new OperationKey(service, version, operation);
         this.encoderKeys =
                 Sets.newHashSet(new XmlEncoderKey(namespace, responseType), new OperationEncoderKey(key,
@@ -134,10 +147,36 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
      * @param responseType
      *            Response type
      */
-    public AbstractResponseEncoder(String service, String version, String operation, String namespace, String prefix,
-            Class<T> responseType) {
-        this(service, version, operation, namespace, prefix, responseType, ServiceConfiguration.getInstance()
-                .isValidateResponse());
+    public AbstractResponseEncoder(String service, String version, String operation, String namespace, String prefix, Class<T> responseType) {
+        this(service, version, operation, namespace, prefix, responseType, false);
+    }
+
+    @Inject
+    public void setSchemaRepository(SchemaRepository schemaRepository) {
+        this.schemaRepository = schemaRepository;
+    }
+
+    public SchemaRepository getSchemaRepository() {
+        return schemaRepository;
+    }
+
+    @Inject
+    public void setSettingsManager(SettingsManager settingsManager) {
+        this.settingsManager = settingsManager;
+    }
+
+    public SettingsManager getSettingsManager() {
+        return settingsManager;
+    }
+
+    @Setting(ServiceSettings.VALIDATE_RESPONSE)
+    public void setValidate(boolean validate) {
+        this.validate = validate;
+    }
+
+    @Override
+    public void init() {
+        this.settingsManager.configure(this);
     }
 
     @Override
@@ -157,7 +196,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
         if (response == null) {
             throw new UnsupportedEncoderInputException(this, response);
         }
-        final Map<HelperValues, String> additionalValues = new EnumMap<HelperValues, String>(HelperValues.class);
+        final Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
         additionalValues.put(HelperValues.VERSION, this.version);
         return encode(response, additionalValues);
     }
@@ -193,7 +232,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
         }
         create(response, outputStream, encodingValues);
     }
-    
+
     @Override
     public boolean forceStreaming() {
     	return false;
@@ -202,7 +241,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
     private void setSchemaLocations(XmlObject document) {
         Map<String, SchemaLocation> schemaLocations = Maps.newHashMap();
         for (String ns : N52XmlHelper.getNamespaces(document)) {
-            for (SchemaLocation sl : CodingRepository.getInstance().getSchemaLocation(ns)) {
+            for (SchemaLocation sl : this.schemaRepository.getSchemaLocation(ns)) {
                 schemaLocations.put(sl.getNamespace(), sl);
             }
         }
@@ -284,7 +323,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
      *             If an error occurs when writing to stream
      */
     protected void writeIndent(int level, OutputStream outputStream) throws IOException {
-        byte[] indent = new String("  ").getBytes();
+        byte[] indent = "  ".getBytes();
         for (int i = 0; i < level; i++) {
             outputStream.write(indent);
         }

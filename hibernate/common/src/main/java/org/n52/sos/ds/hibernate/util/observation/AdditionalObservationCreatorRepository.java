@@ -28,38 +28,40 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.exception.ConfigurationException;
+import javax.inject.Inject;
+
+import org.n52.iceland.component.AbstractComponentRepository;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.util.Producer;
-import org.n52.iceland.component.AbstractUniqueKeyComponentRepository;
 
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("rawtypes")
 public class AdditionalObservationCreatorRepository
-        extends AbstractUniqueKeyComponentRepository<AdditionalObservationCreatorKey, AdditionalObservationCreator, AdditionalObservationCreatorFactory> {
+        extends AbstractComponentRepository<AdditionalObservationCreatorKey, AdditionalObservationCreator, AdditionalObservationCreatorFactory> implements Constructable {
 
     @Deprecated
     private static AdditionalObservationCreatorRepository instance;
     private final Map<AdditionalObservationCreatorKey, Producer<AdditionalObservationCreator>> additionalObservationCreator
             = Maps.newHashMap();
 
-    /**
-     * private constructor for singleton
-     *
-     * @throws ConfigurationException
-     */
-    private AdditionalObservationCreatorRepository() {
-        super(AdditionalObservationCreator.class, AdditionalObservationCreatorFactory.class);
-        AdditionalObservationCreatorRepository.instance = this;
-    }
+    @Inject
+    private Collection<AdditionalObservationCreator> components;
+
+    @Inject
+    private Collection<AdditionalObservationCreatorFactory> componentFactories;
 
     @Override
-    protected void processImplementations(Map<AdditionalObservationCreatorKey, Producer<AdditionalObservationCreator>> implementations) {
-        this.additionalObservationCreator.clear();
+    public void init() {
+        AdditionalObservationCreatorRepository.instance = this;
+        Map<AdditionalObservationCreatorKey, Producer<AdditionalObservationCreator>> implementations
+                = getUniqueProviders(this.components, this.componentFactories);
+                this.additionalObservationCreator.clear();
         this.additionalObservationCreator.putAll(implementations);
     }
 

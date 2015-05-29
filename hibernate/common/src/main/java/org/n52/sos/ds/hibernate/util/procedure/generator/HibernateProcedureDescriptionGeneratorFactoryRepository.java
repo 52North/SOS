@@ -28,10 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
+import java.util.Collection;
 import java.util.Map;
 
-import org.n52.iceland.component.AbstractUniqueKeyComponentRepository;
-import org.n52.iceland.exception.ConfigurationException;
+import javax.inject.Inject;
+
+import org.n52.iceland.component.AbstractComponentRepository;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.util.Producer;
 
 import com.google.common.collect.Maps;
@@ -44,24 +47,26 @@ import com.google.common.collect.Maps;
  *
  */
 public class HibernateProcedureDescriptionGeneratorFactoryRepository
-    extends AbstractUniqueKeyComponentRepository<HibernateProcedureDescriptionGeneratorFactoryKey, HibernateProcedureDescriptionGeneratorFactory, HibernateProcedureDescriptionGeneratorFactoryFactory> {
+    extends AbstractComponentRepository<HibernateProcedureDescriptionGeneratorFactoryKey, HibernateProcedureDescriptionGeneratorFactory, HibernateProcedureDescriptionGeneratorFactoryFactory> implements Constructable {
 
     @Deprecated
     private static HibernateProcedureDescriptionGeneratorFactoryRepository instance;
 
     private final Map<HibernateProcedureDescriptionGeneratorFactoryKey, Producer<HibernateProcedureDescriptionGeneratorFactory>> factories = Maps.newHashMap();
 
-    private HibernateProcedureDescriptionGeneratorFactoryRepository() {
-        super(HibernateProcedureDescriptionGeneratorFactory.class,
-              HibernateProcedureDescriptionGeneratorFactoryFactory.class);
-        HibernateProcedureDescriptionGeneratorFactoryRepository.instance = this;
-    }
+    @Inject
+    private Collection<HibernateProcedureDescriptionGeneratorFactory> components;
+
+    @Inject
+    private Collection<HibernateProcedureDescriptionGeneratorFactoryFactory> componentFactories;
 
     @Override
-    protected void processImplementations(Map<HibernateProcedureDescriptionGeneratorFactoryKey, Producer<HibernateProcedureDescriptionGeneratorFactory>> implementations) throws ConfigurationException {
+    public void init() {
+        HibernateProcedureDescriptionGeneratorFactoryRepository.instance = this;
+        Map<HibernateProcedureDescriptionGeneratorFactoryKey, Producer<HibernateProcedureDescriptionGeneratorFactory>> implementations
+                = getUniqueProviders(this.components, this.componentFactories);
         this.factories.clear();
         this.factories.putAll(implementations);
-        // TODO check for encoder/decoder used by converter
     }
 
     public HibernateProcedureDescriptionGeneratorFactory getFactory(final String descriptionFormat) {

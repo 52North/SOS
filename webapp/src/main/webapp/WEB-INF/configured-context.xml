@@ -94,6 +94,7 @@
     <import resource="components/configured/response-writers.xml" />
     <import resource="components/configured/daos.xml" />
     <import resource="components/configured/web.xml" />
+    <import resource="components/configured/settings-sqlite.xml" />
 
 
     <!--

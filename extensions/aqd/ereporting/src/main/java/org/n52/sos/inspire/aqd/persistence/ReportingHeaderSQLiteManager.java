@@ -60,8 +60,6 @@ public class ReportingHeaderSQLiteManager
     private DecoderRepository decoderRepository;
     @Inject
     private EncoderRepository encoderRepository;
-    @Inject
-    private ReportingHeaderSQLiteSessionFactory sessionFactory;
 
     public void save(RelatedParty relatedParty) {
         try {

@@ -6,16 +6,116 @@
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
-    <!-- load the admin controllers -->
-    <ctx:component-scan base-package="org.n52.sos.web.admin" />
-
-    <!-- default logging backend configurator -->
-    <bean class="org.n52.sos.web.admin.LogBackLoggingConfigurator" />
-
-    <import resource="sos-context.xml" />
-
-    <bean class="org.n52.sos.config.sqlite.SQLiteCapabilitiesExtensionService">
-        <property name="sessionFactory" ref="configurationSQLiteSessionFactory" />
+    <bean class="org.n52.iceland.util.activation.ActivationRegistrator">
+        <description>Used to wire up activation persistence.</description>
+        <property name="listeners">
+            <map>
+                <entry key-ref="bindingRepository" value="#{activationService.bindingListener}" />
+                <entry key-ref="owsExtendedCapabilitiesRepository" value="#{activationService.owsExtendedCapabiltiesListener}"/>
+                <entry key-ref="requestOperatorRepository" value="#{activationService.requestOperatorListener}"/>
+            </map>
+        </property>
+        <property name="initializers">
+            <map>
+                <entry key-ref="bindingRepository" value="#{activationService.bindingInitializer}" />
+                <entry key-ref="owsExtendedCapabilitiesRepository" value="#{activationService.owsExtendedCapabiltiesInitializer}"/>
+                <entry key-ref="requestOperatorRepository" value="#{activationService.requestOperatorInitializer}" />
+            </map>
+        </property>
     </bean>
+
+     <bean class="org.n52.iceland.util.activation.ActivationRegistrator">
+        <description>Used to wire up SOS specific activation persistence.</description>
+        <property name="listeners">
+            <map>
+                <entry key-ref="offeringExtensionRepository" value="#{activationService.offeringExtensionListener}" />
+                <entry key-ref="procedureDescriptionFormatRepository" value="#{activationService.procedureDescriptionFormatListener}"/>
+                <entry key-ref="responseFormatRepository" value="#{activationService.responseFormatListener}" />
+            </map>
+        </property>
+        <property name="initializers">
+            <map>
+                <entry key-ref="offeringExtensionRepository" value="#{activationService.offeringExtensionInitializer}" />
+                <entry key-ref="procedureDescriptionFormatRepository" value="#{activationService.procedureDescriptionFormatInitializer}" />
+                <entry key-ref="responseFormatRepository" value="#{activationService.responseFormatInitializer}" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="icelandServlet" class="org.n52.iceland.service.Service" />
+
+    <bean id="configurator" class="org.n52.iceland.service.Configurator" />
+
+    <bean id="serviceProviderFactory" class="org.n52.iceland.ogc.ows.ServiceProviderFactory" />
+    <bean id="serviceIdentificationFactory" class="org.n52.iceland.ogc.ows.ServiceIdentificationFactory" />
+
+
+
+    <bean id="owsExtendedCapabilitiesRepository"
+          class="org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderRepository" />
+    <bean id="offeringExtensionRepository"
+          class="org.n52.iceland.ogc.swes.OfferingExtensionRepository" />
+    <bean id="capabilitiesExtensionRepository"
+          class="org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository" />
+
+
+    <bean id="reportObligationRepository"
+          class="org.n52.sos.inspire.aqd.ReportObligationRepository" />
+    <bean id="reportingHeaderSQLiteManager"
+          class="org.n52.sos.inspire.aqd.persistence.ReportingHeaderSQLiteManager" />
+    <bean id="reportingHeaderSQLiteSessionFactory"
+          class="org.n52.sos.inspire.aqd.persistence.ReportingHeaderSQLiteSessionFactory" />
+
+    <bean id="additionalObservationCreatorRepository"
+          class="org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository" />
+    <bean id="hibernateProcedureDescriptionGeneratorFactoryRepository"
+          class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository" />
+    <bean id="geometryHandler" class="org.n52.sos.util.GeometryHandler" />
+
+    <bean id="driverCleanupListener" class="org.n52.sos.service.DriverCleanupListener" />
+
+    <bean id="insertSensorCapabilitiesExtensionProvider"
+          class="org.n52.sos.ds.hibernate.InsertSensorCapabilitiesExtensionProvider" />
+    <bean id="insertResultCapabiltiesExtensionProvider"
+          class="org.n52.sos.ds.hibernate.InsertResultCapabiltiesExtensionProvider" />
+    <bean id="insertResultTemplateCapabilitiesExtensionProvider"
+          class="org.n52.sos.ds.hibernate.InsertResultTemplateCapabilitiesExtensionProvider" />
+
+
+    <import resource="components/configured/cache.xml" />
+    <import resource="components/configured/events.xml" />
+    <import resource="components/configured/bindings.xml" />
+    <import resource="components/configured/coding.xml" />
+    <import resource="components/configured/converters.xml" />
+    <import resource="components/configured/operation-handlers.xml" />
+    <import resource="components/configured/request-operators.xml" />
+    <import resource="components/configured/request-response-modifiers.xml" />
+    <import resource="components/configured/service-operators.xml" />
+    <import resource="components/configured/response-writers.xml" />
+    <import resource="components/configured/daos.xml" />
+    <import resource="components/configured/web.xml" />
+
+
+    <!--
+        org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProvider
+    -->
+
+    <!-- OwsExtendedCapabilitiesProvider implementations from extensions/inspire/code -->
+    <bean class="org.n52.sos.inspire.capabilities.InspireExtendedCapabilitiesProvider"/>
+
+
+    <!--
+        org.n52.iceland.ogc.swes.OfferingExtensionProvider
+    -->
+
+    <!-- OfferingExtensionProvider implementations from extensions/inspire/code -->
+    <bean class="org.n52.sos.inspire.offering.InspireOfferingExtensionProvider"/>
+
+    <!--
+        org.n52.sos.service.profile.ProfileHandler
+    -->
+
+    <!-- ProfileHandler implementations from core/profile/coding -->
+    <bean id="profileHandler" class="org.n52.sos.profile.ProfileHandlerImpl" />
 
 </beans>

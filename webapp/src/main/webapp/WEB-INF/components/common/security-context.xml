@@ -19,11 +19,13 @@
         <sec:authentication-provider ref="authenticationProvider" />
     </sec:authentication-manager>
 
-    <bean id="httpBasicAuthenticationEntryPoint" class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+    <bean id="httpBasicAuthenticationEntryPoint"
+          class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
         <property name="realmName" value="52North SOS" />
     </bean>
 
-    <bean id="httpBasicAuthenticationFilter" class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
+    <bean id="httpBasicAuthenticationFilter"
+          class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
         <property name="authenticationManager" ref="authenticationManager" />
         <property name="authenticationEntryPoint" ref="httpBasicAuthenticationEntryPoint" />
     </bean>

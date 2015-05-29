@@ -2,9 +2,9 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
-   <!--
-        org.n52.iceland.encode.ResponseWriterFactory
-    -->
+
+    <bean id="responseWriterRepository"
+         class="org.n52.iceland.encode.ResponseWriterRepository" />
 
     <!-- ResponseWriterFactory implementations from bindings/soap -->
     <bean class="org.n52.sos.encode.SoapResponseWriterFactory"/>
@@ -17,5 +17,5 @@
     <bean class="org.n52.sos.encode.XmlResponseWriterFactory"/>
     <bean class="org.n52.sos.encode.AbstractServiceResponseWriterFactory"/>
     <bean class="org.n52.sos.encode.BinaryAttachmentResponseWriterFactory"/>
-    
+
 </beans>

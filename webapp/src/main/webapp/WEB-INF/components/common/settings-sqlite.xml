@@ -17,6 +17,10 @@
         <property name="sessionFactory" ref="configurationSQLiteSessionFactory" />
     </bean>
 
+    <bean class="org.n52.sos.config.sqlite.SQLiteCapabilitiesExtensionService">
+        <property name="sessionFactory" ref="configurationSQLiteSessionFactory" />
+    </bean>
+
     <bean id="configurationSQLiteSessionFactory" class="org.n52.sos.config.sqlite.SQLiteSessionFactory">
         <property name="databaseName" value="configuration" />
         <property name="annotatedClasses">

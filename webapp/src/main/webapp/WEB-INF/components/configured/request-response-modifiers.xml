@@ -2,9 +2,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
-    <!--
-        org.n52.iceland.convert.RequestResponseModifier
-    -->
+
+    <bean id="requestResponseModifierRepository" class="org.n52.iceland.convert.RequestResponseModifierRepository" />
 
     <!-- RequestResponseModifier implementations from converter/split-and-merge -->
     <bean class="org.n52.sos.converter.SplitMergeObservations"/>

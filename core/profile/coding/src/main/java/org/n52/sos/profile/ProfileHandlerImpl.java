@@ -39,38 +39,36 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.service.profile.DefaultProfile;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
-public class ProfileHandlerImpl extends ProfileHandler {
+public class ProfileHandlerImpl extends ProfileHandler implements Constructable {
 
-    /**
-     * logger
-     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileHandlerImpl.class);
-
     private static final String PROFILES = "profiles";
-
     private Profile activeProfile;
+    private final Map<String, Profile> availableProfiles = new HashMap<>(1);
 
-    private Map<String, Profile> availableProfiles = new HashMap<String, Profile>(1);
-
-    public ProfileHandlerImpl() throws ConfigurationException {
+    @Override
+    public void init() {
+        super.init();
         setActiveProfile(new DefaultProfile());
-        addAvailableProvile(getActiveProfile());
+        addAvailableProfile(getActiveProfile());
         try {
             loadProfiles();
         } catch (OwsExceptionReport e) {
@@ -85,10 +83,10 @@ public class ProfileHandlerImpl extends ProfileHandler {
 
     private void setActiveProfile(Profile profile) {
         this.activeProfile = profile;
-        addAvailableProvile(profile);
+        addAvailableProfile(profile);
     }
 
-    private void addAvailableProvile(Profile profile) {
+    private void addAvailableProfile(Profile profile) {
         if (availableProfiles.containsKey(profile.getIdentifier())) {
             LOGGER.warn("Profile with the identifier {} still exist! Existing profile is overwritten!",
                     profile.getIdentifier());
@@ -125,7 +123,7 @@ public class ProfileHandlerImpl extends ProfileHandler {
             if (profile.isActiveProfile()) {
                 setActiveProfile(profile);
             } else {
-                addAvailableProvile(profile);
+                addAvailableProfile(profile);
             }
         }
     }

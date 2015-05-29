@@ -3,44 +3,48 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
+
     <!--
         org.n52.iceland.ds.DataConnectionProvider
     -->
 
     <!-- DataConnectionProvider implementations from hibernate/dao -->
     <!-- DataConnectionProvider implementations from hibernate/feature -->
-    <bean class="org.n52.sos.ds.hibernate.SessionFactoryProvider"/>
+    <bean id="sessionFactoryProvider" class="org.n52.sos.ds.hibernate.SessionFactoryProvider"/>
 
     <!--
         org.n52.iceland.ds.FeatureQueryHandler
     -->
 
     <!-- FeatureQueryHandler implementations from hibernate/feature -->
-    <bean class="org.n52.sos.ds.hibernate.HibernateFeatureQueryHandler"/>
+    <bean id="featureQueryHandler" class="org.n52.sos.ds.hibernate.HibernateFeatureQueryHandler"/>
 
     <!--
         org.n52.iceland.ds.I18NDAO
     -->
 
+    <bean id="i18nDaoRepository" class="org.n52.iceland.i18n.I18NDAORepository" />
+
+
     <!-- I18NDAO implementations from hibernate/common -->
-    <bean class="org.n52.sos.ds.hibernate.dao.i18n.ProcedureI18NDAO"/>
-    <bean class="org.n52.sos.ds.hibernate.dao.i18n.FeatureI18NDAO"/>
-    <bean class="org.n52.sos.ds.hibernate.dao.i18n.ObservablePropertyI18NDAO"/>
-    <bean class="org.n52.sos.ds.hibernate.dao.i18n.OfferingI18NDAO"/>
+    <bean id="procedureI18NDAO" class="org.n52.sos.ds.hibernate.dao.i18n.ProcedureI18NDAO"/>
+    <bean id="featureI18NDAO" class="org.n52.sos.ds.hibernate.dao.i18n.FeatureI18NDAO"/>
+    <bean id="observablePropertyI18NDAO" class="org.n52.sos.ds.hibernate.dao.i18n.ObservablePropertyI18NDAO"/>
+    <bean id="offeringI18NDAO" class="org.n52.sos.ds.hibernate.dao.i18n.OfferingI18NDAO"/>
 
     <!--
         org.n52.sos.ds.DeleteDeletedObservationDAO
     -->
 
     <!-- DeleteDeletedObservationDAO implementations from hibernate/dao -->
-    <bean class="org.n52.sos.ds.hibernate.admin.HibernateDeleteDeletedObservationsDAO"/>
+    <bean id="deleteDeletedObservationsDAO" class="org.n52.sos.ds.hibernate.admin.HibernateDeleteDeletedObservationsDAO"/>
 
     <!--
         org.n52.sos.ds.GeneralQueryDAO
     -->
 
     <!-- GeneralQueryDAO implementations from hibernate/dao -->
-    <bean class="org.n52.sos.ds.hibernate.admin.HibernateGeneralQueryDAO"/>
+    <bean id="generalQueryDAO" class="org.n52.sos.ds.hibernate.admin.HibernateGeneralQueryDAO"/>
 
     <!--
         org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreator
@@ -63,29 +67,29 @@
     -->
 
     <!-- ProcedureFormatDAO implementations from hibernate/dao -->
-    <bean class="org.n52.sos.ds.hibernate.admin.HibernateProcedureFormatDAO"/>
+    <bean id="procedureFormatDAO" class="org.n52.sos.ds.hibernate.admin.HibernateProcedureFormatDAO"/>
 
     <!--
         org.n52.sos.ds.RenameDAO
     -->
 
     <!-- RenameDAO implementations from hibernate/dao -->
-    <bean class="org.n52.sos.ds.hibernate.admin.HibernateRenameDAO"/>
+    <bean id="renameDAO" class="org.n52.sos.ds.hibernate.admin.HibernateRenameDAO"/>
 
     <!--
         org.n52.sos.ext.deleteobservation.DeleteObservationCacheFeederDAO
     -->
 
     <!-- DeleteObservationCacheFeederDAO implementations from extensions/do/hibernate -->
-    <bean class="org.n52.sos.ext.deleteobservation.HibernateDeleteObservationCacheFeederDAO"/>
+    <bean id="deleteObservationCacheFeederDAO" class="org.n52.sos.ext.deleteobservation.HibernateDeleteObservationCacheFeederDAO"/>
 
     <!--
         org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider
     -->
 
     <!-- CapabilitiesExtensionProvider implementations from hibernate/dao -->
-    <bean class="org.n52.sos.ds.hibernate.InsertSensorDAO"/>
-    <bean class="org.n52.sos.ds.hibernate.InsertResultDAO"/>
-    <bean class="org.n52.sos.ds.hibernate.InsertResultTemplateDAO"/>
+    <bean id="insertSensorDAO" class="org.n52.sos.ds.hibernate.InsertSensorDAO"/>
+    <bean id="insertResultDAO" class="org.n52.sos.ds.hibernate.InsertResultDAO"/>
+    <bean id="insertResultTemplateDAO" class="org.n52.sos.ds.hibernate.InsertResultTemplateDAO"/>
 
 </beans>

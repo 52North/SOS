@@ -2,9 +2,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
-    <!--
-        org.n52.iceland.convert.Converter
-    -->
+
+    <bean id="converterRepository" class="org.n52.iceland.convert.ConverterRepository" />
 
     <!-- Converter implementations from coding/sensorML-v20 -->
     <bean class="org.n52.sos.convert.SensorML20UrlMimeTypeConverter"/>

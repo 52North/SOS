@@ -3,18 +3,24 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
-    <!--
-        org.n52.iceland.sos.encode.Encoder
-    -->
+    <!--<bean id="encoderRepository" class="org.n52.iceland.coding.EncoderRepository" />-->
+    <bean id="encoderRepository"
+          class="org.n52.iceland.coding.SosEncoderRepository" />
+
+
+    <bean id="procedureDescriptionFormatRepository"
+          class="org.n52.iceland.coding.ProcedureDescriptionFormatRepository" />
+
+    <bean id="responseFormatRepository"
+          class="org.n52.iceland.coding.ResponseFormatRepository"/>
+
+    <bean id="schemaRepository"
+          class="org.n52.iceland.coding.SchemaRepository"/>
+
 
     <!-- Encoder implementations from extensions/gda/operation -->
     <bean class="org.n52.sos.gda.GetDataAvailabilityXmlEncoder"/>
     <bean class="org.n52.sos.gda.GetDataAvailabilityJsonEncoder"/>
-
-    <!--
-        org.n52.iceland.encode.Encoder
-    -->
-
     <!-- Encoder implementations from bindings/rest/code -->
     <bean class="org.n52.sos.binding.rest.encode.RestEncoder"/>
     <!-- Encoder implementations from bindings/soap -->

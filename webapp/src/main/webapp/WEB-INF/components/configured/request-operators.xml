@@ -3,9 +3,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
-    <!--
-        org.n52.iceland.request.operator.RequestOperator
-    -->
+    <bean id="requestOperatorRepository" class="org.n52.iceland.request.operator.RequestOperatorRepository" />
 
     <!-- RequestOperator implementations from operations/transactional-v20 -->
     <bean class="org.n52.sos.request.operator.SosDeleteSensorOperatorV20"/>

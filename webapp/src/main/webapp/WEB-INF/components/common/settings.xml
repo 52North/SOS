@@ -1,0 +1,15 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+    <bean id="configLocationProvider"
+          class="org.n52.iceland.service.ServletConfigLocationProvider" />
+
+    <bean id="settingsService"
+          class="org.n52.iceland.config.SettingsManager" />
+
+    <bean id="activationService"
+          class="org.n52.iceland.config.SosActivationService" />
+
+</beans>

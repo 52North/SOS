@@ -3,9 +3,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
-    <!--
-        org.n52.iceland.service.operator.ServiceOperator
-    -->
+    <bean id="serviceOperatorRepository"
+          class="org.n52.iceland.service.operator.ServiceOperatorRepository" />
 
     <!-- ServiceOperator implementations from operations/core-v100 -->
     <bean class="org.n52.sos.service.operator.SosServiceOperatorV100"/>

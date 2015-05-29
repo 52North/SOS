@@ -39,33 +39,29 @@ import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.OperationKey;
+import org.n52.iceland.coding.SchemaRepository;
+import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.encode.EncoderKey;
 import org.n52.iceland.encode.OperationEncoderKey;
 import org.n52.iceland.encode.XmlEncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.service.ServiceSettings;
 import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.util.N52XmlHelper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.coding.SchemaRepository;
-import org.n52.iceland.config.SettingsManager;
-import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.service.ServiceSettings;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
@@ -82,22 +78,16 @@ import com.google.common.collect.Sets;
  */
 public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse> extends AbstractXmlEncoder<T>
         implements StreamingEncoder<XmlObject, T> , Constructable {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResponseEncoder.class);
 
     private final Set<EncoderKey> encoderKeys;
-
     private final String namespace;
-
     private final String prefix;
-
     private final String version;
-
     private final Class<T> responseType;
-
     private boolean validate;
-
     private SchemaRepository schemaRepository;
-
     private SettingsManager settingsManager;
 
     /**

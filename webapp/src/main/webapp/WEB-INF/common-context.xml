@@ -14,18 +14,18 @@
 
     <ctx:annotation-config />
 
-    <!-- Placeholder for the ContextSwitcher. This will be substituted as soon as
-         the ApplicationContext is refreshed. -->
     <bean id="contextSwitcherSwapper" class="org.springframework.aop.target.HotSwappableTargetSource">
+        <description>Placeholder for the ContextSwitcher. This will be substituted as soon as
+         the ApplicationContext is refreshed.</description>
         <constructor-arg>
             <bean class="org.n52.sos.context.ContextSwitcherDummy" />
         </constructor-arg>
     </bean>
 
 
-    <!-- contextSwitcher proxy that can be injected before the real
-         contextSwitcher is created -->
     <bean id="contextSwitcher" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <description>contextSwitcher proxy that can be injected before the real
+         contextSwitcher is created. Allows switching and reloading the context</description>
         <property name="targetSource">
             <ref local="contextSwitcherSwapper" />
         </property>
@@ -38,6 +38,11 @@
 
     <bean id="settingsService" class="org.n52.iceland.config.SettingsManager" />
     <bean id="activationService" class="org.n52.iceland.config.SosActivationService" />
+
+    <bean id="eventBus" class="org.n52.iceland.event.ServiceEventBus" />
+
+    <!-- ServiceEventListener implementations from core/api -->
+    <bean id="exceptionLogger" class="org.n52.iceland.service.ExceptionLogger"/>
 
     <import resource="components/common/settings-definitions.xml" />
     <import resource="components/common/settings-sqlite.xml" />

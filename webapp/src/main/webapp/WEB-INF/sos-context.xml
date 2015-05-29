@@ -6,7 +6,9 @@
     <bean id="cacheFeederDao" class="org.n52.sos.ds.hibernate.SosCacheFeederDAO" />
     <bean id="procedureFormatDao" class="org.n52.sos.ds.hibernate.admin.HibernateProcedureFormatDAO" />
 
+
     <bean class="org.n52.iceland.util.activation.ActivationRegistrator">
+        <description>Used to wire up activation persistence.</description>
         <property name="listeners">
             <map>
                 <entry key-ref="bindingRepository" value="#{activationService.bindingListener}" />
@@ -24,6 +26,7 @@
     </bean>
 
      <bean class="org.n52.iceland.util.activation.ActivationRegistrator">
+        <description>Used to wire up SOS specific activation persistence.</description>
         <property name="listeners">
             <map>
                 <entry key-ref="offeringExtensionRepository" value="#{activationService.offeringExtensionListener}" />
@@ -86,11 +89,22 @@
           class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository" />
     <bean id="geometryHandler" class="org.n52.sos.util.GeometryHandler" />
 
-    <bean class="org.n52.sos.service.DriverCleanupListener" />
+    <bean id="driverCleanupListener" class="org.n52.sos.service.DriverCleanupListener" />
 
-    <bean class="org.n52.sos.ds.hibernate.InsertSensorCapabilitiesExtensionProvider" />
-    <bean class="org.n52.sos.ds.hibernate.InsertResultCapabiltiesExtensionProvider" />
-    <bean class="org.n52.sos.ds.hibernate.InsertResultTemplateCapabilitiesExtensionProvider" />
+    <bean id="insertSensorCapabilitiesExtensionProvider"
+          class="org.n52.sos.ds.hibernate.InsertSensorCapabilitiesExtensionProvider" />
+    <bean id="insertResultCapabiltiesExtensionProvider"
+          class="org.n52.sos.ds.hibernate.InsertResultCapabiltiesExtensionProvider" />
+    <bean id="insertResultTemplateCapabilitiesExtensionProvider"
+          class="org.n52.sos.ds.hibernate.InsertResultTemplateCapabilitiesExtensionProvider" />
+
+
+    <!-- ServiceEventListener implementations from extensions/do/core -->
+    <bean id="deleteObservationContentModificationListener"
+          class="org.n52.sos.ext.deleteobservation.DeleteObservationContentModificationListener"/>
+    <!-- ServiceEventListener implementations from core/cache -->
+    <bean id="contentModificationListener"
+          class="org.n52.sos.cache.ctrl.DefaultContentModificationListener"/>
 
     <!--
     <bean id="contentCacheController" class="org.n52.sos.cache.ctrl.ContentCacheControllerImpl" />
@@ -110,7 +124,6 @@
     <import resource="components/handlers.xml" />
     <import resource="components/daos.xml" />
     <import resource="components/datasource.xml" />
-    <import resource="components/events.xml" />
     <import resource="components/responseWriters.xml" />
     -->
 

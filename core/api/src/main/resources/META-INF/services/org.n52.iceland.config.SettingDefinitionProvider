@@ -1,9 +1,0 @@
-org.n52.iceland.ogc.ows.ServiceProviderFactorySettings
-org.n52.iceland.ogc.ows.ServiceIdentificationFactorySettings
-org.n52.iceland.service.MiscSettings
-org.n52.iceland.service.ServiceSettings
-org.n52.iceland.service.StreamingSettings
-org.n52.sos.service.ProcedureDescriptionSettings
-org.n52.sos.service.TransactionalSecuritySettings
-org.n52.iceland.ds.FeatureQuerySettingsProvider
-org.n52.iceland.i18n.I18NSettings

@@ -28,10 +28,10 @@
  */
 package org.n52.sos.encode;
 
+import org.n52.iceland.component.SingleTypeComponentFactory;
 import org.n52.iceland.encode.ResponseWriter;
 import org.n52.iceland.encode.ResponseWriterFactory;
 import org.n52.iceland.encode.ResponseWriterKey;
-import org.n52.iceland.component.SingleTypeComponentFactory;
 
 /**
  * {@link ResponseWriterFactory} implementation for {@link SoapChain} and
@@ -45,7 +45,7 @@ public class SoapChainResponseWriterFactory
         extends SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>>
         implements ResponseWriterFactory {
 
-    public SoapChainResponseWriterFactory(ResponseWriterKey key) {
+    public SoapChainResponseWriterFactory() {
         super(new ResponseWriterKey(SoapChain.class));
     }
 

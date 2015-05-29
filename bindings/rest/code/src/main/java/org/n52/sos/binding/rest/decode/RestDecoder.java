@@ -32,9 +32,9 @@ import static org.n52.iceland.util.CodingHelper.decoderKeysForElements;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -46,6 +46,7 @@ import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.OperationNotSupportedException;
 import org.n52.iceland.exception.ows.concrete.ContentTypeNotSupportedException;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.http.HTTPHeaders;
@@ -69,33 +70,26 @@ import com.google.common.base.Joiner;
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  *
  */
-public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
+public class RestDecoder implements Decoder<RestRequest, HttpServletRequest>, Constructable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestDecoder.class);
 
-    @SuppressWarnings("unchecked")
-	private final Set<DecoderKey> DECODER_KEYS = decoderKeysForElements(
-            Constants.getInstance().getEncodingNamespace(), HttpServletRequest.class);
-//            union(
-//    		decoderKeysForElements(Constants.getInstance().getEncodingNamespace(), HttpServletRequest.class),
-//    		CodingHelper.xmlDecoderKeysForOperation(SOS, Sos2Constants.SERVICEVERSION,
-//    				Sos2Constants.Operations.DeleteSensor,
-//    				Sos2Constants.Operations.InsertSensor,
-//    				Sos2Constants.Operations.UpdateSensorDescription,
-//    				SosConstants.Operations.DescribeSensor,
-//    				SosConstants.Operations.GetCapabilities,
-//    				SosConstants.Operations.GetFeatureOfInterest,
-//    				SosConstants.Operations.GetObservation,
-//    				SosConstants.Operations.GetObservationById,
-//    				DeleteObservationConstants.Operations.DeleteObservation));
+	private Set<DecoderKey> decoderKeys;
+    private Constants constants;
 
-    /**
-     * constructor called by the service loader of the SOS instance
-     */
-    public RestDecoder() {
-    	LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
-                    Joiner.on(", ").join(DECODER_KEYS));
+    @Inject
+    public void setConstants(Constants constants) {
+        this.constants = constants;
     }
+
+    @Override
+    public void init() {
+        this.decoderKeys =  decoderKeysForElements(this.constants.getEncodingNamespace(),
+                                                   HttpServletRequest.class);
+        LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
+                    Joiner.on(", ").join(decoderKeys));
+    }
+
 
     @Override
     public RestRequest decode(final HttpServletRequest httpRequest)
@@ -210,7 +204,7 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
 
     @Override
     public Set<DecoderKey> getKeys() {
-        return Collections.unmodifiableSet(DECODER_KEYS);
+        return Collections.unmodifiableSet(decoderKeys);
     }
 
     @Override

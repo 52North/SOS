@@ -33,7 +33,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import org.n52.iceland.component.AbstractComponentRepository;
 import org.n52.iceland.lifecycle.Constructable;
@@ -50,10 +50,10 @@ public class AdditionalObservationCreatorRepository
     private final Map<AdditionalObservationCreatorKey, Producer<AdditionalObservationCreator>> additionalObservationCreator
             = Maps.newHashMap();
 
-    @Inject
+    @Autowired(required = false)
     private Collection<AdditionalObservationCreator> components;
 
-    @Inject
+    @Autowired(required = false)
     private Collection<AdditionalObservationCreatorFactory> componentFactories;
 
     @Override

@@ -33,10 +33,13 @@ import static org.n52.sos.service.TransactionalSecuritySettings.TRANSACTIONAL_AC
 import static org.n52.sos.service.TransactionalSecuritySettings.TRANSACTIONAL_ALLOWED_IPS;
 import static org.n52.sos.service.TransactionalSecuritySettings.TRANSACTIONAL_TOKEN;
 
+import javax.inject.Inject;
+
 import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.util.net.IPAddress;
@@ -47,11 +50,12 @@ import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * @author Shane StClair <shane@axiomalaska.com>
- * 
+ *
  * @since 4.0.0
  */
 @Configurable
-public class TransactionalSecurityConfiguration {
+public class TransactionalSecurityConfiguration implements Constructable {
+    @Deprecated
     private static TransactionalSecurityConfiguration instance;
 
     private boolean transactionalActive;
@@ -69,22 +73,26 @@ public class TransactionalSecurityConfiguration {
 
     private ImmutableSet<IPAddress> allowedProxies =  ImmutableSet.of();
 
+    private SettingsManager settingsManager;
+
+    @Inject
+    public void setSettingsManager(SettingsManager settingsManager) {
+        this.settingsManager = settingsManager;
+    }
+
+    @Override
+    public void init() {
+        TransactionalSecurityConfiguration.instance = this;
+        this.settingsManager.configure(this);
+    }
+
     /**
      * @return Returns a singleton instance of the
      *         TransactionalSecurityConfiguration.
      */
-    public static synchronized TransactionalSecurityConfiguration getInstance() {
-        if (instance == null) {
-            instance = new TransactionalSecurityConfiguration();
-            SettingsManager.getInstance().configure(instance);
-        }
+    @Deprecated
+    public static TransactionalSecurityConfiguration getInstance() {
         return instance;
-    }
-
-    /**
-     * private constructor for singleton
-     */
-    private TransactionalSecurityConfiguration() {
     }
 
     /**

@@ -55,7 +55,7 @@ import org.n52.iceland.exception.ConfigurationException;
 import org.n52.sos.context.ContextSwitcher;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.MetaDataHandler;
-import org.n52.sos.web.common.auth.UserService;
+import org.n52.sos.web.common.auth.SosAuthenticationProvider;
 import org.n52.sos.web.install.InstallConstants.Step;
 
 /**
@@ -75,7 +75,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
     private ContextSwitcher contextSwitcher;
 
     @Inject
-    private UserService userService;
+    private SosAuthenticationProvider userService;
 
     @Override
     protected Step getStep() {

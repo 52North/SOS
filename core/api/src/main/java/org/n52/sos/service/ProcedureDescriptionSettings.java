@@ -32,11 +32,14 @@ package org.n52.sos.service;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingDefinitionGroup;
 import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.util.Validation;
 
 
@@ -50,7 +53,7 @@ import org.n52.iceland.util.Validation;
  * @since 4.0.0
  */
 @Configurable
-public class ProcedureDescriptionSettings {
+public class ProcedureDescriptionSettings implements Constructable {
 
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Procedure Description")
             .setDescription("Settings to configure the procedure description generation and enrichment feature.")
@@ -91,7 +94,6 @@ public class ProcedureDescriptionSettings {
 
     public static final String ENRICH_WITH_DISCOVERY_INFORMATION = "procedureDesc.ENRICH_WITH_DISCOVERY_INFORMATION";
 
-
     private String descriptionTemplate;
     private boolean generateClassification;
     private String classifierIntendedApplicationValue;
@@ -108,13 +110,25 @@ public class ProcedureDescriptionSettings {
     private boolean enrichWithFeatures;
     private boolean enrichWithDiscoveryInformation;
 
+
+    @Deprecated
     private static ProcedureDescriptionSettings instance = null;
 
-    public static synchronized ProcedureDescriptionSettings getInstance() {
-        if (instance == null) {
-            instance = new ProcedureDescriptionSettings();
-            SettingsManager.getInstance().configure(instance);
-        }
+    private SettingsManager settingsManager;
+
+    @Inject
+    public void setSettingsManager(SettingsManager settingsManager) {
+        this.settingsManager = settingsManager;
+    }
+
+    @Override
+    public void init() {
+        ProcedureDescriptionSettings.instance = this;
+        this.settingsManager.configure(this);
+    }
+
+    @Deprecated
+    public static ProcedureDescriptionSettings getInstance() {
         return instance;
     }
 

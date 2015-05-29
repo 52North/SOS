@@ -33,9 +33,10 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -44,8 +45,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import org.n52.iceland.config.AdminUserService;
 import org.n52.iceland.config.AdministratorUser;
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.ConfigurationException;
 
@@ -53,15 +54,18 @@ import org.n52.iceland.exception.ConfigurationException;
  * @since 4.0.0
  *
  */
-public class UserService implements AuthenticationProvider, Serializable {
+public class SosAuthenticationProvider implements AuthenticationProvider, Serializable {
     private static final long serialVersionUID = -3207103212342510378L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SosAuthenticationProvider.class);
 
     private static final Set<AdministratorAuthority> ADMIN_AUTHORITIES
             = Collections.singleton(new AdministratorAuthority());
 
-    @Autowired
+    @Inject
+    private AdminUserService adminUserService;
+
+    @Inject
     private PasswordEncoder passwordEncoder;
 
     @Override
@@ -81,7 +85,7 @@ public class UserService implements AuthenticationProvider, Serializable {
             throw new BadCredentialsException("Bad Credentials");
         }
         try {
-            if (!getSettingsManager().hasAdminUser()) {
+            if (!this.adminUserService.hasAdminUser()) {
                 LOG.warn("No admin user is defined! Use the default credentials '{}:{}' "
                         + "to authenticate and change the password as soon as possible!",
                         DefaultAdministratorUser.DEFAULT_USERNAME, DefaultAdministratorUser.DEFAULT_PASSWORD);
@@ -96,7 +100,7 @@ public class UserService implements AuthenticationProvider, Serializable {
         }
 
         try {
-            user = getSettingsManager().getAdminUser(username);
+            user = this.adminUserService.getAdminUser(username);
         } catch (ConnectionProviderException ex) {
             LOG.error("Error querying admin", ex);
             throw new BadCredentialsException("Bad Credentials");
@@ -120,7 +124,7 @@ public class UserService implements AuthenticationProvider, Serializable {
 
     public AdministratorUser createAdmin(String username, String password) {
         try {
-            return getSettingsManager().createAdminUser(username, getPasswordEncoder().encode(password));
+            return this.adminUserService.createAdminUser(username, getPasswordEncoder().encode(password));
         } catch (ConnectionProviderException ex) {
             LOG.error("Error saving admin", ex);
             throw new RuntimeException(ex);
@@ -129,7 +133,7 @@ public class UserService implements AuthenticationProvider, Serializable {
 
     public void setAdminUserName(AdministratorUser user, String name) {
         try {
-            getSettingsManager().saveAdminUser(user.setUsername(name));
+            this.adminUserService.saveAdminUser(user.setUsername(name));
         } catch (ConnectionProviderException ex) {
             LOG.error("Error saving admin", ex);
             throw new RuntimeException(ex);
@@ -138,7 +142,7 @@ public class UserService implements AuthenticationProvider, Serializable {
 
     public void setAdminPassword(AdministratorUser user, String password) {
         try {
-            getSettingsManager().saveAdminUser(user.setPassword(getPasswordEncoder().encode(password)));
+            this.adminUserService.saveAdminUser(user.setPassword(getPasswordEncoder().encode(password)));
         } catch (ConnectionProviderException ex) {
             LOG.error("Error saving admin", ex);
             throw new RuntimeException(ex);
@@ -147,7 +151,7 @@ public class UserService implements AuthenticationProvider, Serializable {
 
     public AdministratorUser getAdmin(String username) throws ConfigurationException {
         try {
-            return getSettingsManager().getAdminUser(username);
+            return this.adminUserService.getAdminUser(username);
         } catch (ConnectionProviderException e) {
             throw new ConfigurationException(e);
         }
@@ -155,7 +159,7 @@ public class UserService implements AuthenticationProvider, Serializable {
 
     public AdministratorUser getAdmin(Principal user) throws ConfigurationException {
         try {
-            return getSettingsManager().getAdminUser(user.getName());
+            return this.adminUserService.getAdminUser(user.getName());
         } catch (ConnectionProviderException e) {
             throw new ConfigurationException(e);
         }
@@ -167,9 +171,5 @@ public class UserService implements AuthenticationProvider, Serializable {
 
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
-    }
-
-    protected SettingsManager getSettingsManager() throws ConfigurationException {
-        return SettingsManager.getInstance();
     }
 }

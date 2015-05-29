@@ -28,39 +28,48 @@
  */
 package org.n52.sos.converter.util;
 
+import javax.inject.Inject;
+
 import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.util.StringHelper;
 
 @Configurable
-public class PrefixedIdentifierHelper {
-    
+public class PrefixedIdentifierHelper implements Constructable {
+    @Deprecated
     private static PrefixedIdentifierHelper instance;
-    
+
     private String globalPrefix;
-    
+
     private String offeringPrefix;
-    
+
     private String procedurePrefix;
-    
+
     private String observablePropertyPrefix;
-    
+
     private String featureOfInterestPrefix;
-    
+
+    private SettingsManager settingsManager;
+
+    @Inject
+    public void setSettingsManager(SettingsManager settingsManager) {
+        this.settingsManager = settingsManager;
+    }
+
+    @Override
+    public void init() {
+        PrefixedIdentifierHelper.instance = this;
+        this.settingsManager.configure(this);
+    }
+
     /**
      * @return Returns a singleton instance of the PrefixedIdentifierHelper.
      */
-    public static synchronized PrefixedIdentifierHelper getInstance() {
-        if (instance == null) {
-            instance = new PrefixedIdentifierHelper();
-            SettingsManager.getInstance().configure(instance);
-        }
+    @Deprecated
+    public static PrefixedIdentifierHelper getInstance() {
         return instance;
-    }
-
-    private PrefixedIdentifierHelper() {
-
     }
 
     /**
@@ -77,7 +86,7 @@ public class PrefixedIdentifierHelper {
     public void setGlobalPrefix(String globalPrefix) {
         this.globalPrefix = globalPrefix;
     }
-    
+
     public boolean isSetGlobalPrefix() {
         return StringHelper.isNotEmpty(getGlobalPrefix());
     }
@@ -100,8 +109,8 @@ public class PrefixedIdentifierHelper {
     public boolean isSetOfferingPrefix() {
         return StringHelper.isNotEmpty(getOfferingPrefix());
     }
-    
-    
+
+
     /**
      * @return the procedurePrefix
      */
@@ -116,7 +125,7 @@ public class PrefixedIdentifierHelper {
     public void setProcedurePrefix(String procedurePrefix) {
         this.procedurePrefix = procedurePrefix;
     }
-    
+
     public boolean isSetProcedurePrefix() {
         return StringHelper.isNotEmpty(getProcedurePrefix());
     }
@@ -139,7 +148,7 @@ public class PrefixedIdentifierHelper {
     public boolean isSetObservablePropertyPrefix() {
         return StringHelper.isNotEmpty(getObservablePropertyPrefix());
     }
-    
+
     /**
      * @return the featureOfInterestPrefix
      */
@@ -154,7 +163,7 @@ public class PrefixedIdentifierHelper {
     public void setFeatureOfInterestPrefix(String featureOfInterestPrefix) {
         this.featureOfInterestPrefix = featureOfInterestPrefix;
     }
-    
+
     public boolean isSetFeatureOfInterestPrefix() {
         return StringHelper.isNotEmpty(getFeatureOfInterestPrefix());
     }

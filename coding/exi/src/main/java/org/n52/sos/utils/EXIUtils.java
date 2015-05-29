@@ -28,6 +28,8 @@
  */
 package org.n52.sos.utils;
 
+import javax.inject.Inject;
+
 import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
@@ -38,6 +40,8 @@ import org.n52.sos.exi.EXISettings;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.lifecycle.Constructable;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.EXIFactory;
@@ -55,7 +59,7 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
  * @since 4.2.0
  */
 @Configurable
-public class EXIUtils {
+public class EXIUtils implements Constructable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EXIUtils.class);
 
@@ -89,34 +93,42 @@ public class EXIUtils {
 
     private static boolean isSOS10Schema;
 
+    @Deprecated
     private static EXIUtils instance = null;
 
-    private EXIUtils() {
+    private SettingsManager settingsManager;
+
+    @Inject
+    public void setSettingsManager(SettingsManager settingsManager) {
+        this.settingsManager = settingsManager;
     }
 
-    public static synchronized EXIUtils getInstance() {
-        if (instance == null) {
-            instance = new EXIUtils();
-            SettingsManager.getInstance().configure(instance);
-            try {
-                // Pre-load Grammars from URL to save time
-                // TODO does this result in any race conditions?
-                if (!isSchemaLessGrammar()) {
-                    if (isXSBaseTypeGrammar()) {
-                        GRAMMAR_BASETYPES = GrammarFactory.newInstance().createXSDTypesOnlyGrammars();
-                    } else if (isSOS10Schema()) {
-                        GRAMMAR_SOS10 = GrammarFactory.newInstance().createGrammars(Sos1Constants.SCHEMA_LOCATION_SOS);
-                    } else if (isSOS20Schema()) {
-                        GRAMMAR_SOS20 =
-                                GrammarFactory.newInstance().createGrammars(Sos2Constants.SCHEMA_LOCATION_URL_SOS);
-                    }
-                }
+    @Override
+    public void init() {
+        EXIUtils.instance = this;
+        this.settingsManager.configure(this);
 
-            } catch (EXIException e) {
-                LOGGER.error("Could not load XSD schema for EXI binding. "
-                        + "Using default schema less grammar. Please update your settings.", e);
+        try {
+            // Pre-load Grammars from URL to save time
+            // TODO does this result in any race conditions?
+            if (!isSchemaLessGrammar()) {
+                if (isXSBaseTypeGrammar()) {
+                    GRAMMAR_BASETYPES = GrammarFactory.newInstance().createXSDTypesOnlyGrammars();
+                } else if (isSOS10Schema()) {
+                    GRAMMAR_SOS10 = GrammarFactory.newInstance().createGrammars(Sos1Constants.SCHEMA_LOCATION_SOS);
+                } else if (isSOS20Schema()) {
+                    GRAMMAR_SOS20 = GrammarFactory.newInstance().createGrammars(Sos2Constants.SCHEMA_LOCATION_URL_SOS);
+                }
             }
+
+        } catch (EXIException e) {
+            LOGGER.error("Could not load XSD schema for EXI binding. "
+                    + "Using default schema less grammar. Please update your settings.", e);
         }
+    }
+
+    @Deprecated
+    public static EXIUtils getInstance() {
         return instance;
     }
 

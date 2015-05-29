@@ -49,7 +49,17 @@
     <bean id="serviceProviderFactory" class="org.n52.iceland.ogc.ows.ServiceProviderFactory" />
     <bean id="serviceIdentificationFactory" class="org.n52.iceland.ogc.ows.ServiceIdentificationFactory" />
 
-
+    <bean class="org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration" />
+    <bean class="org.n52.iceland.service.ServiceConfiguration"/>
+    <bean class="org.n52.sos.utils.EXIUtils" />
+    <bean class="org.n52.sos.converter.util.EReportingPrefixedIdentifierHelper" />
+    <bean class="org.n52.sos.service.ProcedureDescriptionSettings" />
+    <bean class="org.n52.sos.aqd.AqdHelper" />
+    <bean class="org.n52.sos.service.TransactionalSecurityConfiguration" />
+    <bean class="org.n52.sos.inspire.InspireHelper" />
+    <bean class="org.n52.sos.binding.rest.Constants" />
+    <bean class="org.n52.sos.converter.util.FlexibleIdentifierHelper" />
+    <bean class="org.n52.sos.converter.util.PrefixedIdentifierHelper" />
 
     <bean id="owsExtendedCapabilitiesRepository"
           class="org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderRepository" />

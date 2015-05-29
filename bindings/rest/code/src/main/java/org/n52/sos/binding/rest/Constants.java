@@ -93,6 +93,7 @@ import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.service.ServiceSettings;
 import org.n52.iceland.util.Validation;
 import org.n52.iceland.util.http.MediaType;
@@ -103,16 +104,21 @@ import org.n52.sos.ogc.sensorML.SensorMLConstants;
  *         J&uuml;rrens</a>
  */
 @Configurable
-public final class Constants {
+public final class Constants implements Constructable {
 
+    @Deprecated
     private static Constants instance = null;
 
-    public static synchronized Constants getInstance()
-    {
-        if (instance == null) {
-            instance = new Constants();
-            SettingsManager.getInstance().configure(instance);
-        }
+    private SettingsManager settingsManager;
+
+    @Override
+    public void init() {
+        Constants.instance = this;
+        this.settingsManager.configure(this);
+    }
+
+    @Deprecated
+    public static Constants getInstance() {
         return instance;
     }
 
@@ -176,9 +182,6 @@ public final class Constants {
 	private String sosVersion;
 	private String urlEncoding;
 	private URI encodingSchemaUrl;
-
-	private Constants() {
-    }
 
     public String getBindingEndPointResource()
     {

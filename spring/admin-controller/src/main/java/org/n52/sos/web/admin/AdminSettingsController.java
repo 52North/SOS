@@ -49,7 +49,7 @@ import org.n52.iceland.util.StringHelper;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.auth.DefaultAdministratorUser;
-import org.n52.sos.web.common.auth.UserService;
+import org.n52.sos.web.common.auth.SosAuthenticationProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,16 +76,16 @@ public class AdminSettingsController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(AdminSettingsController.class);
 
     @Inject
-    private UserService userService;
+    private SosAuthenticationProvider userService;
 
     @Inject
     private SettingsManager settingsManager;
 
-    public UserService getUserService() {
+    public SosAuthenticationProvider getUserService() {
         return userService;
     }
 
-    public void setUserService(UserService userService) {
+    public void setUserService(SosAuthenticationProvider userService) {
         this.userService = userService;
     }
 

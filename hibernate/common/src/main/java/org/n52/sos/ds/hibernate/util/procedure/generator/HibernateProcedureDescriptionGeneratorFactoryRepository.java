@@ -31,7 +31,7 @@ package org.n52.sos.ds.hibernate.util.procedure.generator;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import org.n52.iceland.component.AbstractComponentRepository;
 import org.n52.iceland.lifecycle.Constructable;
@@ -54,10 +54,10 @@ public class HibernateProcedureDescriptionGeneratorFactoryRepository
 
     private final Map<HibernateProcedureDescriptionGeneratorFactoryKey, Producer<HibernateProcedureDescriptionGeneratorFactory>> factories = Maps.newHashMap();
 
-    @Inject
+    @Autowired(required = false)
     private Collection<HibernateProcedureDescriptionGeneratorFactory> components;
 
-    @Inject
+    @Autowired(required = false)
     private Collection<HibernateProcedureDescriptionGeneratorFactoryFactory> componentFactories;
 
     @Override

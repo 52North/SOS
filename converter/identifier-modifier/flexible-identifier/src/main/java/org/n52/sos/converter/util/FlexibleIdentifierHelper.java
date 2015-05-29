@@ -28,31 +28,28 @@
  */
 package org.n52.sos.converter.util;
 
-import java.util.concurrent.locks.ReentrantLock;
+
+import javax.inject.Inject;
 
 import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
 import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.iceland.util.JavaHelper;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @Configurable
-public class FlexibleIdentifierHelper {
+public class FlexibleIdentifierHelper implements Constructable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FlexibleIdentifierHelper.class);
 
     public static final String RETURN_HUMAN_READABLE_IDENTIFIER = "returnHumanReadableIdentifier";
 
+    @Deprecated
     private static FlexibleIdentifierHelper instance;
-
-    private static ReentrantLock creationLock = new ReentrantLock();
 
     private boolean returnHumanReadableIdentifier = false;
 
@@ -64,30 +61,24 @@ public class FlexibleIdentifierHelper {
 
     private boolean includeFeatureOfInterest = true;
 
-    /**
-     * Private constructor
-     */
-    private FlexibleIdentifierHelper() {
+    private SettingsManager settingsManager;
+
+    @Inject
+    public void setSettingsManager(SettingsManager settingsManager) {
+        this.settingsManager = settingsManager;
+    }
+
+    @Override
+    public void init() {
+        FlexibleIdentifierHelper.instance = this;
+        this.settingsManager.configure(this);
     }
 
     /**
      * @return Returns a singleton instance of the GeometryHandler.
      */
+    @Deprecated
     public static FlexibleIdentifierHelper getInstance() {
-        if (instance == null) {
-            creationLock.lock();
-            try {
-                if (instance == null) {
-                    // don't set instance before configuring, or other threads
-                    // can get access to unconfigured instance!
-                    final FlexibleIdentifierHelper newInstance = new FlexibleIdentifierHelper();
-                    SettingsManager.getInstance().configure(newInstance);
-                    instance = newInstance;
-                }
-            } finally {
-                creationLock.unlock();
-            }
-        }
         return instance;
     }
 

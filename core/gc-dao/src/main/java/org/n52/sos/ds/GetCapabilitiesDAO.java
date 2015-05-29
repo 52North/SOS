@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.binding.Binding;
+import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.coding.DecoderRepository;
 import org.n52.iceland.coding.EncoderRepository;
 import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
@@ -138,7 +139,8 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     private static final int ALL = 0x20 | SERVICE_IDENTIFICATION | SERVICE_PROVIDER | OPERATIONS_METADATA
             | FILTER_CAPABILITIES | CONTENTS;
 
-
+    @Inject
+    private SettingsManager settingsManager;
     @Inject
     private CapabilitiesExtensionService capabilitiesExtensionService;
     @Inject
@@ -149,6 +151,8 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     private OperationHandlerRepository operationHandlerRepository;
     @Inject
     private ProfileHandler profileHandler;
+    @Inject
+    private BindingRepository bindingRepository;
 
     public GetCapabilitiesDAO() {
         super(SosConstants.SOS);
@@ -280,7 +284,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
 
     private Set<String> getProfiles(String service, String version) {
         final List<String> profiles = new LinkedList<>();
-        for (final Binding bindig : getBindingRepository().getBindings().values()) {
+        for (final Binding bindig : this.bindingRepository.getBindings().values()) {
             profiles.addAll(bindig.getConformanceClasses(service, version));
         }
         for (final RequestOperatorKey k : getRequestOperatorRepository().getActiveRequestOperatorKeys()) {
@@ -477,7 +481,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
                 sosObservationOffering
                         .setObservableProperties(getCache().getObservablePropertiesForOffering(offering));
                 sosObservationOffering.setCompositePhenomena(getCache().getCompositePhenomenonsForOffering(offering));
-                final Map<String, Collection<String>> phens4CompPhens = new HashMap<String, Collection<String>>();
+                final Map<String, Collection<String>> phens4CompPhens = new HashMap<>();
                 if (getCache().getCompositePhenomenonsForOffering(offering) != null) {
                     for (final String compositePhenomenon : getCache().getCompositePhenomenonsForOffering(offering)) {
                         phens4CompPhens.put(compositePhenomenon, getCache()
@@ -515,9 +519,8 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         return sosOfferings;
     }
 
-    protected SettingsManager getSettingsManager()
-            throws ConfigurationException {
-        return SettingsManager.getInstance();
+    protected SettingsManager getSettingsManager() {
+        return this.settingsManager;
     }
 
     private SosEnvelope processObservedArea(SosEnvelope sosEnvelope) throws CodedException {

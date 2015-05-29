@@ -28,26 +28,30 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
+import javax.inject.Inject;
+
 import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.lifecycle.Constructable;
 
 /**
  * Configuration class for Hibernate streaming settings
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
  */
 @Configurable
-public class HibernateStreamingConfiguration {
-    
+public class HibernateStreamingConfiguration implements Constructable {
+
     public static int DEFAULT_CHUNK_SIZE = 10000;
-    
+
     public static boolean DEFAULT_STREAMING_DATASOURCE = true;
-    
-    public static boolean DEFAULT_CHUNK_STREAMING_DATASOURCE = true; 
-    
+
+    public static boolean DEFAULT_CHUNK_STREAMING_DATASOURCE = true;
+
+    @Deprecated
     private static HibernateStreamingConfiguration instance;
 
     private boolean streamingDatasource = DEFAULT_STREAMING_DATASOURCE;
@@ -56,26 +60,22 @@ public class HibernateStreamingConfiguration {
 
     private int chunkSize = DEFAULT_CHUNK_SIZE;
 
-    /**
-     * @return Returns a singleton instance of the ServiceConfiguration.
-     */
-    public static synchronized HibernateStreamingConfiguration getInstance() {
-        if (instance == null) {
-            instance = new HibernateStreamingConfiguration();
-            SettingsManager.getInstance().configure(instance);
-        }
-        return instance;
+    private SettingsManager settingsManager;
+
+    @Inject
+    public void setSettingsManager(SettingsManager settingsManager) {
+        this.settingsManager = settingsManager;
     }
 
-    /**
-     * private constructor for singleton
-     */
-    private HibernateStreamingConfiguration() {
+    @Override
+    public void init() {
+        HibernateStreamingConfiguration.instance = this;
+        this.settingsManager.configure(this);
     }
 
     /**
      * Set the indicator to force streaming datasource
-     * 
+     *
      * @param streamingDatasource
      *            Value to set
      */
@@ -86,7 +86,7 @@ public class HibernateStreamingConfiguration {
 
     /**
      * Check if streaming values should be used
-     * 
+     *
      * @return <code>true</code>, if datasource streaming is activated
      */
     public boolean isForceDatasourceStreaming() {
@@ -95,7 +95,7 @@ public class HibernateStreamingConfiguration {
 
     /**
      * Set the indicator to use chunk or scrollable streaming
-     * 
+     *
      * @param chunkDatasourceStreaming
      *            Value to set
      */
@@ -106,7 +106,7 @@ public class HibernateStreamingConfiguration {
 
     /**
      * Check for streaming mode to use
-     * 
+     *
      * @return <code>true</code>, if chunk streaming should be used
      *         <code>false</code>, if scrollable should be used
      */
@@ -116,7 +116,7 @@ public class HibernateStreamingConfiguration {
 
     /**
      * Set the chunk size for chunk streaming
-     * 
+     *
      * @param chunkSize
      *            Size to set
      */
@@ -127,11 +127,19 @@ public class HibernateStreamingConfiguration {
 
     /**
      * Get the chunk size
-     * 
+     *
      * @return the chunk wize
      */
     public int getChunkSize() {
         return chunkSize;
+    }
+
+    /**
+     * @return Returns a singleton instance of the ServiceConfiguration.
+     */
+    @Deprecated
+    public static HibernateStreamingConfiguration getInstance() {
+        return instance;
     }
 
 }

@@ -37,7 +37,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,7 +49,6 @@ import org.n52.sos.exception.ConfigurationException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
@@ -90,6 +88,18 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
 
     public AbstractPostgresDatasource() {
         super();
+        setUsernameDefault(USERNAME_DEFAULT_VALUE);
+        setUsernameDescription(USERNAME_DESCRIPTION);
+        setPasswordDefault(PASSWORD_DEFAULT_VALUE);
+        setPasswordDescription(PASSWORD_DESCRIPTION);
+        setDatabaseDefault(DATABASE_DEFAULT_VALUE);
+        setDatabaseDescription(DATABASE_DESCRIPTION);
+        setHostDefault(HOST_DEFAULT_VALUE);
+        setHostDescription(HOST_DESCRIPTION);
+        setPortDefault(PORT_DEFAULT_VALUE);
+        setPortDescription(PORT_DESCRIPTION);
+        setSchemaDefault(SCHEMA_DEFAULT_VALUE);
+        setSchemaDescription(SCHEMA_DESCRIPTION);
     }
 
     @Override

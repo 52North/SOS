@@ -29,28 +29,26 @@
 package org.n52.sos.ds.datasource;
 
 /**
- * MS SQL Server datasource for custom mapping
- * 
+ * Oracle datasource for custom mapping
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * @since 4.2.0
+ * @since 4.3.0
  *
  */
-public class SqlServerCustomDatasource extends SqlServerCoreDatasource {
+public class OracleCustomDatasource extends OracleCoreDatasource {
 
-    private static final String DIALECT_NAME = "SQL Server Custom Core";
-
-    public SqlServerCustomDatasource() {
+    private static final String DIALECT_NAME = "Oracle Spatial Custom Core";
+    
+    public OracleCustomDatasource() {
         super();
     }
-
+    
     @Override
     public String getDialectName() {
         return DIALECT_NAME;
     }
-
+    
     @Override
     public boolean needsSchema() {
         return false;
     }
-
 }

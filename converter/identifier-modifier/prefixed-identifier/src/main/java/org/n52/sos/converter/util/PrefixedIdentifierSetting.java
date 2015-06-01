@@ -37,7 +37,7 @@ public interface PrefixedIdentifierSetting {
 
     String PROCEDURE_PREFIX_KEY = "sos.prefix.procedure";
 
-    String OBSERVABLE_PROPERTY_PREFIX_KEY = "";
+    String OBSERVABLE_PROPERTY_PREFIX_KEY = "sos.prefix.obervableProperty";
 
     String FEATURE_OF_INTEREST_PREFIX_KEY = "sos.prefix.featureOfInterest";
 

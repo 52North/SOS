@@ -26,11 +26,9 @@
         <param-value>/WEB-INF/configured-context.xml</param-value>
     </context-param>
     <!-- Memory leak preventer listener -->
-    <!--
     <listener>
         <listener-class>se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventor</listener-class>
     </listener>
-    -->
     <!-- Spring startup listener -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>

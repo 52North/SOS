@@ -87,7 +87,7 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
     public static final String RELEASE_MODE_AUTO = "auto";
     public static final String THREAD_LOCAL_SESSION_CONTEXT = "thread";
     public static final int SQLITE_CONNECTION_POOL_SIZE = 1;
-    public static final String CONNECTION_URL_TEMPLATE = "jdbc:sqlite:%s.db";
+    public static final String CONNECTION_URL_TEMPLATE = "jdbc:sqlite:%s";
     public static final String SQLITE_HIBERNATE_DIALECT
             = HibernateSQLiteDialect.class.getName();
     public static final String UPDATE_SCHEMA_VALUE = "update";

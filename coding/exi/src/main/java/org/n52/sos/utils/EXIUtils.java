@@ -30,18 +30,17 @@ package org.n52.sos.utils;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.util.Validation;
 import org.n52.sos.exi.EXISettings;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.lifecycle.Constructable;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.EXIFactory;
@@ -96,17 +95,9 @@ public class EXIUtils implements Constructable {
     @Deprecated
     private static EXIUtils instance = null;
 
-    private SettingsManager settingsManager;
-
-    @Inject
-    public void setSettingsManager(SettingsManager settingsManager) {
-        this.settingsManager = settingsManager;
-    }
-
     @Override
     public void init() {
         EXIUtils.instance = this;
-        this.settingsManager.configure(this);
 
         try {
             // Pre-load Grammars from URL to save time

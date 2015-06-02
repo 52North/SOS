@@ -71,7 +71,6 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
     private SettingsManager settingsManager;
 
     @Inject
-    @Named(ContextSwitcher.BEAN_NAME)
     private ContextSwitcher contextSwitcher;
 
     @Inject

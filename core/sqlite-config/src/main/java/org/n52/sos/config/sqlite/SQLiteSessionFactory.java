@@ -144,7 +144,7 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
     }
 
     protected File getFile() {
-        return new File(getPath(), getDatabaseName());
+        return new File(getPath(), getDatabaseName() + ".db");
     }
 
     protected SessionFactory getSessionFactory() {

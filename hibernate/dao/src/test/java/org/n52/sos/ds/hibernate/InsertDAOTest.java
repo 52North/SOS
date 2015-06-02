@@ -179,17 +179,11 @@ public class InsertDAOTest extends HibernateTestCase {
 
     /* FIXTURES */
     private InsertSensorDAO insertSensorDAO = new InsertSensorDAO();
-
     private DeleteSensorDAO deleteSensorDAO = new DeleteSensorDAO();
-
     private InsertObservationDAO insertObservationDAO = new InsertObservationDAO();
-
     private InsertResultTemplateDAO insertResultTemplateDAO = new InsertResultTemplateDAO();
-
     private InsertResultDAO insertResultDAO = new InsertResultDAO();
-
     private GetObservationDAO getObsDAO = new GetObservationDAO();
-
     private SosInsertObservationOperatorV20 insertObservationOperatorv2 = new SosInsertObservationOperatorV20();
 
     // optionally run these tests multiple times to expose intermittent faults

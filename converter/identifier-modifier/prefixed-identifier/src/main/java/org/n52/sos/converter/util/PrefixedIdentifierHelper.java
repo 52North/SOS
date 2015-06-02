@@ -28,9 +28,6 @@
  */
 package org.n52.sos.converter.util;
 
-import javax.inject.Inject;
-
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.lifecycle.Constructable;
@@ -51,17 +48,9 @@ public class PrefixedIdentifierHelper implements Constructable {
 
     private String featureOfInterestPrefix;
 
-    private SettingsManager settingsManager;
-
-    @Inject
-    public void setSettingsManager(SettingsManager settingsManager) {
-        this.settingsManager = settingsManager;
-    }
-
     @Override
     public void init() {
         PrefixedIdentifierHelper.instance = this;
-        this.settingsManager.configure(this);
     }
 
     /**

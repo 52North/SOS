@@ -47,7 +47,8 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.binding.PathBindingKey;
-import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.coding.DecoderRepository;
+import org.n52.iceland.coding.EncoderRepository;
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.encode.EncoderKey;
@@ -104,6 +105,36 @@ public class RestBinding extends Binding implements Constructable {
     private static final Set<BindingKey> KEYS = Collections.<BindingKey>singleton(new PathBindingKey(URI_PATTERN));
     private Set<String> conformanceClasses;
     private Constants bindingConstants;
+    private ServiceEventBus eventBus;
+    private EncoderRepository encoderRepository;
+    private DecoderRepository decoderRepository;
+
+    @Inject
+    public void setDecoderRepository(DecoderRepository decoderRepository) {
+        this.decoderRepository = decoderRepository;
+    }
+
+    public DecoderRepository getDecoderRepository() {
+        return decoderRepository;
+    }
+
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
+
+    public EncoderRepository getEncoderRepository() {
+        return encoderRepository;
+    }
+
+    @Inject
+    public void setEventBus(ServiceEventBus eventBus) {
+        this.eventBus = eventBus;
+    }
+
+    public ServiceEventBus getEventBus() {
+        return eventBus;
+    }
 
     @Inject
     public void setBindingConstants(Constants bindingConstants) {
@@ -194,7 +225,7 @@ public class RestBinding extends Binding implements Constructable {
         } catch (final OwsExceptionReport oer) {
             LOGGER.error("Error while processing rest request. Exception thrown: {}",
                          oer.getClass().getSimpleName());
-            ServiceEventBus.fire(new ExceptionEvent(oer));
+            this.eventBus.submit(new ExceptionEvent(oer));
             serviceResponse = encodeOwsExceptionReport(oer);
         }
         HTTPUtils.writeObject(request, response, serviceResponse);
@@ -204,7 +235,7 @@ public class RestBinding extends Binding implements Constructable {
         try {
             ExceptionEncoderKey key = new ExceptionEncoderKey(MediaTypes.TEXT_XML);
             Encoder<XmlObject, OwsExceptionReport> encoder =
-                    CodingRepository.getInstance().getEncoder(key);
+                    getEncoderRepository().getEncoder(key);
             if (encoder == null) {
                 throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR,
                         new NoEncoderForKeyException(key));
@@ -292,23 +323,18 @@ public class RestBinding extends Binding implements Constructable {
                 throw new NoApplicableCodeException().withMessage(exceptionText);
              }
             return sdcResponse;
-        }catch(final XmlException xe) {
+        } catch(XmlException | IOException xe) {
             final String exceptionText = String.format("Processing of rest request response failed. Exception thrown: %s",
                     xe.getMessage());
             LOGGER.debug(exceptionText,xe);
             throw new NoApplicableCodeException().withMessage(exceptionText).causedBy(xe);
-        } catch (final IOException e) {
-            final String exceptionText = String.format("Processing of rest request response failed. Exception thrown: %s",
-                    e.getMessage());
-            LOGGER.debug(exceptionText,e);
-            throw new NoApplicableCodeException().withMessage(exceptionText).causedBy(e);
         }
     }
 
     private RestEncoder getEncoder() throws OwsExceptionReport
     {
     	final EncoderKey key = new XmlEncoderKey(bindingConstants.getEncodingNamespace(), RestResponse.class);
-        final Encoder<?,?> encoder = CodingRepository.getInstance().getEncoder(key);
+        final Encoder<?,?> encoder = getEncoderRepository().getEncoder(key);
         if (encoder instanceof RestEncoder) {
             return (RestEncoder) encoder;
         }
@@ -338,7 +364,7 @@ public class RestBinding extends Binding implements Constructable {
     }
 
 	private RestDecoder getDecoder() throws OwsExceptionReport {
-        final Set<Decoder<?, ?>> decoders = CodingRepository.getInstance().getDecoders();
+        final Set<Decoder<?, ?>> decoders = this.decoderRepository.getDecoders();
         for (final Decoder<?,?> decoder : decoders) {
             if (decoder instanceof RestDecoder) {
                 return (RestDecoder) decoder;

@@ -70,8 +70,8 @@ public class SosDeleteSensorOperatorV20 extends AbstractV2TransactionalRequestOp
 
     @Override
     public DeleteSensorResponse receive(DeleteSensorRequest request) throws OwsExceptionReport {
-        DeleteSensorResponse response = getDao().deleteSensor(request);
-        ServiceEventBus.fire(new SensorDeletion(request, response));
+        DeleteSensorResponse response = getOperationHandler().deleteSensor(request);
+        getServiceEventBus().submit(new SensorDeletion(request, response));
         return response;
     }
 
@@ -105,7 +105,7 @@ public class SosDeleteSensorOperatorV20 extends AbstractV2TransactionalRequestOp
             throw new MissingProcedureParameterException();
         }
     }
-    
+
     @Override
     public WSDLOperation getSosOperationDefinition() {
         return WSDLConstants.Operations.DELETE_SENSOR;

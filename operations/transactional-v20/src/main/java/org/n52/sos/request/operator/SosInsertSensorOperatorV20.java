@@ -122,8 +122,8 @@ public class SosInsertSensorOperatorV20 extends
 
     @Override
     public InsertSensorResponse receive(InsertSensorRequest request) throws OwsExceptionReport {
-        InsertSensorResponse response = getDao().insertSensor(request);
-        ServiceEventBus.fire(new SensorInsertion(request, response));
+        InsertSensorResponse response = getOperationHandler().insertSensor(request);
+        getServiceEventBus().submit(new SensorInsertion(request, response));
         return response;
     }
 
@@ -232,11 +232,11 @@ public class SosInsertSensorOperatorV20 extends
     }
 
     private void checkAndSetAssignedOfferings(InsertSensorRequest request) throws InvalidOfferingParameterException {
-        Set<SosOffering> sosOfferings = request.getProcedureDescription().getOfferings();        
+        Set<SosOffering> sosOfferings = request.getProcedureDescription().getOfferings();
         ContentCache cache = Configurator.getInstance().getCache();
-        
+
         // add parent procedure offerings
-        if (request.getProcedureDescription().isSetParentProcedures()) {            
+        if (request.getProcedureDescription().isSetParentProcedures()) {
             Set<String> allParentProcedures = cache.getParentProcedures(
                     request.getProcedureDescription().getParentProcedures(), true, true);
             for (String parentProcedure : allParentProcedures) {
@@ -268,7 +268,7 @@ public class SosInsertSensorOperatorV20 extends
             }
         }
     }
-    
+
     private void checkParentChildProcedures(SosProcedureDescription procedureDescription, String assignedIdentifier) throws CodedException {
         if (procedureDescription.isSetChildProcedures()) {
             for (SosProcedureDescription child : procedureDescription.getChildProcedures()) {
@@ -290,7 +290,7 @@ public class SosInsertSensorOperatorV20 extends
                         procedureDescription.getIdentifier());
             }
         }
-        
+
     }
 
     private void getChildProcedures() {

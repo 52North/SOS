@@ -66,7 +66,7 @@ public class HibernateDeleteObservationCacheFeederDAO extends DeleteObservationC
 
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
-        this.sessionHolder = new HibernateSessionHolder();
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override

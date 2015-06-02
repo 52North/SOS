@@ -29,14 +29,7 @@
 package org.n52.sos.service;
 
 
-import java.util.Collections;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingDefinitionGroup;
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.lifecycle.Constructable;
@@ -110,21 +103,12 @@ public class ProcedureDescriptionSettings implements Constructable {
     private boolean enrichWithFeatures;
     private boolean enrichWithDiscoveryInformation;
 
-
     @Deprecated
     private static ProcedureDescriptionSettings instance = null;
-
-    private SettingsManager settingsManager;
-
-    @Inject
-    public void setSettingsManager(SettingsManager settingsManager) {
-        this.settingsManager = settingsManager;
-    }
 
     @Override
     public void init() {
         ProcedureDescriptionSettings.instance = this;
-        this.settingsManager.configure(this);
     }
 
     @Deprecated

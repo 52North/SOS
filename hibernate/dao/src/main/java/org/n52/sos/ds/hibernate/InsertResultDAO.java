@@ -35,14 +35,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
-import org.n52.iceland.coding.CodingRepository;
+
 import org.n52.iceland.ds.FeatureQueryHandler;
 import org.n52.iceland.ds.FeatureQueryHandlerQueryObject;
-import org.n52.iceland.ds.HibernateDatasourceConstants;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
@@ -60,14 +61,10 @@ import org.n52.iceland.ogc.om.OmObservationConstellation;
 import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.iceland.ogc.om.values.SweDataArrayValue;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.CapabilitiesExtension;
-import org.n52.iceland.ogc.sos.CapabilitiesExtensionKey;
-import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
-import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.ogc.swe.SweDataArray;
 import org.n52.iceland.ogc.swe.SweDataRecord;
 import org.n52.iceland.ogc.swe.SweField;
@@ -92,14 +89,16 @@ import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sos.SosInsertionCapabilities;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.request.InsertResultRequest;
 import org.n52.sos.response.InsertResultResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProvider;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -113,21 +112,16 @@ import com.google.common.collect.Sets;
 public class InsertResultDAO extends AbstractInsertResultHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InsertResultDAO.class);
-
     private static final int FLUSH_THRESHOLD = 50;
+    private HibernateSessionHolder sessionHolder;
 
-    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
-
-    /**
-     * constructor
-     */
     public InsertResultDAO() {
         super(SosConstants.SOS);
     }
 
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override

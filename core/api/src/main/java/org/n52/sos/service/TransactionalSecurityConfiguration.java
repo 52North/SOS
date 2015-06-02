@@ -33,9 +33,6 @@ import static org.n52.sos.service.TransactionalSecuritySettings.TRANSACTIONAL_AC
 import static org.n52.sos.service.TransactionalSecuritySettings.TRANSACTIONAL_ALLOWED_IPS;
 import static org.n52.sos.service.TransactionalSecuritySettings.TRANSACTIONAL_TOKEN;
 
-import javax.inject.Inject;
-
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationException;
@@ -73,17 +70,9 @@ public class TransactionalSecurityConfiguration implements Constructable {
 
     private ImmutableSet<IPAddress> allowedProxies =  ImmutableSet.of();
 
-    private SettingsManager settingsManager;
-
-    @Inject
-    public void setSettingsManager(SettingsManager settingsManager) {
-        this.settingsManager = settingsManager;
-    }
-
     @Override
     public void init() {
         TransactionalSecurityConfiguration.instance = this;
-        this.settingsManager.configure(this);
     }
 
     /**

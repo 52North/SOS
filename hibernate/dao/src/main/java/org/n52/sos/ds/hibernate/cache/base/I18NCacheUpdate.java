@@ -32,6 +32,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.metadata.AbstractI18NMetadata;
@@ -40,11 +43,8 @@ import org.n52.iceland.i18n.metadata.I18NObservablePropertyMetadata;
 import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.Configurator;
+import org.n52.iceland.ogc.ows.ServiceIdentificationFactory;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Cache update class for I18N
@@ -57,12 +57,21 @@ public class I18NCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(I18NCacheUpdate.class);
 
+    private final ServiceIdentificationFactory serviceIdentificationFactory;
+    private final I18NDAORepository i18NDAORepository;
+
+    public I18NCacheUpdate(ServiceIdentificationFactory serviceIdentificationFactory,
+                           I18NDAORepository i18NDAORepository) {
+        this.serviceIdentificationFactory = serviceIdentificationFactory;
+        this.i18NDAORepository = i18NDAORepository;
+    }
+
     @Override
     public void execute() {
         LOGGER.info("Executing I18NCacheUpdate");
         startStopwatch();
         try {
-            getCache().addSupportedLanguage(Configurator.getInstance().getServiceIdentificationFactory().getAvailableLocales());
+            getCache().addSupportedLanguage(this.serviceIdentificationFactory.getAvailableLocales());
             getCache().addSupportedLanguage(getEntityLocales(I18NFeatureMetadata.class));
             getCache().addSupportedLanguage(getEntityLocales(I18NOfferingMetadata.class));
             getCache().addSupportedLanguage(getEntityLocales(I18NObservablePropertyMetadata.class));
@@ -75,8 +84,7 @@ public class I18NCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
 
     private Collection<Locale> getEntityLocales(Class<? extends AbstractI18NMetadata> type)
             throws OwsExceptionReport {
-        I18NDAO<? extends AbstractI18NMetadata> dao
-                = I18NDAORepository.getInstance().getDAO(type);
+        I18NDAO<? extends AbstractI18NMetadata> dao = this.i18NDAORepository.getDAO(type);
         if (dao != null) {
             return dao.getAvailableLocales();
         } else {

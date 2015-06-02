@@ -338,10 +338,10 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         final Set<RequestOperatorKey> requestOperatorKeyTypes =
                 getRequestOperatorRepository().getActiveRequestOperatorKeys();
         final List<OwsOperation> opsMetadata = new ArrayList<OwsOperation>(requestOperatorKeyTypes.size());
-        for (final RequestOperatorKey requestOperatorKeyType : requestOperatorKeyTypes) {
-            if (requestOperatorKeyType.getServiceOperatorKey().getVersion().equals(version)) {
-                final OwsOperation operationMetadata =
-                        getRequestOperatorRepository().getRequestOperator(requestOperatorKeyType)
+        for (final RequestOperatorKey requestOperatorKey : requestOperatorKeyTypes) {
+            if (requestOperatorKey.getServiceOperatorKey().getVersion().equals(version)) {
+                OwsOperation operationMetadata = getRequestOperatorRepository()
+                        .getRequestOperator(requestOperatorKey)
                                 .getOperationMetadata(service, version);
                 if (operationMetadata != null) {
                     opsMetadata.add(operationMetadata);
@@ -969,11 +969,6 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
 
     private boolean isServiceIdentificationSectionRequested(final int sections) {
         return (sections & SERVICE_IDENTIFICATION) != 0;
-    }
-
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return IDEPENDET_IDENTIFIER;
     }
 
     @Override

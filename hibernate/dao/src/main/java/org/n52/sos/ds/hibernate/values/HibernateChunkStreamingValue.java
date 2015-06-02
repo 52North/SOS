@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.om.TimeValuePair;
@@ -72,9 +74,9 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
      * @param featureOfInterest
      *            Datasource featureOfInterest id
      */
-    public HibernateChunkStreamingValue(GetObservationRequest request, long procedure, long observableProperty,
+    public HibernateChunkStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest) {
-        super(request, procedure, observableProperty, featureOfInterest);
+        super(connectionProvider, request, procedure, observableProperty, featureOfInterest);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
     }
 

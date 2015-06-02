@@ -33,9 +33,9 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import org.n52.iceland.config.SettingDefinition;
@@ -55,8 +55,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @Controller
 public class AbstractController {
 
-    @Autowired
+    @Inject
     private ServletContext context;
+
+    @Inject
+    private DatabaseSettingsHandler handler;
 
     public ServletContext getContext() {
         return this.context;
@@ -75,7 +78,7 @@ public class AbstractController {
     }
 
     public DatabaseSettingsHandler getDatabaseSettingsHandler() {
-        return DatabaseSettingsHandler.getInstance(getContext());
+        return this.handler;
     }
 
     protected Boolean parseBoolean(Map<String, String> parameters, String name) {
@@ -95,16 +98,19 @@ public class AbstractController {
         return Boolean.FALSE;
     }
 
-    protected ObjectNode toJSONValueMap(Map<SettingDefinition<?, ?>, SettingValue<?>> settings)
+    protected ObjectNode toJSONValueMap(
+            Map<SettingDefinition<?, ?>, SettingValue<?>> settings)
             throws ConfigurationException, JSONException {
         SortedMap<String, JsonNode> map = new TreeMap<>();
         SettingDefinitionEncoder encoder = new SettingDefinitionEncoder();
-        for (Entry<SettingDefinition<?, ?>, SettingValue<?>> e : settings.entrySet()) {
-        	if (e.getValue() != null) {
-        		map.put(e.getKey().getKey(), encoder.encodeValue(e.getValue()));
-        	} else {
-        		map.put(e.getKey().getKey(), encoder.encodeValue(e.getKey().getType(), e.getKey().getDefaultValue()));
-        	}
+        for (Entry<SettingDefinition<?, ?>, SettingValue<?>> e : settings
+                .entrySet()) {
+            if (e.getValue() != null) {
+                map.put(e.getKey().getKey(), encoder.encodeValue(e.getValue()));
+            } else {
+                map.put(e.getKey().getKey(), encoder.encodeValue(e.getKey()
+                        .getType(), e.getKey().getDefaultValue()));
+            }
         }
         ObjectNode node = JSONUtils.nodeFactory().objectNode();
         node.setAll(map);

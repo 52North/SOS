@@ -38,20 +38,26 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.stream.Stream;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.HibernateDatasourceConstants;
 import org.n52.iceland.exception.ConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Throwables;
 
 /**
  *
@@ -63,17 +69,12 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryProvider.class);
 
 
-    /**
-     * constructor. Opens a new Hibernate SessionFactory
-     */
-    public SessionFactoryProvider() {
-
-    }
-
     public String getUpdateScript() throws ConnectionProviderException, SQLException {
+        Configuration configuration = getConfiguration();
         if (configuration == null) {
             throw new ConfigurationException("configuration is null");
         }
+        SessionFactory sessionFactory = getSessionFactory();
         if (sessionFactory == null) {
             throw new ConfigurationException("sessionFactory is null");
         }
@@ -88,7 +89,7 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
         returnConnection(session);
         StringBuilder updateSqlString = new StringBuilder();
         for (String sqlLine : udpateSql) {
-            updateSqlString.append(sqlLine + ";\n\n");
+            updateSqlString.append(sqlLine).append(";\n\n");
         }
         return updateSqlString.toString();
     }
@@ -130,31 +131,17 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
             } else {
                 // keep this as default/fallback
                 configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_CORE_PATH).toURI()));
-                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH)
-                        .toURI()));
-                configuration.addDirectory(new File(getClass().getResource(
-                        HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH).toURI()));
-                configuration.addDirectory(new File(getClass().getResource(
-                        HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH).toURI()));
-                configuration.addDirectory(new File(getClass().getResource(
-                        HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH).toURI()));
+                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH).toURI()));
+                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH).toURI()));
+                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH).toURI()));
+                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH).toURI()));
             }
             return configuration;
-        } catch (HibernateException he) {
+        } catch (HibernateException | URISyntaxException he) {
             String exceptionText = "An error occurs during instantiation of the database connection pool!";
             LOGGER.error(exceptionText, he);
             destroy();
             throw new ConfigurationException(exceptionText, he);
-        } catch (URISyntaxException urise) {
-            String exceptionText = "An error occurs during instantiation of the database connection pool!";
-            LOGGER.error(exceptionText, urise);
-            destroy();
-            throw new ConfigurationException(exceptionText, urise);
         }
-    }
-    
-    @Override
-    public String getConnectionProviderIdentifier() {
-        return HibernateDatasourceConstants.ORM_CONNECTION_PROVIDER_IDENTIFIER;
     }
 }

@@ -37,18 +37,18 @@ import java.util.Set;
 
 import org.hibernate.Session;
 
+import org.n52.iceland.ds.FeatureQueryHandler;
 import org.n52.iceland.ds.FeatureQueryHandlerQueryObject;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.LocaleHelper;
+import org.n52.iceland.i18n.LocalizedString;
 import org.n52.iceland.i18n.MultilingualString;
 import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
 import org.n52.iceland.ogc.OGCConstants;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosEnvelope;
-import org.n52.iceland.service.Configurator;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
@@ -66,9 +66,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 import org.n52.sos.util.CacheHelper;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -80,20 +78,16 @@ import com.google.common.collect.Sets;
  */
 public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
 
-    @SuppressWarnings("unused")
-    private static final Logger LOGGER = LoggerFactory.getLogger(OfferingCacheUpdateTask.class);
-
     private final FeatureOfInterestDAO featureDAO = new FeatureOfInterestDAO();
-
     private final String offeringId;
-
     private final Collection<ObservationConstellationInfo> observationConstellationInfos;
-
     private final Offering offering;
-
     private boolean obsConstSupported;
+    private final boolean hasSamplingGeometry;
 
-    private boolean hasSamplingGeometry;
+    private final Locale defaultLanguage;
+    private final I18NDAORepository i18NDAORepository;
+    private final FeatureQueryHandler featureQueryHandler;
 
     /**
      * Constructor. Note: never pass in Hibernate objects that have been loaded
@@ -109,11 +103,18 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
      *            Filtering Profile
      */
     public OfferingCacheUpdateTask(Offering offering,
-            Collection<ObservationConstellationInfo> observationConstellationInfos, boolean hasSamplingGeometry) {
+                                   Collection<ObservationConstellationInfo> observationConstellationInfos,
+                                   boolean hasSamplingGeometry,
+                                   Locale defaultLanguage,
+                                   I18NDAORepository i18NDAORepository,
+                                   FeatureQueryHandler featureQueryHandler) {
         this.offering = offering;
         this.offeringId = offering.getIdentifier();
         this.observationConstellationInfos = observationConstellationInfos;
         this.hasSamplingGeometry = hasSamplingGeometry;
+        this.defaultLanguage = defaultLanguage;
+        this.i18NDAORepository = i18NDAORepository;
+        this.featureQueryHandler = featureQueryHandler;
     }
 
     protected void getOfferingInformationFromDbAndAddItToCacheMaps(Session session) throws OwsExceptionReport {
@@ -164,7 +165,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         final MultilingualString name;
         final MultilingualString description;
 
-        I18NDAO<I18NOfferingMetadata> dao = I18NDAORepository.getInstance().getDAO(I18NOfferingMetadata.class);
+        I18NDAO<I18NOfferingMetadata> dao = i18NDAORepository.getDAO(I18NOfferingMetadata.class);
 
         if (dao != null) {
             I18NOfferingMetadata metadata = dao.getMetadata(offeringId);
@@ -173,13 +174,12 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         } else {
             name = new MultilingualString();
             description = new MultilingualString();
-            Locale defaultLocale = ServiceConfiguration.getInstance().getDefaultLanguage();
             if (offering.isSetName()) {
                 final Locale locale;
                 if (offering.isSetCodespaceName()) {
                     locale = LocaleHelper.fromString(offering.getCodespaceName().getCodespace());
                 } else {
-                    locale = defaultLocale;
+                    locale = defaultLanguage;
 
                 }
                 name.addLocalization(locale, offering.getName());
@@ -199,14 +199,14 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
                             offeringName.substring(offeringName.lastIndexOf(Constants.NUMBER_SIGN_CHAR) + 1,
                                     offeringName.length());
                 }
-                name.addLocalization(defaultLocale, offeringName);
+                name.addLocalization(defaultLanguage, offeringName);
             }
             if (offering.isSetDescription()) {
                 final Locale locale;
                 if (offering.isSetCodespaceName()) {
                     locale = LocaleHelper.fromString(offering.getCodespaceName().getCodespace());
                 } else {
-                    locale = defaultLocale;
+                    locale = defaultLanguage;
                 }
                 description.addLocalization(locale, offering.getDescription());
             }
@@ -222,9 +222,9 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             getCache().addOfferingIdentifierHumanReadableName(offeringId, offering.getName());
         } else {
             if (!name.isEmpty()) {
-                if (name.getDefaultLocalization().isPresent()) {
-                    getCache().addOfferingIdentifierHumanReadableName(offeringId,
-                            name.getDefaultLocalization().get().getText());
+                Optional<LocalizedString> defaultName = name.getLocalization(defaultLanguage);
+                if (defaultName.isPresent()) {
+                    getCache().addOfferingIdentifierHumanReadableName(offeringId, defaultName.get().getText());
                 } else {
                     getCache().addOfferingIdentifierHumanReadableName(offeringId, offeringId);
                 }
@@ -234,8 +234,8 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     }
 
     protected Map<ProcedureFlag, Set<String>> getProcedureIdentifier(Session session) throws OwsExceptionReport {
-        Set<String> procedures = new HashSet<String>(0);
-        Set<String> hiddenChilds = new HashSet<String>(0);
+        Set<String> procedures = new HashSet<>(0);
+        Set<String> hiddenChilds = new HashSet<>(0);
         if (obsConstSupported) {
             if (CollectionHelper.isNotEmpty(observationConstellationInfos)) {
                 procedures.addAll(DatasourceCacheUpdateHelper
@@ -258,7 +258,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     }
 
     protected Collection<String> getValidFeaturesOfInterestFrom(Collection<String> featureOfInterestIdentifiers) {
-        Set<String> features = new HashSet<String>(featureOfInterestIdentifiers.size());
+        Set<String> features = new HashSet<>(featureOfInterestIdentifiers.size());
         for (String featureIdentifier : featureOfInterestIdentifiers) {
             features.add(CacheHelper.addPrefixOrGetFeatureIdentifier(featureIdentifier));
         }
@@ -350,7 +350,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             FeatureQueryHandlerQueryObject queryHandler =
                     new FeatureQueryHandlerQueryObject().setFeatureIdentifiers(featureOfInterestIdentifiers)
                             .setConnection(session);
-            return Configurator.getInstance().getFeatureQueryHandler().getEnvelopeForFeatureIDs(queryHandler);
+            return this.featureQueryHandler.getEnvelopeForFeatureIDs(queryHandler);
         }
         return null;
     }

@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds;
 
+import javax.inject.Inject;
+
 import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
@@ -43,6 +45,8 @@ import org.n52.sos.response.UpdateSensorResponse;
  */
 public abstract class AbstractUpdateSensorDescriptionHandler extends AbstractOperationHandler {
 
+    private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
+
     public AbstractUpdateSensorDescriptionHandler(String service) {
         super(service, Sos2Constants.Operations.UpdateSensorDescription.name());
     }
@@ -53,12 +57,21 @@ public abstract class AbstractUpdateSensorDescriptionHandler extends AbstractOpe
         addProcedureParameter(opsMeta);
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
             opsMeta.addPossibleValuesParameter(Sos2Constants.UpdateSensorDescriptionParams.procedureDescriptionFormat,
-                    ProcedureDescriptionFormatRepository.getInstance().getSupportedProcedureDescriptionFormats(service, version));
+                    this.procedureDescriptionFormatRepository.getSupportedProcedureDescriptionFormats(service, version));
         }
         opsMeta.addAnyParameterValue(Sos2Constants.UpdateSensorDescriptionParams.description);
     }
 
     public abstract UpdateSensorResponse updateSensorDescription(UpdateSensorRequest request)
             throws OwsExceptionReport;
+
+    public ProcedureDescriptionFormatRepository getProcedureDescriptionFormatRepository() {
+        return procedureDescriptionFormatRepository;
+    }
+
+    @Inject
+    public void setProcedureDescriptionFormatRepository(ProcedureDescriptionFormatRepository repo) {
+        this.procedureDescriptionFormatRepository = repo;
+    }
 
 }

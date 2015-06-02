@@ -30,6 +30,8 @@ package org.n52.sos.ds.hibernate.values.series;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.om.OmObservation;
@@ -41,7 +43,7 @@ import org.n52.sos.request.GetObservationRequest;
 
 /**
  * Hibernate series streaming value implementation for {@link ScrollableResults}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.2
  *
@@ -54,15 +56,16 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
 
     /**
      * constructor
-     * 
+     *
+     * @param connectionProvider the connection provider
      * @param request
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
-     * @throws CodedException 
+     * @throws CodedException
      */
-    public HibernateScrollableSeriesStreamingValue(GetObservationRequest request, long series) throws CodedException {
-        super(request, series);
+    public HibernateScrollableSeriesStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long series) throws CodedException {
+        super(connectionProvider, request, series);
     }
 
     @Override
@@ -101,7 +104,7 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @Override
     public OmObservation nextSingleObservation() throws OwsExceptionReport {
         try {
@@ -120,7 +123,7 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
 
     /**
      * Get the next results from database
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs when querying the next results
      */
@@ -147,7 +150,7 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
 
     /**
      * Set the queried {@link ScrollableResults} to local variable
-     * 
+     *
      * @param scrollableResult
      *            Queried {@link ScrollableResults}
      */

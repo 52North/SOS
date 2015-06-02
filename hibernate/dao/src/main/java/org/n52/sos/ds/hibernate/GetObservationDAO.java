@@ -35,11 +35,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.ds.HibernateDatasourceConstants;
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
@@ -82,8 +87,6 @@ import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterExcept
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.profile.ProfileHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -98,19 +101,17 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationDAO.class);
 
-    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder sessionHolder;
 
-    /**
-     * constructor
-     */
     public GetObservationDAO() {
         super(SosConstants.SOS);
     }
-    
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
+
     @Override
     public GetObservationResponse getObservation(final GetObservationRequest sosRequest) throws OwsExceptionReport {
         if (sosRequest.getVersion().equals(Sos1Constants.SERVICEVERSION)
@@ -185,7 +186,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
      *
      * @param request
      *            GetObservation request
-     * @param observationDAO 
+     * @param observationDAO
      * @param session
      *            Hibernate session
      * @return List of internal Observation objects
@@ -279,7 +280,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
      *
      * @param request
      *            GetObservation request
-     * @param observationDAO 
+     * @param observationDAO
      * @param session
      *            Hibernate session
      * @return List of internal Observations
@@ -306,7 +307,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
 
         final List<OmObservation> result = new LinkedList<OmObservation>();
         Collection<SeriesObservation> seriesObservations = Lists.newArrayList();
-        
+
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
 
         // query with temporal filter
@@ -391,7 +392,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
     protected List<OmObservation> queryObservationForStreaming(GetObservationRequest request, final Session session)
             throws OwsExceptionReport, ConverterException {
         final long start = System.currentTimeMillis();
-        final List<OmObservation> result = new LinkedList<OmObservation>();
+        final List<OmObservation> result = new LinkedList<>();
         // get valid featureOfInterest identifier
         final Set<String> features = QueryHelper.getFeatures(request, session);
         if (features != null && features.isEmpty()) {
@@ -442,7 +443,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
     protected List<OmObservation> querySeriesObservationForStreaming(GetObservationRequest request,
             final Session session) throws OwsExceptionReport, ConverterException {
         final long start = System.currentTimeMillis();
-        final List<OmObservation> result = new LinkedList<OmObservation>();
+        final List<OmObservation> result = new LinkedList<>();
         // get valid featureOfInterest identifier
         final Set<String> features = QueryHelper.getFeatures(request, session);
         if (features != null && features.isEmpty()) {
@@ -477,13 +478,13 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
      * @param seriesId
      *            Series id
      * @return Streaming observation value
-     * @throws CodedException 
+     * @throws CodedException
      */
     private HibernateSeriesStreamingValue getSeriesStreamingValue(GetObservationRequest request, long seriesId) throws CodedException {
         if (HibernateStreamingConfiguration.getInstance().isChunkDatasourceStreaming()) {
-            return new HibernateChunkSeriesStreamingValue(request, seriesId);
+            return new HibernateChunkSeriesStreamingValue(getConnectionProvider(), request, seriesId);
         } else {
-            return new HibernateScrollableSeriesStreamingValue(request, seriesId);
+            return new HibernateScrollableSeriesStreamingValue(getConnectionProvider(), request, seriesId);
         }
     }
 
@@ -503,10 +504,14 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
     private HibernateStreamingValue getStreamingValue(GetObservationRequest request, long procedure,
             long observableProperty, long feature) {
         if (HibernateStreamingConfiguration.getInstance().isChunkDatasourceStreaming()) {
-            return new HibernateChunkStreamingValue(request, procedure, observableProperty, feature);
+            return new HibernateChunkStreamingValue(getConnectionProvider(), request, procedure, observableProperty, feature);
         } else {
-            return new HibernateScrollableStreamingValue(request, procedure, observableProperty, feature);
+            return new HibernateScrollableStreamingValue(getConnectionProvider(), request, procedure, observableProperty, feature);
         }
+    }
+
+    protected ConnectionProvider getConnectionProvider() {
+        return this.sessionHolder.getConnectionProvider();
     }
 
 }

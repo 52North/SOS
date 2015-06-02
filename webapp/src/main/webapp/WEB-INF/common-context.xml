@@ -14,6 +14,11 @@
 
     <ctx:annotation-config />
 
+    <bean class="org.n52.iceland.config.IcelandBeanPostProcessor">
+        <description>This calls SettingsManager#configure, Constructable#init
+            and Destroyable#destroy for all beans.</description>
+    </bean>
+
     <bean id="contextSwitcherSwapper" class="org.springframework.aop.target.HotSwappableTargetSource">
         <description>Placeholder for the ContextSwitcher. This will be substituted as soon as
          the ApplicationContext is refreshed.</description>
@@ -29,6 +34,11 @@
         <property name="targetSource">
             <ref local="contextSwitcherSwapper" />
         </property>
+    </bean>
+
+    <bean class="org.n52.iceland.service.DatabaseSettingsHandler">
+        <description>Bean that allows convenient access
+            to the datasource.properties</description>
     </bean>
 
     <!-- import security config -->

@@ -49,11 +49,11 @@ import org.n52.sos.util.BatchConstants;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * Renamed, in version 4.x called BatchOperationDAO
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 5.0.0
  */
 public class BatchOperationHandler extends AbstractOperationHandler {
@@ -150,10 +150,5 @@ public class BatchOperationHandler extends AbstractOperationHandler {
                 exceptions.add(new InvalidServiceParameterException(sokt.getService()));
             }
         }
-    }
-    
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return IDEPENDET_IDENTIFIER;
     }
 }

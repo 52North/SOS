@@ -36,11 +36,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+
 import org.n52.iceland.ds.HibernateDatasourceConstants;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedOperatorException;
@@ -75,33 +78,33 @@ import org.n52.sos.ogc.sos.SosResultStructure;
 import org.n52.sos.request.GetResultRequest;
 import org.n52.sos.response.GetResultResponse;
 import org.n52.sos.util.GeometryHandler;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProvider;
 
 import com.google.common.collect.Sets;
 
 /**
  * Implementation of the abstract class AbstractGetResultHandler
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class GetResultDAO extends AbstractGetResultHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetResultDAO.class);
 
-    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder sessionHolder;
 
-    /**
-     * constructor
-     */
     public GetResultDAO() {
         super(SosConstants.SOS);
     }
-    
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override
@@ -156,7 +159,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
 
     /**
      * Query observations from database depending on requested filters
-     * 
+     *
      * @param request
      *            GetObservation request
      * @param featureIdentifiers
@@ -166,8 +169,8 @@ public class GetResultDAO extends AbstractGetResultHandler {
      * @param session
      *            Hibernate session
      * @return List of Observation objects
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             If an error occurs.
      */
@@ -203,7 +206,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
 
     /**
      * Query series observations from database depending on requested filters
-     * 
+     *
      * @param request
      *            GetObservation request
      * @param featureIdentifiers
@@ -243,7 +246,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
 
     /**
      * Query corresponding ResultTemplate
-     * 
+     *
      * @param request
      *            GetResult request
      * @param featureIdentifier
@@ -262,7 +265,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
 
     /**
      * Add offering identifier restriction to Hibernate Criteria
-     * 
+     *
      * @param c
      *            Hibernate Criteria to add restriction
      * @param offering
@@ -274,7 +277,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
 
     /**
      * Add offering identifier restriction to Hibernate Criteria
-     * 
+     *
      * @param c
      *            Hibernate Criteria to add restriction
      * @param temporalFilter
@@ -294,7 +297,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
     /**
      * Create Hibernate Criteria for the class and add ascending of phenomenon
      * start time
-     * 
+     *
      * @param clazz
      *            The class for the Criteria
      * @param session

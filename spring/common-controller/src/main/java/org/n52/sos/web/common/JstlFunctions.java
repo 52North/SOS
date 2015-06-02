@@ -51,7 +51,9 @@ public class JstlFunctions {
     }
 
     public static boolean configurated(ServletContext ctx) {
-        return DatabaseSettingsHandler.getInstance(ctx).exists();
+        DatabaseSettingsHandler handler = new DatabaseSettingsHandler();
+        handler.setServletContext(ctx);
+        return handler.exists();
     }
 
     public static boolean hasClient() {

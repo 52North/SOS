@@ -90,9 +90,9 @@ public class SOSDispatcherServlet
     }
 
     protected boolean isConfigured(ServletContext servletContext) {
-        boolean exists = DatabaseSettingsHandler.getInstance(servletContext).exists();
-        this.configured = exists;
-        return exists;
+        DatabaseSettingsHandler handler = new DatabaseSettingsHandler();
+        handler.setServletContext(servletContext);
+        return this.configured = handler.exists();
     }
 
     @Override

@@ -30,9 +30,6 @@ package org.n52.sos.aqd;
 
 import java.util.Set;
 
-import javax.inject.Inject;
-
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationException;
@@ -67,17 +64,9 @@ public class AqdHelper implements Constructable {
 
     private Set<Integer> verificationFlags;
 
-    private SettingsManager settingsManager;
-
-    @Inject
-    public void setSettingsManager(SettingsManager settingsManager) {
-        this.settingsManager = settingsManager;
-    }
-
     @Override
     public void init() {
         AqdHelper.instance = this;
-        this.settingsManager.configure(this);
     }
 
     /**

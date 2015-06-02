@@ -28,11 +28,17 @@
  */
 package org.n52.sos.ds.hibernate.admin;
 
+import javax.inject.Inject;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.DeleteDeletedObservationDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
@@ -41,18 +47,21 @@ import org.n52.sos.ds.hibernate.entities.Observation;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class HibernateDeleteDeletedObservationsDAO implements DeleteDeletedObservationDAO {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(HibernateDeleteDeletedObservationsDAO.class);
-    private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder sessionHolder;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
 
     @Override
     public void deleteDeletedObservations() throws OwsExceptionReport {
@@ -84,7 +93,7 @@ public class HibernateDeleteDeletedObservationsDAO implements DeleteDeletedObser
 
     /**
      * Get Hibernate Criteria for deleted observations and supported concept
-     * 
+     *
      * @param session
      *            Hibernate session
      * @return Criteria to query deleted observations

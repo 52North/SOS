@@ -28,12 +28,19 @@
  */
 package org.n52.sos.encode;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Stream.concat;
+
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -44,14 +51,12 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.coding.SchemaRepository;
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.encode.EncoderKey;
 import org.n52.iceland.encode.OperationEncoderKey;
 import org.n52.iceland.encode.XmlEncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.response.AbstractServiceResponse;
@@ -64,7 +69,6 @@ import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.util.N52XmlHelper;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -77,7 +81,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse> extends AbstractXmlEncoder<T>
-        implements StreamingEncoder<XmlObject, T> , Constructable {
+        implements StreamingEncoder<XmlObject, T>  {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResponseEncoder.class);
 
@@ -88,7 +92,6 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
     private final Class<T> responseType;
     private boolean validate;
     private SchemaRepository schemaRepository;
-    private SettingsManager settingsManager;
 
     /**
      * constructor
@@ -150,23 +153,9 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
         return schemaRepository;
     }
 
-    @Inject
-    public void setSettingsManager(SettingsManager settingsManager) {
-        this.settingsManager = settingsManager;
-    }
-
-    public SettingsManager getSettingsManager() {
-        return settingsManager;
-    }
-
     @Setting(ServiceSettings.VALIDATE_RESPONSE)
     public void setValidate(boolean validate) {
         this.validate = validate;
-    }
-
-    @Override
-    public void init() {
-        this.settingsManager.configure(this);
     }
 
     @Override
@@ -229,20 +218,18 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
     }
 
     private void setSchemaLocations(XmlObject document) {
-        Map<String, SchemaLocation> schemaLocations = Maps.newHashMap();
-        for (String ns : N52XmlHelper.getNamespaces(document)) {
-            for (SchemaLocation sl : this.schemaRepository.getSchemaLocation(ns)) {
-                schemaLocations.put(sl.getNamespace(), sl);
-            }
-        }
-        for (SchemaLocation sl : getSchemaLocations()) {
-            schemaLocations.put(sl.getNamespace(), sl);
-        }
-        // override default schema location with concrete URL's
-        for (SchemaLocation sl : getConcreteSchemaLocations()) {
-            schemaLocations.put(sl.getNamespace(), sl);
-        }
-        N52XmlHelper.setSchemaLocationsToDocument(document, schemaLocations.values());
+        Collection<SchemaLocation> schemaLocations
+                = concat(getSchemaLocations(document),
+                         concat(getSchemaLocations().stream(),
+                                getConcreteSchemaLocations().stream()))
+                .collect(toMap(SchemaLocation::getNamespace, identity())).values();
+        N52XmlHelper.setSchemaLocationsToDocument(document, schemaLocations);
+    }
+
+    private Stream<SchemaLocation> getSchemaLocations(XmlObject document) {
+        return N52XmlHelper.getNamespaces(document).stream()
+                .map(this.schemaRepository::getSchemaLocation)
+                .filter(Objects::nonNull).flatMap(Set::stream);
     }
 
     protected XmlOptions getXmlOptions() {

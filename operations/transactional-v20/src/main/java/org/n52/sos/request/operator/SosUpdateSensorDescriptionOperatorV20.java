@@ -53,7 +53,7 @@ import org.n52.sos.wsdl.WSDLOperation;
  * @since 4.0.0
  *
  */
-public class SosUpdateSensorDescriptionOperatorV20 extends 
+public class SosUpdateSensorDescriptionOperatorV20 extends
         AbstractV2TransactionalRequestOperator<AbstractUpdateSensorDescriptionHandler, UpdateSensorRequest, UpdateSensorResponse>{
     private static final Set<String> CONFORMANCE_CLASSES = Collections.singleton(ConformanceClasses.SOS_V2_UPDATE_SENSOR_DESCRIPTION);
 
@@ -71,8 +71,8 @@ public class SosUpdateSensorDescriptionOperatorV20 extends
 
     @Override
     public UpdateSensorResponse receive(UpdateSensorRequest request) throws OwsExceptionReport {
-        UpdateSensorResponse response = getDao().updateSensorDescription(request);
-        ServiceEventBus.fire(new SensorModification(request, response));
+        UpdateSensorResponse response = getOperationHandler().updateSensorDescription(request);
+        getServiceEventBus().submit(new SensorModification(request, response));
         return response;
     }
 

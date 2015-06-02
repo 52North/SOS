@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -44,6 +46,7 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.ResultTransformer;
+
 import org.n52.iceland.ds.FeatureQueryHandlerQueryObject;
 import org.n52.iceland.ds.HibernateDatasourceConstants;
 import org.n52.iceland.exception.CodedException;
@@ -81,8 +84,11 @@ import org.n52.sos.gda.AbstractGetDataAvailabilityHandler;
 import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.gda.GetDataAvailabilityResponse;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProvider;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -90,15 +96,13 @@ import com.google.common.collect.Maps;
 /**
  * {@code AbstractGetDataAvailabilityHandler} to handle {@link GetDataAvailabilityRequest}
  * s.
- * 
+ *
  * @author Christian Autermann
  * @since 4.0.0
  */
 public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler implements HibernateSqlQueryConstants {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetDataAvailabilityDAO.class);
-
-    private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
 
     private static final String SQL_QUERY_GET_DATA_AVAILABILITY_FOR_FEATURES = "getDataAvailabilityForFeatures";
 
@@ -121,8 +125,15 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
 
     private static final String SQL_QUERY_GET_DATA_AVAILABILITY_FOR_SERIES = "getDataAvailabilityForSeries";
 
+    private HibernateSessionHolder sessionHolder;
+
     public GetDataAvailabilityDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override
@@ -150,7 +161,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
 
     /**
      * Query data availability information depending on supported functionality
-     * 
+     *
      * @param req
      *            GetDataAvailability request
      * @param session
@@ -215,7 +226,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
 
     /**
      * Get the result times for the timeseries
-     * 
+     *
      * @param dataAvailability
      *            Timeseries to get result times for
      * @param request
@@ -260,7 +271,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
 
     /**
      * GetDataAvailability processing is series mapping is supported.
-     * 
+     *
      * @param request
      *            GetDataAvailability request
      * @param session
@@ -333,7 +344,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
 
     /**
      * Get time information from a named query
-     * 
+     *
      * @param seriesId
      *            Series id
      * @param seriesMinMaxTransformer
@@ -353,7 +364,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
 
     /**
      * Get time information from SeriesGetDataAvailability mapping
-     * 
+     *
      * @param seriesGetDataAvailabilityDAO
      *            Series GetDataAvailability DAO class
      * @param series
@@ -378,7 +389,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
 
     /**
      * Get time information from SeriesObservation
-     * 
+     *
      * @param seriesObservationDAO
      *            Series observation DAO class
      * @param series
@@ -403,7 +414,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
 
     /**
      * Get the result times for the timeseries
-     * 
+     *
      * @param seriesObservationDAO
      *            DAO
      * @param series
@@ -434,7 +445,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
 
     /**
      * Get count of available observation for this time series
-     * 
+     *
      * @param series
      *            Time series
      * @param request
@@ -601,7 +612,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
 
     /**
      * Check if optional count should be added
-     * 
+     *
      * @param request
      *            GetDataAvailability request
      * @return <code>true</code>, if optional count should be added
@@ -615,7 +626,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
 
     /**
      * Check if result times should be added
-     * 
+     *
      * @param request
      *            GetDataAvailability request
      * @return <code>true</code>, if result times should be added
@@ -631,7 +642,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
     /**
      * Check if extensions contains a temporal filter with valueReference
      * phenomenonTime
-     * 
+     *
      * @param extensions
      *            Extensions to check
      * @return <code>true</code>, if extensions contains a temporal filter with
@@ -653,7 +664,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
     /**
      * Get the temporal filter with valueReference phenomenonTime from
      * extensions
-     * 
+     *
      * @param extensions
      *            To get filter from
      * @return Temporal filter with valueReference phenomenonTime
@@ -844,8 +855,4 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
         }
     }
 
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
-    }
 }

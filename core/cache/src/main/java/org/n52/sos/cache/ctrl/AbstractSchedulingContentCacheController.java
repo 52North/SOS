@@ -31,21 +31,17 @@ package org.n52.sos.cache.ctrl;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.inject.Inject;
-
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.lifecycle.Destroyable;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.Validation;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.lifecycle.Destroyable;
 
 /**
  * Abstract class for capabilities cache controller implementations that
@@ -54,21 +50,13 @@ import org.n52.iceland.lifecycle.Destroyable;
  * @since 4.0.0
  */
 @Configurable
-public abstract class AbstractSchedulingContentCacheController implements ContentCacheController, Constructable, Destroyable {
+public abstract class AbstractSchedulingContentCacheController implements ContentCacheController, Destroyable {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSchedulingContentCacheController.class);
 
     private boolean initialized = false;
     private long updateInterval;
     private final Timer timer = new Timer("52n-sos-capabilities-cache-controller", true);
     private TimerTask current = null;
-
-    @Inject
-    private SettingsManager settingsManager;
-
-    @Override
-    public void init() {
-        this.settingsManager.configure(this);
-    }
 
     /**
      * Starts a new timer task

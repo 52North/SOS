@@ -33,13 +33,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.cache.ContentCache;
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationException;
@@ -59,14 +56,10 @@ public class AsyncCachePersistenceStrategy
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(new GroupedAndNamedThreadFactory("cache-persister"));
     private final AtomicReference<ContentCache> cacheReference = new AtomicReference<>();
     private Updater updater;
-    @Inject
-    private SettingsManager settingsManager;
-
 
     @Override
     public void init() {
         super.init();
-        this.settingsManager.configure(this);
         this.updater = new Updater();
         this.executor.schedule(updater, writeDelay, WRITE_DELAY_UNITS);
     }

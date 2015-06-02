@@ -32,12 +32,15 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.HibernateDatasourceConstants;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
@@ -79,15 +82,15 @@ import org.n52.sos.response.InsertSensorResponse;
  */
 public class InsertSensorDAO extends AbstractInsertSensorHandler {
 
-    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+private HibernateSessionHolder sessionHolder;
 
     public InsertSensorDAO() {
         super(SosConstants.SOS);
     }
 
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override

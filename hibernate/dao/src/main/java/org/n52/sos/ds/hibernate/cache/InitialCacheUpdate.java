@@ -28,6 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.cache;
 
+import java.util.Locale;
+
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.ds.FeatureQueryHandler;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.iceland.ogc.ows.ServiceIdentificationFactory;
 import org.n52.sos.ds.hibernate.cache.base.CompositePhenomenonCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.FeatureOfInterestCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.I18NCacheUpdate;
@@ -40,10 +46,10 @@ import org.n52.sos.ds.hibernate.cache.base.ResultTemplateCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.SridCacheUpdate;
 
 /**
- * 
+ *
  * Fills the initial cache.
  * <p/>
- * 
+ *
  * @see CompositePhenomenonCacheUpdate
  * @see ObservationTimeCacheUpdate
  * @see FeatureOfInterestCacheUpdate
@@ -56,17 +62,35 @@ import org.n52.sos.ds.hibernate.cache.base.SridCacheUpdate;
  * @see SridCacheUpdate
  * @see I18NCacheUpdate
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class InitialCacheUpdate extends CompositeCacheUpdate {
 
-    public InitialCacheUpdate(int threadCount) {
+    public InitialCacheUpdate(int threadCount,
+                              Locale defaultLocale,
+                              I18NDAORepository i18NDAORepository,
+                              FeatureQueryHandler featureQueryHandler,
+                              ConnectionProvider connectionProvider,
+                              ServiceIdentificationFactory serviceIdentificationFactory) {
         //execute all updates except offerings and procedures in parallel, then execute offering and procedure updates
         //(which spawn their own threads)
-        super(new ParallelCacheUpdate(threadCount, new SridCacheUpdate(), new ObservablePropertiesCacheUpdate(),
-                new FeatureOfInterestCacheUpdate(), new RelatedFeaturesCacheUpdate(), new CompositePhenomenonCacheUpdate(),
-                new ResultTemplateCacheUpdate(), new ObservationTimeCacheUpdate()),
-                new I18NCacheUpdate(),new OfferingCacheUpdate(threadCount), new ProcedureCacheUpdate(threadCount));
+        super(new ParallelCacheUpdate(threadCount,
+                                      connectionProvider,
+                                      new SridCacheUpdate(),
+                                      new ObservablePropertiesCacheUpdate(),
+                                      new FeatureOfInterestCacheUpdate(),
+                                      new RelatedFeaturesCacheUpdate(),
+                                      new CompositePhenomenonCacheUpdate(),
+                                      new ResultTemplateCacheUpdate(),
+                                      new ObservationTimeCacheUpdate()),
+              new I18NCacheUpdate(serviceIdentificationFactory,
+                                  i18NDAORepository),
+              new OfferingCacheUpdate(threadCount,
+                                      defaultLocale,
+                                      i18NDAORepository,
+                                      featureQueryHandler,
+                                      connectionProvider),
+              new ProcedureCacheUpdate(threadCount, connectionProvider));
     }
 }

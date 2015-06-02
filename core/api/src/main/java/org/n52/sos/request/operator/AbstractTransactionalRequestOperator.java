@@ -29,6 +29,8 @@
 package org.n52.sos.request.operator;
 
 
+import javax.inject.Inject;
+
 import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
@@ -46,21 +48,29 @@ import org.n52.sos.service.TransactionalSecurityConfiguration;
  */
 public abstract class AbstractTransactionalRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
-	
+
     private static final boolean TRANSACTIONAL_ACTIVATION_STATE = false;
 
-	public AbstractTransactionalRequestOperator(String service,
-                                                String version,
-                                                String operationName,
-                                                Class<Q> requestType) {
+    private TransactionalSecurityConfiguration transactionalSecurityConfiguration;
+
+    public AbstractTransactionalRequestOperator(String service, String version, String operationName, Class<Q> requestType) {
         super(service, version, operationName, TRANSACTIONAL_ACTIVATION_STATE, requestType);
+    }
+
+    @Inject
+    public void setTransactionalSecurityConfiguration(TransactionalSecurityConfiguration config) {
+        this.transactionalSecurityConfiguration = config;
+    }
+
+	public TransactionalSecurityConfiguration getTransactionalSecurityConfiguration() {
+        return transactionalSecurityConfiguration;
     }
 
     @Override
     public AbstractServiceResponse receiveRequest(AbstractServiceRequest<?> request)
             throws OwsExceptionReport {
         try {
-            new TransactionalRequestChecker(getConfig())
+            new TransactionalRequestChecker(getTransactionalSecurityConfiguration())
                     .check(request.getRequestContext());
         } catch (ConfigurationException ce) {
             throw new NoApplicableCodeException().causedBy(ce);
@@ -68,7 +78,4 @@ public abstract class AbstractTransactionalRequestOperator<D extends OperationHa
         return super.receiveRequest(request);
     }
 
-    private TransactionalSecurityConfiguration getConfig() {
-        return TransactionalSecurityConfiguration.getInstance();
-    }
 }

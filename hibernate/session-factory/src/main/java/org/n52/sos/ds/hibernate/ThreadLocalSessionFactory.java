@@ -28,49 +28,46 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.hibernate.Session;
-import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.util.CollectionHelper;
+
 /**
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class ThreadLocalSessionFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadLocalSessionFactory.class);
-
     private final ConnectionProvider connectionProvider;
-
     private final Lock lock = new ReentrantLock();
-
     private final Set<Session> createdSessions = CollectionHelper.synchronizedSet();
-
+    private final ThreadLocal<Session> threadLocal;
     private boolean closed = false;
 
-    private ThreadLocal<Session> threadLocal = new ThreadLocal<Session>() {
-        @Override
-        protected Session initialValue() {
-            try {
-                return (Session) getConnectionProvider().getConnection();
-            } catch (ConnectionProviderException cpe) {
-                LOGGER.error("Error while getting initialValue for ThreadLocalSessionFactory!", cpe);
-            }
-            return null;
-        }
-    };
-
     public ThreadLocalSessionFactory(ConnectionProvider connectionProvider) {
-        this.connectionProvider = connectionProvider;
+        this.connectionProvider = Objects.requireNonNull(connectionProvider);
+        this.threadLocal = ThreadLocal.withInitial(this::createConnection);
+    }
+
+    private Session createConnection() {
+        try {
+            return (Session) this.connectionProvider.getConnection();
+        } catch (ConnectionProviderException cpe) {
+            LOGGER.error("Error while getting initialValue for ThreadLocalSessionFactory!", cpe);
+            throw new RuntimeException(cpe);
+        }
     }
 
     public Session getSession() {
@@ -79,9 +76,9 @@ public class ThreadLocalSessionFactory {
             if (isClosed()) {
                 throw new IllegalStateException("factory already closed");
             }
-            Session s = this.threadLocal.get();
-            getCreatedSessions().add(s);
-            return s;
+            Session session = this.threadLocal.get();
+            this.createdSessions.add(session);
+            return session;
         } finally {
             lock.unlock();
         }
@@ -92,35 +89,31 @@ public class ThreadLocalSessionFactory {
         returnSessions();
     }
 
-    public ConnectionProvider getConnectionProvider() {
-        return connectionProvider;
-    }
-
-    protected Set<Session> getCreatedSessions() {
-        return createdSessions;
-    }
-
     protected void setClosed() {
-        lock.lock();
+        this.lock.lock();
         try {
-            closed = true;
+            this.closed = true;
         } finally {
-            lock.unlock();
+            this.lock.unlock();
         }
     }
 
     protected boolean isClosed() {
-        lock.lock();
+        this.lock.lock();
         try {
-            return closed;
+            return this.closed;
         } finally {
-            lock.unlock();
+            this.lock.unlock();
         }
     }
 
     protected void returnSessions() throws ConnectionProviderException {
-        for (Session s : getCreatedSessions()) {
-            getConnectionProvider().returnConnection(s);
+        this.lock.lock();
+        try {
+            this.createdSessions
+                .forEach(this.connectionProvider::returnConnection);
+        } finally {
+            this.lock.unlock();
         }
     }
 }

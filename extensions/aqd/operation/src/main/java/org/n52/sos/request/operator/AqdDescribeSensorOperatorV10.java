@@ -41,10 +41,8 @@ import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.SosHelper;
 
 public class AqdDescribeSensorOperatorV10
-		extends
-		AbstractAqdRequestOperator<AbstractDescribeSensorHandler, DescribeSensorRequest, DescribeSensorResponse> {
-	private static final String OPERATION_NAME = SosConstants.Operations.DescribeSensor
-			.name();
+		extends AbstractAqdRequestOperator<AbstractDescribeSensorHandler, DescribeSensorRequest, DescribeSensorResponse> {
+	private static final String OPERATION_NAME = SosConstants.Operations.DescribeSensor.name();
 
 	public AqdDescribeSensorOperatorV10() {
 		super(OPERATION_NAME, DescribeSensorRequest.class);
@@ -54,9 +52,8 @@ public class AqdDescribeSensorOperatorV10
 	@Override
 	public DescribeSensorResponse receive(DescribeSensorRequest request)
 			throws OwsExceptionReport {
-		return (DescribeSensorResponse) changeResponseServiceVersion(getDao()
-				.getSensorDescription(
-						(DescribeSensorRequest) changeRequestServiceVersion(request)));
+		return (DescribeSensorResponse) changeResponseServiceVersion(getOperationHandler()
+				.getSensorDescription((DescribeSensorRequest) changeRequestServiceVersion(request)));
 	}
 
 	@Override

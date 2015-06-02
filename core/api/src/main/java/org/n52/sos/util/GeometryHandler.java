@@ -100,7 +100,7 @@ public class GeometryHandler implements Constructable, Destroyable, EpsgConstant
      */
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GeometryHandler.class);
-
+    @Deprecated
     private static GeometryHandler instance;
     private boolean datasoureUsesNorthingFirst;
     private final List<Range> epsgsWithNorthingFirstAxisOrder = Lists.newArrayList();
@@ -114,23 +114,17 @@ public class GeometryHandler implements Constructable, Destroyable, EpsgConstant
     private CRSAuthorityFactory crsAuthority;
     private final Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();;
 
-    @Inject
-    private SettingsManager settingsManager;
-
-    public GeometryHandler() {
-        GeometryHandler.instance = this;
-    }
-
     /**
      * @return Returns a singleton instance of the GeometryHandler.
      */
+    @Deprecated
     public static GeometryHandler getInstance() {
         return instance;
     }
 
     @Override
     public void init() {
-        settingsManager.configure(this);
+        GeometryHandler.instance = this;
         crsAuthority = getCRSAuthorityFactory(
                 authority, new Hints(FORCE_LONGITUDE_FIRST_AXIS_ORDER,
                         isEastingFirstEpsgCode(getStorageEPSG())));

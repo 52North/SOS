@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.om.OmObservation;
@@ -73,8 +75,8 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      *            Datasource series id
      * @throws CodedException
      */
-    public HibernateChunkSeriesStreamingValue(GetObservationRequest request, long series) throws CodedException {
-        super(request, series);
+    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long series) throws CodedException {
+        super(connectionProvider, request, series);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
     }
 

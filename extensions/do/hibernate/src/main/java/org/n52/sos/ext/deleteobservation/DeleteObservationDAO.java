@@ -38,7 +38,6 @@ import org.hibernate.Transaction;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.ds.HibernateDatasourceConstants;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.om.OmObservation;
@@ -65,8 +64,7 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
 
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
-        this.hibernateSessionHolder = new HibernateSessionHolder();
-        this.hibernateSessionHolder.setConnectionProvider(connectionProvider);
+        this.hibernateSessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override
@@ -126,11 +124,6 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
 		// TODO Auto-generated method stub
 		return (AbstractObservationRequest) new GetObservationRequest().setService(request.getService()).setVersion(request.getVersion());
 	}
-
-	@Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
-    }
 
 	/**
 	 * Check if {@link Series} should be updated

@@ -34,54 +34,43 @@ import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.service.Configurator;
-import org.n52.iceland.service.ServiceSettings;
-import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.lifecycle.Destroyable;
+import org.n52.iceland.service.ServiceSettings;
+
+import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class DriverCleanupListener implements Constructable, Destroyable {
+public class DriverCleanupListener implements Destroyable {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(DriverCleanupListener.class);
 
-    private Configurator configurator;
-    private SettingsManager settingsManager;
     private boolean deregisterJDBCDriver;
+    private final Set<String> providedDrivers = Sets.newHashSet();
 
-    @Override
-    public void init() {
-        this.settingsManager.configure(this);
+    public void addDriverClass(String name)  {
+        if (name != null && !name.isEmpty()) {
+            synchronized(this.providedDrivers) {
+                this.providedDrivers.add(name);
+            }
+        }
     }
 
     @Override
     public void destroy() {
         if (this.deregisterJDBCDriver) {
-            cleanupDrivers(configurator.getProvidedJdbcDriver());
+            cleanupDrivers(this.providedDrivers);
         } else {
             LOGGER.debug("Deregistering of JDBC driver(s) is disabled!");
         }
-    }
-
-    @Inject
-    public void setConfigurator(Configurator configurator) {
-        this.configurator = configurator;
-    }
-
-    @Inject
-    public void setSettingsManager(SettingsManager settingsManager) {
-        this.settingsManager = settingsManager;
     }
 
     @Setting(ServiceSettings.DEREGISTER_JDBC_DRIVER)
@@ -98,11 +87,14 @@ public class DriverCleanupListener implements Constructable, Destroyable {
     }
 
     private void deregisterDriver(Driver driver, Set<String> provided) {
-        if (provided.contains(driver.getClass().getName())) {
-            LOGGER.debug("JDBC driver {} is marked to do not deregister", driver);
-        } else {
-            deregisterDriver(driver);
+        synchronized(this.providedDrivers) {
+            if (provided.contains(driver.getClass().getName())) {
+                LOGGER.debug("JDBC driver {} is marked to do not deregister", driver);
+            } else {
+                deregisterDriver(driver);
+            }
         }
+
     }
 
     private void deregisterDriver(Driver driver) {

@@ -43,23 +43,26 @@ import org.n52.iceland.ogc.ows.OwsExceptionReport;
  */
 public class HibernateSessionHolder {
 
-    private ConnectionProvider connectionProvider;
+    private final ConnectionProvider connectionProvider;
 
-    @Inject
-    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+    public HibernateSessionHolder(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
+    }
+
+    public ConnectionProvider getConnectionProvider() {
+        return this.connectionProvider;
     }
 
     public Session getSession() throws OwsExceptionReport {
         try {
-            return getSession(connectionProvider.getConnection());
+            return getSession(getConnectionProvider().getConnection());
         } catch (ConnectionProviderException cpe) {
             throw new NoApplicableCodeException().causedBy(cpe).withMessage("Error while getting new Session!");
         }
     }
 
     public void returnSession(Session session) {
-        this.connectionProvider.returnConnection(session);
+        getConnectionProvider().returnConnection(session);
     }
 
     public static Session getSession(Object connection) throws OwsExceptionReport {

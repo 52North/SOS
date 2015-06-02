@@ -28,14 +28,16 @@
  */
 package org.n52.sos.ds.hibernate.cache;
 
+import org.n52.iceland.ds.ConnectionProvider;
+
 
 public class ParallelCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<AbstractThreadableDatasourceCacheUpdate> {
     private static final String THREAD_GROUP_NAME = "parallel-cache-update";
-    
-    private AbstractThreadableDatasourceCacheUpdate[] updates;
-    
-    public ParallelCacheUpdate(int threads, AbstractThreadableDatasourceCacheUpdate... updates) {
-        super(threads, THREAD_GROUP_NAME);
+
+    private final AbstractThreadableDatasourceCacheUpdate[] updates;
+
+    public ParallelCacheUpdate(int threads, ConnectionProvider connectionProvider, AbstractThreadableDatasourceCacheUpdate... updates) {
+        super(threads, THREAD_GROUP_NAME, connectionProvider);
         this.updates = updates;
     }
 

@@ -30,12 +30,15 @@ package org.n52.sos.ds.hibernate;
 
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.iceland.ds.HibernateDatasourceConstants;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
@@ -54,22 +57,19 @@ import org.n52.sos.response.UpdateSensorResponse;
 /**
  * Implementation of the abstract class AbstractUpdateSensorDescriptionHandler
  * @since 4.0.0
- * 
+ *
  */
 public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionHandler {
 
-    private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+private HibernateSessionHolder sessionHolder;
 
-    /**
-     * constructor
-     */
     public UpdateSensorDescriptionDAO() {
         super(SosConstants.SOS);
     }
-    
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override

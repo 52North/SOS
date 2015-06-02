@@ -53,7 +53,6 @@ import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.decode.DecoderKey;
 import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.encode.EncoderKey;
-import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.event.events.ExceptionEvent;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
@@ -200,7 +199,7 @@ public class SoapBinding extends SimpleBinding {
     private void writeOwsExceptionReport(SoapChain chain, OwsExceptionReport owse) throws HTTPException, IOException {
         try {
             String version = chain.hasBodyRequest() ? chain.getBodyRequest().getVersion() : null;
-            ServiceEventBus.fire(new ExceptionEvent(owse));
+            getEventBus().submit(new ExceptionEvent(owse));
             chain.getSoapResponse().setException(owse.setVersion(version));
             if (!chain.getSoapResponse().hasSoapVersion()) {
                 chain.getSoapResponse().setSoapVersion(SOAPConstants.SOAP_1_2_PROTOCOL);

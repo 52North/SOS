@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.cache.base;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -38,7 +39,13 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.util.collections.CollectionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.cache.WritableContentCache;
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.ds.FeatureQueryHandler;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
@@ -56,8 +63,6 @@ import org.n52.sos.ds.hibernate.entities.TOffering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 import org.n52.sos.util.CacheHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -69,28 +74,25 @@ import com.google.common.collect.Lists;
  */
 public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<OfferingCacheUpdateTask> {
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferingCacheUpdate.class);
-
     private static final String THREAD_GROUP_NAME = "offering-cache-update";
-
     private final OfferingDAO offeringDAO = new OfferingDAO();
-
     private Collection<String> offeringsIdToUpdate = Lists.newArrayList();
-
     private Collection<Offering> offeringsToUpdate;
-
     private Map<String,Collection<ObservationConstellationInfo>> offObsConstInfoMap;
+    private final Locale defaultLanguage;
+    private final I18NDAORepository i18NDAORepository;
+    private final FeatureQueryHandler featureQueryHandler;
 
-    /**
-     * constructor
-     * @param threads Thread count
-     */
-    public OfferingCacheUpdate(int threads) {
-        super(threads, THREAD_GROUP_NAME);
+    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository, FeatureQueryHandler featureQueryHandler, ConnectionProvider connectionProvider) {
+        this(threads, defaultLanguage, i18NDAORepository, featureQueryHandler, connectionProvider, null);
     }
 
-    public OfferingCacheUpdate(int threads, Collection<String> offeringIdsToUpdate) {
-        super(threads, THREAD_GROUP_NAME);
+    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository, FeatureQueryHandler featureQueryHandler, ConnectionProvider connectionProvider, Collection<String> offeringIdsToUpdate) {
+        super(threads, THREAD_GROUP_NAME, connectionProvider);
         this.offeringsIdToUpdate = offeringIdsToUpdate;
+        this.defaultLanguage = defaultLanguage;
+        this.i18NDAORepository = i18NDAORepository;
+        this.featureQueryHandler = featureQueryHandler;
     }
 
     private Collection<Offering> getOfferingsToUpdate() {
@@ -175,16 +177,23 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         boolean hasSamplingGeometry = checkForSamplingGeometry();
         for (Offering offering : getOfferingsToUpdate()){
             if (shouldOfferingBeProcessed(offering.getIdentifier())) {
-                offeringUpdateTasks.add(new OfferingCacheUpdateTask(offering,
-                        getOfferingObservationConstellationInfo().get(offering.getIdentifier()), hasSamplingGeometry));
+                Collection<ObservationConstellationInfo> observationConstellations
+                        = getOfferingObservationConstellationInfo().get(offering.getIdentifier());
+                offeringUpdateTasks.add(new OfferingCacheUpdateTask(
+                        offering,
+                        observationConstellations,
+                        hasSamplingGeometry,
+                        this.defaultLanguage,
+                        this.i18NDAORepository,
+                        this.featureQueryHandler));
             }
         }
         return offeringUpdateTasks.toArray(new OfferingCacheUpdateTask[offeringUpdateTasks.size()]);
-    }    
-    
+    }
+
     /**
      * Check if the observation table contains samplingGeometries with values.
-     * 
+     *
      * @return <code>true</code>, if the observation table contains samplingGeometries with values
      */
     private boolean checkForSamplingGeometry() {
@@ -199,7 +208,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     }
 
     protected boolean shouldOfferingBeProcessed(String offeringIdentifier) {
-        try {        
+        try {
             if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
                 return getOfferingObservationConstellationInfo().containsKey(offeringIdentifier);
             } else {
@@ -219,7 +228,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     }
 
     protected Set<String> getObservationTypesFromObservationType(Set<ObservationType> observationTypes) {
-        Set<String> obsTypes = new HashSet<String>(observationTypes.size());
+        Set<String> obsTypes = new HashSet<>(observationTypes.size());
         for (ObservationType obsType : observationTypes) {
             obsTypes.add(obsType.getObservationType());
         }
@@ -228,7 +237,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
 
     protected Collection<String> getFeatureOfInterestTypesFromFeatureOfInterestType(
             Set<FeatureOfInterestType> featureOfInterestTypes) {
-        Set<String> featTypes = new HashSet<String>(featureOfInterestTypes.size());
+        Set<String> featTypes = new HashSet<>(featureOfInterestTypes.size());
         for (FeatureOfInterestType featType : featureOfInterestTypes) {
             featTypes.add(featType.getFeatureOfInterestType());
         }
@@ -236,7 +245,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     }
 
     protected Set<String> getRelatedFeatureIdentifiersFrom(TOffering hOffering) {
-        Set<String> relatedFeatureList = new HashSet<String>(hOffering.getRelatedFeatures().size());
+        Set<String> relatedFeatureList = new HashSet<>(hOffering.getRelatedFeatures().size());
         for (RelatedFeature hRelatedFeature : hOffering.getRelatedFeatures()) {
             if (hRelatedFeature.getFeatureOfInterest() != null
                     && hRelatedFeature.getFeatureOfInterest().getIdentifier() != null) {

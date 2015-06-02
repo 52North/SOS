@@ -57,7 +57,6 @@ import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.Configurator;
-import org.n52.sos.cache.ctrl.ScheduledContentCacheControllerSettings;
 import org.n52.sos.config.sqlite.SQLiteSessionFactory;
 
 import com.google.common.collect.Lists;
@@ -164,11 +163,8 @@ public class H2Configuration {
             if (instance == null) {
                 try {
                     instance = new H2Configuration();
-                } catch (final IOException ex) {
-                    throw new RuntimeException(ex);
-                } catch (final OwsExceptionReport ex) {
-                    throw new RuntimeException(ex);
-                } catch (final ConnectionProviderException ex) {
+                } catch (IOException | OwsExceptionReport |
+                        ConnectionProviderException ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -200,24 +196,15 @@ public class H2Configuration {
             try {
                 session = getSession();
                 transaction = session.beginTransaction();
-                session.doWork(new Work() {
-                    @Override
-                    public void execute(final Connection connection) throws SQLException {
-                        Statement stmt = null;
-                        try {
-                            stmt = connection.createStatement();
-                            for (final String cmd : instance.getDropScript()) {
-                                stmt.addBatch(cmd);
-                            }
-                            for (final String cmd : instance.getCreateScript()) {
-                                stmt.addBatch(cmd);
-                            }
-                            stmt.executeBatch();
-                        } finally {
-                            if (stmt != null) {
-                                stmt.close();
-                            }
+                session.doWork(connection -> {
+                    try (Statement stmt = connection.createStatement()) {
+                        for (String cmd : instance.getDropScript()) {
+                            stmt.addBatch(cmd);
                         }
+                        for (String cmd : instance.getCreateScript()) {
+                            stmt.addBatch(cmd);
+                        }
+                        stmt.executeBatch();
                     }
                 });
                 transaction.commit();
@@ -238,7 +225,7 @@ public class H2Configuration {
                 throw new IllegalStateException("Database is not initialized");
             }
             final Iterator<Table> tableMappings = instance.getConfiguration().getTableMappings();
-            final List<String> tableNames = new LinkedList<String>();
+            final List<String> tableNames = new LinkedList<>();
             GeoDBDialect dialect = new GeoDBDialect();
             while (tableMappings.hasNext()) {
                 tableNames.add(tableMappings.next().getQuotedName(dialect));
@@ -248,23 +235,14 @@ public class H2Configuration {
             try {
                 session = getSession();
                 transaction = session.beginTransaction();
-                session.doWork(new Work() {
-                    @Override
-                    public void execute(final Connection connection) throws SQLException {
-                        Statement stmt = null;
-                        try {
-                            stmt = connection.createStatement();
-                            stmt.addBatch("SET REFERENTIAL_INTEGRITY FALSE");
-                            for (final String table : tableNames) {
-                                stmt.addBatch("DELETE FROM " + table);
-                            }
-                            stmt.addBatch("SET REFERENTIAL_INTEGRITY TRUE");
-                            stmt.executeBatch();
-                        } finally {
-                            if (stmt != null) {
-                                stmt.close();
-                            }
+                session.doWork(connection -> {
+                    try (Statement stmt = connection.createStatement()) {
+                        stmt.addBatch("SET REFERENTIAL_INTEGRITY FALSE");
+                        for (String table : tableNames) {
+                            stmt.addBatch("DELETE FROM " + table);
                         }
+                        stmt.addBatch("SET REFERENTIAL_INTEGRITY TRUE");
+                        stmt.executeBatch();
                     }
                 });
                 transaction.commit();
@@ -281,23 +259,10 @@ public class H2Configuration {
 
     private H2Configuration() throws IOException, OwsExceptionReport, ConnectionProviderException {
         init();
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                cleanup();
-            }
-        }));
+        Runtime.getRuntime().addShutdownHook(new Thread(this::cleanup));
     }
 
     private void cleanup() {
-        try {
-            final Configurator configurator = Configurator.getInstance();
-            if (configurator != null) {
-                configurator.destroy();
-            }
-        } catch (final Exception ex) {
-            throw new RuntimeException(ex);
-        }
         try {
             final File directory = getTempDir();
             if (directory != null && directory.exists()) {
@@ -352,11 +317,7 @@ public class H2Configuration {
                 LOG.debug("Executing {}", s);
                 stmt.execute(s);
             }
-        } catch (final ClassNotFoundException ex) {
-            throw new RuntimeException(ex);
-        } catch (final SQLException ex) {
-            throw new RuntimeException(ex);
-        } catch (MappingException ex) {
+        } catch (ClassNotFoundException | SQLException | MappingException ex) {
             throw new RuntimeException(ex);
         } finally {
             if (stmt != null) {
@@ -381,7 +342,7 @@ public class H2Configuration {
         for (final String s : generateSchemaCreationScript) {
             if (!nonDublicates.contains(s)) {
                 if (s.toLowerCase().startsWith("create table")) {
-                    String substring = s.substring(0, s.indexOf("("));
+                    String substring = s.substring(0, s.indexOf('('));
                     if (!nonDuplicateCreate.contains(substring)) {
                         nonDuplicateCreate.add(substring);
                         LOG.debug("Executing {}", s);

@@ -30,6 +30,8 @@ package org.n52.sos.ds.hibernate.values;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.om.TimeValuePair;
@@ -40,7 +42,7 @@ import org.n52.sos.request.GetObservationRequest;
 
 /**
  * Hibernate streaming value implementation for {@link ScrollableResults}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  */
@@ -52,7 +54,7 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
 
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param procedure
@@ -62,9 +64,9 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
      * @param featureOfInterest
      *            Datasource featureOfInterest id
      */
-    public HibernateScrollableStreamingValue(GetObservationRequest request, long procedure, long observableProperty,
+    public HibernateScrollableStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest) {
-        super(request, procedure, observableProperty, featureOfInterest);
+        super(connectionProvider, request, procedure, observableProperty, featureOfInterest);
     }
 
     @Override
@@ -121,7 +123,7 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
 
     /**
      * Get the next results from database
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs when querying the next results
      */
@@ -149,7 +151,7 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
 
     /**
      * Set the queried {@link ScrollableResults} to local variable
-     * 
+     *
      * @param scrollableResult
      *            Queried {@link ScrollableResults}
      */

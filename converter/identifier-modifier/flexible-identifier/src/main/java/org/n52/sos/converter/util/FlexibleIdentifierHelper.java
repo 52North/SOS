@@ -29,9 +29,6 @@
 package org.n52.sos.converter.util;
 
 
-import javax.inject.Inject;
-
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationException;
@@ -61,17 +58,9 @@ public class FlexibleIdentifierHelper implements Constructable {
 
     private boolean includeFeatureOfInterest = true;
 
-    private SettingsManager settingsManager;
-
-    @Inject
-    public void setSettingsManager(SettingsManager settingsManager) {
-        this.settingsManager = settingsManager;
-    }
-
     @Override
     public void init() {
         FlexibleIdentifierHelper.instance = this;
-        this.settingsManager.configure(this);
     }
 
     /**

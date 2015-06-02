@@ -34,6 +34,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.internal.util.collections.CollectionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
@@ -46,8 +50,6 @@ import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -77,8 +79,8 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
      * constructor
      * @param threads Thread count
      */
-    public ProcedureCacheUpdate(int threads) {
-        super(threads, THREAD_GROUP_NAME);
+    public ProcedureCacheUpdate(int threads, ConnectionProvider connectionProvider) {
+        super(threads, THREAD_GROUP_NAME, connectionProvider);
     }
 
     private Map<String,Collection<ObservationConstellationInfo>> getProcedureObservationConstellationInfo() {
@@ -116,7 +118,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         LOGGER.debug("Executing ProcedureCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
         getProcedureDescriptionFormat();
-        
+
         boolean obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class);
 
         Map<String, Collection<String>> procedureMap = procedureDAO.getProcedureIdentifiers(getSession());

@@ -43,13 +43,14 @@ import org.n52.iceland.cache.ContentCachePersistenceStrategy;
 import org.n52.iceland.cache.ContentCacheUpdate;
 import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.ds.CacheFeederHandler;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.cache.ctrl.action.CompleteCacheUpdate;
 
 import com.google.common.base.Optional;
 
 
-public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheController {
+public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheController implements Constructable {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContentCacheControllerImpl.class);
 
     private static final AtomicInteger COMPLETE_UPDATE_COUNT = new AtomicInteger(0);
@@ -72,7 +73,6 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
 
     @Override
     public void init() {
-        super.init();
         loadOrCreateCache();
     }
 

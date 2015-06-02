@@ -28,10 +28,10 @@
  */
 package org.n52.sos.encode.json;
 
+import org.n52.iceland.component.SingleTypeComponentFactory;
 import org.n52.iceland.encode.ResponseWriter;
 import org.n52.iceland.encode.ResponseWriterFactory;
 import org.n52.iceland.encode.ResponseWriterKey;
-import org.n52.iceland.component.SingleTypeComponentFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -44,16 +44,20 @@ import com.fasterxml.jackson.databind.JsonNode;
  *
  */
 public class JSONResponseWriterFactory
-        extends SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>>
-        implements ResponseWriterFactory {
+        implements ResponseWriterFactory,
+                   SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>> {
 
-    public JSONResponseWriterFactory() {
-        super(new ResponseWriterKey(JsonNode.class));
+    private static final ResponseWriterKey RESPONSE_WRITER_KEY
+            = new ResponseWriterKey(JsonNode.class);
+
+    @Override
+    public ResponseWriterKey getKey() {
+        return RESPONSE_WRITER_KEY;
     }
 
-	@Override
-	public JSONResponseWriter create() {
-		return new JSONResponseWriter();
-	}
+    @Override
+    public JSONResponseWriter create() {
+        return new JSONResponseWriter();
+    }
 
 }

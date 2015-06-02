@@ -42,11 +42,15 @@ import org.n52.iceland.encode.ResponseWriterKey;
  *
  */
 public class SoapChainResponseWriterFactory
-        extends SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>>
-        implements ResponseWriterFactory {
+        implements ResponseWriterFactory,
+                   SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>> {
 
-    public SoapChainResponseWriterFactory() {
-        super(new ResponseWriterKey(SoapChain.class));
+    private static final ResponseWriterKey RESPONSE_WRITER_KEY
+            = new ResponseWriterKey(SoapChain.class);
+
+    @Override
+    public ResponseWriterKey getKey() {
+        return RESPONSE_WRITER_KEY;
     }
 
     @Override

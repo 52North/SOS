@@ -28,11 +28,11 @@
  */
 package org.n52.sos.encode;
 
+import org.n52.iceland.component.SingleTypeComponentFactory;
 import org.n52.iceland.encode.ResponseWriter;
 import org.n52.iceland.encode.ResponseWriterFactory;
 import org.n52.iceland.encode.ResponseWriterKey;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.component.SingleTypeComponentFactory;
 
 /**
  * {@link ResponseWriterFactory} implementation for
@@ -44,16 +44,20 @@ import org.n52.iceland.component.SingleTypeComponentFactory;
  *
  */
 public class AbstractServiceResponseWriterFactory
-        extends SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>>
-        implements ResponseWriterFactory {
+        implements
+        SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>>,
+        ResponseWriterFactory {
 
-    public AbstractServiceResponseWriterFactory() {
-        super(new ResponseWriterKey(AbstractServiceResponse.class));
+    protected static final ResponseWriterKey RESPONSE_WRITER_KEY
+            = new ResponseWriterKey(AbstractServiceResponse.class);
+
+    @Override
+    public ResponseWriterKey getKey() {
+        return RESPONSE_WRITER_KEY;
     }
 
     @Override
     public AbstractServiceResponseWriter create() {
         return new AbstractServiceResponseWriter();
     }
-
 }

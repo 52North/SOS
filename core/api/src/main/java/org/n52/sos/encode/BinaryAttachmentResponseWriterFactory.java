@@ -28,10 +28,10 @@
  */
 package org.n52.sos.encode;
 
+import org.n52.iceland.component.SingleTypeComponentFactory;
 import org.n52.iceland.encode.ResponseWriter;
 import org.n52.iceland.encode.ResponseWriterFactory;
 import org.n52.iceland.encode.ResponseWriterKey;
-import org.n52.iceland.component.SingleTypeComponentFactory;
 import org.n52.sos.response.BinaryAttachmentResponse;
 
 /**
@@ -44,11 +44,15 @@ import org.n52.sos.response.BinaryAttachmentResponse;
  *
  */
 public class BinaryAttachmentResponseWriterFactory
-        extends SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>>
-        implements ResponseWriterFactory {
+        implements ResponseWriterFactory,
+                   SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>> {
 
-    public BinaryAttachmentResponseWriterFactory() {
-        super(new ResponseWriterKey(BinaryAttachmentResponse.class));
+    protected static final ResponseWriterKey RESPONSE_WRITER_KEY
+            = new ResponseWriterKey(BinaryAttachmentResponse.class);
+
+    @Override
+    public ResponseWriterKey getKey() {
+        return RESPONSE_WRITER_KEY;
     }
 
     @Override

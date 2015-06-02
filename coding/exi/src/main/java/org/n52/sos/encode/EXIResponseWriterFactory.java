@@ -28,10 +28,10 @@
  */
 package org.n52.sos.encode;
 
+import org.n52.iceland.component.SingleTypeComponentFactory;
 import org.n52.iceland.encode.ResponseWriter;
 import org.n52.iceland.encode.ResponseWriterFactory;
 import org.n52.iceland.encode.ResponseWriterKey;
-import org.n52.iceland.component.SingleTypeComponentFactory;
 import org.n52.sos.exi.EXIObject;
 
 /**
@@ -42,15 +42,18 @@ import org.n52.sos.exi.EXIObject;
  *
  */
 public class EXIResponseWriterFactory
-        extends SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>>
-        implements ResponseWriterFactory {
+        implements ResponseWriterFactory, SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>> {
 
-    public EXIResponseWriterFactory() {
-        super(new ResponseWriterKey(EXIObject.class));
+    private static final ResponseWriterKey RESPONSE_WRITER_KEY
+            = new ResponseWriterKey(EXIObject.class);
+
+    @Override
+    public ResponseWriterKey getKey() {
+        return RESPONSE_WRITER_KEY;
     }
 
     @Override
-    protected EXIResponseWriter create() {
+    public EXIResponseWriter create() {
         return new EXIResponseWriter();
     }
 }

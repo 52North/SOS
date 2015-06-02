@@ -97,9 +97,7 @@ public class SQLiteAdminUserDao extends AbstractSQLiteDao
             List<AdministratorUser> users = session
                     .createCriteria(AdministratorUser.class)
                     .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-            for (AdministratorUser u : users) {
-                session.delete(u);
-            }
+            users.forEach(session::delete);
         }
     }
 

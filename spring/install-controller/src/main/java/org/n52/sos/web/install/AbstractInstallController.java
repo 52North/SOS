@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.config.SettingsService;
 import org.n52.sos.web.common.AbstractController;
 
 /**
@@ -52,7 +52,7 @@ public class AbstractInstallController extends AbstractController {
     private static final String INSTALLATION_CONFIGURATION = "installation_configuration";
 
     @Inject
-    private SettingsManager settingsManager;
+    private SettingsService settingsManager;
 
     public void setSettings(HttpSession session, InstallationConfiguration settings) {
         session.setAttribute(INSTALLATION_CONFIGURATION, settings);

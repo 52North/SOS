@@ -52,13 +52,12 @@ import org.n52.iceland.coding.EncoderRepository;
 import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
 import org.n52.iceland.coding.ResponseFormatRepository;
 import org.n52.iceland.config.CapabilitiesExtensionService;
-import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.config.SettingsService;
 import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.ds.OperationHandlerRepository;
 import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.i18n.LocaleHelper;
@@ -140,7 +139,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
             | FILTER_CAPABILITIES | CONTENTS;
 
     @Inject
-    private SettingsManager settingsManager;
+    private SettingsService settingsManager;
     @Inject
     private CapabilitiesExtensionService capabilitiesExtensionService;
     @Inject
@@ -519,7 +518,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         return sosOfferings;
     }
 
-    protected SettingsManager getSettingsManager() {
+    protected SettingsService getSettingsManager() {
         return this.settingsManager;
     }
 

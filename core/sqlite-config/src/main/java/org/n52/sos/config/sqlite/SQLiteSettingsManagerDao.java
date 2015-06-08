@@ -40,25 +40,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.config.SettingsManagerDao;
-import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.config.SettingsDao;
 import org.n52.sos.config.sqlite.entities.AbstractSettingValue;
 
 public class SQLiteSettingsManagerDao
         extends AbstractSQLiteDao
-        implements SettingsManagerDao {
+        implements SettingsDao {
     private static final Logger LOG = LoggerFactory.getLogger(SQLiteSettingsManagerDao.class);
 
     private static final Pattern SETTINGS_TYPE_CHANGED = Pattern
             .compile(".*Abort due to constraint violation \\(column .* is not unique\\)");
 
     @Override
-    public SettingValue<?> getSettingValue(String key) throws ConnectionProviderException {
+    public SettingValue<?> getSettingValue(String key) {
         return execute(new GetSettingValueAction(key));
     }
 
     @Override
-    public void saveSettingValue(SettingValue<?> setting) throws ConnectionProviderException {
+    public void saveSettingValue(SettingValue<?> setting) {
         LOG.debug("Saving Setting {}", setting);
         try {
             execute(new SaveSettingValueAction(setting));
@@ -73,12 +72,12 @@ public class SQLiteSettingsManagerDao
     }
 
     @Override
-    public Set<SettingValue<?>> getSettingValues() throws ConnectionProviderException {
+    public Set<SettingValue<?>> getSettingValues() {
         return execute(new GetSettingValuesAction());
     }
 
     @Override
-    public void deleteSettingValue(String setting) throws ConnectionProviderException {
+    public void deleteSettingValue(String setting) {
         execute(new DeleteSettingValueAction(setting));
     }
 
@@ -89,7 +88,7 @@ public class SQLiteSettingsManagerDao
 
 
     @Override
-    public void deleteAll() throws ConnectionProviderException {
+    public void deleteAll() {
         execute(new DeleteAllAction());
     }
 

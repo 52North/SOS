@@ -56,7 +56,7 @@ import org.n52.sos.ext.deleteobservation.MissingObservationParameterException;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 1.0.0
  */
 public class DeleteObservationKvpDecoder extends AbstractKvpDecoder {
@@ -65,10 +65,12 @@ public class DeleteObservationKvpDecoder extends AbstractKvpDecoder {
             Sos2Constants.SERVICEVERSION, DeleteObservationConstants.Operations.DeleteObservation,
             MediaTypes.APPLICATION_KVP);
 
+    @Override
     public Set<DecoderKey> getKeys() {
         return Collections.singleton(KVP_DECODER_KEY_TYPE);
     }
 
+    @Override
     public DeleteObservationRequest decode(Map<String, String> objectToDecode) throws OwsExceptionReport {
         if (objectToDecode == null) {
             throw new UnsupportedDecoderInputException(this, objectToDecode);

@@ -32,8 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.iceland.config.SosActivationDao;
-import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.sos.config.SosActivationDao;
 import org.n52.iceland.encode.ProcedureDescriptionFormatKey;
 import org.n52.iceland.encode.ResponseFormatKey;
 import org.n52.iceland.ogc.swes.OfferingExtensionKey;
@@ -56,20 +55,17 @@ public class SosSQLiteActivationDao
 
     // RESPONSE FORMAT
     @Override
-    public void setResponseFormatStatus(ResponseFormatKey rfkt, boolean active)
-            throws ConnectionProviderException {
+    public void setResponseFormatStatus(ResponseFormatKey rfkt, boolean active) {
         setActive(ObservationEncoding.class, new ObservationEncoding(rfkt), active);
     }
 
     @Override
-    public boolean isResponseFormatActive(ResponseFormatKey rfkt)
-            throws ConnectionProviderException {
+    public boolean isResponseFormatActive(ResponseFormatKey rfkt) {
         return isActive(ObservationEncoding.class, new ObservationEncodingKey(rfkt));
     }
 
     @Override
-    public Set<ResponseFormatKey> getResponseFormatKeys()
-            throws ConnectionProviderException {
+    public Set<ResponseFormatKey> getResponseFormatKeys() {
         return asResponseFormatKeys(getKeys(ObservationEncoding.class));
     }
 
@@ -87,21 +83,18 @@ public class SosSQLiteActivationDao
     @Override
     public void setProcedureDescriptionFormatStatus(
             ProcedureDescriptionFormatKey pdfkt,
-            boolean active)
-            throws ConnectionProviderException {
+            boolean active) {
         setActive(ProcedureEncoding.class, new ProcedureEncoding(pdfkt), active);
     }
 
     @Override
     public boolean isProcedureDescriptionFormatActive(
-            ProcedureDescriptionFormatKey pdfkt)
-            throws ConnectionProviderException {
+            ProcedureDescriptionFormatKey pdfkt) {
         return isActive(ProcedureEncoding.class, new ProcedureEncodingKey(pdfkt));
     }
 
     @Override
-    public Set<ProcedureDescriptionFormatKey> getProcedureDescriptionFormatKeys()
-            throws ConnectionProviderException {
+    public Set<ProcedureDescriptionFormatKey> getProcedureDescriptionFormatKeys() {
         return asProcedureDescriptionFormatKeys(getKeys(ProcedureEncoding.class));
     }
 
@@ -120,20 +113,17 @@ public class SosSQLiteActivationDao
     // OFFERING EXTENSION
     @Override
     public void setOfferingExtensionStatus(OfferingExtensionKey oek,
-                                           boolean active)
-            throws ConnectionProviderException {
+                                           boolean active) {
         setActive(DynamicOfferingExtension.class, new DynamicOfferingExtension(oek), active);
     }
 
     @Override
-    public boolean isOfferingExtensionActive(OfferingExtensionKey oek)
-            throws ConnectionProviderException {
+    public boolean isOfferingExtensionActive(OfferingExtensionKey oek) {
         return isActive(DynamicOfferingExtension.class, new DynamicOfferingExtensionKey(oek));
     }
 
     @Override
-    public Set<OfferingExtensionKey> getOfferingExtensionKeys()
-            throws ConnectionProviderException {
+    public Set<OfferingExtensionKey> getOfferingExtensionKeys() {
         return asOfferingExtensionKeys(getKeys(DynamicOfferingExtension.class));
     }
 

@@ -97,15 +97,6 @@ public class SQLiteCapabilitiesExtensionService
     }
 
     @Override
-    protected <T> T execute(HibernateAction<T> action) {
-        try {
-            return super.execute(action);
-        } catch (ConnectionProviderException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    @Override
     protected <T> T throwingExecute(ThrowingHibernateAction<T> action) throws NoSuchExtensionException {
         try {
             return super.throwingExecute(action);

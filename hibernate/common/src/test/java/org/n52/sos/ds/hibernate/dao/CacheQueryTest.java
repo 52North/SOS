@@ -47,8 +47,9 @@ import org.joda.time.DateTime;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
@@ -59,9 +60,6 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.HibernateObservationBuilder;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @since 4.0.0
@@ -149,7 +147,7 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         // affected by each other (first run is slower,
         // subsequent queries are very fast).
 
-        Map<QueryType, Long> resultTimes = new HashMap<QueryType, Long>();
+        Map<QueryType, Long> resultTimes = new HashMap<>();
 
         final int runs = 100;
         for (int i = 0; i < runs; i++) {

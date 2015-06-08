@@ -37,19 +37,19 @@ import java.util.Set;
 import org.n52.iceland.util.StringHelper;
 
 public class SqlServerDatasource extends AbstractSqlServerDatasource {
-    
+
     private static final String TN_FEATURE_OF_INTEREST = "featureOfInterest";
-    
+
     private static final String TN_OBSERVATION = "observation";
-    
+
     private static final String CN_IDENTIFIER = "identifier";
-    
+
     private static final String CN_URL = "url";
-    
+
     private static final String DECLARE_VARIABLE = "DECLARE @ObjectName NVARCHAR(100);";
-    
+
     private static final String DIALECT_NAME = "SQL Server";
-    
+
 
     public SqlServerDatasource() {
         super();
@@ -59,15 +59,15 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
     public String getDialectName() {
         return DIALECT_NAME;
     }
-    
+
     @Override
     public boolean isPostCreateSchema() {
         return true;
     }
-    
+
     @Override
     public void executePostCreateSchema(Map<String, Object> databaseSettings) {
-        List<String> statements = new ArrayList<String>();
+        List<String> statements = new ArrayList<>();
         for (TableColumn tableColumn : getTableColumns()) {
             statements.add(getGetAndDropConstraint(tableColumn.getTable(), tableColumn.getColumn(), databaseSettings));
             statements.add(getCreateUniqueConstraint(databaseSettings, tableColumn.getTable(), tableColumn.getColumn()));
@@ -85,13 +85,13 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
     }
 
     private Set<TableColumn> getTableColumns() {
-        Set<TableColumn> tableColumns = new HashSet<SqlServerDatasource.TableColumn>();
+        Set<TableColumn> tableColumns = new HashSet<>();
         tableColumns.add(new TableColumn(TN_FEATURE_OF_INTEREST, CN_IDENTIFIER));
         tableColumns.add(new TableColumn(TN_FEATURE_OF_INTEREST, CN_URL));
         tableColumns.add(new TableColumn(TN_OBSERVATION, CN_IDENTIFIER));
         return tableColumns;
     }
-    
+
     private String getSelectConstraintNameToVariable(String table, String colum) {
         StringBuilder builder = new StringBuilder();
         builder.append("SELECT @ObjectName = ccu.CONSTRAINT_NAME ");
@@ -101,7 +101,7 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
         builder.append(" AND ccu.COLUMN_NAME=").append("'").append(colum).append("';");
         return builder.toString();
     }
-    
+
     private String getExecuteDropConstraint(String table, Map<String, Object> databaseSettings) {
         StringBuilder builder = new StringBuilder();
         builder.append("IF (OBJECT_ID(@ObjectName, 'UQ') IS NOT NULL) ");
@@ -112,7 +112,7 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
         builder.append("END ");
         return builder.toString();
     }
-    
+
     private String getCreateUniqueConstraint(Map<String, Object> databaseSettings, String table, String column) {
         StringBuilder builder = new StringBuilder();
         builder.append("CREATE UNIQUE NONCLUSTERED INDEX ").append(table).append("_").append(column);
@@ -132,7 +132,7 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
         builder.append(table);
         return builder.toString();
     }
-    
+
     protected String getDatabase(Map<String, Object> settings) {
         if (isSetSchema(settings)) {
             return (String)settings.get(DATABASE_KEY);
@@ -141,7 +141,7 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
     }
 
     private class TableColumn {
-        
+
         private String table;
 
         private String column;

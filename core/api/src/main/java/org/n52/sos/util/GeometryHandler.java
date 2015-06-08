@@ -38,8 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
@@ -56,7 +54,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.ds.FeatureQuerySettingsProvider;
@@ -64,6 +61,8 @@ import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.lifecycle.Constructable;
+import org.n52.iceland.lifecycle.Destroyable;
 import org.n52.iceland.ogc.filter.SpatialFilter;
 import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.ServiceConfiguration;
@@ -75,8 +74,6 @@ import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.util.Range;
 import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.util.Validation;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.lifecycle.Destroyable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;

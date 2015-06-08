@@ -38,7 +38,6 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -47,7 +46,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.n52.iceland.config.AdminUserService;
 import org.n52.iceland.config.AdministratorUser;
-import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.ConfigurationException;
 
 /**
@@ -62,10 +60,7 @@ public class SosAuthenticationProvider implements AuthenticationProvider, Serial
     private static final Set<AdministratorAuthority> ADMIN_AUTHORITIES
             = Collections.singleton(new AdministratorAuthority());
 
-    @Inject
     private AdminUserService adminUserService;
-
-    @Inject
     private PasswordEncoder passwordEncoder;
 
     @Override
@@ -79,32 +74,21 @@ public class SosAuthenticationProvider implements AuthenticationProvider, Serial
     }
 
     public AdministratorUser authenticate(String username, String password) throws AuthenticationException {
-        AdministratorUser user;
 
         if (username == null || password == null) {
             throw new BadCredentialsException("Bad Credentials");
         }
-        try {
-            if (!this.adminUserService.hasAdminUser()) {
-                LOG.warn("No admin user is defined! Use the default credentials '{}:{}' "
-                        + "to authenticate and change the password as soon as possible!",
-                        DefaultAdministratorUser.DEFAULT_USERNAME, DefaultAdministratorUser.DEFAULT_PASSWORD);
-                if (username.equals(DefaultAdministratorUser.DEFAULT_USERNAME)
-                        && password.equals(DefaultAdministratorUser.DEFAULT_PASSWORD)) {
-                    return new DefaultAdministratorUser();
-                }
+        if (!this.adminUserService.hasAdminUser()) {
+            LOG.warn("No admin user is defined! Use the default credentials '{}:{}' "
+                    + "to authenticate and change the password as soon as possible!",
+                    DefaultAdministratorUser.DEFAULT_USERNAME, DefaultAdministratorUser.DEFAULT_PASSWORD);
+            if (username.equals(DefaultAdministratorUser.DEFAULT_USERNAME)
+                    && password.equals(DefaultAdministratorUser.DEFAULT_PASSWORD)) {
+                return new DefaultAdministratorUser();
             }
-        } catch (ConnectionProviderException ex) {
-            LOG.error("Error querying admin", ex);
-            throw new AuthenticationServiceException("Can not query admin users", ex);
         }
 
-        try {
-            user = this.adminUserService.getAdminUser(username);
-        } catch (ConnectionProviderException ex) {
-            LOG.error("Error querying admin", ex);
-            throw new BadCredentialsException("Bad Credentials");
-        }
+        AdministratorUser user = this.adminUserService.getAdminUser(username);
 
         if (user == null) {
             throw new BadCredentialsException("Bad Credentials");
@@ -123,52 +107,35 @@ public class SosAuthenticationProvider implements AuthenticationProvider, Serial
     }
 
     public AdministratorUser createAdmin(String username, String password) {
-        try {
-            return this.adminUserService.createAdminUser(username, getPasswordEncoder().encode(password));
-        } catch (ConnectionProviderException ex) {
-            LOG.error("Error saving admin", ex);
-            throw new RuntimeException(ex);
-        }
+        return this.adminUserService.createAdminUser(username, getPasswordEncoder().encode(password));
     }
 
     public void setAdminUserName(AdministratorUser user, String name) {
-        try {
-            this.adminUserService.saveAdminUser(user.setUsername(name));
-        } catch (ConnectionProviderException ex) {
-            LOG.error("Error saving admin", ex);
-            throw new RuntimeException(ex);
-        }
+        this.adminUserService.saveAdminUser(user.setUsername(name));
     }
 
     public void setAdminPassword(AdministratorUser user, String password) {
-        try {
-            this.adminUserService.saveAdminUser(user.setPassword(getPasswordEncoder().encode(password)));
-        } catch (ConnectionProviderException ex) {
-            LOG.error("Error saving admin", ex);
-            throw new RuntimeException(ex);
-        }
+        this.adminUserService.saveAdminUser(user.setPassword(getPasswordEncoder().encode(password)));
     }
 
     public AdministratorUser getAdmin(String username) throws ConfigurationException {
-        try {
-            return this.adminUserService.getAdminUser(username);
-        } catch (ConnectionProviderException e) {
-            throw new ConfigurationException(e);
-        }
+        return this.adminUserService.getAdminUser(username);
     }
 
     public AdministratorUser getAdmin(Principal user) throws ConfigurationException {
-        try {
-            return this.adminUserService.getAdminUser(user.getName());
-        } catch (ConnectionProviderException e) {
-            throw new ConfigurationException(e);
-        }
+        return this.adminUserService.getAdminUser(user.getName());
     }
 
     public PasswordEncoder getPasswordEncoder() {
         return passwordEncoder;
     }
 
+    @Inject
+    public void setAdminUserService(AdminUserService adminUserService) {
+        this.adminUserService = adminUserService;
+    }
+
+    @Inject
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }

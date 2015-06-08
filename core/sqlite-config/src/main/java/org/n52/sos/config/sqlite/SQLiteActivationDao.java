@@ -39,7 +39,6 @@ import org.hibernate.criterion.Projections;
 import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.binding.PathBindingKey;
 import org.n52.iceland.config.ActivationDao;
-import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderKey;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
@@ -60,19 +59,18 @@ public class SQLiteActivationDao
         implements ActivationDao {
 
     // BINDING
-
     @Override
-    public void setBindingStatus(BindingKey bk, boolean active) throws ConnectionProviderException {
+    public void setBindingStatus(BindingKey bk, boolean active) {
         setActive(Binding.class, new Binding(bk.getKeyAsString()), active);
     }
 
     @Override
-    public boolean isBindingActive(BindingKey bk) throws ConnectionProviderException {
+    public boolean isBindingActive(BindingKey bk) {
         return isActive(Binding.class, bk.getKeyAsString());
     }
 
     @Override
-    public Set<BindingKey> getBindingKeys() throws ConnectionProviderException {
+    public Set<BindingKey> getBindingKeys() {
         return asBindingKeys(getKeys(Binding.class));
     }
 
@@ -85,70 +83,81 @@ public class SQLiteActivationDao
     }
 
     // OWS EXTENDED CAPABILITIES
-
     @Override
-    public boolean isOwsExtendedCapabilitiesProviderActive(OwsExtendedCapabilitiesProviderKey oeck) throws ConnectionProviderException {
+    public boolean isOwsExtendedCapabilitiesProviderActive(
+            OwsExtendedCapabilitiesProviderKey oeck) {
         return isActive(DynamicOwsExtendedCapabilities.class, new DynamicOwsExtendedCapabilitiesKey(oeck));
     }
 
-
     @Override
-    public void setOwsExtendedCapabilitiesStatus(OwsExtendedCapabilitiesProviderKey oeck, boolean active) throws ConnectionProviderException {
+    public void setOwsExtendedCapabilitiesStatus(
+            OwsExtendedCapabilitiesProviderKey oeck, boolean active) {
         setActive(DynamicOwsExtendedCapabilities.class, new DynamicOwsExtendedCapabilities(oeck), active);
     }
 
     @Override
-    public Set<OwsExtendedCapabilitiesProviderKey> getOwsExtendedCapabilitiesProviderKeys() throws ConnectionProviderException {
+    public Set<OwsExtendedCapabilitiesProviderKey> getOwsExtendedCapabilitiesProviderKeys() {
         return asOwsExtendedCapabilitiesProviderKeys(getKeys(DynamicOwsExtendedCapabilities.class));
     }
 
-    private Set<OwsExtendedCapabilitiesProviderKey> asOwsExtendedCapabilitiesProviderKeys(List<DynamicOwsExtendedCapabilitiesKey> hkeys) {
-        Set<OwsExtendedCapabilitiesProviderKey> keys = new HashSet<>(hkeys.size());
+    private Set<OwsExtendedCapabilitiesProviderKey> asOwsExtendedCapabilitiesProviderKeys(
+            List<DynamicOwsExtendedCapabilitiesKey> hkeys) {
+        Set<OwsExtendedCapabilitiesProviderKey> keys = new HashSet<>(hkeys
+                .size());
         for (DynamicOwsExtendedCapabilitiesKey key : hkeys) {
-            keys.add(new OwsExtendedCapabilitiesProviderKey(new ServiceOperatorKey(key.getService(), key.getVersion()), key.getDomain()));
+            keys
+                    .add(new OwsExtendedCapabilitiesProviderKey(new ServiceOperatorKey(key
+                                            .getService(), key.getVersion()), key
+                                                                .getDomain()));
         }
         return keys;
     }
 
     // REQUEST OPERATOR
-
     @Override
-    public boolean isRequestOperatorActive(RequestOperatorKey requestOperatorKeyType) throws ConnectionProviderException {
-        return isActive(Operation.class, new OperationKey(requestOperatorKeyType), requestOperatorKeyType.isDefaultActive());
+    public boolean isRequestOperatorActive(
+            RequestOperatorKey requestOperatorKeyType) {
+        return isActive(Operation.class, new OperationKey(requestOperatorKeyType), requestOperatorKeyType
+                        .isDefaultActive());
     }
 
     @Override
-    public void setOperationStatus(RequestOperatorKey key, boolean active) throws ConnectionProviderException {
+    public void setOperationStatus(RequestOperatorKey key, boolean active) {
         setActive(Operation.class, new Operation(key), active);
     }
 
     @Override
-    public Set<RequestOperatorKey> getRequestOperatorKeys() throws ConnectionProviderException {
+    public Set<RequestOperatorKey> getRequestOperatorKeys() {
         return asRequestOperatorKeys(getKeys(Operation.class));
     }
 
-    private Set<RequestOperatorKey> asRequestOperatorKeys(List<OperationKey> hkeys) {
+    private Set<RequestOperatorKey> asRequestOperatorKeys(
+            List<OperationKey> hkeys) {
         Set<RequestOperatorKey> keys = new HashSet<>(hkeys.size());
         for (OperationKey key : hkeys) {
-            keys.add(new RequestOperatorKey(new ServiceOperatorKey(key.getService(), key.getVersion()), key.getOperationName()));
+            keys.add(new RequestOperatorKey(new ServiceOperatorKey(key
+                    .getService(), key.getVersion()), key.getOperationName()));
         }
         return keys;
     }
 
-    protected <K extends Serializable, T extends Activatable<K, T>> void setActive(Class<T> type, T activatable, boolean active) throws ConnectionProviderException {
+    protected <K extends Serializable, T extends Activatable<K, T>> void setActive(
+            Class<T> type, T activatable, boolean active) {
         execute(new SetActiveAction<>(type, activatable, active));
     }
 
-    protected <K extends Serializable, T extends Activatable<K, T>> boolean isActive(Class<T> c, K key) throws ConnectionProviderException {
+    protected <K extends Serializable, T extends Activatable<K, T>> boolean isActive(
+            Class<T> c, K key) {
         return execute(new IsActiveAction<>(c, key));
     }
 
-    protected <K extends Serializable, T extends Activatable<K, T>> boolean isActive(Class<T> c, K key, boolean defaultActive) throws ConnectionProviderException {
+    protected <K extends Serializable, T extends Activatable<K, T>> boolean isActive(
+            Class<T> c, K key, boolean defaultActive) {
         return execute(new IsActiveAction<>(c, key, defaultActive));
     }
 
-
-    protected <K extends Serializable, T extends Activatable<K, T>>  List<K> getKeys(Class<T> c) throws ConnectionProviderException {
+    protected <K extends Serializable, T extends Activatable<K, T>> List<K> getKeys(
+            Class<T> c) {
         return execute(new GetKeysAction<>(c));
     }
 

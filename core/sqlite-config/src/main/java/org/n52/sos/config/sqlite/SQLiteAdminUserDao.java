@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.config.AdminUserDao;
 import org.n52.iceland.config.AdministratorUser;
-import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.sos.config.sqlite.entities.AdminUser;
 
 /**
@@ -55,38 +54,32 @@ public class SQLiteAdminUserDao extends AbstractSQLiteDao
             .getLogger(SQLiteAdminUserDao.class);
 
     @Override
-    public AdministratorUser getAdminUser(String username)
-            throws ConnectionProviderException {
+    public AdministratorUser getAdminUser(String username) {
         return execute(new GetAdminUserAction(username));
     }
 
     @Override
-    public AdministratorUser createAdminUser(String username, String password)
-            throws ConnectionProviderException {
+    public AdministratorUser createAdminUser(String username, String password) {
         return execute(new CreateAdminUserAction(username, password));
     }
 
     @Override
-    public void saveAdminUser(AdministratorUser user)
-            throws ConnectionProviderException {
+    public void saveAdminUser(AdministratorUser user) {
         execute(new SaveAdminUserAction(user));
     }
 
     @Override
-    public void deleteAdminUser(String username)
-            throws ConnectionProviderException {
+    public void deleteAdminUser(String username) {
         execute(new DeleteAdminUserAction(username));
     }
 
     @Override
-    public Set<AdministratorUser> getAdminUsers()
-            throws ConnectionProviderException {
+    public Set<AdministratorUser> getAdminUsers() {
         return execute(new GetAdminUsersAction());
     }
 
     @Override
-    public void deleteAll()
-            throws ConnectionProviderException {
+    public void deleteAll() {
         execute(new DeleteAllAction());
     }
 

@@ -47,7 +47,6 @@ import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.binding.PathBindingKey;
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.util.JSONUtils;
@@ -64,9 +63,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 @Controller
 public class AdminBindingController extends AbstractAdminController {
-
-    @Inject
-    private SettingsManager settingsManager;
 
     @Inject
     private BindingRepository bindingRepository;
@@ -86,19 +82,19 @@ public class AdminBindingController extends AbstractAdminController {
     }
 
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_BINDINGS, method = RequestMethod.GET)
-    public String view() throws ConnectionProviderException {
+    public String view() {
         return ControllerConstants.Views.ADMIN_BINDINGS;
     }
 
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_BINDINGS_JSON_ENDPOINT, method = RequestMethod.GET, produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
-    public String getAll() throws ConnectionProviderException {
+    public String getAll() {
         ObjectNode node = JSONUtils.nodeFactory().objectNode();
         node.set(JSONConstants.BINDINGS_KEY, getBindings());
         return JSONUtils.print(node);
     }
 
-    protected ArrayNode getBindings() throws ConnectionProviderException {
+    protected ArrayNode getBindings() {
         Map<String, Binding> bindings = bindingRepository.getAllBindingsByPath();
         ArrayNode a = JSONUtils.nodeFactory().arrayNode();
         for (Entry<String, Binding> e : bindings.entrySet()) {
@@ -112,7 +108,7 @@ public class AdminBindingController extends AbstractAdminController {
 
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_BINDINGS_JSON_ENDPOINT, method = RequestMethod.POST, consumes = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
-    public void change(@RequestBody String request) throws ConnectionProviderException, IOException {
+    public void change(@RequestBody String request) throws IOException {
         JsonNode json = JSONUtils.loadString(request);
         if (json.has(JSONConstants.BINDING_KEY)) {
             BindingKey key = new PathBindingKey(json.path(JSONConstants.BINDING_KEY).asText());

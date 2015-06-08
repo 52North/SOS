@@ -59,7 +59,7 @@ public abstract class AbstractInstallStepController extends AbstractInstallContr
 
     protected Map<String, Object> toModel(InstallationConfiguration c) throws ConfigurationException, JSONException {
         Map<String, Object> model = new HashMap<>(4);
-        model.put(ControllerConstants.SETTINGS_MODEL_ATTRIBUTE, JSONUtils.print(toJSONValueMap(c.getSettings())));
+        model.put(ControllerConstants.SETTINGS_MODEL_ATTRIBUTE, JSONUtils.print(encodeValues(c.getSettings())));
         model.put(ControllerConstants.DATABASE_SETTINGS_MODEL_ATTRIBUTE, c.getDatabaseSettings());
         model.put(ControllerConstants.ADMIN_USERNAME_REQUEST_PARAMETER, c.getUsername());
         model.put(ControllerConstants.ADMIN_PASSWORD_REQUEST_PARAMETER, c.getPassword());

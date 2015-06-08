@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingType;
 import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.config.SettingsService;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.install.InstallConstants.Step;
 
@@ -55,7 +55,7 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
     private static final Logger LOG = LoggerFactory.getLogger(InstallSettingsController.class);
 
     @Inject
-    private SettingsManager settingsManager;
+    private SettingsService settingsManager;
 
     @Override
     protected Step getStep() {
@@ -95,7 +95,7 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
         }
     }
 
-    protected SettingValue<?> createSettingValue(SettingsManager sm, SettingDefinition<?, ?> def, String stringValue,
+    protected SettingValue<?> createSettingValue(SettingsService sm, SettingDefinition<?, ?> def, String stringValue,
             InstallationConfiguration c) throws InstallationSettingsError {
         try {
             return sm.getSettingFactory().newSettingValue(def, stringValue);

@@ -39,14 +39,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.web.common.ControllerConstants;
-import org.n52.sos.web.common.SettingDefinitionEncoder;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -55,8 +47,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingValue;
 import org.n52.iceland.config.SettingValueFactory;
+import org.n52.iceland.config.json.JsonSettingsEncoder;
+import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.context.ContextSwitcher;
+import org.n52.sos.web.common.ControllerConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -152,7 +151,7 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
     }
 
     private JsonNode encodeSettings(Properties p) throws JSONException {
-        SettingDefinitionEncoder enc = new SettingDefinitionEncoder();
+        JsonSettingsEncoder enc = getSettingsEncoder();
         Set<SettingDefinition<?, ?>> defs = getDatasource().getChangableSettingDefinitions(p);
         JsonNode settings = enc.encode(enc.sortByGroup(defs));
         ObjectNode node = JSONUtils.nodeFactory().objectNode();
@@ -161,7 +160,7 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
     }
 
     private JsonNode encodeSettings(Map<String, Object> p) throws JSONException {
-        SettingDefinitionEncoder enc = new SettingDefinitionEncoder();
+        JsonSettingsEncoder enc = getSettingsEncoder();
         Set<SettingDefinition<?, ?>> defs =
                 getDatasource().getChangableSettingDefinitions(
                         getDatasource().getDatasourceProperties(getSettings(), p));

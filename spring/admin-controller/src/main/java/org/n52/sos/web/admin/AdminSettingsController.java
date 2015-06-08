@@ -53,7 +53,6 @@ import org.n52.sos.web.common.auth.SosAuthenticationProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
@@ -66,7 +65,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.config.SettingsService;
 
 
 
@@ -79,7 +78,7 @@ public class AdminSettingsController extends AbstractController {
     private SosAuthenticationProvider userService;
 
     @Inject
-    private SettingsManager settingsManager;
+    private SettingsService settingsManager;
 
     public SosAuthenticationProvider getUserService() {
         return userService;
@@ -98,7 +97,7 @@ public class AdminSettingsController extends AbstractController {
 
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_SETTINGS, method = RequestMethod.GET)
     public ModelAndView displaySettings(Principal user) throws ConfigurationException, JSONException, ConnectionProviderException {
-        Map<String, Object> model = new HashMap<String, Object>(2);
+        Map<String, Object> model = new HashMap<>(2);
         model.put(ControllerConstants.SETTINGS_MODEL_ATTRIBUTE, getSettingsJsonString());
         model.put(ControllerConstants.ADMIN_USERNAME_REQUEST_PARAMETER, user.getName());
         return new ModelAndView(ControllerConstants.Views.ADMIN_SETTINGS, model);
@@ -108,13 +107,8 @@ public class AdminSettingsController extends AbstractController {
     public void updateSettings(HttpServletRequest request, HttpServletResponse response, Principal user)
             throws AuthenticationException, ConfigurationException {
         LOG.info("Updating Settings");
-        try {
-            updateAdminUser(request, user);
-            updateSettings(request);
-        } catch (ConnectionProviderException e1) {
-            LOG.error("Error saving settings", e1);
-            throw new RuntimeException(e1.getMessage());
-        }
+        updateAdminUser(request, user);
+        updateSettings(request);
     }
 
     @ResponseBody
@@ -131,7 +125,7 @@ public class AdminSettingsController extends AbstractController {
     private String getSettingsJsonString()
             throws ConfigurationException, JSONException,
                    ConnectionProviderException {
-        return JSONUtils.print(toJSONValueMap(settingsManager.getSettings()));
+        return JSONUtils.print(encodeValues(settingsManager.getSettings()));
     }
 
     private void logSettings(Collection<SettingValue<?>> values) {
@@ -142,7 +136,7 @@ public class AdminSettingsController extends AbstractController {
         }
     }
 
-    private void updateSettings(HttpServletRequest request) throws ConnectionProviderException {
+    private void updateSettings(HttpServletRequest request) {
         Map<SettingDefinition<?, ?>, SettingValue<?>> changedSettings = new HashMap<>();
         for (SettingDefinition<?, ?> def : settingsManager.getSettingDefinitions()) {
             SettingValue<?> newValue =

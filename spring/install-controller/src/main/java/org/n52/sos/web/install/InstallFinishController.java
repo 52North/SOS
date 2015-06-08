@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -48,7 +47,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.config.SettingsService;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.exception.ConfigurationException;
@@ -68,7 +67,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
     private static final Logger LOG = LoggerFactory.getLogger(InstallFinishController.class);
 
     @Inject
-    private SettingsManager settingsManager;
+    private SettingsService settingsManager;
 
     @Inject
     private ContextSwitcher contextSwitcher;
@@ -191,7 +190,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
             for (SettingValue<?> e : c.getSettings().values()) {
                 this.settingsManager.changeSetting(e);
             }
-        } catch (ConfigurationException | ConnectionProviderException e) {
+        } catch (ConfigurationException e) {
             throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_INSERT_SETTINGS,
                     e.getMessage()), e);
         }

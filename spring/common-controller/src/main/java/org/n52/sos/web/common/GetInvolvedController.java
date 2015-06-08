@@ -30,7 +30,6 @@ package org.n52.sos.web.common;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.logging.Level;
 
 import javax.inject.Inject;
 
@@ -42,8 +41,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.config.SettingsManager;
-import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.config.SettingsService;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.service.ServiceSettings;
 
@@ -60,14 +58,14 @@ public class GetInvolvedController extends AbstractController {
     public static final String SERVICE_URL_MODEL_ATTRIBUTE = "serviceUrl";
 
     @Inject
-    private SettingsManager settingsManager;
+    private SettingsService settingsManager;
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() {
         SettingValue<URI> setting = null;
         try {
             setting = this.settingsManager.getSetting(ServiceSettings.SERVICE_URL);
-        } catch (ConfigurationException | ConnectionProviderException ex) {
+        } catch (ConfigurationException ex) {
             LOG.error("Could not load service url", ex);
         }
         Serializable url = setting == null ? "" : setting.getValue() == null ? "" : setting.getValue();

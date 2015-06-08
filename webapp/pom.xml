@@ -286,7 +286,7 @@
 		    <groupId>${project.groupId}</groupId>
 		    <artifactId>hibernate-datasource-h2</artifactId>
 		</dependency>
-        
+
          <!-- BINDINGS -->
         <dependency>
             <groupId>${project.groupId}</groupId>

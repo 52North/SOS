@@ -46,11 +46,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.json.JsonSettingsEncoder;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.web.common.ControllerConstants;
-import org.n52.sos.web.common.SettingDefinitionEncoder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -77,8 +77,8 @@ public class InstallDatasourceSettingsController extends AbstractInstallControll
     }
 
     private JsonNode encode(InstallationConfiguration c, Map<String, Datasource> dialects) throws JSONException {
-        SettingDefinitionEncoder enc = new SettingDefinitionEncoder();
         ObjectNode node = JSONUtils.nodeFactory().objectNode();
+        JsonSettingsEncoder enc = getSettingsEncoder();
         List<String> orderedDialects = getOrderedDialects(dialects.keySet());
         for (String dialect : orderedDialects) {
             boolean selected = false;

@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class OracleDatasource extends AbstractHibernateFullDBDatasource {
     private static final Logger LOG = LoggerFactory.getLogger(OracleDatasource.class);
@@ -111,14 +111,14 @@ public class OracleDatasource extends AbstractHibernateFullDBDatasource {
         setSchemaDescription(SCHEMA_DESCRIPTION);
         setProvidedJdbcDefault(PROVIDED_JDBC_DEFAULT_VALUE);
     }
-    
+
     @Override
     public Properties getDatasourceProperties(Map<String, Object> settings) {
          Properties p = super.getDatasourceProperties(settings);
          p.put(HibernateConstants.CONNECION_FINDER, OracleC3P0ConnectionFinder.class.getName());
          return p;
     }
-    
+
     @Override
     public String getDialectName() {
         return DIALECT_NAME;
@@ -151,8 +151,8 @@ public class OracleDatasource extends AbstractHibernateFullDBDatasource {
      * {@link Datasource#checkSchemaCreation(Map)} for testing
      */
     void doCheckSchemaCreation(String schema, Statement stmt) throws SQLException {
-        final String schemaPrefix = schema == null ? "" : "" + schema + "."; 
-        final String testTable = schemaPrefix + "sos_test"; 
+        final String schemaPrefix = schema == null ? "" : "" + schema + ".";
+        final String testTable = schemaPrefix + "sos_test";
         final String command =
                 String.format("BEGIN\n" + "  BEGIN\n" + "    EXECUTE IMMEDIATE 'DROP TABLE %1$s';\n"
                         + "  EXCEPTION\n" + "    WHEN OTHERS THEN\n" + "      IF SQLCODE != -942 THEN\n"
@@ -218,7 +218,7 @@ public class OracleDatasource extends AbstractHibernateFullDBDatasource {
             throws ConfigurationException {
         checkClasspath();
     }
-    
+
     @Override
     public void validateSchema(Map<String,Object> settings) {
         Connection conn = null;
@@ -230,9 +230,7 @@ public class OracleDatasource extends AbstractHibernateFullDBDatasource {
             schema = (String)settings.get(SCHEMA_KEY);
             settings.put(SCHEMA_KEY, null);
             getConfig(settings).validateSchema(getDialectInternal(), metadata);
-        } catch (SQLException ex) {
-            throw new ConfigurationException(ex);
-        } catch (HibernateException ex) {
+        } catch (SQLException | HibernateException ex) {
             throw new ConfigurationException(ex);
         } finally {
             close(conn);
@@ -264,10 +262,7 @@ public class OracleDatasource extends AbstractHibernateFullDBDatasource {
         if (mode == Mode.OCI) {
             try {
                 return driver.connect(toOciUrl(settings), props);
-            } catch (UnsatisfiedLinkError e) {
-                LOG.error("Failed to use OCI driver. Falling back to thin.", e);
-                mode = Mode.THIN;
-            } catch (SQLException e) {
+            } catch (UnsatisfiedLinkError | SQLException e) {
                 LOG.error("Failed to use OCI driver. Falling back to thin.", e);
                 mode = Mode.THIN;
             }

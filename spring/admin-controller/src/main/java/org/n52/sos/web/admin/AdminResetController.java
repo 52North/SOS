@@ -40,7 +40,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.cache.ContentCachePersistenceStrategy;
-import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.config.SettingsService;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.sos.context.ContextSwitcher;
@@ -59,7 +59,7 @@ public class AdminResetController extends AbstractAdminController {
     private ContextSwitcher contextSwitcher;
 
     @Inject
-    private SettingsManager settingsManager;
+    private SettingsService settingsManager;
 
     @Inject
     private ContentCacheController contentCacheController;

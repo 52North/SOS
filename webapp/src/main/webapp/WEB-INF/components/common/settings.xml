@@ -3,13 +3,16 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
-    <bean id="configLocationProvider"
-          class="org.n52.iceland.service.ServletConfigLocationProvider" />
+    <bean id="configLocationProvider" class="org.n52.iceland.service.ServletConfigLocationProvider" />
 
-    <bean id="settingsService"
-          class="org.n52.iceland.config.SettingsManager" />
+    <bean id="settingsService" class="org.n52.iceland.config.SettingsServiceImpl" />
 
-    <bean id="activationService"
-          class="org.n52.iceland.config.SosActivationService" />
+    <bean id="adminUserService" class="org.n52.iceland.config.AdminUserServiceImpl" />
+
+    <bean id="activationService" class="org.n52.iceland.config.ActivationService" />
+
+    <bean id="settingsEncoder" class="org.n52.iceland.config.json.JsonSettingsEncoder" />
+
+    <bean id="sosActivationService" class="org.n52.sos.config.SosActivationService" />
 
 </beans>

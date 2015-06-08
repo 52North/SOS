@@ -55,8 +55,7 @@ public class AbstractSQLiteDao {
         return this.sessionFactory != null;
     }
 
-    protected <T> T execute(HibernateAction<T> action)
-            throws ConnectionProviderException {
+    protected <T> T execute(HibernateAction<T> action) {
         synchronized (this) {
             Session session = null;
             Transaction transaction = null;
@@ -72,8 +71,6 @@ public class AbstractSQLiteDao {
                     transaction.rollback();
                 }
                 throw e;
-            } catch (ConnectionProviderException cpe) {
-                throw cpe;
             } finally {
                 getSessionFactory().returnConnection(session);
             }

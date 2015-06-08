@@ -35,6 +35,7 @@ import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
 import net.opengis.sosdo.x10.DeleteObservationResponseType;
 
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.exception.ows.MissingParameterValueException;
 import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
@@ -58,9 +59,12 @@ public class DeleteObservationEncoder extends AbstractResponseEncoder<DeleteObse
             DeleteObservationConstants.NS_SOSDO_1_0_SCHEMA_LOCATION);
 
     public DeleteObservationEncoder() {
-        super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, DeleteObservationConstants.Operations.DeleteObservation
-                .name(), DeleteObservationConstants.NS_SOSDO_1_0, DeleteObservationConstants.NS_SOSDO_1_0_PREFIX,
-                DeleteObservationResponse.class);
+        super(SosConstants.SOS,
+              Sos2Constants.SERVICEVERSION,
+              DeleteObservationConstants.Operations.DeleteObservation.name(),
+              DeleteObservationConstants.NS_SOSDO_1_0,
+              DeleteObservationConstants.NS_SOSDO_1_0_PREFIX,
+              DeleteObservationResponse.class);
     }
 
     @Override

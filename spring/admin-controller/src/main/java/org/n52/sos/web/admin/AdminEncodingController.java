@@ -45,7 +45,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
 import org.n52.iceland.coding.ResponseFormatRepository;
-import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.config.SettingsService;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.encode.ProcedureDescriptionFormatKey;
 import org.n52.iceland.encode.ResponseFormatKey;
@@ -71,9 +71,6 @@ public class AdminEncodingController extends AbstractAdminController {
     private ResponseFormatRepository responseFormatRepository;
 
     @Inject
-    private SettingsManager settingsManager;
-
-    @Inject
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
 
     @ResponseBody
@@ -84,13 +81,13 @@ public class AdminEncodingController extends AbstractAdminController {
     }
 
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_ENCODINGS, method = RequestMethod.GET)
-    public String view() throws ConnectionProviderException {
+    public String view() {
         return ControllerConstants.Views.ADMIN_ENCODINGS;
     }
 
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_ENCODINGS_JSON_ENDPOINT, method = RequestMethod.GET, produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
-    public String getAll() throws ConnectionProviderException {
+    public String getAll() {
         ObjectNode node = JSONUtils.nodeFactory().objectNode();
         node.set(JSONConstants.OBSERVATION_ENCODINGS_KEY, getObservationEncodings());
         node.set(JSONConstants.PROCEDURE_ENCODINGS_KEY, getProcedureEncodings());
@@ -99,7 +96,7 @@ public class AdminEncodingController extends AbstractAdminController {
 
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_ENCODINGS_JSON_ENDPOINT, method = RequestMethod.POST, consumes = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
-    public void change(@RequestBody String request) throws ConnectionProviderException, IOException {
+    public void change(@RequestBody String request) throws IOException {
         JsonNode json = JSONUtils.loadString(request);
 
         if (json.has(JSONConstants.RESPONSE_FORMAT_KEY)) {
@@ -121,7 +118,7 @@ public class AdminEncodingController extends AbstractAdminController {
         }
     }
 
-    protected ArrayNode getObservationEncodings() throws ConnectionProviderException, ConfigurationException {
+    protected ArrayNode getObservationEncodings() {
         ArrayNode joes = JSONUtils.nodeFactory().arrayNode();
         final Map<ServiceOperatorKey, Set<String>> oes =
                 this.responseFormatRepository.getAllSupportedResponseFormats();
@@ -138,8 +135,7 @@ public class AdminEncodingController extends AbstractAdminController {
         return joes;
     }
 
-    protected ArrayNode getProcedureEncodings() throws ConnectionProviderException,
-            ConfigurationException {
+    protected ArrayNode getProcedureEncodings() {
         ArrayNode jpes = JSONUtils.nodeFactory().arrayNode();
         final Map<ServiceOperatorKey, Set<String>> oes =
                 this.procedureDescriptionFormatRepository.getAllProcedureDescriptionFormats();

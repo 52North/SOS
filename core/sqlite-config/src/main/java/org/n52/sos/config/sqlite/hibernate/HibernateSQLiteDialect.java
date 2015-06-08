@@ -86,7 +86,7 @@ public class HibernateSQLiteDialect extends Dialect {
 
     @Override
     public String getIdentityColumnString() {
-        return "integer";
+        return "bigint";
     }
 
     @Override

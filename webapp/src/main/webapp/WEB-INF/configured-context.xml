@@ -28,16 +28,16 @@
         <description>Used to wire up SOS specific activation persistence.</description>
         <property name="listeners">
             <map>
-                <entry key-ref="offeringExtensionRepository" value="#{activationService.offeringExtensionListener}" />
-                <entry key-ref="procedureDescriptionFormatRepository" value="#{activationService.procedureDescriptionFormatListener}"/>
-                <entry key-ref="responseFormatRepository" value="#{activationService.responseFormatListener}" />
+                <entry key-ref="offeringExtensionRepository" value="#{sosActivationService.offeringExtensionListener}" />
+                <entry key-ref="procedureDescriptionFormatRepository" value="#{sosActivationService.procedureDescriptionFormatListener}"/>
+                <entry key-ref="responseFormatRepository" value="#{sosActivationService.responseFormatListener}" />
             </map>
         </property>
         <property name="initializers">
             <map>
-                <entry key-ref="offeringExtensionRepository" value="#{activationService.offeringExtensionInitializer}" />
-                <entry key-ref="procedureDescriptionFormatRepository" value="#{activationService.procedureDescriptionFormatInitializer}" />
-                <entry key-ref="responseFormatRepository" value="#{activationService.responseFormatInitializer}" />
+                <entry key-ref="offeringExtensionRepository" value="#{sosActivationService.offeringExtensionInitializer}" />
+                <entry key-ref="procedureDescriptionFormatRepository" value="#{sosActivationService.procedureDescriptionFormatInitializer}" />
+                <entry key-ref="responseFormatRepository" value="#{sosActivationService.responseFormatInitializer}" />
             </map>
         </property>
     </bean>
@@ -114,7 +114,8 @@
     <import resource="components/configured/response-writers.xml" />
     <import resource="components/configured/daos.xml" />
     <import resource="components/configured/web.xml" />
-    <import resource="components/configured/settings-sqlite.xml" />
+    <!--<import resource="components/configured/settings-sqlite.xml" />-->
+    <import resource="components/configured/settings-json.xml" />
 
 
     <!--

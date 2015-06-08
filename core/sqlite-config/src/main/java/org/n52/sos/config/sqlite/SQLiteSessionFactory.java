@@ -46,7 +46,7 @@ import org.hibernate.service.spi.Stoppable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.lifecycle.Destroyable;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
@@ -213,12 +213,12 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
     }
 
     private Properties getDefaultProperties() {
-        final String updateSchemaValue;
-        if (getFile().exists()) {
-            updateSchemaValue = VALIDATE_SCHEMA_VALUE;
-        } else {
-            updateSchemaValue = CREATE_SCHEMA_VALUE;
-        }
+        final String updateSchemaValue = UPDATE_SCHEMA_VALUE;
+//        if (getFile().exists()) {
+//            updateSchemaValue = VALIDATE_SCHEMA_VALUE;
+//        } else {
+//            updateSchemaValue = CREATE_SCHEMA_VALUE;
+//        }
 
         return new Properties() {
             private static final long serialVersionUID = 3109256773218160485L;
@@ -236,12 +236,11 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
         };
     }
 
-    public Session getConnection()
-            throws ConnectionProviderException {
+    public Session getConnection() {
         try {
             return getSessionFactory().getCurrentSession();
         } catch (HibernateException e) {
-            throw new ConnectionProviderException(e);
+            throw new ConfigurationException(e);
         }
     }
 

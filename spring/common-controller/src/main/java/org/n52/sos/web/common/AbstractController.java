@@ -29,9 +29,6 @@
 package org.n52.sos.web.common;
 
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -40,13 +37,10 @@ import org.springframework.stereotype.Controller;
 
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.config.json.JsonSettingsEncoder;
 import org.n52.iceland.service.DatabaseSettingsHandler;
-import org.n52.iceland.util.JSONUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * @since 4.0.0
@@ -60,6 +54,14 @@ public class AbstractController {
 
     @Inject
     private DatabaseSettingsHandler handler;
+
+    @Inject
+    private JsonSettingsEncoder settingsEncoder;
+
+    public JsonSettingsEncoder getSettingsEncoder() {
+        return settingsEncoder;
+    }
+
 
     public ServletContext getContext() {
         return this.context;
@@ -98,23 +100,8 @@ public class AbstractController {
         return Boolean.FALSE;
     }
 
-    protected ObjectNode toJSONValueMap(
-            Map<SettingDefinition<?, ?>, SettingValue<?>> settings)
-            throws ConfigurationException, JSONException {
-        SortedMap<String, JsonNode> map = new TreeMap<>();
-        SettingDefinitionEncoder encoder = new SettingDefinitionEncoder();
-        for (Entry<SettingDefinition<?, ?>, SettingValue<?>> e : settings
-                .entrySet()) {
-            if (e.getValue() != null) {
-                map.put(e.getKey().getKey(), encoder.encodeValue(e.getValue()));
-            } else {
-                map.put(e.getKey().getKey(), encoder.encodeValue(e.getKey()
-                        .getType(), e.getKey().getDefaultValue()));
-            }
-        }
-        ObjectNode node = JSONUtils.nodeFactory().objectNode();
-        node.setAll(map);
-        return node;
+    protected JsonNode encodeValues(Map<SettingDefinition<?, ?>, SettingValue<?>> settings) {
+        return this.settingsEncoder.encodeValues(settings);
     }
 
 }

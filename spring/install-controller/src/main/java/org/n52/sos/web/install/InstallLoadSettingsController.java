@@ -39,7 +39,6 @@ import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.settings.MultilingualStringSettingDefinition;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
 
 import org.slf4j.Logger;
@@ -54,7 +53,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.iceland.config.SettingsManager;
+import org.n52.iceland.config.SettingsService;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -70,7 +69,7 @@ public class InstallLoadSettingsController extends AbstractInstallController {
     private static final Logger LOG = LoggerFactory.getLogger(InstallLoadSettingsController.class);
 
     @Inject
-    private SettingsManager settingsManager;
+    private SettingsService settingsManager;
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)

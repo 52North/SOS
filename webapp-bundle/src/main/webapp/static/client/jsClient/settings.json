@@ -1,0 +1,16 @@
+{
+    "selectedLineWidth": 4,
+    "commonLineWidth": 1,
+    "restApiUrls": {
+	    "http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/": "52nSensorweb"
+    },
+    "defaultProvider": {
+        "serviceID": "localhost",
+        "apiUrl": "http://localhost:8080/52n-sos-webapp/api/v1/"
+    },
+    "chartOptions":{
+        "yaxis":{
+            "tickDecimals" : 2
+        }
+    }
+}

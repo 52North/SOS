@@ -11,3 +11,4 @@ release.properties
 .externalToolBuilders
 extensions/do/core/configuration.db
 **.*~
+*.tern-project

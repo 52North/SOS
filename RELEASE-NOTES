@@ -11,11 +11,29 @@ RELEASE NOTES
  
   --- New features ---
   
+    * Support for AQD e-Reporting flows E
+      * Primary validated assessment data - measurements (E1a).
+      * Primary validated assessment data -modelled (E1b)
+      * Primary up-to-date assessment data - measurements (E2a) 
+      * More information: http://www.eionet.europa.eu/aqportal
+    * Add core and custom datasources for Oracle (#228)
+    * Support clear datasource for SQL Server (#199)
   
   --- Changes ---
   
+    * Harmonize existing datasources (#228)
+    * SWC REST-API version 1.5.0
+    * Use latest vecmath version
+    * Move Role to correct package (#201)
   
   --- Fixed issues ---
+  
+    * Issue #211: Failing InsertSensor if sml:DataInterface in puts
+    * Issue #225: Use setting default when missing
+    * Issue #227: GetResult returns values of not published series
+    * Issue #226: ERROR log statements while importing observations: "Duplicity of the featureOfInterest identifier"
+    * Issue #230: INSPIRE namespace element is not present in SpatialDatasetIdentifier
+    * Issue #233: Outdated links
   
  
  

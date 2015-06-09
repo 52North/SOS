@@ -123,10 +123,6 @@
 		<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a target="_blank" href="http://www.nexosproject.eu/">NeXOS</a> (co-funded by the European Commission under the grant agreement n&deg;614102)</td>
 	</tr>
 	<tr>
-		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.irceline.be/en"><img alt="Belgian Interregional Environment Agency (IRCEL - CELINE)" align="middle" width="172" src="static/images/funding/logo_irceline_no_text.png" /></a></td>
-		<td style="padding:3px;width:70%;">The <a href="http://www.irceline.be/en" target="_blank" title="Belgian Interregional Environment Agency (IRCEL - CELINE)">Belgian Interregional Environment Agency (IRCEL - CELINE)</a> is primarily active with the domain of air quality (modelling, forecasts, informing the public on the state of their air quality, e-reporting to the EU under the air quality directives, participating in scientific research on air quality, etc.). IRCEL – CELINE is a permanent cooperation between three regional environment agencies: <a href="http://www.awac.be/" title="Agence wallonne de l&#39Air et du Climat (AWAC)">Agence wallonne de l&#39Air et du Climat (AWAC)</a>, <a href="http://www.ibgebim.be/" title="Bruxelles Environnement - Leefmilieu Brussel">Bruxelles Environnement - Leefmilieu Brussel</a> and <a href="http://www.vmm.be/" title="Vlaamse Milieumaatschappij (VMM)">Vlaamse Milieumaatschappij (VMM)</a>.</td>
-	</tr>
-	<tr>
 		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.eo2heaven.org/"><img alt="EO2HEAVEN - Earth Observation and ENVironmental Modeling for the Mitigation of HEAlth Risks" align="middle" width="172" src="static/images/funding/logo_eo2heaven_200px.png" /></a></td>
 		<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a target="_blank" href="http://www.eo2heaven.org/">EO2HEAVEN</a> (co-funded by the European Commission under the grant agreement n&deg;244100)</td>
 	</tr>
@@ -153,6 +149,10 @@
 	<tr>
 		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.wupperverband.de"><img alt="Wupperverband" align="middle" width="196" src="static/images/funding/logo_wv.jpg" /></a></td>
 		<td style="padding:3px;width:70%;">The <a target="_blank" href="http://www.wupperverband.de/">Wupperverband</a> for water, humans and the environment (Germany)</td>
+	</tr>
+	<tr>
+		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.irceline.be/en"><img alt="Belgian Interregional Environment Agency (IRCEL - CELINE)" align="middle" width="130" src="static/images/funding/logo_irceline_no_text.png" /></a></td>
+		<td style="padding:3px;width:70%;">The <a href="http://www.irceline.be/en" target="_blank" title="Belgian Interregional Environment Agency (IRCEL - CELINE)">Belgian Interregional Environment Agency (IRCEL - CELINE)</a> is primarily active with the domain of air quality (modelling, forecasts, informing the public on the state of their air quality, e-reporting to the EU under the air quality directives, participating in scientific research on air quality, etc.). IRCEL – CELINE is a permanent cooperation between three regional environment agencies: <a href="http://www.awac.be/" title="Agence wallonne de l&#39Air et du Climat (AWAC)">Agence wallonne de l&#39Air et du Climat (AWAC)</a>, <a href="http://www.ibgebim.be/" title="Bruxelles Environnement - Leefmilieu Brussel">Bruxelles Environnement - Leefmilieu Brussel</a> and <a href="http://www.vmm.be/" title="Vlaamse Milieumaatschappij (VMM)">Vlaamse Milieumaatschappij (VMM)</a>.</td>
 	</tr>
 	<tr>
 		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.ivl.se/english"><img alt="IVL Swedish Environmental Research Institute" align="middle" width="196" src="static/images/funding/ivl_eng_rgb_70mm.png" /></a></td>

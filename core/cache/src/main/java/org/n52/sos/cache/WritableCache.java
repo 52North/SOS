@@ -31,11 +31,10 @@ package org.n52.sos.cache;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -43,9 +42,10 @@ import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
-
 
 public class WritableCache extends ReadableCache implements WritableContentCache, CacheConstants {
     private static final Logger LOG = LoggerFactory.getLogger(WritableCache.class);
@@ -342,8 +342,7 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
-    public void setI18nDescriptionForOffering(String offering,
-                                              MultilingualString description) {
+    public void setI18nDescriptionForOffering(String offering, MultilingualString description) {
         notNullOrEmpty(OFFERING, offering);
         notNull(DESCRIPTION, description);
         LOG.trace("Setting I18N Description of Offering {} to {}", offering, description);
@@ -523,7 +522,7 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         LOG.trace("Adding role {} to relatedFeature {}", role, relatedFeature);
         getRolesForRelatedFeaturesMap().add(relatedFeature, role);
     }
-    
+
     @Override
     public void removeAllowedObservationTypeForOffering(final String offering, final String allowedObservationType) {
         notNullOrEmpty(OFFERING, offering);
@@ -1460,18 +1459,18 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
-    public void addSupportedLanguage(Locale language){
-      notNull(SUPPORTED_LANGUAGE, language);
-      LOG.trace("Adding Language {}", language);
-      getSupportedLanguageSet().add(language);
+    public void addSupportedLanguage(Locale language) {
+        notNull(SUPPORTED_LANGUAGE, language);
+        LOG.trace("Adding Language {}", language);
+        getSupportedLanguageSet().add(language);
     }
 
     @Override
     public void addSupportedLanguage(Collection<Locale> languages) {
         noNullValues(SUPPORTED_LANGUAGES, languages);
-      for (final Locale language : languages) {
-          addSupportedLanguage(language);
-      }
+        for (final Locale language : languages) {
+            addSupportedLanguage(language);
+        }
     }
 
     @Override
@@ -1485,55 +1484,64 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         LOG.trace("Removing Language {}", language);
         getSupportedLanguageSet().remove(language);
     }
-    
+
     @Override
     public void setRequestableProcedureDescriptionFormat(Collection<String> formats) {
         LOG.trace("Adding requestable procedureDescriptionFormat");
         getRequestableProcedureDescriptionFormats().addAll(formats);
     }
 
-    @Override
-    public void addFeatureOfInterestIdentifierHumanReadableName(String identifier, String humanReadableName) {
+    /**
+     * Check if identifier and humanReadableName already contained in the map,
+     * if not, add the mapping.
+     * 
+     * @param identifier
+     *            Identifier to check
+     * @param humanReadableName
+     *            Human readable name to check
+     * @param map
+     *            Map of type
+     * @param type
+     *            Text type to check, e.g. procedure
+     */
+    protected void checkAndAddIdentifierHumanReadableName(String identifier, String humanReadableName,
+            Map<String, String> map, String type) {
         if (StringHelper.isNotEmpty(identifier) && StringHelper.isNotEmpty(humanReadableName)) {
-            if (!getFeatureOfInterestIdentifierForHumanReadableName().containsKey(humanReadableName)) {
-                getFeatureOfInterestIdentifierForHumanReadableName().put(humanReadableName, identifier);
-            } else {
-                LOG.error("Duplicity of the featureOfInterest identifier {}", identifier);
+            if (!map.containsKey(humanReadableName) && !map.containsValue(identifier)) {
+                map.put(humanReadableName, identifier);
+            } else if (map.containsKey(humanReadableName) && !map.containsValue(identifier)) {
+                LOG.error("Duplicity of the {} humanReadableName '{}'", type, humanReadableName);
+            } else if (!map.containsKey(humanReadableName) && map.containsValue(identifier)) {
+                LOG.error("Duplicity of the {} identifier '{}'", type, identifier);
+            } else if (!identifier.equals(map.get(humanReadableName))) {
+                LOG.error("Duplicity of the {} humanReadableName '{}' and identifier '{}'", type, humanReadableName,
+                        identifier);
             }
         }
+    }
+
+    @Override
+    public void addFeatureOfInterestIdentifierHumanReadableName(String identifier, String humanReadableName) {
+        checkAndAddIdentifierHumanReadableName(identifier, humanReadableName,
+                getFeatureOfInterestIdentifierForHumanReadableName(), "featureOfInterest");
     }
 
     @Override
     public void addObservablePropertyIdentifierHumanReadableName(String identifier, String humanReadableName) {
-        if (StringHelper.isNotEmpty(identifier) && StringHelper.isNotEmpty(humanReadableName)) {
-            if (!getObservablePropertyIdentifierForHumanReadableName().containsKey(humanReadableName)) {
-                getObservablePropertyIdentifierForHumanReadableName().put(humanReadableName, identifier);
-            } else {
-                LOG.error("Duplicity of the observableProperty identifier {}", identifier);
-            }
-        }
+        checkAndAddIdentifierHumanReadableName(identifier, humanReadableName,
+                getObservablePropertyIdentifierForHumanReadableName(), "observableProperty");
     }
 
     @Override
     public void addProcedureIdentifierHumanReadableName(String identifier, String humanReadableName) {
-        if (StringHelper.isNotEmpty(identifier) && StringHelper.isNotEmpty(humanReadableName)) {
-            if (!getProcedureIdentifierForHumanReadableName().containsKey(humanReadableName)) {
-                getProcedureIdentifierForHumanReadableName().put(humanReadableName, identifier);
-            } else {
-                LOG.error("Duplicity of the procedure identifier {}", identifier);
-            }
-        }
+        checkAndAddIdentifierHumanReadableName(identifier, humanReadableName,
+                getProcedureIdentifierForHumanReadableName(), "procedure");
     }
 
     @Override
     public void addOfferingIdentifierHumanReadableName(String identifier, String humanReadableName) {
-        if (StringHelper.isNotEmpty(identifier) && StringHelper.isNotEmpty(humanReadableName)) {
-            if (!getOfferingIdentifierForHumanReadableName().containsKey(humanReadableName)) {
-                getOfferingIdentifierForHumanReadableName().put(humanReadableName, identifier);
-            } else {
-                LOG.error("Duplicity of the offering identifier {}", identifier);
-            }
-        }
+        checkAndAddIdentifierHumanReadableName(identifier, humanReadableName,
+                getOfferingIdentifierForHumanReadableName(), "offering");
     }
 
     @Override
@@ -1542,7 +1550,8 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         LOG.trace("Removing featuresOfInterest identifier for humanReadableName {}", humanReadableName);
         getFeatureOfInterestIdentifierForHumanReadableName().remove(humanReadableName);
         if (getFeatureOfInterestIdentifierForHumanReadableName().containsKey(humanReadableName)) {
-            removeFeatureOfInterestHumanReadableNameForIdentifier(getFeatureOfInterestIdentifierForHumanReadableName().get(humanReadableName));
+            removeFeatureOfInterestHumanReadableNameForIdentifier(getFeatureOfInterestIdentifierForHumanReadableName()
+                    .get(humanReadableName));
         }
     }
 
@@ -1559,7 +1568,8 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         LOG.trace("Removing featuresOfInterest identifier for humanReadableName {}", humanReadableName);
         getObservablePropertyIdentifierForHumanReadableName().remove(humanReadableName);
         if (getObservablePropertyIdentifierForHumanReadableName().containsKey(humanReadableName)) {
-            removeObservablePropertyHumanReadableNameForIdentifier(getObservablePropertyIdentifierForHumanReadableName().get(humanReadableName));
+            removeObservablePropertyHumanReadableNameForIdentifier(getObservablePropertyIdentifierForHumanReadableName()
+                    .get(humanReadableName));
         }
     }
 
@@ -1576,7 +1586,8 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         LOG.trace("Removing procedure identifier for humanReadableName {}", humanReadableName);
         getProcedureIdentifierForHumanReadableName().remove(humanReadableName);
         if (getProcedureIdentifierForHumanReadableName().containsKey(humanReadableName)) {
-            removeProcedureHumanReadableNameForIdentifier(getProcedureIdentifierForHumanReadableName().get(humanReadableName));
+            removeProcedureHumanReadableNameForIdentifier(getProcedureIdentifierForHumanReadableName().get(
+                    humanReadableName));
         }
     }
 
@@ -1593,7 +1604,8 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         LOG.trace("Removing offering identifier for humanReadableName {}", humanReadableName);
         getOfferingIdentifierForHumanReadableName().remove(humanReadableName);
         if (getOfferingIdentifierForHumanReadableName().containsKey(humanReadableName)) {
-            removeOfferingHumanReadableNameForIdentifier(getOfferingIdentifierForHumanReadableName().get(humanReadableName));
+            removeOfferingHumanReadableNameForIdentifier(getOfferingIdentifierForHumanReadableName().get(
+                    humanReadableName));
         }
     }
 

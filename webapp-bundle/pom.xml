@@ -63,6 +63,20 @@
 							<groupId>${project.groupId}</groupId>
 							<artifactId>webapp</artifactId>
 						</overlay>
+					</overlays>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					 <webResources>
+                        <resource>
+                            <directory>src/main/webapp</directory>
+                            <filtering>false</filtering>
+                        </resource>
+                    </webResources>
+					<overlays>
 						<overlay>
 							<groupId>org.n52.sensorweb</groupId>
     						<artifactId>restful-timeseries-client</artifactId>
@@ -71,7 +85,6 @@
 			                	<exclude>**/META-INF/**</exclude>
 			                	<exclude>settings.json</exclude>
 			              	</excludes>
-			              	<filtered>true</filtered>
 			              	<targetPath>static/client/jsClient</targetPath>
 						</overlay>
 					</overlays>
@@ -125,4 +138,39 @@
 			<type>war</type>
 		</dependency>
 	</dependencies>
+	<profiles>
+		<profile>
+            <id>assembly</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                        	<execution>
+                        		<phase>install</phase>
+                        		<goals>
+                        			<goal>single</goal>
+                        		</goals>
+                        		<configuration>
+                        			<finalName>52n-sensorweb-sos-bundle-${project.version}</finalName>
+                        			<appendAssemblyId>false</appendAssemblyId>
+                        		</configuration>
+                        	</execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hibernate-datasource-oracle</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>hibernate-datasource-sqlserver</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+	</profiles>
 </project>

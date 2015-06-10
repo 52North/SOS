@@ -979,7 +979,7 @@
             <dependency>
 			  <groupId>se.jiderhamn</groupId>
 			  <artifactId>classloader-leak-prevention</artifactId>
-			  <version>1.11.0</version>
+			  <version>1.13.0</version>
 			</dependency>
             <!-- third party dialects -->
             <!-- Remove third party ncname resolver from SOS and use OXF instead -->

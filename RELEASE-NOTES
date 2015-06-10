@@ -18,11 +18,14 @@ RELEASE NOTES
       * More information: http://www.eionet.europa.eu/aqportal
     * Add core and custom datasources for Oracle (#228)
     * Support clear datasource for SQL Server (#199)
+    * Add webapp-bundle which builds a 52N SOS war including
+      * Sensor Web Client REST-API (https://github.com/52North/timeseries-api)
+        * Direct access to the database tables.
+      * JavaScript SOS client (https://github.com/52North/js-sensorweb-client)
   
   --- Changes ---
   
     * Harmonize existing datasources (#228)
-    * SWC REST-API version 1.5.0
     * Use latest vecmath version
     * Move Role to correct package (#201)
   

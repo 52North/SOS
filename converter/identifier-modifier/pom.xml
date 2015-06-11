@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.n52.sensorweb.sos</groupId>
+        <artifactId>converter</artifactId>
+         <version>4.3.0</version>
+    </parent>
+    <artifactId>identifier-modifier</artifactId>
+    <packaging>pom</packaging>
+    <name>52°North SOS - Identifier Modifier Modules</name>
+    <description>52°North SOS - Identifier Modifier Modules</description>
+    <modules>
+    	<module>abstract-identifier</module>
+        <module>flexible-identifier</module>
+        <module>prefixed-identifier</module>
+    </modules>
+</project>

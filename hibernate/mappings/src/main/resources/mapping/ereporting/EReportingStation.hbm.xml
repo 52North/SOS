@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingStation" table="station">
+    	<comment>Table to store the AQD e-Reporting Station information. Mapping file: mapping/ereporting/EReportingStation.hbm.xml</comment>
+        <id name="stationId" type="long">
+            <column name="stationId">
+            	<comment>Table primary key, used for relations</comment>
+            </column>
+            <generator class="native">
+            	<param name="sequence">stationId_seq</param>
+            </generator>
+        </id>
+       <property name="identifier" type="string">
+            <column name="identifier" not-null="true" unique-key="stationIdentifierUK">
+            	<comment>The identifier of the station, gml:identifier. Used as parameter for queries. Optional but unique</comment>
+            </column>
+        </property>
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="stationCodespaceIdFk">
+            <column name="codespace">
+            	<comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name">
+            	<comment>The name of the station, gml:name. Optional</comment>
+            </column>
+        </property>
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="stationCodespaceNameFk">
+            <column name="codespaceName">
+            	<comment>Relation/foreign key to the codespace table. Contains the gml:name codespace. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="description" type="string">
+            <column name="description">
+            	<comment>Description of the station, gml:description. Optional</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

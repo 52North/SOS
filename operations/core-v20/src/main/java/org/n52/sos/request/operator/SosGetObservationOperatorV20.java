@@ -87,29 +87,9 @@ public class SosGetObservationOperatorV20 extends
 
     @Override
     public GetObservationResponse receive(final GetObservationRequest sosRequest) throws OwsExceptionReport {
-        boolean checkForMergeObservationsInResponse = checkForMergeObservationsInResponse(sosRequest);
-        sosRequest.setMergeObservationValues(checkForMergeObservationsInResponse);
         final GetObservationResponse sosResponse = getDao().getObservation(sosRequest);
         setObservationResponseResponseFormatAndContentType(sosRequest, sosResponse);
-        // TODO check for correct merging, add merge if swes:extension is set
-        if (checkForMergeObservationsInResponse) {
-            sosResponse.mergeObservationsWithSameConstellation();
-            sosResponse.setMergeObservations(true);
-        }        
         return sosResponse;
-    }
-
-    private boolean checkForMergeObservationsInResponse(GetObservationRequest sosRequest) {
-        if (getActiveProfile().isMergeValues() || isSetExtensionMergeObservationsToSweDataArray(sosRequest)) {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean isSetExtensionMergeObservationsToSweDataArray(final GetObservationRequest sosRequest) {
-        return sosRequest.isSetExtensions()
-                && sosRequest.getExtensions().isBooleanExtensionSet(
-                        Sos2Constants.Extensions.MergeObservationsIntoDataArray.name());
     }
 
     @Override
@@ -262,24 +242,6 @@ public class SosGetObservationOperatorV20 extends
             exceptions.throwIfNotEmpty();
         }
     }
-
-    // private void checkResponseFormat(final GetObservationRequest request)
-    // throws OwsExceptionReport {
-    // if (request.getResponseFormat() == null) {
-    // request.setResponseFormat(getActiveProfile().getObservationResponseFormat());
-    // } else if (request.getResponseFormat() != null &&
-    // request.getResponseFormat().isEmpty()) {
-    // throw new MissingResponseFormatParameterException();
-    // } else {
-    // final Collection<String> supportedResponseFormats =
-    // CodingRepository.getInstance().getSupportedResponseFormats(request.getService(),
-    // request.getVersion());
-    // if (!supportedResponseFormats.contains(request.getResponseFormat())) {
-    // throw new
-    // InvalidResponseFormatParameterException(request.getResponseFormat());
-    // }
-    // }
-    // }
 
     @Override
     public WSDLOperation getSosOperationDefinition() {

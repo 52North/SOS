@@ -60,6 +60,13 @@ public abstract class OwsCapabilities {
     public OwsCapabilities(String service, String version) {
         this.version = version;
     }
+    
+    /**
+     * @param service the service
+     */
+    public void setService(String service) {
+    	this.service = service;
+    }
 
     /**
      * @return the service

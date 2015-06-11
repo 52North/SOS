@@ -346,8 +346,12 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
 //                addXlinkHrefAttr(observation.getObservationConstellation().getProcedure().getIdentifier());
 //            }
 //        } else {
-            empty(OmConstants.QN_OM_20_PROCEDURE);
-            addXlinkHrefAttr(observation.getObservationConstellation().getProcedure().getIdentifier());
+        empty(OmConstants.QN_OM_20_PROCEDURE);
+        addXlinkHrefAttr(observation.getObservationConstellation().getProcedure().getIdentifier());
+        if (observation.getObservationConstellation().getProcedure().isSetName()
+                && observation.getObservationConstellation().getProcedure().getFirstName().isSetValue()) {
+            addXlinkTitleAttr(observation.getObservationConstellation().getProcedure().getFirstName().getValue());
+        }
 //        }
         
         
@@ -400,6 +404,11 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
     protected void writeObservableProperty() throws XMLStreamException {
         empty(OmConstants.QN_OM_20_OBSERVED_PROPERTY);
         addXlinkHrefAttr(observation.getObservationConstellation().getObservableProperty().getIdentifier());
+        if (observation.getObservationConstellation().getObservableProperty().isSetName()
+                && observation.getObservationConstellation().getObservableProperty().getFirstName().isSetValue()) {
+            addXlinkTitleAttr(observation.getObservationConstellation().getObservableProperty().getFirstName()
+                    .getValue());
+        }
     }
 
     /**
@@ -434,6 +443,11 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         } else {
             empty(OmConstants.QN_OM_20_FEATURE_OF_INTEREST);
             addXlinkHrefAttr(observation.getObservationConstellation().getFeatureOfInterest().getIdentifier());
+            if (observation.getObservationConstellation().getFeatureOfInterest().isSetName()
+                    && observation.getObservationConstellation().getFeatureOfInterest().getFirstName().isSetValue()) {
+                addXlinkTitleAttr(observation.getObservationConstellation().getFeatureOfInterest().getFirstName()
+                        .getValue());
+            }
         }
     }
 

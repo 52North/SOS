@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.n52.series.api.v1.db.da.beans">
+	<class name="SeriesEntity" table="series">
+		<id name="pkid" type="long">
+			<column name="seriesid" />
+			<generator class="assigned" />
+		</id>
+		<many-to-one name="category"
+			class="org.n52.series.api.v1.db.da.beans.CategoryEntity" 
+			column="observablepropertyid"
+			insert="false" 
+			update="false" />
+		<many-to-one name="procedure"
+			class="org.n52.series.api.v1.db.da.beans.ProcedureEntity" 
+			column="procedureid" />
+		<many-to-one name="phenomenon"
+			class="org.n52.series.api.v1.db.da.beans.PhenomenonEntity" 
+			column="observablepropertyid"
+			insert="false" 
+			update="false" />
+		<many-to-one name="feature"
+			class="org.n52.series.api.v1.db.da.beans.FeatureEntity" 
+			column="featureofinterestid" />
+		<many-to-one name="unit"
+			class="org.n52.series.api.v1.db.da.beans.UnitEntity" 
+			column="unitid" />
+		<!-- defines a fixed number of decimal places -->
+		<property name="numberOfDecimals" 
+			formula="3" 
+			type="int" />
+		<property name="published" 
+			column="published" 
+			type="org.hibernate.type.TrueFalseType" />
+		<component name="firstValue"
+			class="org.n52.series.api.v1.db.da.beans.ObservationEntity">
+			<property name="seriesPkid" 
+				column="seriesid" 
+				type="long"
+				insert="false" 
+				update="false" />
+			<property name="timestamp" 
+			column="firsttimestamp" 
+			type="timestamp" />
+			<property name="value" 
+			column="firstnumericvalue" 
+			type="double" />
+		</component>
+		<component name="lastValue"
+			class="org.n52.series.api.v1.db.da.beans.ObservationEntity">
+			<property name="seriesPkid" 
+				column="seriesid" 
+				type="long"
+				insert="false" 
+				update="false" />
+			<property name="timestamp" 
+				column="lasttimestamp" 
+				type="timestamp" />
+			<property name="value" 
+				column="lastnumericvalue" 
+				type="double" />
+		</component>
+		<list name="observations" 
+			table="observation" 
+			fetch="select"
+			inverse="true">
+			<key column="observationid" />
+			<index column="seriesid" />
+			<one-to-many class="ObservationEntity" />
+		</list>
+	</class>
+
+</hibernate-mapping>

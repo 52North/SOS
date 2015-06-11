@@ -161,6 +161,12 @@ public class OwsOperation implements Comparable<OwsOperation> {
         addParameterValue(parameterName.name(), value);
     }
 
+    public <E extends Enum<E>> void overrideParameter(E parameterName, OwsParameterValue value) {
+        List<OwsParameterValue> values = new LinkedList<OwsParameterValue>();
+        values.add(value);
+        parameterValues.put(parameterName.name(), values);
+    }
+
     public <E extends Enum<E>> void addPossibleValuesParameter(E parameterName, Collection<String> values) {
         addPossibleValuesParameter(parameterName.name(), values);
     }

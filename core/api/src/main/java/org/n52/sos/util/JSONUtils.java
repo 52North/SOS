@@ -40,6 +40,7 @@ import java.io.Writer;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,8 +175,13 @@ public class JSONUtils {
         return getReader().readTree(reader);
     }
 
-    public static JsonNode loadString(final String json) throws IOException {
-        return loadReader(new StringReader(json));
+    public static JsonNode loadString(final String json)  {
+        try {
+            return loadReader(new StringReader(json));
+        } catch (IOException ex) {
+            // cannot happen
+            throw new RuntimeException(ex);
+        }
     }
 
     public static ObjectNode toJSON(Map<String, ?> map) {

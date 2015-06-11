@@ -79,9 +79,12 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
         this.featureOfInterest = featureOfInterest;
     }
 
-    @Override
+	@Override
     protected void queryTimes() {
         try {
+        	if (session == null) {
+                session = sessionHolder.getSession();
+            }
             ObservationValueTime minTime;
             ObservationValueTime maxTime;
             // query with temporal filter

@@ -233,7 +233,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         if (!sosObservation.getObservationConstellation().isSetObservationType()
                 || (sosObservation.getObservationConstellation().isSetObservationType() && isInvalidObservationType(sosObservation
                         .getObservationConstellation().getObservationType()))) {
-            return null;
+            throw new UnsupportedEncoderInputException(this, sosObservation.getObservationConstellation().isSetObservationType());
         }
         MeasurementTimeseriesDomainRangeDocument xbMearuementTimeseriesDomainRangeDoc =
                 MeasurementTimeseriesDomainRangeDocument.Factory.newInstance();
@@ -420,8 +420,9 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     }
 
     private boolean isInvalidObservationType(String observationType) {
-        return !OmConstants.OBS_TYPE_COUNT_OBSERVATION.equals(observationType)
-                || !OmConstants.OBS_TYPE_MEASUREMENT.equals(observationType);
+        return !(OmConstants.OBS_TYPE_COUNT_OBSERVATION.equals(observationType)
+                || OmConstants.OBS_TYPE_MEASUREMENT.equals(observationType)
+                || OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observationType));
     }
 
     private XmlObject createDataRecord(AbstractObservationValue<?> observationValue, String unit)

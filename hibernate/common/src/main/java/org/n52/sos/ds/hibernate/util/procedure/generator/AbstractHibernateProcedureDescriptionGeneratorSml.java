@@ -28,13 +28,21 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.n52.sos.cache.ContentCache;
+import org.n52.sos.ds.I18NDAO;
+import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.interfaces.BlobObservation;
@@ -44,7 +52,9 @@ import org.n52.sos.ds.hibernate.entities.interfaces.CountObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
+import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.om.OmConstants;
@@ -72,6 +82,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Coordinate;
 
 /**
@@ -124,13 +135,14 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
         if (getServiceConfig().isAddOutputsToSensorML()
                 && !"hydrology".equalsIgnoreCase(Configurator.getInstance().getProfileHandler().getActiveProfile()
                         .getIdentifier())) {
-            abstractProcess.setInputs(createInputs(observableProperties));
-            abstractProcess.setOutputs(createOutputs(procedure, observableProperties, session));
+            TreeSet<String> obsProps = Sets.newTreeSet(Arrays.asList(observableProperties));
+            abstractProcess.setInputs(createInputs(obsProps));
+            abstractProcess.setOutputs(createOutputs(procedure, obsProps, session));
         }
     }
 
-    private List<SmlIo<?>> createInputs(String[] observableProperties) throws OwsExceptionReport {
-        final List<SmlIo<?>> inputs = Lists.newArrayListWithExpectedSize(observableProperties.length);
+    private List<SmlIo<?>> createInputs(Set<String> observableProperties) throws OwsExceptionReport {
+        final List<SmlIo<?>> inputs = Lists.newArrayListWithExpectedSize(observableProperties.size());
         int i = 1;
         for (String observableProperty : observableProperties) {
             inputs.add(new SmlIo<String>().setIoName("input#" + i++).setIoValue(getInputComponent(observableProperty)));
@@ -153,27 +165,27 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private List<SmlIo<?>> createOutputs(Procedure procedure, String[] observableProperties, Session session)
+    private List<SmlIo<?>> createOutputs(Procedure procedure, Set<String> observableProperties, Session session)
             throws OwsExceptionReport {
         try {
-            final List<SmlIo<?>> outputs = Lists.newArrayListWithExpectedSize(observableProperties.length);
+            final List<SmlIo<?>> outputs = Lists.newArrayListWithExpectedSize(observableProperties.size());
             int i = 1;
             final boolean supportsObservationConstellation =
                     HibernateHelper.isEntitySupported(ObservationConstellation.class);
-            for (String observableProperty : observableProperties) {
-                final SmlIo<?> output;
-                if (supportsObservationConstellation) {
-                    output =
-                            createOutputFromObservationConstellation(procedure.getIdentifier(), observableProperty,
-                                    session);
-                } else {
-                    output =
-                            createOutputFromExampleObservation(procedure.getIdentifier(), observableProperty, session);
-                }
-                if (output != null) {
-                    output.setIoName("output#" + i++);
-                    outputs.add(output);
-                }
+                for (String observableProperty : observableProperties) {
+                    final SmlIo<?> output;
+                    if (supportsObservationConstellation) {
+                        output =
+                                createOutputFromObservationConstellation(procedure.getIdentifier(), observableProperty,
+                                        session);
+                    } else {
+                        output =
+                                createOutputFromExampleObservation(procedure.getIdentifier(), observableProperty, session);
+                    }
+                    if (output != null) {
+                        output.setIoName("output#" + i++);
+                        outputs.add(output);
+                    }
             }
             return outputs;
         } catch (final HibernateException he) {
@@ -187,8 +199,8 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
         List<ObservationConstellation> observationConstellations =
                 new ObservationConstellationDAO().getObservationConstellations(procedure, observableProperty, session);
         if (CollectionHelper.isNotEmpty(observationConstellations)) {
-            String unit = queryUnit(observationConstellations.iterator().next(), session);
             ObservationConstellation oc = observationConstellations.iterator().next();
+            String unit = queryUnit(oc, session);
             if (oc.isSetObservationType()) {
                 final String observationType = oc.getObservationType().getObservationType();
                 if (OmConstants.OBS_TYPE_MEASUREMENT.equals(observationType)) {
@@ -256,6 +268,14 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
             LOGGER.debug("QUERY queryUnit(observationConstellation) with NamedQuery: {}",
                     SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY);
             return (String) namedQuery.uniqueResult();
+        } else if (EntitiyHelper.getInstance().isSeriesSupported()) {
+            List<Series> series = DaoFactory.getInstance().getSeriesDAO().getSeries(Lists.newArrayList(oc.getProcedure().getIdentifier()), Lists.newArrayList(oc.getObservableProperty().getIdentifier()), Lists.<String>newArrayList(), session);
+            if (series.iterator().hasNext()) {
+                Series next = series.iterator().next();
+                if (next.isSetUnit() ) {
+                    return next.getUnit().getUnit();
+                }
+            }
         }
         AbstractObservation exampleObservation =
                 getExampleObservation(oc.getProcedure().getIdentifier(), oc.getObservableProperty().getIdentifier(),

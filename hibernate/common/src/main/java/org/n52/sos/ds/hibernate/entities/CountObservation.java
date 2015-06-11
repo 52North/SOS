@@ -55,4 +55,8 @@ public class CountObservation extends Observation implements Serializable, org.n
         return value != null;
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
 }

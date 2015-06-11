@@ -43,24 +43,29 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
+import org.n52.sos.ds.hibernate.entities.interfaces.BlobObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.CategoryObservation;
 import org.n52.sos.ds.hibernate.entities.Codespace;
+import org.n52.sos.ds.hibernate.entities.interfaces.CountObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.Observation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
 import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.interfaces.BooleanObservation;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
@@ -74,8 +79,17 @@ import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.values.BooleanValue;
+import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.GeometryValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TextValue;
+import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -84,6 +98,7 @@ import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,175 +117,6 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractObservationDAO.class);
 
     /**
-     * Get all observation identifiers
-     *
-     * @param session
-     *            Hibernate session
-     * @return Observation identifiers
-     */
-    public abstract List<String> getObservationIdentifiers(Session session);
-
-    /**
-     * Check if there are numeric observations for the offering
-     *
-     * @param offeringIdentifier
-     *            Offering identifier
-     * @param session
-     *            Hibernate session
-     * @return If there are observations or not
-     */
-    public abstract boolean checkNumericObservationsFor(String offeringIdentifier, Session session);
-
-    /**
-     * Check if there are boolean observations for the offering
-     *
-     * @param offeringIdentifier
-     *            Offering identifier
-     * @param session
-     *            Hibernate session
-     * @return If there are observations or not
-     */
-    public abstract boolean checkBooleanObservationsFor(String offeringIdentifier, Session session);
-
-    /**
-     * Check if there are count observations for the offering
-     *
-     * @param offeringIdentifier
-     *            Offering identifier
-     * @param session
-     *            Hibernate session
-     * @return If there are observations or not
-     */
-    public abstract boolean checkCountObservationsFor(String offeringIdentifier, Session session);
-
-    /**
-     * Check if there are category observations for the offering
-     *
-     * @param offeringIdentifier
-     *            Offering identifier
-     * @param session
-     *            Hibernate session
-     * @return If there are observations or not
-     */
-    public abstract boolean checkCategoryObservationsFor(String offeringIdentifier, Session session);
-
-    /**
-     * Check if there are text observations for the offering
-     *
-     * @param offeringIdentifier
-     *            Offering identifier
-     * @param session
-     *            Hibernate session
-     * @return If there are observations or not
-     */
-    public abstract boolean checkTextObservationsFor(String offeringIdentifier, Session session);
-
-    /**
-     * Check if there are blob observations for the offering
-     *
-     * @param offeringIdentifier
-     *            Offering identifier
-     * @param session
-     *            Hibernate session
-     * @return If there are observations or not
-     */
-    public abstract boolean checkBlobObservationsFor(String offeringIdentifier, Session session);
-
-    /**
-     * Check if there are geometry observations for the offering
-     *
-     * @param offeringIdentifier
-     *            Offering identifier
-     * @param session
-     *            Hibernate session
-     * @return If there are observations or not
-     */
-    public abstract boolean checkGeometryObservationsFor(String offeringIdentifier, Session session);
-
-    /**
-     * Check if there are geometry observations for the offering
-     *
-     * @param offeringIdentifier
-     *            Offering identifier
-     * @param session
-     *            Hibernate session
-     * @return If there are observations or not
-     */
-    public abstract boolean checkSweDataArrayObservationsFor(String offeringIdentifier, Session session);
-
-    /**
-     * Get min phenomenon time from observations
-     *
-     * @param session
-     *            Hibernate session Hibernate session
-     * @return min time
-     */
-    public abstract DateTime getMinPhenomenonTime(Session session);
-
-    /**
-     * Get max phenomenon time from observations
-     *
-     * @param session
-     *            Hibernate session Hibernate session
-     *
-     * @return max time
-     */
-    public abstract DateTime getMaxPhenomenonTime(Session session);
-
-    /**
-     * Get min result time from observations
-     *
-     * @param session
-     *            Hibernate session Hibernate session
-     *
-     * @return min time
-     */
-    public abstract DateTime getMinResultTime(Session session);
-
-    /**
-     * Get max phenomenon time from observations
-     *
-     * @param session
-     *            Hibernate session Hibernate session
-     *
-     * @return max time
-     */
-    public abstract DateTime getMaxResultTime(Session session);
-
-    /**
-     * Get global temporal bounding box
-     *
-     * @param session
-     *            Hibernate session the session
-     *
-     * @return the global getEqualRestiction bounding box over all observations,
-     *         or <tt>null</tt>
-     */
-    public abstract TimePeriod getGlobalTemporalBoundingBox(Session session);
-
-    /**
-     * Get Hibernate Criteria for result model
-     *
-     * @param resultModel
-     *            Result model
-     * @param session
-     *            Hibernate session
-     * @return Hibernate Criteria
-     */
-    public abstract Criteria getObservationClassCriteriaForResultModel(String resultModel, Session session);
-
-    /**
-     * Create an observation object from SOS value
-     *
-     * @param value
-     *            SOS value
-     * @param session
-     *            Hibernate session
-     * @return Observation object
-     */
-    public abstract AbstractObservation createObservationFromValue(Value<?> value, Session session);
-
-    /**
      * Add observation identifier (procedure, observableProperty,
      * featureOfInterest) to observation
      *
@@ -280,34 +126,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Observation to add identifiers
      * @param session
      *            Hibernate session
+     * @throws CodedException 
      */
     protected abstract void addObservationIdentifiersToObservation(ObservationIdentifiers observationIdentifiers,
-            AbstractObservation observation, Session session);
-
-    /**
-     * Get default Hibernate Criteria to query observations, default flag ==
-     * <code>false</code>
-     *
-     * @param session
-     *            Hiberante session
-     * @return Default Criteria
-     */
-    public abstract Criteria getDefaultObservationCriteria(Session session);
-
-    /**
-     * Get default Hibernate Criteria to query observation info, default flag ==
-     * <code>false</code>
-     *
-     * @param session
-     *            Hiberante session
-     * @return Default Criteria
-     */
-    public abstract Criteria getDefaultObservationInfoCriteria(Session session);
-
-    public Criteria getDefaultObservationCriteria(Class<?> clazz, Session session) {
-        return session.createCriteria(clazz).add(Restrictions.eq(AbstractObservation.DELETED, false))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-    }
+            AbstractObservation observation, Session session) throws CodedException;
 
     /**
      * Get Hibernate Criteria for querying observations with parameters
@@ -340,17 +162,6 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             String offering, Session session);
 
     /**
-     * Query observation by identifier
-     *
-     * @param identifier
-     *            Observation identifier (gml:identifier)
-     * @param session
-     *            Hiberante session
-     * @return Observation
-     */
-    public abstract AbstractObservation getObservationByIdentifier(String identifier, Session session);
-
-    /**
      * Get Hibernate Criteria for observation with restriction procedure
      *
      * @param procedure
@@ -358,8 +169,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @param session
      *            Hibernate session
      * @return Hibernate Criteria to query observations
+     * @throws CodedException 
      */
-    public abstract Criteria getObservationCriteriaForProcedure(String procedure, Session session);
+    public abstract Criteria getObservationCriteriaForProcedure(String procedure, Session session) throws CodedException;
 
     /**
      * Get Hibernate Criteria for observation with restriction
@@ -369,8 +181,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @param session
      *            Hibernate session
      * @return Hibernate Criteria to query observations
+     * @throws CodedException 
      */
-    public abstract Criteria getObservationCriteriaForObservableProperty(String observableProperty, Session session);
+    public abstract Criteria getObservationCriteriaForObservableProperty(String observableProperty, Session session) throws CodedException;
 
     /**
      * Get Hibernate Criteria for observation with restriction featureOfInterest
@@ -379,8 +192,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @param session
      *            Hibernate session
      * @return Hibernate Criteria to query observations
+     * @throws CodedException 
      */
-    public abstract Criteria getObservationCriteriaForFeatureOfInterest(String featureOfInterest, Session session);
+    public abstract Criteria getObservationCriteriaForFeatureOfInterest(String featureOfInterest, Session session) throws CodedException;
 
     /**
      * Get Hibernate Criteria for observation with restrictions procedure and
@@ -391,8 +205,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @param session
      *            Hibernate session
      * @return Hibernate Criteria to query observations
+     * @throws CodedException 
      */
-    public abstract Criteria getObservationCriteriaFor(String procedure, String observableProperty, Session session);
+    public abstract Criteria getObservationCriteriaFor(String procedure, String observableProperty, Session session) throws CodedException;
 
     /**
      * Get Hibernate Criteria for observation with restrictions procedure,
@@ -404,9 +219,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @param session
      *            Hibernate session
      * @return Hibernate Criteria to query observations
+     * @throws CodedException 
      */
     public abstract Criteria getObservationCriteriaFor(String procedure, String observableProperty,
-            String featureOfInterest, Session session);
+            String featureOfInterest, Session session) throws CodedException;
 
     /**
      * Get all observation identifiers for a procedure.
@@ -416,6 +232,249 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @return Collection of observation identifiers
      */
     public abstract Collection<String> getObservationIdentifiers(String procedureIdentifier, Session session);
+
+    /**
+     * Query observation by identifier
+     *
+     * @param identifier
+     *            Observation identifier (gml:identifier)
+     * @param session
+     *            Hiberante session
+     * @return Observation
+     */
+    public AbstractObservation getObservationByIdentifier(String identifier, Session session) {
+        Criteria criteria = getDefaultObservationCriteria(session);
+        addObservationIdentifierToCriteria(criteria, identifier, session);
+        return (AbstractObservation) criteria.uniqueResult();
+    }
+
+    /**
+     * Check if there are numeric observations for the offering
+     *
+     * @param offeringIdentifier
+     *            Offering identifier
+     * @param session
+     *            Hibernate session
+     * @return If there are observations or not
+     */
+    public boolean checkNumericObservationsFor(String offeringIdentifier, Session session) {
+        return checkObservationFor(getNumericObservationClass(), offeringIdentifier, session);
+    }
+
+    /**
+     * Check if there are boolean observations for the offering
+     *
+     * @param offeringIdentifier
+     *            Offering identifier
+     * @param session
+     *            Hibernate session
+     * @return If there are observations or not
+     */
+    public boolean checkBooleanObservationsFor(String offeringIdentifier, Session session) {
+        return checkObservationFor(getBooleanObservationClass(), offeringIdentifier, session);
+    }
+
+    /**
+     * Check if there are count observations for the offering
+     *
+     * @param offeringIdentifier
+     *            Offering identifier
+     * @param session
+     *            Hibernate session
+     * @return If there are observations or not
+     */
+    public boolean checkCountObservationsFor(String offeringIdentifier, Session session) {
+        return checkObservationFor(getCountObservationClass(), offeringIdentifier, session);
+    }
+
+    /**
+     * Check if there are category observations for the offering
+     *
+     * @param offeringIdentifier
+     *            Offering identifier
+     * @param session
+     *            Hibernate session
+     * @return If there are observations or not
+     */
+    public boolean checkCategoryObservationsFor(String offeringIdentifier, Session session) {
+        return checkObservationFor(getCategoryObservationClass(), offeringIdentifier, session);
+    }
+
+    /**
+     * Check if there are text observations for the offering
+     *
+     * @param offeringIdentifier
+     *            Offering identifier
+     * @param session
+     *            Hibernate session
+     * @return If there are observations or not
+     */
+    public boolean checkTextObservationsFor(String offeringIdentifier, Session session) {
+        return checkObservationFor(getTextObservationClass(), offeringIdentifier, session);
+    }
+
+    /**
+     * Check if there are blob observations for the offering
+     *
+     * @param offeringIdentifier
+     *            Offering identifier
+     * @param session
+     *            Hibernate session
+     * @return If there are observations or not
+     */
+    public boolean checkBlobObservationsFor(String offeringIdentifier, Session session) {
+        return checkObservationFor(getBlobObservationClass(), offeringIdentifier, session);
+    }
+
+    /**
+     * Check if there are geometry observations for the offering
+     *
+     * @param offeringIdentifier
+     *            Offering identifier
+     * @param session
+     *            Hibernate session
+     * @return If there are observations or not
+     */
+    public boolean checkGeometryObservationsFor(String offeringIdentifier, Session session) {
+        return checkObservationFor(getGeometryObservationClass(), offeringIdentifier, session);
+    }
+
+    /**
+     * Check if there are geometry observations for the offering
+     *
+     * @param offeringIdentifier
+     *            Offering identifier
+     * @param session
+     *            Hibernate session
+     * @return If there are observations or not
+     */
+    public boolean checkSweDataArrayObservationsFor(String offeringIdentifier, Session session) {
+        return checkObservationFor(getSweDataArrayObservationClass(), offeringIdentifier, session);
+    }
+
+    /**
+     * Get Hibernate Criteria for result model
+     *
+     * @param resultModel
+     *            Result model
+     * @param session
+     *            Hibernate session
+     * @return Hibernate Criteria
+     */
+    public Criteria getObservationClassCriteriaForResultModel(String resultModel, Session session) {
+        if (StringHelper.isNotEmpty(resultModel)) {
+            if (resultModel.equals(OmConstants.OBS_TYPE_MEASUREMENT)) {
+                return createCriteriaForObservationClass(getNumericObservationClass(), session);
+            } else if (resultModel.equals(OmConstants.OBS_TYPE_COUNT_OBSERVATION)) {
+                return createCriteriaForObservationClass(getCategoryObservationClass(), session);
+            } else if (resultModel.equals(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION)) {
+                return createCriteriaForObservationClass(getCategoryObservationClass(), session);
+            } else if (resultModel.equals(OmConstants.OBS_TYPE_TRUTH_OBSERVATION)) {
+                return createCriteriaForObservationClass(getBooleanObservationClass(), session);
+            } else if (resultModel.equals(OmConstants.OBS_TYPE_TEXT_OBSERVATION)) {
+                return createCriteriaForObservationClass(getTextObservationClass(), session);
+            } else if (resultModel.equals(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION)) {
+                return createCriteriaForObservationClass(getGeometryObservationClass(), session);
+            } else if (resultModel.equals(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION)) {
+                return createCriteriaForObservationClass(getBlobObservationClass(), session);
+            }
+        }
+        return createCriteriaForObservationClass(getObservationClass(), session);
+    }
+
+    /**
+     * Create an observation object from SOS value
+     *
+     * @param value
+     *            SOS value
+     * @param session
+     *            Hibernate session
+     * @return Observation object
+     * @throws CodedException 
+     */
+    public AbstractObservation createObservationFromValue(Value<?> value, Session session) throws CodedException {
+        try {
+
+            if (value instanceof BooleanValue) {
+                AbstractObservation observation = (AbstractObservation) getBooleanObservationClass().newInstance();
+                ((BooleanObservation) observation).setValue(((BooleanValue) value).getValue());
+                return observation;
+            } else if (value instanceof UnknownValue) {
+                AbstractObservation observation = (AbstractObservation) getBlobObservationClass().newInstance();
+                ((BlobObservation) observation).setValue(((UnknownValue) value).getValue());
+                return observation;
+            } else if (value instanceof CategoryValue) {
+                AbstractObservation observation = (AbstractObservation) getCategoryObservationClass().newInstance();
+                ((CategoryObservation) observation).setValue(((CategoryValue) value).getValue());
+                return observation;
+            } else if (value instanceof CountValue) {
+                AbstractObservation observation = (AbstractObservation) getCountObservationClass().newInstance();
+                ((CountObservation) observation).setValue(((CountValue) value).getValue());
+                return observation;
+            } else if (value instanceof GeometryValue) {
+                AbstractObservation observation = (AbstractObservation) getGeometryObservationClass().newInstance();
+                ((GeometryObservation) observation).setValue(((GeometryValue) value).getValue());
+                return observation;
+            } else if (value instanceof QuantityValue) {
+                AbstractObservation observation = (AbstractObservation) getNumericObservationClass().newInstance();
+                ((NumericObservation) observation).setValue(((QuantityValue) value).getValue());
+                return observation;
+            } else if (value instanceof TextValue) {
+                AbstractObservation observation = (AbstractObservation) getTextObservationClass().newInstance();
+                ((TextObservation) observation).setValue(((TextValue) value).getValue());
+                return observation;
+            } else if (value instanceof SweDataArrayValue) {
+                AbstractObservation observation = (AbstractObservation) getSweDataArrayObservationClass().newInstance();
+                ((SweDataArrayObservation) observation).setValue(((SweDataArrayValue) value).getValue().getXml());
+                return observation;
+            }
+            return (AbstractObservation) getObservationClass().newInstance();
+        } catch (IllegalAccessException | InstantiationException e) {
+            throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating observation instance for %S", value.getClass().getCanonicalName());
+        }
+    }
+
+    /**
+     * Get default Hibernate Criteria to query observations, default flag ==
+     * <code>false</code>
+     *
+     * @param session
+     *            Hiberante session
+     * @return Default Criteria
+     */
+    public Criteria getDefaultObservationCriteria(Session session) {
+       return getDefaultCriteria(getObservationClass(), session);
+    }
+
+    /**
+     * Get default Hibernate Criteria to query observation info, default flag ==
+     * <code>false</code>
+     *
+     * @param session
+     *            Hiberante session
+     * @return Default Criteria
+     */
+    public Criteria getDefaultObservationInfoCriteria(Session session) {
+        return getDefaultCriteria(getObservationInfoClass(), session);
+    }
+    
+    /**
+     * Get default Hibernate Criteria to query observation time, default flag ==
+     * <code>false</code>
+     *
+     * @param session
+     *            Hiberante session
+     * @return Default Criteria
+     */
+    public Criteria getDefaultObservationTimeCriteria(Session session) {
+        return getDefaultCriteria(getObservationTimeClass(), session);
+    }
+    
+    @SuppressWarnings("rawtypes")
+    private Criteria getDefaultCriteria(Class clazz, Session session) {
+        return session.createCriteria(clazz).add(Restrictions.eq(AbstractObservation.DELETED, false))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    }
 
     /**
      * Get Hibernate Criteria for observation with restriction procedure Insert
@@ -499,13 +558,16 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         if (value.getValue().getUnit() != null) {
             hObservation.setUnit(getUnit(value.getValue().getUnit(), unitCache, session));
         }
-        ObservationIdentifiers observationIdentifiers =
-                addOfferingsToObaservationAndGetProcedureObservableProperty(hObservation, hObservationConstellations);
-        observationIdentifiers.setFeatureOfInterest(hFeature);
+        addOfferingsToObservation(hObservation, hObservationConstellations);
+        ObservationIdentifiers observationIdentifiers = createObservationIdentifiers(hObservationConstellations);
+        addProcedureObservablePropertyToObservationIdentifiers(hObservationConstellations, observationIdentifiers);
+        addFeatureOfInterestToObservationIdentifiers(hFeature, observationIdentifiers);
+        addAdditionalObjectsToObservationIdentifiers(observationIdentifiers, sosObservation, session);
         addObservationIdentifiersToObservation(observationIdentifiers, hObservation, session);
         if (sosObservation.isSetSpatialFilteringProfileParameter()) {
-            hObservation.setSamplingGeometry(GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(
-                    sosObservation.getSpatialFilteringProfileParameter().getValue().getValue()));
+            hObservation.setSamplingGeometry(GeometryHandler.getInstance()
+                    .switchCoordinateAxisFromToDatasourceIfNeeded(
+                            sosObservation.getSpatialFilteringProfileParameter().getValue().getValue()));
         }
 
         session.saveOrUpdate(hObservation);
@@ -514,6 +576,45 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         if (sosObservation.isSetParameter()) {
             insertParameter(sosObservation.getParameter(), hObservation, session);
         }
+    }
+
+    protected void addOfferingsToObservation(AbstractObservation hObservation,
+            Set<ObservationConstellation> hObservationConstellations) {
+        for (ObservationConstellation observationConstellation : hObservationConstellations) {
+            hObservation.getOfferings().add(observationConstellation.getOffering());
+        }
+    }
+
+    protected ObservationIdentifiers createObservationIdentifiers(Set<ObservationConstellation> hObservationConstellations) {
+        ObservationIdentifiers observationIdentifiers = new ObservationIdentifiers();
+        addProcedureObservablePropertyToObservationIdentifiers(hObservationConstellations, observationIdentifiers);
+        return observationIdentifiers;
+    }
+
+    protected ObservationIdentifiers addProcedureObservablePropertyToObservationIdentifiers(
+            Set<ObservationConstellation> hObservationConstellations, ObservationIdentifiers observationIdentifiers) {
+        if (CollectionHelper.isNotEmpty(hObservationConstellations)) {
+            boolean firstObsConst = true;
+            for (ObservationConstellation observationConstellation : hObservationConstellations) {
+                if (firstObsConst) {
+                    observationIdentifiers.setObservableProperty(observationConstellation.getObservableProperty());
+                    observationIdentifiers.setProcedure(observationConstellation.getProcedure());
+                    firstObsConst = false;
+                }
+            }
+        }
+        return observationIdentifiers;
+    }
+
+    protected ObservationIdentifiers addFeatureOfInterestToObservationIdentifiers(FeatureOfInterest hFeature,
+            ObservationIdentifiers observationIdentifiers) {
+        observationIdentifiers.setFeatureOfInterest(hFeature);
+        return observationIdentifiers;
+    }
+
+    protected ObservationIdentifiers addAdditionalObjectsToObservationIdentifiers(ObservationIdentifiers observationIdentifiers,
+            OmObservation sosObservation, Session session) {
+        return observationIdentifiers;
     }
 
     /**
@@ -577,34 +678,34 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         criteria.add(Restrictions.eq(AbstractObservation.IDENTIFIER, identifier));
     }
 
-    /**
-     * Add offerings to observation and return the observation identifiers
-     * procedure and observableProperty
-     *
-     * @param hObservation
-     *            Observation to add offerings
-     * @param hObservationConstellations
-     *            Observation constellation with offerings, procedure and
-     *            observableProperty
-     * @return ObservaitonIdentifiers object with procedure and
-     *         observableProperty
-     */
-    private ObservationIdentifiers addOfferingsToObaservationAndGetProcedureObservableProperty(
-            AbstractObservation hObservation, Set<ObservationConstellation> hObservationConstellations) {
-        Iterator<ObservationConstellation> iterator = hObservationConstellations.iterator();
-        boolean firstObsConst = true;
-        ObservationIdentifiers observationIdentifiers = new ObservationIdentifiers();
-        while (iterator.hasNext()) {
-            ObservationConstellation observationConstellation = iterator.next();
-            if (firstObsConst) {
-                observationIdentifiers.setObservableProperty(observationConstellation.getObservableProperty());
-                observationIdentifiers.setProcedure(observationConstellation.getProcedure());
-                firstObsConst = false;
-            }
-            hObservation.getOfferings().add(observationConstellation.getOffering());
-        }
-        return observationIdentifiers;
-    }
+//    /**
+//     * Add offerings to observation and return the observation identifiers
+//     * procedure and observableProperty
+//     *
+//     * @param hObservation
+//     *            Observation to add offerings
+//     * @param hObservationConstellations
+//     *            Observation constellation with offerings, procedure and
+//     *            observableProperty
+//     * @return ObservaitonIdentifiers object with procedure and
+//     *         observableProperty
+//     */
+//    protected ObservationIdentifiers addOfferingsToObaservationAndGetProcedureObservableProperty(
+//            AbstractObservation hObservation, Set<ObservationConstellation> hObservationConstellations) {
+//        Iterator<ObservationConstellation> iterator = hObservationConstellations.iterator();
+//        boolean firstObsConst = true;
+//        ObservationIdentifiers observationIdentifiers = new ObservationIdentifiers();
+//        while (iterator.hasNext()) {
+//            ObservationConstellation observationConstellation = iterator.next();
+//            if (firstObsConst) {
+//                observationIdentifiers.setObservableProperty(observationConstellation.getObservableProperty());
+//                observationIdentifiers.setProcedure(observationConstellation.getProcedure());
+//                firstObsConst = false;
+//            }
+//            hObservation.getOfferings().add(observationConstellation.getOffering());
+//        }
+//        return observationIdentifiers;
+//    }
 
     protected void finalizeObservationInsertion(OmObservation sosObservation, AbstractObservation hObservation,
             Session session) throws OwsExceptionReport {
@@ -625,24 +726,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Hibernate session
      * @throws OwsExceptionReport
      */
-    @SuppressWarnings("unchecked")
     protected void insertParameter(Collection<NamedValue<?>> parameter, AbstractObservation observation,
             Session session) throws OwsExceptionReport {
-        for (NamedValue<?> namedValue : parameter) {
-            if (Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
-                AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
-                        DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
-                if (spatialFilteringProfileDAO != null) {
-                    spatialFilteringProfileDAO.insertSpatialfilteringProfile((NamedValue<Geometry>) namedValue,
-                            observation, session);
-                }
-            } else {
-                throw new OptionNotSupportedException().at("om:parameter").withMessage(
-                        "The om:parameter support is not yet implemented!");
-                // new ParameterDAO().insertParameter(namedValue, observation,
-                // session);
-            }
-        }
+        throw new OptionNotSupportedException().at("om:parameter").withMessage(
+                "The om:parameter support is not yet implemented!");
     }
 
     /**
@@ -672,10 +759,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Hibernate session Hibernate session
      * @return min time
      */
-    @SuppressWarnings("rawtypes")
-    protected DateTime getMinPhenomenonTime(Class clazz, Session session) {
+    public DateTime getMinPhenomenonTime(Session session) {
         Criteria criteria =
-                session.createCriteria(clazz)
+                session.createCriteria(getObservationTimeClass())
                         .setProjection(Projections.min(AbstractObservation.PHENOMENON_TIME_START))
                         .add(Restrictions.eq(AbstractObservation.DELETED, false));
         LOGGER.debug("QUERY getMinPhenomenonTime(): {}", HibernateHelper.getSqlString(criteria));
@@ -694,18 +780,18 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *
      * @return max time
      */
-    @SuppressWarnings("rawtypes")
-    protected DateTime getMaxPhenomenonTime(Class clazz, Session session) {
+    public DateTime getMaxPhenomenonTime(Session session) {
 
         Criteria criteriaStart =
-                session.createCriteria(clazz)
+                session.createCriteria(getObservationTimeClass())
                         .setProjection(Projections.max(AbstractObservation.PHENOMENON_TIME_START))
                         .add(Restrictions.eq(AbstractObservation.DELETED, false));
         LOGGER.debug("QUERY getMaxPhenomenonTime() start: {}", HibernateHelper.getSqlString(criteriaStart));
         Object maxStart = criteriaStart.uniqueResult();
 
         Criteria criteriaEnd =
-                session.createCriteria(clazz).setProjection(Projections.max(AbstractObservation.PHENOMENON_TIME_END))
+                session.createCriteria(getObservationTimeClass())
+                        .setProjection(Projections.max(AbstractObservation.PHENOMENON_TIME_END))
                         .add(Restrictions.eq(AbstractObservation.DELETED, false));
         LOGGER.debug("QUERY getMaxPhenomenonTime() end: {}", HibernateHelper.getSqlString(criteriaEnd));
         Object maxEnd = criteriaEnd.uniqueResult();
@@ -731,11 +817,11 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *
      * @return min time
      */
-    @SuppressWarnings("rawtypes")
-    protected DateTime getMinResultTime(Class clazz, Session session) {
+    public DateTime getMinResultTime(Session session) {
 
         Criteria criteria =
-                session.createCriteria(clazz).setProjection(Projections.min(AbstractObservation.RESULT_TIME))
+                session.createCriteria(getObservationTimeClass())
+                        .setProjection(Projections.min(AbstractObservation.RESULT_TIME))
                         .add(Restrictions.eq(AbstractObservation.DELETED, false));
         LOGGER.debug("QUERY getMinResultTime(): {}", HibernateHelper.getSqlString(criteria));
         Object min = criteria.uniqueResult();
@@ -753,11 +839,11 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *
      * @return max time
      */
-    @SuppressWarnings("rawtypes")
-    protected DateTime getMaxResultTime(Class clazz, Session session) {
+    public DateTime getMaxResultTime(Session session) {
 
         Criteria criteria =
-                session.createCriteria(clazz).setProjection(Projections.max(AbstractObservation.RESULT_TIME))
+                session.createCriteria(getObservationTimeClass())
+                        .setProjection(Projections.max(AbstractObservation.RESULT_TIME))
                         .add(Restrictions.eq(AbstractObservation.DELETED, false));
         LOGGER.debug("QUERY getMaxResultTime(): {}", HibernateHelper.getSqlString(criteria));
         Object max = criteria.uniqueResult();
@@ -777,10 +863,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @return the global getEqualRestiction bounding box over all observations,
      *         or <tt>null</tt>
      */
-    @SuppressWarnings("rawtypes")
-    protected TimePeriod getGlobalTemporalBoundingBox(Class clazz, Session session) {
+    public TimePeriod getGlobalTemporalBoundingBox(Session session) {
         if (session != null) {
-            Criteria criteria = session.createCriteria(clazz);
+            Criteria criteria = session.createCriteria(getObservationTimeClass());
             criteria.add(Restrictions.eq(AbstractObservation.DELETED, false));
             criteria.setProjection(Projections.projectionList()
                     .add(Projections.min(AbstractObservation.PHENOMENON_TIME_START))
@@ -1041,89 +1126,33 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     protected void checkAndAddSpatialFilteringProfileCriterion(Criteria c, GetObservationRequest request,
             Session session) throws OwsExceptionReport {
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
-            AbstractSpatialFilteringProfileDAO<?> spatialFilteringProfileDAO =
-                    DaoFactory.getInstance().getSpatialFilteringProfileDAO(session);
-            if (spatialFilteringProfileDAO != null) {
-                c.add(Subqueries.propertyIn(AbstractObservation.ID,
-                        spatialFilteringProfileDAO.getDetachedCriteriaFor(request.getSpatialFilter())));
-            } else {
-                c.add(SpatialRestrictions.filter(
-                        AbstractObservation.SAMPLING_GEOMETRY,
-                        request.getSpatialFilter().getOperator(),
-                        GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(
-                                request.getSpatialFilter().getGeometry())));
-            }
+            c.add(SpatialRestrictions.filter(
+                    AbstractObservation.SAMPLING_GEOMETRY,
+                    request.getSpatialFilter().getOperator(),
+                    GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
+                            request.getSpatialFilter().getGeometry())));
         }
 
     }
 
     /**
-     * Inner class to carry observation identifiers (featureOfInterest,
-     * observableProperty, procedure)
+     * Get all observation identifiers
      *
-     * @author Carsten Hollmann <c.hollmann@52north.org>
-     * @since 4.0.0
-     *
+     * @param session
+     *            Hibernate session
+     * @return Observation identifiers
      */
-    protected class ObservationIdentifiers {
-
-        FeatureOfInterest featureOfInterest;
-
-        ObservableProperty observableProperty;
-
-        Procedure procedure;
-
-        /**
-         * @return the featureOfInterest
-         */
-        public FeatureOfInterest getFeatureOfInterest() {
-            return featureOfInterest;
-        }
-
-        /**
-         * @param featureOfInterest
-         *            the featureOfInterest to set
-         */
-        public void setFeatureOfInterest(FeatureOfInterest featureOfInterest) {
-            this.featureOfInterest = featureOfInterest;
-        }
-
-        /**
-         * @return the observableProperty
-         */
-        public ObservableProperty getObservableProperty() {
-            return observableProperty;
-        }
-
-        /**
-         * @param observableProperty
-         *            the observableProperty to set
-         */
-        public void setObservableProperty(ObservableProperty observableProperty) {
-            this.observableProperty = observableProperty;
-        }
-
-        /**
-         * @return the procedure
-         */
-        public Procedure getProcedure() {
-            return procedure;
-        }
-
-        /**
-         * @param procedure
-         *            the procedure to set
-         */
-        public void setProcedure(Procedure procedure) {
-            this.procedure = procedure;
-        }
-
+    @SuppressWarnings("unchecked")
+    public List<String> getObservationIdentifier(Session session) {
+        Criteria criteria =
+                session.createCriteria(getObservationInfoClass()).add(Restrictions.eq(Observation.DELETED, false))
+                        .add(Restrictions.isNotNull(Observation.IDENTIFIER))
+                        .setProjection(Projections.distinct(Projections.property(Observation.IDENTIFIER)));
+        LOGGER.debug("QUERY getObservationIdentifiers(): {}", HibernateHelper.getSqlString(criteria));
+        return criteria.list();
     }
 
-    public abstract SosEnvelope getSpatialFilteringProfileEnvelopeForOfferingId(String offeringID, Session session)
-            throws OwsExceptionReport;
-
-    protected SosEnvelope getSpatialFilteringProfileEnvelopeForOfferingId(Class clazz, String offeringID,
+    public SosEnvelope getSpatialFilteringProfileEnvelopeForOfferingId(String offeringID,
             Session session) throws OwsExceptionReport {
         try {
             // XXX workaround for Hibernate Spatial's lack of support for
@@ -1132,22 +1161,22 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             Dialect dialect = ((SessionFactoryImplementor) session.getSessionFactory()).getDialect();
             if (GeometryHandler.getInstance().isSpatialDatasource()
                     && HibernateHelper.supportsFunction(dialect, HibernateConstants.FUNC_EXTENT)) {
-                Criteria criteria = session.createCriteria(clazz);
+                Criteria criteria = getDefaultObservationInfoCriteria(session);
                 criteria.setProjection(SpatialProjections.extent(AbstractObservationTime.SAMPLING_GEOMETRY));
                 criteria.createCriteria(AbstractObservation.OFFERINGS).add(
                         Restrictions.eq(Offering.IDENTIFIER, offeringID));
-                LOGGER.debug("QUERY getEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
+                LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
                 Geometry geom = (Geometry) criteria.uniqueResult();
-                geom = GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(geom);
+                geom = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(geom);
                 if (geom != null) {
-                    return new SosEnvelope(geom.getEnvelopeInternal(), GeometryHandler.getInstance().getDefaultEPSG());
+                    return new SosEnvelope(geom.getEnvelopeInternal(), GeometryHandler.getInstance().getStorageEPSG());
                 }
             } else {
                 final Envelope envelope = new Envelope();
-                Criteria criteria = session.createCriteria(clazz);
+                Criteria criteria = getDefaultObservationInfoCriteria(session);
                 criteria.createCriteria(AbstractObservation.OFFERINGS).add(
                         Restrictions.eq(Offering.IDENTIFIER, offeringID));
-                LOGGER.debug("QUERY getEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
+                LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
                 @SuppressWarnings("unchecked")
                 final List<AbstractObservationTime> observationTimes = criteria.list();
                 if (CollectionHelper.isNotEmpty(observationTimes)) {
@@ -1160,7 +1189,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                         }
                     }
                     if (!envelope.isNull()) {
-                        return new SosEnvelope(envelope, GeometryHandler.getInstance().getDefaultEPSG());
+                        return new SosEnvelope(envelope, GeometryHandler.getInstance().getStorageEPSG());
                     }
                 }
             }
@@ -1172,6 +1201,91 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     }
 
     public abstract List<Geometry> getSamplingGeometries(String feature, Session session);
+
+    protected abstract Class<?> getObservationClass();
+
+    protected abstract Class<?> getObservationInfoClass();
+
+    protected abstract Class<?> getObservationTimeClass();
+
+    protected abstract Class<?> getBlobObservationClass();
+
+    protected abstract Class<?> getBooleanObservationClass();
+
+    protected abstract Class<?> getCategoryObservationClass();
+
+    protected abstract Class<?> getCountObservationClass();
+
+    protected abstract Class<?> getGeometryObservationClass();
+
+    protected abstract Class<?> getNumericObservationClass();
+
+    protected abstract Class<?> getSweDataArrayObservationClass();
+
+    protected abstract Class<?> getTextObservationClass();
+
+    /**
+     * Inner class to carry observation identifiers (featureOfInterest,
+     * observableProperty, procedure)
+     *
+     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @since 4.0.0
+     *
+     */
+    protected class ObservationIdentifiers {
+    
+        FeatureOfInterest featureOfInterest;
+    
+        ObservableProperty observableProperty;
+    
+        Procedure procedure;
+    
+        /**
+         * @return the featureOfInterest
+         */
+        public FeatureOfInterest getFeatureOfInterest() {
+            return featureOfInterest;
+        }
+    
+        /**
+         * @param featureOfInterest
+         *            the featureOfInterest to set
+         */
+        public void setFeatureOfInterest(FeatureOfInterest featureOfInterest) {
+            this.featureOfInterest = featureOfInterest;
+        }
+    
+        /**
+         * @return the observableProperty
+         */
+        public ObservableProperty getObservableProperty() {
+            return observableProperty;
+        }
+    
+        /**
+         * @param observableProperty
+         *            the observableProperty to set
+         */
+        public void setObservableProperty(ObservableProperty observableProperty) {
+            this.observableProperty = observableProperty;
+        }
+    
+        /**
+         * @return the procedure
+         */
+        public Procedure getProcedure() {
+            return procedure;
+        }
+    
+        /**
+         * @param procedure
+         *            the procedure to set
+         */
+        public void setProcedure(Procedure procedure) {
+            this.procedure = procedure;
+        }
+    
+    }
 
     /**
      * Check if the observation table contains samplingGeometries with values

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.n52.sensorweb.sos</groupId>
+		<artifactId>identifier-modifier</artifactId>
+		  <version>4.3.0</version>
+	</parent>
+	<artifactId>flexible-identifier</artifactId>
+	<packaging>jar</packaging>
+	<name>52°North SOS - Flexible identifier convert module</name>
+	<description>52°North SOS - Module to support flexible identifiers in requests and responses</description>
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>gda-operation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>abstract-identifier</artifactId>
+		</dependency>
+	</dependencies>
+</project>

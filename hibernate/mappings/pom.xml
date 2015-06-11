@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>hibernate</artifactId>
-        <version>4.2.0</version>
+        <version>4.3.0</version>
     </parent>
     <artifactId>hibernate-mappings</artifactId>
     <name>52°North SOS - Hibernate Mappings</name>
@@ -51,9 +50,9 @@
                                 <phase>generate-resources</phase>
                                 <configuration>
                                     <hibernatetool destdir="target/classes">
-                                        <jdbcconfiguration packagename="it"/>
+                                        <jdbcconfiguration packagename="it" />
                                         <hbm2java destdir="target/generated-sources/hibernate">
-                                            <configuration configurationfile="src/main/resources/sos-hibernate.cfg.xml"/>
+                                            <configuration configurationfile="src/main/resources/sos-hibernate.cfg.xml" />
                                         </hbm2java>
                                     </hibernatetool>
                                 </configuration>

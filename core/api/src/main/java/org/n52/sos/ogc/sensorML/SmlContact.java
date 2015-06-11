@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ogc.sensorML;
 
-import org.n52.sos.Role;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

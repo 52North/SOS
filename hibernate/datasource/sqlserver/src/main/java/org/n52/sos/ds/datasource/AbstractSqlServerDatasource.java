@@ -45,7 +45,6 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.StringSettingDefinition;
@@ -54,20 +53,25 @@ import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
+/**
+ * Abstract class for MS SQL Server datasources
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.2.0
+ *
+ */
 public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullDBDatasource {
 
     private static final int INSTANCE = 3;
 
-	private static final int DATABASE = 4;
+    private static final int DATABASE = 4;
 
-	private static final int PORT = 2;
+    private static final int PORT = 2;
 
-	private static final int HOST = 1;
+    private static final int HOST = 1;
 
-	protected static final String URL_INSTANCE = "instance=";
+    protected static final String URL_INSTANCE = "instance=";
 
     protected static final String URL_DATABASE_NAME = "databaseName=";
 
@@ -75,14 +79,13 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
 
     protected static final String INSTANCE_TITLE = "SQL Server instance";
 
-    protected static final String INSTANCE_DESCRIPTION =
-            "Your SQL Server instance.";
+    protected static final String INSTANCE_DESCRIPTION = "Your SQL Server instance.";
 
     protected static final String SQL_SERVER_DRIVER_CLASS = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
-
-//    TODO adjust make instance optional in regex
-    protected static final Pattern JDBC_URL_PATTERN = Pattern.compile("^jdbc:sqlserver://([^:]+):([0-9]+)(?:;" + URL_INSTANCE + "([^:]+))?;" + URL_DATABASE_NAME + "([^:]+)");
+    // TODO adjust make instance optional in regex
+    protected static final Pattern JDBC_URL_PATTERN = Pattern.compile("^jdbc:sqlserver://([^:]+):([0-9]+)(?:;"
+            + URL_INSTANCE + "([^:]+))?;" + URL_DATABASE_NAME + "([^:]+)");
 
     protected static final String USERNAME_DESCRIPTION =
             "Your database server user name. The default value for SQL Server is \"sqlserver\".";
@@ -127,8 +130,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
         Set<SettingDefinition<?, ?>> settingDefinitions = super.getSettingDefinitions();
-        return CollectionHelper.union(
-                Sets.<SettingDefinition<?, ?>> newHashSet(createInstanceDefinition(null)),
+        return CollectionHelper.union(Sets.<SettingDefinition<?, ?>> newHashSet(createInstanceDefinition(null)),
                 settingDefinitions);
     }
 
@@ -142,14 +144,9 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     }
 
     protected StringSettingDefinition createInstanceDefinition(String instanceValue) {
-        return new StringSettingDefinition()
-        	.setGroup(BASE_GROUP)
-        	.setOrder(SettingDefinitionProvider.ORDER_2)
-            .setKey(INSTANCE_KEY)
-            .setTitle(INSTANCE_TITLE)
-            .setDescription(INSTANCE_DESCRIPTION)
-            .setDefaultValue(instanceValue==null?"":instanceValue)
-            .setOptional(true);
+        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_2)
+                .setKey(INSTANCE_KEY).setTitle(INSTANCE_TITLE).setDescription(INSTANCE_DESCRIPTION)
+                .setDefaultValue(instanceValue == null ? "" : instanceValue).setOptional(true);
     }
 
     @Override
@@ -174,8 +171,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
             final String testTable = schemaPrefix + "sos_installer_test_table";
             final String command =
                     String.format("BEGIN; " + "IF (OBJECT_ID('%1$s') >0 ) DROP TABLE %1$s; "
-                            + "CREATE TABLE %1$s (id integer NOT NULL); "
-                            + "DROP TABLE %1$s; " + "END;", testTable);
+                            + "CREATE TABLE %1$s (id integer NOT NULL); " + "DROP TABLE %1$s; " + "END;", testTable);
             stmt.execute(command);
             return true;
         } catch (SQLException e) {
@@ -205,19 +201,18 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
      * https://msdn.microsoft.com/en-us/library/ms378428%28v=sql.110%29.aspx
      * 
      * String url =
-     * 		String.format("jdbc:sqlserver://%s:%d;instance=%s;databaseName=%s", settings.get(HOST_KEY),
-     * 		settings.get(PORT_KEY), settings.get(INSTANCE_KEY), settings.get(DATABASE_KEY));
+     * String.format("jdbc:sqlserver://%s:%d;instance=%s;databaseName=%s",
+     * settings.get(HOST_KEY), settings.get(PORT_KEY),
+     * settings.get(INSTANCE_KEY), settings.get(DATABASE_KEY));
      */
     @Override
     protected String toURL(Map<String, Object> settings) {
         StringBuilder builder = new StringBuilder("jdbc:sqlserver://");
         builder.append(settings.get(HOST_KEY)).append(Constants.COLON_CHAR);
         builder.append(settings.get(PORT_KEY)).append(Constants.SEMICOLON_CHAR);
-        if (settings.containsKey(INSTANCE_KEY) && 
-        		settings.get(INSTANCE_KEY) != null && 
-        		settings.get(INSTANCE_KEY) instanceof String &&
-        		!((String)settings.get(INSTANCE_KEY)).isEmpty()) {
-        	builder.append(URL_INSTANCE).append(settings.get(INSTANCE_KEY)).append(Constants.SEMICOLON_CHAR);
+        if (settings.containsKey(INSTANCE_KEY) && settings.get(INSTANCE_KEY) != null
+                && settings.get(INSTANCE_KEY) instanceof String && !((String) settings.get(INSTANCE_KEY)).isEmpty()) {
+            builder.append(URL_INSTANCE).append(settings.get(INSTANCE_KEY)).append(Constants.SEMICOLON_CHAR);
         }
         builder.append(URL_DATABASE_NAME).append(settings.get(DATABASE_KEY));
         return builder.toString();
@@ -228,9 +223,10 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
         Matcher matcher = JDBC_URL_PATTERN.matcher(url);
         matcher.find();
         if (matcher.group(INSTANCE) == null) {
-        	return new String[] { matcher.group(HOST), matcher.group(PORT), matcher.group(DATABASE) };
+            return new String[] { matcher.group(HOST), matcher.group(PORT), matcher.group(DATABASE) };
         }
-        return new String[] { matcher.group(HOST), matcher.group(PORT), matcher.group(DATABASE), matcher.group(INSTANCE) };
+        return new String[] { matcher.group(HOST), matcher.group(PORT), matcher.group(DATABASE),
+                matcher.group(INSTANCE) };
     }
 
     @Override
@@ -239,9 +235,9 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
         final Map<String, Object> settings = super.parseDatasourceProperties(current);
         // parse optional instance
         final String[] parsed = parseURL(current.getProperty(HibernateConstants.CONNECTION_URL));
-//        TODO what happens here
+        // TODO what happens here
         if (parsed.length == 4) {
-            settings.put(INSTANCE_KEY, (String)parsed[3]);
+            settings.put(INSTANCE_KEY, (String) parsed[3]);
         }
         return settings;
     }
@@ -269,7 +265,25 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
             try {
                 conn = openConnection(settings);
                 stmt = conn.createStatement();
-                stmt.execute(String.format("truncate %s restart identity cascade", Joiner.on(", ").join(names)));
+                StringBuffer statement = new StringBuffer();
+                // alter table MyOtherTable nocheck constraint all
+                for (String table : names) {
+                    statement = statement.append("ALTER TABLE \"").append(table).append("\" NOCHECK CONSTRAINT ALL;");
+                }
+                // delete from MyTable
+                for (String table : names) {
+                    statement =
+                            statement.append("DELETE from \"").append(table).append("\"; DBCC CHECKIDENT(\"")
+                                    .append(table).append("\", RESEED, 0);");
+                }
+                // alter table MyOtherTable check constraint all
+                for (String table : names) {
+                    statement = statement.append("ALTER TABLE \"").append(table).append("\" CHECK CONSTRAINT ALL;");
+                }
+                statement =
+                        statement.append("DBCC SHRINKDATABASE (").append(settings.get(DATABASE_KEY).toString())
+                                .append(");");
+                stmt.execute(statement.toString());
             } catch (SQLException ex) {
                 throw new ConfigurationException(ex);
             } finally {

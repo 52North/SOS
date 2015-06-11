@@ -73,12 +73,6 @@ public class ReadableCache extends AbstractContentCache {
     }
 
     @Override
-    @Deprecated
-    public Set<String> getObservationIdentifiers() {
-        return copyOf(getObservationIdentifiersSet());
-    }
-
-    @Override
     public Set<String> getProcedures() {
         return copyOf(getProceduresSet());
     }
@@ -274,12 +268,6 @@ public class ReadableCache extends AbstractContentCache {
     }
 
     @Override
-    @Deprecated
-    public Set<String> getObservationIdentifiersForProcedure(final String procedure) {
-        return copyOf(getObservationIdentifiersForProceduresMap().get(procedure));
-    }
-
-    @Override
     public Set<String> getObservationTypesForOffering(final String offering) {
         return copyOf(getObservationTypesForOfferingsMap().get(offering));
     }
@@ -365,12 +353,6 @@ public class ReadableCache extends AbstractContentCache {
     @Override
     public boolean hasObservableProperty(final String observableProperty) {
         return getObservableProperties().contains(observableProperty);
-    }
-
-    @Override
-    @Deprecated
-    public boolean hasObservationIdentifier(final String observationIdentifier) {
-        return getObservationIdentifiers().contains(observationIdentifier);
     }
 
     @Override
@@ -551,5 +533,69 @@ public class ReadableCache extends AbstractContentCache {
     @Override
     public boolean hasRequstableProcedureDescriptionFormat(String format) {
         return getRequestableProcedureDescriptionFormats().contains(format);
+    }
+    
+    @Override
+    public String getFeatureOfInterestIdentifierForHumanReadableName(String humanReadableName) {
+    	if (getFeatureOfInterestIdentifierForHumanReadableName().containsKey(humanReadableName)) {
+    		return getFeatureOfInterestIdentifierForHumanReadableName().get(humanReadableName);
+    	}
+    	return humanReadableName;
+    }
+    
+    @Override
+    public String getFeatureOfInterestHumanReadableNameForIdentifier(String identifier) {
+    	if (getFeatureOfInterestHumanReadableNameForIdentifier().containsKey(identifier)) {
+    		return getFeatureOfInterestHumanReadableNameForIdentifier().get(identifier);
+    	}
+    	return identifier;
+    }
+    
+    @Override
+    public String getObservablePropertyIdentifierForHumanReadableName(String humanReadableName) {
+    	if (getObservablePropertyIdentifierForHumanReadableName().containsKey(humanReadableName)) {
+    		return getObservablePropertyIdentifierForHumanReadableName().get(humanReadableName);
+    	}
+    	return humanReadableName;
+    }
+    
+    @Override
+    public String getObservablePropertyHumanReadableNameForIdentifier(String identifier) {
+    	if (getObservablePropertyHumanReadableNameForIdentifier().containsKey(identifier)) {
+    		return getObservablePropertyHumanReadableNameForIdentifier().get(identifier);
+    	}
+    	return identifier;
+    }
+    
+    @Override
+    public String getProcedureIdentifierForHumanReadableName(String humanReadableName) {
+    	if (getProcedureIdentifierForHumanReadableName().containsKey(humanReadableName)) {
+    		return getProcedureIdentifierForHumanReadableName().get(humanReadableName);
+    	}
+    	return humanReadableName;
+    }
+    
+    @Override
+    public String getProcedureHumanReadableNameForIdentifier(String identifier) {
+    	if (getProcedureHumanReadableNameForIdentifier().containsKey(identifier)) {
+    		return getProcedureHumanReadableNameForIdentifier().get(identifier);
+    	}
+    	return identifier;
+    }
+    
+    @Override
+    public String getOfferingIdentifierForHumanReadableName(String humanReadableName) {
+    	if (getOfferingIdentifierForHumanReadableName().containsKey(humanReadableName)) {
+    		return getOfferingIdentifierForHumanReadableName().get(humanReadableName);
+    	}
+    	return humanReadableName;
+    }
+    
+    @Override
+    public String getOfferingHumanReadableNameForIdentifier(String identifier) {
+    	if (getOfferingHumanReadableNameForIdentifier().containsKey(identifier)) {
+    		return getOfferingHumanReadableNameForIdentifier().get(identifier);
+    	}
+    	return identifier;
     }
 }

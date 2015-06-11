@@ -28,32 +28,45 @@
  */
 package org.n52.sos.ogc.om;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OWSConstants.AdditionalRequestParams;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.service.Configurator;
+import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Geometry;
 
-public abstract class AbstractStreaming extends AbstractObservationValue<Value<OmObservation>>{
-    
+public abstract class AbstractStreaming extends AbstractObservationValue<Value<OmObservation>> {
+
     private static final long serialVersionUID = -4290319005184152231L;
-    
+
     private Map<AdditionalRequestParams, Object> additionalRequestParams = Maps.newHashMap();
+
+    private String responseFormat;
     
-    public abstract boolean hasNextValue() throws OwsExceptionReport ;
+    private int maxNumberOfValues = Integer.MIN_VALUE;
     
+    private int currentNumberOfValues = 0;
+
+    public abstract boolean hasNextValue() throws OwsExceptionReport;
+
     public abstract OmObservation nextSingleObservation() throws OwsExceptionReport;
     
-    public List<OmObservation> mergeObservation() throws OwsExceptionReport {
+
+    public Collection<OmObservation> mergeObservation() throws OwsExceptionReport {
         List<OmObservation> observations = getObservation();
         // TODO merge all observations with the same observationContellation
         // FIXME Failed to set the observation type to sweArrayObservation for
@@ -69,8 +82,7 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
                 } else {
                     boolean combined = false;
                     for (final OmObservation combinedSosObs : mergedObservations) {
-                        if (combinedSosObs.getObservationConstellation().equals(
-                                sosObservation.getObservationConstellation())) {
+                        if (combinedSosObs.checkForMerge(sosObservation)) {
                             combinedSosObs.setResultTime(null);
                             combinedSosObs.mergeWithObservation(sosObservation);
                             combined = true;
@@ -86,7 +98,7 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
         }
         return observations;
     }
-    
+
     public List<OmObservation> getObservation() throws OwsExceptionReport {
         List<OmObservation> observations = Lists.newArrayList();
         do {
@@ -96,17 +108,17 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
     }
 
     public void add(AdditionalRequestParams parameter, Object object) {
-       additionalRequestParams.put(parameter, object);
+        additionalRequestParams.put(parameter, object);
     }
-    
+
     public boolean contains(AdditionalRequestParams parameter) {
         return additionalRequestParams.containsKey(parameter);
     }
-    
+
     public boolean isSetAdditionalRequestParams() {
         return CollectionHelper.isNotEmpty(additionalRequestParams);
     }
-    
+
     protected Object getAdditionalRequestParams(AdditionalRequestParams parameter) {
         return additionalRequestParams.get(parameter);
     }
@@ -142,5 +154,52 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
             }
         }
     }
+
+    @Override
+    public boolean isSetValue() {
+        return true;
+    }
     
+    public void setResponseFormat(String responseFormat) {
+        this.responseFormat = responseFormat;
+    }
+    
+    public String getResponseFormat() {
+        if (Strings.isNullOrEmpty(responseFormat)) {
+            this.responseFormat = Configurator.getInstance().getProfileHandler().getActiveProfile().getObservationResponseFormat();
+        }
+        return responseFormat;
+    }
+
+    /**
+     * @return the maxNumberOfValues
+     */
+    public int getMaxNumberOfValues() {
+        return maxNumberOfValues;
+    }
+
+    /**
+     * @param maxNumberOfValues the maxNumberOfValues to set
+     */
+    public void setMaxNumberOfValues(int maxNumberOfValues) {
+        this.maxNumberOfValues = maxNumberOfValues;
+    }
+    
+    /**
+     * Check if the max number of returned values is exceeded
+     *
+     * @param size
+     *            Max number count
+     * @throws CodedException
+     *             If the size limit is exceeded
+     */
+    protected void checkMaxNumberOfReturnedValues(int size) throws CodedException {
+        if (ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues() > 0) {
+            currentNumberOfValues += size;
+            if (currentNumberOfValues > getMaxNumberOfValues()) {
+                throw new ResponseExceedsSizeLimitException().at("maxNumberOfReturnedValues");
+            }
+        }
+    }
+
 }

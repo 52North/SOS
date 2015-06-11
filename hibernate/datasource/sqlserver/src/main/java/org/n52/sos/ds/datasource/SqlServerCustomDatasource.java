@@ -28,14 +28,19 @@
  */
 package org.n52.sos.ds.datasource;
 
-public class SqlServerCustomDatasource extends AbstractSqlServerDatasource {
+/**
+ * MS SQL Server datasource for custom mapping
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.2.0
+ *
+ */
+public class SqlServerCustomDatasource extends SqlServerCoreDatasource {
 
-    private static final String DIALECT_NAME = "SQL Server Custom";
+    private static final String DIALECT_NAME = "SQL Server Custom Core";
 
     public SqlServerCustomDatasource() {
         super();
-        getSpatialFilteringProfileDefiniton().setDefaultValue(false);
-        super.setTransactional(false);
     }
 
     @Override

@@ -31,6 +31,14 @@
 				</swe:Text>
 			</sos:extension>
 			-->
+			<!-- 
+			<sos:extension xsi:type="swe:BooleanPropertyType">
+				<swe:Boolean>
+					<swe:identifier>returnHumanReadableIdentifier</swe:identifier>
+					<swe:value>true</swe:value>
+				</swe:Boolean>
+			</sos:extension>
+			 -->
 		</sos:GetCapabilities>
 	</env:Body>
 </env:Envelope>

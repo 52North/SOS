@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.n52.series.api.v1.db.da.beans">
+    <class name="FeatureEntity" table="featureofinterest">
+		<id name="pkid" type="long">
+			<column name="featureofinterestid" />
+			<generator class="assigned" />
+		</id>
+		        
+        <property name="description" column="description" type="string"/>
+        <property name="name" column="name" type="string" />
+        <property name="canonicalId" column="identifier" type="string" insert="false" update="false"/>
+        <property name="geom" column="geom" type="org.hibernate.spatial.GeometryType" />
+        
+    </class>
+</hibernate-mapping>

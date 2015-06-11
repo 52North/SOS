@@ -42,6 +42,7 @@ import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.i18n.LocaleHelper;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.StreamingObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -120,11 +121,11 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
                 observation =
                         HibernateGetObservationHelper.toSosObservation(
                                 checkShowMetadtaOfEmptyObservations((SeriesObservation) result.get()[0]),
-                                request.getVersion(), request.getResultModel(), session);
+                                request, LocaleHelper.fromRequest(request), session);
             } else if (resultObject instanceof Series) {
                 observation =
                         HibernateObservationUtilities
-                                .createSosObservationFromSeries((Series) resultObject, request.getVersion(), session)
+                                .createSosObservationFromSeries((Series) resultObject, request, session)
                                 .iterator().next();
             } else {
                 throw new NoApplicableCodeException().withMessage("The object {} is not supported", resultObject
@@ -132,6 +133,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
             }
             checkForModifications(observation);
             session.evict(resultObject);
+            checkMaxNumberOfReturnedValues(1);
             return observation;
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);

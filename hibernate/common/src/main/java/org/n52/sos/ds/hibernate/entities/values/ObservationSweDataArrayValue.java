@@ -59,5 +59,10 @@ public class ObservationSweDataArrayValue extends ObservationValue implements Sw
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(getValue());
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
 
 }

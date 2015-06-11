@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 10.07.2012 15:18:27 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType" table="assessmenttype">
+    	<comment>Table to store the AQD e-Reporting assessmentType information. Mapping file: mapping/ereporting/EReportingAssessmentType.hbm.xml</comment>
+        <id name="assessmentType" type="string">
+            <column name="assessmentType">
+            	<comment>Table primary key, used for relations</comment>
+            </column>
+            <generator class="assigned" />
+        </id>
+        <property name="uri" type="string">
+            <column name="uri">
+            	<comment>AQD e-Reporting assessmentType URI, e.g. "http://dd.eionet.europa.eu/vocabulary/aq/assessmenttype/fixed"</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.cache.base;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -42,6 +43,7 @@ import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDescriptionFormatDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 import org.slf4j.Logger;
@@ -116,13 +118,21 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         startStopwatch();
         getProcedureDescriptionFormat();
         
-        boolean obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class, getSession());
+        boolean obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class);
 
         Map<String, Collection<String>> procedureMap = procedureDAO.getProcedureIdentifiers(getSession());
-        for (Entry<String, Collection<String>> entry : procedureMap.entrySet()) {
-            String procedureIdentifier = entry.getKey();
-            Collection<String> parentProcedures = entry.getValue();
+        List<Procedure> procedures = procedureDAO.getProcedureObjects(getSession());
+        for (Procedure procedure : procedures) {
+        	String procedureIdentifier = procedure.getIdentifier();
+        	 Collection<String> parentProcedures = procedureMap.get(procedureIdentifier);
+//		}
+//        for (Entry<String, Collection<String>> entry : procedureMap.entrySet()) {
+//            String procedureIdentifier = entry.getKey();
+//            Collection<String> parentProcedures = entry.getValue();
             getCache().addProcedure(procedureIdentifier);
+            if (procedure.isSetName()) {
+            	getCache().addProcedureIdentifierHumanReadableName(procedureIdentifier, procedure.getName());
+            }
 
             if (obsConstSupported) {
                 Collection<ObservationConstellationInfo> ocis = getProcedureObservationConstellationInfo().get(procedureIdentifier);

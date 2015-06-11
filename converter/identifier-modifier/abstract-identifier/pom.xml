@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.n52.sensorweb.sos</groupId>
+        <artifactId>identifier-modifier</artifactId>
+         <version>4.3.0</version>
+    </parent>
+    <artifactId>abstract-identifier</artifactId>
+    <packaging>jar</packaging>
+    <name>52°North SOS - Abstract Identifier Modifier Modules</name>
+    <description>52°North SOS - Abstract Identifier Modifier Modules</description>
+   <dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>gda-operation</artifactId>
+		</dependency>
+	</dependencies>
+</project>

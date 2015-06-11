@@ -49,6 +49,7 @@
 		<script type="text/javascript" src="<c:url value="/static/js/arrays.js" />"></script>
 		<script type="text/javascript" src="<c:url value="/static/lib/jquery-1.8.2.min.js" />"></script>
 		<script type="text/javascript" src="<c:url value="/static/lib/bootstrap-2.3.1.min.js" />"></script>
+        <script type="text/javascript" src="<c:url value="/static/js/jquery.additions.js" />"></script>
 		<script type="text/javascript" src="<c:url value="/static/js/application.js" />"></script>
 		<title>52&deg;North Sensor Observation Service</title>
 
@@ -76,33 +77,33 @@
                                     <c:if test="${sos:hasClient()}">
                                         <li>
                                             <a id="client-menuitem" class="menu-item1" href="<c:url value="/client" />">
-                                            	<span class="menu-title">Client</span>
+                                                <span class="menu-title">Client</span>
                                             </a>
                                             <ul>
-                                                 <c:if test="${sos:staticExtensionExists(pageContext.servletContext, 'client/jsClient/index.html')}">
-                                                    <li>
-                                                        <a id="jsclient-menuitem" target="_blank" href="<c:url value="/static/client/jsClient" />">
-                                                            <span class="menu-title">Sensor Web JS Client</span>
-                                                        </a>
-                                                    </li>
-                                                </c:if>
-                                                </ul>
+                                             	<c:if test="${sos:staticExtensionExists(pageContext.servletContext, 'client/jsClient/index.html')}">
+			                                        <li>
+			                                            <a id="jsclient-menuitem" target="_blank" href="<c:url value="/static/client/jsClient" />">
+			                                                <span class="menu-title">Sensor Web JS Client</span>
+			                                            </a>
+			                                        </li>
+		                                    	</c:if>
+                                   			 </ul>
                                         </li>
                                     </c:if>
-                                    <li>
-                                        <a id="documentation-menuitem" class="menu-item2" href="<c:url value="/documentation" />">
-                                            <span class="menu-title">Documentation</span>
-                                        </a>
-                                        <ul>
-                                            <c:if test="${sos:documentExtensionExists(pageContext.servletContext, 'api-doc/index.html')}">
-                                                <li>
-                                                    <a id="rest-menuitem" target="_blank" href="<c:url value="/static/doc/api-doc" />">
-                                                        <span class="menu-title">Sensor Web Client REST-API</span>
-                                                    </a>
-                                                </li>
-                                            </c:if>
-                                         </ul>
-                                    </li>
+                                        <li>
+                                            <a id="documentation-menuitem" class="menu-item2" href="<c:url value="/documentation" />">
+                                                <span class="menu-title">Documentation</span>
+                                            </a>
+                                            <ul>
+                                            	<c:if test="${sos:documentExtensionExists(pageContext.servletContext, 'api-doc/index.html')}">
+			                                        <li>
+			                                            <a id="rest-menuitem" target="_blank" href="<c:url value="/static/doc/api-doc" />">
+			                                                <span class="menu-title">Sensor Web Client REST-API</span>
+			                                            </a>
+			                                        </li>
+			                                    </c:if>
+                                             </ul>
+                                        </li>
                                     <c:if test="${sos:hasAdministrator()}">
                                         <li>
                                             <a id="admin-menuitem" class="menu-item3" href="<c:url value="/admin/index" />">
@@ -168,6 +169,13 @@
                                                                     <span class="menu-title">I18N Settings</span>
                                                                 </a>
                                                             </li>
+                                                            <c:if test="${sos:hasClass('org.n52.sos.web.admin.AdminEReportingHeaderController')}">
+                                                                <li>
+                                                                    <a href="<c:url value="/admin/ereporting" />">
+                                                                        <span class="menu-title">eReporting Header</span>
+                                                                    </a>
+                                                                </li>
+                                                            </c:if>
                                                         </ul>
                                                     </li>
                                                     <li>

@@ -143,6 +143,11 @@ public class ServiceConfiguration {
      * tuple separator for result element.
      */
     private String tupleSeparator;
+    
+    /**
+     * decimal separator for result element.
+     */
+    private String decimalSeparator;
 
     private boolean deregisterJdbcDriver;
 
@@ -182,6 +187,17 @@ public class ServiceConfiguration {
     public void setTupleSeparator(final String separator) throws ConfigurationException {
         Validation.notNullOrEmpty("Tuple separator", separator);
         tupleSeparator = separator;
+    }
+    
+
+    public String getDecimalSeparator() {
+        return decimalSeparator;
+    }
+    
+    @Setting(MiscSettings.DECIMAL_SEPARATOR)
+    public void setDecimalSeparator(final String separator) throws ConfigurationException {
+        Validation.notNullOrEmpty("Decimal separator", separator);
+        decimalSeparator = separator;
     }
 
     @Setting(CHARACTER_ENCODING)
@@ -438,6 +454,7 @@ public class ServiceConfiguration {
     public boolean isForceStreamingEncoding() {
         return streamingEncoding;
     }
+
 
     /*
      * Now, we return the list of returned features and not a complex encoded

@@ -30,6 +30,8 @@ package org.n52.sos.ds.hibernate.entities.series;
 
 import java.io.Serializable;
 
+import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
+
 /**
  * Hibernate series numeric observation entity
  * 
@@ -37,7 +39,7 @@ import java.io.Serializable;
  * 
  */
 public class SeriesNumericObservation extends SeriesObservation implements Serializable,
-        org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation {
+        NumericObservation {
 
     private static final long serialVersionUID = -835034606459038907L;
 
@@ -57,5 +59,10 @@ public class SeriesNumericObservation extends SeriesObservation implements Seria
     public boolean isSetValue() {
         return value != null;
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
 
 }

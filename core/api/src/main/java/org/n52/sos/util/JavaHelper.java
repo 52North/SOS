@@ -31,12 +31,15 @@ package org.n52.sos.util;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 /**
  * Helper class for Java objects.
@@ -124,6 +127,8 @@ public final class JavaHelper {
             return Double.toString(bdValue.doubleValue());
         } else if (object instanceof Double) {
             return ((Double) object).toString();
+        } else if (object instanceof Integer) {
+            return ((Integer) object).toString();
         }
         // TODO why not object.toString()?
         return Constants.EMPTY_STRING;
@@ -186,6 +191,19 @@ public final class JavaHelper {
 
     public static <T> Set<Class<? extends T>> getSubclasses(Class<T> clazz) {
         return reflections.getSubTypesOf(clazz);
+    }
+    
+    public static Set<Integer> getIntegerSetFromString(String s) {
+        HashSet<Integer> set = Sets.newHashSet();
+        if (StringHelper.isNotEmpty(s)) {
+            Set<String> splitToSet = StringHelper.splitToSet(s, Constants.COMMA_STRING);
+            if (CollectionHelper.isNotEmpty(splitToSet)) {
+                for (String string : splitToSet) {
+                    set.add(Integer.parseInt(string));
+                }
+            }
+        }
+        return set;
     }
 
     private JavaHelper() {

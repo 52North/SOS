@@ -102,8 +102,12 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
         }
 		
         // set version.
-        xbCaps.setVersion(response.getVersion());
         SosCapabilities caps = response.getCapabilities();
+        if (caps.isSetVersion()) {
+            xbCaps.setVersion(caps.getVersion());
+        } else {
+            xbCaps.setVersion(response.getVersion());
+        }
         encodeServiceIdentification(caps, xbCaps);
         encodeServiceProvider(caps, xbCaps);
         encodeOperationsMetadata(caps, xbCaps);

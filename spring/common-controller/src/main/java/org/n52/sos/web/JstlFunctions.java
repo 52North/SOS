@@ -68,7 +68,7 @@ public class JstlFunctions {
         return HAS_ADMIN;
     }
 
-    private static boolean hasClass(String c) {
+    public static boolean hasClass(String c) {
         try {
             Class.forName(c);
         } catch (ClassNotFoundException e) {
@@ -128,7 +128,6 @@ public class JstlFunctions {
     public static boolean fileExists(ServletContext ctx, String path) {
         return new File(ctx.getRealPath(path)).exists();
     }
-
 
     public static String mapToJson(@SuppressWarnings("rawtypes") Map map) {
         ObjectNode node = JSONUtils.nodeFactory().objectNode();

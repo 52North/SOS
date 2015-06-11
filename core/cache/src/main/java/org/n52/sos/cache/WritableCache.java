@@ -31,21 +31,21 @@ package org.n52.sos.cache;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
-
 
 public class WritableCache extends ReadableCache implements WritableContentCache, CacheConstants {
     private static final Logger LOG = LoggerFactory.getLogger(WritableCache.class);
@@ -91,14 +91,6 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
-    @Deprecated
-    public void addObservationIdentifier(final String observationIdentifier) {
-        notNullOrEmpty(OBSERVATION_IDENTIFIER, observationIdentifier);
-        LOG.trace("Adding ObservationIdentifier {}", observationIdentifier);
-        getObservationIdentifiersSet().add(observationIdentifier);
-    }
-
-    @Override
     public void addProcedure(final String procedure) {
         notNullOrEmpty(PROCEDURE, procedure);
         LOG.trace("Adding procedure {}", procedure);
@@ -137,36 +129,10 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
-    @Deprecated
-    public void addObservationIdentifiers(final Collection<String> observationIdentifiers) {
-        noNullValues(OBSERVATION_IDENTIFIERS, observationIdentifiers);
-        for (final String observationIdentifier : observationIdentifiers) {
-            addObservationIdentifier(observationIdentifier);
-        }
-    }
-
-    @Override
     public void addProcedures(final Collection<String> procedures) {
         noNullValues(PROCEDURES, procedures);
         for (final String procedure : procedures) {
             addProcedure(procedure);
-        }
-    }
-
-    @Override
-    @Deprecated
-    public void removeObservationIdentifier(final String observationIdentifier) {
-        notNullOrEmpty(OBSERVATION_IDENTIFIER, observationIdentifier);
-        LOG.trace("Removing ObservationIdentifier {}", observationIdentifier);
-        getObservationIdentifiersSet().remove(observationIdentifier);
-    }
-
-    @Override
-    @Deprecated
-    public void removeObservationIdentifiers(final Collection<String> observationIdentifiers) {
-        noNullValues(OBSERVATION_IDENTIFIERS, observationIdentifiers);
-        for (final String observationIdentifier : observationIdentifiers) {
-            removeObservationIdentifier(observationIdentifier);
         }
     }
 
@@ -308,14 +274,6 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
-    @Deprecated
-    public void setObservationIdentifiers(final Collection<String> observationIdentifiers) {
-        LOG.trace("Setting ObservationIdentifiers");
-        getObservationIdentifiersSet().clear();
-        addObservationIdentifiers(observationIdentifiers);
-    }
-
-    @Override
     public void setProcedures(final Collection<String> procedures) {
         LOG.trace("Setting Procedures");
         getProceduresSet().clear();
@@ -384,8 +342,7 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
-    public void setI18nDescriptionForOffering(String offering,
-                                              MultilingualString description) {
+    public void setI18nDescriptionForOffering(String offering, MultilingualString description) {
         notNullOrEmpty(OFFERING, offering);
         notNull(DESCRIPTION, description);
         LOG.trace("Setting I18N Description of Offering {} to {}", offering, description);
@@ -484,15 +441,6 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         notNullOrEmpty(OBSERVABLE_PROPERTY, observableProperty);
         LOG.trace("Adding observableProperty {} to resultTemplate {}", observableProperty, resultTemplate);
         getObservablePropertiesForResultTemplatesMap().add(resultTemplate, observableProperty);
-    }
-
-    @Override
-    @Deprecated
-    public void addObservationIdentifierForProcedure(final String procedure, final String observationIdentifier) {
-        notNullOrEmpty(PROCEDURE, procedure);
-        notNullOrEmpty(OBSERVABLE_PROPERTY, observationIdentifier);
-        LOG.trace("Adding observationIdentifier {} to procedure {}", observationIdentifier, procedure);
-        getObservationIdentifiersForProceduresMap().add(procedure, observationIdentifier);
     }
 
     @Override
@@ -755,23 +703,6 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
-    @Deprecated
-    public void removeObservationIdentifierForProcedure(final String procedure, final String observationIdentifier) {
-        notNullOrEmpty(PROCEDURE, procedure);
-        notNullOrEmpty(OBSERVATION_IDENTIFIER, observationIdentifier);
-        LOG.trace("Removing observationIdentifier {} from procedure {}", observationIdentifier, procedure);
-        getObservationIdentifiersForProceduresMap().removeWithKey(procedure, observationIdentifier);
-    }
-
-    @Override
-    @Deprecated
-    public void removeObservationIdentifiersForProcedure(final String procedure) {
-        notNullOrEmpty(PROCEDURE, procedure);
-        LOG.trace("Removing observationIdentifiers for procedure {}", procedure);
-        getObservationIdentifiersForProceduresMap().remove(procedure);
-    }
-
-    @Override
     public void removeObservationTypeForOffering(final String offering, final String observationType) {
         notNullOrEmpty(OFFERING, offering);
         notNullOrEmpty(OBSERVATION_TYPE, observationType);
@@ -981,16 +912,6 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         final Set<String> newValue = newSynchronizedSet(observableProperties);
         LOG.trace("Setting observableProperties for resultTemplate {} to {}", resultTemplate, newValue);
         getObservablePropertiesForResultTemplatesMap().put(resultTemplate, newValue);
-    }
-
-    @Override
-    @Deprecated
-    public void setObservationIdentifiersForProcedure(final String procedure,
-            final Collection<String> observationIdentifiers) {
-        notNullOrEmpty(PROCEDURE, procedure);
-        final Set<String> newValue = newSynchronizedSet(observationIdentifiers);
-        LOG.trace("Setting observationIdentifiers for procedure {} to {}", procedure, newValue);
-        getObservationIdentifiersForProceduresMap().put(procedure, newValue);
     }
 
     @Override
@@ -1538,18 +1459,18 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     }
 
     @Override
-    public void addSupportedLanguage(Locale language){
-      notNull(SUPPORTED_LANGUAGE, language);
-      LOG.trace("Adding Language {}", language);
-      getSupportedLanguageSet().add(language);
+    public void addSupportedLanguage(Locale language) {
+        notNull(SUPPORTED_LANGUAGE, language);
+        LOG.trace("Adding Language {}", language);
+        getSupportedLanguageSet().add(language);
     }
 
     @Override
     public void addSupportedLanguage(Collection<Locale> languages) {
         noNullValues(SUPPORTED_LANGUAGES, languages);
-      for (final Locale language : languages) {
-          addSupportedLanguage(language);
-      }
+        for (final Locale language : languages) {
+            addSupportedLanguage(language);
+        }
     }
 
     @Override
@@ -1563,11 +1484,156 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         LOG.trace("Removing Language {}", language);
         getSupportedLanguageSet().remove(language);
     }
-    
+
     @Override
     public void setRequestableProcedureDescriptionFormat(Collection<String> formats) {
         LOG.trace("Adding requestable procedureDescriptionFormat");
         getRequestableProcedureDescriptionFormats().addAll(formats);
+    }
+
+    /**
+     * Check if identifier and humanReadableName already contained in the map,
+     * if not, add the mapping.
+     * 
+     * @param identifier
+     *            Identifier to check
+     * @param humanReadableName
+     *            Human readable name to check
+     * @param map
+     *            Map of type
+     * @param type
+     *            Text type to check, e.g. procedure
+     */
+    protected void checkAndAddIdentifierHumanReadableName(String identifier, String humanReadableName,
+            Map<String, String> map, String type) {
+        if (StringHelper.isNotEmpty(identifier) && StringHelper.isNotEmpty(humanReadableName)) {
+            if (!map.containsKey(humanReadableName) && !map.containsValue(identifier)) {
+                map.put(humanReadableName, identifier);
+            } else if (map.containsKey(humanReadableName) && !map.containsValue(identifier)) {
+                LOG.error("Duplicity of the {} humanReadableName '{}'", type, humanReadableName);
+            } else if (!map.containsKey(humanReadableName) && map.containsValue(identifier)) {
+                LOG.error("Duplicity of the {} identifier '{}'", type, identifier);
+            } else if (!identifier.equals(map.get(humanReadableName))) {
+                LOG.error("Duplicity of the {} humanReadableName '{}' and identifier '{}'", type, humanReadableName,
+                        identifier);
+            }
+        }
+    }
+
+    @Override
+    public void addFeatureOfInterestIdentifierHumanReadableName(String identifier, String humanReadableName) {
+        checkAndAddIdentifierHumanReadableName(identifier, humanReadableName,
+                getFeatureOfInterestIdentifierForHumanReadableName(), "featureOfInterest");
+    }
+
+    @Override
+    public void addObservablePropertyIdentifierHumanReadableName(String identifier, String humanReadableName) {
+        checkAndAddIdentifierHumanReadableName(identifier, humanReadableName,
+                getObservablePropertyIdentifierForHumanReadableName(), "observableProperty");
+    }
+
+    @Override
+    public void addProcedureIdentifierHumanReadableName(String identifier, String humanReadableName) {
+        checkAndAddIdentifierHumanReadableName(identifier, humanReadableName,
+                getProcedureIdentifierForHumanReadableName(), "procedure");
+    }
+
+    @Override
+    public void addOfferingIdentifierHumanReadableName(String identifier, String humanReadableName) {
+        checkAndAddIdentifierHumanReadableName(identifier, humanReadableName,
+                getOfferingIdentifierForHumanReadableName(), "offering");
+    }
+
+    @Override
+    public void removeFeatureOfInterestIdentifierForHumanReadableName(String humanReadableName) {
+        notNullOrEmpty(FEATURE_OF_INTEREST_NAME, humanReadableName);
+        LOG.trace("Removing featuresOfInterest identifier for humanReadableName {}", humanReadableName);
+        getFeatureOfInterestIdentifierForHumanReadableName().remove(humanReadableName);
+        if (getFeatureOfInterestIdentifierForHumanReadableName().containsKey(humanReadableName)) {
+            removeFeatureOfInterestHumanReadableNameForIdentifier(getFeatureOfInterestIdentifierForHumanReadableName()
+                    .get(humanReadableName));
+        }
+    }
+
+    @Override
+    public void removeFeatureOfInterestHumanReadableNameForIdentifier(String identifier) {
+        notNullOrEmpty(FEATURE_OF_INTEREST, identifier);
+        LOG.trace("Removing featuresOfInterest human readable name for identifier {}", identifier);
+        getFeatureOfInterestHumanReadableNameForIdentifier().remove(identifier);
+    }
+
+    @Override
+    public void removeObservablePropertyIdentifierForHumanReadableName(String humanReadableName) {
+        notNullOrEmpty(OBSERVABLE_PROPERTY_NAME, humanReadableName);
+        LOG.trace("Removing featuresOfInterest identifier for humanReadableName {}", humanReadableName);
+        getObservablePropertyIdentifierForHumanReadableName().remove(humanReadableName);
+        if (getObservablePropertyIdentifierForHumanReadableName().containsKey(humanReadableName)) {
+            removeObservablePropertyHumanReadableNameForIdentifier(getObservablePropertyIdentifierForHumanReadableName()
+                    .get(humanReadableName));
+        }
+    }
+
+    @Override
+    public void removeObservablePropertyHumanReadableNameForIdentifier(String identifier) {
+        notNullOrEmpty(OBSERVABLE_PROPERTY, identifier);
+        LOG.trace("Removing observableProperty human readable name for identifier {}", identifier);
+        getObservablePropertyHumanReadableNameForIdentifier().remove(identifier);
+    }
+
+    @Override
+    public void removeProcedureIdentifierForHumanReadableName(String humanReadableName) {
+        notNullOrEmpty(PROCEDURE_NAME, humanReadableName);
+        LOG.trace("Removing procedure identifier for humanReadableName {}", humanReadableName);
+        getProcedureIdentifierForHumanReadableName().remove(humanReadableName);
+        if (getProcedureIdentifierForHumanReadableName().containsKey(humanReadableName)) {
+            removeProcedureHumanReadableNameForIdentifier(getProcedureIdentifierForHumanReadableName().get(
+                    humanReadableName));
+        }
+    }
+
+    @Override
+    public void removeProcedureHumanReadableNameForIdentifier(String identifier) {
+        notNullOrEmpty(PROCEDURE, identifier);
+        LOG.trace("Removing procedure human readable name for identifier {}", identifier);
+        getProcedureHumanReadableNameForIdentifier().remove(identifier);
+    }
+
+    @Override
+    public void removeOfferingIdentifierForHumanReadableName(String humanReadableName) {
+        notNullOrEmpty(OFFERING_NAME, humanReadableName);
+        LOG.trace("Removing offering identifier for humanReadableName {}", humanReadableName);
+        getOfferingIdentifierForHumanReadableName().remove(humanReadableName);
+        if (getOfferingIdentifierForHumanReadableName().containsKey(humanReadableName)) {
+            removeOfferingHumanReadableNameForIdentifier(getOfferingIdentifierForHumanReadableName().get(
+                    humanReadableName));
+        }
+    }
+
+    @Override
+    public void removeOfferingHumanReadableNameForIdentifier(String identifier) {
+        notNullOrEmpty(OFFERING, identifier);
+        LOG.trace("Removing offering human readable name for identifier {}", identifier);
+        getOfferingHumanReadableNameForIdentifier().remove(identifier);
+    }
+
+    @Override
+    public void clearFeatureOfInterestIdentifierHumanReadableNameMaps() {
+        getFeatureOfInterestIdentifierForHumanReadableName().clear();
+    }
+
+    @Override
+    public void clearObservablePropertyIdentifierHumanReadableNameMaps() {
+        getObservablePropertyIdentifierForHumanReadableName().clear();
+    }
+
+    @Override
+    public void clearProcedureIdentifierHumanReadableNameMaps() {
+        getProcedureIdentifierForHumanReadableName().clear();
+    }
+
+    @Override
+    public void clearOfferingIdentifierHumanReadableNameMaps() {
+        getOfferingIdentifierForHumanReadableName().clear();
     }
 
 }

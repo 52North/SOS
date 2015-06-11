@@ -59,4 +59,9 @@ public class SeriesTextObservation extends SeriesObservation implements Serializ
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(value);
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
 }

@@ -28,9 +28,13 @@
  */
 package org.n52.sos.encode;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -52,9 +56,7 @@ import net.opengis.swe.x101.SimpleDataRecordType;
 
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.n52.sos.config.SettingsManager;
+import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorML;
@@ -72,13 +74,13 @@ import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.collect.Lists;
 
-
 /**
  * @author Shane StClair
  * 
  * @since 4.0.0
  */
-public class SensorMLEncoderV101Test {
+public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsManagerTest {
+	
     private static final String TEST_ID_1 = "test-id-1";
 
     private static final String TEST_NAME_1 = "test-name-1";
@@ -88,16 +90,6 @@ public class SensorMLEncoderV101Test {
     private static final String TEST_NAME_2 = "test-name-2";
     
     private static final String TEST_CHILD_1 = "test-id-child-1";
-    
-    @BeforeClass
-    public static void initSettingsManager() {
-        SettingsManager.getInstance();
-    }
-
-    @AfterClass
-    public static void cleanupSettingManager() {
-        SettingsManager.getInstance().cleanup();
-    }
 
     @Test
     public void should_set_identifier() throws OwsExceptionReport {

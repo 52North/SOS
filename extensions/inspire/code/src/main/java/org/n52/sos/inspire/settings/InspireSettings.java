@@ -66,10 +66,8 @@ public class InspireSettings implements SettingDefinitionProvider {
     public static final String INSPIRE_METADATA_DATE_KEY = "inspire.metadataDate";
     
     public static final String INSPIRE_USE_AUTHORITY_KEY = "inspire.useAuthority";
-
-//    public static final String INSPIRE_LANGUAGES_DEFAULT_KEY = "inspire.defaultLanguage";
-//
-//    public static final String INSPIRE_CRS_DEFAULT_KEY = "inspire.defaultCrs";
+    
+    public static final String INSPIRE_NAMESPACE_KEY = "inspire.namespace";
 
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("INSPIRE").setOrder(
             ORDER_10);
@@ -139,19 +137,27 @@ public class InspireSettings implements SettingDefinitionProvider {
                         .setDescription("Set the INSPIRE id for this service");
     
     public static final BooleanSettingDefinition INSPIRE_USE_AUTHORITY_DEFINITION = new BooleanSettingDefinition()
-                            .setGroup(GROUP)
-                            .setOrder(ORDER_11)
-                            .setKey(INSPIRE_USE_AUTHORITY_KEY)
-                            .setDefaultValue(false)
-                            .setTitle("Use authority as CRS prefix ")
-                            .setDescription("Should the SOS use the authority prefix (EPSG::) or the OGC CRS prefix (http://www.opengis.net/def/crs/EPSG/0/)?");
+                        .setGroup(GROUP)
+                        .setOrder(ORDER_11)
+                        .setKey(INSPIRE_USE_AUTHORITY_KEY)
+                        .setDefaultValue(false)
+                        .setTitle("Use authority as CRS prefix ")
+                        .setDescription("Should the SOS use the authority prefix (EPSG::) or the OGC CRS prefix (http://www.opengis.net/def/crs/EPSG/0/)?");
+    
+    public static final StringSettingDefinition INSPIRE_NAMESPACE_DEFINITION = new StringSettingDefinition()
+                        .setGroup(GROUP)
+                        .setOrder(ORDER_12)
+                        .setKey(INSPIRE_NAMESPACE_KEY)
+                        .setDefaultValue("http://www.52north.org/")
+                        .setTitle("INSPIRE namespace")
+                        .setDescription("Set the INSPIRE namespace for this service.");
     
     
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet.<SettingDefinition<?, ?>> of(
             INSPIRE_ENABLED_DEFINITION, INSPIRE_FULL_EXTENDED_CAPABILITIES_DEFINITION, INSPIRE_METADATA_URL_URL_DEFINITION, 
             INSPIRE_METADATA_URL_MEDIA_TYPE_DEFINITION, INSPIRE_CONFORMITY_TITLE_DEFINITION,
             INSPIRE_CONFORMITY_DATE_OF_CREATION_DEFINITION, INSPIRE_CONFORMITY_TITLE_DEFINITION, 
-            INSPIRE_METADATA_DATE_DEFINITION, INSPIRE_USE_AUTHORITY_DEFINITION
+            INSPIRE_METADATA_DATE_DEFINITION, INSPIRE_USE_AUTHORITY_DEFINITION, INSPIRE_NAMESPACE_DEFINITION
 //            , INSPIRE_ID_DEFINITION
             );
 

@@ -63,31 +63,48 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
         LOGGER.debug("Executing ObservablePropertiesCacheUpdate");
         startStopwatch();
         List<ObservableProperty> ops = new ObservablePropertyDAO().getObservablePropertyObjects(getSession());
-        //if ObservationConstellation is supported load them all at once, otherwise query obs directly
-        if (HibernateHelper.isEntitySupported(ObservationConstellation.class, getSession())) {
-            Map<String, Collection<ObservationConstellationInfo>> ociMap = ObservationConstellationInfo.mapByObservableProperty(
-                    new ObservationConstellationDAO().getObservationConstellationInfo(getSession()));
+        // if ObservationConstellation is supported load them all at once,
+        // otherwise query obs directly
+        if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
+            Map<String, Collection<ObservationConstellationInfo>> ociMap =
+                    ObservationConstellationInfo.mapByObservableProperty(new ObservationConstellationDAO()
+                            .getObservationConstellationInfo(getSession()));
             for (ObservableProperty op : ops) {
                 final String obsPropIdentifier = op.getIdentifier();
+                if (op.isSetName()) {
+                	getCache().addObservablePropertyIdentifierHumanReadableName(obsPropIdentifier, op.getName());
+                }
                 Collection<ObservationConstellationInfo> ocis = ociMap.get(obsPropIdentifier);
                 if (CollectionHelper.isNotEmpty(ocis)) {
-                    getCache().setOfferingsForObservableProperty(obsPropIdentifier,
-                            DatasourceCacheUpdateHelper.getAllOfferingIdentifiersFromObservationConstellationInfos(ocis));
-                    getCache().setProceduresForObservableProperty(obsPropIdentifier,
-                            DatasourceCacheUpdateHelper.getAllProcedureIdentifiersFromObservationConstellationInfos(ocis));
+                    getCache().setOfferingsForObservableProperty(
+                            obsPropIdentifier,
+                            DatasourceCacheUpdateHelper
+                                    .getAllOfferingIdentifiersFromObservationConstellationInfos(ocis));
+                    getCache().setProceduresForObservableProperty(
+                            obsPropIdentifier,
+                            DatasourceCacheUpdateHelper
+                                    .getAllProcedureIdentifiersFromObservationConstellationInfos(ocis));
                 }
             }
         } else {
             for (ObservableProperty op : ops) {
                 final String obsPropIdentifier = op.getIdentifier();
                 try {
-                    getCache().setOfferingsForObservableProperty(obsPropIdentifier,
-                            new OfferingDAO().getOfferingIdentifiersForObservableProperty(obsPropIdentifier, getSession()));
+                    getCache().setOfferingsForObservableProperty(
+                            obsPropIdentifier,
+                            new OfferingDAO().getOfferingIdentifiersForObservableProperty(obsPropIdentifier,
+                                    getSession()));
                 } catch (OwsExceptionReport e) {
                     getErrors().add(e);
                 }
-                getCache().setProceduresForObservableProperty(obsPropIdentifier,
-                        new ProcedureDAO().getProcedureIdentifiersForObservableProperty(obsPropIdentifier, getSession()));
+                try {
+                    getCache().setProceduresForObservableProperty(
+                            obsPropIdentifier,
+                            new ProcedureDAO().getProcedureIdentifiersForObservableProperty(obsPropIdentifier,
+                                    getSession()));
+                } catch (OwsExceptionReport owse) {
+                    getErrors().add(owse);
+                }
             }
         }
         LOGGER.debug("Executing ObservablePropertiesCacheUpdate ({})", getStopwatchResult());

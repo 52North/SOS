@@ -28,30 +28,19 @@
  */
 package org.n52.sos.ds.datasource;
 
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.Set;
-
-import org.n52.sos.config.SettingDefinition;
-
-import com.google.common.collect.ImmutableSet;
-
-public class CustomMySQLDatasource extends AbstractMySQLDatasource {
-    private static final String DIALECT_NAME = "MySQL/MariaDB Custom Mapping";
+/**
+ * Hibernate datasource implementation for MySQL databases and customized Hibernate mappings.
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ *
+ * @since 4.3.0
+ *
+ */
+public class CustomMySQLDatasource extends MySQLCoreDatasource {
+    private static final String DIALECT_NAME = "MySQL/MariaDB Custom Core";
 
     public CustomMySQLDatasource() {
-        super(false);
-        setUsernameDefault(USERNAME_DEFAULT_VALUE);
-        setUsernameDescription(USERNAME_DESCRIPTION);
-        setPasswordDefault(PASSWORD_DEFAULT_VALUE);
-        setPasswordDescription(PASSWORD_DESCRIPTION);
-        setDatabaseDefault(DATABASE_DEFAULT_VALUE);
-        setDatabaseDescription(DATABASE_DESCRIPTION);
-        setHostDefault(HOST_DEFAULT_VALUE);
-        setHostDescription(HOST_DESCRIPTION);
-        setPortDefault(PORT_DEFAULT_VALUE);
-        setPortDescription(PORT_DESCRIPTION);
-        super.setTransactional(false);
+        super();
     }
 
     @Override
@@ -63,30 +52,10 @@ public class CustomMySQLDatasource extends AbstractMySQLDatasource {
     public String getDialectName() {
         return DIALECT_NAME;
     }
-
+    
     @Override
-    public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties current) {
-        return filter(super.getChangableSettingDefinitions(current), ImmutableSet.of(OLD_CONCEPT_KEY, TRANSACTIONAL_KEY, SPATIAL_FILTERING_PROFILE_KEY, BATCH_SIZE_KEY));
+    public boolean supportsClear() {
+        return false;
     }
-
-
-
-
-    @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return filter(super.getSettingDefinitions(), ImmutableSet.of(OLD_CONCEPT_KEY, TRANSACTIONAL_KEY, SPATIAL_FILTERING_PROFILE_KEY, BATCH_SIZE_KEY));
-    }
-
-
-    private Set<SettingDefinition<?,?>> filter(Set<SettingDefinition<?,?>> definitions, Set<String> keysToExclude) {
-        Iterator<SettingDefinition<?, ?>> iterator = definitions.iterator();
-        while(iterator.hasNext()) {
-            if (keysToExclude.contains(iterator.next().getKey())) {
-                iterator.remove();
-            }
-        }
-        return definitions;
-    }
-
 
 }

@@ -101,5 +101,15 @@ public interface CacheConstants {
     String ENVELOPE = "envelope";
 
     String EVENT_TIME = "eventTime";
+    
+    String NAME_UC = "Name";
+    
+    String FEATURE_OF_INTEREST_NAME = FEATURE_OF_INTEREST + NAME_UC;
+    
+    String OBSERVABLE_PROPERTY_NAME = OBSERVABLE_PROPERTY + NAME_UC;
+    
+    String PROCEDURE_NAME = PROCEDURE + NAME_UC;
+    
+    String OFFERING_NAME = OFFERING + NAME_UC;
 
 }

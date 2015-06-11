@@ -103,17 +103,17 @@ public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
 
     public static final String THREAD_LOCAL_SESSION_CONTEXT = "thread";
 
-    private static final int SQLITE_CONNECTION_POOL_SIZE = 1;
+    public static final int SQLITE_CONNECTION_POOL_SIZE = 1;
 
-    protected static final String CONNECTION_URL_TEMPLATE = "jdbc:sqlite:%s.db";
+    public static final String CONNECTION_URL_TEMPLATE = "jdbc:sqlite:%s.db";
 
     protected static final String DEFAULT_DATABASE_NAME = "configuration";
 
-    private static final String SQLITE_HIBERNATE_DIALECT = HibernateSQLiteDialect.class.getName();
+    public static final String SQLITE_HIBERNATE_DIALECT = HibernateSQLiteDialect.class.getName();
 
-    private static final String UPDATE_SCHEMA_VALUE = "update";
+    public static final String UPDATE_SCHEMA_VALUE = "update";
 
-    private static final String SQLITE_JDBC_DRIVER = "org.sqlite.JDBC";
+    public static final String SQLITE_JDBC_DRIVER = "org.sqlite.JDBC";
 
     public static final String EMPTY = "";
 
@@ -210,29 +210,6 @@ public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
     @Override
     public void returnConnection(Object connection) {
     }
-
-//    @Override
-//    public void cleanup() {
-//        lock.lock();
-//        try {
-//            if (this.sessionFactory != null) {
-//                try {
-//                    if (SessionFactoryImpl.class.isInstance(this.sessionFactory)
-//                            && Stoppable.class.isInstance(((SessionFactoryImpl) this.sessionFactory)
-//                                    .getConnectionProvider())) {
-//                        ((Stoppable) ((SessionFactoryImpl) this.sessionFactory).getConnectionProvider()).stop();
-//                    }
-//                    this.sessionFactory.close();
-//                    LOG.info("Connection provider closed successfully!");
-//                } catch (HibernateException he) {
-//                    LOG.error("Error while closing connection provider!", he);
-//                }
-//            }
-//        } finally {
-//            this.sessionFactory = null;
-//            lock.unlock();
-//        }
-//    }
 
     @Override
     public void initialize(Properties properties) throws ConfigurationException {

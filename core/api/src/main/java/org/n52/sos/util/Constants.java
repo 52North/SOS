@@ -99,6 +99,8 @@ public interface Constants {
     String LESS_THAN_SIGN_STRING = "<";
     
     String GREATER_THAN_SIGN_STRING = ">";
+    
+    String INVERTED_COMMA_STRING = "'";
 
     // char constants
     char SPACE_CHAR = ' ';
@@ -142,6 +144,8 @@ public interface Constants {
     char MINUS_CHAR = '-';
 
     char PLUS_CHAR = '+';
+    
+    char INVERTED_COMMA_CHAR = '\'';
 
     int INT_0 = 0;
 

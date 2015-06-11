@@ -1,0 +1,16 @@
+{
+    "selectedLineWidth": 4,
+    "commonLineWidth": 1,
+    "restApiUrls": {
+	    "http://localhost:8080/52n-sos-webapp/api/v1/": "localhost"
+    },
+    "defaultProvider": {
+        "serviceID": "1",
+        "apiUrl": "http://localhost:8080/52n-sos-webapp/api/v1/"
+    },
+    "chartOptions":{
+        "yaxis":{
+            "tickDecimals" : 2
+        }
+    }
+}

@@ -168,9 +168,13 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
             }
         }
         /*
-         * close {@link WeakCollectionCleaner}
+         * close {@link WeakCollectionCleaner} 
+         * 
+         * Note: Not required if
+         * se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventor is
+         * defined in the web.xml
          */
-        WeakCollectionCleaner.DEFAULT.exit();
+        // WeakCollectionCleaner.DEFAULT.exit();
     }
 
     /**

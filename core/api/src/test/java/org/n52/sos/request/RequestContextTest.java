@@ -41,14 +41,16 @@ import org.n52.sos.util.net.IPAddress;
 public class RequestContextTest {
 
     @Test
-    public void shouldEmpty() {
+    public void shouldEmpty()
+    {
         RequestContext rc = new RequestContext();
         assertThat(rc.getIPAddress().isPresent(), is(false));
         assertThat(rc.getToken().isPresent(), is(false));
     }
 
     @Test
-    public void shouldNotEmptyTokenSet() {
+    public void shouldNotEmptyTokenSet()
+    {
         RequestContext rc = new RequestContext();
         rc.setToken("asfsf");
         assertThat(rc.getIPAddress().isPresent(), is(false));
@@ -56,19 +58,37 @@ public class RequestContextTest {
     }
 
     @Test
-    public void shouldNotEmptyIpSet() {
+    public void shouldNotEmptyIpSet()
+    {
         RequestContext rc = new RequestContext();
         rc.setIPAddress(new IPAddress("192.168.1.1"));
         assertThat(rc.getIPAddress().isPresent(), is(true));
     }
 
     @Test
-    public void shouldNotEmptyIpAndTokenSet() {
+    public void shouldNotEmptyIpAndTokenSet()
+    {
         RequestContext rc = new RequestContext();
         rc.setIPAddress(new IPAddress("192.168.1.1"));
         rc.setToken("asfsf");
         assertThat(rc.getIPAddress().isPresent(), is(true));
         assertThat(rc.getToken().isPresent(), is(true));
+    }
+
+    @Test
+    public void shouldNotEmptyAcceptType()
+    {
+        RequestContext rc = new RequestContext();
+        rc.setAcceptType("application/xml");
+        assertThat(rc.getAcceptType().isPresent(), is(true));
+    }
+
+    @Test
+    public void shouldNotEmptyContentType()
+    {
+        RequestContext rc = new RequestContext();
+        rc.setContentType("application/xml");
+        assertThat(rc.getContentType().isPresent(), is(true));
     }
 
 }

@@ -56,65 +56,103 @@ import com.google.common.net.InetAddresses;
  */
 public class RequestContext {
     private static final Logger LOG = LoggerFactory.getLogger(RequestContext.class);
+
     private Optional<IPAddress> address = Optional.absent();
+
     private Optional<String> token = Optional.absent();
+
     private Optional<ProxyChain> proxyChain = Optional.absent();
 
-    public Optional<IPAddress> getIPAddress() {
+    private Optional<String> contentType = Optional.absent();
+
+    private Optional<String> acceptType = Optional.absent();
+
+    public Optional<IPAddress> getIPAddress()
+    {
         return address;
     }
 
-    public Optional<ProxyChain> getForwardedForChain() {
+    public Optional<ProxyChain> getForwardedForChain()
+    {
         return proxyChain;
     }
-    
-    public void setForwaredForChain(ProxyChain chain) {
+
+    public void setForwaredForChain(ProxyChain chain)
+    {
         this.proxyChain = Optional.fromNullable(chain);
     }
 
-    public void setForwaredForChain(Optional<ProxyChain> chain) {
+    public void setForwaredForChain(Optional<ProxyChain> chain)
+    {
         this.proxyChain = Preconditions.checkNotNull(chain);
     }
 
-    public void setIPAddress(IPAddress ip) {
+    public void setIPAddress(IPAddress ip)
+    {
         this.address = Optional.fromNullable(ip);
     }
 
-    public void setIPAddress(Optional<IPAddress> ip) {
+    public void setIPAddress(Optional<IPAddress> ip)
+    {
         this.address = Preconditions.checkNotNull(ip);
     }
 
-    public Optional<String> getToken() {
+    public Optional<String> getToken()
+    {
         return token;
     }
 
-    public void setToken(String token) {
+    public void setToken(String token)
+    {
         this.token = Optional.fromNullable(Strings.emptyToNull(token));
     }
 
-    public void setToken(Optional<String> token) {
+    public void setToken(Optional<String> token)
+    {
         this.token = Preconditions.checkNotNull(token);
     }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).omitNullValues()
-                .add("address", getIPAddress().orNull())
-                .add("token", getToken().orNull())
-                .add("proxyChain", getForwardedForChain().orNull())
-                .toString();
+    public Optional<String> getContentType()
+    {
+        return contentType;
     }
 
-    public static RequestContext fromRequest(HttpServletRequest req) {
+    public void setContentType(String contentType)
+    {
+        this.contentType = Optional.fromNullable(contentType);
+    }
+
+    public Optional<String> getAcceptType()
+    {
+        return acceptType;
+    }
+
+    public void setAcceptType(String acceptType)
+    {
+        this.acceptType = Optional.fromNullable(acceptType);
+    }
+
+    @Override
+    public String toString()
+    {
+        return Objects.toStringHelper(this).omitNullValues().add("address", getIPAddress().orNull()).add("token", getToken().orNull()).add("proxyChain", getForwardedForChain().orNull())
+                .add("contenType", getContentType().orNull()).add("acceptType", getAcceptType().orNull()).toString();
+    }
+
+    public static RequestContext fromRequest(HttpServletRequest req)
+    {
         RequestContext rc = new RequestContext();
         rc.setIPAddress(getIPAddress(req));
         rc.setForwaredForChain(ProxyChain.fromForwardedForHeader(req.getHeader(HTTPHeaders.X_FORWARDED_FOR)));
         rc.setToken(req.getHeader(HTTPHeaders.AUTHORIZATION));
+        rc.setContentType(req.getHeader(HTTPHeaders.CONTENT_TYPE));
+        rc.setAcceptType(req.getHeader(HTTPHeaders.ACCEPT_ENCODING));
         return rc;
 
     }
 
-    private static IPAddress getIPAddress(HttpServletRequest req) {
+    private static IPAddress getIPAddress(HttpServletRequest req)
+    {
         InetAddress addr = null;
         try {
             addr = InetAddresses.forString(req.getRemoteAddr());
@@ -133,12 +171,12 @@ public class RequestContext {
                 // ::1 is not handled by InetAddresses.isCompatIPv4Address()
                 return new IPAddress("127.0.0.1");
             } else {
-                LOG.warn("Ignoring not v4 compatible IP address: {}",
-                         req.getRemoteAddr());
+                LOG.warn("Ignoring not v4 compatible IP address: {}", req.getRemoteAddr());
             }
         } else {
             LOG.warn("Ignoring unknown InetAddress: {}", addr);
         }
         return null;
     }
+
 }

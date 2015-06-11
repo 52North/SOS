@@ -1219,8 +1219,8 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Start new release: mvn jgitflow:release-start -DautoVersionSubmodules=true -->
-            <!-- Finish new release: mvn jgitflow:release-finish -DnoDeploy=true -->
+            <!-- Start new release: mvn jgitflow:release-start -DautoVersionSubmodules=true -DallowSnapshots=true -Psqlserver,oracle -->
+            <!-- Finish new release: mvn jgitflow:release-finish -DnoDeploy=true -Psqlserver,oracle -->
             <plugin>
 				<groupId>external.atlassian.jgitflow</groupId>
 				<artifactId>jgitflow-maven-plugin</artifactId>

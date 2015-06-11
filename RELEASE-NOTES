@@ -6,7 +6,7 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
  
-  Changes since last release
+  Release 52n-sensorweb-sos-4.3.0
 ==================================
  
   --- New features ---
@@ -15,13 +15,20 @@ RELEASE NOTES
       * Primary validated assessment data - measurements (E1a).
       * Primary validated assessment data -modelled (E1b)
       * Primary up-to-date assessment data - measurements (E2a) 
-      * More information: http://www.eionet.europa.eu/aqportal
+      * More information about AQD e-Reporting: http://www.eionet.europa.eu/aqportal
+	  * Documentation: https://wiki.52north.org/bin/view/SensorWeb/AqdEReporting
+	* Flexible identifier
+	  * The flexible identifier extension offers the possibility to return human readable names 
+	    as identifiers instead of the sometimes cryptic identifiers.
+	  * Affects offering, procedure, observableProperty and featureOfInterest.
+	  * Documentation: https://wiki.52north.org/bin/view/SensorWeb/FlexibleIdentifier
     * Add core and custom datasources for Oracle (#228)
     * Support clear datasource for SQL Server (#199)
-    * Add webapp-bundle which builds a 52N SOS war including
+    * Add webapp-bundle module which builds a 52N SOS war including
       * Sensor Web Client REST-API (https://github.com/52North/timeseries-api)
         * Direct access to the database tables.
-      * JavaScript SOS client (https://github.com/52North/js-sensorweb-client)
+      * JavaScript SOS Client (https://github.com/52North/js-sensorweb-client)
+	    * Linked by default to the SWC REST-API of the bundle
   
   --- Changes ---
   
@@ -37,8 +44,7 @@ RELEASE NOTES
     * Issue #226: ERROR log statements while importing observations: "Duplicity of the featureOfInterest identifier"
     * Issue #230: INSPIRE namespace element is not present in SpatialDatasetIdentifier
     * Issue #233: Outdated links
-  
- 
+	
  
   Release 52n-sensorweb-sos-4.2.0
 ==================================

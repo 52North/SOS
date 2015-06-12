@@ -31,10 +31,14 @@ package org.n52.sos.request;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.n52.sos.exception.HTTPException;
 import org.n52.sos.util.http.HTTPHeaders;
+import org.n52.sos.util.http.HTTPUtils;
+import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.net.IPAddress;
 import org.n52.sos.util.net.ProxyChain;
 import org.slf4j.Logger;
@@ -56,103 +60,86 @@ import com.google.common.net.InetAddresses;
  */
 public class RequestContext {
     private static final Logger LOG = LoggerFactory.getLogger(RequestContext.class);
-
     private Optional<IPAddress> address = Optional.absent();
-
     private Optional<String> token = Optional.absent();
-
     private Optional<ProxyChain> proxyChain = Optional.absent();
-
     private Optional<String> contentType = Optional.absent();
+    private Optional<List<MediaType>> acceptType = Optional.absent();
 
-    private Optional<String> acceptType = Optional.absent();
-
-    public Optional<IPAddress> getIPAddress()
-    {
+    public Optional<IPAddress> getIPAddress() {
         return address;
     }
 
-    public Optional<ProxyChain> getForwardedForChain()
-    {
+    public Optional<ProxyChain> getForwardedForChain() {
         return proxyChain;
     }
 
-    public void setForwaredForChain(ProxyChain chain)
-    {
+    public void setForwaredForChain(ProxyChain chain) {
         this.proxyChain = Optional.fromNullable(chain);
     }
 
-    public void setForwaredForChain(Optional<ProxyChain> chain)
-    {
+    public void setForwaredForChain(Optional<ProxyChain> chain) {
         this.proxyChain = Preconditions.checkNotNull(chain);
     }
 
-    public void setIPAddress(IPAddress ip)
-    {
+    public void setIPAddress(IPAddress ip) {
         this.address = Optional.fromNullable(ip);
     }
 
-    public void setIPAddress(Optional<IPAddress> ip)
-    {
+    public void setIPAddress(Optional<IPAddress> ip) {
         this.address = Preconditions.checkNotNull(ip);
     }
 
-    public Optional<String> getToken()
-    {
+    public Optional<String> getToken() {
         return token;
     }
 
-    public void setToken(String token)
-    {
+    public void setToken(String token) {
         this.token = Optional.fromNullable(Strings.emptyToNull(token));
     }
 
-    public void setToken(Optional<String> token)
-    {
+    public void setToken(Optional<String> token) {
         this.token = Preconditions.checkNotNull(token);
     }
 
-    public Optional<String> getContentType()
-    {
+    public Optional<String> getContentType() {
         return contentType;
     }
 
-    public void setContentType(String contentType)
-    {
+    public void setContentType(String contentType) {
         this.contentType = Optional.fromNullable(contentType);
     }
 
-    public Optional<String> getAcceptType()
-    {
+    public Optional<List<MediaType>> getAcceptType() {
         return acceptType;
     }
 
-    public void setAcceptType(String acceptType)
-    {
-        this.acceptType = Optional.fromNullable(acceptType);
+    public void setAcceptType(List<MediaType> list) {
+        this.acceptType = Optional.fromNullable(list);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return Objects.toStringHelper(this).omitNullValues().add("address", getIPAddress().orNull()).add("token", getToken().orNull()).add("proxyChain", getForwardedForChain().orNull())
                 .add("contenType", getContentType().orNull()).add("acceptType", getAcceptType().orNull()).toString();
     }
 
-    public static RequestContext fromRequest(HttpServletRequest req)
-    {
+    public static RequestContext fromRequest(HttpServletRequest req) {
         RequestContext rc = new RequestContext();
         rc.setIPAddress(getIPAddress(req));
         rc.setForwaredForChain(ProxyChain.fromForwardedForHeader(req.getHeader(HTTPHeaders.X_FORWARDED_FOR)));
         rc.setToken(req.getHeader(HTTPHeaders.AUTHORIZATION));
         rc.setContentType(req.getHeader(HTTPHeaders.CONTENT_TYPE));
-        rc.setAcceptType(req.getHeader(HTTPHeaders.ACCEPT_ENCODING));
+        try {
+            rc.setAcceptType(HTTPUtils.getAcceptHeader(req));
+        } catch (HTTPException e) {
+            // do nothing somebody will catch this if it fails.
+        }
         return rc;
 
     }
 
-    private static IPAddress getIPAddress(HttpServletRequest req)
-    {
+    private static IPAddress getIPAddress(HttpServletRequest req) {
         InetAddress addr = null;
         try {
             addr = InetAddresses.forString(req.getRemoteAddr());

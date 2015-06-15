@@ -42,11 +42,11 @@ import org.hibernate.internal.util.collections.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.cache.WritableContentCache;
+import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.ds.FeatureQueryHandler;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -62,7 +62,6 @@ import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.TOffering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
-import org.n52.sos.util.CacheHelper;
 
 import com.google.common.collect.Lists;
 
@@ -115,24 +114,23 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         LOGGER.debug("Executing OfferingCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
         //perform single threaded updates here
-        WritableContentCache cache = getCache();
+        SosWritableContentCache cache = getCache();
 
         for (Offering offering : getOfferingsToUpdate()){
 //            try {
                 String offeringId = offering.getIdentifier();
                 if (shouldOfferingBeProcessed(offeringId)) {
-                    String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
-                    cache.addOffering(prefixedOfferingId);
+                    cache.addOffering(offeringId);
 
                     if (offering instanceof TOffering) {
                         TOffering tOffering = (TOffering) offering;
                         // Related features
-                        cache.setRelatedFeaturesForOffering(prefixedOfferingId,
+                        cache.setRelatedFeaturesForOffering(offeringId,
                                                              getRelatedFeatureIdentifiersFrom(tOffering));
-                        cache.setAllowedObservationTypeForOffering(prefixedOfferingId,
+                        cache.setAllowedObservationTypeForOffering(offeringId,
                                                                     getObservationTypesFromObservationType(tOffering.getObservationTypes()));
                         // featureOfInterestTypes
-                        cache.setAllowedFeatureOfInterestTypeForOffering(prefixedOfferingId,
+                        cache.setAllowedFeatureOfInterestTypeForOffering(offeringId,
                                                                           getFeatureOfInterestTypesFromFeatureOfInterestType(tOffering.getFeatureOfInterestTypes()));
                     }
                 }

@@ -38,17 +38,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.iceland.cache.ContentCache;
-import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.config.CapabilitiesExtensionService;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.exception.NoSuchExtensionException;
-import org.n52.iceland.exception.NoSuchOfferingException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.sos.web.common.AbstractController;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.sos.config.CapabilitiesExtensionService;
+import org.n52.sos.exception.NoSuchExtensionException;
+import org.n52.sos.exception.NoSuchOfferingException;
+import org.n52.sos.web.admin.AbstractAdminController;
 
-public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
+public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractAdminController {
     private static final Logger log = LoggerFactory.getLogger(AbstractAdminCapabiltiesAjaxEndpoint.class);
     protected static final String OFFERING = "offeringId";
     protected static final String IDENTIFIER = "identifier";
@@ -58,19 +56,11 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
     protected static final String ERRORS_PROPERTY = "errors";
     protected static final String VALID_PROPERTY = "valid";
 
-
     @Inject
     private CapabilitiesExtensionService capabilitiesExtensionService;
 
-    @Inject
-    private ContentCacheController contentCacheController;
-
     protected CapabilitiesExtensionService getCapabilitiesExtensionService() {
         return capabilitiesExtensionService;
-    }
-
-    protected ContentCache getCache() {
-        return this.contentCacheController.getCache();
     }
 
     @ResponseBody

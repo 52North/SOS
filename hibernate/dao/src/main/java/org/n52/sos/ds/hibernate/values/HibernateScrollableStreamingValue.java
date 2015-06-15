@@ -33,17 +33,17 @@ import org.hibernate.ScrollableResults;
 
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.TimeValuePair;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.request.GetObservationRequest;
 
 /**
  * Hibernate streaming value implementation for {@link ScrollableResults}
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  */
 public class HibernateScrollableStreamingValue extends HibernateStreamingValue {

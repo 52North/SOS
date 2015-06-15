@@ -33,9 +33,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -43,7 +43,7 @@ import com.google.common.collect.Sets;
 /**
  * Class that represents SensorML 2.0 FeatrureOfInterest
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

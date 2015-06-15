@@ -30,9 +30,9 @@ package org.n52.sos.ogc.sensorML.elements;
 
 import java.util.List;
 
-import org.n52.iceland.ogc.swe.DataRecord;
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.ogc.swe.DataRecord;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 
 import com.google.common.collect.Lists;
 

@@ -31,12 +31,12 @@ package org.n52.sos.encode.json.base;
 import static org.n52.iceland.util.DateTimeHelper.formatDateTime2IsoString;
 import static org.n52.iceland.util.DateTimeHelper.formatDateTime2String;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.gml.time.TimePosition;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.encode.json.JSONEncoder;
 
 import com.fasterxml.jackson.databind.JsonNode;

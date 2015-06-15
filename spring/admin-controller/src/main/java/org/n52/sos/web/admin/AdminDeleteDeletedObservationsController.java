@@ -38,8 +38,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.DeleteDeletedObservationDAO;
 import org.n52.sos.web.common.ControllerConstants;
 
@@ -48,12 +48,13 @@ import org.n52.sos.web.common.ControllerConstants;
  * @since 4.0.0
  */
 @Controller
-@RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE_DELETE_DELETED_OBSERVATIONS)
+@RequestMapping(ControllerConstants.Paths.ADMIN_DATABASE_DELETE_DELETED_OBSERVATIONS)
 public class AdminDeleteDeletedObservationsController extends AbstractAdminController {
     @Inject
     private DeleteDeletedObservationDAO dao;
 
-    private DeleteDeletedObservationDAO getDAO() throws NoImplementationFoundException {
+    private DeleteDeletedObservationDAO getDAO()
+            throws NoImplementationFoundException {
         return this.dao;
     }
 

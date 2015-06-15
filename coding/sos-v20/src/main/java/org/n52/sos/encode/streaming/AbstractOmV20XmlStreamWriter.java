@@ -42,12 +42,14 @@ import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
+
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.encode.Encoder;
-import org.n52.iceland.encode.EncoderKey;
-import org.n52.iceland.encode.ObservationEncoder;
-import org.n52.iceland.encode.XmlEncoderKey;
+import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.coding.encode.ObservationEncoder;
+import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
@@ -55,27 +57,26 @@ import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.AbstractObservationValue;
-import org.n52.iceland.ogc.om.NamedValue;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.Configurator;
-import org.n52.iceland.util.CodingHelper;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.w3c.W3CConstants;
+import org.n52.sos.coding.encode.EncodingValues;
+import org.n52.sos.coding.encode.XmlStreamWriter;
 import org.n52.sos.encode.AbstractOmEncoderv20;
-import org.n52.sos.encode.EncodingValues;
-import org.n52.sos.encode.XmlStreamWriter;
+import org.n52.sos.ogc.om.AbstractObservationValue;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
+import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.GmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
@@ -84,7 +85,7 @@ import com.google.common.collect.Maps;
  * Abstract implementation of {@link XmlStreamWriter} for writing
  * {@link OmObservation}s to stream
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */

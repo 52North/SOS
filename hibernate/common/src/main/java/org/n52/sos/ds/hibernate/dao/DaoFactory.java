@@ -30,7 +30,7 @@ package org.n52.sos.ds.hibernate.dao;
 
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingObservationDAO;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingSeriesDAO;
@@ -56,7 +56,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 /**
  * Hibernate data access factory.
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  *
  */

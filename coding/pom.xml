@@ -23,5 +23,6 @@
 		<module>json-common</module>
 		<module>exi</module>
 		<module>kvp</module>
+		<module>soap</module>
     </modules>
 </project>

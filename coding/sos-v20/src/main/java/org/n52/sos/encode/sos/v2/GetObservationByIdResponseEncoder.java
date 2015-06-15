@@ -38,17 +38,17 @@ import net.opengis.sos.x20.GetObservationByIdResponseDocument;
 import net.opengis.sos.x20.GetObservationByIdResponseType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.encode.ObservationEncoder;
+import org.n52.iceland.coding.encode.ObservationEncoder;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.XmlHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.response.GetObservationByIdResponse;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.collect.Sets;
 

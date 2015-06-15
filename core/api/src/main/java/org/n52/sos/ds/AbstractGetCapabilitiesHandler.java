@@ -32,7 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
@@ -46,13 +46,13 @@ import org.n52.iceland.service.operator.ServiceOperatorRepository;
 /**
  * interface for getting capabilities for a passed GetCapabilities request from
  * the data source
- * 
+ *
  * Renamed, in version 4.x called AbstractGetCapabilitiesDAO
- * 
+ *
  * @since 5.0.0
  */
 public abstract class AbstractGetCapabilitiesHandler extends AbstractOperationHandler {
-    
+
     protected static final String FALSE = Boolean.FALSE.toString();
 
     protected static final String TRUE = Boolean.TRUE.toString();
@@ -96,11 +96,11 @@ public abstract class AbstractGetCapabilitiesHandler extends AbstractOperationHa
 
     /**
      * Get the SOS capabilities
-     * 
+     *
      * @param request
      *            GetCapabilities request
      * @return internal SOS capabilities representation
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs.
      */

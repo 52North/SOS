@@ -34,7 +34,7 @@ import net.opengis.sosREST.x10.SensorCollectionDocument;
 import net.opengis.sosREST.x10.SensorDocument;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.binding.rest.requests.RestResponse;

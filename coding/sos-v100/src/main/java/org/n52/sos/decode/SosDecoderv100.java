@@ -34,7 +34,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.opengis.sos.x10.DescribeSensorDocument;
@@ -53,34 +52,33 @@ import net.opengis.sos.x10.ResponseModeType.Enum;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.ogc.filter.SpatialFilter;
-import org.n52.iceland.ogc.filter.TemporalFilter;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.service.AbstractServiceCommunicationObject;
 import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.util.http.MediaType;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
+import org.n52.sos.ogc.filter.SpatialFilter;
+import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.OMHelper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.sos.util.XmlHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -174,7 +172,7 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
         }
 
         else {
-            throw new UnsupportedDecoderInputException(this, xmlObject);
+            throw new UnsupportedDecoderXmlInputException(this, xmlObject);
         }
         return request;
     }

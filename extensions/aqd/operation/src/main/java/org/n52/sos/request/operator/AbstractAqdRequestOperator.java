@@ -28,19 +28,17 @@
  */
 package org.n52.sos.request.operator;
 
-import java.util.Collections;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;

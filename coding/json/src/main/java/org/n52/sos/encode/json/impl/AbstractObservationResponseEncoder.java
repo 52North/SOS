@@ -30,11 +30,11 @@ package org.n52.sos.encode.json.impl;
 
 import java.util.Set;
 
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
+import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.response.AbstractObservationResponse;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -50,7 +50,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public abstract class AbstractObservationResponseEncoder<T extends AbstractObservationResponse> extends
-        AbstractSosResponseEncoder<T> implements org.n52.iceland.encode.ObservationEncoder<JsonNode, T>{
+        AbstractSosResponseEncoder<T> implements org.n52.iceland.coding.encode.ObservationEncoder<JsonNode, T>{
     public AbstractObservationResponseEncoder(Class<T> type, String operation) {
         super(type, operation);
     }

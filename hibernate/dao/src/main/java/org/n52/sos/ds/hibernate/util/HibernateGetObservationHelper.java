@@ -44,23 +44,17 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.coding.encode.ObservationEncoder;
+import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.encode.Encoder;
-import org.n52.iceland.encode.ObservationEncoder;
-import org.n52.iceland.encode.XmlEncoderKey;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.iceland.ogc.filter.BinaryLogicFilter;
-import org.n52.iceland.ogc.filter.ComparisonFilter;
-import org.n52.iceland.ogc.filter.Filter;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.filter.FilterConstants;
 import org.n52.iceland.ogc.filter.FilterConstants.ComparisonOperator;
-import org.n52.iceland.ogc.filter.TemporalFilter;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
@@ -71,6 +65,12 @@ import org.n52.sos.ds.hibernate.entities.Observation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
+import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
+import org.n52.sos.ogc.filter.BinaryLogicFilter;
+import org.n52.sos.ogc.filter.ComparisonFilter;
+import org.n52.sos.ogc.filter.Filter;
+import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.slf4j.Logger;
@@ -82,7 +82,7 @@ import com.google.common.collect.Sets;
 /**
  * Helper class for GetObservation DAOs
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */

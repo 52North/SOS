@@ -39,7 +39,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

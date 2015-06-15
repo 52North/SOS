@@ -40,19 +40,19 @@ import java.util.Map;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.iceland.ogc.filter.TemporalFilter;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.OWSConstants.RequestParams;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;
+import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.request.GetObservationRequest;
 
 /**
- * @author Shane StClair <shane@axiomalaska.com>
+ * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  * @since 4.0.0
  */
 public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 {

@@ -67,38 +67,40 @@ import net.opengis.sos.x20.ResultTemplateType.ObservationTemplate;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.ogc.filter.SpatialFilter;
-import org.n52.iceland.ogc.filter.TemporalFilter;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.OmObservationConstellation;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
-import org.n52.iceland.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.service.AbstractServiceCommunicationObject;
 import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.exception.ows.concrete.MissingResultValuesException;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
+import org.n52.sos.ogc.filter.SpatialFilter;
+import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
@@ -109,11 +111,8 @@ import org.n52.sos.request.InsertResultRequest;
 import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.response.GetResultResponse;
 import org.n52.sos.response.GetResultTemplateResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
 
 import com.google.common.base.Joiner;
 
@@ -186,7 +185,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
         } else if (xml instanceof GetResultResponseDocument) {
             return parseGetResultResponse((GetResultResponseDocument) xml);
         } else {
-            throw new UnsupportedDecoderInputException(this, xml);
+            throw new UnsupportedDecoderXmlInputException(this, xml);
         }
     }
 

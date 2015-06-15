@@ -36,36 +36,21 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.cache.ContentCache;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.om.AbstractPhenomenon;
-import org.n52.iceland.ogc.om.NamedValue;
-import org.n52.iceland.ogc.om.ObservationValue;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.OmObservationConstellation;
-import org.n52.iceland.ogc.om.SingleObservationValue;
-import org.n52.iceland.ogc.om.values.BooleanValue;
-import org.n52.iceland.ogc.om.values.CategoryValue;
-import org.n52.iceland.ogc.om.values.CountValue;
-import org.n52.iceland.ogc.om.values.QuantityValue;
-import org.n52.iceland.ogc.om.values.SweDataArrayValue;
-import org.n52.iceland.ogc.om.values.TextValue;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweDataRecord;
-import org.n52.iceland.ogc.swe.SweField;
-import org.n52.iceland.ogc.swe.simpleType.SweAbstractUomType;
-import org.n52.iceland.ogc.swes.SwesExtensions;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.http.HTTPStatus;
@@ -76,6 +61,21 @@ import org.n52.sos.exception.ows.concrete.InvalidObservationTypeForOfferingExcep
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingObservationParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
+import org.n52.sos.ogc.om.AbstractPhenomenon;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.ObservationValue;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.OmObservationConstellation;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.values.BooleanValue;
+import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TextValue;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.response.InsertObservationResponse;
 import org.n52.sos.util.OMHelper;
@@ -350,7 +350,7 @@ public class SosInsertObservationOperatorV20 extends
         if (CollectionHelper.isEmpty(request.getObservations())) {
             throw new MissingObservationParameterException();
         } else {
-            final ContentCache cache = Configurator.getInstance().getCache();
+            final SosContentCache cache = Configurator.getInstance().getCache();
             final CompositeOwsException exceptions = new CompositeOwsException();
             for (final OmObservation observation : request.getObservations()) {
                 final OmObservationConstellation obsConstallation = observation.getObservationConstellation();
@@ -375,10 +375,10 @@ public class SosInsertObservationOperatorV20 extends
         }
     }
 
-    private boolean isSplitObservations(final SwesExtensions swesExtensions) {
-        return swesExtensions != null
-                && !swesExtensions.isEmpty()
-                && swesExtensions
+    private boolean isSplitObservations(final Extensions extensions) {
+        return extensions != null
+                && !extensions.isEmpty()
+                && extensions
                         .isBooleanExtensionSet(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
     }
 

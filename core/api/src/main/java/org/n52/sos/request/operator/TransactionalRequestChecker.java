@@ -31,7 +31,7 @@ package org.n52.sos.request.operator;
 import java.util.Set;
 
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.request.RequestContext;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.iceland.util.net.IPAddress;

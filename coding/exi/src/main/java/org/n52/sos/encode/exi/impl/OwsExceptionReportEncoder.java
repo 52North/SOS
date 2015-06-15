@@ -32,16 +32,18 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.encode.Encoder;
-import org.n52.iceland.encode.EncoderKey;
-import org.n52.iceland.encode.ExceptionEncoderKey;
+import org.n52.iceland.coding.EncoderRepository;
+import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.coding.encode.ExceptionEncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
@@ -54,7 +56,7 @@ import com.google.common.collect.ImmutableSet.Builder;
 /**
  * Response encoder for {@link EXIObject} and {@link OwsExceptionReport}
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
@@ -64,14 +66,19 @@ public class OwsExceptionReportEncoder implements Encoder<EXIObject, OwsExceptio
 
     private final Set<EncoderKey> encoderKeys;
 
-    /**
-     * Constructor
-     */
+    private EncoderRepository encoderRepository;
+
     public OwsExceptionReportEncoder() {
         Builder<EncoderKey> set = ImmutableSet.builder();
         set.add(new ExceptionEncoderKey(MediaTypes.APPLICATION_EXI));
         this.encoderKeys = set.build();
     }
+
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
+
 
     @Override
     public Set<EncoderKey> getKeys() {
@@ -121,7 +128,7 @@ public class OwsExceptionReportEncoder implements Encoder<EXIObject, OwsExceptio
     @Override
     public EXIObject encode(OwsExceptionReport objectToEncode, Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport, UnsupportedEncoderInputException {
-        return encode(objectToEncode, null);
+        return encode(objectToEncode);
     }
 
     /**
@@ -132,7 +139,7 @@ public class OwsExceptionReportEncoder implements Encoder<EXIObject, OwsExceptio
      * @return Matching encoder
      */
     protected <D, S> Encoder<D, S> getEncoder(EncoderKey key) {
-        return CodingRepository.getInstance().getEncoder(key);
+        return this.encoderRepository.getEncoder(key);
     }
 
 }

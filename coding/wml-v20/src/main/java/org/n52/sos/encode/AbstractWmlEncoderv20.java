@@ -49,39 +49,39 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.encode.Encoder;
-import org.n52.iceland.encode.EncoderKey;
-import org.n52.iceland.encode.ProcedureEncoder;
+import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.coding.encode.ProcedureEncoder;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.ReferenceType;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.NamedValue;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.features.FeatureCollection;
-import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.JavaHelper;
-import org.n52.iceland.util.XmlHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.util.http.MediaType;
+import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.features.FeatureCollection;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.wml.ObservationProcess;
 import org.n52.sos.ogc.wml.WaterMLConstants;
 import org.n52.sos.response.GetObservationResponse;
+import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -525,7 +525,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
     private void addInput(ObservationProcessType observationProcess, ObservationProcess procedure)
             throws OwsExceptionReport {
         if (procedure.isSetInputs()) {
-            for (org.n52.iceland.ogc.gml.ReferenceType sosReferenceType : procedure.getInputs()) {
+            for (org.n52.sos.ogc.gml.ReferenceType sosReferenceType : procedure.getInputs()) {
                 XmlObject referenceType = encodeReferenceType(sosReferenceType);
                 if (referenceType != null) {
                     observationProcess.addNewInput().set(referenceType);

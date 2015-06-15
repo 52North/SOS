@@ -30,6 +30,8 @@ package org.n52.sos.web.admin.i18n.ajax;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -42,17 +44,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.cache.ContentCacheUpdate;
 import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.exception.NoSuchIdentifierException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.json.I18NJsonEncoder;
 import org.n52.iceland.i18n.metadata.AbstractI18NMetadata;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.cache.SosWritableContentCache;
+import org.n52.sos.exception.NoSuchIdentifierException;
 import org.n52.sos.web.admin.AbstractAdminController;
 import org.n52.sos.web.common.ControllerConstants;
 
@@ -61,6 +64,17 @@ public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetada
     private static final Logger LOGGER = LoggerFactory
             .getLogger(AbstractAdminI18NAjaxEndpoint.class);
     private final I18NJsonEncoder encoder = new I18NJsonEncoder();
+
+    private I18NDAORepository i18NDAORepository;
+
+    @Inject
+    public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
+        this.i18NDAORepository = i18NDAORepository;
+    }
+
+    public I18NDAORepository getI18NDAORepository() {
+        return i18NDAORepository;
+    }
 
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -142,15 +156,14 @@ public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetada
 
     private void checkIdentifier(String id)
             throws NoSuchIdentifierException {
-        ContentCache cache = getContentCacheController().getCache();
-        if (!isValid(cache, id)) {
+        if (!isValid(getCache(), id)) {
             throw new NoSuchIdentifierException(id);
         }
     }
 
     private I18NDAO<T> getDao()
             throws NoImplementationFoundException {
-        I18NDAO<T> dao = I18NDAORepository.getInstance().getDAO(getType());
+        I18NDAO<T> dao = this.i18NDAORepository.getDAO(getType());
         if (dao == null) {
             throw new NoImplementationFoundException(I18NDAO.class);
         }
@@ -159,15 +172,16 @@ public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetada
 
     protected abstract Class<T> getType();
 
-    protected abstract boolean isValid(ContentCache cache, String id);
+    protected abstract boolean isValid(SosContentCache cache, String id);
 
     protected abstract T create(String id);
 
     protected ContentCacheUpdate getContentCacheUpdate(final T i18n) {
         return new ContentCacheUpdate() {
             @Override public void execute() {
+                SosWritableContentCache cache = (SosWritableContentCache) getCache();
                 // ignore no longer available locales to skip a complete update
-                getCache().addSupportedLanguage(i18n.getLocales());
+                cache.addSupportedLanguage(i18n.getLocales());
             }
         };
     }

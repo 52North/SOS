@@ -34,12 +34,12 @@ import net.opengis.swes.x20.UpdateSensorDescriptionResponseDocument;
 import net.opengis.swes.x20.UpdateSensorDescriptionResponseType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.swes.SwesConstants;
-import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.response.UpdateSensorResponse;
+import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.collect.Sets;
 

@@ -40,7 +40,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
 /**
  * Abstract feature I18N entity
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

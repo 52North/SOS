@@ -41,7 +41,7 @@ import org.apache.xmlbeans.XmlOptions;
 import org.custommonkey.xmlunit.Diff;
 import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.encode.ProcedureEncoder;
+import org.n52.iceland.coding.encode.ProcedureEncoder;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.gml.AbstractFeature;
@@ -49,16 +49,11 @@ import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosOffering;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
-import org.n52.iceland.ogc.swe.DataRecord;
-import org.n52.iceland.ogc.swe.SweField;
-import org.n52.iceland.ogc.swe.simpleType.SweText;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.oxf.xml.NcNameResolver;
+import org.n52.sos.coding.encode.AbstractXmlEncoder;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.SensorML;
@@ -67,8 +62,14 @@ import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.sos.ogc.sensorML.elements.SmlCapabilitiesPredicates;
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
+import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.swe.DataRecord;
+import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.SweSimpleDataRecord;
+import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.util.SosHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -83,7 +84,7 @@ import com.google.common.collect.Sets;
 /**
  * Abstract {@link AbstractXmlEncoder} class to encode OGC SensorML
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

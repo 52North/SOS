@@ -30,8 +30,8 @@ package org.n52.sos.config;
 
 import java.util.Set;
 
-import org.n52.iceland.encode.ProcedureDescriptionFormatKey;
-import org.n52.iceland.encode.ResponseFormatKey;
+import org.n52.iceland.coding.encode.ProcedureDescriptionFormatKey;
+import org.n52.iceland.coding.encode.ResponseFormatKey;
 import org.n52.iceland.ogc.swes.OfferingExtensionKey;
 
 /**

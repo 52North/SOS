@@ -28,12 +28,12 @@
  */
 package org.n52.sos.web.admin.caps;
 
-import org.n52.sos.web.common.ControllerConstants;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import org.n52.sos.web.common.ControllerConstants;
 
 @Controller
 @RequestMapping(ControllerConstants.Paths.ADMIN_CAPABILITIES_SETTINGS)

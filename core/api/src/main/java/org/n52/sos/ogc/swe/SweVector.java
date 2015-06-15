@@ -31,7 +31,6 @@ package org.n52.sos.ogc.swe;
 import java.util.Arrays;
 import java.util.List;
 
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.iceland.util.StringHelper;
 
@@ -39,16 +38,16 @@ import com.google.common.base.Objects;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SweVector extends SweAbstractDataComponent {
-    private List<SweCoordinate<?>> coordinates;
+    private List<? extends SweCoordinate<?>> coordinates;
 
     private String referenceFrame;
 
     private String localFrame;
 
-    public SweVector(List<SweCoordinate<?>> coordinates) {
+    public SweVector(List<? extends SweCoordinate<?>> coordinates) {
         this.coordinates = coordinates;
     }
 
@@ -60,7 +59,7 @@ public class SweVector extends SweAbstractDataComponent {
         this((List<SweCoordinate<?>>) null);
     }
 
-    public List<SweCoordinate<?>> getCoordinates() {
+    public List<? extends SweCoordinate<?>> getCoordinates() {
         return coordinates;
     }
 

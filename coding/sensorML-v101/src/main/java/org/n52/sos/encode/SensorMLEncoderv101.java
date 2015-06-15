@@ -28,9 +28,8 @@
  */
 package org.n52.sos.encode;
 
-import static java.util.Collections.singletonMap;
-import static org.n52.iceland.util.CodingHelper.encoderKeysForElements;
 import static org.n52.iceland.util.CollectionHelper.union;
+import static org.n52.sos.util.CodingHelper.encoderKeysForElements;
 
 import java.util.Collections;
 import java.util.List;
@@ -94,11 +93,12 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.encode.Encoder;
-import org.n52.iceland.encode.EncoderKey;
-import org.n52.iceland.encode.XmlEncoderKey;
+import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.ogc.gml.GmlConstants;
@@ -106,23 +106,13 @@ import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.ogc.swe.SweConstants.SweAggregateType;
-import org.n52.iceland.ogc.swe.SweDataArray;
-import org.n52.iceland.ogc.swe.SweDataRecord;
-import org.n52.iceland.ogc.swe.SweField;
-import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.XmlHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.w3c.SchemaLocation;
@@ -149,9 +139,19 @@ import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
 import org.n52.sos.ogc.sensorML.elements.SmlLocation;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweCoordinate;
+import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.SweSimpleDataRecord;
+
+import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -179,14 +179,10 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
                     .build();
 
     private static final Map<String, ImmutableMap<String, Set<String>>> SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS =
-            ImmutableMap.of(
-                    SosConstants.SOS,
-                    ImmutableMap
-                            .<String, Set<String>> builder()
-                            .put(Sos2Constants.SERVICEVERSION,
-                                    ImmutableSet.of(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
-                            .put(Sos1Constants.SERVICEVERSION,
-                                    ImmutableSet.of(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE)).build());
+            ImmutableMap.of(SosConstants.SOS, ImmutableMap.<String, Set<String>> builder()
+                            .put(Sos2Constants.SERVICEVERSION, ImmutableSet.of(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
+                            .put(Sos1Constants.SERVICEVERSION, ImmutableSet.of(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
+                            .build());
 
     @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = union(
@@ -226,11 +222,9 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     @Override
     public Set<String> getSupportedProcedureDescriptionFormats(final String service, final String version) {
-        if (SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS.containsKey(service)
-                && SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS.get(service).containsKey(version)) {
-            return SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS.get(service).get(version);
-        }
-        return Collections.emptySet();
+        return SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS
+                .getOrDefault(service, ImmutableMap.of())
+                .getOrDefault(version, Collections.emptySet());
     }
 
     @Override

@@ -30,14 +30,14 @@ package org.n52.sos.encode.streaming;
 
 import java.io.OutputStream;
 
-import org.n52.iceland.encode.Encoder;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.sos.encode.EncodingValues;
+import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.sos.coding.encode.EncodingValues;
 
 /**
  * Generic interface for StreamingEncoders.
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  * @param <T>

@@ -35,28 +35,29 @@ import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 
-import org.n52.iceland.cache.ContentCache;
-import org.n52.iceland.i18n.I18NDAO;
-import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.i18n.LocalizedString;
-import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
-import org.n52.iceland.service.Configurator;
-import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.sos.cache.SosContentCache;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.i18n.I18NDAO;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.iceland.i18n.LocalizedString;
+import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.gml.CodeType;
+import org.n52.sos.service.Configurator;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.util.CollectionHelper;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
@@ -65,8 +66,8 @@ import com.google.common.collect.Lists;
 
 /**
  * Abstract generator class for procedure descriptions
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
@@ -234,7 +235,7 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
     }
 
     @VisibleForTesting
-    ContentCache getCache() {
+    SosContentCache getCache() {
         return Configurator.getInstance().getCache();
     }
 

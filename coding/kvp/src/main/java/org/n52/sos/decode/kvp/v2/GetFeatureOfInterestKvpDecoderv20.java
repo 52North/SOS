@@ -35,21 +35,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.decode.DecoderKey;
-import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.coding.decode.OperationDecoderKey;
+import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
 import org.n52.iceland.exception.ows.concrete.ParameterNotSupportedException;
-import org.n52.iceland.ogc.filter.SpatialFilter;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.filter.FilterConstants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.KvpHelper;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.decode.kvp.AbstractKvpDecoder;
+import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 
 /**
@@ -75,23 +76,6 @@ public class GetFeatureOfInterestKvpDecoderv20 extends AbstractKvpDecoder {
             String parameterValues = element.get(parameterName);
             try {
                 if (!parseDefaultParameter(request, parameterValues, parameterName)) {
-//                    // service (mandatory)
-//                    if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service.name())) {
-//                        request.setService(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-//                        foundService = true;
-//                    }
-//
-//                    // version (mandatory)
-//                    else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.version.name())) {
-//                        request.setVersion(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-//                        foundVersion = true;
-//                    }
-//                    // request (mandatory)
-//                    else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
-//                        KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
-//                    }
-//                    // observedProperty (optional)
-//                    else
                         if (parameterName.equalsIgnoreCase(Sos2Constants.GetFeatureOfInterestParams.observedProperty
                             .name())) {
                         request.setObservedProperties(KvpHelper.checkParameterMultipleValues(parameterValues,
@@ -118,7 +102,7 @@ public class GetFeatureOfInterestKvpDecoderv20 extends AbstractKvpDecoder {
                             throw new MissingParameterValueException(parameterName);
                         }
                         KvpHelper.checkParameterSingleValue(splittedParameterValues.get(0),
-                                SosConstants.Filter.ValueReference);
+                                FilterConstants.Expression.ValueReference);
                         KvpHelper.checkParameterMultipleValues(splittedParameterValues, parameterName);
 
                         spatialFilters.add(parseSpatialFilter(splittedParameterValues, parameterName));
@@ -127,12 +111,6 @@ public class GetFeatureOfInterestKvpDecoderv20 extends AbstractKvpDecoder {
                     // namespaces (conditional)
                     else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.namespaces.name())) {
                         request.setNamespaces(parseNamespaces(parameterValues));
-                     // language (optional)
-//                    } else if (parameterName.equalsIgnoreCase(SosConstants.InspireParams.language.name())) {
-//                        request.addExtension(getLanguageExtension(KvpHelper.checkParameterSingleValue(parameterValues, parameterName)));
-//                    // CRS (optional)
-//                    } else if (parameterName.equalsIgnoreCase(SosConstants.InspireParams.crs.name())) {
-//                        request.addExtension(getCrsExtension(KvpHelper.checkParameterSingleValue(parameterValues, parameterName)));
                     } else {
                         exceptions.add(new ParameterNotSupportedException(parameterName));
                     }

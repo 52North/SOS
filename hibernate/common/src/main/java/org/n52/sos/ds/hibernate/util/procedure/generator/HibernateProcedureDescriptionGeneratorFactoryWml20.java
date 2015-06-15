@@ -34,20 +34,20 @@ import java.util.Set;
 
 import org.hibernate.Session;
 
-import org.n52.iceland.ogc.gml.ReferenceType;
-import org.n52.iceland.ogc.om.NamedValue;
-import org.n52.iceland.ogc.om.values.TextValue;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.values.TextValue;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.wml.ObservationProcess;
 import org.n52.sos.ogc.wml.WaterMLConstants;
 
 /**
  * Generator class for WaterML 2.0 procedure descriptions
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

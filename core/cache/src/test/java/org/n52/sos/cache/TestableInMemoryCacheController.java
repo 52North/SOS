@@ -31,11 +31,10 @@ package org.n52.sos.cache;
 import java.io.File;
 
 import org.n52.iceland.cache.WritableContentCache;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.ConfigLocationProvider;
-import org.n52.sos.cache.ctrl.ContentCacheControllerImpl;
-import org.n52.sos.cache.ctrl.persistence.AbstractPersistingCachePersistenceStrategy;
-import org.n52.sos.cache.ctrl.persistence.ImmediatePersistenceStrategy;
+import org.n52.iceland.cache.ctrl.ContentCacheControllerImpl;
+import org.n52.iceland.cache.ctrl.persistence.AbstractPersistingCachePersistenceStrategy;
+import org.n52.iceland.cache.ctrl.persistence.ImmediatePersistenceStrategy;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 
 import com.google.common.io.Files;
 
@@ -47,14 +46,24 @@ public class TestableInMemoryCacheController extends ContentCacheControllerImpl 
     public TestableInMemoryCacheController() {
         tempFile = new File(directory, AbstractPersistingCachePersistenceStrategy.CACHE_FILE);
         ImmediatePersistenceStrategy ps = new ImmediatePersistenceStrategy();
-        ps.setConfigLocationProvider(new ConfigLocationProvider() {
-            @Override
-            public String get() {
-                return directory.getAbsolutePath();
-            }
-        });
+        ps.setConfigLocationProvider(directory::getAbsolutePath);
         ps.init();
         setUpdateInterval(Integer.MAX_VALUE);
+    }
+
+    @Override
+    public void setCache(WritableContentCache wcc) {
+        super.setCache(wcc);
+    }
+
+    @Override
+    public SosWritableContentCache getCache() {
+        return (SosWritableContentCache) super.getCache();
+    }
+
+    @Override
+    public void update() throws OwsExceptionReport {
+        // noop
     }
 
     public static void setUp() {
@@ -67,15 +76,5 @@ public class TestableInMemoryCacheController extends ContentCacheControllerImpl 
 
     public static File getTempFile() {
         return tempFile;
-    }
-
-    @Override
-    public void setCache(WritableContentCache wcc) {
-        super.setCache(wcc);
-    }
-
-    @Override
-    public void update() throws OwsExceptionReport {
-        // noop
     }
 }

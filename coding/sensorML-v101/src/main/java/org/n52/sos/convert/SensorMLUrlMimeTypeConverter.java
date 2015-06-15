@@ -29,18 +29,16 @@
 package org.n52.sos.convert;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKeyType;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
-import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
@@ -48,7 +46,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Converter for SensorML 1.0.1 URL to SensorML 1.0.1 MimeType
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

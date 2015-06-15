@@ -35,7 +35,7 @@ import org.n52.iceland.lifecycle.Constructable;
 /**
  * Configuration class for Hibernate streaming settings
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */

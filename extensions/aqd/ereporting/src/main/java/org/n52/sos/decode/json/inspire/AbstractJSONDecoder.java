@@ -30,10 +30,10 @@ package org.n52.sos.decode.json.inspire;
 
 import java.net.URI;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
 import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.decode.json.JSONDecoder;
 import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.util.Nillable;

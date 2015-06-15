@@ -43,6 +43,8 @@
         <description>Bean that allows convenient access to the datasource.properties</description>
     </bean>
 
+    <bean class="org.n52.sos.util.XmlOptionsHelper" />
+
     <!-- import security config -->
     <import resource="components/common/security-context.xml" />
     <!-- import components -->

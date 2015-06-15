@@ -32,7 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.iceland.ogc.sos.SosOffering;
+import org.n52.sos.ogc.sos.SosOffering;
 
 /**
  * SOS internal representation of a sensor description

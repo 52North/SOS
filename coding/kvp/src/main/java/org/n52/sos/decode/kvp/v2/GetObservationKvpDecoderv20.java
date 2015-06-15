@@ -34,30 +34,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.decode.DecoderKey;
-import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.coding.decode.OperationDecoderKey;
+import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
 import org.n52.iceland.exception.ows.concrete.ParameterNotSupportedException;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.filter.FilterConstants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants.Extensions;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
-import org.n52.iceland.ogc.swes.SwesExtensionImpl;
-import org.n52.iceland.ogc.swes.SwesExtensions;
+import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.KvpHelper;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.decode.kvp.AbstractKvpDecoder;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.GetObservationRequest;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GetObservationKvpDecoderv20 extends AbstractKvpDecoder {
 
@@ -96,7 +97,8 @@ public class GetObservationKvpDecoderv20 extends AbstractKvpDecoder {
                     }
 
                     // featureOfInterest (optional)
-                    else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.featureOfInterest.name())) {
+                    else if (parameterName
+                            .equalsIgnoreCase(SosConstants.GetObservationParams.featureOfInterest.name())) {
                         request.setFeatureIdentifiers(KvpHelper.checkParameterMultipleValues(parameterValues,
                                 parameterName));
                     }
@@ -105,9 +107,11 @@ public class GetObservationKvpDecoderv20 extends AbstractKvpDecoder {
                     else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.temporalFilter.name())) {
                         try {
                             request.setTemporalFilters(parseTemporalFilter(
-                                    KvpHelper.checkParameterMultipleValues(parameterValues, parameterName), parameterName));
+                                    KvpHelper.checkParameterMultipleValues(parameterValues, parameterName),
+                                    parameterName));
                         } catch (final OwsExceptionReport e) {
-                            exceptions.add(new InvalidParameterValueException(parameterName, parameterValues).causedBy(e));
+                            exceptions.add(new InvalidParameterValueException(parameterName, parameterValues)
+                                    .causedBy(e));
                         }
                     }
 
@@ -118,7 +122,7 @@ public class GetObservationKvpDecoderv20 extends AbstractKvpDecoder {
                             throw new MissingParameterValueException(parameterName);
                         }
                         KvpHelper.checkParameterSingleValue(splittedParameterValues.get(0),
-                                SosConstants.Filter.ValueReference);
+                                FilterConstants.Expression.ValueReference);
                         KvpHelper.checkParameterMultipleValues(splittedParameterValues, parameterName);
                         request.setSpatialFilter(parseSpatialFilter(splittedParameterValues, parameterName));
                     }
@@ -135,8 +139,8 @@ public class GetObservationKvpDecoderv20 extends AbstractKvpDecoder {
                      * EXTENSIONS
                      */
                     // MergeObservationsIntoDataArray
-                    else if (parameterName
-                            .equalsIgnoreCase(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name())) {
+                    else if (parameterName.equalsIgnoreCase(Sos2Constants.Extensions.MergeObservationsIntoDataArray
+                            .name())) {
                         request.setExtensions(parseExtension(Sos2Constants.Extensions.MergeObservationsIntoDataArray,
                                 parameterValues, request.getExtensions()));
                     } else {
@@ -161,20 +165,16 @@ public class GetObservationKvpDecoderv20 extends AbstractKvpDecoder {
         return request;
     }
 
-    private SwesExtensions parseExtension(final Extensions extension, final String parameterValues,
-            SwesExtensions extensions) {
+    private org.n52.iceland.ogc.ows.Extensions parseExtension(final Extensions extension,
+            final String parameterValues, org.n52.iceland.ogc.ows.Extensions extensions) {
         if (extensions == null || extensions.isEmpty()) {
             extensions = new SwesExtensions();
         }
         switch (extension) {
         case MergeObservationsIntoDataArray:
-            extensions.addSwesExtension(
-            		new SwesExtensionImpl<SweBoolean>()
-            		.setDefinition(extension.name())
-            		.setValue(
-            				(SweBoolean) new SweBoolean()
-            				.setValue(Boolean.parseBoolean(parameterValues))
-            		.setDefinition(extension.name())));
+            extensions.addExtension(new SwesExtension<SweBoolean>().setDefinition(extension.name()).setValue(
+                    (SweBoolean) new SweBoolean().setValue(Boolean.parseBoolean(parameterValues)).setDefinition(
+                            extension.name())));
             break;
         default:
             break;

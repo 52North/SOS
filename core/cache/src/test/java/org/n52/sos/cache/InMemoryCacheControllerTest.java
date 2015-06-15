@@ -38,7 +38,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.n52.iceland.ogc.om.OmConstants.OBS_TYPE_MEASUREMENT;
 import static org.n52.iceland.ogc.om.OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION;
-import static org.n52.iceland.ogc.om.features.SfConstants.FT_SAMPLINGPOINT;
+import static org.n52.sos.ogc.om.features.SfConstants.FT_SAMPLINGPOINT;
 import static org.n52.sos.util.builder.DataRecordBuilder.aDataRecord;
 import static org.n52.sos.util.builder.InsertObservationRequestBuilder.aInsertObservationRequest;
 import static org.n52.sos.util.builder.InsertResultTemplateRequestBuilder.anInsertResultTemplateRequest;
@@ -64,23 +64,21 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.n52.iceland.cache.ContentCache;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosEnvelope;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.util.Constants;
-import org.n52.sos.cache.ctrl.ContentCacheControllerImpl;
 import org.n52.sos.cache.ctrl.action.ObservationInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultTemplateInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorDeletionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorInsertionUpdate;
 import org.n52.sos.ds.MockCacheFeederDAO;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.swes.SwesFeatureRelationship;
 import org.n52.sos.request.DeleteSensorRequest;
 import org.n52.sos.request.InsertObservationRequest;
@@ -138,7 +136,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
     private AbstractServiceRequest request;
 
-    private ContentCacheControllerImpl controller;
+    private TestableInMemoryCacheController controller;
 
     private AbstractServiceResponse response;
 
@@ -824,7 +822,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
     private boolean onlyValidRelatedFeaturesAreInRoleMap() {
         Set<String> allowedRelatedFeatures = getCache().getRelatedFeatures();
-        for (String relatedFeatureWithRole : ((WritableCache) getCache()).getRolesForRelatedFeaturesMap().keySet()) {
+        for (String relatedFeatureWithRole : ((SosWritableContentCacheImpl) getCache()).getRolesForRelatedFeaturesMap().keySet()) {
             if (!allowedRelatedFeatures.contains(relatedFeatureWithRole)) {
                 return false;
             }
@@ -982,7 +980,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
         return ((InsertSensorRequest) request).getProcedureDescription().getIdentifier();
     }
 
-    protected ContentCache getCache() {
+    protected SosContentCache getCache() {
         return controller.getCache();
     }
 

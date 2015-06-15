@@ -28,6 +28,7 @@
  */
 package org.n52.sos.util;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 import javax.xml.namespace.NamespaceContext;
@@ -80,7 +81,7 @@ public class NamespaceContextBuilder {
         @Override
         public Iterator<String> getPrefixes(String namespaceURI) {
             String prefix = this.namespaces.get(namespaceURI);
-            return prefix == null ? Iterators.<String>emptyIterator()
+            return prefix == null ? Collections.<String>emptyIterator()
                                   : Iterators.singletonIterator(prefix);
         }
     }

@@ -43,18 +43,19 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.ds.HibernateDatasourceConstants;
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedOperatorException;
-import org.n52.iceland.ogc.filter.TemporalFilter;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractGetResultHandler;
+import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
@@ -71,18 +72,15 @@ import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
+import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
+import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
 import org.n52.sos.request.GetResultRequest;
 import org.n52.sos.response.GetResultResponse;
 import org.n52.sos.util.GeometryHandler;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.ds.ConnectionProvider;
 
 import com.google.common.collect.Sets;
 
@@ -97,9 +95,15 @@ public class GetResultDAO extends AbstractGetResultHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetResultDAO.class);
 
     private HibernateSessionHolder sessionHolder;
+    private FeatureQueryHandler featureQueryHandler;
 
     public GetResultDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Inject
+    public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
+        this.featureQueryHandler = featureQueryHandler;
     }
 
     @Inject
@@ -115,7 +119,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
             final GetResultResponse response = new GetResultResponse();
             response.setService(request.getService());
             response.setVersion(request.getVersion());
-            final Set<String> featureIdentifier = QueryHelper.getFeatures(request, session);
+            final Set<String> featureIdentifier = QueryHelper.getFeatures(this.featureQueryHandler, request, session);
             final List<ResultTemplate> resultTemplates = queryResultTemplate(request, featureIdentifier, session);
             if (isNotEmpty(resultTemplates)) {
                 final SosResultEncoding sosResultEncoding =

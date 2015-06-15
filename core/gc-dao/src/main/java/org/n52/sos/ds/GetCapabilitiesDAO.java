@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.xml.namespace.QName;
@@ -51,18 +52,17 @@ import org.n52.iceland.coding.DecoderRepository;
 import org.n52.iceland.coding.EncoderRepository;
 import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
 import org.n52.iceland.coding.ResponseFormatRepository;
-import org.n52.iceland.config.CapabilitiesExtensionService;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.config.SettingsService;
-import org.n52.iceland.decode.Decoder;
 import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.ds.OperationHandlerRepository;
-import org.n52.iceland.encode.Encoder;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.ogc.filter.FilterCapabilities;
 import org.n52.iceland.ogc.filter.FilterConstants.ComparisonOperator;
 import org.n52.iceland.ogc.filter.FilterConstants.ConformanceClassConstraintNames;
 import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
@@ -73,7 +73,6 @@ import org.n52.iceland.ogc.ows.MergableExtension;
 import org.n52.iceland.ogc.ows.OWSConstants;
 import org.n52.iceland.ogc.ows.OfferingExtension;
 import org.n52.iceland.ogc.ows.OwsDomainType;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProvider;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderRepository;
 import org.n52.iceland.ogc.ows.OwsNoValues;
@@ -89,11 +88,9 @@ import org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosEnvelope;
-import org.n52.iceland.ogc.sos.SosOffering;
 import org.n52.iceland.ogc.swes.OfferingExtensionProvider;
 import org.n52.iceland.ogc.swes.OfferingExtensionRepository;
-import org.n52.iceland.ogc.swes.SwesExtensionImpl;
+import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
@@ -102,8 +99,12 @@ import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.collections.MultiMaps;
 import org.n52.iceland.util.collections.SetMultiMap;
+import org.n52.sos.config.CapabilitiesExtensionService;
+import org.n52.sos.ogc.filter.FilterCapabilities;
 import org.n52.sos.ogc.sos.SosCapabilities;
+import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.sos.SosObservationOffering;
+import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.I18NHelper;
@@ -600,7 +601,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
                         }
                         if (extensions.containsKey(sosObservationOffering.getOffering().getIdentifier())) {
                             for (OfferingExtension offeringExtension : extensions.get(sosObservationOffering.getOffering().getIdentifier())) {
-                                sosObservationOffering.addExtension(new SwesExtensionImpl<OfferingExtension>().setValue(offeringExtension));
+                                sosObservationOffering.addExtension(new SwesExtension<OfferingExtension>().setValue(offeringExtension));
                             }
                         }
 
@@ -687,28 +688,34 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
 
         // set TemporalOperands
         final List<QName> operands = new ArrayList<QName>(2);
-        if (version.equals(Sos2Constants.SERVICEVERSION)) {
-            operands.add(GmlConstants.QN_TIME_PERIOD_32);
-            operands.add(GmlConstants.QN_TIME_INSTANT_32);
-        } else if (version.equals(Sos1Constants.SERVICEVERSION)) {
-            operands.add(GmlConstants.QN_TIME_PERIOD);
-            operands.add(GmlConstants.QN_TIME_INSTANT);
+        switch (version) {
+            case Sos2Constants.SERVICEVERSION:
+                operands.add(GmlConstants.QN_TIME_PERIOD_32);
+                operands.add(GmlConstants.QN_TIME_INSTANT_32);
+                break;
+            case Sos1Constants.SERVICEVERSION:
+                operands.add(GmlConstants.QN_TIME_PERIOD);
+                operands.add(GmlConstants.QN_TIME_INSTANT);
+                break;
         }
 
         filterCapabilities.setTemporalOperands(operands);
 
         // set TemporalOperators
         final SetMultiMap<TimeOperator, QName> ops = MultiMaps.newSetMultiMap(TimeOperator.class);
-        if (version.equals(Sos2Constants.SERVICEVERSION)) {
-            for (final TimeOperator op : TimeOperator.values()) {
-                ops.add(op, GmlConstants.QN_TIME_INSTANT_32);
-                ops.add(op, GmlConstants.QN_TIME_PERIOD_32);
-            }
-        } else if (version.equals(Sos1Constants.SERVICEVERSION)) {
-            for (final TimeOperator op : TimeOperator.values()) {
-                ops.add(op, GmlConstants.QN_TIME_INSTANT);
-                ops.add(op, GmlConstants.QN_TIME_PERIOD);
-            }
+        switch (version) {
+            case Sos2Constants.SERVICEVERSION:
+                for (final TimeOperator op : TimeOperator.values()) {
+                    ops.add(op, GmlConstants.QN_TIME_INSTANT_32);
+                    ops.add(op, GmlConstants.QN_TIME_PERIOD_32);
+                }
+                break;
+            case Sos1Constants.SERVICEVERSION:
+                for (final TimeOperator op : TimeOperator.values()) {
+                    ops.add(op, GmlConstants.QN_TIME_INSTANT);
+                    ops.add(op, GmlConstants.QN_TIME_PERIOD);
+                }
+                break;
         }
         filterCapabilities.setTempporalOperators(ops);
     }
@@ -722,7 +729,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     private void getScalarFilterCapabilities(final FilterCapabilities filterCapabilities) {
         // TODO PropertyIsNil, PropertyIsNull? better:
         // filterCapabilities.setComparisonOperators(Arrays.asList(ComparisonOperator.values()));
-        final List<ComparisonOperator> comparisonOperators = new ArrayList<ComparisonOperator>(8);
+        final List<ComparisonOperator> comparisonOperators = new ArrayList<>(8);
         comparisonOperators.add(ComparisonOperator.PropertyIsBetween);
         comparisonOperators.add(ComparisonOperator.PropertyIsEqualTo);
         comparisonOperators.add(ComparisonOperator.PropertyIsNotEqualTo);
@@ -746,7 +753,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
      *             * If an error occurs
      */
     private Set<String> getFOI4offering(final String offering) throws OwsExceptionReport {
-        final Set<String> featureIDs = new HashSet<String>(0);
+        final Set<String> featureIDs = new HashSet<>(0);
         final Set<String> features = getConfigurator().getCache().getFeaturesOfInterestForOffering(offering);
         if (!ProfileHandler.getInstance().getActiveProfile().isListFeatureOfInterestsInOfferings()
             || features == null) {
@@ -777,13 +784,10 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     }
 
     @Override
-    protected Set<String> getExtensionSections(final String service, final String version) throws OwsExceptionReport {
-        final Collection<CapabilitiesExtension> extensions = getAndMergeExtensions(service, version);
-        final HashSet<String> sections = new HashSet<String>(extensions.size());
-        for (final CapabilitiesExtension e : extensions) {
-            sections.add(e.getSectionName());
-        }
-        return sections;
+    protected Set<String> getExtensionSections(String service, String version) throws OwsExceptionReport {
+        return getAndMergeExtensions(service, version).stream()
+                .map(CapabilitiesExtension::getSectionName)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -801,7 +805,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         final List<CapabilitiesExtension> extensions = Lists.newLinkedList();
         if (CollectionHelper.isNotEmpty(capabilitiesExtensionProviders)) {
             final HashMap<String, MergableExtension> map =
-                    new HashMap<String, MergableExtension>(capabilitiesExtensionProviders.size());
+                    new HashMap<>(capabilitiesExtensionProviders.size());
             for (final CapabilitiesExtensionProvider capabilitiesExtensionDAO : capabilitiesExtensionProviders) {
                 if (capabilitiesExtensionDAO.getExtension() != null) {
                     if (capabilitiesExtensionDAO.getExtension() instanceof MergableExtension) {
@@ -829,15 +833,9 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
 
     private Collection<CapabilitiesExtension> getExtensions(final Set<String> requestedExtensionSections, final String service, final String version)
             throws OwsExceptionReport {
-        final List<CapabilitiesExtension> extensions = getAndMergeExtensions(service, version);
-        final List<CapabilitiesExtension> filtered =
-                new ArrayList<>(requestedExtensionSections.size());
-        for (final CapabilitiesExtension e : extensions) {
-            if (requestedExtensionSections.contains(e.getSectionName())) {
-                filtered.add(e);
-            }
-        }
-        return filtered;
+        return getAndMergeExtensions(service, version).stream()
+                .filter(e -> requestedExtensionSections.contains(e.getSectionName()))
+                .collect(Collectors.toList());
     }
 
     protected void setUpPhenomenaForOffering(final String offering, final String procedure, final SosObservationOffering sosOffering) {

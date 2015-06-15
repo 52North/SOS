@@ -29,50 +29,51 @@
 package org.n52.sos.ogc.swes;
 
 import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.swes.SwesConstants.HasSwesExtension;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.ogc.swes.SwesExtensions;
+import org.n52.iceland.ogc.ows.Extension;
+import org.n52.iceland.ogc.ows.Extensions;
+import org.n52.iceland.ogc.ows.OWSConstants.HasExtension;
 
 /**
  * SOS internal representation of AbstractSWES element
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
-public abstract class AbstractSWES extends AbstractFeature implements HasSwesExtension<AbstractSWES> {
+public abstract class AbstractSWES extends AbstractFeature implements HasExtension<AbstractSWES> {
 
     private static final long serialVersionUID = -7371500673994109819L;
 
-    private SwesExtensions extensions;
+    private Extensions extensions;
 
     @Override
-    public SwesExtensions getExtensions() {
+    public Extensions getExtensions() {
         return extensions;
     }
 
     @Override
-    public AbstractSWES setExtensions(final SwesExtensions extensions) {
+    public AbstractSWES setExtensions(final Extensions extensions) {
         this.extensions = extensions;
         return this;
     }
 
     @Override
-    public AbstractSWES addExtensions(SwesExtensions extensions) {
+    public AbstractSWES addExtensions(Extensions extensions) {
         if (getExtensions() == null) {
             setExtensions(extensions);
         } else {
-            getExtensions().addSwesExtension(extensions.getExtensions());
+            getExtensions().addExtension(extensions.getExtensions());
         }
         return this;
     }
 
     @SuppressWarnings("rawtypes")
-    public AbstractSWES addExtension(final SwesExtension extension) {
+    @Override
+    public AbstractSWES addExtension(Extension extension) {
         if (getExtensions() == null) {
-            setExtensions(new SwesExtensions());
+            setExtensions(new Extensions());
         }
-        getExtensions().addSwesExtension(extension);
+        getExtensions().addExtension(extension);
         return this;
     }
 

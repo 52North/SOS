@@ -46,26 +46,26 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.OptionNotSupportedException;
-import org.n52.iceland.exception.ows.concrete.XmlDecodingException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.ows.Extension;
 import org.n52.iceland.ogc.ows.OfferingExtension;
 import org.n52.iceland.ogc.ows.OwsCapabilities;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.StringBasedExtension;
 import org.n52.iceland.ogc.sos.CapabilitiesExtension;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosOffering;
-import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.iceland.response.GetCapabilitiesResponse;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.iceland.w3c.W3CConstants;
+import org.n52.sos.exception.ows.concrete.XmlDecodingException;
 import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosInsertionCapabilities;
 import org.n52.sos.ogc.sos.SosObservationOffering;
+import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.sos.util.CodingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -348,16 +348,16 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     private void encodeOfferingExtension(SosObservationOffering sosOffering, ObservationOfferingType xbObsOff) throws OwsExceptionReport {
         if (sosOffering.isSetExtensions()) {
-            for (SwesExtension<?> swesExtention : sosOffering.getExtensions().getExtensions()) {
-                if (swesExtention.getValue() instanceof OfferingExtension) {
-                    OfferingExtension extension = (OfferingExtension) swesExtention.getValue();
+            for (Extension<?> extention : sosOffering.getExtensions().getExtensions()) {
+                if (extention.getValue() instanceof OfferingExtension) {
+                    OfferingExtension extension = (OfferingExtension) extention.getValue();
                     try {
                         xbObsOff.addNewExtension().set(XmlObject.Factory.parse(extension.getExtension()));
                     } catch (XmlException ex) {
                             throw new XmlDecodingException("SwesExtension", extension.getExtension(), ex);
                     }
                 } else {
-                    xbObsOff.addNewExtension().set(CodingHelper.encodeObjectToXml(swesExtention.getNamespace(), swesExtention));
+                    xbObsOff.addNewExtension().set(CodingHelper.encodeObjectToXml(extention.getNamespace(), extention));
                 }
                 
             }

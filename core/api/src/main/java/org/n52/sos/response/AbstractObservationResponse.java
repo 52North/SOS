@@ -31,10 +31,10 @@ package org.n52.sos.response;
 import java.util.Collections;
 import java.util.List;
 
-import org.n52.iceland.ogc.om.OmObservation;
 import org.n52.iceland.request.ResponseFormat;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.util.StringHelper;
+import org.n52.sos.ogc.om.OmObservation;
 
 /**
  * TODO JavaDoc

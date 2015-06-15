@@ -28,15 +28,15 @@
  */
 package org.n52.sos.cache.ctrl.action;
 
-import org.n52.iceland.cache.ContentCacheUpdate;
-import org.n52.iceland.ds.CacheFeederHandler;
+import org.n52.sos.cache.SosContentCacheUpdate;
+import org.n52.sos.ds.CacheFeederHandler;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
  *
  * @since 4.0.0
  */
-public abstract class CacheFeederDAOCacheUpdate extends ContentCacheUpdate {
+public abstract class CacheFeederDAOCacheUpdate extends SosContentCacheUpdate {
     private final CacheFeederHandler cacheFeederDAO;
 
     public CacheFeederDAOCacheUpdate(CacheFeederHandler cacheFeederDAO) {
@@ -46,5 +46,4 @@ public abstract class CacheFeederDAOCacheUpdate extends ContentCacheUpdate {
     public CacheFeederHandler getCacheFeederDAO() {
         return cacheFeederDAO;
     }
-
 }

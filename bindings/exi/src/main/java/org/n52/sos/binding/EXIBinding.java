@@ -44,23 +44,6 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.xmlbeans.XmlObject;
-
-import org.n52.iceland.binding.SimpleBinding;
-import org.n52.iceland.coding.OperationKey;
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.exception.HTTPException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.util.CodingHelper;
-import org.n52.iceland.util.XmlHelper;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.utils.EXIUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -69,6 +52,21 @@ import org.xml.sax.XMLReader;
 import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.binding.MediaTypeBindingKey;
 import org.n52.iceland.binding.PathBindingKey;
+import org.n52.iceland.binding.SimpleBinding;
+import org.n52.iceland.coding.OperationKey;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.exception.HTTPException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.iceland.util.http.MediaType;
+import org.n52.iceland.util.http.MediaTypes;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.utils.EXIUtils;
 
 import com.google.common.collect.ImmutableSet;
 import com.siemens.ct.exi.EXIFactory;
@@ -79,7 +77,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * Binding implementation for EXI - Efficient XML Interchange See See <a
  * href="http://www.w3.org/TR/exi/">http://www.w3.org/TR/exi/</a>
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
@@ -190,15 +188,12 @@ public class EXIBinding extends SimpleBinding {
 
             // create XmlObject from OutputStream
             return XmlHelper.parseXmlString(os.toString());
-        } catch (IOException ioe) {
+        } catch (IOException | EXIException ioe) {
             throw new NoApplicableCodeException().causedBy(ioe).withMessage(
                     "Error while reading request! Message: %s", ioe.getMessage());
         } catch (TransformerException te) {
             throw new NoApplicableCodeException().causedBy(te).withMessage(
                     "Error while transforming request! Message: %s", te.getMessage());
-        } catch (EXIException exie) {
-            throw new NoApplicableCodeException().causedBy(exie).withMessage(
-                    "Error while reading request! Message: %s", exie.getMessage());
         }
     }
 

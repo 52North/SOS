@@ -32,25 +32,24 @@ import java.net.URI;
 import java.util.Locale;
 import java.util.Set;
 
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.i18n.I18NSettings;
-import org.n52.iceland.service.Configurator;
-import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.util.Validation;
-import org.n52.sos.inspire.settings.InspireSettings;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.config.annotation.Configurable;
+import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.lifecycle.Constructable;
+import org.n52.iceland.util.StringHelper;
+import org.n52.iceland.util.Validation;
+import org.n52.sos.inspire.settings.InspireSettings;
+import org.n52.sos.service.Configurator;
 
 import com.google.common.collect.Sets;
 
 /**
  * Helper class for INSPIRE
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */

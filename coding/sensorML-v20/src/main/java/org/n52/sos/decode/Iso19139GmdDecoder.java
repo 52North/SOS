@@ -30,9 +30,9 @@ package org.n52.sos.decode;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import org.apache.xmlbeans.XmlObject;
 import org.isotc211.x2005.gco.CharacterStringPropertyType;
 import org.isotc211.x2005.gmd.CIAddressType;
 import org.isotc211.x2005.gmd.CIContactPropertyType;
@@ -42,20 +42,19 @@ import org.isotc211.x2005.gmd.CIResponsiblePartyDocument;
 import org.isotc211.x2005.gmd.CIResponsiblePartyPropertyType;
 import org.isotc211.x2005.gmd.CIResponsiblePartyType;
 import org.isotc211.x2005.gmd.CITelephoneType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.iso.gmd.GmdConstants;
 import org.n52.sos.ogc.sensorML.Role;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.sos.util.CodingHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -64,9 +63,8 @@ import com.google.common.collect.Lists;
  * {@link Decoder} class to decode ISO TC211 Geographic MetaData (GMD)
  * extensible markup language.
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
- *
  */
 public class Iso19139GmdDecoder implements Decoder<Object, Object> {
 
@@ -86,16 +84,6 @@ public class Iso19139GmdDecoder implements Decoder<Object, Object> {
     }
 
     @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
     public Object decode(Object element) throws OwsExceptionReport, UnsupportedDecoderInputException {
         if (element instanceof CIResponsiblePartyDocument) {
             return decodeCIResponsibleParty(((CIResponsiblePartyDocument) element).getCIResponsibleParty());
@@ -104,6 +92,9 @@ public class Iso19139GmdDecoder implements Decoder<Object, Object> {
         } else if (element instanceof CIResponsiblePartyType) {
             return decodeCIResponsibleParty((CIResponsiblePartyType) element);
         } else {
+            if (element instanceof XmlObject) {
+                throw new UnsupportedDecoderXmlInputException(this, (XmlObject)element);
+            }
             throw new UnsupportedDecoderInputException(this, element);
         }
     }

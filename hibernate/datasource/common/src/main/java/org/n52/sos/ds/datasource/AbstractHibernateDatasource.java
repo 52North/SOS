@@ -54,14 +54,15 @@ import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.settings.BooleanSettingDefinition;
 import org.n52.iceland.config.settings.ChoiceSettingDefinition;
 import org.n52.iceland.config.settings.IntegerSettingDefinition;
 import org.n52.iceland.config.settings.StringSettingDefinition;
 import org.n52.iceland.ds.DatasourceCallback;
-import org.n52.iceland.ds.HibernateDatasourceConstants;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.util.StringHelper;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.SessionFactoryProvider;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.util.SQLConstants;
@@ -651,6 +652,16 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             }
         }
         return false;
+    }
+
+    protected Set<SettingDefinition<?,?>> filter(Set<SettingDefinition<?,?>> definitions, Set<String> keysToExclude) {
+        Iterator<SettingDefinition<?, ?>> iterator = definitions.iterator();
+        while(iterator.hasNext()) {
+            if (keysToExclude.contains(iterator.next().getKey())) {
+                iterator.remove();
+            }
+        }
+        return definitions;
     }
 
     /**

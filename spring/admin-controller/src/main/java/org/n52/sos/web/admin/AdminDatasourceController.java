@@ -35,7 +35,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.ds.GeneralQueryDAO;
 import org.n52.sos.web.common.ControllerConstants;

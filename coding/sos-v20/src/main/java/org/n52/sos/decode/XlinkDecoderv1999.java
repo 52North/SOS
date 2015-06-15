@@ -29,23 +29,22 @@
 package org.n52.sos.decode;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
-
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.decode.DecoderKey;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CodingHelper;
-import org.n52.iceland.w3c.W3CConstants;
-import org.n52.iceland.w3c.xlink.W3CHrefAttribute;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.x1999.xlink.HrefAttribute;
+
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
+import org.n52.iceland.w3c.W3CConstants;
+import org.n52.iceland.w3c.xlink.W3CHrefAttribute;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
+import org.n52.sos.util.CodingHelper;
 
 public class XlinkDecoderv1999 implements Decoder<Object, XmlObject> {
 
@@ -84,7 +83,7 @@ public class XlinkDecoderv1999 implements Decoder<Object, XmlObject> {
         if (xmlObject instanceof HrefAttribute) {
             return encodeHrefAttribute((HrefAttribute) xmlObject);
         } else {
-            throw new UnsupportedDecoderInputException(this, xmlObject);
+            throw new UnsupportedDecoderXmlInputException(this, xmlObject);
         }
     }
 

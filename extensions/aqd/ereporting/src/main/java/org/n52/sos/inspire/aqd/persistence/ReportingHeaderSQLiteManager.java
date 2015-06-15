@@ -34,11 +34,11 @@ import org.hibernate.Session;
 
 import org.n52.iceland.coding.DecoderRepository;
 import org.n52.iceland.coding.EncoderRepository;
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.decode.JsonDecoderKey;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.JsonDecoderKey;
+import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.encode.Encoder;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.config.sqlite.AbstractSQLiteDao;

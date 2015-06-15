@@ -34,7 +34,7 @@ import org.n52.iceland.ogc.gml.AbstractFeature;
 /**
  * Class represents an AbstractMonitoringObject
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */

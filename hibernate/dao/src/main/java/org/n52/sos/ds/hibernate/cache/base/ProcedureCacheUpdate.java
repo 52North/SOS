@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
@@ -56,7 +56,7 @@ import com.google.common.collect.Sets;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * @author Shane StClair <shane@axiomalaska.com>
+ * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  *
  * @since 4.0.0
  */

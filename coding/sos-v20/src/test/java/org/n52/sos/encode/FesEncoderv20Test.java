@@ -45,18 +45,18 @@ import net.opengis.fes.x20.BBOXType;
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
 
-import org.n52.iceland.encode.EncoderKey;
+import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.filter.FilterConstants;
 import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.iceland.ogc.filter.SpatialFilter;
-import org.n52.iceland.ogc.filter.TemporalFilter;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.sos.ogc.filter.SpatialFilter;
+import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.sos.util.CodingHelper;
 
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Envelope;
@@ -77,7 +77,7 @@ public class FesEncoderv20Test {
     public final void should_return_correct_encoder_keys() {
         final Set<EncoderKey> expectedKeySet =
                 CodingHelper.encoderKeysForElements(FilterConstants.NS_FES_2, TemporalFilter.class,
-                        org.n52.iceland.ogc.filter.FilterCapabilities.class, SpatialFilter.class);
+                        org.n52.sos.ogc.filter.FilterCapabilities.class, SpatialFilter.class);
         final Set<EncoderKey> returnedKeySet = fesEncoder.getKeys();
 
         assertThat(returnedKeySet.size(), is(3));

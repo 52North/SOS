@@ -50,27 +50,14 @@ import org.joda.time.DateTimeZone;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OptionNotSupportedException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.NamedValue;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.SingleObservationValue;
-import org.n52.iceland.ogc.om.values.BooleanValue;
-import org.n52.iceland.ogc.om.values.CategoryValue;
-import org.n52.iceland.ogc.om.values.CountValue;
-import org.n52.iceland.ogc.om.values.GeometryValue;
-import org.n52.iceland.ogc.om.values.QuantityValue;
-import org.n52.iceland.ogc.om.values.SweDataArrayValue;
-import org.n52.iceland.ogc.om.values.TextValue;
-import org.n52.iceland.ogc.om.values.UnknownValue;
-import org.n52.iceland.ogc.om.values.Value;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosEnvelope;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
@@ -96,6 +83,19 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.values.BooleanValue;
+import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.GeometryValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TextValue;
+import org.n52.sos.ogc.om.values.UnknownValue;
+import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
@@ -107,7 +107,7 @@ import com.vividsolutions.jts.geom.Geometry;
 /**
  * Abstract Hibernate data access class for observations.
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  *
  */
@@ -1227,7 +1227,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * Inner class to carry observation identifiers (featureOfInterest,
      * observableProperty, procedure)
      *
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.0.0
      *
      */

@@ -31,19 +31,19 @@ package org.n52.sos.decode;
 import net.opengis.swes.x20.ExtensibleRequestType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.ogc.swes.SwesExtensionImpl;
-import org.n52.iceland.ogc.swes.SwesExtensions;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.ogc.swes.SwesExtensions;
+import org.n52.sos.util.CodingHelper;
 
 public class AbstractSwesDecoderv20 {
-    
+
     protected SwesExtensions parseExtensibleRequest(ExtensibleRequestType extensibleRequestType) throws OwsExceptionReport {
         return parseExtensibleRequestExtension(extensibleRequestType.getExtensionArray());
     }
-    
+
     protected SwesExtensions parseExtensibleRequestExtension(XmlObject[] extensionArray) throws OwsExceptionReport {
         if (CollectionHelper.isNotNullOrEmpty(extensionArray)) {
             final SwesExtensions extensions = new SwesExtensions();
@@ -51,9 +51,9 @@ public class AbstractSwesDecoderv20 {
 
                 final Object obj = CodingHelper.decodeXmlElement(xbSwesExtension);
                 if (obj instanceof SwesExtension<?>) {
-                    extensions.addSwesExtension((SwesExtension<?>) obj);
+                    extensions.addExtension((SwesExtension<?>) obj);
                 } else {
-                    extensions.addSwesExtension(new SwesExtensionImpl<Object>().setValue(obj));
+                    extensions.addExtension(new SwesExtension<>().setValue(obj));
                 }
             }
             return extensions;

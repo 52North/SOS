@@ -43,58 +43,56 @@ import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
 import org.n52.iceland.exception.ows.OwsExceptionCode;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.AbstractGeometry;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.gml.ReferenceType;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.Time.NilReason;
 import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.AbstractPhenomenon;
-import org.n52.iceland.ogc.om.NamedValue;
-import org.n52.iceland.ogc.om.ObservationValue;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.om.OmObservableProperty;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.OmObservationConstellation;
-import org.n52.iceland.ogc.om.SingleObservationValue;
-import org.n52.iceland.ogc.om.values.BooleanValue;
-import org.n52.iceland.ogc.om.values.CategoryValue;
-import org.n52.iceland.ogc.om.values.CountValue;
-import org.n52.iceland.ogc.om.values.GeometryValue;
-import org.n52.iceland.ogc.om.values.HrefAttributeValue;
-import org.n52.iceland.ogc.om.values.NilTemplateValue;
-import org.n52.iceland.ogc.om.values.QuantityValue;
-import org.n52.iceland.ogc.om.values.ReferenceValue;
-import org.n52.iceland.ogc.om.values.SweDataArrayValue;
-import org.n52.iceland.ogc.om.values.TextValue;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
-import org.n52.iceland.ogc.swe.SweDataArray;
 import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.w3c.xlink.W3CHrefAttribute;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
+import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.ogc.gml.GmlMeasureType;
+import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.om.AbstractPhenomenon;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.ObservationValue;
+import org.n52.sos.ogc.om.OmObservableProperty;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.OmObservationConstellation;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.values.BooleanValue;
+import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.GeometryValue;
+import org.n52.sos.ogc.om.values.HrefAttributeValue;
+import org.n52.sos.ogc.om.values.NilTemplateValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.ReferenceValue;
+import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.sensorML.SensorML;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.service.ServiceConstants.ObservationType;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.util.CodingHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
@@ -169,8 +167,12 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
             return parseNamedValueType((NamedValuePropertyType) object);
         } else if (object instanceof NamedValuePropertyType[]) {
             return parseNamedValueTypeArray((NamedValuePropertyType[]) object);
+        } else {
+            if (object instanceof XmlObject) {
+                throw new UnsupportedDecoderXmlInputException(this, (XmlObject)object);
+            }
+            throw new UnsupportedDecoderInputException(this, object);
         }
-        throw new UnsupportedDecoderInputException(this, object);
     }
 
     private OmObservation parseOmObservation(OMObservationType omObservation) throws OwsExceptionReport {
@@ -240,7 +242,7 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
             sosNamedValue.setName(referenceType);
             return sosNamedValue;
         } else {
-            throw new UnsupportedDecoderInputException(this, namedValueProperty);
+            throw new UnsupportedDecoderXmlInputException(this, namedValueProperty);
         }
     }
 
@@ -290,7 +292,7 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
             namedValue.setValue(new HrefAttributeValue((W3CHrefAttribute)value));
             return namedValue;
         } else {
-            throw new UnsupportedDecoderInputException(this, xmlObject);
+            throw new UnsupportedDecoderXmlInputException(this, xmlObject);
         }
     }
 

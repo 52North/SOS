@@ -30,7 +30,7 @@ package org.n52.sos.request;
 
 import java.util.List;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.response.GetObservationByIdResponse;

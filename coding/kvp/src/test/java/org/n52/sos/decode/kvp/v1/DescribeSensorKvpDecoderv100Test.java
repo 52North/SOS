@@ -37,16 +37,16 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OWSConstants.RequestParams;
 import org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;
 import org.n52.sos.request.DescribeSensorRequest;
 
 /**
- * @author Shane StClair <shane@axiomalaska.com>
+ * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  * @since 4.0.0
  */
 public class DescribeSensorKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 {

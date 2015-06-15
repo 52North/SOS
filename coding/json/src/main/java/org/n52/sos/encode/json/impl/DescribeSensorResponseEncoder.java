@@ -31,15 +31,15 @@ package org.n52.sos.encode.json.impl;
 import java.util.List;
 
 import org.apache.xmlbeans.XmlOptions;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
-import org.n52.iceland.util.CodingHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
 import org.n52.sos.response.DescribeSensorResponse;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;

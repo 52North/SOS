@@ -34,7 +34,7 @@ import javax.inject.Inject;
 import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.sos.service.TransactionalSecurityConfiguration;

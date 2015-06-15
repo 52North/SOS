@@ -40,48 +40,44 @@ import java.util.RandomAccess;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.ds.FeatureQuerySettingsProvider;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
 import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
 import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator2;
-import org.n52.iceland.ogc.filter.SpatialFilter;
-import org.n52.iceland.ogc.filter.TemporalFilter;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
 import org.n52.iceland.ogc.ows.OWSConstants;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
-import org.n52.iceland.ogc.swe.simpleType.SweText;
 import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.ogc.swes.SwesExtensionImpl;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.service.ServiceConstants;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.JTSHelper;
 import org.n52.iceland.util.KvpHelper;
 import org.n52.iceland.util.Validation;
+import org.n52.sos.ds.FeatureQuerySettingsProvider;
+import org.n52.sos.ogc.filter.SpatialFilter;
+import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.service.ServiceConstants.SupportedType;
 
 /**
  * @since 4.0.0
@@ -251,7 +247,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
             throws OwsExceptionReport {
         if (!parameterValues.isEmpty()) {
             if (!(parameterValues instanceof RandomAccess)) {
-                parameterValues = new ArrayList<String>(parameterValues);
+                parameterValues = new ArrayList<>(parameterValues);
             }
             SpatialFilter spatialFilter = new SpatialFilter();
 
@@ -343,7 +339,8 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
         }
         // order: valueReference, temporal operator, time
         else if (parameterValues.size() == 3) {
-            filterList.add(createTemporalFilterFromValue(parameterValues.get(2), parameterValues.get(1), parameterValues.get(0)));
+            filterList.add(createTemporalFilterFromValue(parameterValues.get(2), parameterValues.get(1),
+                    parameterValues.get(0)));
         } else {
             throw new InvalidParameterValueException().withMessage("The parameter value is not valid!");
         }
@@ -437,12 +434,16 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
         SweBoolean bool =
                 (SweBoolean) new SweBoolean().setValue(Boolean.parseBoolean(returnHumanReadableIdentifier))
                         .setIdentifier(OWSConstants.AdditionalRequestParams.returnHumanReadableIdentifier.name());
-        return new SwesExtensionImpl<SweBoolean>().setValue(bool);
+        SwesExtension<SweBoolean> extension = new SwesExtension<>();
+        extension.setValue(bool);
+        return extension;
     }
 
     protected SwesExtension<SweText> getSweTextFor(String identifier, String value) {
         SweText text = (SweText) new SweText().setValue(value).setIdentifier(identifier);
-        return new SwesExtensionImpl<SweText>().setValue(text);
+        SwesExtension<SweText> extension = new SwesExtension<>();
+        extension.setValue(text);
+        return extension;
     }
 
 }

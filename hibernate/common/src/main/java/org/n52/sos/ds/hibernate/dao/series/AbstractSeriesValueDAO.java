@@ -38,7 +38,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.AbstractValueDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract value data access object class for {@link SeriesValue}
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */

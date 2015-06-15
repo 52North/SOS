@@ -48,20 +48,20 @@ import net.opengis.swe.x101.UomPropertyType;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swe.RangeValue;
-import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
-import org.n52.iceland.ogc.swe.simpleType.SweCount;
-import org.n52.iceland.ogc.swe.simpleType.SweText;
-import org.n52.iceland.ogc.swe.simpleType.SweTimeRange;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.sos.ogc.swe.RangeValue;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
+import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
+import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 
 import com.google.common.collect.Lists;
 
 /**
- * @author Carsten Hollmann
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * 
  * @since 4.0.0
  */

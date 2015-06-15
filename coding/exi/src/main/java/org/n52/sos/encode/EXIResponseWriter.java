@@ -35,21 +35,23 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.encode.ResponseProxy;
-import org.n52.iceland.util.XmlOptionsHelper;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.exi.EXIObject;
-import org.n52.sos.exi.EXISettings;
-import org.n52.sos.utils.EXIUtils;
-
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import org.n52.iceland.encode.ResponseWriterKey;
+import org.n52.iceland.coding.encode.ResponseProxy;
+import org.n52.iceland.coding.encode.ResponseWriterKey;
+import org.n52.iceland.util.Producer;
+import org.n52.iceland.util.http.MediaType;
+import org.n52.iceland.util.http.MediaTypes;
+import org.n52.sos.coding.encode.AbstractResponseWriter;
+import org.n52.sos.exi.EXIObject;
+import org.n52.sos.exi.EXISettings;
 
+import com.google.common.base.Charsets;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -58,18 +60,22 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * Writer class for {@link EXIObject}
  *
  * Converts XML documents via EXI encoding using {@link EXISettings}.
- *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
 public class EXIResponseWriter extends AbstractResponseWriter<EXIObject> {
 
-
-
-	private final static EXIUtils EXI_UTILS = EXIUtils.getInstance();
-
     public static final ResponseWriterKey KEY = new ResponseWriterKey(EXIObject.class);
+
+    private final Producer<EXIFactory> exiFactory;
+    private final Producer<XmlOptions> xmlOptions;
+
+    // we can not use injection in this class as it is manually created by a factory
+    public EXIResponseWriter(Producer<EXIFactory> exiUtils, Producer<XmlOptions> xmlOptions) {
+        this.exiFactory = exiUtils;
+        this.xmlOptions = xmlOptions;
+    }
 
     @Override
     public Set<ResponseWriterKey> getKeys() {
@@ -78,20 +84,22 @@ public class EXIResponseWriter extends AbstractResponseWriter<EXIObject> {
 
     @Override
     public void write(EXIObject exiObject, OutputStream out, ResponseProxy responseProxy) throws IOException {
-        try (InputStream is =
-                new ByteArrayInputStream(exiObject.getDoc().xmlText(XmlOptionsHelper.getInstance().getXmlOptions())
-                        .getBytes("UTF-8"))) {
-
-        	EXIFactory ef = EXI_UTILS.newEXIFactory();
-
-            EXIResult exiResult = new EXIResult(ef);
-            exiResult.setOutputStream(out);
+        byte[] bytes = getBytes(exiObject);
+        try (InputStream is = new ByteArrayInputStream(bytes)) {
+            EXIResult result = new EXIResult(this.exiFactory.get());
+            result.setOutputStream(out);
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-            xmlReader.setContentHandler(exiResult.getHandler());
+            xmlReader.setContentHandler(result.getHandler());
             xmlReader.parse(new InputSource(is));
         } catch (EXIException | SAXException e) {
             throw new IOException(e);
         }
+    }
+
+    private byte[] getBytes(EXIObject exi) {
+        XmlObject doc = exi.getDoc();
+        String text = doc.xmlText(this.xmlOptions.get());
+        return text.getBytes(Charsets.UTF_8);
     }
 
     @Override
@@ -101,7 +109,7 @@ public class EXIResponseWriter extends AbstractResponseWriter<EXIObject> {
 
     @Override
     public void setContentType(MediaType contentType) {
-
+        // ignore
     }
 
     @Override

@@ -32,8 +32,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.n52.iceland.cache.ContentCache;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.service.Configurator;
 
 /**
  * Class to get a summary of the cache objects.
@@ -58,12 +58,14 @@ public class CacheSummaryHandler {
     public static final String DEFAULT_EPSG = "default_epsg";
     public static final String NUM_EPSGS = "num_epsgs";
 
+
+
     private CacheSummaryHandler() {
 
     }
 
     public static Map<String, String> getCacheValues() {
-        ContentCache cache = Configurator.getInstance().getCache();
+        SosContentCache cache = Configurator.getInstance().getCache();
         Map<String, String> values = new TreeMap<>();
         values.put(MIN_PHENOMENON_TIME, nullSafeToString(cache.getMinPhenomenonTime()));
         values.put(MAX_PHENOMENON_TIME, nullSafeToString(cache.getMaxPhenomenonTime()));

@@ -36,6 +36,13 @@ import java.util.Set;
 
 import org.n52.iceland.util.StringHelper;
 
+/**
+ * MS SQL Server datasource
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.2.0
+ *
+ */
 public class SqlServerDatasource extends AbstractSqlServerDatasource {
 
     private static final String TN_FEATURE_OF_INTEREST = "featureOfInterest";
@@ -49,7 +56,6 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
     private static final String DECLARE_VARIABLE = "DECLARE @ObjectName NVARCHAR(100);";
 
     private static final String DIALECT_NAME = "SQL Server";
-
 
     public SqlServerDatasource() {
         super();
@@ -70,10 +76,16 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
         List<String> statements = new ArrayList<>();
         for (TableColumn tableColumn : getTableColumns()) {
             statements.add(getGetAndDropConstraint(tableColumn.getTable(), tableColumn.getColumn(), databaseSettings));
-            statements.add(getCreateUniqueConstraint(databaseSettings, tableColumn.getTable(), tableColumn.getColumn()));
+            statements
+                    .add(getCreateUniqueConstraint(databaseSettings, tableColumn.getTable(), tableColumn.getColumn()));
             execute(statements.toArray(new String[statements.size()]), databaseSettings);
             statements.clear();
         }
+    }
+
+    @Override
+    public boolean supportsClear() {
+        return false;
     }
 
     private String getGetAndDropConstraint(String table, String column, Map<String, Object> databaseSettings) {
@@ -116,7 +128,9 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
     private String getCreateUniqueConstraint(Map<String, Object> databaseSettings, String table, String column) {
         StringBuilder builder = new StringBuilder();
         builder.append("CREATE UNIQUE NONCLUSTERED INDEX ").append(table).append("_").append(column);
-        builder.append(" ON ").append(getQualifiedTable(getDatabase(databaseSettings), getSchema(databaseSettings), table)).append("(").append(column).append(")");
+        builder.append(" ON ")
+                .append(getQualifiedTable(getDatabase(databaseSettings), getSchema(databaseSettings), table))
+                .append("(").append(column).append(")");
         builder.append("WHERE ").append(column).append(" IS NOT NULL");
         return builder.toString();
     }
@@ -135,7 +149,7 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
 
     protected String getDatabase(Map<String, Object> settings) {
         if (isSetSchema(settings)) {
-            return (String)settings.get(DATABASE_KEY);
+            return (String) settings.get(DATABASE_KEY);
         }
         return "";
     }
@@ -159,7 +173,8 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
         }
 
         /**
-         * @param table the table to set
+         * @param table
+         *            the table to set
          */
         private void setTable(String table) {
             this.table = table;
@@ -173,7 +188,8 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
         }
 
         /**
-         * @param column the column to set
+         * @param column
+         *            the column to set
          */
         public void setColumn(String column) {
             this.column = column;

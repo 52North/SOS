@@ -33,7 +33,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,7 +42,7 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.cache.ContentCache;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierRepository;
@@ -52,24 +51,20 @@ import org.n52.iceland.ds.OperationHandlerRepository;
 import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.event.events.RequestEvent;
 import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
 import org.n52.iceland.exception.ows.OperationNotSupportedException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.VersionNegotiationFailedException;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingValueReferenceException;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.ogc.filter.SpatialFilter;
-import org.n52.iceland.ogc.filter.TemporalFilter;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
 import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.iceland.request.operator.RequestOperatorKey;
@@ -78,6 +73,9 @@ import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.exception.ows.concrete.InvalidValueReferenceException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
+import org.n52.sos.ogc.filter.SpatialFilter;
+import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.service.profile.Profile;
@@ -321,8 +319,8 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     protected abstract void checkParameters(Q request) throws OwsExceptionReport;
 
-    protected ContentCache getCache() {
-        return this.contentCacheController.getCache();
+    protected SosContentCache getCache() {
+        return (SosContentCache) this.contentCacheController.getCache();
     }
 
     protected Profile getActiveProfile() {
@@ -700,36 +698,6 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     protected boolean hasLanguageExtension(SwesExtensions extensions) {
         return extensions != null && extensions.containsExtension(OWSConstants.AdditionalRequestParams.language);
     }
-
-    // protected void checkLanguageExtension(SwesExtensions extensions) throws
-    // OwsExceptionReport {
-    // checkLanguageExtension(extensions,
-    // ServiceConfiguration.getInstance().getSupportedLanguages());
-    // }
-    //
-    // protected void checkLanguageExtension(SwesExtensions extensions,
-    // Set<String> supportedLanguages)
-    // throws OwsExceptionReport {
-    // if (hasLanguageExtension(extensions)) {
-    // SwesExtension<?> extension =
-    // extensions.getExtension(SosConstants.InspireParams.language);
-    // String value = Constants.EMPTY_STRING;
-    // if (extension.getValue() instanceof String) {
-    // value = (String) extension.getValue();
-    // } else if (extension.getValue() instanceof SweText) {
-    // value = ((SweText) extension.getValue()).getValue();
-    // } else {
-    // throw new
-    // MissingParameterValueException(SosConstants.InspireParams.language)
-    // .withMessage("The language extension value should be of type 'swe:TextPropertytype'");
-    // }
-    // if (!supportedLanguages.contains(value)) {
-    // throw new
-    // InvalidParameterValueException(SosConstants.InspireParams.language,
-    // value);
-    // }
-    // }
-    // }
 
     private boolean checkFeatureValueReference(String valueReference) {
         return "sams:shape".equals(valueReference)

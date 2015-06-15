@@ -30,7 +30,6 @@ package org.n52.sos.decode;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import net.opengis.fes.x20.BBOXType;
@@ -57,30 +56,30 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlObject.Factory;
 
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.ogc.filter.BinaryLogicFilter;
-import org.n52.iceland.ogc.filter.ComparisonFilter;
-import org.n52.iceland.ogc.filter.Filter;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.filter.FilterConstants;
 import org.n52.iceland.ogc.filter.FilterConstants.BinaryLogicOperator;
 import org.n52.iceland.ogc.filter.FilterConstants.ComparisonOperator;
 import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator2;
-import org.n52.iceland.ogc.filter.SpatialFilter;
-import org.n52.iceland.ogc.filter.TemporalFilter;
-import org.n52.iceland.ogc.filter.UnaryLogicFilter;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.XmlHelper;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
+import org.n52.sos.ogc.filter.BinaryLogicFilter;
+import org.n52.sos.ogc.filter.ComparisonFilter;
+import org.n52.sos.ogc.filter.Filter;
+import org.n52.sos.ogc.filter.SpatialFilter;
+import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.sos.ogc.filter.UnaryLogicFilter;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,7 +142,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
         } else if (xmlObject instanceof FilterDocument) {
             return parseFilterType(((FilterDocument) xmlObject).getFilter());
         } else {
-            throw new UnsupportedDecoderInputException(this, xmlObject);
+            throw new UnsupportedDecoderXmlInputException(this, xmlObject);
         }
     }
 
@@ -166,11 +165,11 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
         } else if (filterType.isSetLogicOps()) {
             return parseLogicFilterType(filterType.getLogicOps());
         } else if (filterType.isSetFunction()) {
-            throw new UnsupportedDecoderInputException(this, filterType);
+            throw new UnsupportedDecoderXmlInputException(this, filterType);
         } else if (filterType.getIdArray() != null) {
-            throw new UnsupportedDecoderInputException(this, filterType);
+            throw new UnsupportedDecoderXmlInputException(this, filterType);
         } else {
-            throw new UnsupportedDecoderInputException(this, filterType);
+            throw new UnsupportedDecoderXmlInputException(this, filterType);
         }
     }
 
@@ -202,7 +201,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
                     if (sosGeometry instanceof Geometry) {
                         spatialFilter.setGeometry((Geometry) sosGeometry);
                     } else {
-                        throw new UnsupportedDecoderInputException(this, xbSpatialOpsType);
+                        throw new UnsupportedDecoderXmlInputException(this, xbSpatialOpsType);
                     }
 
                 } else {
@@ -322,7 +321,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
         } else if (comparisonOpsType instanceof PropertyIsBetweenType) {
             return parsePropertyIsBetweenFilter((PropertyIsBetweenType) comparisonOpsType);
         } else {
-            throw new UnsupportedDecoderInputException(this, comparisonOpsType);
+            throw new UnsupportedDecoderXmlInputException(this, comparisonOpsType);
         }
     }
 
@@ -343,7 +342,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
         } else if (ComparisonOperator.PropertyIsGreaterThanOrEqualTo.name().equals(localName)) {
             comparisonFilter.setOperator(ComparisonOperator.PropertyIsGreaterThanOrEqualTo);
         } else {
-            throw new UnsupportedDecoderInputException(this, comparisonOpsType);
+            throw new UnsupportedDecoderXmlInputException(this, comparisonOpsType);
         }
         parseExpressions(comparisonOpsType.getExpressionArray(), comparisonFilter);
         return comparisonFilter;
@@ -433,7 +432,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
     private ComparisonFilter parsePropertyIsNullFilter(PropertyIsNullType comparisonOpsType) throws OwsExceptionReport {
         ComparisonFilter comparisonFilter = new ComparisonFilter();
         comparisonFilter.setOperator(ComparisonOperator.PropertyIsNull);
-        throw new UnsupportedDecoderInputException(this, comparisonOpsType);
+        throw new UnsupportedDecoderXmlInputException(this, comparisonOpsType);
         // TODO get values
         // return comparisonFilter;
     }
@@ -450,7 +449,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
     private ComparisonFilter parsePropertyIsNilFilter(PropertyIsNilType comparisonOpsType) throws OwsExceptionReport {
         ComparisonFilter comparisonFilter = new ComparisonFilter();
         comparisonFilter.setOperator(ComparisonOperator.PropertyIsNil);
-        throw new UnsupportedDecoderInputException(this, comparisonOpsType);
+        throw new UnsupportedDecoderXmlInputException(this, comparisonOpsType);
         // TODO get values
         // return comparisonFilter;
     }
@@ -468,7 +467,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
             throws OwsExceptionReport {
         ComparisonFilter comparisonFilter = new ComparisonFilter();
         comparisonFilter.setOperator(ComparisonOperator.PropertyIsBetween);
-        throw new UnsupportedDecoderInputException(this, comparisonOpsType);
+        throw new UnsupportedDecoderXmlInputException(this, comparisonOpsType);
         // TODO get values
         // return comparisonFilter;
     }
@@ -489,7 +488,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
         } else if (logicOpsType instanceof BinaryLogicOpType) {
             return parseBinaryLogicalFilter((BinaryLogicOpType) logicOpsType);
         }
-        throw new UnsupportedDecoderInputException(this, logicOpsType);
+        throw new UnsupportedDecoderXmlInputException(this, logicOpsType);
     }
 
     /**
@@ -512,11 +511,11 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
         } else if (unaryLogicOpType.isSetLogicOps()) {
             return new UnaryLogicFilter(parseLogicFilterType(unaryLogicOpType.getLogicOps()));
         } else if (unaryLogicOpType.isSetFunction()) {
-            throw new UnsupportedDecoderInputException(this, unaryLogicOpType);
+            throw new UnsupportedDecoderXmlInputException(this, unaryLogicOpType);
         } else if (unaryLogicOpType.getIdArray() != null) {
-            throw new UnsupportedDecoderInputException(this, unaryLogicOpType);
+            throw new UnsupportedDecoderXmlInputException(this, unaryLogicOpType);
         } else {
-            throw new UnsupportedDecoderInputException(this, unaryLogicOpType);
+            throw new UnsupportedDecoderXmlInputException(this, unaryLogicOpType);
         }
     }
 
@@ -539,7 +538,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
         } else if (localName.equals(BinaryLogicOperator.Or.name())) {
             binaryLogicFilter = new BinaryLogicFilter(BinaryLogicOperator.Or);
         } else {
-            throw new UnsupportedDecoderInputException(this, binaryLogicOpType);
+            throw new UnsupportedDecoderXmlInputException(this, binaryLogicOpType);
         }
         Set<Filter<?>> filters = getFilterPredicates(binaryLogicOpType);
 
@@ -574,13 +573,13 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
             filters.addAll(parseTemporalFilterArray(binaryLogicOpType.getTemporalOpsArray()));
         }
         if (CollectionHelper.isNotNullOrEmpty(binaryLogicOpType.getExtensionOpsArray())) {
-            throw new UnsupportedDecoderInputException(this, binaryLogicOpType);
+            throw new UnsupportedDecoderXmlInputException(this, binaryLogicOpType);
         }
         if (CollectionHelper.isNotNullOrEmpty(binaryLogicOpType.getFunctionArray())) {
-            throw new UnsupportedDecoderInputException(this, binaryLogicOpType);
+            throw new UnsupportedDecoderXmlInputException(this, binaryLogicOpType);
         }
         if (CollectionHelper.isNotNullOrEmpty(binaryLogicOpType.getIdArray())) {
-            throw new UnsupportedDecoderInputException(this, binaryLogicOpType);
+            throw new UnsupportedDecoderXmlInputException(this, binaryLogicOpType);
         }
         return filters;
     }

@@ -38,8 +38,8 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.encode.ProcedureDescriptionFormatKey;
-import org.n52.iceland.encode.ResponseFormatKey;
+import org.n52.iceland.coding.encode.ProcedureDescriptionFormatKey;
+import org.n52.iceland.coding.encode.ResponseFormatKey;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
@@ -89,11 +89,11 @@ public class SQLiteSettingsManagerTest {
             databaseFile.delete();
         }
     }
-    private SQLiteSettingsManagerDao settingsManager;
+    private SQLiteSettingsDao settingsManager;
 
     @Before
     public void setUp() throws ConfigurationException {
-        SQLiteSettingsManagerDao manager = new SQLiteSettingsManagerDao();
+        SQLiteSettingsDao manager = new SQLiteSettingsDao();
         manager.setSessionFactory(sessionFactory);
         this.settingsManager = manager;
     }

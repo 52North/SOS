@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.decode.Decoder;
+import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.ogc.OGCConstants;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
@@ -45,7 +45,7 @@ import com.google.common.collect.Sets;
 /**
  * Abstract {@link Decoder} class to decode OGC SensorML
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

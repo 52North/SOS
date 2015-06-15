@@ -37,18 +37,18 @@ import static org.n52.sos.coding.json.JSONConstants.RESULT_ENCODING;
 import static org.n52.sos.coding.json.JSONConstants.RESULT_STRUCTURE;
 import static org.n52.sos.coding.json.JSONConstants.TOKEN_SEPARATOR;
 
-import org.n52.iceland.ogc.om.OmObservationConstellation;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweDataRecord;
-import org.n52.iceland.ogc.swe.SweField;
-import org.n52.iceland.ogc.swe.encoding.SweTextEncoding;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
+import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
 import org.n52.sos.request.InsertResultTemplateRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;

@@ -31,19 +31,19 @@ package org.n52.sos.ogc.sensorML.elements;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.ogc.swe.DataRecord;
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
-import org.n52.iceland.ogc.swe.SweField;
-import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.ogc.swe.DataRecord;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.SweSimpleDataRecord;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 
 import com.google.common.collect.Sets;
 
 /**
  * Abstract container class for SensorML data components.
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  *
  * @param <T> Implemented class

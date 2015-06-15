@@ -31,23 +31,24 @@ package org.n52.sos.inspire.capabilities;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilities;
-import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderKey;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProvider;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderKey;
 import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.simpleType.SweCount;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.DateTimeHelper;
+import org.n52.iceland.util.Producer;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.inspire.AbstractInspireProvider;
@@ -56,7 +57,6 @@ import org.n52.sos.inspire.InspireConformity.InspireDegreeOfConformity;
 import org.n52.sos.inspire.InspireConformityCitation;
 import org.n52.sos.inspire.InspireConstants;
 import org.n52.sos.inspire.InspireDateOfCreation;
-import org.n52.sos.inspire.InspireHelper;
 import org.n52.sos.inspire.InspireLanguageISO6392B;
 import org.n52.sos.inspire.InspireMandatoryKeyword;
 import org.n52.sos.inspire.InspireMandatoryKeywordValue;
@@ -64,45 +64,39 @@ import org.n52.sos.inspire.InspireMetadataPointOfContact;
 import org.n52.sos.inspire.InspireResourceLocator;
 import org.n52.sos.inspire.InspireTemporalReference;
 import org.n52.sos.inspire.InspireUniqueResourceIdentifier;
-import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.util.SosHelper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
 /**
  * Provider for the INSPIRE ExtendedCapabilities
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
-public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider implements
-        OwsExtendedCapabilitiesProvider {
+public class InspireExtendedCapabilitiesProvider
+        extends AbstractInspireProvider
+        implements OwsExtendedCapabilitiesProvider {
 
-    @SuppressWarnings("unused")
-    private static final Logger LOGGER = LoggerFactory.getLogger(InspireExtendedCapabilitiesProvider.class);
     private final OwsExtendedCapabilitiesProviderKey key
             = new OwsExtendedCapabilitiesProviderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, InspireConstants.INSPIRE);
-    /**
-     * constructor
-     */
-    public InspireExtendedCapabilitiesProvider() {
-        InspireHelper.getInstance();
+
+    private Producer<OwsServiceProvider> owsServiceProvider;
+
+    @Inject
+    public void setOwsServiceProvider(Producer<OwsServiceProvider> owsServiceProvider) {
+        this.owsServiceProvider = owsServiceProvider;
+    }
+
+    public OwsServiceProvider getOwsServiceProvider() {
+        return owsServiceProvider.get();
     }
 
     @Override
     public Set<OwsExtendedCapabilitiesProviderKey> getKeys() {
         return Collections.singleton(key);
-    }
-
-
-    @Override
-    @Deprecated
-    public Set<OwsExtendedCapabilitiesProviderKey> getExtendedCapabilitiesKeyType() {
-        return getKeys();
     }
 
     @Override
@@ -232,7 +226,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
      *             contact
      */
     private InspireMetadataPointOfContact getMetadataPointOfContact() throws OwsExceptionReport {
-        OwsServiceProvider serviceProvider = Configurator.getInstance().getServiceProvider();
+        OwsServiceProvider serviceProvider = getOwsServiceProvider();
         return new InspireMetadataPointOfContact(serviceProvider.getName(), serviceProvider.getMailAddress());
     }
 
@@ -272,7 +266,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
     private Set<InspireUniqueResourceIdentifier> getSpatialDataSetIdentifier(String version) {
         Set<InspireUniqueResourceIdentifier> spatialDataSetIdentifier = Sets.newHashSet();
 
-        for (String offering : Configurator.getInstance().getCache().getOfferings()) {
+        for (String offering : getCache().getOfferings()) {
             InspireUniqueResourceIdentifier iuri = new InspireUniqueResourceIdentifier(offering);
 //            iuri.setNamespace(ServiceConfiguration.getInstance().getServiceURL());
             spatialDataSetIdentifier.add(iuri);
@@ -302,10 +296,10 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
                 }
             }
         }
-        if (GeometryHandler.getInstance().getSupportedCRS().contains(Integer.toString(targetSrid))) {
+        if (getGeometryHandler().getSupportedCRS().contains(Integer.toString(targetSrid))) {
             return targetSrid;
         }
-        return GeometryHandler.getInstance().getDefaultResponseEPSG();
+        return getGeometryHandler().getDefaultResponseEPSG();
     }
 
 }

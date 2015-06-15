@@ -31,6 +31,13 @@ package org.n52.sos.service.operator;
 import org.n52.iceland.service.operator.AbstractServiceOperator;
 import org.n52.sos.aqd.AqdConstants;
 
+/**
+ * Implementation of {@link AbstractServiceOperator} for Air Quality e-Reporting
+ * AQD 1.0.0 requests.
+ * 
+ * @since 4.3.0
+ * 
+ */
 public class AqdServiceOperatorV10 extends AbstractServiceOperator {
 
     public AqdServiceOperatorV10() {

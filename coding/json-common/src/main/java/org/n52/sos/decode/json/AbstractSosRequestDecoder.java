@@ -38,19 +38,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.iceland.decode.DecoderKey;
-import org.n52.iceland.decode.JsonDecoderKey;
-import org.n52.iceland.decode.OperationDecoderKey;
-import org.n52.iceland.ogc.filter.ComparisonFilter;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
-import org.n52.iceland.ogc.swe.simpleType.SweText;
+import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.coding.decode.JsonDecoderKey;
+import org.n52.iceland.coding.decode.OperationDecoderKey;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.ogc.swes.SwesExtensionImpl;
-import org.n52.iceland.ogc.swes.SwesExtensions;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.coding.json.JSONValidator;
+import org.n52.sos.ogc.filter.ComparisonFilter;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.ogc.swes.SwesExtensions;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
@@ -58,10 +57,10 @@ import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @param <T>
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class AbstractSosRequestDecoder<T extends AbstractServiceRequest<?>> extends JSONDecoder<T> {
@@ -110,7 +109,7 @@ public abstract class AbstractSosRequestDecoder<T extends AbstractServiceRequest
             for (JsonNode n : node) {
             	SwesExtension extension = parseExtension(n);
             	if (extension != null) {
-            		extensions.addSwesExtension(extension);
+            		extensions.addExtension(extension);
             	}
             }
         }
@@ -122,17 +121,15 @@ public abstract class AbstractSosRequestDecoder<T extends AbstractServiceRequest
     	SwesExtension extension = null;
     	if (node.isObject() && node.has(DEFINITION) && node.has(VALUE)) {
     		if (node.path("value").isBoolean()) {
-    			extension = new SwesExtensionImpl<SweBoolean>()
-					.setDefinition(node.path(DEFINITION).asText())
-					.setValue(new SweBoolean()
-						.setValue(node.path(VALUE).asBoolean())
-					);
+                SwesExtension<SweBoolean> ext = new SwesExtension<>();
+                ext.setDefinition(node.path(DEFINITION).asText())
+					.setValue(new SweBoolean().setValue(node.path(VALUE).asBoolean()));
+    			extension = ext;
     		} else if (node.path(VALUE).isTextual()) {
-    			extension = new SwesExtensionImpl<SweText>()
-					.setDefinition(node.path(DEFINITION).asText())
-					.setValue(new SweText()
-						.setValue(node.path(VALUE).asText())
-					);
+                SwesExtension<SweText> ext = new SwesExtension<>();
+                ext.setDefinition(node.path(DEFINITION).asText())
+					.setValue(new SweText().setValue(node.path(VALUE).asText()));
+    			extension = ext;
     		}
     	}
 		return extension;

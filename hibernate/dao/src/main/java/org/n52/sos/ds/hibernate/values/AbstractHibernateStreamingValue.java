@@ -37,15 +37,12 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
 
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swes.SwesExtensions;
+import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
+import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GmlHelper;
@@ -54,13 +51,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
 
 import com.google.common.collect.Maps;
 
 /**
  * Abstract class for Hibernate streaming values
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
@@ -110,14 +110,14 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         return observations.values();
     }
 
-    private void addSpecificValuesToObservation(OmObservation observation, AbstractValue value, SwesExtensions swesExtensions) {
+    private void addSpecificValuesToObservation(OmObservation observation, AbstractValue value, Extensions extensions) {
         boolean newSession = false;
         try {
             if (session == null) {
                 session = sessionHolder.getSession();
                 newSession = true;
             }
-            value.addValueSpecificDataToObservation(observation, session, swesExtensions);
+            value.addValueSpecificDataToObservation(observation, session, extensions);
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying times", owse);
         } finally {

@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.opengis.swe.x101.AbstractDataArrayType.ElementCount;
@@ -74,47 +73,48 @@ import net.opengis.swe.x101.VectorPropertyType;
 import net.opengis.swe.x101.VectorType;
 import net.opengis.swe.x101.VectorType.Coordinate;
 
+import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
-
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.decode.DecoderKey;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swe.RangeValue;
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.ogc.swe.SweDataArray;
-import org.n52.iceland.ogc.swe.SweDataRecord;
-import org.n52.iceland.ogc.swe.SweField;
-import org.n52.iceland.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.iceland.ogc.swe.encoding.SweTextEncoding;
-import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.iceland.ogc.swe.simpleType.SweBoolean;
-import org.n52.iceland.ogc.swe.simpleType.SweCount;
-import org.n52.iceland.ogc.swe.simpleType.SweQuality;
-import org.n52.iceland.ogc.swe.simpleType.SweText;
-import org.n52.iceland.ogc.swe.simpleType.SweTime;
-import org.n52.iceland.ogc.swe.simpleType.SweTimeRange;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CodingHelper;
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.XmlHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
-import org.n52.sos.ogc.sensorML.elements.SmlPosition;
-import org.n52.sos.ogc.swe.SweCoordinate;
-import org.n52.sos.ogc.swe.SweEnvelope;
-import org.n52.sos.ogc.swe.SweSimpleDataRecord;
-import org.n52.sos.ogc.swe.SweVector;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
+import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.iceland.ogc.swe.SweConstants;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
+import org.n52.iceland.util.DateTimeHelper;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
+import org.n52.sos.ogc.sensorML.elements.SmlPosition;
+import org.n52.sos.ogc.swe.RangeValue;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweCoordinate;
+import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweEnvelope;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.SweSimpleDataRecord;
+import org.n52.sos.ogc.swe.SweVector;
+import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.sos.ogc.swe.simpleType.SweCategory;
+import org.n52.sos.ogc.swe.simpleType.SweCount;
+import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
+import org.n52.sos.ogc.swe.simpleType.SweQuality;
+import org.n52.sos.ogc.swe.simpleType.SweQuantity;
+import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
+import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.ogc.swe.simpleType.SweTime;
+import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -192,6 +192,9 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
         } else if (element instanceof AbstractDataRecordDocument) {
             return parseAbstractDataComponentType(((AbstractDataRecordDocument) element).getAbstractDataRecord());
         } else {
+            if (element instanceof XmlObject) {
+                throw new UnsupportedDecoderXmlInputException(this, (XmlObject)element);
+            }
             throw new UnsupportedDecoderInputException(this, element);
         }
     }

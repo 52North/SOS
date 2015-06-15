@@ -29,10 +29,13 @@
 package org.n52.sos.ds.hibernate.values.series;
 
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesValueTimeDAO;
@@ -41,15 +44,10 @@ import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GmlHelper;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.ds.ConnectionProvider;
-
 /**
  * Abstract Hibernate series streaming value class for the series concept
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.2
  *
  */

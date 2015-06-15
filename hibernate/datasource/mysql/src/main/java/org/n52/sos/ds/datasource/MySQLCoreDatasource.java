@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.datasource;
 
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
@@ -39,27 +38,17 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Hibernate datasource implementation for MySQL databases without transactional mapping.
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  *
  * @since 4.3.0
  *
  */
 public class MySQLCoreDatasource extends AbstractMySQLDatasource {
 
-    protected static final String DIALECT_NAME = "MySQL/MariaDB Core Mapping";
+    protected static final String DIALECT_NAME = "MySQL/MariaDB Core";
 
     public MySQLCoreDatasource() {
         super(false);
-        setUsernameDefault(USERNAME_DEFAULT_VALUE);
-        setUsernameDescription(USERNAME_DESCRIPTION);
-        setPasswordDefault(PASSWORD_DEFAULT_VALUE);
-        setPasswordDescription(PASSWORD_DESCRIPTION);
-        setDatabaseDefault(DATABASE_DEFAULT_VALUE);
-        setDatabaseDescription(DATABASE_DESCRIPTION);
-        setHostDefault(HOST_DEFAULT_VALUE);
-        setHostDescription(HOST_DESCRIPTION);
-        setPortDefault(PORT_DEFAULT_VALUE);
-        setPortDescription(PORT_DESCRIPTION);
         super.setTransactional(false);
     }
 
@@ -78,13 +67,8 @@ public class MySQLCoreDatasource extends AbstractMySQLDatasource {
         return filter(super.getSettingDefinitions(), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
     }
 
-    private Set<SettingDefinition<?,?>> filter(Set<SettingDefinition<?,?>> definitions, Set<String> keysToExclude) {
-        Iterator<SettingDefinition<?, ?>> iterator = definitions.iterator();
-        while(iterator.hasNext()) {
-            if (keysToExclude.contains(iterator.next().getKey())) {
-                iterator.remove();
-            }
-        }
-        return definitions;
+    @Override
+    public boolean supportsClear() {
+        return false;
     }
 }

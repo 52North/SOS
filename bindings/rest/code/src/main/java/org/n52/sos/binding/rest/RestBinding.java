@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,11 +50,11 @@ import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.binding.PathBindingKey;
 import org.n52.iceland.coding.DecoderRepository;
 import org.n52.iceland.coding.EncoderRepository;
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.encode.Encoder;
-import org.n52.iceland.encode.EncoderKey;
-import org.n52.iceland.encode.ExceptionEncoderKey;
-import org.n52.iceland.encode.XmlEncoderKey;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.coding.encode.ExceptionEncoderKey;
+import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.event.events.ExceptionEvent;
 import org.n52.iceland.exception.CodedException;
@@ -61,13 +62,13 @@ import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionCode;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.response.ServiceResponse;
-import org.n52.iceland.util.XmlOptionsHelper;
+import org.n52.iceland.util.Producer;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.iceland.util.http.HTTPUtils;
 import org.n52.iceland.util.http.MediaTypes;
@@ -108,6 +109,16 @@ public class RestBinding extends Binding implements Constructable {
     private ServiceEventBus eventBus;
     private EncoderRepository encoderRepository;
     private DecoderRepository decoderRepository;
+
+    private Producer<XmlOptions> xmlOptions;
+
+    public void setXmlOptions(Producer<XmlOptions> xmlOptions) {
+        this.xmlOptions = xmlOptions;
+    }
+
+    public XmlOptions getXmlOptions() {
+        return xmlOptions.get();
+    }
 
     @Inject
     public void setDecoderRepository(DecoderRepository decoderRepository) {
@@ -242,7 +253,7 @@ public class RestBinding extends Binding implements Constructable {
             }
             XmlObject encoded = encoder.encode(oer);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            encoded.save(baos, XmlOptionsHelper.getInstance().getXmlOptions());
+            encoded.save(baos, getXmlOptions());
             baos.flush();
             return new ServiceResponse(null, MediaTypes.TEXT_XML, getResponseCode(oer));
         } catch (OwsExceptionReport ex) {

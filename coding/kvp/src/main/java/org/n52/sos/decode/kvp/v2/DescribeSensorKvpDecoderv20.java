@@ -32,14 +32,14 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.decode.DecoderKey;
-import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.coding.decode.OperationDecoderKey;
+import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
 import org.n52.iceland.exception.ows.concrete.ParameterNotSupportedException;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.KvpHelper;
@@ -73,19 +73,6 @@ public class DescribeSensorKvpDecoderv20 extends AbstractKvpDecoder {
             String parameterValues = element.get(parameterName);
             try {
                 if (!parseDefaultParameter(request, parameterValues, parameterName)) {
-//                    // service (mandatory)
-//                    if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service.name())) {
-//                        request.setService(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-//                        foundService = true;
-//                    } // version (mandatory)
-//                    else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.version.name())) {
-//                        request.setVersion(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-//                        foundVersion = true;
-//                    } // request (mandatory)
-//                    else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
-//                        KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
-//                    } // procedure
-//                    else 
                         if (parameterName.equalsIgnoreCase(SosConstants.DescribeSensorParams.procedure.name())) {
                         request.setProcedure(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
                     } // procedureDescriptionFormat
@@ -100,12 +87,6 @@ public class DescribeSensorKvpDecoderv20 extends AbstractKvpDecoder {
                         } catch (OwsExceptionReport e) {
                             exceptions.add(new InvalidParameterValueException(parameterName, parameterValues).causedBy(e));
                         }
-//                     // language (optional)
-//                    } else if (parameterName.equalsIgnoreCase(SosConstants.InspireParams.language.name())) {
-//                        request.addExtension(getLanguageExtension(KvpHelper.checkParameterSingleValue(parameterValues, parameterName)));
-//                    // CRS (optional)
-//                    } else if (parameterName.equalsIgnoreCase(SosConstants.InspireParams.crs.name())) {
-//                        request.addExtension(getCrsExtension(KvpHelper.checkParameterSingleValue(parameterValues, parameterName)));
                     } else {
                         exceptions.add(new ParameterNotSupportedException(parameterName));
                     }

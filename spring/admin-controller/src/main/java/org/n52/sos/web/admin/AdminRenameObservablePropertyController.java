@@ -46,10 +46,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import org.n52.iceland.cache.ContentCache;
-import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.RenameDAO;
 import org.n52.sos.exception.AlreadyUsedIdentifierException;
 import org.n52.sos.exception.NoSuchObservablePropertyException;
@@ -68,26 +67,26 @@ public class AdminRenameObservablePropertyController extends AbstractAdminContro
     private static final Logger log = LoggerFactory.getLogger(AdminRenameObservablePropertyController.class);
     @Inject
     private RenameDAO dao;
-    @Inject
-    private ContentCacheController contentCacheController;
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() {
-        ContentCache cache = this.contentCacheController.getCache();
+        SosContentCache cache = getCache();
         List<String> observableProperties = Lists.newArrayList(cache.getObservableProperties());
         Collections.sort(observableProperties);
         return new ModelAndView(ControllerConstants.Views.ADMIN_RENAME_OBSERVABLE_PROPERTIES,
                                 "observableProperties", observableProperties);
     }
 
+
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(method = RequestMethod.POST)
     public void change(@RequestParam(OLD_IDENTIFIER_REQUEST_PARAM) String oldName,
                        @RequestParam(NEW_IDENTIFIER_REQUEST_PARAM) String newName)
-            throws NoSuchObservablePropertyException, OwsExceptionReport, NoImplementationFoundException,
-                   AlreadyUsedIdentifierException {
+            throws NoSuchObservablePropertyException, NoImplementationFoundException,
+                   AlreadyUsedIdentifierException, OwsExceptionReport {
         log.info("Changing observable property: {} -> {}", oldName, newName);
-        ContentCache cache = this.contentCacheController.getCache();
+        SosContentCache cache = getCache();
         if (!cache.hasObservableProperty(oldName)) {
             throw new NoSuchObservablePropertyException(oldName);
         }

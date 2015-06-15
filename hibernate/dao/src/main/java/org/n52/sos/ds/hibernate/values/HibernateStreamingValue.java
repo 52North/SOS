@@ -28,21 +28,20 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.dao.ValueDAO;
 import org.n52.sos.ds.hibernate.dao.ValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.values.ObservationValueTime;
 import org.n52.sos.request.GetObservationRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.ds.ConnectionProvider;
-
 /**
  * Abstract Hibernate streaming value class for old observation concept
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */

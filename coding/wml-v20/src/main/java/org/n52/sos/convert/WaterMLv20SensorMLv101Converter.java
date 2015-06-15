@@ -33,15 +33,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKeyType;
-import org.n52.iceland.ogc.gml.ReferenceType;
-import org.n52.iceland.ogc.om.NamedValue;
-import org.n52.iceland.ogc.om.values.TextValue;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
-import org.n52.iceland.ogc.swe.SweField;
-import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.ProcessModel;
@@ -57,12 +57,12 @@ import org.n52.sos.ogc.sensorML.elements.SmlDocumentationList;
 import org.n52.sos.ogc.sensorML.elements.SmlDocumentationListMember;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.sos.ogc.wml.ObservationProcess;
 import org.n52.sos.ogc.wml.WaterMLConstants;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;

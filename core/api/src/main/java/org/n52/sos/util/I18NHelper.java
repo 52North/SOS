@@ -30,21 +30,21 @@ package org.n52.sos.util;
 
 import java.util.Locale;
 
-import org.n52.iceland.cache.ContentCache;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.i18n.LocalizedString;
 import org.n52.iceland.i18n.MultilingualString;
-import org.n52.iceland.ogc.sos.SosOffering;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.sos.ogc.sos.SosOffering;
 
 import com.google.common.base.Optional;
 
 /**
  * Helper class for I18N support
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
@@ -63,7 +63,7 @@ public class I18NHelper {
         addOfferingNames(sosOffering, LocaleHelper.fromString(request.getRequestedLanguage()));
     }
 
-    public static void addOfferingNames(SosOffering sosOffering, AbstractServiceRequest<?> request,ContentCache cache, Locale defaultLocale, boolean showAllLanguages) {
+    public static void addOfferingNames(SosOffering sosOffering, AbstractServiceRequest<?> request,SosContentCache cache, Locale defaultLocale, boolean showAllLanguages) {
         addOfferingNames(cache, sosOffering, LocaleHelper.fromString(request.getRequestedLanguage()), defaultLocale, showAllLanguages);
     }
 
@@ -82,7 +82,7 @@ public class I18NHelper {
                         isShowAllLanguageValues());
     }
 
-    public static void addOfferingNames(ContentCache cache, SosOffering offering, Locale requestedLocale, Locale defaultLocale, boolean showAllLanguages) {
+    public static void addOfferingNames(SosContentCache cache, SosOffering offering, Locale requestedLocale, Locale defaultLocale, boolean showAllLanguages) {
         String identifier = offering.getIdentifier();
         if (requestedLocale != null && cache.hasI18NNamesForOffering(identifier, requestedLocale)) {
             offering.addName(cache.getI18nNameForOffering(identifier, requestedLocale).asCodeType());
@@ -134,7 +134,7 @@ public class I18NHelper {
         addOfferingDescription(offering, locale, getDefaultLanguage(), getCache());
     }
 
-    public static void addOfferingDescription(SosOffering offering, Locale locale, Locale defaultLocale, ContentCache cache) {
+    public static void addOfferingDescription(SosOffering offering, Locale locale, Locale defaultLocale, SosContentCache cache) {
         MultilingualString descriptions = cache
                 .getI18nDescriptionsForOffering(offering.getIdentifier());
         if (descriptions != null) {
@@ -152,7 +152,7 @@ public class I18NHelper {
      * @return Current cache
      */
     @Deprecated
-    protected static ContentCache getCache() {
+    protected static SosContentCache getCache() {
         return Configurator.getInstance().getCache();
     }
 

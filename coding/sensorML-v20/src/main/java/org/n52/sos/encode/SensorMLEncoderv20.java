@@ -28,9 +28,8 @@
  */
 package org.n52.sos.encode;
 
-import static java.util.Collections.singletonMap;
-import static org.n52.iceland.util.CodingHelper.encoderKeysForElements;
 import static org.n52.iceland.util.CollectionHelper.union;
+import static org.n52.sos.util.CodingHelper.encoderKeysForElements;
 
 import java.util.Collections;
 import java.util.List;
@@ -85,10 +84,13 @@ import net.opengis.sensorml.x20.TermType;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.encode.EncoderKey;
+import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.OGCConstants;
 import org.n52.iceland.ogc.gml.CodeType;
@@ -97,21 +99,14 @@ import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.ogc.swe.SweDataArray;
-import org.n52.iceland.ogc.swe.SweDataRecord;
-import org.n52.iceland.ogc.swe.simpleType.SweText;
+import org.n52.iceland.service.ServiceConstants.ProcedureDescriptionFormat;
 import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.JavaHelper;
-import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.oxf.xml.NcNameResolver;
@@ -147,12 +142,14 @@ import org.n52.sos.ogc.sensorML.v20.PhysicalComponent;
 import org.n52.sos.ogc.sensorML.v20.PhysicalSystem;
 import org.n52.sos.ogc.sensorML.v20.SimpleProcess;
 import org.n52.sos.ogc.sensorML.v20.SmlFeatureOfInterest;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.service.ServiceConstants.ProcedureDescriptionFormat;
+import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
@@ -164,8 +161,7 @@ import com.google.common.collect.Sets;
 
 /**
  * {@link AbstractSensorMLEncoder} class to encode OGC SensorML 2.0
- *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
@@ -226,11 +222,9 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     @Override
     public Set<String> getSupportedProcedureDescriptionFormats(final String service, final String version) {
-        if (SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS.containsKey(service)
-                && SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS.get(service).containsKey(version)) {
-            return SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS.get(service).get(version);
-        }
-        return Collections.emptySet();
+        return SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS
+                .getOrDefault(service, ImmutableMap.of())
+                .getOrDefault(version, Collections.emptySet());
     }
 
     @Override

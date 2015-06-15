@@ -36,50 +36,50 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 
+import org.n52.iceland.coding.encode.ObservationEncoder;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
-import org.n52.iceland.convert.RequestResponseModifierKeyType;
-import org.n52.iceland.encode.ObservationEncoder;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.convert.RequestResponseModifierKey;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.util.CodingHelper;
+import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.response.InsertObservationResponse;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
+import org.n52.sos.util.CodingHelper;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class SplitMergeObservations implements RequestResponseModifier {
 
-    private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
+    private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
     /**
      * Get the keys
      *
      * @return Set of keys
      */
-    private static Set<RequestResponseModifierKeyType> getKeyTypes() {
+    private static Set<RequestResponseModifierKey> getKeyTypes() {
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
         Map<AbstractServiceRequest<?>, AbstractServiceResponse> requestResponseMap = Maps.newHashMap();
 
         requestResponseMap.put(new GetObservationRequest(), new GetObservationResponse());
         requestResponseMap.put(new InsertObservationRequest(), new InsertObservationResponse());
-        Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
+        Set<RequestResponseModifierKey> keys = Sets.newHashSet();
         for (String service : services) {
             for (String version : versions) {
                 for (AbstractServiceRequest<?> request : requestResponseMap.keySet()) {
-                    keys.add(new RequestResponseModifierKeyType(service, version, request));
-                    keys.add(new RequestResponseModifierKeyType(service, version, request, requestResponseMap
+                    keys.add(new RequestResponseModifierKey(service, version, request));
+                    keys.add(new RequestResponseModifierKey(service, version, request, requestResponseMap
                             .get(request)));
                 }
             }
@@ -88,7 +88,7 @@ public class SplitMergeObservations implements RequestResponseModifier {
     }
 
     @Override
-    public Set<RequestResponseModifierKeyType> getKeys() {
+    public Set<RequestResponseModifierKey> getKeys() {
         return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
     }
 

@@ -34,7 +34,6 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.iceland.ogc.sos.SosEnvelope;
 
 import com.vividsolutions.jts.geom.Envelope;
 

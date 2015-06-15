@@ -29,26 +29,26 @@
 package org.n52.sos.decode;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.decode.DecoderKey;
-import org.n52.iceland.decode.XmlNamespaceDecoderKey;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.AbstractServiceCommunicationObject;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CodingHelper;
-import org.n52.iceland.util.XmlHelper;
-import org.n52.sos.aqd.AqdConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.service.ServiceConstants.SupportedType;
+import org.n52.sos.aqd.AqdConstants;
+import org.n52.sos.coding.decode.XmlNamespaceDecoderKey;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
 
 import com.google.common.base.Joiner;
 

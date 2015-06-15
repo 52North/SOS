@@ -35,12 +35,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import org.n52.sos.config.SosActivationDao;
+import org.n52.iceland.coding.encode.ProcedureDescriptionFormatKey;
+import org.n52.iceland.coding.encode.ResponseFormatKey;
 import org.n52.iceland.config.json.AbstractJsonActivationDao;
-import org.n52.iceland.encode.ProcedureDescriptionFormatKey;
-import org.n52.iceland.encode.ResponseFormatKey;
 import org.n52.iceland.ogc.swes.OfferingExtensionKey;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.sos.config.SosActivationDao;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

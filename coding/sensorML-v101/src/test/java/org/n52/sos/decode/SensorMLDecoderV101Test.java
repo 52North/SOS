@@ -61,15 +61,10 @@ import net.opengis.swe.x101.DataRecordType;
 import net.opengis.swe.x101.SimpleDataRecordType;
 
 import org.junit.Test;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosOffering;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
-import org.n52.iceland.util.CodingHelper;
-import org.n52.iceland.util.XmlHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
 import org.n52.sos.ogc.sensorML.SensorML;
@@ -78,6 +73,11 @@ import org.n52.sos.ogc.sensorML.SmlContactList;
 import org.n52.sos.ogc.sensorML.SmlPerson;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
 import org.n52.sos.ogc.sensorML.System;
+import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 
 /**
  * @author Shane StClair

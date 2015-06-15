@@ -33,14 +33,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
-import org.n52.iceland.cache.ContentCacheUpdate;
+
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.GroupedAndNamedThreadFactory;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class UpdateSchedulingTest extends AbstractCacheControllerTest {
@@ -52,7 +52,7 @@ public class UpdateSchedulingTest extends AbstractCacheControllerTest {
     @Test
     public void test() throws InterruptedException {
         final TestableInMemoryCacheController ue = new TestableInMemoryCacheController();
-        ue.setCache(new WritableCache());
+        ue.setCache(new SosWritableContentCacheImpl());
         ExecutorService e = Executors.newFixedThreadPool(10, new GroupedAndNamedThreadFactory("test"));
 
         e.execute(new BlockingCacheUpdate(ue, "complete0", TIMEOUT));
@@ -97,7 +97,7 @@ public class UpdateSchedulingTest extends AbstractCacheControllerTest {
         }
     }
 
-    private class NonBlockingCacheUpdate extends ContentCacheUpdate implements Runnable {
+    private class NonBlockingCacheUpdate extends SosContentCacheUpdate implements Runnable {
         private final TestableInMemoryCacheController executor;
 
         private final String offering;

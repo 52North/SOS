@@ -36,30 +36,32 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.ds.OperationHandlerKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.Constraint;
 import org.n52.iceland.ogc.ows.DCP;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.ows.OwsParameterValuePossibleValues;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.collections.MultiMaps;
 import org.n52.iceland.util.collections.SetMultiMap;
 import org.n52.iceland.util.http.HTTPHeaders;
 import org.n52.iceland.util.http.HTTPMethods;
 import org.n52.iceland.util.http.MediaType;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.SosHelper;
 
@@ -74,15 +76,19 @@ public abstract class AbstractOperationHandler implements OperationHandler {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractOperationHandler.class);
 
     private final OperationHandlerKey key;
+    private ContentCacheController contentCacheController;
 
     public AbstractOperationHandler(String service, String operationName) {
         this.key = new OperationHandlerKey(service, operationName);
     }
 
-    @Deprecated
+    @Inject
+    public void setContentCacheController(ContentCacheController contentCacheController) {
+        this.contentCacheController = contentCacheController;
+    }
+
     protected ContentCacheController getCacheController() {
-        // FIXME use @Inject
-        return getConfigurator().getCacheController();
+        return this.contentCacheController;
     }
 
     @Deprecated
@@ -144,20 +150,8 @@ public abstract class AbstractOperationHandler implements OperationHandler {
         return operation;
     }
 
-    // @Override
-    // /* provide a default implementation for extension-less DAO's */
-    // public SosCapabilitiesExtension getExtension() throws OwsExceptionReport
-    // {
-    // return null;
-    // }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    protected ContentCache getCache() {
-        return getCacheController().getCache();
+    protected SosContentCache getCache() {
+        return (SosContentCache) getCacheController().getCache();
     }
 
     /**

@@ -31,12 +31,12 @@ package org.n52.sos.ds.hibernate.util.procedure.enrich;
 import java.util.Collection;
 import java.util.Set;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.LocalizedString;
 import org.n52.iceland.i18n.metadata.I18NObservablePropertyMetadata;
-import org.n52.iceland.ogc.om.AbstractPhenomenon;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.om.AbstractPhenomenon;
 
 import com.google.common.base.Optional;
 

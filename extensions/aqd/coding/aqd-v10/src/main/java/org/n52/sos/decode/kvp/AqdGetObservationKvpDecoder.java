@@ -31,17 +31,17 @@ package org.n52.sos.decode.kvp;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.decode.DecoderKey;
-import org.n52.iceland.decode.OperationDecoderKey;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.coding.decode.OperationDecoderKey;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.simpleType.SweText;
 import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.util.KvpHelper;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.decode.kvp.v2.GetObservationKvpDecoderv20;
+import org.n52.sos.ogc.swe.simpleType.SweText;
 
 public class AqdGetObservationKvpDecoder extends GetObservationKvpDecoderv20 {
 
@@ -53,7 +53,7 @@ public class AqdGetObservationKvpDecoder extends GetObservationKvpDecoderv20 {
     public Set<DecoderKey> getKeys() {
         return Collections.singleton(KVP_DECODER_KEY_TYPE);
     }
-    
+
     @Override
     protected boolean parseExtensionParameter(AbstractServiceRequest<?> request, String parameterValues,
         String parameterName) throws OwsExceptionReport {

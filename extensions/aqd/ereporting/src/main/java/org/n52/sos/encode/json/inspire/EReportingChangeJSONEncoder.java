@@ -28,7 +28,7 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.inspire.aqd.EReportingChange;
 import org.n52.sos.util.AQDJSONConstants;

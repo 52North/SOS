@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.opengis.gml.x32.FeaturePropertyType;
@@ -82,27 +81,22 @@ import net.opengis.swe.x20.DataStreamPropertyType;
 
 import org.apache.xmlbeans.XmlObject;
 import org.isotc211.x2005.gmd.CIResponsiblePartyPropertyType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.OGCConstants;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.gml.ReferenceType;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosOffering;
-import org.n52.iceland.ogc.swe.DataRecord;
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
-import org.n52.iceland.ogc.swe.SweDataRecord;
-import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.iceland.ogc.swe.simpleType.SweText;
+import org.n52.iceland.service.ServiceConstants.ProcedureDescriptionFormat;
 import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.XmlHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.sos.encode.AbstractSensorMLDecoder;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.SensorML20Constants;
@@ -127,13 +121,17 @@ import org.n52.sos.ogc.sensorML.v20.SimpleProcess;
 import org.n52.sos.ogc.sensorML.v20.SmlDataInterface;
 import org.n52.sos.ogc.sensorML.v20.SmlDataStreamPropertyType;
 import org.n52.sos.ogc.sensorML.v20.SmlFeatureOfInterest;
+import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.sos.ogc.swe.DataRecord;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweVector;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.service.ServiceConstants.ProcedureDescriptionFormat;
+import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
@@ -210,7 +208,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         } else if (element instanceof AggregateProcessPropertyType) {
             sml = parseAggregateProcess((AggregateProcessType) element);
         } else {
-            throw new UnsupportedDecoderInputException(this, element);
+            throw new UnsupportedDecoderXmlInputException(this, element);
         }
         if (sml != null) {
             setXmlDescription(element, sml);
@@ -616,7 +614,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
             // Object decodeXmlElement =
             // CodingHelper.decodeXmlElement(pupt.getText());
         } else {
-            throw new UnsupportedDecoderInputException(this, pupt);
+            throw new UnsupportedDecoderXmlInputException(this, pupt);
         }
         return position;
     }

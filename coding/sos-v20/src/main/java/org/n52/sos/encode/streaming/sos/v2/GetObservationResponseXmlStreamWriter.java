@@ -35,33 +35,33 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.encode.Encoder;
-import org.n52.iceland.encode.ObservationEncoder;
-import org.n52.iceland.encode.XmlEncoderKey;
+import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.coding.encode.ObservationEncoder;
+import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.om.OmObservation;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.iceland.w3c.W3CConstants;
-import org.n52.sos.encode.EncodingValues;
-import org.n52.sos.encode.XmlStreamWriter;
+import org.n52.sos.coding.encode.EncodingValues;
+import org.n52.sos.coding.encode.XmlStreamWriter;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.StreamingEncoder;
+import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.StreamingObservation;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.sos.Sos2StreamingConstants;
 import org.n52.sos.response.GetObservationResponse;
+import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.collect.Sets;
 
 /**
  * Implementatio of {@link XmlStreamWriter} for {@link GetObservationResponse}
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */

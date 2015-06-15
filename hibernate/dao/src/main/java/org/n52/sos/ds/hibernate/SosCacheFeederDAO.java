@@ -46,19 +46,19 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.ds.CacheFeederHandler;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.ds.FeatureQueryHandler;
-import org.n52.iceland.ds.HibernateDatasourceConstants;
 import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ows.CompositeOwsException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.ServiceIdentificationFactory;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Validation;
+import org.n52.sos.cache.SosWritableContentCache;
+import org.n52.sos.ds.CacheFeederHandler;
+import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.cache.InitialCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.OfferingCacheUpdate;
 
@@ -115,7 +115,7 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
     }
 
     @Override
-    public void updateCache(WritableContentCache cache) throws OwsExceptionReport {
+    public void updateCache(SosWritableContentCache cache) throws OwsExceptionReport {
         checkCacheNotNull(cache);
         List<OwsExceptionReport> errors = CollectionHelper.synchronizedList();
         Session session = null;
@@ -149,7 +149,7 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
     }
 
     @Override
-    public void updateCacheOfferings(WritableContentCache cache, Collection<String> offeringsNeedingUpdate)
+    public void updateCacheOfferings(SosWritableContentCache cache, Collection<String> offeringsNeedingUpdate)
             throws OwsExceptionReport {
         checkCacheNotNull(cache);
         if (CollectionHelper.isEmpty(offeringsNeedingUpdate)) {

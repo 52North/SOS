@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ogc.sos;
 
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
 
 /**
  * @since 4.0.0

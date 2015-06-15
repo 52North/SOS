@@ -30,7 +30,7 @@ package org.n52.sos.ds;
 
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
@@ -58,12 +58,16 @@ public abstract class AbstractInsertSensorHandler extends AbstractOperationHandl
         } else {
             opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.procedureDescription);
             opsMeta.addPossibleValuesParameter(Sos2Constants.InsertSensorParams.procedureDescriptionFormat,
-                ProcedureDescriptionFormatRepository.getInstance().getSupportedProcedureDescriptionFormats(service, version));
+                getProcedureDescriptionFormatRepository().getSupportedProcedureDescriptionFormats(service, version));
             opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.observableProperty);
             opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.metadata);
             opsMeta.addDataTypeParameter(Sos2Constants.InsertSensorParams.metadata,
                     Sos2Constants.SCHEMA_LOCATION_URL_SOS_INSERTION_CAPABILITIES);
         }
+    }
+
+    private ProcedureDescriptionFormatRepository getProcedureDescriptionFormatRepository() {
+        return ProcedureDescriptionFormatRepository.getInstance();
     }
 
     public CodingRepository getCodingRepository() {

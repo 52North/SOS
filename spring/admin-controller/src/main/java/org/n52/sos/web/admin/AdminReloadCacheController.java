@@ -31,13 +31,6 @@ package org.n52.sos.web.admin;
 
 import javax.servlet.UnavailableException;
 
-import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.Configurator;
-import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.web.common.ControllerConstants;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -47,6 +40,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.exception.ows.CompositeOwsException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.sos.service.Configurator;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.web.common.ControllerConstants;
 
 /**
  * @since 4.0.0

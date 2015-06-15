@@ -28,14 +28,13 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import javax.inject.Inject;
 
 import org.hibernate.Session;
 
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 
 /**
  * @since 4.0.0

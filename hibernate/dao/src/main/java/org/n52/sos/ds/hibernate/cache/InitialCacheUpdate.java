@@ -31,9 +31,9 @@ package org.n52.sos.ds.hibernate.cache;
 import java.util.Locale;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.ds.FeatureQueryHandler;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.ogc.ows.ServiceIdentificationFactory;
+import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.cache.base.CompositePhenomenonCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.FeatureOfInterestCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.I18NCacheUpdate;
@@ -79,7 +79,7 @@ public class InitialCacheUpdate extends CompositeCacheUpdate {
                                       connectionProvider,
                                       new SridCacheUpdate(),
                                       new ObservablePropertiesCacheUpdate(),
-                                      new FeatureOfInterestCacheUpdate(),
+                                      new FeatureOfInterestCacheUpdate(featureQueryHandler),
                                       new RelatedFeaturesCacheUpdate(),
                                       new CompositePhenomenonCacheUpdate(),
                                       new ResultTemplateCacheUpdate(),

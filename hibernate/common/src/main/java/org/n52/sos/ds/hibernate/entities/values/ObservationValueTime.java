@@ -40,7 +40,7 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
  * Implementation of {@link AbstractObservationTime} for old concept used in streaming
  * datasource
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */

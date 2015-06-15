@@ -28,13 +28,13 @@
  */
 package org.n52.sos.ogc.sensorML.v20;
 
-import org.n52.iceland.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
 
 /**
  * Class that represents SensorML 2.0 PhysicalProcess.
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

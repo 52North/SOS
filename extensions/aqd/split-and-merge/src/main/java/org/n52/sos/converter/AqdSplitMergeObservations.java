@@ -35,13 +35,13 @@ import java.util.Set;
 
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
-import org.n52.iceland.convert.RequestResponseModifierKeyType;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swe.SweDataArray;
+import org.n52.iceland.convert.RequestResponseModifierKey;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.sos.aqd.AqdConstants;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
@@ -50,24 +50,24 @@ import com.google.common.collect.Sets;
 
 public class AqdSplitMergeObservations implements RequestResponseModifier {
 
-    private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
+    private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
     /**
      * Get the keys
      *
      * @return Set of keys
      */
-    private static Set<RequestResponseModifierKeyType> getKeyTypes() {
-        Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
-        keys.add(new RequestResponseModifierKeyType(AqdConstants.AQD, AqdConstants.VERSION,
+    private static Set<RequestResponseModifierKey> getKeyTypes() {
+        Set<RequestResponseModifierKey> keys = Sets.newHashSet();
+        keys.add(new RequestResponseModifierKey(AqdConstants.AQD, AqdConstants.VERSION,
                 new GetObservationRequest()));
-        keys.add(new RequestResponseModifierKeyType(AqdConstants.AQD, AqdConstants.VERSION,
+        keys.add(new RequestResponseModifierKey(AqdConstants.AQD, AqdConstants.VERSION,
                 new GetObservationRequest(), new GetObservationResponse()));
         return keys;
     }
 
     @Override
-    public Set<RequestResponseModifierKeyType> getKeys() {
+    public Set<RequestResponseModifierKey> getKeys() {
         return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
     }
 

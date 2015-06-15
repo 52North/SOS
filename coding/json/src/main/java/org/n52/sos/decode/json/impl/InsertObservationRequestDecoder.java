@@ -31,12 +31,12 @@ package org.n52.sos.decode.json.impl;
 import static org.n52.sos.coding.json.JSONConstants.OBSERVATION;
 import static org.n52.sos.coding.json.JSONConstants.OFFERING;
 
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
+import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.request.InsertObservationRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;

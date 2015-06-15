@@ -46,23 +46,24 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.ResultTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.ds.FeatureQueryHandlerQueryObject;
-import org.n52.iceland.ds.HibernateDatasourceConstants;
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.filter.TemporalFilter;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.ReferenceType;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.Extension;
+import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.ogc.swes.SwesExtensions;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.util.StringHelper;
+import org.n52.sos.ds.FeatureQueryHandler;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
@@ -84,11 +85,8 @@ import org.n52.sos.gda.AbstractGetDataAvailabilityHandler;
 import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.gda.GetDataAvailabilityResponse;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.sos.ogc.gml.ReferenceType;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -126,9 +124,15 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
     private static final String SQL_QUERY_GET_DATA_AVAILABILITY_FOR_SERIES = "getDataAvailabilityForSeries";
 
     private HibernateSessionHolder sessionHolder;
+    private FeatureQueryHandler featureQueryHandler;
 
     public GetDataAvailabilityDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Inject
+    public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
+        this.featureQueryHandler = featureQueryHandler;
     }
 
     @Inject
@@ -283,9 +287,9 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
     private List<?> querySeriesDataAvailabilities(GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport {
         List<DataAvailability> dataAvailabilityValues = Lists.newLinkedList();
-        Map<String, ReferenceType> procedures = new HashMap<String, ReferenceType>();
-        Map<String, ReferenceType> observableProperties = new HashMap<String, ReferenceType>();
-        Map<String, ReferenceType> featuresOfInterest = new HashMap<String, ReferenceType>();
+        Map<String, ReferenceType> procedures = new HashMap<>();
+        Map<String, ReferenceType> observableProperties = new HashMap<>();
+        Map<String, ReferenceType> featuresOfInterest = new HashMap<>();
         AbstractSeriesObservationDAO seriesObservationDAO = getSeriesObservationDAO();
         SeriesMinMaxTransformer seriesMinMaxTransformer = new SeriesMinMaxTransformer();
         boolean supportsNamedQuery =
@@ -601,7 +605,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
             FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
             queryObject.addFeatureIdentifier(identifier).setConnection(session)
                     .setVersion(Sos2Constants.SERVICEVERSION);
-            AbstractFeature feature = Configurator.getInstance().getFeatureQueryHandler().getFeatureByID(queryObject);
+            AbstractFeature feature = this.featureQueryHandler.getFeatureByID(queryObject);
             if (feature.isSetName() && feature.getFirstName().isSetValue()) {
                 referenceType.setTitle(feature.getFirstName().getValue());
             }
@@ -648,9 +652,9 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
      * @return <code>true</code>, if extensions contains a temporal filter with
      *         valueReference phenomenonTime
      */
-    private boolean hasPhenomenonTimeFilter(SwesExtensions extensions) {
+    private boolean hasPhenomenonTimeFilter(Extensions extensions) {
         boolean hasFilter = false;
-        for (SwesExtension<?> extension : extensions.getExtensions()) {
+        for (Extension<?> extension : extensions.getExtensions()) {
             if (extension.getValue() instanceof TemporalFilter) {
                 TemporalFilter filter = (TemporalFilter) extension.getValue();
                 if (TemporalRestrictions.PHENOMENON_TIME_VALUE_REFERENCE.equals(filter.getValueReference())) {
@@ -669,8 +673,8 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
      *            To get filter from
      * @return Temporal filter with valueReference phenomenonTime
      */
-    private TemporalFilter getPhenomenonTimeFilter(SwesExtensions extensions) {
-        for (SwesExtension<?> extension : extensions.getExtensions()) {
+    private TemporalFilter getPhenomenonTimeFilter(Extensions extensions) {
+        for (Extension<?> extension : extensions.getExtensions()) {
             if (extension.getValue() instanceof TemporalFilter) {
                 TemporalFilter filter = (TemporalFilter) extension.getValue();
                 if (TemporalRestrictions.PHENOMENON_TIME_VALUE_REFERENCE.equals(filter.getValueReference())) {

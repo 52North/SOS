@@ -31,7 +31,7 @@ package org.n52.sos.request.operator;
 import java.util.Map;
 
 import org.n52.iceland.ds.OperationHandler;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
+import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;

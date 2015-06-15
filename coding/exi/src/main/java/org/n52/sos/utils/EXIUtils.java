@@ -36,6 +36,7 @@ import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.util.Producer;
 import org.n52.iceland.util.Validation;
 import org.n52.sos.exi.EXISettings;
 
@@ -55,42 +56,34 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
  * @since 4.2.0
  */
 @Configurable
-public class EXIUtils implements Constructable {
-
+public class EXIUtils implements Constructable, Producer<EXIFactory>{
     private static final Logger LOGGER = LoggerFactory.getLogger(EXIUtils.class);
-
-    private static Grammars GRAMMAR_SOS20 = null;
-
-    private static Grammars GRAMMAR_SOS10 = null;
-
-    private static Grammars GRAMMAR_BASETYPES = null;
-
-    private CodingMode alignment = CodingMode.BIT_PACKED;
-
-    private boolean isStrict;
-
-    private boolean isDefault;
-
-    private boolean preserveComments;
-
-    private boolean preserveProcessingInstructions;
-
-    private boolean preserveDTD;
-
-    private boolean preservePrefixes;
-
-    private boolean preserveLexicalValue;
-
-    private static boolean isSchemaLessGrammar;
-
-    private static boolean isXSBaseTypeGrammar;
-
-    private static boolean isSOS20Schema;
-
-    private static boolean isSOS10Schema;
-
     @Deprecated
     private static EXIUtils instance = null;
+
+    private Grammars grammarSos20 = null;
+    private Grammars grammarSos10 = null;
+    private Grammars grammarBaseTypes = null;
+    private boolean isSchemaLessGrammar;
+    private boolean isXSBaseTypeGrammar;
+    private boolean isSOS20Schema;
+    private boolean isSOS10Schema;
+    private CodingMode alignment;
+    private boolean isStrict;
+    private boolean isDefault;
+    private boolean preserveComments;
+    private boolean preserveProcessingInstructions;
+    private boolean preserveDTD;
+    private boolean preservePrefixes;
+    private boolean preserveLexicalValue;
+    private final Grammars grammarSchemaLess;
+    private final GrammarFactory grammarFactory;
+
+    public EXIUtils() {
+        this.alignment = CodingMode.BIT_PACKED;
+        this.grammarFactory = GrammarFactory.newInstance();
+        this.grammarSchemaLess = this.grammarFactory.createSchemaLessGrammars();
+    }
 
     @Override
     public void init() {
@@ -101,11 +94,11 @@ public class EXIUtils implements Constructable {
             // TODO does this result in any race conditions?
             if (!isSchemaLessGrammar()) {
                 if (isXSBaseTypeGrammar()) {
-                    GRAMMAR_BASETYPES = GrammarFactory.newInstance().createXSDTypesOnlyGrammars();
+                    grammarBaseTypes = grammarFactory.createXSDTypesOnlyGrammars();
                 } else if (isSOS10Schema()) {
-                    GRAMMAR_SOS10 = GrammarFactory.newInstance().createGrammars(Sos1Constants.SCHEMA_LOCATION_SOS);
+                    grammarSos10 = grammarFactory.createGrammars(Sos1Constants.SCHEMA_LOCATION_SOS);
                 } else if (isSOS20Schema()) {
-                    GRAMMAR_SOS20 = GrammarFactory.newInstance().createGrammars(Sos2Constants.SCHEMA_LOCATION_URL_SOS);
+                    grammarSos20 = grammarFactory.createGrammars(Sos2Constants.SCHEMA_LOCATION_URL_SOS);
                 }
             }
 
@@ -115,38 +108,33 @@ public class EXIUtils implements Constructable {
         }
     }
 
-    @Deprecated
-    public static EXIUtils getInstance() {
-        return instance;
-    }
-
     @Setting(EXISettings.EXI_FIDELITY_LEXICAL_VALUE)
-    public void setFidelityLexicalValue(final boolean preserveLexicalValue) {
+    public void setFidelityLexicalValue(boolean preserveLexicalValue) {
         this.preserveLexicalValue = preserveLexicalValue;
     }
 
     @Setting(EXISettings.EXI_FIDELITY_PREFIXES)
-    public void setFidelityPrefixes(final boolean preservePrefixes) {
+    public void setFidelityPrefixes(boolean preservePrefixes) {
         this.preservePrefixes = preservePrefixes;
     }
 
     @Setting(EXISettings.EXI_FIDELITY_DTD)
-    public void setFidelityDTD(final boolean preserveDTD) {
+    public void setFidelityDTD(boolean preserveDTD) {
         this.preserveDTD = preserveDTD;
     }
 
     @Setting(EXISettings.EXI_FIDELITY_PROCESSING_INSTRUCTIONS)
-    public void setFidelityProcessingInstructions(final boolean preserveProcessingInstructions) {
+    public void setFidelityProcessingInstructions(boolean preserveProcessingInstructions) {
         this.preserveProcessingInstructions = preserveProcessingInstructions;
     }
 
     @Setting(EXISettings.EXI_FIDELITY_COMMENTS)
-    public void setFidelityComments(final boolean preserveComments) {
+    public void setFidelityComments(boolean preserveComments) {
         this.preserveComments = preserveComments;
     }
 
     @Setting(EXISettings.EXI_FIDELITY)
-    public void setStrictFidelity(final String fidelity) {
+    public void setStrictFidelity(String fidelity) {
         Validation.notNullOrEmpty(EXISettings.EXI_FIDELITY, fidelity);
         if (fidelity.equalsIgnoreCase(EXISettings.EXI_FIDELITY_STRICT)) {
             this.isStrict = true;
@@ -156,13 +144,13 @@ public class EXIUtils implements Constructable {
     }
 
     @Setting(EXISettings.EXI_ALIGNMENT)
-    public void setCodingMode(final String codingMode) {
+    public void setCodingMode(String codingMode) {
         Validation.notNullOrEmpty(EXISettings.EXI_ALIGNMENT, codingMode);
         this.alignment = CodingMode.valueOf(codingMode);
     }
 
     @Setting(EXISettings.EXI_GRAMMAR)
-    public void setGrammarType(final String grammar) {
+    public void setGrammarType(String grammar) {
         Validation.notNullOrEmpty(EXISettings.EXI_GRAMMAR, grammar);
         if (grammar.equalsIgnoreCase(EXISettings.EXI_GRAMMAR_SCHEMALESS)) {
             setSchemaLessGrammar(true);
@@ -172,7 +160,7 @@ public class EXIUtils implements Constructable {
     }
 
     @Setting(EXISettings.EXI_GRAMMAR_SCHEMA)
-    public void setGrammarSchema(final String grammarSchema) {
+    public void setGrammarSchema(String grammarSchema) {
         Validation.notNullOrEmpty(EXISettings.EXI_GRAMMAR_SCHEMA, grammarSchema);
         if (grammarSchema.equalsIgnoreCase(EXISettings.EXI_GRAMMAR_SCHEMA_SOS_20)) {
             setSOS20Schema(true);
@@ -181,60 +169,13 @@ public class EXIUtils implements Constructable {
         }
     }
 
-    /**
-     * @return the isSchemaLessGrammar
-     */
-    private static boolean isSchemaLessGrammar() {
-        return isSchemaLessGrammar;
-    }
-
-    /**
-     * @param isSchemaLessGrammar the isSchemaLessGrammar to set
-     */
-    private static void setSchemaLessGrammar(boolean isSchemaLessGrammar) {
-        EXIUtils.isSchemaLessGrammar = isSchemaLessGrammar;
-    }
-
-    /**
-     * @return the isXSBaseTypeGrammar
-     */
-    public static boolean isXSBaseTypeGrammar() {
-        return isXSBaseTypeGrammar;
-    }
-
-    /**
-     * @param isXSBaseTypeGrammar the isXSBaseTypeGrammar to set
-     */
-    public static void setXSBaseTypeGrammar(boolean isXSBaseTypeGrammar) {
-        EXIUtils.isXSBaseTypeGrammar = isXSBaseTypeGrammar;
-    }
-
-    /**
-     * @return the isSOS20Schema
-     */
-    public static boolean isSOS20Schema() {
-        return isSOS20Schema;
-    }
-
-    /**
-     * @param isSOS20Schema the isSOS20Schema to set
-     */
-    public static void setSOS20Schema(boolean isSOS20Schema) {
-        EXIUtils.isSOS20Schema = isSOS20Schema;
-    }
-
-    /**
-     * @return the isSOS10Schema
-     */
-    public static boolean isSOS10Schema() {
-        return isSOS10Schema;
-    }
-
-    /**
-     * @param isSOS10Schema the isSOS10Schema to set
-     */
-    public static void setSOS10Schema(boolean isSOS10Schema) {
-        EXIUtils.isSOS10Schema = isSOS10Schema;
+    @Override
+    public EXIFactory get() {
+        try {
+            return newEXIFactory();
+        } catch (UnsupportedOption ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     /**
@@ -244,56 +185,26 @@ public class EXIUtils implements Constructable {
      *             if one of the fidelity options is not supported.
      */
     public EXIFactory newEXIFactory() throws UnsupportedOption {
-        EXIFactory ef = DefaultEXIFactory.newInstance();
-        //
-        // GRAMMAR
-        //
-        // TODO How to identify the correct location: SOS 1.0 vs. 2.0 vs WFS vs
-        // WPS ...
-        Grammars g = null;
-        if (!isSchemaLessGrammar()) {
-            if (isXSBaseTypeGrammar()) {
-                g = GRAMMAR_BASETYPES;
-            } else {
-                if (isSOS20Schema()) {
-                    g = GRAMMAR_SOS20;
-                } else if (isSOS10Schema()) {
-                    g = GRAMMAR_SOS10;
-                }
-            }
-        }
-        // default to schema less grammar
-        if (g == null) {
-            g = GrammarFactory.newInstance().createSchemaLessGrammars();
-        }
-        ef.setGrammars(g);
+        EXIFactory factory = DefaultEXIFactory.newInstance();
+        factory.setGrammars(getGrammars());
         //
         // STRICT vs. OTHER fidelity options
         //
         // TODO is it possible to identify these options via any EXI header or
         // something else?
-        if (isStrict) {
-            ef.setFidelityOptions(FidelityOptions.createStrict());
-        } else if (isDefault) {
-            ef.setFidelityOptions(FidelityOptions.createDefault());
+        if (this.isStrict) {
+            factory.setFidelityOptions(FidelityOptions.createStrict());
+        } else if (this.isDefault) {
+            factory.setFidelityOptions(FidelityOptions.createDefault());
         } else {
-            if (preserveComments) {
-                ef.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_COMMENT, true);
-            }
-            if (preserveProcessingInstructions) {
-                ef.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_PI, true);
-            }
-            if (preserveDTD) {
-                ef.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_DTD, true);
-            }
-            if (preservePrefixes) {
-                ef.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_PREFIX, true);
-            }
-            if (preserveLexicalValue) {
-                ef.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
-            }
+            FidelityOptions options = factory.getFidelityOptions();
+            options.setFidelity(FidelityOptions.FEATURE_COMMENT, this.preserveComments);
+            options.setFidelity(FidelityOptions.FEATURE_PI, this.preserveProcessingInstructions);
+            options.setFidelity(FidelityOptions.FEATURE_DTD, this.preserveDTD);
+            options.setFidelity(FidelityOptions.FEATURE_PREFIX, this.preservePrefixes);
+            options.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, this.preserveLexicalValue);
         }
-        ef.setCodingMode(alignment);
+        factory.setCodingMode(alignment);
         //
         // TODO Implement usage and settings UI for Additional Values
         //
@@ -302,7 +213,90 @@ public class EXIUtils implements Constructable {
         // if (cm.usesRechanneling()) {
         // ef.setBlockSize(ANY_CONSTANT_OR_SETTING);
         // }
-        return ef;
+        return factory;
+    }
+
+    private Grammars getGrammars() {
+        //
+        // GRAMMAR
+        //
+        // TODO How to identify the correct location: SOS 1.0 vs. 2.0 vs WFS vs
+        // WPS ...
+        if (isSchemaLessGrammar()) {
+            return grammarSchemaLess;
+        }
+        if (isXSBaseTypeGrammar()) {
+            return grammarBaseTypes;
+        }
+        if (isSOS20Schema()) {
+            return grammarSos20;
+        }
+        if (isSOS10Schema()) {
+            return grammarSos10;
+        }
+        // default to schema less grammar
+        return grammarSchemaLess;
+    }
+
+    /**
+     * @return the isSchemaLessGrammar
+     */
+    private boolean isSchemaLessGrammar() {
+        return this.isSchemaLessGrammar;
+    }
+
+    /**
+     * @param isSchemaLessGrammar the isSchemaLessGrammar to set
+     */
+    private void setSchemaLessGrammar(boolean isSchemaLessGrammar) {
+        this.isSchemaLessGrammar = isSchemaLessGrammar;
+    }
+
+    /**
+     * @return the isXSBaseTypeGrammar
+     */
+    public boolean isXSBaseTypeGrammar() {
+        return this.isXSBaseTypeGrammar;
+    }
+
+    /**
+     * @param isXSBaseTypeGrammar the isXSBaseTypeGrammar to set
+     */
+    public void setXSBaseTypeGrammar(boolean isXSBaseTypeGrammar) {
+        this.isXSBaseTypeGrammar = isXSBaseTypeGrammar;
+    }
+
+    /**
+     * @return the isSOS20Schema
+     */
+    public boolean isSOS20Schema() {
+        return this.isSOS20Schema;
+    }
+
+    /**
+     * @param isSOS20Schema the isSOS20Schema to set
+     */
+    public void setSOS20Schema(boolean isSOS20Schema) {
+        this.isSOS20Schema = isSOS20Schema;
+    }
+
+    /**
+     * @return the isSOS10Schema
+     */
+    public boolean isSOS10Schema() {
+        return this.isSOS10Schema;
+    }
+
+    /**
+     * @param isSOS10Schema the isSOS10Schema to set
+     */
+    public void setSOS10Schema(boolean isSOS10Schema) {
+        this.isSOS10Schema = isSOS10Schema;
+    }
+
+    @Deprecated
+    public static EXIUtils getInstance() {
+        return instance;
     }
 
 }

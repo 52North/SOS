@@ -39,19 +39,20 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.encode.EncoderKey;
+import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.sos.coding.encode.AbstractXmlEncoder;
 import org.n52.sos.inspire.InspireConstants;
 import org.n52.sos.inspire.InspireObject;
 import org.n52.sos.inspire.InspireSupportedCRS;
@@ -59,16 +60,14 @@ import org.n52.sos.inspire.InspireSupportedLanguages;
 import org.n52.sos.inspire.capabilities.FullInspireExtendedCapabilities;
 import org.n52.sos.inspire.capabilities.InspireExtendedCapabilities;
 import org.n52.sos.inspire.capabilities.MinimalInspireExtendedCapabilities;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.sos.util.CodingHelper;
 
 import com.google.common.collect.Sets;
 
 /**
  * XML encoder class for the INSPIRE schema
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
@@ -99,7 +98,7 @@ public class InspireXmlEncoder extends AbstractXmlEncoder<Object> {
 
     @Override
     public XmlObject encode(Object objectToEncode) throws OwsExceptionReport, UnsupportedEncoderInputException {
-        return encode(objectToEncode, new EnumMap<HelperValues, String>(HelperValues.class));
+        return encode(objectToEncode, new EnumMap<>(HelperValues.class));
     }
 
     @Override
@@ -151,11 +150,6 @@ public class InspireXmlEncoder extends AbstractXmlEncoder<Object> {
     public Set<SchemaLocation> getSchemaLocations() {
         return Sets.newHashSet(InspireConstants.INSPIRE_COMMON_10_SCHEMA_LOCATION,
                 InspireConstants.INSPIRE_DLS_10_SCHEMA_LOCATION);
-    }
-
-    @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
     }
 
     @Override

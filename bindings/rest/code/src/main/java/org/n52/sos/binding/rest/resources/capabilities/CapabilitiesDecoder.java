@@ -33,7 +33,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.util.http.HTTPMethods;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;

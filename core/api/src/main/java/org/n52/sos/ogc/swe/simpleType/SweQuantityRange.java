@@ -28,15 +28,13 @@
  */
 package org.n52.sos.ogc.swe.simpleType;
 
-import org.n52.iceland.ogc.swe.RangeValue;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
-import org.n52.iceland.ogc.swe.simpleType.SweAbstractUomType;
-import org.n52.iceland.ogc.swe.simpleType.SweQuality;
+import org.n52.sos.ogc.swe.RangeValue;
 
 /**
  * SOS internal representation of SWE simpleType quantity
  * 
- * @author Carsten Hollmann
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  */
 public class SweQuantityRange extends SweAbstractUomType<RangeValue<Double>> implements SweQuality {

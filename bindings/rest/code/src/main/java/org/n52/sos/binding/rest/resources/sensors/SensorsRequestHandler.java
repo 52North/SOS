@@ -32,7 +32,7 @@ import java.io.IOException;
 
 import org.apache.xmlbeans.XmlException;
 import org.n52.iceland.exception.ows.OperationNotSupportedException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RequestHandler;
 import org.n52.sos.binding.rest.requests.RestRequest;

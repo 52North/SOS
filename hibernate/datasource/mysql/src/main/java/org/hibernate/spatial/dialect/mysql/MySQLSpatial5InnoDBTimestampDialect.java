@@ -37,7 +37,7 @@ import org.hibernate.dialect.Dialect;
  * Hibernate Spatial {@link Dialect} for MySQL that registers Types.TIMESTAMP to
  * timestampt instead of datetime.
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */

@@ -28,20 +28,22 @@
  */
 package org.n52.sos.web.admin.i18n.ajax;
 
-import org.n52.iceland.cache.ContentCache;
-import org.n52.iceland.cache.ContentCacheUpdate;
-import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
-import org.n52.sos.web.common.ControllerConstants;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.n52.iceland.cache.ContentCacheUpdate;
+import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
+import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.cache.SosWritableContentCache;
+import org.n52.sos.web.common.ControllerConstants;
+
 @Controller
 @RequestMapping(ControllerConstants.Paths.OFFERING_I18N_AJAX_ENDPOINT)
-public class OfferingI18NAjaxEndpoint extends AbstractAdminI18NAjaxEndpoint<I18NOfferingMetadata> {
+public class OfferingI18NAjaxEndpoint
+        extends AbstractAdminI18NAjaxEndpoint<I18NOfferingMetadata> {
 
     @Override
-    protected boolean isValid(ContentCache cache, String id) {
+    protected boolean isValid(SosContentCache cache, String id) {
         return cache.hasOffering(id);
     }
 
@@ -61,9 +63,10 @@ public class OfferingI18NAjaxEndpoint extends AbstractAdminI18NAjaxEndpoint<I18N
         return new ContentCacheUpdate() {
             @Override
             public void execute() {
-                getCache().addSupportedLanguage(i18n.getLocales());
-                getCache().setI18nNameForOffering(i18n.getIdentifier(), i18n.getName());
-                getCache().setI18nDescriptionForOffering(i18n.getIdentifier(), i18n.getDescription());
+                SosWritableContentCache cache = (SosWritableContentCache) getCache();
+                cache.addSupportedLanguage(i18n.getLocales());
+                cache.setI18nNameForOffering(i18n.getIdentifier(), i18n.getName());
+                cache.setI18nDescriptionForOffering(i18n.getIdentifier(), i18n.getDescription());
             }
         };
     }

@@ -34,15 +34,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.iceland.ogc.om.AbstractObservationValue;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.values.Value;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OWSConstants.AdditionalRequestParams;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
+import org.n52.sos.ogc.om.AbstractObservationValue;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.service.profile.ProfileHandler;
 
 import com.google.common.base.Strings;
@@ -56,20 +55,20 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
     private Map<AdditionalRequestParams, Object> additionalRequestParams = Maps.newHashMap();
 
     private String responseFormat;
-    
+
     private int maxNumberOfValues = Integer.MIN_VALUE;
-    
+
     private int currentNumberOfValues = 0;
 
     public abstract boolean hasNextValue() throws OwsExceptionReport;
 
     public abstract OmObservation nextSingleObservation() throws OwsExceptionReport;
-    
+
 
     /**
      * Check and modify observation for Spatial Filtering Profile and requested
      * crs
-     * 
+     *
      * @param observation
      *            {@link OmObservation} to check
      * @throws OwsExceptionReport
@@ -84,7 +83,7 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
         // the merged Observations
         // (proc, obsProp, foi)
         if (CollectionHelper.isNotEmpty(observations)) {
-            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
+            final List<OmObservation> mergedObservations = new LinkedList<>();
             int obsIdCounter = 1;
             for (final OmObservation sosObservation : observations) {
                 if (mergedObservations.isEmpty()) {
@@ -140,11 +139,11 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
     public boolean isSetValue() {
         return true;
     }
-    
+
     public void setResponseFormat(String responseFormat) {
         this.responseFormat = responseFormat;
     }
-    
+
     public String getResponseFormat() {
         if (Strings.isNullOrEmpty(responseFormat)) {
             this.responseFormat = ProfileHandler.getInstance().getActiveProfile().getObservationResponseFormat();
@@ -165,7 +164,7 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
     public void setMaxNumberOfValues(int maxNumberOfValues) {
         this.maxNumberOfValues = maxNumberOfValues;
     }
-    
+
     /**
      * Check if the max number of returned values is exceeded
      *

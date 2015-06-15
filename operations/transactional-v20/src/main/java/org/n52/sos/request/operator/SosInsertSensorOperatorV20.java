@@ -35,31 +35,31 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.iceland.cache.ContentCache;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosOffering;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.MiscSettings;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.JavaHelper;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.AbstractInsertSensorHandler;
 import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.exception.ows.concrete.InvalidFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
+import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.response.InsertSensorResponse;
 import org.n52.sos.util.SosHelper;
@@ -233,7 +233,7 @@ public class SosInsertSensorOperatorV20 extends
 
     private void checkAndSetAssignedOfferings(InsertSensorRequest request) throws InvalidOfferingParameterException {
         Set<SosOffering> sosOfferings = request.getProcedureDescription().getOfferings();
-        ContentCache cache = Configurator.getInstance().getCache();
+        SosContentCache cache = Configurator.getInstance().getCache();
 
         // add parent procedure offerings
         if (request.getProcedureDescription().isSetParentProcedures()) {

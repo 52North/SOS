@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Test;
-import org.n52.iceland.decode.XmlNamespaceDecoderKey;
+import org.n52.sos.coding.decode.XmlNamespaceDecoderKey;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

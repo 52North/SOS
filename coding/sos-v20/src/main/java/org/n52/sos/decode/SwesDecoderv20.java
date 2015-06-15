@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.opengis.gml.x32.FeaturePropertyType;
@@ -55,42 +54,43 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.decode.DecoderKey;
-import org.n52.iceland.decode.XmlNamespaceDecoderKey;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.DecoderResponseUnsupportedException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.OGCConstants;
 import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants.UpdateSensorDescriptionParams;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.ogc.swes.SwesConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.service.AbstractServiceCommunicationObject;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CodingHelper;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.XmlHelper;
-import org.n52.sos.ogc.sos.SosInsertionMetadata;
-import org.n52.sos.ogc.swes.SwesFeatureRelationship;
-import org.n52.sos.request.DeleteSensorRequest;
-import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.request.InsertSensorRequest;
-import org.n52.sos.request.UpdateSensorRequest;
-import org.n52.sos.util.SosHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import org.n52.iceland.service.ServiceConstants.SupportedType;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.coding.decode.XmlNamespaceDecoderKey;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.sos.SosInsertionMetadata;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.swes.SwesFeatureRelationship;
+import org.n52.sos.request.DeleteSensorRequest;
+import org.n52.sos.request.DescribeSensorRequest;
+import org.n52.sos.request.InsertSensorRequest;
+import org.n52.sos.request.UpdateSensorRequest;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.SosHelper;
+import org.n52.sos.util.XmlHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -144,7 +144,7 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
         } else if (xmlObject instanceof DeleteSensorDocument) {
             return parseDeleteSensor((DeleteSensorDocument) xmlObject);
         } else {
-            throw new UnsupportedDecoderInputException(this, xmlObject);
+            throw new UnsupportedDecoderXmlInputException(this, xmlObject);
         }
     }
 

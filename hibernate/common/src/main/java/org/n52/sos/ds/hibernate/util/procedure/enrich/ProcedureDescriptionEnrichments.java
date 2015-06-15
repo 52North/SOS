@@ -32,12 +32,12 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.hibernate.Session;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;

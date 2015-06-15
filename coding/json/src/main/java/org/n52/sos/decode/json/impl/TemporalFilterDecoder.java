@@ -28,14 +28,14 @@
  */
 package org.n52.sos.decode.json.impl;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
 import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.iceland.ogc.filter.TemporalFilter;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.JSONValidator;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.JSONDecoder;
+import org.n52.sos.ogc.filter.TemporalFilter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

@@ -49,10 +49,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.coding.decode.OperationDecoderKey;
 import org.n52.iceland.exception.HTTPException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.http.MediaTypes;
@@ -69,17 +69,11 @@ import com.google.common.collect.Lists;
 public class SensorDescriptionController extends AbstractAdminController {
 
     private static final Logger log = LoggerFactory.getLogger(SensorDescriptionController.class);
-
     private static final String SENSORS = "sensors";
-
     private static final String PROCEDURE_FORMAT_MAP = "procedureFormatMap";
-
     private static final String IS_UPDATE_SENSOR_SUPPORTED = "isUpdateSensorSupported";
-
     private static final String IS_DESCRIBE_SENSOR_SUPPORTED = "isDescribeSensorSupported";
-
     private static final String IS_DELETE_SENSOR_SUPPORTED = "isDeleteSensorSupported";
-
     private static final String DESCRIBE_SENSOR_REQUEST_METHOD = "describeSensorRequestMethod";
 
     private static final OperationDecoderKey DESCRIBE_SENSOR_DECODER_KEY_SOAP = new OperationDecoderKey(
@@ -127,7 +121,7 @@ public class SensorDescriptionController extends AbstractAdminController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() throws OwsExceptionReport {
-        Map<String, Object> model = new HashMap<String, Object>(5);
+        Map<String, Object> model = new HashMap<>(5);
 		boolean getKvp = false, getSoap = false, update = false, delete = false;
         try {
 			for (Binding b : this.bindingRepository.getBindings().values()) {
@@ -162,7 +156,7 @@ public class SensorDescriptionController extends AbstractAdminController {
         model.put(IS_DELETE_SENSOR_SUPPORTED, delete);
         model.put(IS_UPDATE_SENSOR_SUPPORTED, update);
         model.put(IS_DESCRIBE_SENSOR_SUPPORTED, getKvp||getSoap);
-        List<String> procedures = Lists.newArrayList(this.contentCacheController.getCache().getProcedures());
+        List<String> procedures = Lists.newArrayList(getCache().getProcedures());
         Collections.sort(procedures);
         model.put(SENSORS, procedures);
         model.put(PROCEDURE_FORMAT_MAP, this.dao.getProcedureFormatMap());

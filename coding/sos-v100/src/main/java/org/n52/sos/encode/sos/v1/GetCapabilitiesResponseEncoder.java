@@ -55,8 +55,9 @@ import net.opengis.sos.x10.FilterCapabilitiesDocument.FilterCapabilities;
 import net.opengis.sos.x10.ObservationOfferingType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.encode.Encoder;
+import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.filter.FilterConstants.ComparisonOperator;
 import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
@@ -64,20 +65,19 @@ import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosEnvelope;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.response.GetCapabilitiesResponse;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.oxf.xml.NcNameResolver;
 import org.n52.sos.ogc.sos.SosCapabilities;
+import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.sos.SosObservationOffering;
+import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.N52XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.collect.Sets;
 
@@ -143,7 +143,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
      *            FilterCapabilities.
      */
     protected void setFilterCapabilities(FilterCapabilities filterCapabilities,
-            org.n52.iceland.ogc.filter.FilterCapabilities sosFilterCaps) {
+            org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps) {
         setScalarFilterCapabilities(filterCapabilities.addNewScalarCapabilities(), sosFilterCaps);
         setSpatialFilterCapabilities(filterCapabilities.addNewSpatialCapabilities(), sosFilterCaps);
         setTemporalFilterCapabilities(filterCapabilities.addNewTemporalCapabilities(), sosFilterCaps);
@@ -305,7 +305,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
      * @param sosFilterCaps
      */
     protected void setSpatialFilterCapabilities(SpatialCapabilitiesType spatialCapabilities,
-            org.n52.iceland.ogc.filter.FilterCapabilities sosFilterCaps) {
+            org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps) {
 
         // set GeometryOperands
         if (!sosFilterCaps.getSpatialOperands().isEmpty()) {
@@ -340,7 +340,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
      * @param sosFilterCaps
      */
     protected void setTemporalFilterCapabilities(TemporalCapabilitiesType temporalCapabilities,
-            org.n52.iceland.ogc.filter.FilterCapabilities sosFilterCaps) {
+            org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps) {
 
         // set TemporalOperands
         if (!sosFilterCaps.getTemporalOperands().isEmpty()) {
@@ -375,7 +375,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
      * @param sosFilterCaps
      */
     protected void setScalarFilterCapabilities(ScalarCapabilitiesType scalarCapabilities,
-            org.n52.iceland.ogc.filter.FilterCapabilities sosFilterCaps) {
+            org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps) {
 
         if (!sosFilterCaps.getComparisonOperators().isEmpty()) {
             ComparisonOperatorsType scalarOps = scalarCapabilities.addNewComparisonOperators();

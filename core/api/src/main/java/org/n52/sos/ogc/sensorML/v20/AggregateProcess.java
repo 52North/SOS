@@ -38,7 +38,7 @@ import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 /**
  * Class that represents SensorML 2.0 AggregateProcess
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

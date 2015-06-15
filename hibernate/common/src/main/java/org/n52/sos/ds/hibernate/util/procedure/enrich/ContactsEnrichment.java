@@ -28,13 +28,14 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsServiceProvider;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.sos.iso.CodeList;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.Role;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

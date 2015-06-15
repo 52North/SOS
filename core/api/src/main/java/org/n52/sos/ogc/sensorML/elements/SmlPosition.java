@@ -31,16 +31,16 @@ package org.n52.sos.ogc.sensorML.elements;
 import java.util.List;
 
 import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.StringHelper;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweVector;
 
 /**
  * SOS internal representation of SensorML position
- * 
+ *
  * @since 4.0.0
  */
 public class SmlPosition extends SweAbstractDataComponent {
@@ -49,10 +49,10 @@ public class SmlPosition extends SweAbstractDataComponent {
 
     private String referenceFrame;
 
-    private List<SweCoordinate<?>> position;
-    
+    private List<? extends SweCoordinate<?>> position;
+
     private SweVector vector;
-    
+
     private SweAbstractDataComponent dataComponent;
 
     /**
@@ -64,7 +64,7 @@ public class SmlPosition extends SweAbstractDataComponent {
 
     /**
      * constructor
-     * 
+     *
      * @param name
      *            Position name
      * @param fixed
@@ -82,10 +82,10 @@ public class SmlPosition extends SweAbstractDataComponent {
         this.referenceFrame = referenceFrame;
         this.position = position;
     }
-    
+
     /**
      * constructor
-     * 
+     *
      * @param name
      *            Position name
      * @param fixed
@@ -140,7 +140,7 @@ public class SmlPosition extends SweAbstractDataComponent {
         this.referenceFrame = referenceFrame;
         return this;
     }
-    
+
     public boolean isSetReferenceFrame() {
         return StringHelper.isNotEmpty(referenceFrame);
     }
@@ -148,7 +148,7 @@ public class SmlPosition extends SweAbstractDataComponent {
     /**
      * @return the position
      */
-    public List<SweCoordinate<?>> getPosition() {
+    public List<? extends SweCoordinate<?>> getPosition() {
         if (!isSetPosition() && isSetVector() && getVector().isSetCoordinates()) {
             if (!isSetName() && vector.isSetName()) {
                 setName(vector.getName());
@@ -163,18 +163,18 @@ public class SmlPosition extends SweAbstractDataComponent {
      *            the position to set
      * @return This object
      */
-    public SmlPosition setPosition(final List<SweCoordinate<?>> position) {
+    public SmlPosition setPosition(List<? extends SweCoordinate<?>> position) {
         this.position = position;
         return this;
     }
-    
+
     public boolean isSetPosition() {
         return CollectionHelper.isNotEmpty(position);
     }
-    
+
     public SweVector getVector() {
         if (!isSetVector() && isSetPosition()) {
-            SweVector vector = (SweVector)copyValueTo(new SweVector(getPosition()));
+            SweVector vector = (SweVector) copyValueTo(new SweVector(getPosition()));
             vector.setReferenceFrame(getReferenceFrame());
             if (isSetName()) {
                 vector.setName(getName());
@@ -187,11 +187,11 @@ public class SmlPosition extends SweAbstractDataComponent {
     public void setVector(SweVector vector) {
        this.vector = vector;
     }
-    
+
     public boolean isSetVector() {
         return vector != null;
     }
-    
+
     public SweAbstractDataComponent getAbstractDataComponent() {
         if (!isSetAbstractDataComponent() && isSetVector()) {
             return vector;
@@ -205,7 +205,7 @@ public class SmlPosition extends SweAbstractDataComponent {
         }
        this.dataComponent = dataComponent;
     }
-    
+
     public boolean isSetAbstractDataComponent() {
         return dataComponent != null && isSetVector();
     }

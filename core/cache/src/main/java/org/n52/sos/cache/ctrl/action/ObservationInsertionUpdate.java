@@ -30,19 +30,19 @@ package org.n52.sos.cache.ctrl.action;
 
 import java.util.List;
 
-import org.n52.iceland.cache.WritableContentCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.ogc.OGCConstants;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.om.NamedValue;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.util.action.Action;
+import org.n52.sos.cache.SosWritableContentCache;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.request.InsertObservationRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -68,11 +68,11 @@ import com.vividsolutions.jts.geom.Geometry;
  * <li>Procedure &rarr; temporal bounding box</li>
  * <li>Global temporal bounding box</li>
  * </ul>
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @since 4.0.0
- * 
+ *
  */
 public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationInsertionUpdate.class);
@@ -91,7 +91,7 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
 
     @Override
     public void execute() {
-        final WritableContentCache cache = getCache();
+        final SosWritableContentCache cache = (SosWritableContentCache) getCache();
         // TODO Review required methods and update test accordingly (@see
         // SensorInsertionInMemoryCacheUpdate)
         // Always update the javadoc when changing this method!
@@ -124,7 +124,7 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
                 cache.addProcedureForFeatureOfInterest(featureOfInterest, procedure);
                 if (sosSamplingFeature.isSetSampledFeatures()) {
                     for (AbstractFeature parentFeature : sosSamplingFeature.getSampledFeatures()) {
-                        getCache().addParentFeature(sosSamplingFeature.getIdentifierCodeWithAuthority().getValue(),
+                        cache.addParentFeature(sosSamplingFeature.getIdentifierCodeWithAuthority().getValue(),
                                 parentFeature.getIdentifierCodeWithAuthority().getValue());
                     }
                 }
@@ -168,7 +168,7 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
                 cache.updatePhenomenonTimeForOffering(offering, phenomenonTime);
                 cache.updateResultTimeForOffering(offering, resultTime);
                 cache.updateEnvelopeForOffering(offering, envelope);
-                if (spatialFitleringProfileEnvelope != null && !envelope.isNull()) {
+                if (!envelope.isNull()) {
                     cache.updateSpatialFilteringProfileEnvelopeForOffering(offering, spatialFitleringProfileEnvelope);
                 }
             }

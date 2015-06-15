@@ -29,7 +29,7 @@
 package org.n52.sos.decode.json.inspire;
 
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.inspire.aqd.Contact;
 import org.n52.sos.inspire.aqd.RelatedParty;
 import org.n52.sos.util.AQDJSONConstants;

@@ -30,15 +30,15 @@ package org.n52.sos.encode.streaming;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.sos.encode.EncodingValues;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.sos.coding.encode.EncodingValues;
+import org.n52.sos.ogc.om.OmObservation;
 
 /**
  * Implementation of {@link AbstractOmV20XmlStreamWriter} to write O&M 2.0 encoded
  * {@link OmObservation}s to stream
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */

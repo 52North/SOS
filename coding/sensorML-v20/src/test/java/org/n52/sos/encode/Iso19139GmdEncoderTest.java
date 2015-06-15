@@ -43,10 +43,9 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.w3c.dom.Node;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.util.XmlHelper;
 import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.iso.GcoConstants;
 import org.n52.sos.iso.gmd.GmdConformanceResult;
@@ -54,6 +53,7 @@ import org.n52.sos.iso.gmd.GmdConstants;
 import org.n52.sos.iso.gmd.GmdDomainConsistency;
 import org.n52.sos.iso.gmd.GmdQuantitativeResult;
 import org.n52.sos.util.NamespaceContextBuilder;
+import org.n52.sos.util.XmlHelper;
 
 import com.google.common.collect.ImmutableMap;
 

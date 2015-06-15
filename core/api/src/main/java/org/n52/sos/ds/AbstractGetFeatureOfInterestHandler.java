@@ -33,21 +33,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosEnvelope;
+import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.util.SosHelper;
 
 /**
  * Renamed, in version 4.x called AbstractGetFeatureOfInterestDAO
- * 
+ *
  * @since 5.0.0
- * 
+ *
  */
 public abstract class AbstractGetFeatureOfInterestHandler extends AbstractOperationHandler {
     public AbstractGetFeatureOfInterestHandler(final String service) {
@@ -90,7 +90,7 @@ public abstract class AbstractGetFeatureOfInterestHandler extends AbstractOperat
     }
 
     protected Set<String> getFeatureIdentifiers(final List<String> featureIdentifiers) {
-        final Set<String> allFeatureIdentifiers = new HashSet<String>();
+        final Set<String> allFeatureIdentifiers = new HashSet<>();
         for (final String featureIdentifier : featureIdentifiers) {
             if (isRelatedFeature(featureIdentifier)) {
                 allFeatureIdentifiers.addAll(getCache().getChildFeatures(featureIdentifier, true, true));
@@ -100,75 +100,4 @@ public abstract class AbstractGetFeatureOfInterestHandler extends AbstractOperat
         }
         return allFeatureIdentifiers;
     }
-
-    /*
-     * Now, we return the list of the child features and not the relatedFeature
-     * itself // TODO add javadoc // FIXME where to add check for
-     * samplingFeature types? protected FeatureCollection
-     * processRelatedFeatures( final List<String> requestedFeatures, final
-     * FeatureCollection featuresToProcess, final String
-     * relatedSamplingFeatureRole) { // TODO Eike: relatedFeatures: compare
-     * feature collection with requested features if
-     * (isNotEmpty(requestedFeatures) && featuresToProcess != null &&
-     * featuresToProcess.isSetMembers()) { final Map<String,Collection<String>>
-     * relatedFeatureIdentifiersWithChilds =
-     * getRelatedFeatureIdentifiersWithChilds(requestedFeatures);
-     * 
-     * final FeatureCollection requestedFeatureObjects =
-     * removeNotRequestedFeatures(requestedFeatures, featuresToProcess);
-     * 
-     * for (final String featureIdentifier : requestedFeatures) { if
-     * (isRelatedFeature(featureIdentifier)) { final Collection<String>
-     * childIdentifier =
-     * relatedFeatureIdentifiersWithChilds.get(featureIdentifier); final
-     * Collection<AbstractFeature> childFeatures =
-     * getChildFeatures(childIdentifier,featuresToProcess); final
-     * SamplingFeature relatedFeature; if
-     * (featuresToProcess.getMembers().keySet().contains(featureIdentifier)) {
-     * relatedFeature = (SamplingFeature)
-     * featuresToProcess.getMembers().get(featureIdentifier); } else {
-     * relatedFeature = new SamplingFeature(new
-     * CodeWithAuthority(featureIdentifier)); }
-     * addRelatedChilds(relatedFeature,childFeatures
-     * ,relatedSamplingFeatureRole);
-     * requestedFeatureObjects.addMember(relatedFeature); } } return
-     * requestedFeatureObjects; } else { return featuresToProcess; } }
-     * 
-     * private Map<String, Collection<String>>
-     * getRelatedFeatureIdentifiersWithChilds(final List<String>
-     * requestedFeatures) { final Map<String, Collection<String>>
-     * featureIdsWithChilds = CollectionHelper.map(); for (final String
-     * featureIdentifier : requestedFeatures) { if
-     * (isRelatedFeature(featureIdentifier) &&
-     * getCache().isRelatedFeatureSampled(featureIdentifier)) {
-     * featureIdsWithChilds.put(featureIdentifier,
-     * getCache().getChildFeatures(featureIdentifier, true, false)); } } return
-     * featureIdsWithChilds; }
-     * 
-     * private SamplingFeature addRelatedChilds( final SamplingFeature
-     * relatedFeature, final Collection<AbstractFeature> childFeatures, final
-     * String relatedSamplingFeatureRole) { for (final AbstractFeature
-     * childFeature : childFeatures) {
-     * relatedFeature.addRelatedSamplingFeature(new
-     * SamplingFeatureComplex(relatedSamplingFeatureRole,(SamplingFeature)
-     * childFeature)); } return relatedFeature; }
-     * 
-     * private Collection<AbstractFeature> getChildFeatures(final
-     * Collection<String> childIdentifiers, final FeatureCollection
-     * featuresToProcess) { final Collection<AbstractFeature> childFeatures =
-     * CollectionHelper.set(); for (final AbstractFeature abstractFeature :
-     * featuresToProcess.getMembers().values()) { if
-     * (childIdentifiers.contains(abstractFeature.getIdentifier().getValue())) {
-     * childFeatures.add(abstractFeature); } } return childFeatures; }
-     * 
-     * private FeatureCollection removeNotRequestedFeatures(final List<String>
-     * requestedFeatures, final FeatureCollection featuresToProcess) { final
-     * FeatureCollection processedFeatures = new FeatureCollection(); for (final
-     * AbstractFeature abstractFeature :
-     * featuresToProcess.getMembers().values()) { final String identifier =
-     * abstractFeature.getIdentifier().getValue(); if
-     * (requestedFeatures.contains(identifier) && !isRelatedFeature(identifier))
-     * { processedFeatures.addMember(abstractFeature); } } return
-     * processedFeatures; }
-     */
 }

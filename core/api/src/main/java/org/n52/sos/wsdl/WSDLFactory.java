@@ -42,7 +42,7 @@ import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.Producer;
 import org.n52.sos.request.operator.WSDLAwareRequestOperator;

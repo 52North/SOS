@@ -29,8 +29,8 @@
 package org.n52.sos.ds.hibernate.dao;
 
 import org.hibernate.Session;
-import org.n52.iceland.ogc.om.NamedValue;
 import org.n52.sos.ds.hibernate.entities.Parameter;
+import org.n52.sos.ogc.om.NamedValue;
 
 /**
  * Hibernate DAO class to om:pramameter

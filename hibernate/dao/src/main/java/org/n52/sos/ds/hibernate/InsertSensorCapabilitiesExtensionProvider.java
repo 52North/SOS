@@ -30,7 +30,7 @@ package org.n52.sos.ds.hibernate;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.cache.ContentCache;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
 import org.n52.iceland.ogc.sos.CapabilitiesExtension;
@@ -65,13 +65,17 @@ public class InsertSensorCapabilitiesExtensionProvider extends AbstractCapabilit
 
     @Override
     public CapabilitiesExtension getExtension() {
-        ContentCache cache = this.contentCacheController.getCache();
+        SosContentCache cache = getCache();
         SosInsertionCapabilities insertionCapabilities = new SosInsertionCapabilities();
         insertionCapabilities.addFeatureOfInterestTypes(cache.getFeatureOfInterestTypes());
         insertionCapabilities.addObservationTypes(cache.getObservationTypes());
         insertionCapabilities.addProcedureDescriptionFormats(this.procedureDescriptionFormatRepository
                 .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
         return insertionCapabilities;
+    }
+
+    private SosContentCache getCache() {
+        return (SosContentCache) this.contentCacheController.getCache();
     }
 
 

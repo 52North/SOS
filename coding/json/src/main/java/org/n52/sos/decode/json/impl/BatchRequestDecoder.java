@@ -29,10 +29,10 @@
 package org.n52.sos.decode.json.impl;
 
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.OperationDecoderKey;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoDecoderForKeyException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;

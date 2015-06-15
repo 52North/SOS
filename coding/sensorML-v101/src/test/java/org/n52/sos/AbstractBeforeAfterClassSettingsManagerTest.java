@@ -33,7 +33,7 @@ package org.n52.sos;
  * SettingsManager. This requires a SettingsManager implementation as test
  * dependency, e.g. sqlite-config module.
  *
- * @author Carsten Hollmann
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  *
  * @since 4.0.0
  *

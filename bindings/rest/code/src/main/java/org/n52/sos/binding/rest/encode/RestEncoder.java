@@ -39,15 +39,14 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.encode.Encoder;
-import org.n52.iceland.encode.EncoderKey;
+import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForResponseException;
 import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CodingHelper;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.binding.rest.Constants;
@@ -79,6 +78,7 @@ import org.n52.sos.binding.rest.resources.sensors.SensorsPostEncoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPostResponse;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPutEncoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPutResponse;
+import org.n52.sos.util.CodingHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;

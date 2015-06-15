@@ -45,22 +45,21 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.cache.ContentCache;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.config.CapabilitiesExtensionService;
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.NoSuchExtensionException;
-import org.n52.iceland.exception.NoSuchOfferingException;
 import org.n52.iceland.ogc.ows.OfferingExtension;
 import org.n52.iceland.ogc.ows.StaticCapabilities;
 import org.n52.iceland.ogc.ows.StringBasedCapabilitiesExtension;
 import org.n52.iceland.util.collections.LinkedListMultiMap;
 import org.n52.iceland.util.collections.ListMultiMap;
+import org.n52.sos.config.CapabilitiesExtensionService;
 import org.n52.sos.config.sqlite.entities.Activatable;
 import org.n52.sos.config.sqlite.entities.CapabilitiesExtensionImpl;
 import org.n52.sos.config.sqlite.entities.OfferingExtensionIdentifier;
 import org.n52.sos.config.sqlite.entities.OfferingExtensionImpl;
 import org.n52.sos.config.sqlite.entities.StaticCapabilitiesImpl;
+import org.n52.sos.exception.NoSuchExtensionException;
+import org.n52.sos.exception.NoSuchOfferingException;
 
 /**
  * TODO JavaDoc
@@ -86,8 +85,8 @@ public class SQLiteCapabilitiesExtensionService
         this.contentCacheController = contentCacheController;
     }
 
-    protected ContentCache getCache() {
-        return this.contentCacheController.getCache();
+    protected SosContentCache getCache() {
+        return (SosContentCache) this.contentCacheController.getCache();
     }
 
     private void checkOffering(final String offering) throws NoSuchOfferingException {

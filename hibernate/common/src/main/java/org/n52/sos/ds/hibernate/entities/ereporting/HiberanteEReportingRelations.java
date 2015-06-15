@@ -184,7 +184,7 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
     /**
      * Interface for AQD EReporting Station elements
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.3.0
      *
      */
@@ -212,7 +212,7 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
     /**
      * Interface for AQD EReporting Network elements
      * 
-     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.3.0
      *
      */

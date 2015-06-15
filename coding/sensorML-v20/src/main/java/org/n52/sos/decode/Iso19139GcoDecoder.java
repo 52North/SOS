@@ -29,23 +29,22 @@
 package org.n52.sos.decode;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.isotc211.x2005.gco.CodeListValueType;
-
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.decode.DecoderKey;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CodingHelper;
-import org.n52.sos.iso.GcoConstants;
-import org.n52.sos.ogc.sensorML.Role;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
+import org.n52.sos.iso.GcoConstants;
+import org.n52.sos.ogc.sensorML.Role;
+import org.n52.sos.util.CodingHelper;
 
 import com.google.common.base.Joiner;
 
@@ -53,7 +52,7 @@ import com.google.common.base.Joiner;
  * {@link Decoder} class to decode ISO TC211 Geographic COmmon (GCO) extensible
  * markup language.
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
@@ -89,7 +88,7 @@ public class Iso19139GcoDecoder implements Decoder<Object, XmlObject> {
         if (element instanceof CodeListValueType) {
             return encodeCodeListValue((CodeListValueType) element);
         } else {
-            throw new UnsupportedDecoderInputException(this, element);
+            throw new UnsupportedDecoderXmlInputException(this, element);
         }
     }
 

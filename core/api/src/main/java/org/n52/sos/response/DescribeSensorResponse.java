@@ -31,9 +31,9 @@ package org.n52.sos.response;
 import java.util.List;
 
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 /**
  * @since 4.0.0

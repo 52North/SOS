@@ -36,7 +36,7 @@ import org.n52.iceland.w3c.SchemaLocation;
  * Constants interface for INSPIRE. Provides element names, prefixes,
  * namespaces, {@link SchemaLocation}, {@link QName}
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  * 
  */

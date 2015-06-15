@@ -31,7 +31,8 @@ package org.n52.sos.web.admin;
 import javax.inject.Inject;
 
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.web.common.AbstractController;
 
 /**
@@ -40,25 +41,27 @@ import org.n52.sos.web.common.AbstractController;
  */
 public abstract class AbstractAdminController extends AbstractController {
 
-    @Inject
     private ContentCacheController contentCacheController;
+
+    @Inject
+    public void setContentCacheController(ContentCacheController ctrl) {
+        this.contentCacheController = ctrl;
+    }
 
     protected boolean cacheIsLoading() {
         return contentCacheController.isUpdateInProgress();
     }
 
-    protected void updateCache() throws OwsExceptionReport {
+    protected void updateCache()
+            throws OwsExceptionReport {
         //don't wait for cache update to complete since it can take much longer than browser timeouts.
         //instead, start it and then check loading status from the client using cacheIsLoading().
-        new Thread(new Runnable(){
-            @Override
-            public void run() {
-                try {
-                    contentCacheController.update();
-                } catch (OwsExceptionReport e) {
-                    //NOOP
-                    //TODO should the last cache loading error be stored and accessible to the client?
-                }
+        new Thread(() -> {
+            try {
+                contentCacheController.update();
+            } catch (OwsExceptionReport e) {
+                //NOOP
+                //TODO should the last cache loading error be stored and accessible to the client?
             }
         }).start();
     }
@@ -66,4 +69,9 @@ public abstract class AbstractAdminController extends AbstractController {
     public ContentCacheController getContentCacheController() {
         return contentCacheController;
     }
+
+    protected SosContentCache getCache() {
+        return (SosContentCache) this.contentCacheController.getCache();
+    }
+
 }

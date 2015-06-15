@@ -31,7 +31,7 @@ package org.n52.sos.binding.rest.resources;
 import java.io.IOException;
 
 import org.apache.xmlbeans.XmlException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.binding.rest.requests.RequestHandler;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;

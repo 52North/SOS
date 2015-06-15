@@ -30,62 +30,60 @@ package org.n52.sos.inspire.offering;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Stream;
 
+import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swes.OfferingExtensionKey;
 import org.n52.iceland.ogc.swes.OfferingExtensionProvider;
-import org.n52.iceland.ogc.swes.SwesExtensionImpl;
-import org.n52.iceland.ogc.swes.SwesExtensions;
+import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.sos.inspire.AbstractInspireProvider;
 import org.n52.sos.inspire.InspireConstants;
-import org.n52.sos.inspire.InspireHelper;
-import org.n52.sos.inspire.InspireSupportedCRS;
-import org.n52.sos.inspire.InspireSupportedLanguages;
-
-import com.google.common.collect.Sets;
+import org.n52.sos.inspire.settings.InspireSettings;
 
 /**
  * Implementation of {@link OfferingExtensionProvider} for INSPIRE
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
-public class InspireOfferingExtensionProvider extends AbstractInspireProvider implements OfferingExtensionProvider {
+public class InspireOfferingExtensionProvider extends AbstractInspireProvider
+        implements OfferingExtensionProvider {
+    private static final Set<OfferingExtensionKey> KEYS = Collections
+            .singleton(new OfferingExtensionKey(SosConstants.SOS,
+                                                Sos2Constants.SERVICEVERSION,
+                                                InspireConstants.INSPIRE));
 
-    Set<OfferingExtensionKey> providerKeys = Sets.newHashSet(new OfferingExtensionKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, InspireConstants.INSPIRE));
+    private boolean enabled;
 
-    public InspireOfferingExtensionProvider() {
-    }
-
-    @Override
-    @Deprecated
-    public Set<OfferingExtensionKey> getOfferingExtensionKeyTypes() {
-        return getKeys();
+    @Setting(InspireSettings.INSPIRE_ENABLED_KEY)
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override
     public Set<OfferingExtensionKey> getKeys() {
-        return Collections.unmodifiableSet(this.providerKeys);
+        return Collections.unmodifiableSet(KEYS);
     }
 
     @Override
-    public SwesExtensions getOfferingExtensions(String identifier) {
-        SwesExtensions extensions = new SwesExtensions();
-        extensions.addSwesExtension(new SwesExtensionImpl<InspireSupportedLanguages>().setValue(
-                getSupportedLanguages()).setNamespace(InspireConstants.NS_INSPIRE_COMMON));
-        extensions.addSwesExtension(new SwesExtensionImpl<InspireSupportedCRS>().setValue(getSupportedCRS())
-                .setNamespace(InspireConstants.NS_INSPIRE_COMMON));
-        return extensions;
+    public Extensions getOfferingExtensions(String identifier) {
+        return Stream.of(getSupportedLanguages(), getSupportedCRS())
+                .map(o -> new SwesExtension<>(o)
+                        .setNamespace(InspireConstants.NS_INSPIRE_COMMON))
+                .collect(Extensions::new,
+                         Extensions::addExtension,
+                         Extensions::addExtension);
     }
+
+
 
     @Override
     public boolean hasExtendedOfferingFor(String identifier) {
-    	if (InspireHelper.getInstance().isEnabled()) {
-    		 return getCache().getOfferings().contains(identifier);
-    	}
-        return false;
+        return this.enabled && getCache().getOfferings().contains(identifier);
     }
 
 }

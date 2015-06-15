@@ -33,7 +33,7 @@ import java.util.Set;
 import net.opengis.sos.x20.InsertResultResponseDocument;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.response.InsertResultResponse;

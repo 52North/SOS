@@ -28,8 +28,8 @@
  */
 package org.n52.sos.decode.json.inspire;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.sos.inspire.aqd.EReportingChange;
 import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.inspire.aqd.InspireID;

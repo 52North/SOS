@@ -33,12 +33,12 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.decode.DecoderKey;
-import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.coding.decode.OperationDecoderKey;
+import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.ParameterNotSupportedException;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.GetCapabilitiesRequest;
@@ -84,15 +84,7 @@ public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder {
             String parameterValues = element.get(parameterName);
             try {
                 if (!parseDefaultParameter(request, parameterValues, parameterName)) {
-//                    // service (mandatory SOS 1.0.0, SOS 2.0 default)
-//                    if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service.name())) {
-//                        request.setService(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-//                    } // request (mandatory)
-//                    else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
-//                        KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
-//                    } // acceptVersions (optional)
-//                    else 
-                        if (parameterName.equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions.name())) {
+                    if (parameterName.equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions.name())) {
                         if (!parameterValues.isEmpty()) {
                             request.setAcceptVersions(Arrays.asList(parameterValues.split(Constants.COMMA_STRING)));
                         } else {

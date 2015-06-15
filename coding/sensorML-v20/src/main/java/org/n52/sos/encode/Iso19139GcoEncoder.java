@@ -28,8 +28,8 @@
  */
 package org.n52.sos.encode;
 
-import static org.n52.iceland.util.CodingHelper.encoderKeysForElements;
 import static org.n52.iceland.util.CollectionHelper.union;
+import static org.n52.sos.util.CodingHelper.encoderKeysForElements;
 
 import java.util.Collections;
 import java.util.Map;
@@ -37,20 +37,20 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.isotc211.x2005.gco.CodeListValueType;
-
-import org.n52.iceland.encode.EncoderKey;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.XmlHelper;
-import org.n52.iceland.util.XmlOptionsHelper;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.iso.GcoConstants;
-import org.n52.sos.ogc.sensorML.Role;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
+import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.sos.coding.encode.AbstractXmlEncoder;
+import org.n52.sos.iso.GcoConstants;
+import org.n52.sos.ogc.sensorML.Role;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -58,8 +58,7 @@ import com.google.common.collect.Sets;
 /**
  * {@link AbstractXmlEncoder} class to decode ISO TC211 Geographic COmmon (GCO) extensible
  * markup language.
- *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

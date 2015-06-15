@@ -37,22 +37,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.cache.ContentCacheUpdate;
 import org.n52.iceland.event.ServiceEvent;
 import org.n52.iceland.event.ServiceEventListener;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.sos.ds.FeatureQueryHandler;
+import org.n52.sos.ogc.om.OmObservation;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 1.0.0
  */
-public class DeleteObservationContentModificationListener implements ServiceEventListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DeleteObservationContentModificationListener.class);
+public class DeleteObservationContentModificationListener implements
+        ServiceEventListener {
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(DeleteObservationContentModificationListener.class);
 
     private static final Set<Class<? extends ServiceEvent>> TYPES = Collections
-            .<Class<? extends ServiceEvent>> singleton(DeleteObservationEvent.class);
+            .<Class<? extends ServiceEvent>>singleton(DeleteObservationEvent.class);
 
     private ContentCacheController contentCacheController;
     private DeleteObservationCacheFeederDAO cacheFeederDAO;
+    private FeatureQueryHandler featureQueryHandler;
+
+    @Inject
+    public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
+        this.featureQueryHandler = featureQueryHandler;
+    }
 
     @Inject
     public void setCacheFeederDAO(DeleteObservationCacheFeederDAO cacheFeederDAO) {
@@ -60,7 +71,8 @@ public class DeleteObservationContentModificationListener implements ServiceEven
     }
 
     @Inject
-    public void setContentCacheController(ContentCacheController contentCacheController) {
+    public void setContentCacheController(
+            ContentCacheController contentCacheController) {
         this.contentCacheController = contentCacheController;
     }
 
@@ -73,8 +85,7 @@ public class DeleteObservationContentModificationListener implements ServiceEven
     public void handle(ServiceEvent event) {
         if (event instanceof DeleteObservationEvent) {
             DeleteObservationEvent e = (DeleteObservationEvent) event;
-            DeleteObservationCacheControllerUpdate update =
-                    new DeleteObservationCacheControllerUpdate(this.cacheFeederDAO, e.getDeletedObservation());
+            ContentCacheUpdate update = createUpdate(e.getDeletedObservation());
             LOGGER.debug("Updating Cache after content modification: {}", update);
             try {
                 this.contentCacheController.update(update);
@@ -84,5 +95,10 @@ public class DeleteObservationContentModificationListener implements ServiceEven
         } else {
             LOGGER.debug("Can not handle modification event: {}", event);
         }
+    }
+
+    private DeleteObservationCacheControllerUpdate createUpdate(OmObservation e) {
+        return new DeleteObservationCacheControllerUpdate(
+                this.featureQueryHandler, this.cacheFeederDAO, e);
     }
 }

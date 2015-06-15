@@ -35,13 +35,13 @@ import javax.inject.Inject;
 import org.hibernate.Session;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.ds.ProcedureFormatDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 
 /**
- * @author Shane StClair <shane@axiomalaska.com>
+ * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  */
 public class HibernateProcedureFormatDAO implements ProcedureFormatDAO {
 

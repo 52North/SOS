@@ -32,15 +32,15 @@ import static org.n52.iceland.util.DateTimeHelper.parseIsoString2DateTime;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
 
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.decode.DecoderKey;
-import org.n52.iceland.decode.JsonDecoderKey;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.coding.decode.JsonDecoderKey;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
 import org.n52.iceland.exception.ows.concrete.NoDecoderForKeyException;
 import org.n52.iceland.ogc.OGCConstants;
@@ -51,7 +51,6 @@ import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.sos.coding.json.JSONConstants;
 

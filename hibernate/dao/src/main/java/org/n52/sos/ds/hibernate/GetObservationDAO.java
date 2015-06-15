@@ -47,12 +47,10 @@ import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.OmObservationConstellation;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
@@ -61,6 +59,7 @@ import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.AbstractGetObservationHandler;
+import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
@@ -84,6 +83,8 @@ import org.n52.sos.ds.hibernate.values.series.HibernateChunkSeriesStreamingValue
 import org.n52.sos.ds.hibernate.values.series.HibernateScrollableSeriesStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateSeriesStreamingValue;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.profile.ProfileHandler;
@@ -102,6 +103,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationDAO.class);
 
     private HibernateSessionHolder sessionHolder;
+    private FeatureQueryHandler featureQueryHandler;
 
     public GetObservationDAO() {
         super(SosConstants.SOS);
@@ -111,6 +113,12 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
+
+    @Inject
+    public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
+        this.featureQueryHandler = featureQueryHandler;
+    }
+
 
     @Override
     public GetObservationResponse getObservation(final GetObservationRequest sosRequest) throws OwsExceptionReport {
@@ -204,7 +212,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
 
         final long start = System.currentTimeMillis();
         // get valid featureOfInterest identifier
-        final Set<String> features = QueryHelper.getFeatures(request, session);
+        final Set<String> features = getFeatures(request, session);
         if (features != null && features.isEmpty()) {
             return new ArrayList<OmObservation>();
         }
@@ -297,7 +305,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
 
         final long start = System.currentTimeMillis();
         // get valid featureOfInterest identifier
-        final Set<String> features = QueryHelper.getFeatures(request, session);
+        final Set<String> features = getFeatures(request, session);
         if (features != null && features.isEmpty()) {
             return new ArrayList<OmObservation>();
         }
@@ -394,7 +402,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         final long start = System.currentTimeMillis();
         final List<OmObservation> result = new LinkedList<>();
         // get valid featureOfInterest identifier
-        final Set<String> features = QueryHelper.getFeatures(request, session);
+        final Set<String> features = getFeatures(request, session);
         if (features != null && features.isEmpty()) {
             return result;
         }
@@ -445,7 +453,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         final long start = System.currentTimeMillis();
         final List<OmObservation> result = new LinkedList<>();
         // get valid featureOfInterest identifier
-        final Set<String> features = QueryHelper.getFeatures(request, session);
+        final Set<String> features = getFeatures(request, session);
         if (features != null && features.isEmpty()) {
             return result;
         }
@@ -468,6 +476,10 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         }
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
         return result;
+    }
+
+    private Set<String> getFeatures(GetObservationRequest request, Session session) throws OwsExceptionReport {
+        return QueryHelper.getFeatures(this.featureQueryHandler, request, session);
     }
 
     /**

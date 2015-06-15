@@ -37,8 +37,8 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKeyType;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sensorML.SensorML20Constants;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
@@ -47,7 +47,7 @@ import com.google.common.collect.ImmutableSet;
  * {@link Converter} class to convert SensorML 2.0 URL to MimeType and the other
  * way round.
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

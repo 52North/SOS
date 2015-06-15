@@ -30,7 +30,7 @@ package org.n52.sos.binding.rest.resources;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.RestRequest;
 

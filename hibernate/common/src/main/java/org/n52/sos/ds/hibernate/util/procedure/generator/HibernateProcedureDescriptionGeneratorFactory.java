@@ -32,15 +32,15 @@ import java.util.Locale;
 
 import org.hibernate.Session;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
 import org.n52.iceland.component.Component;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 /**
  * Interface for procedure description generator factories
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */

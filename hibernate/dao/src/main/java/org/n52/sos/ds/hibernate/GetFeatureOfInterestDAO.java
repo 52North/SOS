@@ -44,20 +44,22 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.ds.FeatureQueryHandlerQueryObject;
-import org.n52.iceland.ds.HibernateDatasourceConstants;
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.ogc.om.features.FeatureCollection;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.AbstractGetFeatureOfInterestHandler;
+import org.n52.sos.ds.FeatureQueryHandler;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
@@ -69,13 +71,9 @@ import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
+import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.ds.ConnectionProvider;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -108,6 +106,14 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
 
     private static final String SQL_QUERY_GET_FEATURE_FOR_OBSERVED_PROPERTY = "getFeatureForObservableProperty";
     private HibernateSessionHolder sessionHolder;
+
+    private FeatureQueryHandler featureQueryHandler;
+
+    @Inject
+    public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
+        this.featureQueryHandler = featureQueryHandler;
+    }
+
 
     public GetFeatureOfInterestDAO() {
         super(SosConstants.SOS);
@@ -222,7 +228,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
      *             If an error occurs during processing
      */
     private FeatureCollection getFeatures(final GetFeatureOfInterestRequest request, final Session session) throws OwsExceptionReport {
-        final Set<String> foiIDs = new HashSet<String>(queryFeatureIdentifiersForParameter(request, session));
+        final Set<String> foiIDs = new HashSet<>(queryFeatureIdentifiersForParameter(request, session));
         if (request.isSetFeatureOfInterestIdentifiers()) {
             addRequestedRelatedFeatures(foiIDs, request.getFeatureIdentifiers());
         }
@@ -233,7 +239,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
                 .setConnection(session)
                 .setVersion(request.getVersion())
                 .setI18N(LocaleHelper.fromRequest(request));
-        return new FeatureCollection(getConfigurator().getFeatureQueryHandler().getFeatures(queryObject));
+        return new FeatureCollection(this.featureQueryHandler.getFeatures(queryObject));
     }
 
     /**

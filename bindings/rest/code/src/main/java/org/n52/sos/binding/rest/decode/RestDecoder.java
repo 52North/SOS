@@ -28,7 +28,7 @@
  */
 package org.n52.sos.binding.rest.decode;
 
-import static org.n52.iceland.util.CodingHelper.decoderKeysForElements;
+import static org.n52.sos.util.CodingHelper.decoderKeysForElements;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,14 +40,14 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.decode.DecoderKey;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.OperationNotSupportedException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.ContentTypeNotSupportedException;
 import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.http.HTTPHeaders;
 import org.n52.iceland.util.http.HTTPStatus;
@@ -218,7 +218,7 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest>, Co
     }
 
     private Constants bindingConstants() {
-        return Constants.getInstance();
+        return this.constants;
     }
 
 }

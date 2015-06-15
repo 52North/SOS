@@ -45,11 +45,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
 import org.n52.iceland.coding.ResponseFormatRepository;
-import org.n52.iceland.config.SettingsService;
+import org.n52.iceland.coding.encode.ProcedureDescriptionFormatKey;
+import org.n52.iceland.coding.encode.ResponseFormatKey;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.encode.ProcedureDescriptionFormatKey;
-import org.n52.iceland.encode.ResponseFormatKey;
-import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
 import org.n52.iceland.util.JSONUtils;

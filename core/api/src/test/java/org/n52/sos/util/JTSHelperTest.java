@@ -41,10 +41,8 @@ import static org.n52.sos.util.JTSHelperForTesting.randomCoordinates;
 import static org.n52.sos.util.ReverseOf.reverseOf;
 
 import org.junit.Test;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.JTSConstants;
-import org.n52.iceland.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -61,7 +59,6 @@ import com.vividsolutions.jts.geom.Polygon;
  * @since 4.0.0
  */
 public class JTSHelperTest extends JTSHelper {
-
 
     @Test
     public void factoryFromSridShouldSetSrid() {
@@ -88,7 +85,7 @@ public class JTSHelperTest extends JTSHelper {
     public void shouldPointWKTString() throws OwsExceptionReport {
         String coordinates = "52.0 7.0";
         StringBuilder builder = new StringBuilder();
-        builder.append(JTSConstants.WKT_POINT);
+        builder.append(WKT_POINT);
         builder.append("(");
         builder.append(coordinates);
         builder.append(")");

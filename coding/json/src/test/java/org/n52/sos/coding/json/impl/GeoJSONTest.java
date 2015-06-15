@@ -40,7 +40,7 @@ import java.util.Random;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.Constants;
 import org.n52.sos.coding.json.GeoJSONException;
 import org.n52.sos.coding.json.SchemaConstants;

@@ -30,26 +30,29 @@ package org.n52.sos.ext.deleteobservation;
 
 import java.util.List;
 
-import org.n52.iceland.cache.ContentCacheUpdate;
+import org.n52.iceland.exception.ows.CompositeOwsException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.cache.SosContentCacheUpdate;
+import org.n52.sos.ds.FeatureQueryHandler;
+import org.n52.sos.ogc.om.OmObservation;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
  *
  * @since 1.0.0
  */
-public class DeleteObservationCacheControllerUpdate extends ContentCacheUpdate {
-    private final OmObservation o;
+public class DeleteObservationCacheControllerUpdate extends SosContentCacheUpdate {
+    private final OmObservation observation;
+    private final DeleteObservationCacheFeederDAO cacheFeederDAO;
+    private final FeatureQueryHandler featureQueryHandler;
 
-    private DeleteObservationCacheFeederDAO cacheFeederDAO;
-
-    public DeleteObservationCacheControllerUpdate(DeleteObservationCacheFeederDAO dao, OmObservation o) {
+    public DeleteObservationCacheControllerUpdate(FeatureQueryHandler featureQueryHandler,
+                                                  DeleteObservationCacheFeederDAO dao, OmObservation o) {
         this.cacheFeederDAO = dao;
-        this.o = o;
+        this.observation = o;
+        this.featureQueryHandler = featureQueryHandler;
     }
 
     protected DeleteObservationCacheFeederDAO getDao() throws NoImplementationFoundException {
@@ -61,8 +64,9 @@ public class DeleteObservationCacheControllerUpdate extends ContentCacheUpdate {
         try {
             List<OwsExceptionReport> errors = CollectionHelper.synchronizedList();
             getDao().setErrors(errors);
+            getDao().setFeatureQueryHandler(this.featureQueryHandler);
             getDao().setCache(getCache());
-            getDao().setDeletedObservation(o);
+            getDao().setDeletedObservation(this.observation);
             getDao().execute();
             if (!errors.isEmpty()) {
                 throw new CompositeOwsException(errors);

@@ -32,13 +32,13 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.decode.DecoderKey;
-import org.n52.iceland.decode.OperationDecoderKey;
+import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.coding.decode.OperationDecoderKey;
+import org.n52.iceland.exception.ows.CompositeOwsException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
 import org.n52.iceland.exception.ows.concrete.ParameterNotSupportedException;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.KvpHelper;
@@ -73,20 +73,6 @@ public class GetResultTemplateKvpDecoderv20 extends AbstractKvpDecoder {
             String parameterValues = element.get(parameterName);
             try {
                 if (!parseDefaultParameter(request, parameterValues, parameterName)) {
-//                    // service (mandatory)
-//                    if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service.name())) {
-//                        request.setService(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-//                        foundService = true;
-//                    } // version (mandatory)
-//                    else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.version.name())) {
-//                        request.setVersion(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-//                        foundVersion = true;
-//                    } // request (mandatory)
-//                    else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
-//                        KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
-//                    } // offering (mandatory)
-//                    else 
-                        
                         if (parameterName.equalsIgnoreCase(Sos2Constants.GetResultTemplateParams.offering.name())) {
                         request.setOffering(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
                         foundOffering = true;

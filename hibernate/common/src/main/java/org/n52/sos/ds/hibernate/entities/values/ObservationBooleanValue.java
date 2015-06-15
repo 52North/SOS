@@ -34,7 +34,7 @@ import org.n52.sos.ds.hibernate.entities.interfaces.BooleanValue;
  * Concrete implementation of {@link ObservationValue} for old concept and boolean
  * values
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */

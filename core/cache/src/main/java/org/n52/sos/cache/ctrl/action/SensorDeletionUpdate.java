@@ -33,10 +33,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.cache.WritableContentCache;
-import org.n52.iceland.ds.CacheFeederHandler;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.sos.cache.SosWritableContentCache;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.action.Action;
+import org.n52.sos.ds.CacheFeederHandler;
 import org.n52.sos.request.DeleteSensorRequest;
 
 import com.google.common.collect.Sets;
@@ -70,7 +70,7 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
 
     @Override
     public void execute() {
-        final WritableContentCache cache = getCache();
+        final SosWritableContentCache cache = getCache();
         final String procedure = request.getProcedureIdentifier();
 
         cache.removeProcedure(procedure);

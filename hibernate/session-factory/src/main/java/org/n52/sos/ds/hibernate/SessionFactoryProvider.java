@@ -38,8 +38,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.stream.Stream;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -54,10 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.ds.HibernateDatasourceConstants;
 import org.n52.iceland.exception.ConfigurationException;
-
-import com.google.common.base.Throwables;
 
 /**
  *

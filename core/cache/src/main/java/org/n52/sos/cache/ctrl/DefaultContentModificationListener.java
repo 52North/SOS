@@ -38,15 +38,15 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.cache.ContentCacheUpdate;
-import org.n52.iceland.ds.CacheFeederHandler;
 import org.n52.iceland.event.ServiceEvent;
 import org.n52.iceland.event.ServiceEventListener;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.cache.ctrl.action.ObservationInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultTemplateInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorDeletionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorInsertionUpdate;
+import org.n52.sos.ds.CacheFeederHandler;
 import org.n52.sos.event.events.ObservationInsertion;
 import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.event.events.ResultTemplateInsertion;

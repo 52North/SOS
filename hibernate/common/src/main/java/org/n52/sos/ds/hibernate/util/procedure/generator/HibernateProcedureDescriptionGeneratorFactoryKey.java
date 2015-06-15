@@ -31,7 +31,7 @@ package org.n52.sos.ds.hibernate.util.procedure.generator;
 /**
  * Key class for {@link HibernateProcedureDescriptionGeneratorFactory}
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
@@ -86,7 +86,7 @@ public class HibernateProcedureDescriptionGeneratorFactoryKey implements
 
     @Override
     public String toString() {
-        return String.format("%s[from=%s, to=%s]", getClass().getSimpleName(), getDescriptionFormat());
+        return String.format("%s[format=%s]", getClass().getSimpleName(), getDescriptionFormat());
     }
 
 }

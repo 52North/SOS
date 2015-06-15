@@ -35,18 +35,6 @@ import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.ObservationValue;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.SingleObservationValue;
-import org.n52.iceland.ogc.om.quality.OmResultQuality;
-import org.n52.iceland.ogc.om.values.SweDataArrayValue;
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
-import org.n52.iceland.ogc.swe.SweDataArray;
-import org.n52.iceland.ogc.swe.SweDataRecord;
-import org.n52.iceland.ogc.swe.SweField;
-import org.n52.iceland.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.iceland.ogc.swe.simpleType.SweCount;
-import org.n52.iceland.ogc.swe.simpleType.SweTime;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.JavaHelper;
@@ -60,8 +48,20 @@ import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations
 import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue;
 import org.n52.sos.iso.gmd.GmdDomainConsistency;
+import org.n52.sos.ogc.om.ObservationValue;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.quality.OmResultQuality;
+import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
+import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
+import org.n52.sos.ogc.swe.simpleType.SweTime;
 import org.n52.sos.util.SweHelper;
 
 import com.google.common.collect.Lists;
@@ -70,7 +70,7 @@ import com.google.common.collect.Sets;
 /**
  * Helper class for eReporting.
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */

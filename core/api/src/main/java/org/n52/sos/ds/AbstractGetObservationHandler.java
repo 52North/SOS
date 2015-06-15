@@ -28,26 +28,25 @@
  */
 package org.n52.sos.ds;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import javax.xml.namespace.QName;
+import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 
-import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.ResponseFormatRepository;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.ows.OwsParameterValueRange;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosEnvelope;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.MinMax;
+import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.SosHelper;
@@ -63,8 +62,15 @@ import org.n52.sos.util.SosHelper;
  */
 public abstract class AbstractGetObservationHandler extends AbstractOperationHandler {
 
+    private ResponseFormatRepository responseFormatRepository;
+
     public AbstractGetObservationHandler(final String service) {
         super(service, SosConstants.Operations.GetObservation.name());
+    }
+
+    @Inject
+    public void setResponseFormatRepository(ResponseFormatRepository responseFormatRepository) {
+        this.responseFormatRepository = responseFormatRepository;
     }
 
     @Override
@@ -74,8 +80,8 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
         final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version);
         addOfferingParameter(opsMeta);
         addProcedureParameter(opsMeta);
-        opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.responseFormat, ResponseFormatRepository
-                .getInstance().getSupportedResponseFormats(SosConstants.SOS, version));
+        opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.responseFormat,
+                                           getResponseFormatRepository().getSupportedResponseFormats(SosConstants.SOS, version));
 
         addObservablePropertyParameter(opsMeta);
         addFeatureOfInterestParameter(opsMeta, featureIDs);
@@ -101,6 +107,10 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
             opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.responseMode,
                     SosConstants.RESPONSE_MODES);
         }
+    }
+
+    protected ResponseFormatRepository getResponseFormatRepository() {
+        return this.responseFormatRepository;
     }
 
     /**
@@ -138,11 +148,9 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
     }
 
     private List<String> getResultModels() {
-        final List<String> resultModelsList = new ArrayList<String>(OmConstants.RESULT_MODELS.size());
-        for (final QName qname : OmConstants.RESULT_MODELS) {
-            resultModelsList.add(qname.getPrefix() + ":" + qname.getLocalPart());
-        }
-        return resultModelsList;
+        return OmConstants.RESULT_MODELS.stream()
+                .map(qname -> qname.getPrefix() + ":" + qname.getLocalPart())
+                .collect(Collectors.toList());
     }
 
     /**

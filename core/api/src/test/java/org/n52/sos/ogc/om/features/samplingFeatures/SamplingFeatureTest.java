@@ -39,8 +39,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeatureComplex;
 
 import com.google.common.collect.Lists;
 

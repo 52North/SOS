@@ -37,9 +37,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.ds.HibernateDatasourceConstants;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.ds.AbstractDeleteSensorHandler;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;

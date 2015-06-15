@@ -30,6 +30,7 @@ package org.n52.sos.util;
 
 import static org.geotools.factory.Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER;
 import static org.geotools.referencing.ReferencingFactoryFinder.getCRSAuthorityFactory;
+import static org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator.BBOX;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -56,24 +57,22 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.ds.FeatureQuerySettingsProvider;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.lifecycle.Destroyable;
-import org.n52.iceland.ogc.filter.SpatialFilter;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.EpsgConstants;
-import org.n52.iceland.util.JTSHelper;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.util.Range;
 import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.util.Validation;
+import org.n52.sos.ds.FeatureQuerySettingsProvider;
+import org.n52.sos.ogc.filter.SpatialFilter;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -90,7 +89,7 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  */
 @Configurable
-public class GeometryHandler implements Constructable, Destroyable, EpsgConstants {
+public class GeometryHandler implements Constructable, Destroyable {
 
     /*
      * longitude = east-west latitude = north-south
@@ -99,6 +98,8 @@ public class GeometryHandler implements Constructable, Destroyable, EpsgConstant
     private static final Logger LOGGER = LoggerFactory.getLogger(GeometryHandler.class);
     @Deprecated
     private static GeometryHandler instance;
+    private static final String EPSG = "EPSG";
+    private static final String EPSG_PREFIX = EPSG + Constants.COLON_STRING;
     private boolean datasoureUsesNorthingFirst;
     private final List<Range> epsgsWithNorthingFirstAxisOrder = Lists.newArrayList();
     private int storageEPSG;
@@ -111,13 +112,6 @@ public class GeometryHandler implements Constructable, Destroyable, EpsgConstant
     private CRSAuthorityFactory crsAuthority;
     private final Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();;
 
-    /**
-     * @return Returns a singleton instance of the GeometryHandler.
-     */
-    @Deprecated
-    public static GeometryHandler getInstance() {
-        return instance;
-    }
 
     @Override
     public void init() {
@@ -142,8 +136,8 @@ public class GeometryHandler implements Constructable, Destroyable, EpsgConstant
             }
         }
         /*
-         * close {@link WeakCollectionCleaner}
-         */
+        * close {@link WeakCollectionCleaner}
+        */
         WeakCollectionCleaner.DEFAULT.exit();
     }
 
@@ -257,6 +251,26 @@ public class GeometryHandler implements Constructable, Destroyable, EpsgConstant
         this.supportedCRS.addAll(StringHelper.splitToSet(supportedCRS, Constants.COMMA_STRING));
     }
 
+    /**
+     * Get List of supported EPSG codes
+     *
+     * @return Supported EPSG codes
+     */
+    public Set<String> getSupportedCRS() {
+        try {
+            Set<String> authorityCodes = getCrsAuthorityFactory().getAuthorityCodes(CoordinateReferenceSystem.class);
+            if (CollectionHelper.isNotEmpty(authorityCodes) && CollectionHelper.isNotEmpty(this.supportedCRS)) {
+                return CollectionHelper.conjunctCollectionsToSet(authorityCodes, this.supportedCRS);
+            } else if (CollectionHelper.isEmpty(authorityCodes)) {
+                return Sets.newHashSet(Integer.toString(getStorageEPSG()), Integer.toString(getStorage3DEPSG()));
+            }
+            return authorityCodes;
+        } catch (FactoryException fe) {
+            LOGGER.warn("Error while querying supported EPSG codes", fe);
+        }
+        return Collections.emptySet();
+    }
+
     @Setting(FeatureQuerySettingsProvider.AUTHORITY)
     public void setAuthority(final String authority) {
         Validation.notNull("The CRS authority", authority);
@@ -338,6 +352,15 @@ public class GeometryHandler implements Constructable, Destroyable, EpsgConstant
     }
 
     /**
+     * Is datasource a spatial datasource
+     *
+     * @return Spatial datasource or not
+     */
+    public boolean isSpatialDatasource() {
+        return spatialDatasource;
+    }
+
+    /**
      * Check if the EPSG code is northing first
      *
      * @param epsgCode
@@ -362,15 +385,6 @@ public class GeometryHandler implements Constructable, Destroyable, EpsgConstant
      */
     public boolean isEastingFirstEpsgCode(final int epsgCode) {
         return !isNorthingFirstEpsgCode(epsgCode);
-    }
-
-    /**
-     * Is datasource a spatial datasource
-     *
-     * @return Spatial datasource or not
-     */
-    public boolean isSpatialDatasource() {
-        return spatialDatasource;
     }
 
     /**
@@ -616,26 +630,6 @@ public class GeometryHandler implements Constructable, Destroyable, EpsgConstant
     }
 
     /**
-     * Get List of supported EPSG codes
-     *
-     * @return Supported EPSG codes
-     */
-    public Set<String> getSupportedCRS() {
-        try {
-            Set<String> authorityCodes = getCrsAuthorityFactory().getAuthorityCodes(CoordinateReferenceSystem.class);
-            if (CollectionHelper.isNotEmpty(authorityCodes) && CollectionHelper.isNotEmpty(this.supportedCRS)) {
-                return CollectionHelper.conjunctCollectionsToSet(authorityCodes, this.supportedCRS);
-            } else if (CollectionHelper.isEmpty(authorityCodes)) {
-                return Sets.newHashSet(Integer.toString(getStorageEPSG()), Integer.toString(getStorage3DEPSG()));
-            }
-            return authorityCodes;
-        } catch (FactoryException fe) {
-            LOGGER.warn("Error while querying supported EPSG codes", fe);
-        }
-        return Collections.emptySet();
-    }
-
-    /**
      * Transform envelope from source to target EPSG code
      *
      * @param envelope
@@ -658,7 +652,7 @@ public class GeometryHandler implements Constructable, Destroyable, EpsgConstant
                 return transformed;
             } catch (FactoryException fe) {
                 throw new NoApplicableCodeException().causedBy(fe).withMessage("The EPSG code '%s' is not supported!",
-                        sourceSRID);
+                                                                               sourceSRID);
             } catch (MismatchedDimensionException mde) {
                 throw new NoApplicableCodeException().causedBy(mde).withMessage(
                         "Transformation from EPSG code '%s' to '%s' fails!", sourceSRID, targetSRID);
@@ -700,6 +694,14 @@ public class GeometryHandler implements Constructable, Destroyable, EpsgConstant
 
     public String addOgcCrsPrefix(int crs) {
         return new StringBuilder(ServiceConfiguration.getInstance().getSrsNamePrefixSosV2()).append(crs).toString();
+    }
+
+    /**
+     * @return Returns a singleton instance of the GeometryHandler.
+     */
+    @Deprecated
+    public static GeometryHandler getInstance() {
+        return instance;
     }
 
 }

@@ -66,8 +66,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.FileIOHelper;
+import org.n52.sos.web.admin.AbstractLoggingConfigurator.Appender;
+import org.n52.sos.web.admin.AbstractLoggingConfigurator.Level;
 
 /**
  * @since 4.0.0

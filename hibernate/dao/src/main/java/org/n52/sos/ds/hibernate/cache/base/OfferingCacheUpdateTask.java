@@ -37,8 +37,7 @@ import java.util.Set;
 
 import org.hibernate.Session;
 
-import org.n52.iceland.ds.FeatureQueryHandler;
-import org.n52.iceland.ds.FeatureQueryHandlerQueryObject;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.LocaleHelper;
@@ -47,10 +46,10 @@ import org.n52.iceland.i18n.MultilingualString;
 import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
 import org.n52.iceland.ogc.OGCConstants;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosEnvelope;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
+import org.n52.sos.ds.FeatureQueryHandler;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.cache.ProcedureFlag;
@@ -64,7 +63,7 @@ import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
-import org.n52.sos.util.CacheHelper;
+import org.n52.sos.ogc.sos.SosEnvelope;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
@@ -127,7 +126,6 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         // NOTE: Don't perform queries or load obecjts here unless you have to,
         // since they are performed once per offering
 
-        String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
 
         getCache().addOffering(offeringId);
         addOfferingNamesAndDescriptionsToCache(offeringId, session);
@@ -135,29 +133,29 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class);
         // Procedures
         final Map<ProcedureFlag, Set<String>> procedureIdentifiers = getProcedureIdentifier(session);
-        getCache().setProceduresForOffering(prefixedOfferingId, procedureIdentifiers.get(ProcedureFlag.PARENT));
-        getCache().setHiddenChildProceduresForOffering(prefixedOfferingId,
+        getCache().setProceduresForOffering(offeringId, procedureIdentifiers.get(ProcedureFlag.PARENT));
+        getCache().setHiddenChildProceduresForOffering(offeringId,
                 procedureIdentifiers.get(ProcedureFlag.HIDDEN_CHILD));
 
         // Observable properties
-        getCache().setObservablePropertiesForOffering(prefixedOfferingId, getObservablePropertyIdentifier(session));
+        getCache().setObservablePropertiesForOffering(offeringId, getObservablePropertyIdentifier(session));
 
         // Observation types
-        getCache().setObservationTypesForOffering(prefixedOfferingId, getObservationTypes(session));
+        getCache().setObservationTypesForOffering(offeringId, getObservationTypes(session));
 
         // Features of Interest
         List<String> featureOfInterestIdentifiers =
                 featureDAO.getFeatureOfInterestIdentifiersForOffering(offeringId, session);
-        getCache().setFeaturesOfInterestForOffering(prefixedOfferingId,
+        getCache().setFeaturesOfInterestForOffering(offeringId,
                 getValidFeaturesOfInterestFrom(featureOfInterestIdentifiers));
-        getCache().setFeatureOfInterestTypesForOffering(prefixedOfferingId,
+        getCache().setFeatureOfInterestTypesForOffering(offeringId,
                 getFeatureOfInterestTypes(featureOfInterestIdentifiers, session));
 
         // Spatial Envelope
-        getCache().setEnvelopeForOffering(prefixedOfferingId,
+        getCache().setEnvelopeForOffering(offeringId,
                 getEnvelopeForOffering(featureOfInterestIdentifiers, session));
         // Spatial Filtering Profile Spatial Envelope
-        addSpatialFilteringProfileEnvelopeForOffering(prefixedOfferingId, offeringId, session);
+        addSpatialFilteringProfileEnvelopeForOffering(offeringId, session);
     }
 
     protected void addOfferingNamesAndDescriptionsToCache(String offeringId, Session session)
@@ -248,7 +246,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         } else {
             List<String> list = new ProcedureDAO().getProcedureIdentifiersForOffering(offeringId, session);
             for (String procedureIdentifier : list) {
-                procedures.add(CacheHelper.addPrefixOrGetProcedureIdentifier(procedureIdentifier));
+                procedures.add(procedureIdentifier);
             }
         }
         Map<ProcedureFlag, Set<String>> allProcedures = Maps.newEnumMap(ProcedureFlag.class);
@@ -260,7 +258,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     protected Collection<String> getValidFeaturesOfInterestFrom(Collection<String> featureOfInterestIdentifiers) {
         Set<String> features = new HashSet<>(featureOfInterestIdentifiers.size());
         for (String featureIdentifier : featureOfInterestIdentifiers) {
-            features.add(CacheHelper.addPrefixOrGetFeatureIdentifier(featureIdentifier));
+            features.add(featureIdentifier);
         }
         return features;
     }
@@ -278,8 +276,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             List<String> list =
                     new ObservablePropertyDAO().getObservablePropertyIdentifiersForOffering(offeringId, session);
             for (String observablePropertyIdentifier : list) {
-                observableProperties.add(CacheHelper
-                        .addPrefixOrGetObservablePropertyIdentifier(observablePropertyIdentifier));
+                observableProperties.add(observablePropertyIdentifier);
             }
             return observableProperties;
         }
@@ -367,11 +364,11 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    protected void addSpatialFilteringProfileEnvelopeForOffering(String prefixedOfferingId, String offeringID,
+    protected void addSpatialFilteringProfileEnvelopeForOffering(String offeringID,
             Session session) throws OwsExceptionReport {
         if (hasSamplingGeometry) {
             getCache().setSpatialFilteringProfileEnvelopeForOffering(
-                    prefixedOfferingId,
+                    offeringId,
                     DaoFactory.getInstance().getObservationDAO()
                             .getSpatialFilteringProfileEnvelopeForOfferingId(offeringID, session));
         }

@@ -33,7 +33,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.cache.ContentCache;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
@@ -68,7 +68,7 @@ public class InsertResultTemplateCapabilitiesExtensionProvider
     @Override
     public CapabilitiesExtension getExtension() {
         SosInsertionCapabilities insertionCapabilities = new SosInsertionCapabilities();
-        ContentCache cache = getCache();
+        SosContentCache cache = getCache();
         insertionCapabilities.addFeatureOfInterestTypes(cache.getFeatureOfInterestTypes());
         insertionCapabilities.addObservationTypes(cache.getObservationTypes());
         insertionCapabilities.addProcedureDescriptionFormats(ProcedureDescriptionFormatRepository.getInstance()
@@ -82,8 +82,8 @@ public class InsertResultTemplateCapabilitiesExtensionProvider
         return this.codingRepository;
     }
 
-    private ContentCache getCache() {
-        return this.contentCacheController.getCache();
+    private SosContentCache getCache() {
+        return (SosContentCache) this.contentCacheController.getCache();
     }
 
     @Override

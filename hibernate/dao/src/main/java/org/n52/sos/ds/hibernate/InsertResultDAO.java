@@ -41,39 +41,26 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.ds.FeatureQueryHandler;
-import org.n52.iceland.ds.FeatureQueryHandlerQueryObject;
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.AbstractPhenomenon;
-import org.n52.iceland.ogc.om.MultiObservationValues;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.om.OmObservableProperty;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.OmObservationConstellation;
-import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.iceland.ogc.om.values.SweDataArrayValue;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
-import org.n52.iceland.ogc.swe.SweAbstractDataComponent;
-import org.n52.iceland.ogc.swe.SweDataArray;
-import org.n52.iceland.ogc.swe.SweDataRecord;
-import org.n52.iceland.ogc.swe.SweField;
-import org.n52.iceland.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.iceland.ogc.swe.encoding.SweTextEncoding;
-import org.n52.iceland.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.ds.AbstractInsertResultHandler;
+import org.n52.sos.ds.FeatureQueryHandler;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
@@ -88,17 +75,27 @@ import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
+import org.n52.sos.ogc.om.AbstractPhenomenon;
+import org.n52.sos.ogc.om.MultiObservationValues;
+import org.n52.sos.ogc.om.OmObservableProperty;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.OmObservationConstellation;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.sensorML.SensorML;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.request.InsertResultRequest;
 import org.n52.sos.response.InsertResultResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.ds.ConnectionProvider;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -114,9 +111,15 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(InsertResultDAO.class);
     private static final int FLUSH_THRESHOLD = 50;
     private HibernateSessionHolder sessionHolder;
+    private FeatureQueryHandler featureQueryHandler;
 
     public InsertResultDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Inject
+    public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
+        this.featureQueryHandler = featureQueryHandler;
     }
 
     @Inject
@@ -135,6 +138,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
         Map<String,Codespace> codespaceCache = Maps.newHashMap();
         Map<String,Unit> unitCache = Maps.newHashMap();
 
+
         try {
             session = sessionHolder.getSession();
             final ResultTemplate resultTemplate =
@@ -150,8 +154,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
                     Sets.newHashSet(new ObservationConstellationDAO().getObservationConstellation(
                             resultTemplate.getProcedure(),
                             resultTemplate.getObservableProperty(),
-                            Configurator.getInstance().getCache()
-                                    .getOfferingsForProcedure(resultTemplate.getProcedure().getIdentifier()), session));
+                            getCache().getOfferingsForProcedure(resultTemplate.getProcedure().getIdentifier()), session));
 
             int insertion = 0;
             final int size = observations.size();
@@ -223,12 +226,11 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
      */
     protected AbstractFeature getSosAbstractFeature(final FeatureOfInterest featureOfInterest, final String version,
             final Session session) throws OwsExceptionReport {
-        final FeatureQueryHandler featureQueryHandler = Configurator.getInstance().getFeatureQueryHandler();
         FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject()
             .addFeatureIdentifier(featureOfInterest.getIdentifier())
             .setConnection(session)
             .setVersion(version);
-        return featureQueryHandler.getFeatureByID(queryObject);
+        return this.featureQueryHandler.getFeatureByID(queryObject);
     }
 
     /**
@@ -266,7 +268,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
             final Session session) {
         // get all offerings for procedure to match all parent procedure
         // offerings
-        Set<Offering> procedureOfferings = new HashSet<Offering>();
+        Set<Offering> procedureOfferings = new HashSet<>();
         procedureOfferings.add(resultTemplate.getOffering());
         Set<String> procedureOfferingIds =
                 getCache().getOfferingsForProcedure(resultTemplate.getProcedure().getIdentifier());
@@ -330,14 +332,13 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
 
         final SweDataRecord record = setRecordFrom(resultStructure);
 
-        final Map<Integer, String> observedProperties = new HashMap<Integer, String>(record.getFields().size() - 1);
-        final Map<Integer, String> units = new HashMap<Integer, String>(record.getFields().size() - 1);
+        final Map<Integer, String> observedProperties = new HashMap<>(record.getFields().size() - 1);
+        final Map<Integer, String> units = new HashMap<>(record.getFields().size() - 1);
 
-        int j = 0;
+        int index = 0;
         for (final SweField swefield : record.getFields()) {
-            if (j != resultTimeIndex && j != phenomenonTimeIndex) {
+            if (index != resultTimeIndex && index != phenomenonTimeIndex) {
                 if (swefield.getElement() instanceof SweAbstractSimpleType<?>) {
-                    final Integer index = Integer.valueOf(j);
                     final SweAbstractSimpleType<?> sweAbstractSimpleType =
                             (SweAbstractSimpleType<?>) swefield.getElement();
                     if (sweAbstractSimpleType instanceof SweQuantity) {
@@ -349,7 +350,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
                     throw new NoApplicableCodeException().withMessage("The swe:Field element of type {} is not yet supported!", swefield.getElement().getClass().getName());
                 }
             }
-            ++j;
+            ++index;
         }
 
         // TODO support for compositePhenomenon

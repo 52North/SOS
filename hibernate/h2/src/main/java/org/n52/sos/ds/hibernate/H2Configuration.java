@@ -55,8 +55,8 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.service.Configurator;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.sos.service.Configurator;
 import org.n52.sos.config.sqlite.SQLiteSessionFactory;
 
 import com.google.common.collect.Lists;

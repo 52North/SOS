@@ -29,24 +29,24 @@
 package org.n52.sos.ds.hibernate.entities.values;
 
 import org.hibernate.Session;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.SingleObservationValue;
-import org.n52.iceland.ogc.om.values.Value;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swes.SwesExtensions;
+import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservableProperty;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.values.Value;
 
 /**
  * Implementation of {@link AbstractValue} for old concept used in streaming
  * datasource
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
@@ -115,7 +115,7 @@ public class ObservationValue extends AbstractValue implements HasProcedure, Has
     }
 
     @Override
-    public void addValueSpecificDataToObservation(OmObservation observation, Session session, SwesExtensions swesExtensions)
+    public void addValueSpecificDataToObservation(OmObservation observation, Session session, Extensions extensions)
             throws OwsExceptionReport {
         // nothing to do
 

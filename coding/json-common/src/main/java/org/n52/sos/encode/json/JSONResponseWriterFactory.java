@@ -28,10 +28,11 @@
  */
 package org.n52.sos.encode.json;
 
+
+import org.n52.iceland.coding.encode.ResponseWriter;
+import org.n52.iceland.coding.encode.ResponseWriterFactory;
+import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.component.SingleTypeComponentFactory;
-import org.n52.iceland.encode.ResponseWriter;
-import org.n52.iceland.encode.ResponseWriterFactory;
-import org.n52.iceland.encode.ResponseWriterKey;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -39,7 +40,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * {@link ResponseWriterFactory} implementation for {@link JsonNode} and
  * {@link JSONResponseWriter}
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */

@@ -31,7 +31,7 @@ package org.n52.sos.gda;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.StringHelper;

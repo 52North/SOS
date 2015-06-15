@@ -34,17 +34,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
-import org.n52.iceland.convert.RequestResponseModifierKeyType;
+import org.n52.iceland.convert.RequestResponseModifierKey;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.ReferenceType;
-import org.n52.iceland.ogc.om.NamedValue;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.iceland.ogc.om.values.HrefAttributeValue;
-import org.n52.iceland.ogc.om.values.ReferenceValue;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosOffering;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
@@ -57,6 +50,13 @@ import org.n52.sos.convert.AbstractIdentifierModifier;
 import org.n52.sos.converter.util.EReportingPrefixedIdentifierHelper;
 import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.gda.GetDataAvailabilityResponse;
+import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.HrefAttributeValue;
+import org.n52.sos.ogc.om.values.ReferenceValue;
+import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.request.GetObservationByIdRequest;
@@ -76,14 +76,14 @@ import com.google.common.collect.Sets;
 
 public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModifier {
 
-    private Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES;
+    private Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES;
 
     /**
      * Get the keys
      *
      * @return Set of keys
      */
-    private Set<RequestResponseModifierKeyType> getKeyTypes() {
+    private Set<RequestResponseModifierKey> getKeyTypes() {
         Set<String> services = Sets.newHashSet(AqdConstants.AQD);
         Set<String> versions = Sets.newHashSet(AqdConstants.VERSION);
         Map<AbstractServiceRequest<?>, AbstractServiceResponse> requestResponseMap = Maps.newHashMap();
@@ -95,12 +95,12 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
         requestResponseMap.put(new GetDataAvailabilityRequest(), new GetDataAvailabilityResponse());
         requestResponseMap.put(new GetResultTemplateRequest(), new GetResultTemplateResponse());
         requestResponseMap.put(new GetResultRequest(), new GetResultResponse());
-        Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
+        Set<RequestResponseModifierKey> keys = Sets.newHashSet();
         for (String service : services) {
             for (String version : versions) {
                 for (AbstractServiceRequest<?> request : requestResponseMap.keySet()) {
-                    keys.add(new RequestResponseModifierKeyType(service, version, request));
-                    keys.add(new RequestResponseModifierKeyType(service, version, request, requestResponseMap
+                    keys.add(new RequestResponseModifierKey(service, version, request));
+                    keys.add(new RequestResponseModifierKey(service, version, request, requestResponseMap
                             .get(request)));
                 }
             }
@@ -109,7 +109,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     }
 
     @Override
-    public Set<RequestResponseModifierKeyType> getKeys() {
+    public Set<RequestResponseModifierKey> getKeys() {
         if (REQUEST_RESPONSE_MODIFIER_KEY_TYPES == null) {
             REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
         }

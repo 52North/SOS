@@ -28,14 +28,14 @@
  */
 package org.n52.sos.ds;
 
+import org.n52.iceland.exception.ows.CompositeOwsException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.InvalidAcceptVersionsParameterException;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceOrVersionException;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
 import org.n52.iceland.exception.ows.concrete.VersionNotSupportedException;
-import org.n52.iceland.ogc.ows.CompositeOwsException;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
@@ -81,7 +81,7 @@ public class BatchOperationHandler extends AbstractOperationHandler {
     protected ServiceOperator getServiceOperator(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         checkServiceOperatorKeys(request);
         for (ServiceOperatorKey sokt : request.getServiceOperatorKeyType()) {
-            ServiceOperator so = ServiceOperatorRepository.getInstance().getServiceOperator(sokt);
+            ServiceOperator so = getServiceOperatorRepository().getServiceOperator(sokt);
             if (so != null) {
                 return so;
             }
@@ -92,6 +92,10 @@ public class BatchOperationHandler extends AbstractOperationHandler {
         } else {
             throw new InvalidServiceOrVersionException(request.getService(), request.getVersion());
         }
+    }
+
+    protected ServiceOperatorRepository getServiceOperatorRepository() {
+        return ServiceOperatorRepository.getInstance();
     }
 
     protected void checkServiceOperatorKeys(AbstractServiceRequest<?> request) throws OwsExceptionReport {
@@ -108,7 +112,7 @@ public class BatchOperationHandler extends AbstractOperationHandler {
     }
 
     protected boolean isVersionSupported(String service, String version) {
-        return ServiceOperatorRepository.getInstance().isVersionSupported(service, version);
+        return getServiceOperatorRepository().isVersionSupported(service, version);
     }
 
     @Override
@@ -146,7 +150,7 @@ public class BatchOperationHandler extends AbstractOperationHandler {
         if (sokt.hasService()) {
             if (sokt.getService().isEmpty()) {
                 exceptions.add(new MissingServiceParameterException());
-            } else if (!ServiceOperatorRepository.getInstance().isServiceSupported(sokt.getService())) {
+            } else if (!getServiceOperatorRepository().isServiceSupported(sokt.getService())) {
                 exceptions.add(new InvalidServiceParameterException(sokt.getService()));
             }
         }

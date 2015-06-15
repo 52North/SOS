@@ -28,31 +28,24 @@
  */
 package org.n52.sos.ogc.om;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.om.NamedValue;
-import org.n52.iceland.ogc.om.OmObservation;
-import org.n52.iceland.ogc.om.values.Value;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OWSConstants.AdditionalRequestParams;
 import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.sos.AbstractStreaming;
 import org.n52.sos.util.GeometryHandler;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
- * @param <T>
  */
 public abstract class StreamingObservation extends AbstractStreaming {
-
-    /**
-     * serial number
-     */
     private static final long serialVersionUID = -5759256296641975519L;
-    
+
     @Override
     public Time getPhenomenonTime() {
         // TODO Auto-generated method stub
@@ -74,11 +67,11 @@ public abstract class StreamingObservation extends AbstractStreaming {
     public void setValue(Value<OmObservation> value) {
         // TODO Auto-generated method stub
     }
-    
+
     /**
      * Check and modify observation for Spatial Filtering Profile and requested
      * crs
-     * 
+     *
      * @param observation
      *            {@link OmObservation} to check
      * @throws OwsExceptionReport
@@ -107,5 +100,5 @@ public abstract class StreamingObservation extends AbstractStreaming {
             }
         }
     }
-    
+
 }

@@ -34,12 +34,13 @@ import java.util.Collection;
 import java.util.Locale;
 
 import org.hibernate.Session;
-import org.n52.iceland.cache.ContentCache;
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosOffering;
-import org.n52.iceland.ogc.sos.SosProcedureDescription;
-import org.n52.iceland.service.Configurator;
+
+import org.n52.sos.cache.SosContentCache;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.util.I18NHelper;
 
@@ -63,7 +64,7 @@ public abstract class ProcedureDescriptionEnrichment {
         return ProcedureDescriptionSettings.getInstance();
     }
 
-    protected ContentCache getCache() {
+    protected SosContentCache getCache() {
         return Configurator.getInstance().getCache();
     }
 

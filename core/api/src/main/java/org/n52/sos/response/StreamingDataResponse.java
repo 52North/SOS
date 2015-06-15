@@ -28,13 +28,13 @@
  */
 package org.n52.sos.response;
 
-import org.n52.iceland.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.AbstractStreaming;
 
 /**
  * Interface to indicate that the response may contain streaming data.
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */

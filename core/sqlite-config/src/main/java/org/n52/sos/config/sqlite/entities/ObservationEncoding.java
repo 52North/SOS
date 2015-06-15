@@ -30,7 +30,7 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.iceland.encode.ResponseFormatKey;
+import org.n52.iceland.coding.encode.ResponseFormatKey;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

@@ -56,7 +56,7 @@ import org.n52.iceland.w3c.W3CConstants;
  */
 @Configurable
 public final class XmlOptionsHelper implements Constructable, Destroyable, Producer<XmlOptions> {
-
+    @Deprecated
     private static XmlOptionsHelper instance;
     private EncoderRepository encoderRepository;
     private final ReentrantLock lock = new ReentrantLock();
@@ -120,7 +120,8 @@ public final class XmlOptionsHelper implements Constructable, Destroyable, Produ
     /**
      * Cleanup, set XML options to null
      */
-    public void cleanup() {
+    @Override
+    public void destroy() {
         xmlOptions = null;
     }
 
@@ -160,12 +161,6 @@ public final class XmlOptionsHelper implements Constructable, Destroyable, Produ
     }
 
     @Override
-    public void destroy() {
-        /* TODO implement org.n52.sos.util.XmlOptionsHelper.destroy() */
-        throw new UnsupportedOperationException("org.n52.sos.util.XmlOptionsHelper.destroy() not yet implemented");
-    }
-
-    @Override
     public XmlOptions get() {
         return getXmlOptions();
     }
@@ -178,7 +173,7 @@ public final class XmlOptionsHelper implements Constructable, Destroyable, Produ
      * @deprecated Use injection:
      * <pre>
      * &#064;Inject
-     * private Producer&lt;XmlOptioon&gt; xmloptions;
+     * private Provider&lt;XmlOptioon&gt; xmloptions;
      * ...
      * XmlOptions options = this.xmlOptions.get();
      * </pre>

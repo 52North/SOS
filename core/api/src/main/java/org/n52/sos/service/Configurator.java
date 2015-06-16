@@ -35,7 +35,6 @@ import java.util.Properties;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
-import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.DataConnectionProvider;
@@ -51,7 +50,9 @@ import org.n52.iceland.ogc.ows.ServiceIdentificationFactory;
 import org.n52.iceland.ogc.ows.ServiceProviderFactory;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.iceland.util.Producer;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.FeatureQueryHandler;
+
 
 /**
  * Singleton class reads the configFile and builds the RequestOperator and DAO;

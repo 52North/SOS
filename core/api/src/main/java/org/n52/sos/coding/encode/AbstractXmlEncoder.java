@@ -28,18 +28,17 @@
  */
 package org.n52.sos.coding.encode;
 
-import org.n52.iceland.coding.encode.AbstractDelegatingEncoder;
-
 import java.util.EnumMap;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
+import org.n52.iceland.coding.encode.AbstractDelegatingEncoder;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.util.Producer;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
 
@@ -50,19 +49,20 @@ import org.n52.iceland.util.http.MediaTypes;
  */
 public abstract class AbstractXmlEncoder<S> extends AbstractDelegatingEncoder<XmlObject, S> {
 
-    private Producer<XmlOptions> xmlOptions;
+    private Provider<XmlOptions> xmlOptions;
 
     public XmlOptions getXmlOptions() {
         return xmlOptions.get();
     }
 
     @Inject
-    public void setXmlOptions(Producer<XmlOptions> xmlOptions) {
+    public void setXmlOptions(Provider<XmlOptions> xmlOptions) {
         this.xmlOptions = xmlOptions;
     }
 
     @Override
-    public XmlObject encode(S element) throws OwsExceptionReport {
+    public XmlObject encode(S element)
+            throws OwsExceptionReport {
         return encode(element, new EnumMap<>(HelperValues.class));
     }
 

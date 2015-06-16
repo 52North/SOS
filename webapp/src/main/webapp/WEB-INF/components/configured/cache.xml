@@ -21,4 +21,5 @@
           class="org.n52.sos.cache.ctrl.DefaultContentModificationListener"/>
 
     <bean class="org.n52.sos.cache.ContentCacheFactoryImpl"/>
+    <bean class="org.n52.sos.cache.ctrl.CompleteCacheUpdateFactoryImpl"/>
 </beans>

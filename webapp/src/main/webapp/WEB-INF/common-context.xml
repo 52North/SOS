@@ -46,7 +46,9 @@
     <!-- import security config -->
     <import resource="components/security.xml" />
 
-    <bean id="eventBus" class="org.n52.iceland.event.ServiceEventBus" />
+    <bean id="eventBus" class="org.n52.iceland.event.ServiceEventBus">
+        <property name="async" value="false" />
+    </bean>
 
     <!-- ServiceEventListener implementations from core/api -->
     <bean id="exceptionLogger" class="org.n52.iceland.service.ExceptionLogger"/>

@@ -61,7 +61,6 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.StringHelper;
 
@@ -83,14 +82,15 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     private final Map<String, SosProcedureDescription> procedures = Maps.newHashMap();
 
-    private final Set<OmObservationConstellation> observationConstellations = Sets.newHashSet();
+    
+    private final Map<Integer, OmObservationConstellation> observationConstellations = Maps.newHashMap();
 
     private List<OmObservation> observationCollection;
 
 
     public ObservationOmObservationCreator(Collection<? extends Observation<?>> observations,
             AbstractObservationRequest request, Locale language, Session session) {
-    	super(checkVersion(request), session);
+    	super(request, session);
         this.request = request;
         if (observations == null) {
             this.observations = Collections.emptyList();
@@ -101,7 +101,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     public ObservationOmObservationCreator(Collection<? extends Observation<?>> observations, AbstractObservationRequest request,
             Session session) {
-    	super(checkVersion(request), session);
+    	super(request, session);
         this.request = request;
         if (observations == null) {
             this.observations = Collections.emptyList();
@@ -116,13 +116,6 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     private String getResultModel() {
         return request.getResultModel();
-    }
-
-    private String getResponseFormat() {
-        if (request.isSetResponseFormat()) {
-            return request.getResponseFormat();
-        }
-        return Configurator.getInstance().getProfileHandler().getActiveProfile().getObservationResponseFormat();
     }
 
     private SosProcedureDescription getProcedure(String procedureId) {
@@ -183,7 +176,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             if (hObservation.hasSamplingGeometry()) {
                 sosObservation.addParameter(createSpatialFilteringProfileParameter(hObservation.getSamplingGeometry()));
             }
-            checkFoAdditionalObservationCreator(hObservation, sosObservation);
+            checkForAdditionalObservationCreator(hObservation, sosObservation);
             // TODO check for ScrollableResult vs
             // setFetchSize/setMaxResult
             // + setFirstResult
@@ -247,6 +240,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         o.setNoDataValue(getActiveProfile().getResponseNoDataPlaceholder());
         o.setTokenSeparator(getTokenSeparator());
         o.setTupleSeparator(getTupleSeparator());
+        o.setDecimalSeparator(getDecimalSeparator());
         o.setObservationConstellation(oc);
         o.setResultTime(new TimeInstant(new DateTime(ho.getResultTime(), DateTimeZone.UTC)));
 
@@ -323,18 +317,18 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         OmObservationConstellation obsConst =
                 new OmObservationConstellation(getProcedure(procedureId), getObservedProperty(phenomenonId),
                         getFeature(featureId));
-
-        /* sfp the offerings to find the templates */
-        if (obsConst.getOfferings() == null) {
-            final Set<String> offerings = Sets.newHashSet(getCache().getOfferingsForObservableProperty(obsConst.getObservableProperty().getIdentifier()));
-            offerings.retainAll(getCache().getOfferingsForProcedure(obsConst.getProcedure().getIdentifier()));
-//            final Set<String> offerings =
-//                    Sets.newHashSet(getCache().getOfferingsForObservableProperty(
-//                            obsConst.getObservableProperty().getIdentifier()));
-//            offerings.retainAll(getCache().getOfferingsForProcedure(obsConst.getProcedure().getIdentifier()));
-            obsConst.setOfferings(offerings);
-        }
-        if (!observationConstellations.contains(obsConst)) {
+        if (observationConstellations.containsKey(obsConst.hashCode())) {
+            return observationConstellations.get(obsConst.hashCode());
+        } else {
+            int hashCode = obsConst.hashCode();
+            /* sfp the offerings to find the templates */
+            if (obsConst.getOfferings() == null) {
+                final Set<String> offerings =
+                        Sets.newHashSet(getCache().getOfferingsForObservableProperty(
+                                obsConst.getObservableProperty().getIdentifier()));
+                offerings.retainAll(getCache().getOfferingsForProcedure(obsConst.getProcedure().getIdentifier()));
+                obsConst.setOfferings(offerings);
+            }
             if (StringHelper.isNotEmpty(getResultModel())) {
                 obsConst.setObservationType(getResultModel());
             }
@@ -345,9 +339,9 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             if (hoc != null && hoc.getObservationType() != null) {
                 obsConst.setObservationType(hoc.getObservationType().getObservationType());
             }
-            observationConstellations.add(obsConst);
+            observationConstellations.put(hashCode, obsConst);
+            return obsConst;
         }
-        return obsConst;
     }
 
 

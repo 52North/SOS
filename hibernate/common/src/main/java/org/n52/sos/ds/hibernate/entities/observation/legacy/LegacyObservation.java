@@ -43,4 +43,5 @@ import org.n52.sos.ds.hibernate.entities.observation.Observation;
 public interface LegacyObservation<T>
         extends Observation<T>,
                 HasWriteableObservationContext {
+
 }

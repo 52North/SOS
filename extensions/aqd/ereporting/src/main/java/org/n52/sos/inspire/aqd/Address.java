@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Nillable;
 import org.n52.sos.util.Reference;
 
@@ -53,8 +54,11 @@ public class Address {
     private Nillable<String> postCode = Nillable.missing();
     private final List<Nillable<GeographicalName>> thoroughfares = new LinkedList<>();
     private Nillable<Reference> addressFeature = Nillable.missing();
-
+    
     public List<GeographicalName> getAdminUnits() {
+        if (CollectionHelper.isEmpty(adminUnits)) {
+            addAdminUnit(new GeographicalName());
+        }
         return Collections.unmodifiableList(adminUnits);
     }
 

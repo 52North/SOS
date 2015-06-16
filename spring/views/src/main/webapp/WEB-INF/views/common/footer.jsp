@@ -40,21 +40,21 @@
                 <h3>Communities</h3>
                 <ul class="fn_list">
                     <li><a target="_blank" href="http://52north.org/communities/sensorweb/">Sensor Web</a></li>
-                    <li><a target="_blank" href="http://52north.org/communities/geoprocessing">Geoprocessing</a></li>
-                    <li><a target="_blank" href="http://52north.org/communities/ilwis/overview">ILWIS</a></li>
-                    <li><a target="_blank" href="http://52north.org/communities/earth-observation/overview">Earth Observation</a></li>
+                    <li><a target="_blank" href="http://52north.org/communities/geoprocessing/">Geoprocessing</a></li>
+                    <li><a target="_blank" href="http://52north.org/communities/ilwis/">ILWIS</a></li>
+                    <li><a target="_blank" href="http://52north.org/communities/earth-observation/">Earth Observation</a></li>
                     <li><a target="_blank" href="http://52north.org/communities/security/">Security &amp; Geo-RM</a></li>
                     <li><a target="_blank" href="http://52north.org/communities/semantics/">Semantics</a></li>
-                    <li><a target="_blank" href="http://52north.org/communities/geostatistics/overview">Geostatistics</a></li>
+                    <li><a target="_blank" href="http://52north.org/communities/geostatistics/">Geostatistics</a></li>
                     <li><a target="_blank" href="http://52north.org/communities/3d-community">3D Community</a></li>
-                    <li><a target="_blank" href="http://52north.org/communities/metadata-management-community/">Metadata Management</a></li>
+                    <li><a target="_blank" href="http://52north.org/communities/metadata-management/">Metadata Management</a></li>
                 </ul>
             </div>
             <div class="fn_box">
                 <h3>Get Involved</h3>
                 <ul class="fn_list">
                     <li><a href="http://52north.org/about/get-involved/partnership-levels" target="_blank">Partnership Levels</a></li>
-                    <li><a href="http://52north.org/about/get-involved/license-agreement" target="_blank">License Agreement</a></li>
+                    <li><a href="http://52north.org/about/licensing/cla-guidelines" target="_blank">License Agreement Guidelines</a></li>
                 </ul>
             </div>
             <div class="fn_box">
@@ -65,10 +65,12 @@
             <div class="fn_box">
                 <h3>Cooperation partners</h3>
                 <p>The 52&deg;North principal cooperation partners</p>
-                <a href="http://ifgi.uni-muenster.de/" target="_blank" title="Institute for Geoinformatics">Institute for Geoinformatics</a><br/>
-                <a href="http://www.conterra.de/" target="_blank" title="con terra GmbH">con terra GmbH</a><br/>
-                <a href="http://www.esri.com/" target="_blank" title="ESRI">ESRI</a><br/>
-                <a href="http://www.itc.nl/" target="_blank" title="International Institute for Geo-Information Science and Earth Observation">International Institute for Geo-Information Science and Earth Observation</a>
+                <ul>
+                	<li><a href="http://ifgi.uni-muenster.de/" target="_blank" title="Institute for Geoinformatics">Institute for Geoinformatics</a></li>
+                	<li><a href="http://www.conterra.de/" target="_blank" title="con terra GmbH">con terra GmbH</a></li>
+                	<li><a href="http://www.esri.com/" target="_blank" title="ESRI">ESRI</a></li>
+                    <li><a href="http://www.itc.nl/" target="_blank" title="International Institute for Geo-Information Science and Earth Observation">ITC</a></li>
+                </ul>
             </div>
         </div>
     </div>

@@ -40,6 +40,7 @@ import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.ObservationEncoder;
 import org.n52.sos.encode.XmlEncoderKey;
 import org.n52.sos.encode.XmlStreamWriter;
+import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
@@ -64,7 +65,7 @@ import com.google.common.collect.Sets;
  * @since 4.1.0
  *
  */
-public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetObservationResponse> {
+public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetObservationResponse> implements StreamingDataEncoder {
 
     private GetObservationResponse response;
 
@@ -148,14 +149,14 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         // additionalValues.put(HelperValues.DOCUMENT, null);
         // EncodingValues encodingValues = new
         // EncodingValues(additionalValues).setEncodingNamespace(response.getResponseFormat());
-        if (encoder.shouldObservationsWithSameXBeMerged()) {
-            response.mergeObservationsWithSameConstellation();
+        if (!response.isSetMergeObservation()) {
+            response.setMergeObservations(encoder.shouldObservationsWithSameXBeMerged());
         }
         for (OmObservation o : response.getObservationCollection()) {
             if (o.getValue() instanceof StreamingObservation) {
                 StreamingObservation streamingObservation = (StreamingObservation) o.getValue();
                 if (streamingObservation.hasNextValue()) {
-                    if (encoder.shouldObservationsWithSameXBeMerged() || response.isSetMergeObservation()) {
+                    if (response.isSetMergeObservation()) {
                         for (OmObservation obs : streamingObservation.mergeObservation()) {
                             writeObservationData(obs, encoder, encodingValues);
                             writeNewLine();
@@ -171,9 +172,9 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
                     writeNewLine();
                 }
             } else if (o.getValue() instanceof StreamingValue) {
-                StreamingValue streamingValue = (StreamingValue) o.getValue();
+                StreamingValue<?> streamingValue = (StreamingValue<?>) o.getValue();
                 if (streamingValue.hasNextValue()) {
-                    if (encoder.shouldObservationsWithSameXBeMerged() || response.isSetMergeObservation()) {
+                    if (response.isSetMergeObservation()) {
                         if (encoder.supportsResultStreamingForMergedValues()) {
                             writeObservationData(o, encoder, encodingValues);
                             writeNewLine();

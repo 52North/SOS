@@ -1,0 +1,3 @@
+The MySQL scripts uses the schema/database "sos".
+
+If you want to create/update/drop/clear your SOS tables, please use an editor and replace "sos" to your schema/database in the .sql files.

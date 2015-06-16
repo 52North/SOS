@@ -51,8 +51,7 @@ import org.joda.time.DateTimeZone;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import org.n52.sos.AbstractBeforeAfterClassTest;
+import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosEnvelope;
@@ -80,12 +79,11 @@ import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- *         J&uuml;rrens</a>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  * @since 4.0.0
  */
-public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassTest {
+public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsManagerTest {
 
     @Test
     public final void should_encode_simpleDataRecord() throws OwsExceptionReport {

@@ -48,4 +48,8 @@ public interface IdentifierNameDescriptionEntity
                 HasCodespaceName,
                 HasDescription {
 
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
 }

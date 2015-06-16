@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.series.valued;
 
-import java.math.BigDecimal;
-
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
@@ -47,16 +45,16 @@ public class NumericValuedSeriesObservation
         extends AbstractValuedSeriesObservation<BigDecimal>
         implements NumericValuedObservation {
 
-    private static final long serialVersionUID = 7487419141361171657L;
-    private BigDecimal value;
+    private static final long serialVersionUID = 7487419141361171658L;
+    private Double value;
 
     @Override
-    public BigDecimal getValue() {
+    public Double getValue() {
         return value;
     }
 
     @Override
-    public void setValue(BigDecimal value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 
@@ -64,6 +62,11 @@ public class NumericValuedSeriesObservation
     public boolean isSetValue() {
         return getValue() != null;
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
 
     @Override
     public void accept(VoidValuedObservationVisitor visitor)

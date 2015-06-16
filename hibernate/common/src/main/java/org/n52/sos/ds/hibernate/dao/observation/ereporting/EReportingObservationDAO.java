@@ -31,13 +31,16 @@ package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 import java.util.Collection;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdConstants.AssessmentType;
+import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.AqdSamplingPoint;
+import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingObservationContext;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingSamplingPointDAO;
@@ -50,6 +53,7 @@ import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObserv
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.OptionNotSupportedException;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
@@ -123,6 +127,33 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
     }
 
     @Override
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request)
+            throws CodedException {
+        if (request.isSetResponseFormat() && AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
+            ReportObligationType flow = AqdHelper.getInstance().getFlow(request.getExtensions());
+            if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E2A.equals(flow)) {
+                addAssessmentType(c, AqdConstants.AssessmentType.Fixed.name());
+            } else if (ReportObligationType.E1B.equals(flow)) {
+                addAssessmentType(c, AqdConstants.AssessmentType.Model.name());
+            } else {
+                throw new OptionNotSupportedException().withMessage("The requested e-Reporting flow %s is not supported!",
+                        flow.name());
+            }
+         // add quality restrictions
+            EReportingDaoHelper.addValidityAndVerificationRestrictions(c, request);
+        }
+    }
+
+    private void addAssessmentType(Criteria c, String assessmentType) {
+        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(EReportingSeries.class);
+        detachedCriteria.add(Restrictions.eq(Series.DELETED, false));
+        detachedCriteria.createCriteria(EReportingSeries.SAMPLING_POINT).createCriteria(EReportingSamplingPoint.ASSESSMENTTYPE).
+        add(Restrictions.ilike(EReportingAssessmentType.ASSESSMENT_TYPE, assessmentType));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.ID)));
+        c.add(Subqueries.propertyIn(SeriesObservation.SERIES, detachedCriteria));
+    }
+
+    @Override
     protected void addObservationContextToObservation(ObservationContext ctx,
             Observation<?> observation, Session session) throws CodedException {
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
@@ -178,9 +209,11 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
     private AqdSamplingPoint addAssessmentTypeParameterValuesToAqdSamplingPoint(AqdSamplingPoint samplingPoint,
             Value<?> value) {
         if (value instanceof ReferenceValue) {
-            samplingPoint.setAssessmentType(AssessmentType.fromConceptURI(((ReferenceValue) value).getValue().getHref()));
+            samplingPoint.setAssessmentType(AssessmentType.fromConceptURI(((ReferenceValue) value).getValue()
+                    .getHref()));
         } else if (value instanceof HrefAttributeValue) {
-            samplingPoint.setAssessmentType(AssessmentType.fromConceptURI(((HrefAttributeValue) value).getValue().getHref()));
+            samplingPoint.setAssessmentType(AssessmentType.fromConceptURI(((HrefAttributeValue) value).getValue()
+                    .getHref()));
         }
         return samplingPoint;
     }

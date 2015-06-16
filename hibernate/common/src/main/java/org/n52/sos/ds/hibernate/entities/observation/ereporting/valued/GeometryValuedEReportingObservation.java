@@ -59,6 +59,11 @@ public class GeometryValuedEReportingObservation
         return value != null;
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue().toText();
+	}
+
     @Override
     public void accept(VoidValuedObservationVisitor visitor)
             throws OwsExceptionReport {

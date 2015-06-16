@@ -37,7 +37,6 @@ import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionGroup;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
-import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.config.settings.UriSettingDefinition;
 
@@ -84,16 +83,16 @@ public class ServiceSettings implements SettingDefinitionProvider {
                             + " The path to a specific binding (like <code>/soap</code>) will appended to this URL."
                             + " For detailed information, please read the <a href=\"https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation\">documentation</a>");
 
-    public static final IntegerSettingDefinition MAX_GET_OBSERVATION_RESULTS_DEFINITION =
-            new IntegerSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_4)
-                    .setKey(MAX_GET_OBSERVATION_RESULTS)
-                    .setDefaultValue(0)
-                    .setTitle("Maximum number of observations")
-                    .setDescription(
-                            "Maximum number of observation in GetObservation responses. "
-                                    + "Set to <code>0</code> (zero) for unlimited number of observations.");
+//    public static final IntegerSettingDefinition MAX_GET_OBSERVATION_RESULTS_DEFINITION =
+//            new IntegerSettingDefinition()
+//                    .setGroup(GROUP)
+//                    .setOrder(ORDER_4)
+//                    .setKey(MAX_GET_OBSERVATION_RESULTS)
+//                    .setDefaultValue(0)
+//                    .setTitle("Maximum number of observations")
+//                    .setDescription(
+//                            "Maximum number of observation in GetObservation responses. "
+//                                    + "Set to <code>0</code> (zero) for unlimited number of observations.");
 
     // TODO quality is not yet supported
     // public static final BooleanSettingDefinition SUPPORTS_QUALITY_DEFINITION
@@ -185,7 +184,7 @@ public class ServiceSettings implements SettingDefinitionProvider {
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = Sets.<SettingDefinition<?, ?>> newHashSet(
             SERVICE_URL_DEFINITION,
-            MAX_GET_OBSERVATION_RESULTS_DEFINITION,
+//            MAX_GET_OBSERVATION_RESULTS_DEFINITION,
             // SUPPORTS_QUALITY_DEFINITION,
             SENSOR_DIRECTORY_DEFINITION,
             USE_DEFAULT_PREFIXES_DEFINITION,

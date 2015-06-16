@@ -35,7 +35,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
@@ -57,11 +56,12 @@ public class FileDescriptionCreationStrategy implements
             .getLogger(FileDescriptionCreationStrategy.class);
 
     @Override
-    public SosProcedureDescription create(Procedure p, Locale i18n, Session s)
+    public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport {
         XmlObject xml = read(p.getDescriptionFile());
         SosProcedureDescription desc = decode(xml);
         desc.setIdentifier(p.getIdentifier());
+        desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
         return desc;
     }
 

@@ -47,11 +47,12 @@ import com.google.common.collect.Sets;
  * TODO JavaDoc
  * 
  * @author Christian Autermann <c.autermann@52north.org>
+ * @author CarstenHollmann <c.hollmann@52north.org>
  * 
  * @since 4.0.0
  */
 @SuppressWarnings("rawtypes")
-public class ResponseWriterRepository extends AbstractConfiguringServiceLoaderRepository<ResponseWriter> {
+public class ResponseWriterRepository extends AbstractConfiguringServiceLoaderRepository<ResponseWriterFactory> {
 	private static class LazyHolder {
 		private static final ResponseWriterRepository INSTANCE = new ResponseWriterRepository();
 		
@@ -59,12 +60,12 @@ public class ResponseWriterRepository extends AbstractConfiguringServiceLoaderRe
 	}
 
 
-    private final Map<Class<?>, ResponseWriter<?>> writersByClass = CollectionHelper.synchronizedMap();
+    private final Map<Class<?>, ResponseWriterFactory<?,?>> writersByClass = CollectionHelper.synchronizedMap();
 
-    private final Set<ResponseWriter<?>> writers = CollectionHelper.synchronizedSet();
+    private final Set<ResponseWriterFactory<?,?>> writers = CollectionHelper.synchronizedSet();
 
     public ResponseWriterRepository() {
-        super(ResponseWriter.class, false);
+        super(ResponseWriterFactory.class, false);
         load(false);
     }
 
@@ -73,41 +74,41 @@ public class ResponseWriterRepository extends AbstractConfiguringServiceLoaderRe
     }
 
     @Override
-    protected void processConfiguredImplementations(final Set<ResponseWriter> implementations) throws ConfigurationException {
+    protected void processConfiguredImplementations(final Set<ResponseWriterFactory> implementations) throws ConfigurationException {
         writersByClass.clear();
         writers.clear();
-        for (final ResponseWriter<?> i : implementations) {
+        for (final ResponseWriterFactory<?,?> i : implementations) {
             writers.add(i);
         }
     }
 
     @SuppressWarnings("unchecked")
-    public <T> ResponseWriter<T> getWriter(final Class<? extends T> clazz) {
+	public <T> ResponseWriter<T> getWriter(final Class<? extends T> clazz) {
         if (!writersByClass.containsKey(clazz)) {
-            final Set<ResponseWriter<?>> compatible = Sets.newHashSet();
-            for (final ResponseWriter<?> w : writers) {
+            final Set<ResponseWriterFactory<?,?>> compatible = Sets.newHashSet();
+            for (final ResponseWriterFactory<?,?> w : writers) {
                 if (ClassHelper.getSimiliarity(w.getType(), clazz) >= 0) {
                     compatible.add(w);
                 }
             }
             writersByClass.put(clazz, chooseWriter(compatible, clazz));
         }
-        return (ResponseWriter<T>) writersByClass.get(clazz);
+        return (ResponseWriter<T>) writersByClass.get(clazz).getResponseWriter();
     }
 
-    private ResponseWriter<?> chooseWriter(final Set<ResponseWriter<?>> compatible, final Class<?> clazz) {
-        return compatible.isEmpty() ? null : Collections.min(compatible, new ResponseWriterComparator(clazz));
+    private ResponseWriterFactory<?,?> chooseWriter(final Set<ResponseWriterFactory<?,?>> compatible, final Class<?> clazz) {
+        return compatible.isEmpty() ? null : Collections.min(compatible, new ResponseWriterFactoryComparator(clazz));
     }
 
-    private class ResponseWriterComparator implements Comparator<ResponseWriter<?>> {
+    private class ResponseWriterFactoryComparator implements Comparator<ResponseWriterFactory<?,?>> {
         private final Class<?> clazz;
 
-        ResponseWriterComparator(final Class<?> clazz) {
+        ResponseWriterFactoryComparator(final Class<?> clazz) {
             this.clazz = clazz;
         }
 
         @Override
-        public int compare(final ResponseWriter<?> o1, final ResponseWriter<?> o2) {
+        public int compare(final ResponseWriterFactory<?,?> o1, final ResponseWriterFactory<?,?> o2) {
             return Comparables.compare(getSimiliarity(o1.getType(), clazz), getSimiliarity(o2.getType(), clazz));
         }
     }

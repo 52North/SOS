@@ -28,6 +28,13 @@
  */
 package org.n52.sos.ef;
 
+/**
+ * Class represents an EnvironmentalMonitoringFacility
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.3.0
+ *
+ */
 public class EfEnvironmentalMonitoringFacility extends EfAbstractMonitoringFeature {
 
     private static final long serialVersionUID = -2450539070600982839L;

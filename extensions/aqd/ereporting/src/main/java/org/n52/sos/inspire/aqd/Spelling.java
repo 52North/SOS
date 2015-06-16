@@ -33,6 +33,7 @@ import org.n52.sos.util.Nillable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 /**
  * TODO JavaDoc
@@ -45,6 +46,9 @@ public class Spelling {
     private Nillable<String> transliterationScheme = Nillable.missing();
 
     public String getText() {
+        if (Strings.isNullOrEmpty(text)) {
+            return "unknown";
+        }
         return text;
     }
 

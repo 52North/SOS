@@ -146,6 +146,8 @@ public interface GmlConstants extends Constants {
     /* attribute names in GML */
 
     String AN_ID = "id";
+    
+    String AN_INDETERMINATE_POSITION = "indeterminatePosition";
 
     /* QNames for elements */
 
@@ -183,8 +185,12 @@ public interface GmlConstants extends Constants {
     QName QN_ABSTRACT_FEATURE_COLLECTION = new QName(NS_GML, EN_ABSTRACT_FEATURE_COLLECTION, NS_GML_PREFIX);
 
     QName QN_FEATURE_COLLECTION = new QName(NS_GML, OmConstants.EN_FEATURE_COLLECTION, NS_GML_PREFIX);
+    
+    QName QN_FEATURE_COLLECTION_32 = new QName(NS_GML_32, OmConstants.EN_FEATURE_COLLECTION, NS_GML_PREFIX);
 
     QName QN_FEATURE_MEMBER = new QName(NS_GML, EN_FEATURE_MEMBER, NS_GML_PREFIX);
+
+    QName QN_FEATURE_MEMBER_32 = new QName(NS_GML_32, EN_FEATURE_MEMBER, NS_GML_PREFIX);
 
     QName QN_ABSTRACT_RING = new QName(NS_GML, EN_ABSTRACT_RING_311, NS_GML_PREFIX);
 
@@ -233,6 +239,8 @@ public interface GmlConstants extends Constants {
      */
     QName QN_IDENTIFIER_32 = new QName(NS_GML_32, EN_IDENTIFIER, NS_GML_PREFIX);
 
+    QName QN_INDETERMINATE_POSITION_32 = new QName(NS_GML_32, AN_INDETERMINATE_POSITION, NS_GML_PREFIX);
+
     /** string constant for ascending sorting order */
     String SORT_ORDER_ASC = SortingOrder.ASC.name();
 
@@ -259,6 +267,24 @@ public interface GmlConstants extends Constants {
      */
     enum SortingOrder {
         ASC, DESC
+    }
+    
+    
+    /**
+     * inapplicable there is no value
+     * missing the correct value is not readily available to the sender of this data. Furthermore, a correct value may not exist
+     * template the value will be available later
+     * unknown the correct value is not known to, and not computable by, the sender of this data. However, a correct value probably exists
+     * withheld the value is not divulged
+     * Not supported: other:text other brief explanation, where text is a string of two or more characters with no included spaces
+     * 
+     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * 
+     * @since 4.3.0
+     *
+     */
+    enum NilReason {
+        inapplicable, missing, template, unknown, withheld;
     }
 
 }

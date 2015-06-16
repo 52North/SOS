@@ -41,6 +41,7 @@ import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.AbstractInsertSensorDAO;
 import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.SensorInsertion;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.concrete.InvalidFeatureOfInterestTypeException;
@@ -52,6 +53,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.response.InsertSensorResponse;
 import org.n52.sos.service.Configurator;
@@ -153,7 +155,11 @@ public class SosInsertSensorOperatorV20 extends
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-
+        try {
+            checkParentChildProcedures(request.getProcedureDescription(), request.getAssignedProcedureIdentifier());
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
+        }
         if (request.getMetadata() != null) {
             try {
                 checkObservationTypes(request.getMetadata().getObservationTypes());
@@ -259,6 +265,30 @@ public class SosInsertSensorOperatorV20 extends
         }
     }
     
+    private void checkParentChildProcedures(SosProcedureDescription procedureDescription, String assignedIdentifier) throws CodedException {
+        if (procedureDescription.isSetChildProcedures()) {
+            for (SosProcedureDescription child : procedureDescription.getChildProcedures()) {
+                if (child.getIdentifier().equalsIgnoreCase(assignedIdentifier)) {
+                    throw new InvalidParameterValueException()
+                    .at("childProcdureIdentifier")
+                    .withMessage(
+                            "The procedure with the identifier '%s' is linked to itself as child procedure !",
+                            procedureDescription.getIdentifier());
+                }
+            }
+        }
+        if (procedureDescription.isSetParentProcedures()) {
+            if (procedureDescription.getParentProcedures().contains(assignedIdentifier)) {
+                throw new InvalidParameterValueException()
+                .at("parentProcdureIdentifier")
+                .withMessage(
+                        "The procedure with the identifier '%s' is linked to itself as parent procedure !",
+                        procedureDescription.getIdentifier());
+            }
+        }
+        
+    }
+
     private void getChildProcedures() {
         // TODO implement
         // add parent offerings

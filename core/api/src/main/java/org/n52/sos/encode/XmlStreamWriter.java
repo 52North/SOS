@@ -32,7 +32,6 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -50,7 +49,9 @@ import com.google.common.xml.XmlEscapers;
  *
  */
 public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
-    private final Map<String,String> prefixes = new HashMap<>();
+
+    private final Map<String, String> prefixes = new HashMap<>();
+
     private XMLStreamWriter w;
 
     @Override
@@ -88,8 +89,7 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
             prefixes.put(prefix, namespace);
         } else {
             if (!ns.equals(namespace)) {
-                throw new XMLStreamException(
-                        "Prefix <" + prefix + "> is already bound to <" + ns + ">");
+                throw new XMLStreamException("Prefix <" + prefix + "> is already bound to <" + ns + ">");
             }
         }
     }
@@ -118,6 +118,7 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
     protected void chars(String chars) throws XMLStreamException {
         chars(chars, true);
     }
+
     @Override
     protected void chars(String chars, boolean escape) throws XMLStreamException {
         if (escape) {

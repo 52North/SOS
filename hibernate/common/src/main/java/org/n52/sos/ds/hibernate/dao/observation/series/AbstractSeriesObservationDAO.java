@@ -182,6 +182,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     public List<Geometry> getSamplingGeometries(String feature, Session session) {
         Criteria criteria = getDefaultObservationTimeCriteria(session).createAlias(AbstractSeriesObservation.SERIES, "s");
         criteria.createCriteria("s." + Series.FEATURE_OF_INTEREST).add(eq(FeatureOfInterest.IDENTIFIER, feature));
+        criteria.add(Restrictions.isNotNull(AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY));
         criteria.addOrder(Order.asc(AbstractTemporalReferencedObservation.PHENOMENON_TIME_START));
         criteria.setProjection(Projections.property(AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY));
         return criteria.list();
@@ -317,7 +318,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             Criteria seriesCriteria = observationCriteria.createCriteria(AbstractSeriesObservation.SERIES);
 
             checkAndAddSpatialFilteringProfileCriterion(observationCriteria, request, session);
-
+			addSpecificRestrictions(c, request)
             if (CollectionHelper.isNotEmpty(request.getProcedures())) {
                 seriesCriteria.createCriteria(Series.PROCEDURE)
                         .add(Restrictions.in(Procedure.IDENTIFIER, request.getProcedures()));
@@ -351,6 +352,16 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             return observationCriteria;
     }
 
+    
+    private String createSeriesAliasAndRestrictions(Criteria c) {
+        String alias = "s";
+        String aliasWithDot = alias + ".";
+        c.createAlias(SeriesObservation.SERIES, alias);
+        c.add(Restrictions.eq(aliasWithDot + Series.DELETED, false));
+        c.add(Restrictions.eq(aliasWithDot + Series.PUBLISHED, true));
+        return aliasWithDot;
+    }
+    
     /**
      * Query series observations {@link ScrollableResults} for GetObservation request and features
      *
@@ -581,6 +592,8 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 
     public abstract List<SeriesObservation<?>> getSeriesObservationsFor(Series series, GetObservationRequest request, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport;
 
+    protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException;
+    
     protected Criteria getSeriesObservationCriteriaFor(Series series, GetObservationRequest request,
             SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
         final Criteria c =
@@ -624,4 +637,43 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         LOGGER.debug("QUERY getSeriesObservationFor(series, offerings): {}", HibernateHelper.getSqlString(criteria));
         return criteria;
     }
+    
+	/**
+	 * Get the first not deleted observation for the {@link Series}
+	 * 
+	 * @param series
+	 *            Series to get observation for
+	 * @param session
+	 *            Hibernate session
+	 * @return First not deleted observation
+	 */
+	public SeriesObservation getFirstObservationFor(Series series, Session session) {
+		Criteria c = getDefaultObservationCriteria(session);
+		c.add(Restrictions.eq(SeriesObservation.SERIES, series));
+		c.addOrder(Order.asc(AbstractObservation.PHENOMENON_TIME_START));
+		c.setMaxResults(1);
+		 LOGGER.debug("QUERY getFirstObservationFor(series): {}",
+	                HibernateHelper.getSqlString(c));
+		return (SeriesObservation)c.uniqueResult();
+	}
+
+	/**
+	 * Get the last not deleted observation for the {@link Series}
+	 * 
+	 * @param series
+	 *            Series to get observation for
+	 * @param session
+	 *            Hibernate session
+	 * @return Last not deleted observation
+	 */
+	public SeriesObservation getLastObservationFor(Series series, Session session) {
+		Criteria c = getDefaultObservationCriteria(session);
+		c.add(Restrictions.eq(SeriesObservation.SERIES, series));
+		c.addOrder(Order.desc(AbstractObservation.PHENOMENON_TIME_END));
+		c.setMaxResults(1);
+		 LOGGER.debug("QUERY getLastObservationFor(series): {}",
+	                HibernateHelper.getSqlString(c));
+		return (SeriesObservation)c.uniqueResult();
+	} 
+
 }

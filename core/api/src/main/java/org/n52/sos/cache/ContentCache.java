@@ -600,6 +600,22 @@ public interface ContentCache
      */
     boolean isLanguageSupported(Locale language);
 
+    /**
+     * Get supported requestable procedure description format
+     *
+     * @return Supported requestable procedure description format
+     */
+    public Set<String> getRequstableProcedureDescriptionFormat();
+    
+    /**
+     * Is the specific requestable procedure description format supported
+     *
+     * @param format
+     *            format to check
+     * @return <code>true</code>, if the specific format is supported
+     */
+    public boolean hasRequstableProcedureDescriptionFormat(String format);
+    
     String getFeatureOfInterestIdentifierForHumanReadableName(String humanReadableName);
 
     String getFeatureOfInterestHumanReadableNameForIdentifier(String identifier);

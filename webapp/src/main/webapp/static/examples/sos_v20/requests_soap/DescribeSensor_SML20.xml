@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd">
+	<env:Body>
+		<swes:DescribeSensor service="SOS" version="2.0.0" xmlns:swes="http://www.opengis.net/swes/2.0"
+			xmlns:gml="http://www.opengis.net/gml/3.2"
+			xsi:schemaLocation="http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd">
+			<swes:procedure>http://www.52north.org/test/procedure/1</swes:procedure>
+			<swes:procedureDescriptionFormat>http://www.opengis.net/sensorml/2.0</swes:procedureDescriptionFormat>
+			<!-- optional validTime: not set, latest sensor description is returned. -->
+			<!-- 
+			<swes:validTime>
+				<gml:TimeInstant gml:id="validTime">
+					<gml:timePosition>2013-08-14T15:02:43.219</gml:timePosition>
+				</gml:TimeInstant>
+			</swes:validTime>
+			 -->
+			 <!-- 	
+			<swes:validTime>
+				<gml:TimeInstant gml:id="validTime">
+					<gml:timePosition indeterminatePosition="after">2013-08-14T15:00:00</gml:timePosition>
+				</gml:TimeInstant>
+			</swes:validTime>
+			 -->
+			<!-- 
+			<swes:validTime>
+				<gml:TimePeriod gml:id="validTime">
+					<gml:beginPosition>2013-08-14T15:02:43.219</gml:beginPosition>
+		            <gml:endPosition>2013-08-14t15:02:47</gml:endPosition>
+				</gml:TimePeriod>
+			</swes:validTime>
+			 -->
+		</swes:DescribeSensor>
+	</env:Body>
+</env:Envelope>

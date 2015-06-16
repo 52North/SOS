@@ -41,6 +41,7 @@ import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.dao.ProcedureDescriptionFormatDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -96,6 +97,10 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         return procedureMap;
     }
 
+    private void getProcedureDescriptionFormat() {
+        getCache().setRequestableProcedureDescriptionFormat(new ProcedureDescriptionFormatDAO().getProcedureDescriptionFormat(getSession()));
+    }
+
     @Override
     protected ProcedureCacheUpdateTask[] getUpdatesToExecute() {
         Collection<ProcedureCacheUpdateTask> procedureUpdateTasks = Lists.newArrayList();
@@ -111,6 +116,8 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         //single threaded updates
         LOGGER.debug("Executing ProcedureCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
+        getProcedureDescriptionFormat();
+        
         boolean obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class);
 
         Map<String, Collection<String>> procedureMap = procedureDAO.getProcedureIdentifiers(getSession());

@@ -64,6 +64,11 @@ public class LegacyBooleanObservation
     public void setValue(Boolean value) {
         this.value = value;
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
 
     @Override
     public void accept(VoidObservationVisitor visitor)

@@ -41,6 +41,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.n52.sos.inspire.aqd.GeographicalName;
+import org.n52.sos.inspire.aqd.Spelling;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.Nillable;
@@ -88,9 +89,11 @@ public class GeographicalNameReaderTest {
         errors.checkThat(gn.getNativeness(), is(Nillable.of(new CodeType("<asdfasdf"))));
         errors.checkThat(gn.getNameStatus(), is(Nillable.<CodeType>unknown()));
 
-        errors.checkThat(gn.getSpelling().get().getText(), is("asdfasdf"));
-        errors.checkThat(gn.getSpelling().get().getScript(), is(Nillable.of("asdfasdf")));
-        errors.checkThat(gn.getSpelling().get().getTransliterationScheme(), is(Nillable.of("asdfasdfasdf")));
+        for (Spelling sp : gn.getSpelling()) {
+            errors.checkThat(sp.getText(), is("asdfasdf"));
+            errors.checkThat(sp.getScript(), is(Nillable.of("asdfasdf")));
+            errors.checkThat(sp.getTransliterationScheme(), is(Nillable.of("asdfasdfasdf")));
+        }
 
         errors.checkThat(gn.getPronunciation().get().getIPA(), is(Nillable.of("asdfasdf")));
         errors.checkThat(gn.getPronunciation().get().getSoundLink(), is(Nillable.of(URI.create("http://asdfasdf"))));

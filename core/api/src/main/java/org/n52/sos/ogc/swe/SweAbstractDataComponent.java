@@ -86,7 +86,7 @@ public abstract class SweAbstractDataComponent {
         if (StringHelper.isNotEmpty(label)) {
             return label;
         } else if (isSetNames()) {
-           return getName().getValue();
+            return getName().getValue();
         }
         return null;
     }
@@ -230,5 +230,22 @@ public abstract class SweAbstractDataComponent {
     public abstract SweDataComponentType getDataComponentType();
     public abstract <T> T accept(SweDataComponentVisitor<T> visitor) throws OwsExceptionReport;
     public abstract void accept(VoidSweDataComponentVisitor visitor) throws OwsExceptionReport;
+
+    /**
+     * Copies all values from this {@link SweAbstractDataComponent} to the
+     * passed
+     * 
+     * @param copy
+     *            {@link SweAbstractDataComponent} to copy values to
+     * @return 
+     */
+    public SweAbstractDataComponent copyValueTo(SweAbstractDataComponent copy) {
+        copy.setDefinition(definition);
+        copy.setDescription(description);
+        copy.setIdentifier(identifier);
+        copy.setLabel(label);
+        copy.setName(names);
+        return copy;
+    }
 
 }

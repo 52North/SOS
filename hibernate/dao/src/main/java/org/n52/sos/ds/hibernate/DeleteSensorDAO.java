@@ -43,6 +43,7 @@ import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
+import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
@@ -124,7 +125,7 @@ public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
                         deleteFlag, session);
             }
             // set deleted flag in Series and Observation table for series concept to true
-            if (HibernateHelper.isEntitySupported(Series.class)) {
+            if (EntitiyHelper.getInstance().isSeriesSupported()) {
                 List<Series> series =
                         DaoFactory.getInstance().getSeriesDAO().updateSeriesSetAsDeletedForProcedureAndGetSeries(identifier, deleteFlag,
                                 session);

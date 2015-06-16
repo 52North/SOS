@@ -31,7 +31,7 @@ package org.n52.sos.ogc.om;
 import java.util.Set;
 
 import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.om.quality.SosQuality;
+import org.n52.sos.ogc.om.quality.OmResultQuality;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.util.CollectionHelper;
 
@@ -64,7 +64,7 @@ public class SingleObservationValue<T> extends AbstractObservationValue<Value<T>
     /**
      * Measurment quality
      */
-    private Set<SosQuality> qualityList = Sets.newHashSet();
+    private Set<OmResultQuality> qualityList = Sets.newHashSet();
 
     /**
      * constructor
@@ -92,7 +92,7 @@ public class SingleObservationValue<T> extends AbstractObservationValue<Value<T>
      * @param qualityList
      *            Measurment quality
      */
-    public SingleObservationValue(Time phenomenonTime, Value<T> value, Set<SosQuality> qualityList) {
+    public SingleObservationValue(Time phenomenonTime, Value<T> value, Set<OmResultQuality> qualityList) {
         this.phenomenonTime = phenomenonTime;
         this.value = value;
         this.qualityList = qualityList;
@@ -137,17 +137,17 @@ public class SingleObservationValue<T> extends AbstractObservationValue<Value<T>
      * @param qualityList
      *            Measurement quality to set
      */
-    public SingleObservationValue<T> setQualityList(Set<SosQuality> qualityList) {
+    public SingleObservationValue<T> setQualityList(Set<OmResultQuality> qualityList) {
         this.qualityList = qualityList;
         return this;
     }
     
-    public SingleObservationValue<T> addQualityList(Set<SosQuality> qualityList) {
+    public SingleObservationValue<T> addQualityList(Set<OmResultQuality> qualityList) {
         this.qualityList.addAll(qualityList);
         return this;
     }
     
-    public SingleObservationValue<T> addQuality(SosQuality qualityList) {
+    public SingleObservationValue<T> addQuality(OmResultQuality qualityList) {
         this.qualityList.add(qualityList);
         return this;
     }
@@ -157,11 +157,16 @@ public class SingleObservationValue<T> extends AbstractObservationValue<Value<T>
      * 
      * @return Measurement quality
      */
-    public Set<SosQuality> getQualityList() {
+    public Set<OmResultQuality> getQualityList() {
         return qualityList;
     }
     
     public boolean isSetQualityList() {
         return CollectionHelper.isNotEmpty(getQualityList());
     }
+    
+	@Override
+	public boolean isSetValue() {
+		return getValue() != null && getValue().isSetValue();
+	}
 }

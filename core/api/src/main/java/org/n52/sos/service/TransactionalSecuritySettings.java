@@ -69,11 +69,11 @@ public class TransactionalSecuritySettings implements SettingDefinitionProvider 
                     .setOrder(ORDER_0)
                     .setKey(TRANSACTIONAL_ACTIVE)
                     .setTitle("Transactional security active")
-                    .setOptional(false)
+                    .setOptional(true)
                     .setDescription(
                             "Activate/Deactivate transactional security support. If true, allowed IPs or token should be defined!"
                             + " If allowed IPs and/or authorization token are defined, then incoming transactional requests are checked against them.")
-                    .setDefaultValue(false);
+                    .setDefaultValue(true);
 
     public static final StringSettingDefinition TRANSACTIONAL_ALLOWED_IPS_DEFINITION = new StringSettingDefinition()
             .setGroup(TX_SEC_GROUP)
@@ -81,7 +81,7 @@ public class TransactionalSecuritySettings implements SettingDefinitionProvider 
             .setKey(TRANSACTIONAL_ALLOWED_IPS)
             .setTitle("Transactional Allowed IPs")
             .setOptional(true)
-            .setDefaultValue("")
+            .setDefaultValue("127.0.0.1")
             .setDescription(
                     "Comma separated ranges of IPs that should be allowed to make transactional requests. " +
                     "Use CIDR notation or raw IP addresses (e.g. <code>127.0.0.1,192.168.0.0/16</code>). " +

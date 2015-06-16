@@ -35,12 +35,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import org.n52.sos.convert.ConverterException;
-import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.om.OmObservableProperty;
@@ -50,7 +46,7 @@ import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
+import org.n52.sos.request.AbstractObservationRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,13 +80,13 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
      * @param session
      *            Hibernate sesssion
      */
-    public SeriesOmObservationCreator(Series series, String version, Session session) {
-        super(version, session);
+    public SeriesOmObservationCreator(Series series, AbstractObservationRequest request, Session session) {
+        super(request, session);
         this.series = series;
     }
 
-    public SeriesOmObservationCreator(Series series, String version, Locale language, Session session) {
-        super(version, language, session);
+    public SeriesOmObservationCreator(Series series, AbstractObservationRequest request, Locale language, Session session) {
+        super(request, language, session);
         this.series = series;
     }
 
@@ -110,11 +106,12 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
             sosObservation.setNoDataValue(getNoDataValue());
             sosObservation.setTokenSeparator(getTokenSeparator());
             sosObservation.setTupleSeparator(getTupleSeparator());
+            sosObservation.setDecimalSeparator(getDecimalSeparator());
             sosObservation.setObservationConstellation(obsConst);
+            checkForAdditionalObservationCreator(series, sosObservation);
             final NilTemplateValue value = new NilTemplateValue();
             value.setUnit(obsProp.getUnit());
-            sosObservation
-                    .setValue(new SingleObservationValue(new TimeInstant(), value));
+            sosObservation.setValue(new SingleObservationValue(new TimeInstant(), value));
             observations.add(sosObservation);
         }
         return observations;
@@ -185,6 +182,15 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
      */
     protected Series getSeries() {
         return series;
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected void checkForAdditionalObservationCreator(Series series, OmObservation sosObservation) {
+        AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), series.getClass());
+        if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
+            AdditionalObservationCreator<Series> creator = AdditionalObservationCreatorRepository.getInstance().get(key);
+            creator.create(sosObservation, series);
+        }
     }
 
     private String queryUnit() {

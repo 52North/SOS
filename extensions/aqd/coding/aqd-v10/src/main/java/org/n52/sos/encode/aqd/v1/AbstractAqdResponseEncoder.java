@@ -35,6 +35,8 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.aqd.AqdConstants;
+import org.n52.sos.aqd.AqdHelper;
+import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.encode.AbstractResponseEncoder;
 import org.n52.sos.encode.Encoder;
@@ -44,7 +46,6 @@ import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
-import org.n52.sos.inspire.aqd.ReportObligationType;
 import org.n52.sos.ogc.filter.FilterConstants;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.ows.OWSConstants;
@@ -79,6 +80,10 @@ public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceRespon
 
     protected Profile getActiveProfile() {
         return Configurator.getInstance().getProfileHandler().getActiveProfile();
+    }
+    
+    protected AqdHelper getAqdHelper() {
+        return AqdHelper.getInstance();
     }
 
     protected XmlObject encodeGml(Object o) throws OwsExceptionReport {

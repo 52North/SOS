@@ -1,1 +1,3 @@
 org.n52.sos.ds.datasource.MySQLDatasource
+org.n52.sos.ds.datasource.MySQLCoreDatasource
+org.n52.sos.ds.datasource.CustomMySQLDatasource

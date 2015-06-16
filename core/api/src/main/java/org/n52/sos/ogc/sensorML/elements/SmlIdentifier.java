@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
+import org.n52.sos.util.StringHelper;
+
 /**
  * SOS internal representation of SensorML identifier
  * 
@@ -40,6 +42,8 @@ public class SmlIdentifier {
     private String definition;
 
     private String value;
+    
+    private String label;
 
     /**
      * constructor
@@ -54,9 +58,11 @@ public class SmlIdentifier {
     public SmlIdentifier(final String name, final String definition, final String value) {
         super();
         this.name = name;
+        this.label = name;
         this.definition = definition;
         this.value = value;
     }
+    
 
     /**
      * @return the Identifier name
@@ -71,6 +77,24 @@ public class SmlIdentifier {
      */
     public void setName(final String name) {
         this.name = name;
+        this.label = name;
+    }
+    
+    
+    /**
+     * @return the Identifier label
+     */
+    public String getLabel() {
+        return name;
+    }
+
+    /**
+     * @param name
+     *            Identifier name
+     */
+    public void setLabel(final String label) {
+        this.label = label;
+        this.name = label;
     }
 
     /**
@@ -105,18 +129,22 @@ public class SmlIdentifier {
 
     @Override
     public String toString() {
-        return String.format("SosSMLIdentifier [name=%s, definition=%s, value=%s]", name, definition, value);
+        return String.format("SosSMLIdentifier [name=%s, label=%s, definition=%s, value=%s]", name, label, definition, value);
     }
 
     public boolean isSetName() {
-        return name != null && !name.isEmpty();
+        return StringHelper.isNotEmpty(name);
+    }
+    
+    public boolean isSetLabel() {
+        return StringHelper.isNotEmpty(label);
     }
 
     public boolean isSetValue() {
-        return value != null && !value.isEmpty();
+        return StringHelper.isNotEmpty(value);
     }
 
     public boolean isSetDefinition() {
-        return definition != null && !definition.isEmpty();
+        return StringHelper.isNotEmpty(definition);
     }
 }

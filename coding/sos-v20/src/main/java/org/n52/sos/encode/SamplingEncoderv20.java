@@ -47,7 +47,6 @@ import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -66,6 +65,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -195,25 +195,33 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
 
             // set sampledFeatures
             // TODO: CHECK
-            if (sampFeat.getSampledFeatures() != null && !sampFeat.getSampledFeatures().isEmpty()) {
-                if (sampFeat.getSampledFeatures().size() == 1) {
-                    final XmlObject encodeObjectToXml =
-                            CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sampFeat.getSampledFeatures()
-                                    .get(0));
-                    xbSampFeature.addNewSampledFeature().set(encodeObjectToXml);
-                } else {
-                    final FeatureCollection featureCollection = new FeatureCollection();
-                    featureCollection.setGmlId("sampledFeatures_" + absFeature.getGmlId());
-                    for (final AbstractFeature sampledFeature : sampFeat.getSampledFeatures()) {
-                        featureCollection.addMember(sampledFeature);
-                    }
-                    final XmlObject encodeObjectToXml =
-                            CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, featureCollection);
+            if (sampFeat.isSetSampledFeatures()) {
+                Map<HelperValues, String> additionalValues = Maps.newHashMap();
+                additionalValues.put(HelperValues.REFERENCED, null);
+                for (AbstractFeature sampledFeature : sampFeat.getSampledFeatures()) {
+                    XmlObject encodeObjectToXml =
+                            CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sampledFeature, additionalValues);
                     xbSampFeature.addNewSampledFeature().set(encodeObjectToXml);
                 }
+//                // Old version before schema was fixed. Now sampledFeatures multiplicity is 1..* and not 1..1.
+//                if (sampFeat.getSampledFeatures().size() == 1) {
+//                    final XmlObject encodeObjectToXml =
+//                            CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sampFeat.getSampledFeatures()
+//                                    .get(0));
+//                    xbSampFeature.addNewSampledFeature().set(encodeObjectToXml);
+//                } else {
+//                    final FeatureCollection featureCollection = new FeatureCollection();
+//                    featureCollection.setGmlId("sampledFeatures_" + absFeature.getGmlId());
+//                    for (final AbstractFeature sampledFeature : sampFeat.getSampledFeatures()) {
+//                        featureCollection.addMember(sampledFeature);
+//                    }
+//                    final XmlObject encodeObjectToXml =
+//                            CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, featureCollection);
+//                    xbSampFeature.addNewSampledFeature().set(encodeObjectToXml);
+//                }
 
             } else {
-                xbSampFeature.addNewSampledFeature().setHref(GmlConstants.NIL_UNKNOWN);
+                xbSampFeature.addNewSampledFeature().setHref(OGCConstants.UNKNOWN);
             }
 
             if (sampFeat.isSetParameter()) {

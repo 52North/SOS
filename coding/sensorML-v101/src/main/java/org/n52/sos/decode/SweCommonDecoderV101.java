@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.opengis.swe.x101.AbstractDataArrayType.ElementCount;
 import net.opengis.swe.x101.AbstractDataComponentType;
 import net.opengis.swe.x101.AbstractDataRecordDocument;
 import net.opengis.swe.x101.AbstractDataRecordType;
@@ -46,6 +47,7 @@ import net.opengis.swe.x101.CountDocument;
 import net.opengis.swe.x101.CountDocument.Count;
 import net.opengis.swe.x101.CountRangeDocument;
 import net.opengis.swe.x101.CountRangeDocument.CountRange;
+import net.opengis.swe.x101.BlockEncodingPropertyType;
 import net.opengis.swe.x101.DataArrayDocument;
 import net.opengis.swe.x101.DataArrayType;
 import net.opengis.swe.x101.DataComponentPropertyType;
@@ -62,6 +64,7 @@ import net.opengis.swe.x101.QuantityRangeDocument;
 import net.opengis.swe.x101.QuantityRangeDocument.QuantityRange;
 import net.opengis.swe.x101.SimpleDataRecordType;
 import net.opengis.swe.x101.TextDocument;
+import net.opengis.swe.x101.TextBlockDocument.TextBlock;
 import net.opengis.swe.x101.TextDocument.Text;
 import net.opengis.swe.x101.TimeDocument;
 import net.opengis.swe.x101.TimeDocument.Time;
@@ -89,6 +92,8 @@ import org.n52.sos.ogc.swe.SweEnvelope;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.SweSimpleDataRecord;
 import org.n52.sos.ogc.swe.SweVector;
+import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
@@ -103,6 +108,8 @@ import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -295,8 +302,62 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
     }
 
     private SweDataArray parseSweDataArrayType(final DataArrayType xbDataArray) throws OwsExceptionReport {
+        if (!xbDataArray.getElementType().isSetAbstractDataRecord()) {
+            throw new InvalidParameterValueException()
+                    .at(XmlHelper.getLocalName(xbDataArray.getElementType()))
+                    .withMessage(
+                            "The swe:DataArray contains a not yet supported elementType element. Currently only 'swe:DataRecord' is supported as elementType element.");
+        }
         final SweDataArray dataArray = new SweDataArray();
-        // TODO
+        if (xbDataArray.getElementCount() != null) {
+            dataArray.setElementCount(parseElementCount(xbDataArray.getElementCount()));
+        }
+        // parse data record to elementType
+        DataComponentPropertyType elementType = xbDataArray.getElementType();
+
+        if (elementType != null) {
+            SweAbstractDataComponent sosAbstractDataComponentType = null;
+            if (elementType.isSetBoolean()) {
+                sosAbstractDataComponentType = parseAbstractDataComponentType(elementType.getBoolean());
+            } else if (elementType.isSetCategory()) {
+                sosAbstractDataComponentType = parseAbstractDataComponentType(elementType.getCategory());
+            } else if (elementType.isSetCount()) {
+                sosAbstractDataComponentType = parseAbstractDataComponentType(elementType.getCount());
+            } else if (elementType.isSetCountRange()) {
+                sosAbstractDataComponentType = parseAbstractDataComponentType(elementType.getCountRange());
+            } else if (elementType.isSetQuantity()) {
+                sosAbstractDataComponentType = parseAbstractDataComponentType(elementType.getQuantity());
+            } else if (elementType.isSetQuantityRange()) {
+                sosAbstractDataComponentType = parseAbstractDataComponentType(elementType.getQuantityRange());
+            } else if (elementType.isSetText()) {
+                sosAbstractDataComponentType = parseAbstractDataComponentType(elementType.getText());
+            } else if (elementType.isSetTime()) {
+                sosAbstractDataComponentType = parseAbstractDataComponentType(elementType.getTime());
+            } else if (elementType.isSetTimeRange()) {
+                sosAbstractDataComponentType = parseAbstractDataComponentType(elementType.getTimeRange());
+            } else if (elementType.isSetAbstractDataRecord()) {
+                sosAbstractDataComponentType = parseAbstractDataComponentType(elementType.getAbstractDataRecord());
+            }
+            if (sosAbstractDataComponentType != null) {
+                dataArray.setElementType(sosAbstractDataComponentType);
+            }
+        }
+        if (xbDataArray.isSetEncoding()) {
+            dataArray.setEncoding(parseEncoding(xbDataArray.getEncoding()));
+        }
+
+        // parse values
+        if (xbDataArray.isSetValues()) {
+            // TODO implement full support
+            // dataArray.setValues(parseValues(dataArray.getElementCount(),
+            // dataArray.getElementType(),
+            // dataArray.getEncoding(), xbDataArray.getValues()));
+        }
+
+        DataArrayDocument xbDataArrayDoc =
+                DataArrayDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        xbDataArrayDoc.setDataArray1(xbDataArray);
+        dataArray.setXml(xbDataArrayDoc.xmlText());
         return dataArray;
     }
 
@@ -576,5 +637,29 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
             }
         }
         return sosFields;
+    }
+    
+    private SweCount parseElementCount(final ElementCount elementCount) throws OwsExceptionReport {
+        if (elementCount.isSetCount()) {
+            return (SweCount) parseCount(elementCount.getCount());
+        }
+        return null;
+    }
+    
+    private SweAbstractEncoding parseEncoding(final BlockEncodingPropertyType abstractEncodingType) throws OwsExceptionReport {
+        assert abstractEncodingType != null;
+        if (abstractEncodingType.isSetTextBlock()) {
+            return parseTextEncoding(abstractEncodingType.getTextBlock());
+        }
+        throw new NotYetSupportedException(SweConstants.EN_ENCODING_TYPE, abstractEncodingType,
+                TextBlock.type.getName());
+    }
+    
+    private SweTextEncoding parseTextEncoding(final TextBlock textEncoding) {
+        final SweTextEncoding sosTextEncoding = new SweTextEncoding();
+        sosTextEncoding.setBlockSeparator(textEncoding.getBlockSeparator());
+        sosTextEncoding.setTokenSeparator(textEncoding.getTokenSeparator());
+        sosTextEncoding.setDecimalSeparator(textEncoding.getDecimalSeparator());
+        return sosTextEncoding;
     }
 }

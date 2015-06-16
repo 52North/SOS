@@ -841,7 +841,26 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         // get extrema indeterminate time
         c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
         Timestamp indeterminateExtremaTime = (Timestamp) c.uniqueResult();
+        return addIndeterminateTimeRestriction(c, sosIndeterminateTime, indeterminateExtremaTime);
+    }
 
+    /**
+     * Add an indeterminate time restriction to a criteria. This allows for
+     * multiple results if more than one observation has the extrema time (max
+     * for latest, min for first). Note: use this method *after* adding all
+     * other applicable restrictions so that they will apply to the min/max
+     * observation time determination.
+     * 
+     * @param c
+     *            Criteria to add the restriction to
+     * @param sosIndeterminateTime
+     *            Indeterminate time restriction to add
+     * @param indeterminateExtremaTime
+     *            Indeterminate time extrema
+     * @return Modified criteria
+     */
+    protected Criteria addIndeterminateTimeRestriction(Criteria c, SosIndeterminateTime sosIndeterminateTime,
+            Date indeterminateExtremaTime) {
         // reset criteria
         // see http://stackoverflow.com/a/1472958/193435
         c.setProjection(null);
@@ -1053,7 +1072,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 criteria.setProjection(SpatialProjections.extent(TemporalReferencedObservation.SAMPLING_GEOMETRY));
                 criteria.createCriteria(Observation.OFFERINGS).add(
                         Restrictions.eq(Offering.IDENTIFIER, offeringID));
-                LOGGER.debug("QUERY getEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
+                LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
                 Geometry geom = (Geometry) criteria.uniqueResult();
                 geom = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(geom);
                 if (geom != null) {
@@ -1062,10 +1081,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             } else {
                 final Envelope envelope = new Envelope();
                 Criteria criteria = getDefaultObservationInfoCriteria(session);
-                criteria.setProjection(SpatialProjections.extent(TemporalReferencedObservation.SAMPLING_GEOMETRY));
-                criteria.createCriteria(Observation.OFFERINGS).add(
+                criteria.createCriteria(AbstractObservation.OFFERINGS).add(
                         Restrictions.eq(Offering.IDENTIFIER, offeringID));
-                LOGGER.debug("QUERY getEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
+                LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
                 @SuppressWarnings("unchecked")
                 final List<TemporalReferencedObservation> observationTimes = criteria.list();
                 if (CollectionHelper.isNotEmpty(observationTimes)) {
@@ -1393,5 +1411,20 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 return this.observationType;
             }
         }
+    }
+
+    /**
+     * Check if the observation table contains samplingGeometries with values
+     * 
+     * @param session
+     *            Hibernate session
+     * @return <code>true</code>, if the observation table contains samplingGeometries with values
+     */
+    public boolean containsSamplingGeometries(Session session) {
+        Criteria criteria = getDefaultObservationInfoCriteria(session);
+        criteria.add(Restrictions.isNotNull(AbstractObservation.SAMPLING_GEOMETRY));
+        criteria.setProjection(Projections.rowCount());
+        LOGGER.debug("QUERY containsSamplingGeometries(): {}", HibernateHelper.getSqlString(criteria));
+        return (Long) criteria.uniqueResult() > 0;
     }
 }

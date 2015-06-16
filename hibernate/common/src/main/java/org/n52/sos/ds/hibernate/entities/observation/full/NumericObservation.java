@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.full;
 
-import java.math.BigDecimal;
-
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
 
@@ -39,6 +37,6 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObserva
  * @since 4.0.0
  *
  */
-public interface NumericObservation extends NumericValuedObservation, Observation<BigDecimal> {
+public interface NumericObservation extends NumericValuedObservation, Observation<Double> {
 
 }

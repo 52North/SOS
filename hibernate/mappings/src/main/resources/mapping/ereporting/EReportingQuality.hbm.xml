@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingQuality" table="ereportingQuality">
+    	<comment>Table to store the AQD e-Reporting quality information for yearly reporting. Mapping file: mapping/ereporting/EReportingQuality.hbm.xml</comment>
+        <id name="id" type="long">
+            <column name="id">
+            	<comment>Table primary key</comment>
+            </column>
+            <generator class="native">
+            	<param name="sequence">repQualityId_seq</param>
+            </generator>
+        </id>
+        <property name="series" type="long">
+           	<column name="series" not-null="true" unique-key="qualityIdentity">
+           		<comment>Relation/foreign key to the associated series table. Contains "series".seriesId</comment>
+           	</column>
+        </property>
+        <property name="year" type="int">
+           	<column name="year" not-null="true" unique-key="qualityIdentity">
+           		<comment>referenced year</comment>
+           	</column>
+        </property>
+        <property name="primaryObservation" type="string">
+            <column name="primaryObservation" not-null="true" unique-key="qualityIdentity">
+           		<comment>primaryObservation flag, see http://dd.eionet.europa.eu/vocabulary/aq/primaryObservation/view</comment>
+           	</column>
+        </property>
+        <property name="timeCoverageFlag" type="org.hibernate.type.TrueFalseType">
+            <column name="timeCoverageFlag" check="timeCoverageFlag in ('T','F')" length="1">
+           		<comment>indicator for time coverage </comment>
+           	</column>
+        </property>
+        <property name="dataCaptureFlag" type="org.hibernate.type.TrueFalseType">
+            <column name="dataCaptureFlag" check="dataCaptureFlag in ('T','F')" length="1">
+           		<comment>Data capture value, used for multi day aggregations</comment>
+           	</column>
+        </property>
+        <property name="uncertaintyEstimation" type="double">
+            <column name="uncertaintyEstimation" not-null="false">
+           		<comment>value for uncertainty estimation</comment>
+           	</column>
+        </property>
+    </class>
+</hibernate-mapping>

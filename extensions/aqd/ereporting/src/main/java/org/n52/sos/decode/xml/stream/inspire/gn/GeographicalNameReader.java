@@ -60,7 +60,7 @@ public class GeographicalNameReader extends XmlReader<GeographicalName> {
         } else if (name.equals(AqdConstants.QN_GN_PRONUNCIATION)) {
             this.geographicalName.setPronunciation(delegate(new PronounciationReader()));
         } else if (name.equals(AqdConstants.QN_GN_SPELLING)) {
-            this.geographicalName.setSpelling(delegate(new SpellingReader()));
+            this.geographicalName.addSpelling(delegate(new SpellingReader()));
         } else if (name.equals(AqdConstants.QN_GN_GRAMMATICAL_GENDER)) {
             this.geographicalName.setGrammaticalGender(delegate(new NillableCodeTypeReader()));
         } else if (name.equals(AqdConstants.QN_GN_GRAMMATICAL_NUMBER)) {

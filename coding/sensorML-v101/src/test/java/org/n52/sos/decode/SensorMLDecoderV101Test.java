@@ -60,10 +60,8 @@ import net.opengis.swe.x101.DataComponentPropertyType;
 import net.opengis.swe.x101.DataRecordType;
 import net.opengis.swe.x101.SimpleDataRecordType;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.n52.sos.config.SettingsManager;
+import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
@@ -86,7 +84,7 @@ import org.n52.sos.util.XmlOptionsHelper;
  * 
  * @since 4.0.0
  */
-public class SensorMLDecoderV101Test  {
+public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsManagerTest {
     private static final String TEST_ID_1 = "test-id-1";
 
     private static final String TEST_NAME_1 = "test-name-1";
@@ -94,17 +92,6 @@ public class SensorMLDecoderV101Test  {
     private static final String TEST_ID_2 = "test-id-2";
 
     private static final String TEST_NAME_2 = "test-name-2";
-    
-    
-    @BeforeClass
-    public static void initSettingsManager() {
-        SettingsManager.getInstance();
-    }
-
-    @AfterClass
-    public static void cleanupSettingManager() {
-        SettingsManager.getInstance().cleanup();
-    }
 
     @Test
     public void should_set_identifier_by_identifier_name() throws OwsExceptionReport {
@@ -449,7 +436,7 @@ public class SensorMLDecoderV101Test  {
         dataArray.addNewElementCount().addNewCount().setValue(new BigInteger("1"));
         DataComponentPropertyType addNewElementType = dataArray.addNewElementType();
         addNewElementType.setName("elementType");
-        addNewElementType.addNewBoolean();
+        addNewElementType.addNewAbstractDataRecord();
         return dataArray;
     }
 

@@ -35,6 +35,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.n52.sos.aqd.AqdConstants;
+import org.n52.sos.iso.GcoConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.Nillable;
 import org.n52.sos.w3c.W3CConstants;
@@ -54,7 +55,7 @@ public abstract class NillableReader<T> extends XmlReader<Nillable<T>> {
 
     protected List<QName> getPossibleNilReasonAttributes() {
         return Arrays.asList(AqdConstants.QN_NIL_REASON,
-                             AqdConstants.QN_GCO_NIL_REASON);
+                             GcoConstants.QN_GCO_NIL_REASON);
     }
 
     @Override

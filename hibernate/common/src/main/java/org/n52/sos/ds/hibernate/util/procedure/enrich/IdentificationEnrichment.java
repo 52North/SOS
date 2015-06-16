@@ -28,11 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-
-
-
-
-
 import org.n52.sos.ds.I18NDAO;
 import org.n52.sos.i18n.I18NDAORepository;
 import org.n52.sos.i18n.LocalizedString;
@@ -44,7 +39,6 @@ import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
 
 import com.google.common.base.Optional;
-import com.vividsolutions.jts.geom.MultiLineString;
 
 /**
  * TODO JavaDoc

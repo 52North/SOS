@@ -44,6 +44,8 @@ import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.factory.AbstractAuthorityFactory;
+import org.geotools.referencing.factory.DeferredAuthorityFactory;
+import org.geotools.util.WeakCollectionCleaner;
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
@@ -150,26 +152,29 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
                         isEastingFirstEpsgCode(getStorageEPSG())));
 
     }
-    
+
     @Override
     public void cleanup() {
-        if (getCrsAuthorityFactory() != null && getCrsAuthorityFactory() instanceof AbstractAuthorityFactory) {
-            try {
-                ((AbstractAuthorityFactory)getCrsAuthorityFactory()).dispose();
-            } catch (FactoryException fe) {
-                LOGGER.error("Error while GeometryHandler clean up", fe);
+        if (getCrsAuthorityFactory() != null) {
+            if (getCrsAuthorityFactory() instanceof DeferredAuthorityFactory) {
+                DeferredAuthorityFactory.exit();
+            }
+            if (getCrsAuthorityFactory() instanceof AbstractAuthorityFactory) {
+                try {
+                    ((AbstractAuthorityFactory) getCrsAuthorityFactory()).dispose();
+                } catch (FactoryException fe) {
+                    LOGGER.error("Error while GeometryHandler clean up", fe);
+                }
             }
         }
-    }
-
-    @Deprecated
-    public int getDefaultEPSG() {
-        return getStorageEPSG();
-    }
-
-    @Deprecated
-    public int getDefault3DEPSG() {
-        return getStorage3DEPSG();
+        /*
+         * close {@link WeakCollectionCleaner} 
+         * 
+         * Note: Not required if
+         * se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventor is
+         * defined in the web.xml
+         */
+        // WeakCollectionCleaner.DEFAULT.exit();
     }
 
     /**
@@ -442,6 +447,8 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
      *            Value to check
      * @return Double value
      */
+    // TODO replace with JavaHelper.asDouble?
+    @Deprecated
     public double getValueAsDouble(final Object value) {
         if (value instanceof String) {
             return Double.valueOf((String) value).doubleValue();
@@ -494,6 +501,25 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
         }
         builder.append(Constants.CLOSE_BRACE_CHAR);
         return builder.toString();
+    }
+
+    /**
+     * Get WKT string from longitude and latitude with axis order as defined by
+     * EPSG code.
+     * 
+     * @param longitude
+     *            Longitude coordinate
+     * @param latitude
+     *            Latitude coordinate
+     * @param epsg
+     *            EPSG code to check for axis order
+     * @return WKT string
+     */
+    public String getWktString(Object longitude, Object latitude, int epsg) {
+        if (isNorthingFirstEpsgCode(epsg)) {
+            return getWktString(latitude, longitude);
+        }
+        return getWktString(longitude, latitude);
     }
 
     /**
@@ -720,7 +746,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
     public String addAuthorityCrsPrefix(int crs) {
         return new StringBuilder(getAuthority()).append(Constants.DOUBLE_COLON_STRING).append(crs).toString();
     }
-    
+
     public Set<String> addOgcCrsPrefix(Collection<Integer> crses) {
         HashSet<String> withPrefix = Sets.newHashSetWithExpectedSize(crses.size());
         for (Integer crs : crses) {
@@ -728,7 +754,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
         }
         return withPrefix;
     }
-    
+
     public String addOgcCrsPrefix(int crs) {
         return new StringBuilder(ServiceConfiguration.getInstance().getSrsNamePrefixSosV2()).append(crs).toString();
     }

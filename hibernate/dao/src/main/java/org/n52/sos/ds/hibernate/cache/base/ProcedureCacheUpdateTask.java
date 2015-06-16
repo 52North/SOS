@@ -32,9 +32,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO.ProcedureTimeExtrema;
+import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.slf4j.Logger;
@@ -60,13 +62,29 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
 
     protected void getProcedureInformationFromDbAndAddItToCacheMaps() throws OwsExceptionReport {
         //temporal extent
-        ProcedureTimeExtrema pte = new ProcedureDAO().getProcedureTimeExtrema(getSession(), procedureId);
-        if (pte != null) {
+        ProcedureDAO procedureDAO = new ProcedureDAO();
+        TimeExtrema pte = null;
+        if (procedureDAO.isProcedureTimeExtremaNamedQuerySupported(getSession())) {
+            pte = procedureDAO.getProcedureTimeExtremaFromNamedQuery(getSession(), procedureId);
+        } else {
+            AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
+            if (isSetTimeExtremaEmpty(pte) && seriesDAO != null) {
+                pte = seriesDAO.getProcedureTimeExtrema(getSession(), procedureId);
+            }
+            if (isSetTimeExtremaEmpty(pte)) {
+                pte = new ProcedureDAO().getProcedureTimeExtrema(getSession(), procedureId);
+            }
+        }
+        if (pte != null && pte.isSetTimes()) {
             getCache().setMinPhenomenonTimeForProcedure(procedureId, pte.getMinTime());
             getCache().setMaxPhenomenonTimeForProcedure(procedureId, pte.getMaxTime());
         }
     }
-
+    
+    private boolean isSetTimeExtremaEmpty(TimeExtrema te) {
+        return te == null || (te != null && !te.isSetTimes());
+    }
+ 
     @Override
     public void execute() {
         try {

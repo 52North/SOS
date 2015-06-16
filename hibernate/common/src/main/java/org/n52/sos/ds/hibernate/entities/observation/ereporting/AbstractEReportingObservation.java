@@ -29,14 +29,28 @@
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
+import org.n52.sos.util.StringHelper;
 
 public abstract class AbstractEReportingObservation<T>
         extends AbstractSeriesObservation<T>
         implements EReportingObservation<T> {
 
     private static final long serialVersionUID = 2878044983511090422L;
-    private Integer validation;
+
+    private Integer validation = EReportingValues.DEFAULT_VALIDATION;
+
+    private Integer verification = EReportingValues.DEFAULT_VERIFICATION;
+
+    private String primaryObservation = EReportingValues.DEFAULT_PRIMARY_OBSERVATION;
+
+    private Boolean timeCoverageFlag;
+
+    private Boolean dataCaptureFlag;
+    
+    private Double dataCapture;
     private Integer verification;
+
+    private Double uncertaintyEstimation;
 
     @Override
     public EReportingSeries getEReportingSeries() {
@@ -82,4 +96,82 @@ public abstract class AbstractEReportingObservation<T>
     public boolean isSetValidation() {
         return getValidation() != null;
     }
+
+    @Override
+    public String getPrimaryObservation() {
+        return primaryObservation;
+    }
+
+    @Override
+    public EReportingObservation setPrimaryObservation(String primaryObservation) {
+        this.primaryObservation = primaryObservation;
+        return this;
+    }
+
+    @Override
+    public boolean isSetPrimaryObservation() {
+        return StringHelper.isNotEmpty(getPrimaryObservation());
+    }
+
+    @Override
+    public Boolean getDataCaptureFlag() {
+        return this.dataCaptureFlag;
+    }
+
+    @Override
+    public void setDataCaptureFlag(Boolean dataCaptureFlag) {
+        this.dataCaptureFlag = dataCaptureFlag;
+    }
+
+    @Override
+    public boolean isSetDataCaptureFlag() {
+        return this.dataCaptureFlag != null;
+    }
+    
+    @Override
+    public Double getDataCapture() {
+        return this.dataCapture;
+    }
+
+    @Override
+    public EReportingObservation setDataCapture(Double dataCapture) {
+        this.dataCapture = dataCapture;
+        return this;
+    }
+
+    @Override
+    public boolean isSetDataCapture() {
+        return this.dataCapture != null;
+    }
+
+    @Override
+    public Boolean getTimeCoverageFlag() {
+        return this.timeCoverageFlag;
+    }
+
+    @Override
+    public void setTimeCoverageFlag(Boolean timeCoverageFlag) {
+        this.timeCoverageFlag = timeCoverageFlag;
+    }
+
+    @Override
+    public boolean isSetTimeCoverageFlag() {
+        return this.timeCoverageFlag != null;
+    }
+
+    @Override
+    public Double getUncertaintyEstimation() {
+        return this.uncertaintyEstimation;
+    }
+
+    @Override
+    public void setUncertaintyEstimation(Double uncertaintyEstimation) {
+        this.uncertaintyEstimation = uncertaintyEstimation;
+    }
+
+    @Override
+    public boolean isSetUncertaintyEstimation() {
+        return this.uncertaintyEstimation != null;
+    }
+
 }

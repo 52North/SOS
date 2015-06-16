@@ -118,6 +118,14 @@ public interface HibernateRelations {
 
         boolean isDeleted();
     }
+    
+    interface HasPublishedFlag {
+        String PUBLISHED = "published";
+
+        HasPublishedFlag setPublished(boolean published);
+
+        boolean isPublished();
+    }
 
     interface HasFeatureOfInterestType {
         String FEATURE_OF_INTEREST_TYPE = "featureOfInterestType";
@@ -453,15 +461,23 @@ public interface HibernateRelations {
 
         void setUrl(String url);
     }
+    
+    
+	interface GetStringValue {
+		
+		 boolean isSetValue();
+		
+		String getValueAsString();
+		
+	}
 
-    interface HasValue<T> {
+    interface HasValue<T> extends GetStringValue {
         String VALUE = "value";
 
         T getValue();
 
         void setValue(T value);
 
-        boolean isSetValue();
     }
 
     interface HasUnitValue<T> extends HasUnit, HasValue<T> {}

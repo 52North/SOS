@@ -35,6 +35,8 @@ import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
 
@@ -49,8 +51,8 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateSeriesStreamingValue.class);
     private static final long serialVersionUID = 201732114914686926L;
-    protected final SeriesValueDAO seriesValueDAO = new SeriesValueDAO();
-    protected final SeriesValueTimeDAO seriesValueTimeDAO = new SeriesValueTimeDAO();
+    protected final AbstractSeriesValueDAO seriesValueDAO;
+    protected final AbstractSeriesValueTimeDAO seriesValueTimeDAO;
     protected long series;
 
     /**
@@ -60,42 +62,49 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
+     * @throws CodedException
      */
-    public HibernateSeriesStreamingValue(GetObservationRequest request, long series) {
+    public HibernateSeriesStreamingValue(GetObservationRequest request, long series) throws CodedException {
         super(request);
         this.series = series;
+        this.seriesValueDAO = (AbstractSeriesValueDAO) DaoFactory.getInstance().getValueDAO();
+        this.seriesValueTimeDAO = (AbstractSeriesValueTimeDAO) DaoFactory.getInstance().getValueTimeDAO();
     }
 
     @Override
     protected void queryTimes() {
+        Session s = null;
         try {
-            TemporalReferencedSeriesObservation minTime;
-            TemporalReferencedSeriesObservation maxTime;
-            // query with temporal filter
-            if (temporalFilterCriterion != null) {
-                minTime = seriesValueTimeDAO.getMinSeriesValueFor(request, series, temporalFilterCriterion, session);
-                maxTime = seriesValueTimeDAO.getMaxSeriesValueFor(request, series, temporalFilterCriterion, session);
+            s = sessionHolder.getSession();
+            ObservationTimeExtrema timeExtrema =
+                    seriesValueTimeDAO.getTimeExtremaForSeries(request, series, temporalFilterCriterion, s);
+            if (timeExtrema.isSetPhenomenonTime()) {
+                setPhenomenonTime(GmlHelper.createTime(timeExtrema.getMinPhenTime(), timeExtrema.getMaxPhenTime()));
             }
-            // query without temporal or indeterminate filters
-            else {
-                minTime = seriesValueTimeDAO.getMinSeriesValueFor(request, series, session);
-                maxTime = seriesValueTimeDAO.getMaxSeriesValueFor(request, series, session);
+            if (timeExtrema.isSetResultTime()) {
+                setResultTime(new TimeInstant(timeExtrema.getMaxResultTime()));
             }
-            setPhenomenonTime(createPhenomenonTime(minTime, maxTime));
-            setResultTime(createResutlTime(maxTime));
-            setValidTime(createValidTime(minTime, maxTime));
+            if (timeExtrema.isSetValidTime()) {
+                setValidTime(GmlHelper.createTime(timeExtrema.getMinValidTime(), timeExtrema.getMaxValidTime()));
+            }
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying times", owse);
+        } finally {
+            sessionHolder.returnSession(s);
         }
     }
 
     @Override
     protected void queryUnit() {
+        Session s = null;
         try {
-            setUnit(seriesValueDAO.getUnit(request, series, session));
+           s = sessionHolder.getSession();
+            setUnit(seriesValueDAO.getUnit(request, series, s));
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying unit", owse);
+        } finally {
+            sessionHolder.returnSession(s);
         }
-
     }
+
 }

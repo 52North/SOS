@@ -43,14 +43,10 @@ import org.n52.sos.util.http.MediaTypes;
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
-public class SoapResponseWriter implements ResponseWriter<SOAPMessage> {
-    @Override
-    public Class<SOAPMessage> getType() {
-        return SOAPMessage.class;
-    }
+public class SoapResponseWriter extends AbstractResponseWriter<SOAPMessage> {
 
     @Override
-    public void write(SOAPMessage t, OutputStream out) throws IOException {
+    public void write(SOAPMessage t, OutputStream out, ResponseProxy responseProxy) throws IOException {
         try {
             t.writeTo(out);
         } catch (SOAPException ex) {

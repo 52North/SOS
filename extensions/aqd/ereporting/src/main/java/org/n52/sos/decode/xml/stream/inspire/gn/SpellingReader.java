@@ -31,7 +31,7 @@ package org.n52.sos.decode.xml.stream.inspire.gn;
 import javax.xml.namespace.QName;
 
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.decode.xml.stream.NillableSubtagReader;
+import org.n52.sos.decode.xml.stream.SubtagReader;
 import org.n52.sos.decode.xml.stream.XmlReader;
 import org.n52.sos.inspire.aqd.Spelling;
 
@@ -40,7 +40,7 @@ import org.n52.sos.inspire.aqd.Spelling;
  *
  * @author Christian Autermann
  */
-public class SpellingReader extends NillableSubtagReader<Spelling> {
+public class SpellingReader extends SubtagReader<Spelling> {
 
     @Override
     protected QName getSubtagName() {

@@ -37,22 +37,19 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.response.GetCapabilitiesResponse;
 import org.n52.sos.w3c.SchemaLocation;
 
+public class AqdGetCapabilitiesResponseEncoder extends AbstractAqdResponseEncoder<GetCapabilitiesResponse> {
 
-public class AqdGetCapabilitiesResponseEncoder extends
-AbstractAqdResponseEncoder<GetCapabilitiesResponse> {
-	
-	public AqdGetCapabilitiesResponseEncoder() {
-		  super(SosConstants.Operations.GetCapabilities.name(), GetCapabilitiesResponse.class);
-	}
+    public AqdGetCapabilitiesResponseEncoder() {
+        super(SosConstants.Operations.GetCapabilities.name(), GetCapabilitiesResponse.class);
+    }
 
-	@Override
-	protected Set<SchemaLocation> getConcreteSchemaLocations() {
-		return Collections.emptySet();
-	}
+    @Override
+    protected Set<SchemaLocation> getConcreteSchemaLocations() {
+        return Collections.emptySet();
+    }
 
-	@Override
-	protected XmlObject create(GetCapabilitiesResponse response)
-			throws OwsExceptionReport {
-		return encodeWithSosEncoder(response);
-	}
+    @Override
+    protected XmlObject create(GetCapabilitiesResponse response) throws OwsExceptionReport {
+        return encodeWithSosEncoder(response);
+    }
 }

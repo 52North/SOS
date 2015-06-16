@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+	<display-name>${project.parent.name}, Git-Branch '${git.branch}' with
+		state '${git.commit.id}' @ ${git.commit.time}</display-name>
+	<description>This is an OGC SOS with Sensor Web REST-API.</description>
+	<context-param>
+		<!--defines the directory in which the log files will be stored. -->
+		<param-name>logDir</param-name>
+		<!-- a relative path is not allowed, if a relative path would be supported 
+			the log dir has to be in the WEB-INF dir -->
+		<param-value>${conf.sos.logdir}</param-value>
+	</context-param>
+	<!-- Spring configuration -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/applicationContext.xml</param-value>
+	</context-param>
+	<!-- location of the database configuration file -->
+	<context-param>
+		<param-name>datasourceConfigLocation</param-name>
+		<param-value>/WEB-INF/datasource.properties</param-value>
+	</context-param>
+	<!-- Memory leak preventer listener -->
+	<listener>
+	  <listener-class>se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventor</listener-class>
+	</listener>
+	<!-- Spring startup listener -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<!-- SOS startup listener -->
+	<listener>
+		<listener-class>org.n52.sos.service.SosContextListener</listener-class>
+	</listener>
+	<filter>
+		<filter-name>CORS</filter-name>
+		<filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
+		<init-param>
+			<param-name>cors.allowOrigin</param-name>
+			<param-value>*</param-value>
+		</init-param>
+		<init-param>
+			<param-name>cors.allowGenericHttpRequests</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>cors.supportedMethods</param-name>
+			<param-value>GET, POST, HEAD, PUT, DELETE, OPTIONS</param-value>
+		</init-param>
+		<init-param>
+			<param-name>cors.supportedHeaders</param-name>
+			<param-value>*</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>CORS</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!-- Spring security filter -->
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!-- Install filter -->
+	<filter>
+		<filter-name>installFilter</filter-name>
+		<filter-class>org.n52.sos.web.install.InstallFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>installFilter</filter-name>
+		<url-pattern>/install/*</url-pattern>
+	</filter-mapping>
+	<!-- Spring dispatcher servlet -->
+	<servlet>
+		<servlet-name>dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/applicationContext.xml,/WEB-INF/dispatcher-servlet.xml</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>rest-dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>-1</load-on-startup>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/spring/api-view-config.xml,/WEB-INF/spring/api-dispatcher.xml</param-value>
+		</init-param>
+	</servlet>
+	<!-- Admin servlet -->
+	<servlet>
+		<servlet-name>Admin</servlet-name>
+		<servlet-class>org.n52.sos.service.admin.SosAdminService</servlet-class>
+	</servlet>
+	<!-- SOS servlet -->
+	<servlet>
+		<servlet-name>SOS</servlet-name>
+		<servlet-class>org.n52.sos.service.SosService</servlet-class>
+	</servlet>
+	<!-- mappings of endpoints -->
+	<servlet-mapping>
+		<servlet-name>Admin</servlet-name>
+		<url-pattern>/admin</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SOS</servlet-name>
+		<url-pattern>/sos/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SOS</servlet-name>
+		<url-pattern>/service/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>dispatcher</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>rest-dispatcher</servlet-name>
+		<url-pattern>/api/*</url-pattern>
+	</servlet-mapping>
+</web-app>

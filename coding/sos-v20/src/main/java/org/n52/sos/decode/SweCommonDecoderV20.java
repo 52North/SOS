@@ -40,6 +40,7 @@ import net.opengis.swe.x20.AbstractDataComponentDocument;
 import net.opengis.swe.x20.AbstractDataComponentType;
 import net.opengis.swe.x20.AbstractEncodingType;
 import net.opengis.swe.x20.AnyScalarPropertyType;
+import net.opengis.swe.x20.BooleanPropertyType;
 import net.opengis.swe.x20.BooleanType;
 import net.opengis.swe.x20.CategoryType;
 import net.opengis.swe.x20.CountPropertyType;
@@ -73,6 +74,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.sos.exception.ows.InvalidParameterValueException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -182,6 +184,8 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
             return parseAbstractDataComponent(((TextPropertyType)element).getText());
         } else if (element instanceof CountPropertyType) {
             return parseAbstractDataComponent(((CountPropertyType)element).getCount());
+        } else if (element instanceof BooleanPropertyType) {
+            return parseAbstractDataComponent(((BooleanPropertyType)element).getBoolean());
         } else {
             throw new UnsupportedDecoderInputException(this, element);
         }
@@ -409,10 +413,32 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
     }
 
     private SweQuantityRange parseQuantityRange(final QuantityRangeType quantityRange) throws OwsExceptionReport {
-        throw new NotYetSupportedException(SweConstants.EN_QUANTITY_RANGE);
+    	SweQuantityRange sweQuantityRange = new SweQuantityRange();
+    	if (quantityRange.isSetDefinition()) {
+    		sweQuantityRange.setDefinition(quantityRange.getDefinition());
+    	}
+    	if (quantityRange.isSetLabel()) {
+    		sweQuantityRange.setLabel(quantityRange.getLabel());
+    	}
+    	if (!quantityRange.getUom().isNil() && quantityRange.getUom().isSetCode()) {
+    		sweQuantityRange.setUom(quantityRange.getUom().getCode());
+    	}
+    	if (quantityRange.getValue() != null) {
+    		sweQuantityRange.setValue(parseRangeValue(quantityRange.getValue()));
+    	}
+        return sweQuantityRange;
     }
 
-    private SweText parseText(final TextType xbText) {
+    private RangeValue<Double> parseRangeValue(List<?> value) throws CodedException {
+    	if (value == null || value.isEmpty() || value.size() != 2) {
+    		throw new NoApplicableCodeException()
+    			.at("?:QuantityRange/?:value")
+    			.withMessage("The 'swe:value' element of an 'swe:QuantityRange' is not set correctly", "");
+    	}
+		return new RangeValue<Double>(Double.parseDouble(value.get(0).toString()), Double.parseDouble(value.get(1).toString()));
+	}
+
+	private SweText parseText(final TextType xbText) {
         final SweText sosText = new SweText();
         if (xbText.isSetValue()) {
             sosText.setValue(xbText.getValue());
@@ -484,9 +510,8 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
                 throw new InvalidParameterValueException().at(SweConstants.EN_POSITION).withMessage(
                         "Error when parsing the Coordinates of Position: It must be of type Quantity!");
             }
-            return sosCoordinates;
         }
-        return null;
+        return sosCoordinates;
     }
 
     private List<SweField> parseAnyScalarPropertyTypeArray(final AnyScalarPropertyType[] fieldArray)

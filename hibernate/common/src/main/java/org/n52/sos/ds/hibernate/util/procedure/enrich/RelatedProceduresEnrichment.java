@@ -139,16 +139,21 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
                 for (ValidProcedureTime cvpt : tChild.getValidProcedureTimes()) {
                     TimePeriod thisCvptValidTime = new TimePeriod(cvpt.getStartTime(),
                             cvpt.getEndTime());
-                    //make sure this child's validtime is within the parent's valid time,
-                    //if parent has one
-                    if (validTime != null && !thisCvptValidTime.isWithin(validTime)){
-                        continue;
-                    }
-
-                    if (childVpt == null || cvpt.getEndTime() == null ||
-                            (cvpt.getEndTime() != null && childVpt.getEndTime() != null &&
-                            cvpt.getEndTime().after(childVpt.getEndTime()))) {                       
+                    
+                    if (validTime != null && !validTime.isSetEnd() && !thisCvptValidTime.isSetEnd()) {
                         childVpt = cvpt;
+                    } else {
+                        //make sure this child's validtime is within the parent's valid time,
+                        //if parent has one
+                        if (validTime != null && !thisCvptValidTime.isWithin(validTime)){
+                            continue;
+                        }
+    
+                        if (childVpt == null || cvpt.getEndTime() == null ||
+                                (cvpt.getEndTime() != null && childVpt.getEndTime() != null &&
+                                cvpt.getEndTime().after(childVpt.getEndTime()))) {                       
+                            childVpt = cvpt;
+                        }
                     }
                 }
             }
@@ -157,9 +162,9 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
                 //matching child validProcedureTime was found, use it to build procedure description
                 SosProcedureDescription childDescription =
                         converter.createSosProcedureDescriptionFromValidProcedureTime(
-                                child, childVpt, getVersion(), getLocale(), getSession());
+                                child, procedureDescriptionFormat, childVpt, getVersion(), getLocale(), getSession());
                 childProcedures.add(childDescription);                
-            } else {
+            } else  if  (child != null) {
                 //no matching child validProcedureTime, generate the procedure description
                 SosProcedureDescription childDescription = converter.createSosProcedureDescription(
                         child, procedureDescriptionFormat, getVersion(), procedureCache, getLocale(), getSession());

@@ -31,11 +31,13 @@ package org.n52.sos.ogc.om;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.quality.OmResultQuality;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.TVPValue;
@@ -95,6 +97,16 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /** separator of value tuples, which are contained in the resulte element */
     private String tupleSeparator;
+    
+    /** separator of decimal values, which are contained in the resulte element */
+    private String decimalSeparator;
+
+    /**
+     * Measurment quality
+     */
+    private Set<OmResultQuality> qualityList = Sets.newHashSet();
+
+    private String additionalMergeIndicator;
 
     /**
      * constructor
@@ -148,6 +160,10 @@ public class OmObservation extends AbstractFeature implements Serializable {
      */
     public Time getPhenomenonTime() {
         return value.getPhenomenonTime();
+    }
+    
+    public boolean isSetPhenomenonTime() {
+        return getPhenomenonTime() != null && !getPhenomenonTime().isEmpty();
     }
 
     /**
@@ -263,6 +279,25 @@ public class OmObservation extends AbstractFeature implements Serializable {
     public void setTupleSeparator(final String tupleSeparator) {
         this.tupleSeparator = tupleSeparator;
     }
+    
+    /**
+     * Get decimal separator
+     * 
+     * @return the decimalSeparator
+     */
+    public String getDecimalSeparator() {
+        return decimalSeparator;
+    }
+
+    /**
+     * Set decimal separator
+     * 
+     * @param decimalSeparator
+     *            the decimalSeparator to set
+     */
+    public void setDecimalSeparator(final String decimalSeparator) {
+        this.decimalSeparator = decimalSeparator;
+    }
 
     /**
      * Get observation values
@@ -283,6 +318,10 @@ public class OmObservation extends AbstractFeature implements Serializable {
         this.value = value;
     }
 
+    public boolean isSetValue() {
+        return getValue() != null && getValue().isSetValue();
+    }
+
     /**
      * Merge this observation with passed observation
      * 
@@ -290,8 +329,20 @@ public class OmObservation extends AbstractFeature implements Serializable {
      *            Observation to merge
      */
     public void mergeWithObservation(final OmObservation sosObservation) {
-        mergeValues(sosObservation);
+        mergeValues(sosObservation.getValue());
         mergeResultTimes(sosObservation);
+        setObservationTypeToSweArrayObservation();
+    }
+
+    /**
+     * Merge this observation with passed observation
+     * 
+     * @param sosObservation
+     *            Observation to merge
+     */
+    public void mergeWithObservation(ObservationValue<?> observationValue) {
+        mergeValues(observationValue);
+        // mergeResultTimes(sosObservation);
         setObservationTypeToSweArrayObservation();
     }
 
@@ -322,25 +373,25 @@ public class OmObservation extends AbstractFeature implements Serializable {
     /**
      * Merge observation values with passed observation values
      * 
-     * @param sosObservation
+     * @param observationValue
      *            Observation to merge
      */
-    private void mergeValues(final OmObservation sosObservation) {
+    private void mergeValues(final ObservationValue<?> observationValue) {
         TVPValue tvpValue;
         if (getValue() instanceof SingleObservationValue) {
             tvpValue = convertSingleValueToMultiValue((SingleObservationValue<?>) value);
         } else {
             tvpValue = (TVPValue) ((MultiObservationValues<?>) value).getValue();
         }
-        if (sosObservation.getValue() instanceof SingleObservationValue) {
-            final SingleObservationValue<?> singleValue = (SingleObservationValue<?>) sosObservation.getValue();
+        if (observationValue instanceof SingleObservationValue) {
+            final SingleObservationValue<?> singleValue = (SingleObservationValue<?>) observationValue;
             if (!(singleValue.getValue() instanceof NilTemplateValue)) {
                 final TimeValuePair timeValuePair =
                         new TimeValuePair(singleValue.getPhenomenonTime(), singleValue.getValue());
                 tvpValue.addValue(timeValuePair);
             }
-        } else if (sosObservation.getValue() instanceof MultiObservationValues) {
-            final MultiObservationValues<?> multiValue = (MultiObservationValues<?>) sosObservation.getValue();
+        } else if (observationValue instanceof MultiObservationValues) {
+            final MultiObservationValues<?> multiValue = (MultiObservationValues<?>) observationValue;
             tvpValue.addValues(((TVPValue) multiValue.getValue()).getValue());
         }
     }
@@ -389,6 +440,15 @@ public class OmObservation extends AbstractFeature implements Serializable {
      */
     public boolean isSetTokenSeparator() {
         return StringHelper.isNotEmpty(getTokenSeparator());
+    }
+    
+    /**
+     * Check whether decimal separator is set
+     * 
+     * @return <code>true</code>, if decimal separator is set
+     */
+    public boolean isSetDecimalSeparator() {
+        return StringHelper.isNotEmpty(getDecimalSeparator());
     }
 
     /**
@@ -514,22 +574,82 @@ public class OmObservation extends AbstractFeature implements Serializable {
                 && namedValue.getName().getHref().equals(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY)
                 && namedValue.getValue() instanceof GeometryValue;
     }
-    
+
     public OmObservation cloneTemplate() {
         OmObservation clone = new OmObservation();
         clone.setObservationConstellation(this.getObservationConstellation());
+        clone.setParameter(this.getParameter());
         clone.setResultType(this.getResultType());
         clone.setTokenSeparator(this.getTokenSeparator());
         clone.setTupleSeparator(this.getTupleSeparator());
+        clone.setDecimalSeparator(this.getDecimalSeparator());
         return clone;
     }
-    
+
     @Override
     public String getGmlId() {
-    	if (Strings.isNullOrEmpty(super.getGmlId()) && isSetObservationID()) {
-    		setGmlId("o_" + getObservationID());
-    	}
-    	return super.getGmlId();
+        if (Strings.isNullOrEmpty(super.getGmlId()) && isSetObservationID()) {
+            setGmlId("o_" + getObservationID());
+        }
+        return super.getGmlId();
     }
-   
+
+    /**
+     * Set result quality
+     * 
+     * @param qualityList
+     *            Result quality to set
+     */
+    public OmObservation setResultQuality(Set<OmResultQuality> qualityList) {
+        this.qualityList = qualityList;
+        return this;
+    }
+
+    public OmObservation addResultQuality(Set<OmResultQuality> qualityList) {
+        this.qualityList.addAll(qualityList);
+        return this;
+    }
+
+    public OmObservation addResultQuality(OmResultQuality qualityList) {
+        this.qualityList.add(qualityList);
+        return this;
+    }
+
+    /**
+     * Get result quality
+     * 
+     * @return Result quality
+     */
+    public Set<OmResultQuality> getResultQuality() {
+        return qualityList;
+    }
+
+    public boolean isSetResultQuality() {
+        return CollectionHelper.isNotEmpty(getResultQuality());
+    }
+
+    public OmObservation setAdditionalMergeIndicator(String additionalMergeIndicator) {
+        this.additionalMergeIndicator = additionalMergeIndicator;
+        return this;
+    }
+
+    public String getAdditionalMergeIndicator() {
+        return additionalMergeIndicator;
+    }
+
+    public boolean isSetAdditionalMergeIndicator() {
+        return StringHelper.isNotEmpty(getAdditionalMergeIndicator());
+    }
+
+    public boolean checkForMerge(OmObservation observation) {
+        boolean merge = true;
+        if (isSetAdditionalMergeIndicator() && observation.isSetAdditionalMergeIndicator()) {
+            merge = getAdditionalMergeIndicator().equals(observation.getAdditionalMergeIndicator());
+        } else if ((isSetAdditionalMergeIndicator() && !observation.isSetAdditionalMergeIndicator())
+                || (!isSetAdditionalMergeIndicator() && observation.isSetAdditionalMergeIndicator())) {
+            merge = false;
+        }
+        return getObservationConstellation().equals(observation.getObservationConstellation()) && merge;
+    }
+
 }

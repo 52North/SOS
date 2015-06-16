@@ -109,16 +109,16 @@ public abstract class SQLiteManager implements Cleanupable {
                 session.flush();
                 transaction.commit();
                 return result;
-            } catch (final HibernateException e) {
-                if (transaction != null) {
-                    transaction.rollback();
-                }
-                throw e;
-            } catch (final ConnectionProviderException cpe) {
+            } catch (ConnectionProviderException cpe) {
                 if (transaction != null) {
                     transaction.rollback();
                 }
                 throw new RuntimeException(cpe);
+            } catch (Exception e) {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+                throw e;
             } finally {
                 getConnectionProvider().returnConnection(session);
             }

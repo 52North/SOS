@@ -34,6 +34,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.inspire.aqd.persistence.ReportingHeaderSQLiteManager;

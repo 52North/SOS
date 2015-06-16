@@ -48,6 +48,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.streaming.WmlTVPEncoderv20XmlStreamWriter;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.ObservationValue;
@@ -229,21 +230,23 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         xbDefMeasureMetaComponent.getDefaultTVPMeasurementMetadata().getInterpolationType().setTitle("Instantaneous");
         String unit = null;
         if (sosObservation.getValue() instanceof SingleObservationValue) {
-            SingleObservationValue<?> singleObservationValue = (SingleObservationValue<?>) sosObservation.getValue();
-            String time = getTimeString(singleObservationValue.getPhenomenonTime());
-            unit = singleObservationValue.getValue().getUnit();
-            if (sosObservation.getValue().getValue() instanceof QuantityValue) {
-                QuantityValue quantityValue = (QuantityValue) singleObservationValue.getValue();
-                // FIXME equals on BigDecimal and Double.NaN
-                if (!quantityValue.getValue().equals(Double.NaN)) {
-                    String value = Double.toString(quantityValue.getValue().doubleValue());
-                    addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time, value);
-                }
-            } else if (sosObservation.getValue().getValue() instanceof CountValue) {
-                CountValue countValue = (CountValue) singleObservationValue.getValue();
-                if (countValue.getValue() != null) {
-                    String value = Integer.toString(countValue.getValue().intValue());
-                    addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time, value);
+            // time periods can not be set in MeasureTVPType
+            if (sosObservation.getValue().getPhenomenonTime() instanceof TimeInstant) {
+                SingleObservationValue<?> singleObservationValue = (SingleObservationValue<?>) sosObservation.getValue();
+                String time = getTimeString(singleObservationValue.getPhenomenonTime());
+                unit = singleObservationValue.getValue().getUnit();
+                if (sosObservation.getValue().getValue() instanceof QuantityValue) {
+                    QuantityValue quantityValue = (QuantityValue) singleObservationValue.getValue();
+                    if (!quantityValue.getValue().equals(Double.NaN)) {
+                        String value = Double.toString(quantityValue.getValue().doubleValue());
+                        addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time, value);
+                    }
+                } else if (sosObservation.getValue().getValue() instanceof CountValue) {
+                    CountValue countValue = (CountValue) singleObservationValue.getValue();
+                    if (countValue.getValue() != null) {
+                        String value = Integer.toString(countValue.getValue().intValue());
+                        addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time, value);
+                    }
                 }
             }
         } else if (sosObservation.getValue() instanceof MultiObservationValues) {
@@ -252,23 +255,25 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
             List<TimeValuePair> timeValuePairs = tvpValue.getValue();
             unit = tvpValue.getUnit();
             for (TimeValuePair timeValuePair : timeValuePairs) {
-                if (timeValuePair.getValue() instanceof QuantityValue) {
-                    QuantityValue quantityValue = (QuantityValue) timeValuePair.getValue();
-                    // FIXME equals on BigDecimal and Double.NaN
-                    if (!quantityValue.getValue().equals(Double.NaN)) {
-                        timeValuePair.getTime();
-                        String time = getTimeString(timeValuePair.getTime());
-                        String value = Double.toString(quantityValue.getValue().doubleValue());
-                        addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
-                                value);
-                    }
-                } else if (timeValuePair.getValue() instanceof CountValue) {
-                    CountValue countValue = (CountValue) timeValuePair.getValue();
-                    if (countValue.getValue() != null) {
-                        String time = getTimeString(timeValuePair.getTime());
-                        String value = Integer.toString(countValue.getValue().intValue());
-                        addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
-                                value);
+                // time periods can not be set in MeasureTVPType
+                if (timeValuePair.getTime() instanceof TimeInstant) {
+                    if (timeValuePair.getValue() instanceof QuantityValue) {
+                        QuantityValue quantityValue = (QuantityValue) timeValuePair.getValue();
+                        if (!quantityValue.getValue().equals(Double.NaN)) {
+                            timeValuePair.getTime();
+                            String time = getTimeString(timeValuePair.getTime());
+                            String value = Double.toString(quantityValue.getValue().doubleValue());
+                            addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
+                                    value);
+                        }
+                    } else if (timeValuePair.getValue() instanceof CountValue) {
+                        CountValue countValue = (CountValue) timeValuePair.getValue();
+                        if (countValue.getValue() != null) {
+                            String time = getTimeString(timeValuePair.getTime());
+                            String value = Integer.toString(countValue.getValue().intValue());
+                            addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
+                                    value);
+                        }
                     }
                 }
             }
@@ -332,7 +337,6 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
             unit = singleObservationValue.getValue().getUnit();
             if (observationValue.getValue() instanceof QuantityValue) {
                 QuantityValue quantityValue = (QuantityValue) singleObservationValue.getValue();
-                // FIXME equals on BigDecimal and Double.NaN
                 if (!quantityValue.getValue().equals(Double.NaN)) {
                     String value = Double.toString(quantityValue.getValue().doubleValue());
                     addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time, value);
@@ -352,7 +356,6 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
             for (TimeValuePair timeValuePair : timeValuePairs) {
                 if (timeValuePair.getValue() instanceof QuantityValue) {
                     QuantityValue quantityValue = (QuantityValue) timeValuePair.getValue();
-                    // FIXME equals on BigDecimal and Double.NaN
                     if (!quantityValue.getValue().equals(Double.NaN)) {
                         timeValuePair.getTime();
                         String time = getTimeString(timeValuePair.getTime());

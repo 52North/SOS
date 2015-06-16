@@ -257,5 +257,25 @@ public class SosOffering extends AbstractFeature implements Comparable<SosOfferi
         }
         return offeringSet;
     }
+    
+    /**
+     * Creates a set of {@literal SosOffering}s from a map containing
+     * identifiers as keys and names as values.
+     * 
+     * @param map
+     *            the map (may be {@literal null})
+     * 
+     * @return the set (never {@literal null})
+     */
+    public static SosOffering from(SweAbstractSimpleType<?> type) {
+        if (type == null) {
+            return null;
+        }
+        SosOffering sosOffering = new SosOffering(type.getValue().toString(), type.getName());
+        if (type.isSetDescription()) {
+            sosOffering.setDescription(type.getDescription());
+        }
+        return sosOffering;
+    }
 
 }

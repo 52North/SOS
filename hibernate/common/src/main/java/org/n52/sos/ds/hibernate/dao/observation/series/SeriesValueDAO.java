@@ -28,16 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
-import java.util.List;
-
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
-import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
@@ -62,7 +53,7 @@ import org.n52.sos.ds.hibernate.entities.observation.series.ValuedSeriesObservat
  * @since 4.1.0
  *
  */
-public class SeriesValueDAO extends AbstractValueDAO {
+public class SeriesValueDAO extends AbstractSeriesValueDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeriesValueDAO.class);
 
@@ -88,6 +79,11 @@ public class SeriesValueDAO extends AbstractValueDAO {
         return getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session).scroll(
                 ScrollMode.FORWARD_ONLY);
     }
+    
+    @Override
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
+        // nothing  to add
+}
 
     /**
      * Query streaming value for parameter as {@link ScrollableResults}

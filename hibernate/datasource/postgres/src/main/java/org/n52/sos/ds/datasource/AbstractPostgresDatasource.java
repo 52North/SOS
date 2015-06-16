@@ -37,7 +37,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,7 +49,6 @@ import org.n52.sos.exception.ConfigurationException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
@@ -90,6 +88,18 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
 
     public AbstractPostgresDatasource() {
         super();
+        setUsernameDefault(USERNAME_DEFAULT_VALUE);
+        setUsernameDescription(USERNAME_DESCRIPTION);
+        setPasswordDefault(PASSWORD_DEFAULT_VALUE);
+        setPasswordDescription(PASSWORD_DESCRIPTION);
+        setDatabaseDefault(DATABASE_DEFAULT_VALUE);
+        setDatabaseDescription(DATABASE_DESCRIPTION);
+        setHostDefault(HOST_DEFAULT_VALUE);
+        setHostDescription(HOST_DESCRIPTION);
+        setPortDefault(PORT_DEFAULT_VALUE);
+        setPortDescription(PORT_DESCRIPTION);
+        setSchemaDefault(SCHEMA_DEFAULT_VALUE);
+        setSchemaDescription(SCHEMA_DESCRIPTION);
     }
 
     @Override
@@ -109,12 +119,13 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
         try {
             conn = openConnection(settings);
             stmt = conn.createStatement();
-            String schema = (String) settings.get(createSchemaDefinition().getKey());
-            schema = schema == null ? "" : "." + schema;
+            final String schema = (String) settings.get(createSchemaDefinition().getKey());
+            final String schemaPrefix = schema == null ? "" : "\"" + schema + "\".";
+            final String testTable = schemaPrefix + "sos_installer_test_table";
             final String command =
-                    String.format("BEGIN; " + "DROP TABLE IF EXISTS \"%1$ssos_installer_test_table\"; "
-                            + "CREATE TABLE \"%1$ssos_installer_test_table\" (id integer NOT NULL); "
-                            + "DROP TABLE \"%1$ssos_installer_test_table\"; " + "END;", schema);
+                    String.format("BEGIN; " + "DROP TABLE IF EXISTS %1$s; "
+                            + "CREATE TABLE %1$s (id integer NOT NULL); "
+                            + "DROP TABLE %1$s; " + "END;", testTable);
             stmt.execute(command);
             return true;
         } catch (SQLException e) {

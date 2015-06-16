@@ -1,27 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>52n-sos</artifactId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
     <artifactId>extensions</artifactId>
     <packaging>pom</packaging>
     <name>52°North SOS - Extension Modules</name>
     <description>52°North SOS - Extension Modules</description>
     <modules>
+    	<module>aqd</module>
         <module>gda</module>
         <module>do</module>
-        <module>aqd</module>
+        <module>inspire</module>
     </modules>
-    <profiles>
-        <profile>
-            <id>inspire</id>
-            <modules>
-                <module>inspire</module>
-            </modules>
-        </profile>
-    </profiles>
 </project>

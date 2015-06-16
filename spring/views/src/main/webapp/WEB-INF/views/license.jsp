@@ -95,12 +95,12 @@
 		</tr>
 		<tr>
 			<td><a href='http://www.mchange.com/projects/c3p0/'>c3p0:c3p0</a></td>
-			<td>0.9.1</td>
+			<td>0.9.2.1</td>
 			<td><a href='http://www.gnu.org/licenses/lgpl-2.1.html'>LGPLv2.1</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://logback.qos.ch/'>ch.qos.logback:logback-classic</a></td>
-			<td>1.0.0</td>
+			<td>1.0.13</td>
 			<td>
 				<a href='http://www.eclipse.org/legal/epl-v10.html'>EPLv1</a>
 				/<a href="http://www.gnu.org/licenses/lgpl-2.1.html">LGPL</a>
@@ -108,7 +108,7 @@
 		</tr>
 		<tr>
 			<td><a href='http://logback.qos.ch/'>ch.qos.logback:logback-core</a></td>
-			<td>1.0.0</td>
+			<td>1.0.13</td>
 			<td>
 				<a href='http://www.eclipse.org/legal/epl-v10.html'>EPLv1</a>
 				/<a href="http://www.gnu.org/licenses/lgpl-2.1.html">LGPL</a>
@@ -121,7 +121,7 @@
 		</tr>
 		<tr>
 			<td><a href='http://www.vividsolutions.com/jts/jtshome.htm'>com.vividsolutions:jts</a></td>
-			<td>1.12</td>
+			<td>1.13</td>
 			<td><a href='http://www.gnu.org/licenses/lgpl-2.1.html'>LGPL</a></td>
 		</tr>
 		<tr>
@@ -146,12 +146,12 @@
 		</tr>
 		<tr>
 			<td><a href='http://www.oracle.com/technetwork/java/javaee/jsp/index.html'>javax.servlet:jsp-api</a></td>
-			<td>2.0</td>
+			<td>2.5</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://joda-time.sourceforge.net/'>joda-time:joda-time</a></td>
-			<td>1.6</td>
+			<td>2.3</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache License, Version 2.0</a></td>
 		</tr>
 		<tr>
@@ -166,17 +166,17 @@
 		</tr>
 		<tr>
 			<td><a href='http://hc.apache.org/'>org.apache.httpcomponents:httpclient</a></td>
-			<td>4.2.2</td>
+			<td>4.2.5</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://hc.apache.org/'>org.apache.httpcomponents:httpcore</a></td>
-			<td>4.2.2</td>
+			<td>4.2.4</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://xmlbeans.apache.org/'>org.apache.xmlbeans:xmlbeans</a></td>
-			<td>2.4.0</td>
+			<td>2.6.0</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
 		</tr>
 		<tr>
@@ -191,32 +191,32 @@
 		</tr>
 		<tr>
 			<td><a href='http://www.hibernatespatial.org/'>org.hibernate:hibernate-spatial</a></td>
-			<td>4.0-M1</td>
+			<td>4.3-52N</td>
 			<td><a href='http://www.gnu.org/licenses/lgpl-2.1.html'>LGPLv2.1</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://www.hibernate.org/'>org.hibernate:hibernate-c3p0</a></td>
-			<td>4.1.4.Final</td>
+			<td>4.3.5.Final</td>
 			<td><a href='http://www.gnu.org/licenses/lgpl-2.1.html'>LGPLv2.1</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://www.hibernate.org/'>org.hibernate:hibernate-core</a></td>
-			<td>4.1.4.Final</td>
+			<td>4.3.5.Final</td>
 			<td><a href='http://www.gnu.org/licenses/lgpl-2.1.html'>LGPLv2.1</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://www.hibernate.org/'>org.hibernate.common:hibernate-commons-annotations</a></td>
-			<td>4.0.1.Final</td>
+			<td>4.0.4.Final</td>
 			<td><a href='http://www.gnu.org/licenses/lgpl-2.1.html'>LGPLv2.1</a></td>
 		</tr>
 		<tr>
-			<td><a href='http://www.hibernate.org/'>org.hibernate.javax.persistence:hibernate-jpa-2.0-api</a></td>
-			<td>1.0.1.Final</td>
+			<td><a href='http://www.hibernate.org/'>org.hibernate.javax.persistence:hibernate-jpa-2.1-api</a></td>
+			<td>1.0.0.Final</td>
 			<td><a href='http://www.eclipse.org/org/documents/edl-v10.php'>Eclipse Distribution License - v 1.0</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://www.csg.ci.i.u-tokyo.ac.jp/~chiba/javassist/'>org.javassist:javassist</a></td>
-			<td>3.15.0-GA</td>
+			<td>3.18.1-GA</td>
 			<td>
 				<a href='http://www.mozilla.org/MPL/1.1/index.txt'>MPL 1.1</a>
 				/<a href="http://www.gnu.org/licenses/lgpl-2.1.html">LGPLv2.1</a>
@@ -225,207 +225,207 @@
 		</tr>
 		<tr>
 			<td><a href='http://www.jboss.org/'>org.jboss.logging:jboss-logging</a></td>
-			<td>3.1.0.GA</td>
+			<td>3.1.3.GA</td>
 			<td><a href='http://www.gnu.org/licenses/lgpl-2.1.html'>LGPLv2.1</a></td>
 		</tr>
 		<tr>
-			<td><a href='https://github.com/jboss/jboss-transaction-api_spec'>org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec</a></td>
+			<td><a href='https://github.com/jboss/jboss-transaction-api_spec'>org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec</a></td>
 			<td>1.0.0.Final</td>
 			<td><a href='https://glassfish.dev.java.net/nonav/public/CDDL+GPL.html'>CDDL + GPLv2 with classpath exception</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb:52n-xml-filter-v20</a></td>
-			<td>1.1.2</td>
+			<td>1.1.5</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb:52n-xml-gml-v311</a></td>
-			<td>1.1.2</td>
+			<td>1.1.5</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb:52n-xml-gml-v321</a></td>
-			<td>1.1.2</td>
+			<td>1.1.5</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb:52n-xml-om-v100</a></td>
-			<td>1.1.2</td>
+			<td>1.1.5</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb:52n-xml-om-v20</a></td>
-			<td>1.1.2</td>
+			<td>1.1.5</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb:52n-xml-ows-v110</a></td>
-			<td>1.1.2</td>
+			<td>1.1.5</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb:52n-xml-sampling-v100</a></td>
-			<td>1.1.2</td>
+			<td>1.1.5</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb:52n-xml-sampling-v20</a></td>
-			<td>1.1.2</td>
+			<td>1.1.5</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb:52n-xml-sensorML-v101</a></td>
-			<td>1.1.2</td>
+			<td>1.1.5</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb:52n-xml-soap-v12</a></td>
-			<td>1.1.2</td>
+			<td>1.1.5</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb:52n-xml-sos-v100</a></td>
-			<td>1.1.2</td>
+			<td>1.1.5</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb:52n-xml-sos-v20</a></td>
-			<td>1.1.2</td>
+			<td>1.1.5</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb:52n-xml-sweCommon-v101</a></td>
-			<td>1.1.2</td>
+			<td>1.1.5</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb:52n-xml-sweCommon-v20</a></td>
-			<td>1.1.2</td>
+			<td>1.1.5</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb:52n-xml-swes-v20</a></td>
-			<td>1.1.2</td>
+			<td>1.1.5</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb:52n-xml-xlink-v110</a></td>
-			<td>1.0.0</td>
+			<td>1.1.5</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-admin</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-api</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-cache</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-coding-ows-v110</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-coding-sensorML-v101</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-coding-sos-v100</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-coding-sos-v20</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-config-sqlite</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-core-v100</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-core-v20</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-hibernate-api</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-hibernate-common</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-hibernate-core</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-hibernate-dialect</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-hibernate-feature</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-profile</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-spring-admin-controller</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-spring-admin-views</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-spring-common-controller</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-spring-common-views</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-spring-installer-controller</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://52north.org/'>org.n52.sensorweb.sos:52n-sos-spring-installer-views</a></td>
-			<td>4.0.0-SNAPSHOT</td>
+			<td>4.1.0</td>
 			<td><a href='http://www.gnu.org/licenses/gpl-2.0.html'>GPLv2</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://postgis.net/'>org.postgis:postgis-jdbc</a></td>
-			<td>2.0.1</td>
+			<td>2.1.3</td>
 			<td><a href='http://www.gnu.org/licenses/lgpl-2.1.html'>LGPLv2.1</a></td>
 		</tr>
 		<tr>
@@ -450,42 +450,37 @@
 		</tr>
 		<tr>
 			<td><a href='http://www.springsource.org/'>org.springframework:spring-aop</a></td>
-			<td>3.0.7.RELEASE</td>
-			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
-		</tr>
-		<tr>
-			<td><a href='http://www.springsource.org/'>org.springframework:spring-aop</a></td>
-			<td>3.1.2.RELEASE</td>
+			<td>3.2.6.RELEASE</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://www.springsource.org/'>org.springframework:spring-asm</a></td>
-			<td>3.1.2.RELEASE</td>
+			<td>3.2.6.RELEASE</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://www.springsource.org/'>org.springframework:spring-beans</a></td>
-			<td>3.1.2.RELEASE</td>
+			<td>3.2.6.RELEASE</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://www.springsource.org/'>org.springframework:spring-context</a></td>
-			<td>3.1.2.RELEASE</td>
+			<td>3.2.6.RELEASE</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://www.springsource.org/'>org.springframework:spring-context-support</a></td>
-			<td>3.1.2.RELEASE</td>
+			<td>3.2.6.RELEASE</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://www.springsource.org/'>org.springframework:spring-core</a></td>
-			<td>3.1.2.RELEASE</td>
+			<td>3.2.6.RELEASE</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://www.springsource.org/'>org.springframework:spring-expression</a></td>
-			<td>3.1.2.RELEASE</td>
+			<td>3.2.6.RELEASE</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
 		</tr>
 		<tr>
@@ -500,37 +495,37 @@
 		</tr>
 		<tr>
 			<td><a href='http://www.springsource.org/'>org.springframework:spring-web</a></td>
-			<td>3.1.2.RELEASE</td>
+			<td>3.2.6.RELEASE</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://www.springsource.org/'>org.springframework:spring-webmvc</a></td>
-			<td>3.1.2.RELEASE</td>
+			<td>3.2.6.RELEASE</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://www.springsource.org/'>org.springframework.security:spring-security-acl</a></td>
-			<td>3.1.2.RELEASE</td>
+			<td>3.1.4.RELEASE</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://www.springsource.org/'>org.springframework.security:spring-security-config</a></td>
-			<td>3.1.2.RELEASE</td>
+			<td>3.1.4.RELEASE</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://www.springsource.org/'>org.springframework.security:spring-security-core</a></td>
-			<td>3.1.2.RELEASE</td>
+			<td>3.1.4.RELEASE</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://www.springsource.org/'>org.springframework.security:spring-security-taglibs</a></td>
-			<td>3.1.2.RELEASE</td>
+			<td>3.1.4.RELEASE</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
 		</tr>
 		<tr>
 			<td><a href='http://www.springsource.org/'>org.springframework.security:spring-security-web</a></td>
-			<td>3.1.2.RELEASE</td>
+			<td>3.1.4.RELEASE</td>
 			<td><a href='http://www.apache.org/licenses/LICENSE-2.0.html'>Apache</a></td>
 		</tr>
 		<tr>

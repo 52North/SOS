@@ -63,7 +63,8 @@ public abstract class AbstractSettingValue<T> implements SettingValue<T>, Serial
 
     @Override
     public String toString() {
-        return String.format("%s[key=%s, value=%s]", getClass().getSimpleName(), getKey(), getValue());
+        return String.format("%s[type=%s, key=%s, value=%s]", getClass().getSimpleName(), getType(),
+        		getKey(), getValue());
     }
 
     @Override

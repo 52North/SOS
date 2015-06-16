@@ -30,6 +30,7 @@ package org.n52.sos.encode.xml.stream.inspire.aqd;
 
 import java.io.OutputStream;
 import java.util.Collections;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -49,6 +50,8 @@ import org.n52.sos.inspire.aqd.InspireID;
 import org.n52.sos.inspire.aqd.Pronunciation;
 import org.n52.sos.inspire.aqd.RelatedParty;
 import org.n52.sos.inspire.aqd.Spelling;
+import org.n52.sos.iso.GcoConstants;
+import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
@@ -95,10 +98,10 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
                       EncodingValues encodingValues)
             throws XMLStreamException, OwsExceptionReport {
         this.init(out, encodingValues);
-        this.encodeReportingHeader(elementToStream);
+        this.encodeReportingHeader(elementToStream, encodingValues);
     }
 
-    private void encodeReportingHeader(EReportingHeader h)
+    private void encodeReportingHeader(EReportingHeader h, EncodingValues encodingValues)
             throws XMLStreamException, DateTimeFormatException {
 
         start(AqdConstants.QN_AQD_REPORTING_HEADER);
@@ -106,12 +109,14 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
         namespace(AqdConstants.NS_AQD_PREFIX, AqdConstants.NS_AQD);
         namespace(AqdConstants.NS_BASE_PREFIX, AqdConstants.NS_BASE);
         namespace(AqdConstants.NS_BASE2_PREFIX, AqdConstants.NS_BASE2);
-        namespace(AqdConstants.NS_GCO_PREFIX, AqdConstants.NS_GCO);
         namespace(AqdConstants.NS_GN_PREFIX, AqdConstants.NS_GN);
         namespace(GmlConstants.NS_GML_PREFIX, GmlConstants.NS_GML_32);
         namespace(W3CConstants.NS_XLINK_PREFIX, W3CConstants.NS_XLINK);
         namespace(W3CConstants.NS_XSI_PREFIX, W3CConstants.NS_XSI);
-        schemaLocation(Collections.singleton(AqdConstants.NS_AQD_SCHEMA_LOCATION));
+        namespace(GcoConstants.NS_GCO_PREFIX, GcoConstants.NS_GCO);
+        if (encodingValues.isAddSchemaLocation()) {
+            schemaLocation(Collections.singleton(AqdConstants.NS_AQD_SCHEMA_LOCATION));
+        }
 
         attr(GmlConstants.QN_ID_32, getGMLId(h));
 
@@ -119,7 +124,9 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
         encodeInpireID(h.getInspireID());
         encodeReportingAuthority(h.getReportingAuthority());
         encodeReportingPeriod(h.getReportingPeriod());
-
+        if (h.isSetContent()) {
+            encodeContent(h.getContent());
+        }
         end(AqdConstants.QN_AQD_REPORTING_HEADER);
     }
 
@@ -191,6 +198,18 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
         end(AqdConstants.QN_BASE2_RELATED_PARTY);
     }
 
+    private void encodeContent(List<Referenceable<AbstractFeature>> content) throws XMLStreamException {
+        for (Referenceable<AbstractFeature> v : content) {
+            if (v.isReference()) {
+                empty(AqdConstants.QN_AQD_CONTENT);
+                encodeReferenceAttr(v.getReference());
+            } else {
+                empty(AqdConstants.QN_AQD_CONTENT);
+                attr(W3CConstants.QN_XLINK_HREF, v.getInstance().get().getIdentifier());
+            }
+        }
+    }
+
     private void encodeReferenceAttr(Reference v)
             throws XMLStreamException {
         attr(W3CConstants.QN_XLINK_HREF, v.getHref().toString());
@@ -244,7 +263,7 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
         if (v.isNil()) {
             attr(W3CConstants.QN_XSI_NIL, Boolean.toString(true));
             if (v.getNilReason().isPresent()) {
-                attr(AqdConstants.QN_GCO_NIL_REASON, v.getNilReason().get());
+                attr(GcoConstants.QN_GCO_NIL_REASON, v.getNilReason().get());
             }
         }
     }
@@ -257,9 +276,9 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
                 encodeGCONilAttr(v);
             } else {
                 start(qn);
-                start(AqdConstants.QN_GCO_CHARACTER_STRING);
+                start(GcoConstants.QN_GCO_CHARACTER_STRING);
                 chars(v.get());
-                endInline(AqdConstants.QN_GCO_CHARACTER_STRING);
+                endInline(GcoConstants.QN_GCO_CHARACTER_STRING);
                 end(qn);
             }
         }
@@ -382,7 +401,11 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
         encodeNillableCodeType(AqdConstants.QN_GN_NAME_STATUS, v.getNameStatus());
         encodeNillableString(AqdConstants.QN_GN_SOURCE_OF_NAME, v.getSourceOfName());
         encodeNillablePronunciation(AqdConstants.QN_GN_PRONUNCIATION, v.getPronunciation());
-        encodeNillableSpelling(AqdConstants.QN_GN_SPELLING, v.getSpelling());
+        for (Spelling value : v.getSpelling()) {
+            start(AqdConstants.QN_GN_SPELLING);
+            encodeSpellingOfName(value);
+            end(AqdConstants.QN_GN_SPELLING);
+        }
         encodeNillableCodeType(AqdConstants.QN_GN_GRAMMATICAL_GENDER, v.getGrammaticalGender());
         encodeNillableCodeType(AqdConstants.QN_GN_GRAMMATICAL_NUMBER, v.getGrammaticalNumber());
         end(AqdConstants.QN_GN_GEOGRAPHICAL_NAME);
@@ -489,4 +512,5 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
                    DateTimeFormatException {
         chars(DateTimeHelper.formatDateTime2String(time, format));
     }
+    
 }

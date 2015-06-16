@@ -42,17 +42,17 @@ import org.n52.sos.util.http.MediaType;
  * 
  * @since 4.0.0
  */
-public class XmlResponseWriter implements ResponseWriter<XmlObject> {
+public class XmlResponseWriter extends AbstractResponseWriter<XmlObject> {
     
     private MediaType contentType;
 
-    @Override
-    public Class<XmlObject> getType() {
-        return XmlObject.class;
-    }
+//    @Override
+//    public Class<XmlObject> getType() {
+//        return XmlObject.class;
+//    }
 
     @Override
-    public void write(XmlObject xml, OutputStream out) throws IOException {
+    public void write(XmlObject xml, OutputStream out, ResponseProxy responseProxy) throws IOException {
         xml.save(out, XmlOptionsHelper.getInstance().getXmlOptions());
     }
 

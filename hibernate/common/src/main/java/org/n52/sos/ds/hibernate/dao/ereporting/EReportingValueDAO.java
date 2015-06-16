@@ -28,8 +28,23 @@
  */
 package org.n52.sos.ds.hibernate.dao.ereporting;
 
+import org.hibernate.Criteria;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueDAO;
+import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesValueDAO;
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.request.GetObservationRequest;
 
-public class EReportingValueDAO extends SeriesValueDAO {
+public class EReportingValueDAO extends AbstractSeriesValueDAO {
+
+	@Override
+	protected Class<?> getSeriesValueClass() {
+		return EReportingValue.class;
+	}
+	
+        @Override
+        protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
+            // add quality restrictions
+            EReportingDaoHelper.addValidityAndVerificationRestrictions(c, request);
+        }
 
 }

@@ -29,14 +29,13 @@
 package org.n52.sos.ds.hibernate.values;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
@@ -46,15 +45,9 @@ import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservati
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.Value;
@@ -63,16 +56,18 @@ import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.OMHelper;
 
-import com.vividsolutions.jts.geom.Geometry;
+import com.google.common.collect.Maps;
 
 /**
- * Abstract class for streaming values
+ * Abstract class for Hibernate streaming values
  *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
  */
-public abstract class AbstractHibernateStreamingValue extends StreamingValue {
+public abstract class AbstractHibernateStreamingValue extends StreamingValue<AbstractValue> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHibernateStreamingValue.class);
 
     private static final long serialVersionUID = -8355955808723620476L;
 
@@ -80,11 +75,46 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
 
     protected Session session;
 
-    protected OmObservation observationTemplate;
-
     protected final GetObservationRequest request;
 
     protected Criterion temporalFilterCriterion;
+
+    @Override
+    public Collection<OmObservation> mergeObservation() throws OwsExceptionReport {
+
+        Map<String, OmObservation> observations = Maps.newHashMap();
+        while (hasNextValue()) {
+            AbstractValue nextEntity = nextEntity();
+            OmObservation observation = null;
+            if (observations.containsKey(nextEntity.getDiscriminator())) {
+                observation = observations.get(nextEntity.getDiscriminator());
+            } else {
+                observation = observationTemplate.cloneTemplate();
+                addSpecificValuesToObservation(observation, nextEntity, request.getExtensions());
+                observations.put(nextEntity.getDiscriminator(), observation);
+            }
+            nextEntity.mergeValueToObservation(observation, getResponseFormat());
+            sessionHolder.getSession().evict(nextEntity);
+        }
+        return observations.values();
+    }
+
+    private void addSpecificValuesToObservation(OmObservation observation, AbstractValue value, SwesExtensions swesExtensions) {
+        boolean newSession = false;
+        try {
+            if (session == null) {
+                session = sessionHolder.getSession();
+                newSession = true;
+            }
+            value.addValueSpecificDataToObservation(observation, session, swesExtensions);
+        } catch (OwsExceptionReport owse) {
+            LOGGER.error("Error while querying times", owse);
+        } finally {
+            if (newSession) {
+                sessionHolder.returnSession(session);
+            }
+        }
+    }
 
     /**
      * constructor
@@ -208,14 +238,15 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
      */
     protected Time createPhenomenonTime(TemporalReferencedObservation minTime, TemporalReferencedObservation maxTime) {
         // create time element
-        final DateTime phenStartTime = new DateTime(minTime.getPhenomenonTimeStart(), DateTimeZone.UTC);
+
+        final DateTime phenStartTime = DateTimeHelper.makeDateTime(minTime.getPhenomenonTimeStart());
         DateTime phenEndTime;
         if (maxTime.getPhenomenonTimeEnd() != null) {
-            phenEndTime = new DateTime(maxTime.getPhenomenonTimeEnd(), DateTimeZone.UTC);
+            phenEndTime = DateTimeHelper.makeDateTime(minTime.getPhenomenonTimeEnd());
         } else {
             phenEndTime = phenStartTime;
         }
-        return createTime(phenStartTime, phenEndTime);
+        return GmlHelper.createTime(phenStartTime, phenEndTime);
     }
 
     /**
@@ -226,7 +257,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
      * @return result time
      */
     protected TimeInstant createResutlTime(TemporalReferencedObservation maxTime) {
-        DateTime dateTime = new DateTime(maxTime.getResultTime(), DateTimeZone.UTC);
+        DateTime dateTime = DateTimeHelper.makeDateTime(maxTime.getResultTime());
         return new TimeInstant(dateTime);
     }
 
@@ -254,9 +285,9 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue {
     protected Time createValidTime(TemporalReferencedObservation minTime, TemporalReferencedObservation maxTime) {
         // create time element
         if (minTime.getValidTimeStart() != null && maxTime.getValidTimeEnd() != null) {
-            final DateTime startTime = new DateTime(minTime.getValidTimeStart(), DateTimeZone.UTC);
-            DateTime endTime = new DateTime(maxTime.getValidTimeEnd(), DateTimeZone.UTC);
-            return createTime(startTime, endTime);
+            final DateTime startTime = DateTimeHelper.makeDateTime(minTime.getValidTimeStart());
+            DateTime endTime = DateTimeHelper.makeDateTime(minTime.getValidTimeEnd());
+            return GmlHelper.createTime(startTime, endTime);
         }
         return null;
     }

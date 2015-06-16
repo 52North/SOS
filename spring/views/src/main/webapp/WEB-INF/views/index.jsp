@@ -49,19 +49,19 @@
 	<th style="padding:3px;">Name</th><th style="padding:3px;">Organisation</th>
 </tr>
 <tr>
-	<td style="padding:3px;">Carsten Hollmann</td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
+	<td style="padding:3px;"><a href="http://52north.org/about/52-north-team/25-carsten-hollmann" title="52&deg;North Carsten Hollmann">Carsten Hollmann</a></td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
 </tr>
 <tr>
-	<td style="padding:3px;">Eike Hinderk J&uuml;rrens</td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
+	<td style="padding:3px;"><a href="http://52north.org/about/52-north-team/14-eike-hinderk-juerrens" title="52&deg;North Eike Hinderk J&uuml;rrens">Eike Hinderk J&uuml;rrens</a></td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
 </tr>
 <tr>
-	<td style="padding:3px;">Christian Autermann</td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
+	<td style="padding:3px;"><a href="http://52north.org/about/52-north-team/30-autermann-christian">Christian Autermann</a></td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
 </tr>
 <tr>
-	<td style="padding:3px;">Christoph Stasch</td><td style="padding:3px;"><a href="http://www.uni-muenster.de/Geoinformatics/en/index.html" title="IfGI">Institute for Geoinformatics (IfGI)</a></td>
+	<td style="padding:3px;"><a href="http://52north.org/about/52-north-team/31-stasch-christoph" title="52&deg;North Christoph Stasch">Christoph Stasch</a></td><td style="padding:3px;"><a href="http://www.uni-muenster.de/Geoinformatics/en/index.html" title="IfGI">Institute for Geoinformatics (IfGI)</a></td>
 </tr>
 <tr>
-	<td style="padding:3px;">Shane StClair</td><td style="padding:3px;"><a href="http://www.axiomalaska.com/" title="Axiom Alaska">Axiom Consulting &amp; Design</a></td>
+	<td style="padding:3px;">Shane StClair</td><td style="padding:3px;"><a href="http://www.axiomdatascience.com" title="Axiom Data Science">Axiom Data Science</a></td>
 </tr>
 <tr>
 	<td style="padding:3px;">Victor Gonz&aacute;lez</td><td style="padding:3px;"><a href="http://geomati.co/en" title="geomati.co">geomati.co</a></td>
@@ -74,6 +74,12 @@
 </tr>
 <tr>
 	<td style="padding:3px;">Alexander Kmoch</td><td style="padding:3px;"><a target="_blank" href="http://www.zgis.at">Z_GIS</a>,  <a target="_blank" href="http://www.uni-salzburg.at">Universit&auml;t Salzburg</a> (Austria and Germany)</td>
+</tr>
+<tr>
+	<td style="padding:3px;">Carl Schroedl</td><td style="padding:3px;">Center for Integrated Data Analytics (<a target="_blank" href="http://cida.usgs.gov">CIDA</a>), <a target="_blank" href="http://www.usgs.gov">USGS</a></td>
+</tr>
+<tr>
+	<td style="padding:3px;">Jordan Walker</td><td style="padding:3px;">Center for Integrated Data Analytics (<a target="_blank" href="http://cida.usgs.gov">CIDA</a>), <a target="_blank" href="http://www.usgs.gov">USGS</a></td>
 </tr>
 </table>
 
@@ -94,13 +100,13 @@
 <table style="background-color:white;width:100%;">
 	<tr>
 		<td align="center" style="width:25%;"><a target="_blank" href="http://www.uni-muenster.de/Geoinformatics/en/index.html"><img alt="IfGI"  align="middle" width="200" src="static/images/contribution/logo_ifgi.png"/></a></td>
-		<td align="center" style="width:25%;"><a target="_blank" href="http://www.axiomalaska.com/"><img alt="Axiom"  align="middle" width="85" src="static/images/contribution/axiom.png" /></a></td>
+		<td align="center" style="width:25%;"><a target="_blank" href="http://www.axiomdatascience.com"><img alt="Axiom Data Science"  align="middle" width="85" src="static/images/contribution/axiom.png" /></a></td>
 		<td align="center" style="width:25%;"><a target="_blank" href="http://geomati.co"><img alt="geomati.co"  align="middle" width="85" src="static/images/contribution/logo_geomatico_256.png" /></a></td>
 		<td align="center" style="width:25%;"><a target="_blank" href="http://www.itg.es/"><img alt="ITG"  align="middle" width="104" src="static/images/contribution/Logo_ITG_vectorizado.png" /></a></td>
 	</tr>
 	<tr>
 		<td align="center" style="width:25%;"><a target="_blank" href="http://www.zgis.at"><img alt="ZIGS"  align="middle" width="128" src="static/images/contribution/UniSalzburgZGIS_1.jpg"/></a></td>
-		<td align="center" style="width:25%;"><a target="_blank" href="<c:url value="/get-involved" />">Your logo?!<br/>Get involved!</a></td>
+		<td align="center" style="width:25%;"><a href="<c:url value="/get-involved" />">Your logo?!<br/>Get involved!</a></td>
 		<td align="center" style="width:25%;"><img alt="Placeholder" align="middle" width="85" src="static/images/contribution/placeholder.png" /></td>
 	</tr>
 </table>
@@ -112,6 +118,10 @@
 <br/>
 
 <table style="background-color:white;width:100%;">
+	<tr>
+		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.nexosproject.eu/"><img alt="NeXOS - Next generation, Cost-effective, Compact, Multifunctional Web Enabled Ocean Sensor Systems Empowering Marine, Maritime and Fisheries Management" align="middle" width="172" src="static/images/funding/logo_nexos.png" /></a></td>
+		<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a target="_blank" href="http://www.nexosproject.eu/">NeXOS</a> (co-funded by the European Commission under the grant agreement n&deg;614102)</td>
+	</tr>
 	<tr>
 		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.eo2heaven.org/"><img alt="EO2HEAVEN - Earth Observation and ENVironmental Modeling for the Mitigation of HEAlth Risks" align="middle" width="172" src="static/images/funding/logo_eo2heaven_200px.png" /></a></td>
 		<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a target="_blank" href="http://www.eo2heaven.org/">EO2HEAVEN</a> (co-funded by the European Commission under the grant agreement n&deg;244100)</td>
@@ -139,6 +149,10 @@
 	<tr>
 		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.wupperverband.de"><img alt="Wupperverband" align="middle" width="196" src="static/images/funding/logo_wv.jpg" /></a></td>
 		<td style="padding:3px;width:70%;">The <a target="_blank" href="http://www.wupperverband.de/">Wupperverband</a> for water, humans and the environment (Germany)</td>
+	</tr>
+	<tr>
+		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.irceline.be/en"><img alt="Belgian Interregional Environment Agency (IRCEL - CELINE)" align="middle" width="130" src="static/images/funding/logo_irceline_no_text.png" /></a></td>
+		<td style="padding:3px;width:70%;">The <a href="http://www.irceline.be/en" target="_blank" title="Belgian Interregional Environment Agency (IRCEL - CELINE)">Belgian Interregional Environment Agency (IRCEL - CELINE)</a> is primarily active with the domain of air quality (modelling, forecasts, informing the public on the state of their air quality, e-reporting to the EU under the air quality directives, participating in scientific research on air quality, etc.). IRCEL – CELINE is a permanent cooperation between three regional environment agencies: <a href="http://www.awac.be/" title="Agence wallonne de l&#39Air et du Climat (AWAC)">Agence wallonne de l&#39Air et du Climat (AWAC)</a>, <a href="http://www.ibgebim.be/" title="Bruxelles Environnement - Leefmilieu Brussel">Bruxelles Environnement - Leefmilieu Brussel</a> and <a href="http://www.vmm.be/" title="Vlaamse Milieumaatschappij (VMM)">Vlaamse Milieumaatschappij (VMM)</a>.</td>
 	</tr>
 	<tr>
 		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.ivl.se/english"><img alt="IVL Swedish Environmental Research Institute" align="middle" width="196" src="static/images/funding/ivl_eng_rgb_70mm.png" /></a></td>

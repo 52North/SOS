@@ -106,7 +106,7 @@ public class EReportingHeaderJSONEncoderTest {
                                                 .setNativeness(new CodeType("<asdfasdf"))
                                                 .setNameStatus(Nillable
                                                         .<CodeType>unknown())
-                                                .setSpelling(new Spelling()
+                                                .addSpelling(new Spelling()
                                                         .setScript("asdfasdf")
                                                         .setText("asdfasdf")
                                                         .setTransliterationScheme("asdfasdfasdf")
@@ -124,7 +124,7 @@ public class EReportingHeaderJSONEncoderTest {
                                                 .setNativeness(new CodeType("<asdfasdf"))
                                                 .setNameStatus(Nillable
                                                         .<CodeType>unknown())
-                                                .setSpelling(new Spelling()
+                                                .addSpelling(new Spelling()
                                                         .setScript("asdfasdf")
                                                         .setText("asdfasdf")
                                                         .setTransliterationScheme("asdfasdfasdf")
@@ -143,7 +143,7 @@ public class EReportingHeaderJSONEncoderTest {
                                                 .setNativeness(new CodeType("<asdfasdf"))
                                                 .setNameStatus(Nillable
                                                         .<CodeType>unknown())
-                                                .setSpelling(new Spelling()
+                                                .addSpelling(new Spelling()
                                                         .setScript("asdfasdf")
                                                         .setText("asdfasdf")
                                                         .setTransliterationScheme("asdfasdfasdf")
@@ -162,7 +162,7 @@ public class EReportingHeaderJSONEncoderTest {
                                                 .setNativeness(new CodeType("<asdfasdf"))
                                                 .setNameStatus(Nillable
                                                         .<CodeType>unknown())
-                                                .setSpelling(new Spelling()
+                                                .addSpelling(new Spelling()
                                                         .setScript("asdfasdf")
                                                         .setText("asdfasdf")
                                                         .setTransliterationScheme("asdfasdfasdf")

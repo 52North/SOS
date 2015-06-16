@@ -27,9 +27,9 @@
 -- Public License for more details.
 --
 
-ALTER TABLE observation ADD samplingGeometry SDO_GEOMETRY;
-
 UPDATE observation o SET (samplingGeometry) = (SELECT spf.geom FROM spatialFilteringProfile spf WHERE o.observationid = spf.observation)
 WHERE EXISTS (SELECT * FROM spatialFilteringProfile spf WHERE o.observationid = spf.observation);
 
 DROP TABLE spatialFilteringProfile;
+
+DROP sequence spatialFilteringProfileId_seq;

@@ -27,8 +27,11 @@
 -- Public License for more details.
 --
 
-ALTER TABLE sos.dbo.observation ADD samplingGeometry GEOMETRY;
+use sos
+-- change schema 'sos' to your schema if necessary
 
-UPDATE sos.dbo.observation SET sos.dbo.observation.samplingGeometry = spf.geom FROM sos.dbo.spatialFilteringProfile spf WHERE sos.dbo.observation.observationid = spf.observation;
+ALTER TABLE dbo.observation ADD samplingGeometry GEOMETRY;
 
-DROP TABLE sos.dbo.spatialFilteringProfile;
+UPDATE dbo.observation SET samplingGeometry = spf.geom FROM dbo.spatialFilteringProfile spf WHERE dbo.observation.observationid = spf.observation;
+
+DROP TABLE dbo.spatialFilteringProfile;

@@ -120,7 +120,15 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
             // counter for batch flushing
             int obsCount = 0;
 
-            for (OmObservation sosObservation : request.getObservations()) {
+            for (final OmObservation sosObservation : request.getObservations()) {
+                // check strict spatial filtering profile
+                if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()
+                        && !sosObservation.isSetSpatialFilteringProfileParameter()) {
+                    throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
+                            .withMessage("The sampling geometry definition is missing in the observation because"
+                                    + " the Spatial Filtering Profile is specification conformant. To use a less"
+                                    + " restrictive Spatial Filtering Profile you can change this in the Service-Settings!");
+                }
 
                 insertObservation(sosObservation, cache, exceptions, session);
 

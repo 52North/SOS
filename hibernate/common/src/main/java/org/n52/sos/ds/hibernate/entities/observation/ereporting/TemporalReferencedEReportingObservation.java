@@ -30,12 +30,19 @@ package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
+import org.n52.sos.util.StringHelper;
 
 public class TemporalReferencedEReportingObservation
         extends TemporalReferencedSeriesObservation
         implements HasEReportingSeries {
 
     private static final long serialVersionUID = -5055301771550925701L;
+    
+    private Integer validation = EReportingValues.DEFAULT_VALIDATION;
+
+    private Integer verification = EReportingValues.DEFAULT_VERIFICATION;
+
+    private String primaryObservation = EReportingValues.DEFAULT_PRIMARY_OBSERVATION;
 
     @Override
     public EReportingSeries getEReportingSeries() {
@@ -51,4 +58,53 @@ public class TemporalReferencedEReportingObservation
     public boolean hasEReportingSeries() {
         return getSeries() instanceof EReportingSeries;
     }
+    
+    @Override
+    public Integer getVerification() {
+        return verification;
+    }
+
+    @Override
+    public EReportingObservationTime setVerification(Integer verification) {
+        this.verification = verification;
+        return this;
+    }
+
+    @Override
+    public boolean isSetVerification() {
+        return getVerification() != null;
+    }
+
+    @Override
+    public Integer getValidation() {
+        return validation;
+    }
+
+    @Override
+    public EReportingObservationTime setValidation(Integer validation) {
+        this.validation = validation;
+        return this;
+    }
+
+    @Override
+    public boolean isSetValidation() {
+        return getValidation() != null;
+    }
+
+    @Override
+    public String getPrimaryObservation() {
+        return primaryObservation;
+    }
+
+    @Override
+    public EReportingObservationTime setPrimaryObservation(String primaryObservation) {
+        this.primaryObservation = primaryObservation;
+        return this;
+    }
+
+    @Override
+    public boolean isSetPrimaryObservation() {
+        return StringHelper.isNotEmpty(getPrimaryObservation());
+    }
+    
 }

@@ -31,11 +31,14 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ogc.om.OmObservation;
 
-public interface AdditionalObservationCreator {
+public interface AdditionalObservationCreator<T extends Series> {
 
     Set<AdditionalObservationCreatorKey> getKeys();
+    
+    OmObservation create(OmObservation omObservation, T series);
 
     OmObservation create(OmObservation omObservation, Observation<?> observation);
 

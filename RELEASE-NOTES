@@ -5,8 +5,215 @@ RELEASE NOTES
  in Observation&Measurement), information about the sensor itself (encoded in a 
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
+ 
+  Changes since last release
+==================================
+ 
+  --- New features ---
+  
+    
+  
+  --- Changes ---
+  
+    
+  
+  --- Fixed issues ---
+  
+  
+  
+  Release 52n-sensorweb-sos-4.3.0
+==================================
+ 
+  --- New features ---
+  
+    * Support for AQD e-Reporting flows E
+      * Primary validated assessment data - measurements (E1a).
+      * Primary validated assessment data -modelled (E1b)
+      * Primary up-to-date assessment data - measurements (E2a) 
+      * More information about AQD e-Reporting: http://www.eionet.europa.eu/aqportal
+	  * Documentation: https://wiki.52north.org/bin/view/SensorWeb/AqdEReporting
+	* Flexible identifier
+	  * The flexible identifier extension offers the possibility to return human readable names 
+	    as identifiers instead of the sometimes cryptic identifiers.
+	  * Affects offering, procedure, observableProperty and featureOfInterest.
+	  * Documentation: https://wiki.52north.org/bin/view/SensorWeb/FlexibleIdentifier
+    * Add core and custom datasources for Oracle (#228)
+    * Support clear datasource for SQL Server (#199)
+    * Add webapp-bundle module which builds a 52N SOS war including
+      * Sensor Web Client REST-API (https://github.com/52North/timeseries-api)
+        * Direct access to the database tables.
+      * JavaScript SOS Client (https://github.com/52North/js-sensorweb-client)
+	    * Linked by default to the SWC REST-API of the bundle
+  
+  --- Changes ---
+  
+    * Harmonize existing datasources (#228)
+    * Use latest vecmath version
+    * Move Role to correct package (#201)
+  
+  --- Fixed issues ---
+  
+    * Issue #211: Failing InsertSensor if sml:DataInterface in puts
+    * Issue #225: Use setting default when missing
+    * Issue #227: GetResult returns values of not published series
+    * Issue #226: ERROR log statements while importing observations: "Duplicity of the featureOfInterest identifier"
+    * Issue #230: INSPIRE namespace element is not present in SpatialDatasetIdentifier
+    * Issue #233: Outdated links
+	
+ 
+  Release 52n-sensorweb-sos-4.2.0
+==================================
 
-Changes since last release
+ --- New features ---
+ 
+    * INSPIRE SOS:
+      * Details: https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#INSPIRE_Download_Service_extensi
+      * Multilingualism:
+        * Name/description of offering, procedure, observableProperty, and featureOfInterest can be defined in different languages
+        * Define/Change via the admin interface, insertion via transactional operations is not yet supported.
+        * Details: https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#Multilingualism_support
+      * Coordinate transformation:
+        * Requested coordinates are transformed to the defined database CRS
+        * Coordinates in the responses are transformed to the requested or defined response CRS
+        *Details: https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#CRS_support
+      *https://github.com/52North/SOS/pull/131
+    * Support for transactional feature relation insertion
+      * Insert valid sampledFeature feature and add relation to database
+      * https://github.com/52North/SOS/pull/125
+    * Maven source plugin added to build source jar artifacts (good for debugging)
+      * https://github.com/52North/SOS/pull/121
+    * Support for procedures with external (http URL) description
+      * URL should be stored in descriptionfile column of the procedure table
+    * Support for "getFirst" in temporal filter of GetObservation requests, as it was implemented in 52N SOS 3.x
+    * Support for choice settings
+      * https://github.com/52North/SOS/pull/182
+    * EXI binding
+      * Support for EXI encoded XML messages
+      * https://github.com/52North/SOS/pull/189
+    * Support for SensorML 2.0
+      * https://github.com/52North/SOS/pull/190
+
+
+ --- Changes ---
+ 
+    * Database model: Use doubles instead of BigDecimals for numeric obs values
+      * Discussion: https://github.com/52North/SOS/issues/120
+      * !!! Requires database update via SQL script (/mis/db/../.._update_41_to_42.sql
+    * Use series first/last timestamp for procedure time extrema (Performance improvement)
+      * Query the procedure time extrema from the series table if the information are available
+      * https://github.com/52North/SOS/pull/130
+    * Query samplingGeometry extent only if values are not null (Performance improvement)
+      * Check if not null sampledGeometries are contained in the database.
+      * If not, the extent query is not executed.
+      * https://github.com/52North/SOS/pull/128
+    * Update used version of 52N XML Common to 2.1.0
+      * SamplingFeature schema fixed multiplicity of sampledFeature from 1..1 to 1..*
+    * Transactional operations are disabled by default
+      * https://github.com/52North/SOS/pull/187
+  
+ 
+ --- Fixed issues ---
+ 
+    * Fix checkSchemaCreation during install
+      * https://github.com/52North/SOS/pull/119
+    * Removed mandatory schema settings for full DB datasources and fixed the MySQL one.
+      * MySQL does not support separate schema. Schema is a synonym for database.
+      * https://github.com/52North/SOS/pull/129
+    * Issue #185: Multilingual settings are not loaded from settings file
+      * https://github.com/52North/SOS/pull/186
+    * Issue #172: JSON GetFeatureOfInterest request ignores the observedProperty parameter
+      * https://github.com/52North/SOS/pull/184
+    * Issue #176: DeleteObservation throws NPE when deleting the latest observation for a series
+      * https://github.com/52North/SOS/pull/184
+    * Persisted service URL was not displayed in settings
+      * https://github.com/52North/SOS/pull/181
+    * Fix/stop threads in async cache persistence strategy and created by json schema factory
+      * https://github.com/52North/SOS/pull/171
+    * Issue #167: Improve error message when requesting empty time period
+      * https://github.com/52North/SOS/pull/170
+    * Issue #168: Laxer checking of output format
+      * https://github.com/52North/SOS/pull/169
+    * Fix IP address with port proxy chain
+      * https://github.com/52North/SOS/pull/165
+    * Issue #147: Impossible to NOT use the public schema 
+      * https://github.com/52North/SOS/pull/148
+    * Fix NPE in DataAvailabilityTransformer for NamedQueries by using new TimerPeriod constructor with Object parameter
+      * https://github.com/52North/SOS/pull/146
+    * Issue #191: JDBC string SQL server: optional instance parameter is required in our impelementation
+      * https://github.com/52North/SOS/pull/193
+   
+  Release 52n-sensorweb-sos-4.1.5
+==================================
+
+ --- New features ---
+ 
+ 
+ --- Changes ---
+ 
+  
+ --- Fixed bugs ---
+  
+    * Fix problem when requesting DescribeSensor with procedureDescriptionFormat = http://www.opengis.net/waterml/2.0/observationProcess.
+       * The SOS does not set the procedureDescriptionFormat to the sensor description before the SensorML 1.0.1 to WML 2.0 
+         converter is called which leads to an error in the converter.
+  
+  Release 52n-sensorweb-sos-4.1.4
+==================================
+
+ --- New features ---
+
+ 
+ --- Changes ---
+
+  
+ --- Fixed bugs ---
+ 
+    * Fix problem with query for Spatial Filtering Profile envelope for database that do not support the spatial extent function.
+      * https://github.com/52North/SOS/pull/161
+
+  Release 52n-sensorweb-sos-4.1.3
+==================================
+
+ --- New features ---
+ 
+    * Add published flag to series table
+ 
+ --- Changes ---
+ 
+    * Set OGC unknown URL instead of URN as xlink:href value of sampledFeature
+  
+ --- Fixed bugs ---
+   
+      
+  Release 52n-sensorweb-sos-4.1.2
+==================================
+
+ --- New features ---
+ 
+ --- Changes ---
+  
+ --- Fixed bugs ---
+ 
+     * NullPointerException when Features Of Interest have no geometries
+       * https://github.com/52North/SOS/issues/149  
+ 
+ 
+ Release 52n-sensorweb-sos-4.1.1
+==================================
+
+ --- New features ---
+ 
+ --- Changes ---
+  
+ --- Fixed bugs ---
+ 
+     * Issue with OpenGeo repository
+     * GetFeatureOfInterest request with featureOfInterest identifier and procedure/observableProperty identifier
+       ignores the featureOfInterest identifier
+     * Performance issue for first/latest GetObservation with series concept
+
+
+Release 52n-sensorweb-sos-4.1
 ==================================
 
  --- New features ---
@@ -42,6 +249,8 @@ Changes since last release
       * Corresponding to the selected datasource, the required DAOs and ConnectionProvider are loaded during 
         the initialization.
       * https://github.com/52North/SOS/commit/d906f74267e8efcc51e53703a391aafb29119178
+    * If featureOfInterest geometry is missing, create the geometry from existing samplingGeometries
+      * https://github.com/52North/SOS/commit/dc8ce1eb00de99b09e4a60574be96c34bf441eb2
  
  --- Changes ---
  
@@ -78,6 +287,8 @@ Changes since last release
       * For each supported DBMS an update script is available (/misc/db/..) to add the new column, copy the 
         samplingGeometries and remove the spatialfilteringprofile table.
       * https://github.com/52North/SOS/commit/65e8a4d7867f3e19c3c444438f79df5a3616fb8d
+    * Change offering fetch mode to lazy to reduce the number of subqueries when querying the observations.
+      * https://github.com/52North/SOS/commit/67475c6d3741641d02a4be4fb6c466526152c09f
       
  
  --- Fixed bugs ---
@@ -99,10 +310,36 @@ Changes since last release
     * Fix problem with duplicated entries in generated SQL scripts.
       * https://github.com/52North/SOS/commit/6e70d910e6f8f7140d79f65c83250cf5370b73fc
     * Fix #74: Exception when executing SOS 1.0.0 DescribeSensor requests
-      * https://github.com/52North/SOS/commit/
+      * https://github.com/52North/SOS/commit/7e0e6a2ca8670e8f7ec632d899d9781391a04bbd
+    * Throw exception if the inserted sensor description has swe:DataArray sml:output element without a swe:DataRecord elementType element.
+      * https://github.com/52North/SOS/commit/5c55aeeb92a8ed60a12449c1171b757a38fc57bc
+    * Fix GetObservation invalid srs exception code.
+      * https://github.com/52North/SOS/commit/0b20dd424be7556a767170ba8392897b36cdd8c8
+    * Fix #79: File-based H2/GeoDB fails on sampling geometry index
+      * https://github.com/52North/SOS/commit/a5814ee539f25ada7eeedd75e63a37e68c6682cf
+    * Fix #81: GetDataAvailability returns invalid times and value counts
+      * https://github.com/52North/SOS/commit/49c004ff8a7255aed677bef05c913254070387e1
+    * Fix #83: Update GetInvolved link on client landing page
+      * https://github.com/52North/SOS/commit/c710a08dcdc05545d5515a24e643bc191bf71a94
+    * Fix #84: AbstractSettingsDefinition equals() returns true if all variables are the same except key, title and description
+      * https://github.com/52North/SOS/commit/c710a08dcdc05545d5515a24e643bc191bf71a94
+    * Fix used Hibernate mapping path constants
+      * https://github.com/52North/SOS/commit/8be9ad0d4bb6e388e9b8a5f9ed05ed6423b994d4
+    * Fix #87: Inform user about javascript requirement for the webapp
+      * https://github.com/52North/SOS/commit/5014f1fa00199e573b80ca931928fa53542602f7
+    * Fix #80: Resetting the SOS does not delete the cache file
+      * https://github.com/52North/SOS/commit/a43b945940963ec4152da7769de242213e219a70
+    * Fix #101: SOS 1.0.0 GetObservation SOAP request fails
+      * https://github.com/52North/SOS/commit/4972a4e0a13bc0e3e5cb951f4d322c064a22e8de
+    * Fix #106: Possible thread safety issue in HTTPUtils' GenericWritable
+      * https://github.com/52North/SOS/commit/835ce396cc9dda645a15bb2c538580943af7cfd5
+    * Fix #109: First position is missing in the featuerOfInterest geometry if generated from samplingGeometries
+      * https://github.com/52North/SOS/commit/6ccf283def95198c3ba8dd452ee10232a7a6251f
+	* Fix #116: Time fields in observation table are identical when executing InsertResult with om:resultTime
+	  * https://github.com/52North/SOS/commit/286cd8d166e3bfd95b936aec4d9ad4d487aa800b
  
  
-Release 52n-sos-4.0.1
+Release 52n-sensorweb-sos-4.0.1
 ==================================
 
  --- New features ---
@@ -115,7 +352,7 @@ Release 52n-sos-4.0.1
     * Add missing setting of namedQuery parameter
 
 
-Release 52n-sos-4.0.0
+Release 52n-sensorweb-sos-4.0.0
 ==================================
 
  --- New features ---
@@ -157,7 +394,7 @@ Release 52n-sos-4.0.0
                  Command: create sequence public.codespaceId_seq
     * [Bug 1005] Spatial Filtering Profile filtering does not work after refactoring the Hibernate GetObservation request processing (r22393)
     
-Release 52n-sos-4.0.0-RC6
+Release 52n-sensorweb-sos-4.0.0-RC6
 ==================================
 
  --- New features ---
@@ -173,7 +410,7 @@ Release 52n-sos-4.0.0-RC6
 
     * [Bug 975] NPE in TimeInstant.compareTo() when time value is null
 
-Release 52n-sos-4.0.0-RC5
+Release 52n-sensorweb-sos-4.0.0-RC5
 ==================================
 
  --- New features ---
@@ -193,7 +430,7 @@ Release 52n-sos-4.0.0-RC5
     * [Bug 951] JSON GetObservation with no temporal filters throws a NPE
 
 
-Release 52n-sos-4.0.0-RC4
+Release 52n-sensorweb-sos-4.0.0-RC4
 ==================================
 
  --- New features ---
@@ -213,7 +450,7 @@ Release 52n-sos-4.0.0-RC4
     * [Bug 964] KVP requests should require the service parameter
     * [Bug 965] KVP: The  position after decimal point of spatial filter values are ignored
 
-Release 52n-sos-4.0.0-RC3
+Release 52n-sensorweb-sos-4.0.0-RC3
 ==================================
 
  --- New features ---
@@ -228,7 +465,7 @@ Release 52n-sos-4.0.0-RC3
 
     * Double call of om:result element content creation
 
-Release 52n-sos-4.0.0-RC2
+Release 52n-sensorweb-sos-4.0.0-RC2
 ==================================
 
  --- New features ---
@@ -245,7 +482,7 @@ Release 52n-sos-4.0.0-RC2
     * [Bug 942] NPE when inserting external referenced feature
         * NPE when a referenced featureOfInterest (no geometry) was inserted via InsertObservation and the feature does not exists in the SOS 
 
-Release 52n-sos-4.0.0-RC1
+Release 52n-sensorweb-sos-4.0.0-RC1
 ==================================
 
  --- New features ---
@@ -281,7 +518,7 @@ Release 52n-sos-4.0.0-RC1
     * [Bug 935] - SOS 1.0.0 DescribeSensor request throws invalid outputFormat exception
     * [Bug 941] - CapabilitiesCache setMaxResultTime() and setMinResultTime() changes global phenomenonTime
 
-Release 52n-sos-4.0.0-Beta2
+Release 52n-sensorweb-sos-4.0.0-Beta2
 ===================================
 
 --- New features ---

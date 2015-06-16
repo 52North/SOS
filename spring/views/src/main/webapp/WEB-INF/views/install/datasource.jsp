@@ -53,6 +53,10 @@
     <fieldset id="settings"></fieldset>
     <fieldset id="actions" style="display: none;">
         <legend>Actions</legend>
+       		 <p><span class="label label-important">Note!</span></p> 
+       		 <p>To support the requirements of the <em>INSPIRE SOS</em>, the database model was adjusted from 52N SOS version 4.1 to 4.2.</p>
+       		 <p>This requires an update of existing database model but the <strong><em>Force updating existing tables</em></strong> function does not work.</p>
+       		 <p>Please, update your database model manually with the appropirate update script provided in the SOS sources folder <strong>/misc/db/...</strong>.</p>
         <div class="control-group" id="create">
             <div class="controls">
                 <label class="checkbox">

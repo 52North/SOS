@@ -62,6 +62,11 @@ public class CountValuedSeriesObservation
     public boolean isSetValue() {
         return getValue() != null;
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
 
     @Override
     public void accept(VoidValuedObservationVisitor visitor)

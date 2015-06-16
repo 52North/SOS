@@ -69,6 +69,8 @@ import org.n52.sos.ogc.om.OmCompositePhenomenon;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.quality.OmResultQuality;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
@@ -95,9 +97,11 @@ import org.n52.sos.util.Constants;
 import org.n52.sos.util.GmlHelper;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
+import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.W3CConstants;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 
@@ -151,6 +155,11 @@ public abstract class AbstractOmEncoderv20
      * @return Indicator
      */
     protected abstract boolean convertEncodedProcedure();
+
+    @Override
+    public boolean forceStreaming() {
+        return false;
+    }
 
     @Override
     public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
@@ -217,6 +226,14 @@ public abstract class AbstractOmEncoderv20
             throws OwsExceptionReport {
         OMObservationType xbObservation = createOmObservationType();
 
+        if (!sosObservation.isSetObservationID()) {
+            sosObservation.setObservationID(JavaHelper.generateID(Double.toString(System.currentTimeMillis()
+                    * Math.random())));
+        }
+        String observationID = sosObservation.getObservationID();
+        if (!sosObservation.isSetGmlID()) {
+            sosObservation.setGmlId("o_" + observationID);
+        }
         // set a unique gml:id
         xbObservation.setId(generateObservationGMLId());
         if (!sosObservation.isSetObservationID()) {
@@ -380,6 +397,10 @@ public abstract class AbstractOmEncoderv20
             }
         } else {
             procedure.setHref(procedureDescription.getIdentifier());
+        }
+     // set name as xlink:title
+        if (procedure.isSetHref() && procedureDescription.isSetName() && procedureDescription.getFirstName().isSetValue()) {
+            procedure.setTitle(procedureDescription.getFirstName().getValue());
         }
     }
 

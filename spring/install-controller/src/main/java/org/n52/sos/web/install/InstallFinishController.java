@@ -95,15 +95,19 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
         try {
             if (c.isDropSchema()) {
                 String[] dropSchema = datasource.dropSchema(c.getDatabaseSettings());
+                LOG.debug("Drop database with the following statements!");
                 datasource.execute(dropSchema, c.getDatabaseSettings());
+                LOG.debug("Dropping the database finished!");
             }
             datasource.prepare(c.getDatabaseSettings());
             if (c.isCreateSchema()) {
                 String[] createSchema = datasource.createSchema(c.getDatabaseSettings());
+                LOG.debug("Create database with the following statements!");
                 datasource.execute(createSchema, c.getDatabaseSettings());
                 if (datasource.isPostCreateSchema()) {
                     datasource.executePostCreateSchema(c.getDatabaseSettings());
                 }
+                LOG.debug("Database creation finished!");
             }
             if (c.isForceUpdateSchema()) {
                 String[] updateSchema = datasource.updateSchema(c.getDatabaseSettings());
@@ -115,6 +119,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
                     }
                 }
                 datasource.execute(updateSchema, c.getDatabaseSettings());
+                LOG.debug("Updating the database finished!");
             }
         } catch (Throwable e) {
             throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_CONNECT_TO_THE_DATABASE,

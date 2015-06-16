@@ -58,6 +58,11 @@ public class CategoryValuedEReportingObservation
         return StringHelper.isNotEmpty(value);
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
+
     @Override
     public void accept(VoidValuedObservationVisitor visitor)
             throws OwsExceptionReport {

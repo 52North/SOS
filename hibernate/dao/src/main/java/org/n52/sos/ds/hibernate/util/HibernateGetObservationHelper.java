@@ -121,7 +121,7 @@ public class HibernateGetObservationHelper {
      */
     public static void checkMaxNumberOfReturnedTimeSeries(Collection<? extends SeriesObservation<?>> seriesObservations,
             int metadataObservationsCount) throws CodedException {
-        if (Integer.MAX_VALUE != ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries()) {
+        if (ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries() > 0) {
             Set<Long> seriesIds = Sets.newHashSet();
             for (SeriesObservation<?> seriesObs : seriesObservations) {
                 seriesIds.add(seriesObs.getSeries().getSeriesId());
@@ -140,7 +140,7 @@ public class HibernateGetObservationHelper {
      */
     public static void checkMaxNumberOfReturnedSeriesSize(int size) throws CodedException {
         // FIXME refactor profile handling
-        if (size > ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries()) {
+        if (ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries() > 0 && size > ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries()) {
             throw new ResponseExceedsSizeLimitException().at("maxNumberOfReturnedTimeSeries");
         }
     }
@@ -155,9 +155,16 @@ public class HibernateGetObservationHelper {
      */
     public static void checkMaxNumberOfReturnedValues(int size) throws CodedException {
         // FIXME refactor profile handling
-        if (size > ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues()) {
+        if (ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues() > 0 &&  size > ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues()) {
             throw new ResponseExceedsSizeLimitException().at("maxNumberOfReturnedValues");
         }
+    }
+
+    public static int getMaxNumberOfValuesPerSeries(int size) {
+        if (ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues() > 0) {
+            return ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues() / size;
+        }
+        return ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues();
     }
 
     public static List<String> getAndCheckFeatureOfInterest(final ObservationConstellation observationConstellation,
@@ -374,7 +381,7 @@ public class HibernateGetObservationHelper {
     public static boolean checkEncoderForMergeObservationValues(String responseFormat) {
         Encoder<XmlObject, OmObservation> encoder =
                 CodingRepository.getInstance().getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
-        if (encoder == null && encoder instanceof ObservationEncoder) {
+        if (encoder != null && encoder instanceof ObservationEncoder) {
             return ((ObservationEncoder<?, OmObservation>) encoder).shouldObservationsWithSameXBeMerged();
         }
         return false;

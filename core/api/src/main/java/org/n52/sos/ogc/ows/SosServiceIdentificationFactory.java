@@ -47,6 +47,7 @@ import org.n52.sos.config.SettingsManager;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.i18n.I18NSettings;
 import org.n52.sos.i18n.LocaleHelper;
 import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -62,16 +63,22 @@ import com.google.common.collect.Sets;
 public class SosServiceIdentificationFactory extends LazyThreadSafeProducer<SosServiceIdentification> {
 
     private File file;
+
     private String[] keywords;
+
     private MultilingualString title;
+
     private MultilingualString abstrakt;
+
     private String serviceType;
+
     private String serviceTypeCodeSpace;
+
     private String fees;
+
     private String[] constraints;
 
-    public SosServiceIdentificationFactory()
-            throws ConfigurationException {
+    public SosServiceIdentificationFactory() throws ConfigurationException {
         SettingsManager.getInstance().configure(this);
     }
 
@@ -92,40 +99,51 @@ public class SosServiceIdentificationFactory extends LazyThreadSafeProducer<SosS
     }
 
     @Setting(TITLE)
-    public void setTitle(MultilingualString title)
-            throws ConfigurationException {
+    public void setTitle(Object title) throws ConfigurationException {
         Validation.notNull("Service Identification Title", title);
-        this.title = title;
+        if (title instanceof MultilingualString) {
+            this.title = (MultilingualString) title;
+        } else if (title instanceof String) {
+            Locale locale = LocaleHelper.fromString(I18NSettings.I18N_DEFAULT_LANGUAGE_DEFINITION.getDefaultValue());
+            this.title = new MultilingualString().addLocalization(locale, (String)title);
+        } else {
+            throw new ConfigurationException(
+                    String.format("%s is not supported as title!", title.getClass().getName()));
+        }
         setRecreate();
     }
 
     @Setting(ABSTRACT)
-    public void setAbstract(MultilingualString description)
-            throws ConfigurationException {
+    public void setAbstract(Object description) throws ConfigurationException {
         Validation.notNull("Service Identification Abstract", description);
-        this.abstrakt = description;
+        if (description instanceof MultilingualString) {
+            this.abstrakt = (MultilingualString) description;
+        } else if (description instanceof String) {
+            Locale locale = LocaleHelper.fromString(I18NSettings.I18N_DEFAULT_LANGUAGE_DEFINITION.getDefaultValue());
+            this.abstrakt = new MultilingualString().addLocalization(locale, (String)description);
+        } else {
+            throw new ConfigurationException(
+                    String.format("%s is not supported as abstract!", description.getClass().getName()));
+        }
         setRecreate();
     }
 
     @Setting(SERVICE_TYPE)
-    public void setServiceType(String serviceType)
-            throws ConfigurationException {
+    public void setServiceType(String serviceType) throws ConfigurationException {
         Validation.notNullOrEmpty("Service Identification Service Type", serviceType);
         this.serviceType = serviceType;
         setRecreate();
     }
 
     @Setting(SERVICE_TYPE_CODE_SPACE)
-    public void setServiceTypeCodeSpace(String serviceTypeCodeSpace)
-            throws ConfigurationException {
+    public void setServiceTypeCodeSpace(String serviceTypeCodeSpace) throws ConfigurationException {
         this.serviceTypeCodeSpace = serviceTypeCodeSpace;
         setRecreate();
     }
 
     @Setting(FEES)
-    public void setFees(String fees)
-            throws ConfigurationException {
-//        Validation.notNullOrEmpty("Service Identification Fees", fees);
+    public void setFees(String fees) throws ConfigurationException {
+        // Validation.notNullOrEmpty("Service Identification Fees", fees);
         this.fees = fees;
         setRecreate();
     }
@@ -141,8 +159,7 @@ public class SosServiceIdentificationFactory extends LazyThreadSafeProducer<SosS
     }
 
     @Override
-    protected SosServiceIdentification create(Locale language)
-            throws ConfigurationException {
+    protected SosServiceIdentification create(Locale language) throws ConfigurationException {
         if (this.file != null) {
             return createFromFile();
         } else {
@@ -151,8 +168,7 @@ public class SosServiceIdentificationFactory extends LazyThreadSafeProducer<SosS
     }
 
     private SosServiceIdentification createFromSettings(Locale locale) {
-        SosServiceIdentification serviceIdentification
-                = new SosServiceIdentification();
+        SosServiceIdentification serviceIdentification = new SosServiceIdentification();
         if (this.title != null) {
             serviceIdentification.setTitle(this.title.filter(locale));
         }
@@ -165,8 +181,7 @@ public class SosServiceIdentificationFactory extends LazyThreadSafeProducer<SosS
         serviceIdentification.setFees(this.fees);
         serviceIdentification.setServiceType(this.serviceType);
         serviceIdentification.setServiceTypeCodeSpace(this.serviceTypeCodeSpace);
-        Set<String> supportedVersions = ServiceOperatorRepository
-                .getInstance().getSupportedVersions(SosConstants.SOS);
+        Set<String> supportedVersions = ServiceOperatorRepository.getInstance().getSupportedVersions(SosConstants.SOS);
         serviceIdentification.setVersions(supportedVersions);
         if (this.keywords != null) {
             serviceIdentification.setKeywords(Arrays.asList(this.keywords));
@@ -174,13 +189,10 @@ public class SosServiceIdentificationFactory extends LazyThreadSafeProducer<SosS
         return serviceIdentification;
     }
 
-    private SosServiceIdentification createFromFile()
-            throws ConfigurationException {
+    private SosServiceIdentification createFromFile() throws ConfigurationException {
         try {
-            SosServiceIdentification serviceIdentification
-                    = new SosServiceIdentification();
-            serviceIdentification.setServiceIdentification(XmlHelper
-                    .loadXmlDocumentFromFile(this.file));
+            SosServiceIdentification serviceIdentification = new SosServiceIdentification();
+            serviceIdentification.setServiceIdentification(XmlHelper.loadXmlDocumentFromFile(this.file));
             return serviceIdentification;
         } catch (OwsExceptionReport ex) {
             throw new ConfigurationException(ex);
@@ -198,8 +210,7 @@ public class SosServiceIdentificationFactory extends LazyThreadSafeProducer<SosS
             if (this.abstrakt == null) {
                 return this.title.getLocales();
             } else {
-                return Sets.union(this.title.getLocales(),
-                                  this.abstrakt.getLocales());
+                return Sets.union(this.title.getLocales(), this.abstrakt.getLocales());
             }
         }
     }

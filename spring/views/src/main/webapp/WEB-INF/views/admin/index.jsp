@@ -44,7 +44,7 @@
 
 <c:if test="${warning}">
     <script type="text/javascript">
-    showMessage('<b>Warning!</b> You are used the default credentials to log in. Please change them \
+    showMessage('<b>Warning!</b> You are using the default credentials to log in. Please change them \
                    <a href="<c:url value="/admin/settings#credentials"/>">here</a> as soon as possible!');
     </script>
 </c:if>
@@ -53,7 +53,7 @@
 <c:if test="${sos:hasClient()}">
 <div class="row" style="margin-top: 50px">
     <div class="span12">
-    <p>A test data set can be insert using the <a href="<c:url value="/client?load=exampleData"/>">Test client</a>. For this the JSON Binding and the <code>Batch</code>, <code>InsertSensor</code>, <code>InsertObservation</code> and <code>InsertResultTemplate</code> operations have to be active. Be aware that it only can be removed by cleaning the entire database.</p>
+    <p>A test data set can be inserted using the <a href="<c:url value="/client?load=exampleData"/>">Test client</a>. For this the JSON Binding and the <code>Batch</code>, <code>InsertSensor</code>, <code>InsertObservation</code> and <code>InsertResultTemplate</code> operations have to be active. Be aware that it only can be removed by cleaning the entire database.</p>
 </c:if>
 
 

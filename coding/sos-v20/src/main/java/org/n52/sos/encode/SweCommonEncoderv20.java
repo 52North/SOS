@@ -73,6 +73,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;
+import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -287,6 +288,8 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
                     DataArrayType.Factory.newInstance(getXmlOptions());
             if (sosDataArray.isSetElementCount()) {
                 xbDataArray.addNewElementCount().setCount(createCount(sosDataArray.getElementCount()));
+            } else {
+                xbDataArray.addNewElementCount().addNewCount();
             }
             if (sosDataArray.isSetElementTyp()) {
                 final ElementType elementType = xbDataArray.addNewElementType();
@@ -441,13 +444,15 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         final QuantityType xbQuantity =
                 QuantityType.Factory.newInstance(getXmlOptions());
         if (quantity.isSetAxisID()) {
-            xbQuantity.setAxisID(quantity.getDescription());
+            xbQuantity.setAxisID(quantity.getAxisID());
         }
         if (quantity.isSetValue()) {
             xbQuantity.setValue(quantity.getValue());
         }
         if (quantity.isSetUom()) {
             xbQuantity.setUom(createUnitReference(quantity.getUom()));
+        } else {
+            xbQuantity.setUom(createUnknownUnitReference());
         }
         if (quantity.getQuality() != null) {
             // TODO implement
@@ -460,13 +465,15 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         final QuantityRangeType xbQuantityRange =
                 QuantityRangeType.Factory.newInstance(getXmlOptions());
         if (quantityRange.isSetAxisID()) {
-            xbQuantityRange.setAxisID(quantityRange.getDescription());
+            xbQuantityRange.setAxisID(quantityRange.getAxisID());
         }
         if (quantityRange.isSetValue()) {
             xbQuantityRange.setValue(quantityRange.getValue().getRangeAsList());
         }
         if (quantityRange.isSetUom()) {
             xbQuantityRange.setUom(createUnitReference(quantityRange.getUom()));
+        } else {
+            xbQuantityRange.setUom(createUnknownUnitReference());
         }
         if (quantityRange.isSetQuality()) {
             // TODO implement
@@ -513,7 +520,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return xbTimeRange;
     }
 
-    private VectorType createVector(SweVector sweVector) {
+    private VectorType createVector(SweVector sweVector) throws OwsExceptionReport {
         final VectorType xbVector = VectorType.Factory.newInstance(getXmlOptions());
         if (sweVector.isSetReferenceFrame()) {
             xbVector.setReferenceFrame(sweVector.getReferenceFrame());
@@ -529,10 +536,10 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return xbVector;
     }
 
-    private Coordinate createCoordinate(final SweCoordinate<?> coordinate) {
+    private Coordinate createCoordinate(final SweCoordinate<?> coordinate) throws OwsExceptionReport {
         final Coordinate xbCoordinate = Coordinate.Factory.newInstance(getXmlOptions());
         xbCoordinate.setName(coordinate.getName());
-        xbCoordinate.setQuantity(createQuantity((SweQuantity) coordinate.getValue()));
+        xbCoordinate.setQuantity((QuantityType)createAbstractDataComponent((SweQuantity) coordinate.getValue(), null));
         return xbCoordinate;
     }
 
@@ -580,6 +587,13 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         } else {
             unitReference.setCode(uom);
         }
+        return unitReference;
+    }
+    
+    private UnitReference createUnknownUnitReference() {
+        final UnitReference unitReference =
+                UnitReference.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        unitReference.setHref(OGCConstants.UNKNOWN);
         return unitReference;
     }
 

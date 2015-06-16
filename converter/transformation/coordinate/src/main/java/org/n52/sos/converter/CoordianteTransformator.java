@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.sos.convert.RequestResponseModifier;
+import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
@@ -58,6 +59,7 @@ import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 import org.n52.sos.ogc.sensorML.elements.SmlLocation;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
+import org.n52.sos.ogc.sensorML.v20.AbstractPhysicalProcess;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -69,6 +71,7 @@ import org.n52.sos.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweEnvelope;
 import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweText;
@@ -402,12 +405,16 @@ public class CoordianteTransformator implements
      *             If the transformation fails
      */
     private void checkAbstractSensorML(AbstractSensorML abstractSensorML, int targetCrs) throws OwsExceptionReport {
-        if (abstractSensorML instanceof SensorML && ((SensorML) abstractSensorML).isSetMembers()) {
-            checkCapabilitiesForObservedAreaAndTransform((SensorML) abstractSensorML, targetCrs);
-            for (AbstractProcess member : ((SensorML) abstractSensorML).getMembers()) {
-                checkCapabilitiesForObservedAreaAndTransform(member, targetCrs);
-                checkAbstractProcess(member, targetCrs);
+        if (abstractSensorML instanceof SensorML) {
+            checkCapabilitiesForObservedAreaAndTransform(abstractSensorML, targetCrs);
+            if (((SensorML) abstractSensorML).isSetMembers()) {
+                for (AbstractProcess member : ((SensorML) abstractSensorML).getMembers()) {
+                    checkCapabilitiesForObservedAreaAndTransform(member, targetCrs);
+                    checkAbstractProcess(member, targetCrs);
+                }
             }
+        } else {
+            checkAbstractProcess(abstractSensorML, targetCrs);
         }
     }
 
@@ -421,9 +428,9 @@ public class CoordianteTransformator implements
      * @throws OwsExceptionReport
      *             If the transformation fails
      */
-    private void checkAbstractProcess(AbstractProcess abstractProcess, int targetCrs) throws OwsExceptionReport {
-        if (abstractProcess instanceof AbstractComponent) {
-            AbstractComponent abstractComponent = (AbstractComponent) abstractProcess;
+    private void checkAbstractProcess(AbstractSensorML abstractSensorML, int targetCrs) throws OwsExceptionReport {
+        if (abstractSensorML instanceof AbstractComponent) {
+            AbstractComponent abstractComponent = (AbstractComponent) abstractSensorML;
             if (abstractComponent.isSetPosition()) {
                 transformPosition(abstractComponent.getPosition(), targetCrs);
             } else if (abstractComponent.isSetLocation()) {
@@ -435,6 +442,11 @@ public class CoordianteTransformator implements
                         checkAbstractSensorML(component.getProcess(), targetCrs);
                     }
                 }
+            }
+        } else if (abstractSensorML instanceof AbstractPhysicalProcess) {
+            AbstractPhysicalProcess process = (AbstractPhysicalProcess) abstractSensorML;
+            if (process.isSetPosition()) {
+                transformPosition(process.getPosition(), targetCrs);
             }
         }
     }
@@ -450,11 +462,41 @@ public class CoordianteTransformator implements
      *             If the transformation fails
      */
     private void transformPosition(SmlPosition position, int targetCrs) throws OwsExceptionReport {
-        int sourceCrs = getCrsFromString(position.getReferenceFrame());
+        int sourceCrs = targetCrs;
+        if (position.isSetReferenceFrame()) {
+            sourceCrs = getCrsFromString(position.getReferenceFrame());
+        } else if (position.isSetVector() && position.getVector().isSetReferenceFrame()) {
+            sourceCrs = getCrsFromString(position.getVector().getReferenceFrame());
+        }
+        if (position.isSetPosition()) {
+            position.setPosition(transformSweCoordinates(position.getPosition(), sourceCrs, targetCrs));
+            position.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
+        } else if (position.isSetVector()) {
+            SweVector vector = position.getVector();
+            vector.setCoordinates(transformSweCoordinates(vector.getCoordinates(), sourceCrs, targetCrs));
+            vector.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
+        }
+    }
+
+    /**
+     * Transform coordinates
+     * 
+     * @param position
+     *            {@link SweCoordinate}s to transform
+     * @param sourceCrs
+     *            Source CRS
+     * @param targetCrs
+     *            Target CRS
+     * @return Transformed {@link SweCoordinate}s
+     * @throws OwsExceptionReport
+     *             if an error occurs
+     */
+    private List<SweCoordinate<?>> transformSweCoordinates(List<SweCoordinate<?>> position, int sourceCrs,
+            int targetCrs) throws OwsExceptionReport {
         SweCoordinate<?> altitude = null;
         Object easting = null;
         Object northing = null;
-        for (SweCoordinate<?> coordinate : position.getPosition()) {
+        for (SweCoordinate<?> coordinate : position) {
             if (SweCoordinateName.altitude.name().equals(coordinate.getName())) {
                 altitude = coordinate;
             } else if (SweCoordinateName.northing.name().equals(coordinate.getName())) {
@@ -490,11 +532,8 @@ public class CoordianteTransformator implements
         SweQuantity xq =
                 SweHelper.createSweQuantity(x, SweConstants.X_AXIS, ProcedureDescriptionSettings.getInstance()
                         .getLatLongUom());
-        position.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
-        position.setPosition(Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(
-                SweCoordinateName.northing.name(), yq),
-                new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq), altitude));
-
+        return Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(SweCoordinateName.northing.name(), yq),
+                new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq), altitude);
     }
 
     /**
@@ -744,7 +783,8 @@ public class CoordianteTransformator implements
                     checkOmParameterForGeometry(omObservation.getParameter(), targetCRS);
                 }
                 if (omObservation.getValue() instanceof AbstractStreaming) {
-                    ((AbstractStreaming)omObservation.getValue()).add(OWSConstants.AdditionalRequestParams.crs, targetCRS);
+                    ((AbstractStreaming) omObservation.getValue()).add(OWSConstants.AdditionalRequestParams.crs,
+                            targetCRS);
                 }
             }
         }
@@ -843,9 +883,9 @@ public class CoordianteTransformator implements
         return ServiceConfiguration.getInstance();
     }
 
-	@Override
-	public boolean isMerger() {
-		return false;
-	}
+    @Override
+    public RequestResponseModifierFacilitator getFacilitator() {
+        return new RequestResponseModifierFacilitator();
+    }
 
 }

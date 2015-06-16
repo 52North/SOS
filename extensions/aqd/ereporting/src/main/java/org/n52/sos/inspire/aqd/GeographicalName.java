@@ -29,7 +29,12 @@
 package org.n52.sos.inspire.aqd;
 
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.n52.sos.ogc.gml.CodeType;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Nillable;
 
 import com.google.common.base.Objects;
@@ -46,10 +51,10 @@ public class GeographicalName {
     private Nillable<CodeType> nameStatus = Nillable.missing();
     private Nillable<String> sourceOfName = Nillable.missing();
     private Nillable<Pronunciation> pronunciation = Nillable.missing();
-    private Nillable<Spelling> spelling = Nillable.missing();
+    private List<Spelling> spelling = new LinkedList<>();
     private Nillable<CodeType> grammaticalGender = Nillable.missing();
     private Nillable<CodeType> grammaticalNumber = Nillable.missing();
-
+    
     public Nillable<String> getLanguage() {
         return language;
     }
@@ -117,17 +122,21 @@ public class GeographicalName {
         return setPronunciation(Nillable.of(pronunciation));
     }
 
-    public Nillable<Spelling> getSpelling() {
-        return spelling;
+    public List<Spelling> getSpelling() {
+        if (CollectionHelper.isEmpty(spelling)) {
+            addSpelling(new Spelling());
+        }
+        return Collections.unmodifiableList(spelling);
     }
 
-    public GeographicalName setSpelling(Nillable<Spelling> spelling) {
+    public GeographicalName setSpelling(List<Spelling> spelling) {
         this.spelling = Preconditions.checkNotNull(spelling);
         return this;
     }
 
-    public GeographicalName setSpelling(Spelling spelling) {
-        return setSpelling(Nillable.of(spelling));
+    public GeographicalName addSpelling(Spelling spelling) {
+        this.spelling.add(Preconditions.checkNotNull(spelling));
+        return this;
     }
 
     public Nillable<CodeType> getGrammaticalGender() {

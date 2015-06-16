@@ -124,9 +124,6 @@ import java.util.SortedSet;
 
 import javax.xml.namespace.QName;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.sos.i18n.LocaleHelper;
@@ -151,6 +148,8 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosObservationOffering;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.response.GetCapabilitiesResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;

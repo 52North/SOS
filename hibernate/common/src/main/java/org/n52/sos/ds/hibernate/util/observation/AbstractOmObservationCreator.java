@@ -37,6 +37,8 @@ import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
+import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
@@ -66,16 +68,16 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.0.0
  */
 public abstract class AbstractOmObservationCreator {
-    private final String version;
+    private final AbstractObservationRequest request;
     private final Session session;
     private final Locale i18n;
 
-    public AbstractOmObservationCreator(String version, Session session) {
+    public AbstractOmObservationCreator(AbstractObservationRequest request, Session session) {
         this(version, null, session);
     }
 
-    public AbstractOmObservationCreator(String version, Locale i18n, Session session) {
-        this.version = version;
+    public AbstractOmObservationCreator(AbstractObservationRequest request, Locale i18n, Session session) {
+        this.request = request;
         this.session = session;
         this.i18n = i18n == null ?  ServiceConfiguration.getInstance().getDefaultLanguage() : i18n;
     }
@@ -99,6 +101,10 @@ public abstract class AbstractOmObservationCreator {
     protected String getTupleSeparator() {
         return ServiceConfiguration.getInstance().getTupleSeparator();
     }
+    
+    protected String getDecimalSeparator() {
+        return ServiceConfiguration.getInstance().getDecimalSeparator();
+    }
 
     protected String getNoDataValue() {
         return getActiveProfile().getResponseNoDataPlaceholder();
@@ -108,7 +114,14 @@ public abstract class AbstractOmObservationCreator {
                                                         ConverterException;
 
     public String getVersion() {
-        return version;
+        return request.getVersion();
+    }
+    
+    public String getResponseFormat() {
+        if (request.isSetResponseFormat()) {
+            return request.getResponseFormat();
+        }
+        return Configurator.getInstance().getProfileHandler().getActiveProfile().getObservationResponseFormat();
     }
 
     public Session getSession() {
@@ -138,7 +151,7 @@ public abstract class AbstractOmObservationCreator {
         OmObservableProperty omObservableProperty = new OmObservableProperty(phenID, description, null, null);
         if (observableProperty.isSetName()) {
         	omObservableProperty.setHumanReadableIdentifier(observableProperty.getName());
-        	omObservableProperty.setName(new CodeType(observableProperty.getName()));
+        	addName(omObservableProperty, observableProperty);
         }
         return omObservableProperty;
     }
@@ -160,14 +173,28 @@ public abstract class AbstractOmObservationCreator {
             return new HibernateProcedureConverter().createSosProcedureDescription(hProcedure, pdf, getVersion(),
                     getSession());
         } else {
-        	SosProcedureDescriptionUnknowType sosProcedure = new SosProcedureDescriptionUnknowType(identifier, pdf, null);
-        	if (hProcedure.isSetName()) {
-        		sosProcedure.setHumanReadableIdentifier(hProcedure.getName());
-        	}
+            SosProcedureDescriptionUnknowType sosProcedure =
+                    new SosProcedureDescriptionUnknowType(identifier, pdf, null);
+            if (hProcedure.isSetName()) {
+                sosProcedure.setHumanReadableIdentifier(hProcedure.getName());
+                addName(sosProcedure, hProcedure);
+            }
             return sosProcedure;
         }
     }
 
+    /**
+     * @param abstractFeature
+     * @param hAbstractFeature
+     */
+    protected void addName(AbstractFeature abstractFeature, AbstractIdentifierNameDescriptionEntity hAbstractFeature) {
+        if (hAbstractFeature.isSetCodespaceName()) {
+            abstractFeature.addName(hAbstractFeature.getName(), hAbstractFeature.getCodespaceName().getCodespace());
+        }
+        abstractFeature.addName(hAbstractFeature.getName());
+        
+    }
+    
     /**
      * Get featureOfInterest object from series
      *
@@ -184,10 +211,24 @@ public abstract class AbstractOmObservationCreator {
         return feature;
     }
 
+    protected void checkForAdditionalObservationCreator(AbstractObservation hObservation, OmObservation sosObservation) {
+        AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass());
+        if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
+            AdditionalObservationCreator<?> creator = AdditionalObservationCreatorRepository.getInstance().get(key);
+            creator.create(sosObservation, hObservation);
+        } else {
+            AdditionalObservationCreatorKey key2 = new AdditionalObservationCreatorKey(null, hObservation.getClass());
+            if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key2)) {
+                AdditionalObservationCreator<?> creator = AdditionalObservationCreatorRepository.getInstance().get(key2);
+                creator.add(sosObservation, hObservation);
+            }
+        }
+    }
+    
     public static String checkVersion(AbstractObservationRequest request) {
-		if (request != null) {
-			return request.getVersion();
-		}
-		return null;
-	}
+        if (request != null) {
+            return request.getVersion();
+        }
+        return null;
+    }
 }

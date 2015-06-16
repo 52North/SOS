@@ -41,6 +41,8 @@ public interface ControllerConstants {
      */
     interface Views {
         String INDEX = "index";
+        
+        String DOCUMENTATION = "documentation";
 
         String CLIENT = "client";
 
@@ -105,6 +107,8 @@ public interface ControllerConstants {
         String WSDL = "/wsdl";
 
         String INDEX = "/index";
+        
+        String DOCUMENTATION = "/documentation";
 
         String LICENSE = "/license";
 

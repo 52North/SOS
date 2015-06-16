@@ -99,7 +99,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
      * file
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(OmEncoderv20.class);
-
+    
     private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(OmConstants.NS_OM_2,
             OmObservation.class, NamedValue.class, SingleObservationValue.class, MultiObservationValues.class);
 
@@ -124,7 +124,8 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
                 .join(ENCODER_KEYS));
     }
 
-    @Override
+
+	@Override
     public Set<EncoderKey> getEncoderKeyType() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }

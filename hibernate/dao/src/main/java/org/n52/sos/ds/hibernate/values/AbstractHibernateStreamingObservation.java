@@ -126,7 +126,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
             } else if (resultObject instanceof Series) {
                 observation =
                         HibernateObservationUtilities
-                                .createSosObservationFromSeries((Series) resultObject, request.getVersion(), session)
+                                .createSosObservationFromSeries((Series) resultObject, request, session)
                                 .iterator().next();
             } else {
                 throw new NoApplicableCodeException().withMessage("The object {} is not supported", resultObject
@@ -134,6 +134,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
             }
             checkForModifications(observation);
             session.evict(resultObject);
+            checkMaxNumberOfReturnedValues(1);
             return observation;
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);

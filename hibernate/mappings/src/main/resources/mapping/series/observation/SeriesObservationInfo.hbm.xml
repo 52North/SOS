@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo" table="observation">
+        <id name="observationId" type="long">
+            <column name="observationId" />
+            <generator class="native">
+            	<param name="sequence">observationId_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="series" class="org.n52.sos.ds.hibernate.entities.series.Series" fetch="select" lazy="no-proxy" foreign-key="observationSeriesFk">
+           	<column index="obsSeriesIdx" name="seriesId" not-null="true" unique-key="observationIdentity"/>
+        </many-to-one>
+         <property name="phenomenonTimeStart" type="timestamp" >
+            <column index="obsPhenTimeStartIdx" name="phenomenonTimeStart" length="29" not-null="true" unique-key="observationIdentity"/>
+        </property>
+        <property name="phenomenonTimeEnd" type="timestamp">
+            <column index="obsPhenTimeEndIdx" name="phenomenonTimeEnd" length="29" not-null="true" unique-key="observationIdentity"/>
+        </property>
+        <property name="resultTime" type="timestamp" >
+            <column index="obsResultTimeIdx" name="resultTime" length="29" not-null="true" unique-key="observationIdentity"/>
+        </property>
+        <property name="identifier" type="string">
+            <column name="identifier" unique-key="obsIdentifierUK"/>
+        </property>
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="obsCodespaceIdentifierFk">
+            <column name="codespace" />
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name" />
+        </property>
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="obsCodespaceNameFk">
+            <column name="codespaceName" />
+        </many-to-one>
+        <property name="description" type="string">
+            <column name="description" />
+        </property>
+        <property name="deleted" type="org.hibernate.type.TrueFalseType">
+            <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
+        </property>
+        <property name="validTimeStart" type="timestamp">
+            <column name="validTimeStart" length="29" />
+        </property>
+        <property name="validTimeEnd" type="timestamp">
+            <column name="validTimeEnd" length="29" />
+        </property>
+        <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit" fetch="select" lazy="no-proxy" foreign-key="observationUnitFk">
+            <column name="unitId" not-null="false" />
+        </many-to-one>
+        <set name="offerings" table="observationHasOffering" inverse="false" fetch="select" lazy="true" >
+            <key>
+                <column name="observationId" not-null="true" index="obshasoffobservationidx" />
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Offering" foreign-key="observationOfferingFk">
+                <column name="offeringId" not-null="true" index="obshasoffofferingidx" />
+            </many-to-many>
+        </set>
+        <property name="samplingGeometry" type="org.hibernate.spatial.GeometryType">
+            <column name="samplingGeometry"/>
+        </property>
+    </class>
+</hibernate-mapping>

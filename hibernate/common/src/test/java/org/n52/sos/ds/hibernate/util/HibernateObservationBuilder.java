@@ -273,6 +273,7 @@ public class HibernateObservationBuilder {
             series.setProcedure(getProcedure());
             series.setFeatureOfInterest(getFeatureOfInterest());
             series.setDeleted(false);
+            series.setPublished(true);
 
             if (series instanceof EReportingSeries) {
                 EReportingSeries eReportingSeries = (EReportingSeries) series;

@@ -90,6 +90,10 @@ public abstract class AbstractFeature extends AbstractGML implements Serializabl
         super(featureIdentifier, gmlId);
     }
     
+    public void copyTo(AbstractFeature copyOf) {
+        super.copyTo(copyOf);
+    }
+    
     public AbstractFeature setDefaultElementEncoding(String defaultEncoding) {
     	this.defaultEncoding = defaultEncoding;
     	return this;

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>org.n52.sensorweb.sos</groupId>
 		<artifactId>hibernate-datasource</artifactId>
-		<version>4.2.0-SNAPSHOT</version>
+		<version>4.4.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>hibernate-datasource-sqlserver</artifactId>
@@ -27,7 +26,6 @@
 		<dependency>
 			<groupId>com.microsoft</groupId>
 			<artifactId>sqljdbc4</artifactId>
-			<version>4.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- Hibernate Core Dependencies -->
@@ -44,12 +42,6 @@
 			<artifactId>hibernate-spatial</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>1.9.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 		</dependency>
@@ -59,7 +51,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.15</version>
+				<version>2.15</version><!--$NO-MVN-MAN-VER$-->
 				<configuration>
 					<additionalClasspathElements>
 						<additionalClasspathElement>${project.basedir}/lib</additionalClasspathElement>

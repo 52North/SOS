@@ -189,10 +189,10 @@ function generateSettings(settings, settingValues, container, tabbed) {
         var $label = $("<label>").addClass("checkbox").text(setting.title);
         var $description = $("<span>").addClass("help-block").html(setting.description);
         $setting.append($label).append($controls.append($label.prepend($input)).append($description));
-        if (typeof setting["default"] === "boolean") {
-            $input.attr("checked", setting["default"]);
-        } else if (typeof settingValues[setting.id] === "boolean") {
-            $input.attr("checked", settingValues[setting.id]);
+        if (settingValues[setting.id] !== null && typeof settingValues[setting.id] === "boolean") {
+        	 $input.attr("checked", settingValues[setting.id]);
+        } else if (typeof setting["default"] === "boolean") {
+        	 $input.attr("checked", setting["default"]);
         }
     }
 

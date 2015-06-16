@@ -62,7 +62,7 @@ public class AdditionalObservationCreatorRepository extends AbstractConfiguringS
     protected void processConfiguredImplementations(Set<AdditionalObservationCreator> additionalObservationCreators)
             throws ConfigurationException {
         this.additionalObservationCreator.clear();
-        for (final AdditionalObservationCreator aoc : additionalObservationCreators) {
+        for (final AdditionalObservationCreator<?> aoc : additionalObservationCreators) {
             for (AdditionalObservationCreatorKey key : aoc.getKeys()) {
                 LOGGER.debug("Registered AdditionalObservationCreator for {}", key);
                 this.additionalObservationCreator.put(key, aoc);

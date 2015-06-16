@@ -27,10 +27,8 @@
 -- Public License for more details.
 --
 
-ALTER TABLE observation ADD COLUMN samplingGeometry GEOMETRY;
-
 SET SQL_SAFE_UPDATES=0;
-UPDATE observation SET observation.samplingGeometry = (Select spf.geom FROM spatialFilteringProfile spf WHERE observation.observationid = spf.observation);
+UPDATE sos.observation SET observation.samplingGeometry = (Select spf.geom FROM spatialFilteringProfile spf WHERE observation.observationid = spf.observation);
 SET SQL_SAFE_UPDATES=1;
 
-DROP TABLE spatialFilteringProfile;
+DROP TABLE sos.spatialFilteringProfile;

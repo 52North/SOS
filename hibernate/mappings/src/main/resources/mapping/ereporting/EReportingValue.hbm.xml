@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="observation">
+        <id name="observationId" type="long">
+            <column name="observationId" />
+            <generator class="native">
+            	<param name="sequence">observationId_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="series" class="org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries" fetch="select" lazy="no-proxy" foreign-key="observationSeriesFk">
+           	<column index="obsSeriesIdx" name="seriesId" not-null="true" unique-key="observationIdentity"/>
+        </many-to-one>
+         <property name="phenomenonTimeStart" type="timestamp" >
+            <column index="obsPhenTimeStartIdx" name="phenomenonTimeStart" length="29" not-null="true" unique-key="observationIdentity"/>
+        </property>
+        <property name="phenomenonTimeEnd" type="timestamp">
+            <column index="obsPhenTimeEndIdx" name="phenomenonTimeEnd" length="29" not-null="true" unique-key="observationIdentity"/>
+        </property>
+        <property name="resultTime" type="timestamp" >
+            <column index="obsResultTimeIdx" name="resultTime" length="29" not-null="true" unique-key="observationIdentity"/>
+        </property>
+        <property name="identifier" type="string">
+            <column name="identifier" unique-key="obsIdentifierUK"/>
+        </property>
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="obsCodespaceIdentifierFk">
+            <column name="codespace" />
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name" />
+        </property>
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="obsCodespaceNameFk">
+            <column name="codespaceName" />
+        </many-to-one>
+        <property name="description" type="string">
+            <column name="description"/>
+        </property>
+        <property name="deleted" type="org.hibernate.type.TrueFalseType">
+            <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')"/>
+        </property>
+        <property name="validTimeStart" type="timestamp">
+            <column name="validTimeStart" length="29" not-null="false" default="NULL"/>
+        </property>
+        <property name="validTimeEnd" type="timestamp">
+            <column name="validTimeEnd" length="29" not-null="false" default="NULL"/>
+        </property>
+        <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit" fetch="select" lazy="no-proxy" foreign-key="observationUnitFk">
+            <column name="unitId" not-null="false" />
+        </many-to-one>
+        <set name="offerings" table="observationHasOffering" inverse="false" fetch="select" lazy="true" >
+            <key>
+                <column name="observationId" not-null="true" index="obshasoffobservationidx" />
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Offering" foreign-key="observationOfferingFk" lazy="proxy">
+                <column name="offeringId" not-null="true" index="obshasoffofferingidx" />
+            </many-to-many>
+        </set>
+        <property name="samplingGeometry" type="org.hibernate.spatial.GeometryType">
+            <column name="samplingGeometry" />
+        </property>
+        <property name="validation" type="int">
+            <column name="validation" not-null="true" default="-1"/>
+        </property>
+        <property name="verification" type="int">
+            <column name="verification" not-null="true" default="3"/>
+        </property>
+        <property name="primaryObservation" type="string">
+            <column name="primaryObservation" not-null="true" default="'var'"/>
+        </property>
+        <property name="timeCoverageFlag" type="org.hibernate.type.TrueFalseType">
+            <column name="timeCoverageFlag" check="timeCoverageFlag in ('T','F')" length="1" />
+        </property>
+        <property name="dataCaptureFlag" type="org.hibernate.type.TrueFalseType">
+            <column name="dataCaptureFlag" check="dataCaptureFlag in ('T','F')" length="1" />
+        </property>
+        <property name="dataCapture" type="double">
+            <column name="dataCapture" not-null="false" />
+        </property>
+        <property name="uncertaintyEstimation" type="double">
+            <column name="uncertaintyEstimation" not-null="false" />
+        </property>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingNumericValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="numericValue">
+        	<key column="observationId" foreign-key="observationNumericValueFk" />
+         	<property name="value" type="double" />
+        </joined-subclass>
+        <!-- <joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingBlobValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="blobValue">
+        	<key column="observationId" foreign-key="observationBlobValueFk" />
+         	<property name="value" type="blob" />
+        </joined-subclass>
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingBooleanValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="booleanValue" check="value in ('T','F')">
+        	<key column="observationId" foreign-key="observationBooleanValueFk" />
+        	<property name="value" type="org.hibernate.type.TrueFalseType"/>
+        </joined-subclass>
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingCategoryValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="categoryValue">
+        	<key column="observationId" foreign-key="observationCategoryValueFk" />
+         	<property name="value" type="string" />
+        </joined-subclass>
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingCountValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="countValue">
+        	<key column="observationId" foreign-key="observationCountValueFk" />
+        	<property name="value" type="integer" />
+        </joined-subclass>
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingGeometryValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="geometryValue">
+        	<key column="observationId" foreign-key="observationGeometryValueFk" />
+         	<property name="value" type="org.hibernate.spatial.GeometryType" />
+        </joined-subclass>
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingTextValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="textValue">
+        	<key column="observationId" foreign-key="observationTextValueFk" />
+        	<property name="value" type="org.hibernate.type.StringClobType" />
+        </joined-subclass>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingSweDataArrayValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="sweDataArrayValue">
+        	<key column="observationId" foreign-key="observationSweDataArrayValueFk" />
+        	<property name="value" type="org.hibernate.type.StringClobType" />
+        </joined-subclass> -->
+    </class>
+</hibernate-mapping>

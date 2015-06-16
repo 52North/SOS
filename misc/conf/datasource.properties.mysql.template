@@ -2,7 +2,7 @@
 org.n52.sos.ds.Datasource=org.n52.sos.ds.datasource.MySQLDatasource
 
 # path to mapping files
-HIBERNATE_DIRECTORY=/mapping/core;/mapping/series/observation;/mapping/transactional;/mapping/series/spatialFilteringProfile;
+HIBERNATE_DIRECTORY=/mapping/core;/mapping/series/observation;/mapping/transactional;
 
 # hibernate/postgres configuration
 

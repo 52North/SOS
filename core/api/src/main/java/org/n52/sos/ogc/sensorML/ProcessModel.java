@@ -32,7 +32,7 @@ package org.n52.sos.ogc.sensorML;
  * @since 4.0.0
  * 
  */
-public class ProcessModel extends AbstractProcess {
+public class ProcessModel extends AbstractProcess implements HasProcessMethod {
 
     private static final long serialVersionUID = -5490781462864023242L;
     
@@ -42,8 +42,12 @@ public class ProcessModel extends AbstractProcess {
         return method;
     }
 
-    public ProcessModel setMethod(final ProcessMethod method) {
+    public void setMethod(final ProcessMethod method) {
         this.method = method;
-        return this;
+    }
+
+    @Override
+    public boolean isSetMethod() {
+        return method != null;
     }
 }

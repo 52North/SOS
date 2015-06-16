@@ -62,6 +62,11 @@ public class BooleanValuedLegacyObservation
     public boolean isSetValue() {
         return getValue();
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
 
     @Override
     public void accept(VoidValuedObservationVisitor visitor)

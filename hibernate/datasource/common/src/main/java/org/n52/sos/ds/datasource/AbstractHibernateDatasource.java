@@ -51,6 +51,7 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
+import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
 import org.n52.sos.config.settings.ChoiceSettingDefinition;
@@ -137,13 +138,13 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected static final boolean TRANSACTIONAL_DEFAULT_VALUE = true;
 
-    protected static final String MULTI_LANGUAGE_TITLE = "Multi language support";
+    protected static final String MULTILINGUALISM_TITLE = "Multilingualism support";
 
-    protected static final String MULTI_LANGUAGE_DESCRIPTION = "Should the database support multi language?";
+    protected static final String MULTILINGUALISM_DESCRIPTION = "Should the database support multilingualism?";
 
-    protected static final String MULTI_LANGUAGE_KEY = "sos.language";
+    protected static final String MULTILINGUALISM_KEY = "sos.language";
 
-    protected static final boolean MULTI_LANGUAGE_DEFAULT_VALUE = false;
+    protected static final boolean MULTILINGUALISM_DEFAULT_VALUE = false;
 
     protected static final String USERNAME_KEY = HibernateConstants.CONNECTION_USERNAME;
 
@@ -174,9 +175,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     private boolean transactionalDatasource = true;
 
-    private final BooleanSettingDefinition mulitLanguageDefinition = createMultiLanguageDefinition();
+    private final BooleanSettingDefinition multilingualismDefinition = createMultilingualismDefinition();
 
-    private boolean multiLanguageDatasource = true;
+    private boolean multilingualismDatasource = true;
 
     /**
      * Create settings definition for username
@@ -293,10 +294,10 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 .setOrder(SettingDefinitionProvider.ORDER_3).setKey(TRANSACTIONAL_KEY);
     }
 
-    protected BooleanSettingDefinition createMultiLanguageDefinition() {
-        return new BooleanSettingDefinition().setDefaultValue(MULTI_LANGUAGE_DEFAULT_VALUE)
-                .setTitle(MULTI_LANGUAGE_TITLE).setDescription(MULTI_LANGUAGE_DESCRIPTION).setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_3).setKey(MULTI_LANGUAGE_KEY);
+    protected BooleanSettingDefinition createMultilingualismDefinition() {
+        return new BooleanSettingDefinition().setDefaultValue(MULTILINGUALISM_DEFAULT_VALUE)
+                .setTitle(MULTILINGUALISM_TITLE).setDescription(MULTILINGUALISM_DESCRIPTION).setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_3).setKey(MULTILINGUALISM_KEY);
     }
 
     /**
@@ -365,7 +366,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             }
         }
         if (isMultiLanguageDatasource()) {
-            Boolean multiLanguage = (Boolean) settings.get(this.mulitLanguageDefinition.getKey());
+            Boolean multiLanguage = (Boolean) settings.get(this.multilingualismDefinition.getKey());
             if (multiLanguage != null && multiLanguage.booleanValue()) {
                 config.addDirectory(resource(HIBERNATE_MAPPING_I18N_PATH));
             }
@@ -510,18 +511,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
             while (iter.hasNext()) {
                 Table table = iter.next();
-                // check if table is a physical table, tables is a table and if
-                // table is contained in the defined schema
-                // if (table.isPhysicalTable() &&
-                // metadata.isTable(table.getName())
-                // && metadata.getTableMetadata(table.getName(), schema,
-                // catalog, false) != null) {
-                // return true;
-                // }
                 if (table.isPhysicalTable()
                         && metadata.isTable(table.getQuotedName())
-                        && metadata.getTableMetadata(table.getName(), table.getSchema(), table.getCatalog(),
-                                table.isQuoted()) != null) {
+                        && metadata.getTableMetadata(table.getName(), schema, catalog, table.isQuoted()) != null) {
                     return true;
                 }
             }
@@ -538,9 +530,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (metaData != null) {
             ResultSet rs = metaData.getSchemas();
             while (rs.next()) {
-                if (StringHelper.isNotEmpty(rs.getString("TABLE_SCHEM")) && rs.getString("TABLE_SCHEM").equals(schema)) {
+                if (StringHelper.isNotEmpty(rs.getString("TABLE_SCHEM")) && rs.getString("TABLE_SCHEM").equalsIgnoreCase(schema)) {
                     return rs.getString("TABLE_SCHEM");
                 }
+            }
+            if (StringHelper.isNotEmpty(schema)) {
+                throw new ConfigurationException(String.format("Requested schema (%s) is not contained in the database!", schema));
             }
         }
         return null;
@@ -634,6 +629,16 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             }
         }
         return false;
+    }
+    
+    protected Set<SettingDefinition<?,?>> filter(Set<SettingDefinition<?,?>> definitions, Set<String> keysToExclude) {
+        Iterator<SettingDefinition<?, ?>> iterator = definitions.iterator();
+        while(iterator.hasNext()) {
+            if (keysToExclude.contains(iterator.next().getKey())) {
+                iterator.remove();
+            }
+        }
+        return definitions;
     }
 
     /**
@@ -732,7 +737,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             }
         }
         if (isMultiLanguageDatasource()) {
-            Boolean t = (Boolean) settings.get(mulitLanguageDefinition.getKey());
+            Boolean t = (Boolean) settings.get(multilingualismDefinition.getKey());
             if (t != null && t) {
                 builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_I18N_PATH);
             }
@@ -772,7 +777,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     protected BooleanSettingDefinition getMulitLanguageDefiniton() {
-        return mulitLanguageDefinition;
+        return multilingualismDefinition;
     }
 
     /**
@@ -853,7 +858,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return the multi language
      */
     public boolean isMultiLanguageDatasource() {
-        return multiLanguageDatasource;
+        return multilingualismDatasource;
     }
 
     /**
@@ -861,7 +866,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      *            language the multi language to set
      */
     public void setMultiLangugage(boolean multiLanguageDatasource) {
-        this.multiLanguageDatasource = multiLanguageDatasource;
+        this.multilingualismDatasource = multiLanguageDatasource;
     }
 
     /**

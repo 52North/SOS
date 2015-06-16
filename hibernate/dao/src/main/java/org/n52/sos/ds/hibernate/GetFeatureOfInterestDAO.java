@@ -42,8 +42,6 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.n52.sos.ds.AbstractGetFeatureOfInterestDAO;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
@@ -59,11 +57,10 @@ import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
-import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
-import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
+import org.n52.sos.i18n.LocaleHelper;
 import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -71,8 +68,9 @@ import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
-import org.n52.sos.i18n.LocaleHelper;
 import org.n52.sos.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -94,7 +92,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     private static final String SQL_QUERY_GET_FEATURE_FOR_IDENTIFIER_PROCEDURE = "getFeatureForIdentifierProcedure";
 
     private static final String SQL_QUERY_GET_FEATURE_FOR_IDENTIFIER_OBSERVED_PROPERTY =
-            "getFeatureForIdentifieObservableProperty";
+            "getFeatureForIdentifierObservableProperty";
 
     private static final String SQL_QUERY_GET_FEATURE_FOR_IDENTIFIER_PROCEDURE_OBSERVED_PROPERTY =
             "getFeatureForIdentifierProcedureObservableProperty";
@@ -276,7 +274,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     @SuppressWarnings("unchecked")
     private List<String> queryFeatureIdentifiersForParameter(final GetFeatureOfInterestRequest req,
             final Session session) throws OwsExceptionReport {
-        if (req.hasParameter()) {
+        if (req.hasNoParameter()) {
             return new FeatureOfInterestDAO().getFeatureOfInterestIdentifiers(session);
         }
         if (req.containsOnlyFeatureParameter() && req.isSetFeatureOfInterestIdentifiers()) {
@@ -364,10 +362,14 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
      * @param session
      *            Hibernate Sesstion
      * @return Resulting FeatureOfInterest identifiers list
+     * @throws CodedException If an error occurs during processing
      */
     @SuppressWarnings("unchecked")
-    private List<String> queryFeatureIdentifiersForParameterForSeries(GetFeatureOfInterestRequest req, Session session) {
+    private List<String> queryFeatureIdentifiersForParameterForSeries(GetFeatureOfInterestRequest req, Session session) throws CodedException {
         final Criteria c = session.createCriteria(FeatureOfInterest.class);
+        if (req.isSetFeatureOfInterestIdentifiers()) {
+            c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, req.getFeatureIdentifiers()));
+        }
         c.add(Subqueries.propertyIn(FeatureOfInterest.ID,
                 getDetachedCriteriaForSeriesWithProcedureObservableProperty(req, session)));
         c.setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
@@ -420,6 +422,9 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     private Criteria getCriteriaForFeatureIdentifiersOfParameterFromSeriesObservations(
             GetFeatureOfInterestRequest req, Session session) throws OwsExceptionReport {
         final Criteria c = session.createCriteria(FeatureOfInterest.class);
+        if (req.isSetFeatureOfInterestIdentifiers()) {
+            c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, req.getFeatureIdentifiers()));
+        }
         c.add(Subqueries.propertyIn(FeatureOfInterest.ID,
                 getDetachedCriteriaForFeautreOfInterestForSeries(req, session)));
         c.setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
@@ -435,10 +440,11 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
      * @param session
      *            Hibernate Sesstion
      * @return Detached Criteria
+     * @throws CodedException If an error occurs during processing
      */
     private DetachedCriteria getDetachedCriteriaForSeriesWithProcedureObservableProperty(
-            GetFeatureOfInterestRequest req, Session session) {
-        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(Series.class);
+            GetFeatureOfInterestRequest req, Session session) throws CodedException {
+        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(EntitiyHelper.getInstance().getSeriesEntityClass());
         detachedCriteria.add(Restrictions.eq(Series.DELETED, false));
         // observableProperties
         if (req.isSetObservableProperties()) {
@@ -468,7 +474,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
      */
     private DetachedCriteria getDetachedCriteriaForFeautreOfInterestForSeries(GetFeatureOfInterestRequest req,
             Session session) throws OwsExceptionReport {
-        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(Series.class);
+        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(EntitiyHelper.getInstance().getSeriesEntityClass());
         detachedCriteria.add(Subqueries.propertyIn(Series.ID,
                 getDetachedCriteriaForSeriesWithProcedureObservablePropertyTemporalFilter(req, session)));
         detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.FEATURE_OF_INTEREST)));
@@ -484,16 +490,10 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
      * @param session
      *            Hibernate Sesstion
      * @return Detached Criteria
-     * @throws UnsupportedTimeException
-     *             If time is not supported
-     * @throws UnsupportedValueReferenceException
-     *             If valueReference is not supported
-     * @throws UnsupportedOperatorException
-     *             If temporal operator is not supported
+     * @throws CodedException If an error occurs during processing
      */
     private DetachedCriteria getDetachedCriteriaForSeriesWithProcedureObservablePropertyTemporalFilter(
-            GetFeatureOfInterestRequest req, Session session) throws UnsupportedTimeException,
-            UnsupportedValueReferenceException, UnsupportedOperatorException {
+            GetFeatureOfInterestRequest req, Session session) throws CodedException {
         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(ContextualReferencedSeriesObservation.class);
         DetachedCriteria seriesCriteria = detachedCriteria.createCriteria(ContextualReferencedSeriesObservation.SERIES);
         detachedCriteria.add(Restrictions.eq(Series.DELETED, false));

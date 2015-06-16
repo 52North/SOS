@@ -57,6 +57,11 @@ public class SweDataArrayValuedEReportingObservation
         return StringHelper.isNotEmpty(value);
     }
 
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
+
     @Override
     public void accept(VoidValuedObservationVisitor visitor)
             throws OwsExceptionReport {

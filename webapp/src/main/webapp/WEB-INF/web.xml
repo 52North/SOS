@@ -4,7 +4,7 @@
 	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
-	<display-name>${project.parent.name}, Git-Branch '${git.branch}' with state '${git.commit.id}' @ ${git.commit.time}</display-name>
+	<display-name>${project.parent.name}; Git-Branch: '${git.branch}'; Git-Commit: '${git.commit.id}' @ ${git.commit.time}; Build time: ${git.build.time}</display-name>
 	<description>This is an OGC SOS.</description>
 
 	<context-param>
@@ -25,6 +25,11 @@
 		<param-name>datasourceConfigLocation</param-name>
 		<param-value>/WEB-INF/datasource.properties</param-value>
 	</context-param>
+	
+	<!-- Memory leak preventer listener -->
+	<listener>
+	  <listener-class>se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventor</listener-class>
+	</listener>
 
 	<!-- Spring startup listener -->
 	<listener>

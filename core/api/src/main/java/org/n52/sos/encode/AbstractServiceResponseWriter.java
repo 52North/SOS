@@ -35,8 +35,11 @@ import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.sos.response.StreamingDataResponse;
 import org.n52.sos.service.ServiceConfiguration;
+import org.n52.sos.util.http.MediaType;
 
 /**
  * {@link ResponseWriter} for {@link AbstractServiceResponse}
@@ -47,32 +50,31 @@ import org.n52.sos.service.ServiceConfiguration;
  */
 public class AbstractServiceResponseWriter extends AbstractResponseWriter<AbstractServiceResponse> {
 
-    @Override
-    public Class<AbstractServiceResponse> getType() {
-        return AbstractServiceResponse.class;
-    }
+    // @Override
+    // public Class<AbstractServiceResponse> getType() {
+    // return AbstractServiceResponse.class;
+    // }
 
     @Override
-    public void write(AbstractServiceResponse asr, OutputStream out) throws IOException {
+    public void write(AbstractServiceResponse asr, OutputStream out, ResponseProxy responseProxy) throws IOException {
         try {
             Encoder<Object, AbstractServiceResponse> encoder = getEncoder(asr);
             if (encoder != null) {
                 if (isStreaming(asr)) {
                     ((StreamingEncoder<?, AbstractServiceResponse>) encoder).encode(asr, out);
                 } else {
-                    if (!(encoder instanceof StreamingDataEncoder) && asr.hasStreamingData()) {
-                        asr.mergeStreamingData();
+                    if (asr instanceof StreamingDataResponse && ((StreamingDataResponse)asr).hasStreamingData() && !(encoder instanceof StreamingDataEncoder)) {
+                        ((StreamingDataResponse)asr).mergeStreamingData();
                     }
-                    // use encoded Object specific writer, e.g.
-                    // XmlResponseWriter
+                    // use encoded Object specific writer, e.g. XmlResponseWriter
                     Object encode = encoder.encode(asr);
                     if (encode != null) {
                         ResponseWriter<Object> writer =
                                 ResponseWriterRepository.getInstance().getWriter(encode.getClass());
                         if (writer == null) {
-                            throw new RuntimeException("no writer for " + asr.getClass() + " found!");
+                            throw new RuntimeException("no writer for " + encode.getClass() + " found!");
                         }
-                        writer.write(encode, out);
+                        writer.write(encode, out, responseProxy);
                     }
                 }
             }
@@ -98,13 +100,20 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
      * @return {@link Encoder} for the {@link AbstractServiceResponse}
      */
     private Encoder<Object, AbstractServiceResponse> getEncoder(AbstractServiceResponse asr) {
-        OperationEncoderKey key = new OperationEncoderKey(asr.getOperationKey(), getContentType());
+        OperationEncoderKey key = new OperationEncoderKey(asr.getOperationKey(), getEncodedContentType(asr));
         Encoder<Object, AbstractServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
             throw new RuntimeException(new NoEncoderForKeyException(new OperationEncoderKey(asr.getOperationKey(),
                     getContentType())));
         }
         return encoder;
+    }
+
+    private MediaType getEncodedContentType(AbstractServiceResponse asr) {
+        if (asr instanceof ResponseFormat) {
+            return getEncodedContentType((ResponseFormat) asr);
+        }
+        return getContentType();
     }
 
     /**
@@ -119,7 +128,10 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
      *         {@link StreamingEncoder}
      */
     private boolean isStreaming(AbstractServiceResponse asr) {
-        return ServiceConfiguration.getInstance().isForceStreamingEncoding() && getEncoder(asr) instanceof StreamingEncoder;
+        if (getEncoder(asr) instanceof StreamingEncoder) {
+            return ServiceConfiguration.getInstance().isForceStreamingEncoding()
+                    || ((StreamingEncoder<?, ?>) getEncoder(asr)).forceStreaming();
+        }
+        return false;
     }
-
 }

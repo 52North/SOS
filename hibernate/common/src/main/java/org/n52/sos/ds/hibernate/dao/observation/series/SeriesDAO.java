@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.dao.observation.series;
 import java.util.Collection;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
@@ -52,7 +53,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) {
+    public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws CodedException {
         return getSeriesCriteria(request, features, session).list();
     }
 
@@ -83,5 +84,11 @@ public class SeriesDAO extends AbstractSeriesDAO {
     protected Class <?>getSeriesClass() {
         return Series.class;
     }
+
+    @Override
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) {
+        // nothing to add
+    }
+
 
 }

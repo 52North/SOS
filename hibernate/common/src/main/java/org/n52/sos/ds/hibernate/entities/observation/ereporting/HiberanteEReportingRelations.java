@@ -55,6 +55,9 @@ public interface HiberanteEReportingRelations {
     }
 
     interface HasValidation {
+
+        Integer DEFAULT_VALIDATION = -1;
+
         String VALIDATION = "validation";
         Integer getValidation();
         void setValidation(Integer validation);
@@ -68,10 +71,147 @@ public interface HiberanteEReportingRelations {
         boolean isSetVerification();
     }
 
+    interface HasPrimaryObservation {
+
+        String DEFAULT_PRIMARY_OBSERVATION = AqdConstants.VAR;
+
+        String PRIMARY_OBSERVATION = "primaryObservation";
+
+        String getPrimaryObservation();
+
+        HasPrimaryObservation setPrimaryObservation(String primaryObservation);
+
+        boolean isSetPrimaryObservation();
+    }
+
+    interface HasTimeCoverageFlag {
+        String TIME_COVERAGE_FLAG = "timeCoverageFlag";
+
+        Boolean getTimeCoverageFlag();
+
+        void setTimeCoverageFlag(Boolean timeCoverageFlag);
+
+        boolean isSetTimeCoverageFlag();
+    }
+
+    interface HasDataCaptureFlag {
+        String DATA_CAPTURE_FLAG = "dataCaptureFlag";
+
+        Boolean getDataCaptureFlag();
+
+        void setDataCaptureFlag(Boolean dataCaptureFlag);
+
+        boolean isSetDataCaptureFlag();
+    }
+
+    interface HasDataCapture {
+
+        String DATA_CAPTURE = "dataCapture";
+
+        Double getDataCapture();
+
+        HasDataCapture setDataCapture(Double dataCapture);
+
+        boolean isSetDataCapture();
+    }
+
+    interface HasUncertaintyEstimation {
+        String UNCERTAINTY_ESTIMATION = "uncertaintyEstimation";
+
+        Double getUncertaintyEstimation();
+
+        void setUncertaintyEstimation(Double uncertaintyEstimation);
+
+        boolean isSetUncertaintyEstimation();
+    }
+
+    interface EReportingQualityData extends HasTimeCoverageFlag, HasDataCaptureFlag, HasUncertaintyEstimation {
+
+    }
+
+    interface EReportingValues extends EReportingValuesTime, HasDataCapture, EReportingQualityData, HasUnit,
+            GetStringValue {
+
+        String getPrimaryObservation();
+
+    }
+
+    interface EReportingValuesTime extends HasEReportingSeries, HasValidation, HasVerification, HasPrimaryObservation {
+
+        String getPrimaryObservation();
+
+    }
+
     interface HasAssessmentType {
         String ASSESSMENTTYPE = "assessmentType";
+
+        /**
+         * @return the assessmentType
+         */
         EReportingAssessmentType getAssessmentType();
+
+        /**
+         * @param assessmentType
+         *            the assessmentType to set
+         */
         void setAssessmentType(EReportingAssessmentType assessmentType);
+
         boolean isSetAssessmentType();
+    }
+
+    /**
+     * Interface for AQD EReporting Station elements
+     * 
+     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @since 4.3.0
+     *
+     */
+    interface HasStation {
+        String STATION = "station";
+
+        /**
+         * @return the station
+         */
+        EReportingStation getStation();
+
+        /**
+         * @param station
+         *            the station to set
+         * @return this
+         */
+        HasStation setStation(EReportingStation station);
+
+        /**
+         * @return <code>true</code>, if station is not null
+         */
+        boolean isSetStation();
+    }
+
+    /**
+     * Interface for AQD EReporting Network elements
+     * 
+     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @since 4.3.0
+     *
+     */
+    interface HasNetwork {
+        String NETWORK = "network";
+
+        /**
+         * @return the network
+         */
+        EReportingNetwork getNetwork();
+
+        /**
+         * @param network
+         *            the network to set
+         * @return this
+         */
+        HasNetwork setNetwork(EReportingNetwork network);
+
+        /**
+         * @return <code>true</code>, if network is not null
+         */
+        boolean isSetNetwork();
     }
 }

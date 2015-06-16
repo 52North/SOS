@@ -35,53 +35,23 @@ import org.hibernate.Session;
 
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-
-import com.google.common.collect.Lists;
+import org.n52.sos.request.AbstractObservationRequest;
 
 public class EReportingSeriesOmObservationCreator extends SeriesOmObservationCreator {
-    
-    
-    public EReportingSeriesOmObservationCreator(EReportingSeries series, String version, Session session) {
-        super(series, version, session);
+
+
+    public EReportingSeriesOmObservationCreator(EReportingSeries series, AbstractObservationRequest request, Session session) {
+        super(series, request, session);
     }
 
-    public EReportingSeriesOmObservationCreator(EReportingSeries series, String version, Locale language, Session session) {
-        super(series, version, language, session);
+    public EReportingSeriesOmObservationCreator(EReportingSeries series, AbstractObservationRequest request, Locale language, Session session) {
+        super(series, request, language, session);
     }
-    
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+
     @Override
     public List<OmObservation> create() throws OwsExceptionReport, ConverterException {
-        final List<OmObservation> observations = Lists.newLinkedList();
-        if (series != null) {
-            SosProcedureDescription procedure = createProcedure(series.getProcedure().getIdentifier());
-            OmObservableProperty obsProp = createObservableProperty(series.getObservableProperty());
-            AbstractFeature feature = createFeatureOfInterest(series.getFeatureOfInterest().getIdentifier());
-
-            final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);
-
-            final OmObservation sosObservation = new OmObservation();
-            sosObservation.setNoDataValue(getNoDataValue());
-            sosObservation.setTokenSeparator(getTokenSeparator());
-            sosObservation.setTupleSeparator(getTupleSeparator());
-            sosObservation.setObservationConstellation(obsConst);
-            // set or add???
-            sosObservation.setParameter(new EReportingObservationHelper().createSamplingPointParameter((EReportingSeries)series));
-            final NilTemplateValue value = new NilTemplateValue();
-            value.setUnit(obsProp.getUnit());
-            sosObservation
-                    .setValue(new SingleObservationValue(new TimeInstant(), value));
-            observations.add(sosObservation);
-        }
-        return observations;
+        return super.create();
     }
 }

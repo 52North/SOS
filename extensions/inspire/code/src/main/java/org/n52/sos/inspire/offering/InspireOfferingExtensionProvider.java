@@ -32,6 +32,7 @@ import java.util.Set;
 
 import org.n52.sos.inspire.AbstractInspireProvider;
 import org.n52.sos.inspire.InspireConstants;
+import org.n52.sos.inspire.InspireHelper;
 import org.n52.sos.inspire.InspireSupportedCRS;
 import org.n52.sos.inspire.InspireSupportedLanguages;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -74,7 +75,10 @@ public class InspireOfferingExtensionProvider extends AbstractInspireProvider im
 
     @Override
     public boolean hasExtendedOfferingFor(String identifier) {
-        return getCache().getOfferings().contains(identifier);
+    	if (InspireHelper.getInstance().isEnabled()) {
+    		 return getCache().getOfferings().contains(identifier);
+    	}
+        return false;
     }
 
 }

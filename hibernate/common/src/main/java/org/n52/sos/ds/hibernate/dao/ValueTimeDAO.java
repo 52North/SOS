@@ -43,6 +43,7 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
@@ -192,6 +193,7 @@ public class ValueTimeDAO extends AbstractValueDAO {
             logArgs += ", sosIndeterminateTime";
             addIndeterminateTimeRestriction(c, sosIndeterminateTime);
         }
+        addSpecificRestrictions(c, request);
         LOGGER.debug("QUERY getObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c;
     }
@@ -208,5 +210,10 @@ public class ValueTimeDAO extends AbstractValueDAO {
     public Criteria getDefaultObservationCriteria(Class<?> clazz, Session session) {
         return session.createCriteria(clazz).add(Restrictions.eq(TemporalReferencedLegacyObservation.DELETED, false))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    }
+    
+    @Override
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
+        // nothing  to add
     }
 }

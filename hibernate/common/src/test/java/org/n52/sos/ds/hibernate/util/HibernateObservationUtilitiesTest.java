@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -148,7 +147,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
 
             session.flush();
 
-            hObservation.setValue(BigDecimal.valueOf(1.0));
+            hObservation.setValue(Double.valueOf(1.0));
             hObservation.setProcedure(hProcedure);
             hObservation.setOfferings(Collections.singleton(hOffering));
             hObservation.setObservableProperty(hObservableProperty);

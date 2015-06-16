@@ -33,9 +33,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.aqd.AqdConstants.ElementType;
-import org.n52.sos.aqd.AqdUomRepository;
-import org.n52.sos.aqd.AqdUomRepository.Uom;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingBlobObservation;
@@ -46,34 +43,25 @@ import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingG
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingNumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingSweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingTextObservation;
-import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.quality.SosQuality;
-import org.n52.sos.ogc.om.quality.SosQuality.QualityType;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.util.Constants;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.SweHelper;
+import org.n52.sos.util.CollectionHelper;
 
-import com.google.common.collect.Lists;
+public class EReportingObservationCreator implements AdditionalObservationCreator<EReportingSeries> {
 
-public class EReportingObservationCreator implements AdditionalObservationCreator {
+    @SuppressWarnings("unchecked")
+    private static final Set<AdditionalObservationCreatorKey> KEYS = CollectionHelper.union(
+            AdditionalObservationCreatorRepository.encoderKeysForElements(AqdConstants.NS_AQD,
+                    EReportingObservation.class, EReportingBlobObservation.class, EReportingBooleanObservation.class,
+                    EReportingCategoryObservation.class, EReportingCountObservation.class,
+                    EReportingGeometryObservation.class, EReportingNumericObservation.class,
+                    EReportingSweDataArrayObservation.class, EReportingTextObservation.class, EReportingSeries.class),
+            AdditionalObservationCreatorRepository.encoderKeysForElements(null, EReportingObservation.class,
+                    EReportingBlobObservation.class, EReportingBooleanObservation.class,
+                    EReportingCategoryObservation.class, EReportingCountObservation.class,
+                    EReportingGeometryObservation.class, EReportingNumericObservation.class,
+                    EReportingSweDataArrayObservation.class, EReportingTextObservation.class));
 
     private static final Set<AdditionalObservationCreatorKey> KEYS
             = AdditionalObservationCreatorRepository
@@ -161,23 +149,16 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
         if (elementType.isSetUOM()) {
             time.setUom(elementType.getUOM());
         }
-        return time;
+        return omObservation;
     }
 
-    private SweAbstractDataComponent createSweCatagory(ElementType elementType) {
-        return new SweCategory().setDefinition(elementType.getDefinition());
-    }
-
-    private SweAbstractDataComponent createSweQuantity(ElementType elementType, String unit) {
-        SweQuantity quantity = new SweQuantity();
-        quantity.setDefinition(elementType.getDefinition());
-        Uom aqdUom = AqdUomRepository.getAqdUom(unit);
-        if (aqdUom != null) {
-            quantity.setUom(aqdUom.getConceptURI());
-        } else {
-            quantity.setUom(OGCConstants.UNKNOWN);
+    @Override
+    public OmObservation add(OmObservation omObservation, AbstractObservation observation) {
+        if (observation instanceof EReportingObservation) {
+            EReportingObservation eReportingObservation = (EReportingObservation) observation;
+            omObservation.setAdditionalMergeIndicator(eReportingObservation.getPrimaryObservation());
         }
-        return quantity;
+        return omObservation;
     }
 
     private SweAbstractEncoding createEncoding(OmObservation omObservation) {

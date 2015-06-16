@@ -40,19 +40,25 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.n52.sos.aqd.AqdConstants;
+import org.n52.sos.aqd.AqdHelper;
+import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.encode.xml.stream.inspire.aqd.EReportingHeaderEncoder;
 import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
-import org.n52.sos.inspire.aqd.ReportObligationType;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.AbstractStreaming;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
@@ -69,113 +75,137 @@ import com.google.common.collect.Sets;
 
 public class AqdEncoder extends AbstractXmlEncoder<Object> implements ObservationEncoder<XmlObject, Object> {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(AqdEncoder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AqdEncoder.class);
 
-	private static final Set<EncoderKey> ENCODER_KEY_TYPES = CodingHelper
-			.encoderKeysForElements(AqdConstants.NS_AQD,
-					GetObservationResponse.class, OmObservation.class, EReportingHeader.class);
+    private static final Set<EncoderKey> ENCODER_KEY_TYPES = CodingHelper.encoderKeysForElements(AqdConstants.NS_AQD,
+            GetObservationResponse.class, OmObservation.class, EReportingHeader.class);
 
-	public AqdEncoder() {
-		LOGGER.debug(
-				"Encoder for the following keys initialized successfully: {}!",
-				Joiner.on(", ").join(ENCODER_KEY_TYPES));
-	}
+    public AqdEncoder() {
+        LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
+                Joiner.on(", ").join(ENCODER_KEY_TYPES));
+    }
 
-	@Override
-	public Set<EncoderKey> getEncoderKeyType() {
-		return Collections.unmodifiableSet(ENCODER_KEY_TYPES);
-	}
+    @Override
+    public Set<EncoderKey> getEncoderKeyType() {
+        return Collections.unmodifiableSet(ENCODER_KEY_TYPES);
+    }
 
-	@Override
-	public Set<SchemaLocation> getSchemaLocations() {
-		return Sets
-				.newHashSet(AqdConstants.NS_AQD_SCHEMA_LOCATION);
-	}
+    @Override
+    public Set<SchemaLocation> getSchemaLocations() {
+        return Sets.newHashSet(AqdConstants.NS_AQD_SCHEMA_LOCATION);
+    }
 
-	@Override
-	public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
-		nameSpacePrefixMap.put(AqdConstants.NS_AQD, AqdConstants.NS_AQD_PREFIX);
-	}
+    @Override
+    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
+        nameSpacePrefixMap.put(AqdConstants.NS_AQD, AqdConstants.NS_AQD_PREFIX);
+    }
 
-	@Override
-	public boolean isObservationAndMeasurmentV20Type() {
-		return false;
-	}
+    @Override
+    public boolean isObservationAndMeasurmentV20Type() {
+        return false;
+    }
 
-	@Override
-	public boolean shouldObservationsWithSameXBeMerged() {
-		return false;
-	}
+    @Override
+    public boolean shouldObservationsWithSameXBeMerged() {
+        return false;
+    }
 
-	@Override
-	public boolean supportsResultStreamingForMergedValues() {
-		return false;
-	}
+    @Override
+    public boolean supportsResultStreamingForMergedValues() {
+        return false;
+    }
 
-	@Override
-	public Set<String> getSupportedResponseFormats(String service,
-			String version) {
-		return Sets.newHashSet(AqdConstants.NS_AQD);
-	}
+    @Override
+    public Set<String> getSupportedResponseFormats(String service, String version) {
+        return Sets.newHashSet(AqdConstants.NS_AQD);
+    }
 
-	@Override
-	public XmlObject encode(Object element,
-			Map<HelperValues, String> additionalValues)
-			throws OwsExceptionReport, UnsupportedEncoderInputException {
-		if (element instanceof GetObservationResponse) {
-			return encodeGetObservationResponse((GetObservationResponse) element);
-		} else if (element instanceof OmObservation) {
-			return encodeOmObservation((OmObservation)element);
-		} else if (element instanceof EReportingHeader) {
-			return encodeEReportingHeader((EReportingHeader)element);
-		}
-		throw new UnsupportedEncoderInputException(this, element);
-	}
+    @Override
+    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
+            UnsupportedEncoderInputException {
+        if (element instanceof GetObservationResponse) {
+            return encodeGetObservationResponse((GetObservationResponse) element);
+        } else if (element instanceof OmObservation) {
+            return encodeOmObservation((OmObservation) element);
+        } else if (element instanceof EReportingHeader) {
+            return encodeEReportingHeader((EReportingHeader) element);
+        }
+        throw new UnsupportedEncoderInputException(this, element);
+    }
 
-	private XmlObject encodeGetObservationResponse(
-			GetObservationResponse response) throws OwsExceptionReport {
-		FeatureCollection featureCollection = new FeatureCollection();
-		featureCollection.setGmlId("fc_" + JavaHelper.generateID(new DateTime()
-				.toString()));
-		// TODO get FLOW from response
-		EReportingHeader eReportingHeader = getEReportingHeader(ReportObligationType.E2A);
-		featureCollection.addMember(eReportingHeader);
-		TimePeriod timePeriod = new TimePeriod();
-		for (OmObservation observation : response.getObservationCollection()) {
-			timePeriod.extendToContain(observation.getPhenomenonTime());
-			featureCollection.addMember(observation);
-		}
-		if (timePeriod.isEmpty()) {
-			eReportingHeader.setReportingPeriod(Referenceable.of((Time)timePeriod));
-		}
-		Map<HelperValues, String> additionalValues = new EnumMap<HelperValues, String>(HelperValues.class);
-		additionalValues.put(HelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2);
-		additionalValues.put(HelperValues.DOCUMENT, null);
-		return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32,
-				featureCollection, additionalValues);
-	}
+    private XmlObject encodeGetObservationResponse(GetObservationResponse response) throws OwsExceptionReport {
+        FeatureCollection featureCollection = getFeatureCollection(response);
+        // TODO get FLOW from response
+        EReportingHeader eReportingHeader = getEReportingHeader(getReportObligationType(response));
+        featureCollection.addMember(eReportingHeader);
+        TimePeriod timePeriod = new TimePeriod();
+        TimeInstant resultTime = new TimeInstant(new DateTime(DateTimeZone.UTC));
+        boolean mergeStreaming = response.hasStreamingData() && !response.isSetMergeObservation();
+        int counter = 1;
+        for (OmObservation observation : response.getObservationCollection()) {
+            if (mergeStreaming) {
+                AbstractStreaming value = (AbstractStreaming) observation.getValue();
+                if (value instanceof StreamingValue) {
+                    for (OmObservation omObservation : value.mergeObservation()) {
+                        getAqdHelper().processObservation(omObservation, timePeriod, resultTime, featureCollection,
+                                eReportingHeader, counter++);
+                    }
+                } else {
+                    while (value.hasNextValue()) {
+                        getAqdHelper().processObservation(value.nextSingleObservation(), timePeriod, resultTime,
+                                featureCollection, eReportingHeader, counter++);
+                    }
+                }
+            } else {
+                getAqdHelper().processObservation(observation, timePeriod, resultTime, featureCollection,
+                        eReportingHeader, counter++);
+            }
+        }
+        if (!timePeriod.isEmpty()) {
+            eReportingHeader.setReportingPeriod(Referenceable.of((Time) timePeriod));
+        }
+        Map<HelperValues, String> additionalValues = new EnumMap<HelperValues, String>(HelperValues.class);
+        additionalValues.put(HelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2);
+        additionalValues.put(HelperValues.DOCUMENT, null);
+        return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, featureCollection, additionalValues);
+    }
 
-	private XmlObject encodeOmObservation(OmObservation element) throws OwsExceptionReport {
-		return CodingHelper.encodeObjectToXml(OmConstants.NS_OM_2, element);
-	}
-	
-	private XmlObject encodeEReportingHeader(EReportingHeader element) throws OwsExceptionReport {
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			new EReportingHeaderEncoder(element).write(baos);
-			return XmlObject.Factory.parse(baos.toString("UTF8"));
-		} catch (XMLStreamException xmlse) {
-	            throw new NoApplicableCodeException().causedBy(xmlse).withMessage("Error encoding response");
-		} catch (XmlException xmle) {
+    private XmlObject encodeOmObservation(OmObservation element) throws OwsExceptionReport {
+        return CodingHelper.encodeObjectToXml(OmConstants.NS_OM_2, element);
+    }
+
+    private XmlObject encodeEReportingHeader(EReportingHeader element) throws OwsExceptionReport {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            new EReportingHeaderEncoder(element).write(baos);
+            return XmlObject.Factory.parse(baos.toString("UTF8"));
+        } catch (XMLStreamException xmlse) {
+            throw new NoApplicableCodeException().causedBy(xmlse).withMessage("Error encoding response");
+        } catch (XmlException xmle) {
             throw new NoApplicableCodeException().causedBy(xmle).withMessage("Error encoding response");
         } catch (UnsupportedEncodingException uee) {
             throw new NoApplicableCodeException().causedBy(uee).withMessage("Error encoding response");
         }
-		
-	}
 
-	protected EReportingHeader getEReportingHeader(ReportObligationType type) throws CodedException {
-		return ReportObligationRepository.getInstance().createHeader(type);
-	}
+    }
+
+    private ReportObligationType getReportObligationType(GetObservationResponse response)
+            throws InvalidParameterValueException {
+        return getAqdHelper().getFlow(response.getExtensions());
+    }
+
+    private FeatureCollection getFeatureCollection(GetObservationResponse response) throws CodedException {
+        FeatureCollection featureCollection = new FeatureCollection();
+        featureCollection.setGmlId("fc_" + JavaHelper.generateID(new DateTime().toString()));
+
+        return featureCollection;
+    }
+
+    private AqdHelper getAqdHelper() {
+        return AqdHelper.getInstance();
+    }
+
+    protected EReportingHeader getEReportingHeader(ReportObligationType type) throws CodedException {
+        return ReportObligationRepository.getInstance().createHeader(type);
+    }
 }

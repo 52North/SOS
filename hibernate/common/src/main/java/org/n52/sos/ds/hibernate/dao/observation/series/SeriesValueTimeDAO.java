@@ -40,21 +40,19 @@ import org.n52.sos.ds.hibernate.dao.observation.AbstractValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
 
 /**
- * Implementation of {@link AbstractValueDAO} for series concept to query only
- * time information
+ * Implementation of {@link AbstractSeriesValueTimeDAO} for series concept to
+ * query only time information
  *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
  */
-public class SeriesValueTimeDAO extends AbstractValueTimeDAO {
+public class SeriesValueTimeDAO extends AbstractSeriesValueTimeDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeriesValueTimeDAO.class);
 
@@ -78,6 +76,11 @@ public class SeriesValueTimeDAO extends AbstractValueTimeDAO {
         return (TemporalReferencedSeriesObservation) getSeriesValueCriteriaFor(request, series, temporalFilterCriterion,
                 SosIndeterminateTime.first, session).uniqueResult();
     }
+    
+    @Override
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
+        // nothing  to add
+}
 
     /**
      * Query the maximum {@link TemporalReferencedSeriesObservation} for parameter

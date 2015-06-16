@@ -103,16 +103,16 @@ public class HibernateObservationUtilities {
      *             If procedure creation fails
      */
     public static Collection<? extends OmObservation> createSosObservationFromObservationConstellation(
-            ObservationConstellation oc, List<String> fois, String version, Session session)
+            ObservationConstellation oc, List<String> fois, AbstractObservationRequest request, Session session)
             throws OwsExceptionReport, ConverterException {
-        return createSosObservationFromObservationConstellation(oc, fois, version, ServiceConfiguration.getInstance()
+        return createSosObservationFromObservationConstellation(oc, fois, request, ServiceConfiguration.getInstance()
                 .getDefaultLanguage(), session);
     }
 
     public static Collection<? extends OmObservation> createSosObservationFromObservationConstellation(
-            ObservationConstellation oc, List<String> fois, String version, Locale language, Session session)
+            ObservationConstellation oc, List<String> fois, AbstractObservationRequest request, Locale language, Session session)
             throws OwsExceptionReport, ConverterException {
-        return new ObservationConstellationOmObservationCreator(oc, fois, version, language, session).create();
+        return new ObservationConstellationOmObservationCreator(oc, fois, request, language, session).create();
     }
 
     /**
@@ -130,31 +130,31 @@ public class HibernateObservationUtilities {
      * @throws ConverterException
      *             If procedure creation fails
      */
-    public static Collection<? extends OmObservation> createSosObservationFromSeries(Series series, String version,
+    public static Collection<? extends OmObservation> createSosObservationFromSeries(Series series, AbstractObservationRequest request,
             Session session) throws OwsExceptionReport, ConverterException {
-        return createSosObservationFromSeries(series, version,
+        return createSosObservationFromSeries(series, request,
                 ServiceConfiguration.getInstance().getDefaultLanguage(), session);
     }
 
-    public static Collection<? extends OmObservation> createSosObservationFromSeries(Series series, String version,
+    public static Collection<? extends OmObservation> createSosObservationFromSeries(Series series, AbstractObservationRequest request,
             Locale language, Session session) throws OwsExceptionReport, ConverterException {
         if (series instanceof EReportingSeries) {
-            return createSosObservationFromEReportingSeries((EReportingSeries) series, version, ServiceConfiguration
+            return createSosObservationFromEReportingSeries((EReportingSeries) series, request, ServiceConfiguration
                     .getInstance().getDefaultLanguage(), session);
         } else {
-            return new SeriesOmObservationCreator(series, version, language, session).create();
+            return new SeriesOmObservationCreator(series, request, language, session).create();
         }
     }
 
     public static Collection<? extends OmObservation> createSosObservationFromEReportingSeries(EReportingSeries series,
-            String version, Session session) throws OwsExceptionReport, ConverterException {
-        return createSosObservationFromEReportingSeries(series, version,
+            AbstractObservationRequest r, Session session) throws OwsExceptionReport, ConverterException {
+        return createSosObservationFromEReportingSeries(series, r,
                 ServiceConfiguration.getInstance().getDefaultLanguage(), session);
     }
 
     public static Collection<? extends OmObservation> createSosObservationFromEReportingSeries(EReportingSeries series,
-            String version, Locale language, Session session) throws OwsExceptionReport, ConverterException {
-        return new EReportingSeriesOmObservationCreator(series, version, language, session).create();
+            AbstractObservationRequest r, Locale language, Session session) throws OwsExceptionReport, ConverterException {
+        return new EReportingSeriesOmObservationCreator(series, r, language, session).create();
     }
 
     /**

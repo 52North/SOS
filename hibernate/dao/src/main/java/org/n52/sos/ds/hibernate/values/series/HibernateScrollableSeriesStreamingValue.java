@@ -32,6 +32,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
 
 import org.n52.sos.ds.hibernate.entities.observation.series.ValuedSeriesObservation;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -59,8 +60,9 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
+     * @throws CodedException 
      */
-    public HibernateScrollableSeriesStreamingValue(GetObservationRequest request, long series) {
+    public HibernateScrollableSeriesStreamingValue(GetObservationRequest request, long series) throws CodedException {
         super(request, series);
     }
 
@@ -82,9 +84,15 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
     }
 
     @Override
+    public SeriesValue nextEntity() throws OwsExceptionReport {
+        checkMaxNumberOfReturnedValues(1);
+        return (SeriesValue) scrollableResult.get()[0];
+    }
+
+    @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-            ValuedSeriesObservation<?> resultObject = (ValuedSeriesObservation<?>) scrollableResult.get()[0];
+            ValuedSeriesObservation<?> resultObject = nextEntity();
             TimeValuePair value = createTimeValuePairFrom(resultObject);
             session.evict(resultObject);
             return value;
@@ -94,12 +102,12 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    
     @Override
     public OmObservation nextSingleObservation() throws OwsExceptionReport {
         try {
             OmObservation observation = observationTemplate.cloneTemplate();
-            ValuedSeriesObservation<?> resultObject = (ValuedSeriesObservation<?>) scrollableResult.get()[0];
+            ValuedSeriesObservation<?> resultObject = nextEntity();
             addValuesToObservation(observation, resultObject);
             if (resultObject.hasSamplingGeometry()) {
                 observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));

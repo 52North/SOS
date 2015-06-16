@@ -33,6 +33,8 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,11 +46,14 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Strings;
@@ -69,8 +74,9 @@ public abstract class AbstractSeriesDAO {
      * @param session
      *            Hibernate session
      * @return Series that fit
+     * @throws CodedException 
      */
-    public abstract List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session);
+    public abstract List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws CodedException;
 
     /**
      * Query series for observedProiperty and featuresOfInterest
@@ -128,6 +134,7 @@ public abstract class AbstractSeriesDAO {
      */
     public abstract Series getOrInsertSeries(ObservationContext identifiers, final Session session) throws CodedException;
 
+    protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException;
     protected Series getOrInsert(ObservationContext identifiers, final Session session) throws CodedException {
         Criteria criteria = getDefaultAllSeriesCriteria(session);
         identifiers.addIdentifierRestrictionsToCritera(criteria);
@@ -138,6 +145,7 @@ public abstract class AbstractSeriesDAO {
             series = getSeriesImpl();
             identifiers.addValuesToSeries(series);
             series.setDeleted(false);
+            series.setPublished(true);
             session.save(series);
             session.flush();
             session.refresh(series);
@@ -159,9 +167,10 @@ public abstract class AbstractSeriesDAO {
         }
     }
 
-    public Criteria getSeriesCriteria(GetObservationRequest request, Collection<String> features, Session session) {
+    public Criteria getSeriesCriteria(GetObservationRequest request, Collection<String> features, Session session) throws CodedException {
         final Criteria c =
                 createCriteriaFor(request.getProcedures(), request.getObservedProperties(), features, session);
+        addSpecificRestrictions(c, request);
         LOGGER.debug("QUERY getSeries(request, features): {}", HibernateHelper.getSqlString(c));
         return c;
     }
@@ -175,8 +184,7 @@ public abstract class AbstractSeriesDAO {
     }
 
     public Criteria getSeriesCriteria(String observedProperty, Collection<String> features, Session session) {
-        final Criteria c = session.createCriteria(getSeriesClass()).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        c.add(Restrictions.eq(Series.DELETED, false));
+        final Criteria c = getDefaultSeriesCriteria(session);
         if (CollectionHelper.isNotEmpty(features)) {
             addFeatureOfInterestToCriteria(c, features);
         }
@@ -317,7 +325,9 @@ public abstract class AbstractSeriesDAO {
      * @return Default criteria
      */
     public Criteria getDefaultSeriesCriteria(Session session) {
-        return session.createCriteria(getSeriesClass()).add(Restrictions.eq(Series.DELETED, false))
+        return session.createCriteria(getSeriesClass())
+                .add(Restrictions.eq(Series.DELETED, false))
+                .add(Restrictions.eq(Series.PUBLISHED, true))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
@@ -394,6 +404,53 @@ public abstract class AbstractSeriesDAO {
         session.flush();
     }
 
+	/**
+	 * Check {@link Series} if the deleted observation time stamp corresponds to
+	 * the first/last series time stamp
+	 * 
+	 * @param series
+	 *            Series to update
+	 * @param observation
+	 *            Deleted observation
+	 * @param session
+	 *            Hibernate session
+	 */
+	public void updateSeriesAfterObservationDeletion(Series series, SeriesObservation observation, Session session) {
+		SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO();
+		if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())) {
+			SeriesObservation firstObservation = seriesObservationDAO.getFirstObservationFor(series, session);
+			series.setFirstTimeStamp(firstObservation.getPhenomenonTimeStart());
+			if (firstObservation instanceof NumericObservation) {
+				series.setFirstNumericValue(((NumericObservation) firstObservation).getValue());
+			}
+		} else if (series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
+			SeriesObservation latestObservation = seriesObservationDAO.getLastObservationFor(series, session);
+			series.setLastTimeStamp(latestObservation.getPhenomenonTimeEnd());
+			if (latestObservation instanceof NumericObservation) {
+				series.setLastNumericValue(((NumericObservation) latestObservation).getValue());
+			}
+		}
+		session.saveOrUpdate(series);
+	}
+	
+	public TimeExtrema getProcedureTimeExtrema(Session session, String procedure) {
+        Criteria c = getDefaultSeriesCriteria(session);
+        addProcedureToCriteria(c, procedure);
+        ProjectionList projectionList = Projections.projectionList();
+        projectionList.add(Projections.min(Series.FIRST_TIME_STAMP));
+        projectionList.add(Projections.max(Series.LAST_TIME_STAMP));
+        c.setProjection(projectionList);
+            LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}", HibernateHelper.getSqlString(c));
+            Object[] result = (Object[]) c.uniqueResult();
+        
+        TimeExtrema pte = new TimeExtrema();
+        if (result != null) {
+            pte.setMinTime(DateTimeHelper.makeDateTime(result[0]));
+            pte.setMaxTime(DateTimeHelper.makeDateTime(result[1]));
+        }
+        return pte;
+    }
+    
     /**
      * Create series query criteria for parameter
      *

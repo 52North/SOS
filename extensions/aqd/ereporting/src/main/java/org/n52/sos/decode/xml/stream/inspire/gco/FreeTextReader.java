@@ -31,8 +31,8 @@ package org.n52.sos.decode.xml.stream.inspire.gco;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
-import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.decode.xml.stream.XmlReader;
+import org.n52.sos.iso.GcoConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
@@ -47,7 +47,7 @@ public class FreeTextReader extends XmlReader<String> {
     @Override
     protected void read(QName name)
             throws XMLStreamException, OwsExceptionReport {
-        if (name.equals(AqdConstants.QN_GCO_CHARACTER_STRING)) {
+        if (name.equals(GcoConstants.QN_GCO_CHARACTER_STRING)) {
             this.string = chars();
         } else {
             ignore();

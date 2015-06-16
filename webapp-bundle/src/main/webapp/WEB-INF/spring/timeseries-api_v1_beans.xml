@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+
+    <mvc:annotation-driven />
+
+	<bean id="serviceInfo" class="org.n52.series.api.v1.db.da.beans.ServiceInfo">
+        <property name="serviceId" value="1" />
+        <property name="serviceDescription" value="My Timeseries Service." />
+    </bean>
+
+    <bean id="serviceInfoAccess" class="org.n52.series.api.v1.db.srv.ServiceInfoAccess" abstract="true">
+        <property name="serviceInfo" ref="serviceInfo" />
+    </bean>
+
+    <!-- inject implementation of the Timeseries API's SPI version 1 -->
+
+    <bean id="searchService" class="org.n52.series.api.v1.db.srv.Search" parent="serviceInfoAccess" />
+    <bean id="serviceParameterService" class="org.n52.series.api.v1.db.srv.ServiceAccessService" parent="serviceInfoAccess" />
+    <bean id="offeringParameterService" class="org.n52.series.api.v1.db.srv.OfferingsAccessService" parent="serviceInfoAccess" />
+    <bean id="categoryParameterService" class="org.n52.series.api.v1.db.srv.CategoriesAccessService" parent="serviceInfoAccess" />
+    <bean id="featureParameterService" class="org.n52.series.api.v1.db.srv.FeaturesAccessService" parent="serviceInfoAccess" />
+    <bean id="procedureParameterService" class="org.n52.series.api.v1.db.srv.ProceduresAccessService" parent="serviceInfoAccess" />
+    <bean id="stationParameterService" class="org.n52.series.api.v1.db.srv.StationsAccessService" parent="serviceInfoAccess" >
+       <constructor-arg name="dbSrid" value="EPSG:4326" />
+    </bean>
+    <bean id="phenomenonParameterService" class="org.n52.series.api.v1.db.srv.PhenomenaAccessService"  parent="serviceInfoAccess" />
+    <bean id="timeseriesService" class="org.n52.series.api.v1.db.srv.TimeseriesAccessService" parent="serviceInfoAccess" />
+    <bean id="metadataService" class="org.n52.series.api.v1.db.srv.MetadataAccessService" />
+
+</beans>

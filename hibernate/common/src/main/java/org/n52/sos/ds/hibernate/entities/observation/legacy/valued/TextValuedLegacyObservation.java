@@ -63,6 +63,11 @@ public class TextValuedLegacyObservation
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(getValue());
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
 
     @Override
     public void accept(VoidValuedObservationVisitor visitor)

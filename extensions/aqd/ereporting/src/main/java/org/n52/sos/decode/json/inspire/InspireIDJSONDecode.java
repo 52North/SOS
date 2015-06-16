@@ -31,6 +31,7 @@ package org.n52.sos.decode.json.inspire;
 import org.n52.sos.inspire.aqd.InspireID;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.AQDJSONConstants;
+import org.n52.sos.util.Validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -42,11 +43,23 @@ public class InspireIDJSONDecode extends AbstractJSONDecoder<InspireID> {
 
     @Override
     public InspireID decodeJSON(JsonNode node, boolean validate) throws OwsExceptionReport {
-        InspireID inspireID = new InspireID();
-        inspireID.setNamespace(node.path(AQDJSONConstants.NAMESPACE).textValue());
-        inspireID.setLocalId(node.path(AQDJSONConstants.LOCAL_ID).textValue());
+            InspireID inspireID = new InspireID();
+        inspireID.setNamespace(getNamespace(node));
+        inspireID.setLocalId(getLocalId(node));
         inspireID.setVersionId(parseNillableString(node.path(AQDJSONConstants.VERSION_ID)));
         return inspireID;
     }
+    
+    private String getNamespace(JsonNode node) throws OwsExceptionReport {
+        String namespace = node.path(AQDJSONConstants.NAMESPACE).textValue();
+        Validation.notNullOrEmpty("InspireId namespace", namespace);
+        return namespace;    
+     }
+    
+    private String getLocalId(JsonNode node) throws OwsExceptionReport {
+        String localId = node.path(AQDJSONConstants.LOCAL_ID).textValue();
+        Validation.notNullOrEmpty("InspireId localId", localId);
+        return localId;    
+     }
 
 }

@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.series.full;
 
-import java.math.BigDecimal;
 
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
@@ -49,17 +48,17 @@ public class SeriesNumericObservation
         extends AbstractSeriesObservation<BigDecimal>
         implements NumericObservation {
 
-    private static final long serialVersionUID = -835034606459038906L;
+    private static final long serialVersionUID = -835034606459038907L;
 
-    private BigDecimal value;
+    private Double value;
 
     @Override
-    public BigDecimal getValue() {
+    public Double getValue() {
         return this.value;
     }
 
     @Override
-    public void setValue(BigDecimal value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 
@@ -67,6 +66,11 @@ public class SeriesNumericObservation
     public boolean isSetValue() {
         return value != null;
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
 
     @Override
     public void accept(VoidObservationVisitor visitor)

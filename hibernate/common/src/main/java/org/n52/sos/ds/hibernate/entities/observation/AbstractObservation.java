@@ -54,4 +54,8 @@ public abstract class AbstractObservation<T>
     public boolean isSetUnit() {
         return getUnit() != null && getUnit().isSetUnit();
     }
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
 }

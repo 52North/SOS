@@ -268,7 +268,11 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
 
         for (String offering : Configurator.getInstance().getCache().getOfferings()) {
             InspireUniqueResourceIdentifier iuri = new InspireUniqueResourceIdentifier(offering);
-//            iuri.setNamespace(ServiceConfiguration.getInstance().getServiceURL());
+            if (InspireHelper.getInstance().isSetNamespace()) {
+                iuri.setNamespace(InspireHelper.getInstance().getNamespace());
+            } else {
+                iuri.setNamespace(ServiceConfiguration.getInstance().getServiceURL());
+            }
             spatialDataSetIdentifier.add(iuri);
         }
         return spatialDataSetIdentifier;

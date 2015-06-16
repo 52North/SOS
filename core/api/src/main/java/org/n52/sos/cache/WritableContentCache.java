@@ -373,7 +373,7 @@ public interface WritableContentCache
 
     void addProcedureIdentifierHumanReadableName(String identifier, String humanReadableName);
 
-	void addOfferingIdentifierHumanReadableName(String identifier, String humanReadableName);
+    void addOfferingIdentifierHumanReadableName(String identifier, String humanReadableName);
 
     /**
      * Dissociate the specified allowed observation type with the specified
@@ -1120,6 +1120,14 @@ public interface WritableContentCache
      */
     void removeSupportedLanguage(Locale language);
 
+    /**
+     * Set the specified requestable procedureDescriptionFormat.
+     *
+     * @param formats
+     *            the new formats
+     */
+    void setRequestableProcedureDescriptionFormat(Collection<String> formats);
+    
     void clearFeatureOfInterestIdentifierHumanReadableNameMaps();
 
     void clearObservablePropertyIdentifierHumanReadableNameMaps();

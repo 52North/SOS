@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.series;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
@@ -53,17 +52,26 @@ public class Series
                    HasUnit {
 
     private static final long serialVersionUID = 7838379468605356753L;
-    public static final String ID = "seriesId";
+    
+    public static String ID = "seriesId";
+    
+    public static String FIRST_TIME_STAMP = "firstTimeStamp";
+    
+    public static String LAST_TIME_STAMP = "lastTimeStamp";
+
     private long seriesId;
     private FeatureOfInterest featureOfInterest;
     private ObservableProperty observableProperty;
     private Procedure procedure;
     private Boolean deleted = false;
+    
+    private Boolean published = true;
+
     // the following values are used by the timeseries api
     private Date firstTimeStamp;
     private Date lastTimeStamp;
-    private BigDecimal firstNumericValue;
-    private BigDecimal lastNumericValue;
+    private Double firstNumericValue;
+    private Double lastNumericValue;
     private Unit unit;
     private boolean hiddenChild;
 
@@ -126,10 +134,21 @@ public class Series
     public boolean isDeleted() {
         return deleted;
     }
+    
+    @Override
+    public Series setPublished(final boolean published) {
+        this.published = published;
+        return this;
+    }
 
     @Override
     public boolean getDeleted() {
         return deleted;
+    }
+
+    @Override
+    public boolean isPublished() {
+        return published;
     }
 
     /**
@@ -171,14 +190,14 @@ public class Series
     /**
      * @return the firstNumericValue
      */
-    public BigDecimal getFirstNumericValue() {
+    public Double getFirstNumericValue() {
         return firstNumericValue;
     }
 
     /**
      * @param firstNumericValue the firstNumericValue to set
      */
-    public void setFirstNumericValue(BigDecimal firstNumericValue) {
+    public void setFirstNumericValue(Double firstNumericValue) {
         this.firstNumericValue = firstNumericValue;
     }
 
@@ -197,14 +216,14 @@ public class Series
     /**
      * @return the lastNumericValue
      */
-    public BigDecimal getLastNumericValue() {
+    public Double getLastNumericValue() {
         return lastNumericValue;
     }
 
     /**
      * @param lastNumericValue the lastNumericValue to set
      */
-    public void setLastNumericValue(BigDecimal lastNumericValue) {
+    public void setLastNumericValue(Double lastNumericValue) {
         this.lastNumericValue = lastNumericValue;
     }
 
@@ -243,5 +262,9 @@ public class Series
     @Override
     public boolean isHiddenChild() {
         return this.hiddenChild;
+    }
+
+    public boolean isSetFirstLastTime() {
+        return isSetFirstTimeStamp() && isSetLastTimeStamp();
     }
 }

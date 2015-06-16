@@ -3,8 +3,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
-    <bean id="converterRepository" class="org.n52.iceland.convert.ConverterRepository" />
-
     <!-- Converter implementations from coding/sensorML-v20 -->
     <bean class="org.n52.sos.convert.SensorML20UrlMimeTypeConverter"/>
     <bean class="org.n52.sos.convert.SensorML20SensorML101Converter"/>

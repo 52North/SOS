@@ -28,6 +28,8 @@
  */
 package org.n52.sos.coding.encode;
 
+import org.n52.iceland.coding.encode.OperationEncoderKey;
+
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Stream.concat;
@@ -50,9 +52,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.coding.OperationKey;
-import org.n52.iceland.coding.SchemaRepository;
+import org.n52.iceland.coding.encode.SchemaRepository;
 import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.OperationEncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;

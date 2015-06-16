@@ -43,18 +43,36 @@
         <description>Bean that allows convenient access to the datasource.properties</description>
     </bean>
 
-    <bean class="org.n52.sos.util.XmlOptionsHelper" />
-
     <!-- import security config -->
-    <import resource="components/common/security-context.xml" />
-    <!-- import components -->
-    <import resource="components/common/events.xml" />
-    <import resource="components/common/settings.xml" />
-    <!--<import resource="components/common/settings-sqlite.xml" />-->
-    <import resource="components/common/settings-json.xml" />
-    <import resource="components/common/settings-definitions.xml" />
-    <import resource="components/common/datasources.xml" />
-    <!-- import web controllers -->
-    <import resource="components/common/web.xml" />
+    <import resource="components/security.xml" />
+
+    <bean id="eventBus" class="org.n52.iceland.event.ServiceEventBus" />
+
+    <!-- ServiceEventListener implementations from core/api -->
+    <bean id="exceptionLogger" class="org.n52.iceland.service.ExceptionLogger"/>
+
+    <bean id="eventListenerRegistrator" class="org.n52.iceland.event.ServiceEventListenerRegistrator">
+        <description>Used to decouple EventListener and EventBus creation.</description>
+    </bean>
+
+    <!-- import datasources -->
+    <import resource="components/datasources.xml" />
+
+    <!-- load controllers for client -->
+    <ctx:component-scan base-package="org.n52.sos.web.client" />
+
+    <!-- load controllers for pages that are always present -->
+    <ctx:component-scan base-package="org.n52.sos.web.common" />
+
+    <!--  settings related beans -->
+    <bean id="configLocationProvider" class="org.n52.iceland.service.ServletConfigLocationProvider" />
+    <bean id="settingsService" class="org.n52.iceland.config.SettingsServiceImpl" />
+    <bean id="adminUserService" class="org.n52.iceland.config.AdminUserServiceImpl" />
+    <bean id="activationService" class="org.n52.iceland.config.ActivationService" />
+    <bean id="settingsEncoder" class="org.n52.iceland.config.json.JsonSettingsEncoder" />
+    <bean id="sosActivationService" class="org.n52.sos.config.SosActivationService" />
+    <import resource="components/settings-definitions.xml" />
+    <!--<import resource="components/settings-sqlite.xml" />-->
+    <import resource="components/settings-json.xml" />
 
 </beans>

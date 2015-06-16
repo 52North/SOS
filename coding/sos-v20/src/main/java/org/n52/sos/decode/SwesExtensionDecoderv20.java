@@ -42,7 +42,6 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.swes.SwesConstants;
 import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
@@ -74,16 +73,6 @@ public class SwesExtensionDecoderv20 implements Decoder<SwesExtension<?>, XmlObj
     @Override
     public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
-    }
-
-    @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
     }
 
     @Override

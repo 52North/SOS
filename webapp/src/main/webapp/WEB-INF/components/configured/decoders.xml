@@ -3,8 +3,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
-    <bean id="decoderRepository" class="org.n52.iceland.coding.DecoderRepository" />
-
     <!-- Decoder implementations from bindings/rest/code -->
     <bean class="org.n52.sos.binding.rest.decode.RestDecoder"/>
     <!-- Decoder implementations from bindings/soap -->

@@ -28,6 +28,8 @@
  */
 package org.n52.sos.coding.encode;
 
+import org.n52.iceland.coding.encode.AbstractDelegatingEncoder;
+
 import java.util.EnumMap;
 
 import javax.inject.Inject;

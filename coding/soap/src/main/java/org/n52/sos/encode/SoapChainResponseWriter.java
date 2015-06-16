@@ -47,7 +47,7 @@ import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.w3c.soap.SoapChain;
 import org.n52.iceland.w3c.soap.SoapResponse;
-import org.n52.sos.coding.encode.AbstractResponseWriter;
+import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;

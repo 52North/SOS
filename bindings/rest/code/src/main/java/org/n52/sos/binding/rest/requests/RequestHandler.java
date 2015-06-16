@@ -38,6 +38,7 @@ import net.opengis.swes.x20.AbstractContentsType.Offering;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.OperationEncoderKey;
@@ -54,6 +55,7 @@ import org.n52.iceland.service.operator.ServiceOperatorKey;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.binding.rest.Constants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

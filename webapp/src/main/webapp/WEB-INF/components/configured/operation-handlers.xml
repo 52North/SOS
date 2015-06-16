@@ -3,8 +3,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
-    <bean id="operationHandlerRepository" class="org.n52.iceland.ds.OperationHandlerRepository" />
-
     <!-- OperationHandler implementations from core/api -->
     <bean class="org.n52.sos.ds.BatchOperationHandler"/>
     <!-- OperationHandler implementations from core/gc-dao -->

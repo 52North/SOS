@@ -28,6 +28,9 @@
  */
 package org.n52.sos.coding.encode;
 
+import org.n52.iceland.coding.encode.OperationEncoderKey;
+import org.n52.iceland.coding.encode.AbstractResponseWriter;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
@@ -36,7 +39,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.OperationEncoderKey;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterKey;

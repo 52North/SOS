@@ -122,16 +122,6 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
     }
 
     @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    @Override
     public AbstractServiceRequest<?> decode(final XmlObject xmlObject) throws OwsExceptionReport {
         LOGGER.debug("REQUESTTYPE:" + xmlObject.getClass());
         XmlHelper.validateDocument(xmlObject);

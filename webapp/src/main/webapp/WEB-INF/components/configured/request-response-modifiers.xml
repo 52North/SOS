@@ -3,15 +3,13 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
-    <bean id="requestResponseModifierRepository" class="org.n52.iceland.convert.RequestResponseModifierRepository" />
-
     <!-- RequestResponseModifier implementations from converter/split-and-merge -->
     <bean class="org.n52.sos.converter.SplitMergeObservations"/>
     <!-- RequestResponseModifier implementations from converter/identifier-modifier/prefixed-identifier -->
     <!-- RequestResponseModifier implementations from converter/identifier-modifier/flexible-identifier -->
     <bean class="org.n52.sos.converter.FlexibleIdentifierModifier"/>
     <!-- RequestResponseModifier implementations from converter/transformation/coordinate -->
-    <bean class="org.n52.sos.converter.CoordianteTransformator"/>
+    <bean class="org.n52.sos.converter.CoordinateTransformator"/>
     <!-- RequestResponseModifier implementations from extensions/aqd/ereporting-identifier -->
     <bean class="org.n52.sos.converter.EReportingPrefixedIdentifierModifier"/>
     <!-- RequestResponseModifier implementations from extensions/aqd/split-and-merge -->

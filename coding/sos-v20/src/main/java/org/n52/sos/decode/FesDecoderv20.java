@@ -116,16 +116,6 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
     }
 
     @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    @Override
     public Object decode(XmlObject xmlObject) throws OwsExceptionReport {
         if (xmlObject instanceof SpatialOpsType) {
             return parseSpatialFilterType((SpatialOpsType) xmlObject);

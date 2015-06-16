@@ -36,7 +36,7 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.coding.encode.ObservationEncoder;
+import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;

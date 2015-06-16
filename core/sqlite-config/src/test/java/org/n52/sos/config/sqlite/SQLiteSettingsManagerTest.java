@@ -38,7 +38,7 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.encode.ProcedureDescriptionFormatKey;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 import org.n52.iceland.coding.encode.ResponseFormatKey;
 import org.n52.iceland.exception.ConfigurationException;
 import org.n52.iceland.ogc.sos.Sos2Constants;

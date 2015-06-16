@@ -148,16 +148,6 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
     }
 
     @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
     public Object decode(final Object element) throws OwsExceptionReport {
         if (element instanceof DataArrayDocument) {
             return parseAbstractDataComponentType(((DataArrayDocument) element).getDataArray1());

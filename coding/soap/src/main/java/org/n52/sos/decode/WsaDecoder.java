@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.w3c.wsa.WsaActionHeader;
 import org.n52.iceland.w3c.wsa.WsaConstants;
 import org.n52.iceland.w3c.wsa.WsaHeader;
@@ -72,16 +71,6 @@ public class WsaDecoder implements Decoder<List<WsaHeader>, List<SOAPHeaderEleme
     @Override
     public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
-    }
-
-    @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
     }
 
     @Override

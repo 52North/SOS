@@ -31,13 +31,11 @@ package org.n52.sos.decode.kvp;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.RandomAccess;
-import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -66,7 +64,6 @@ import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.KvpHelper;
@@ -97,16 +94,6 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
     private int defaultResponseEPSG;
 
     private int defaultResponse3DEPSG;
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
 
     public int getStorageEPSG() {
         return storageEPSG;

@@ -26,22 +26,47 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.service.operator;
+package org.n52.sos.coding.encode;
 
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.operator.AbstractServiceOperator;
+import java.util.Set;
+
+import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.coding.encode.EncoderRepository;
+import org.n52.iceland.util.Producer;
+import org.n52.iceland.util.Producers;
+
+import com.google.common.collect.Sets;
 
 /**
- * Implementation of {@link AbstractServiceOperator} for OGC SOS 2.0 requests.
- * 
- * @since 4.0.0
- * 
+ * TODO JavaDoc
+ *
+ * @author Christian Autermann
  */
-public class SosServiceOperatorV20 extends AbstractServiceOperator {
+public class SosEncoderRepository extends EncoderRepository {
+    //TODO move to SOS
+    private final Set<Producer<ObservationEncoder<?, ?>>> observationEncoders
+            = Sets.newHashSet();
 
-    public SosServiceOperatorV20() {
-        super(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
+    @Override
+    public void init() {
+        super.init();
+        this.observationEncoders.clear();
+        for (Producer<Encoder<?, ?>> producer : getComponentProviders()) {
+            Encoder<?, ?> encoder = producer.get();
+            if (encoder instanceof ObservationEncoder) {
+                this.observationEncoders.add(asObservationEncoderProducer(producer));
+            }
+        }
+    }
+
+    public Set<ObservationEncoder<?, ?>> getObservationEncoders() {
+        return Producers.produce(this.observationEncoders);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Producer<ObservationEncoder<?, ?>> asObservationEncoderProducer(
+            Producer<? extends Encoder<?, ?>> producer) {
+        return (Producer<ObservationEncoder<?, ?>>) producer;
     }
 
 }

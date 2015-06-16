@@ -36,7 +36,7 @@ import javax.inject.Inject;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.iceland.ogc.sos.CapabilitiesExtension;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionKey;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;

@@ -56,7 +56,7 @@ import org.isotc211.x2005.gmd.DQElementPropertyType;
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.ObservationEncoder;
+import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;

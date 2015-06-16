@@ -36,9 +36,9 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.coding.ResponseFormatRepository;
+import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.ObservationEncoder;
+import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;

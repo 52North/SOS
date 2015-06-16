@@ -38,7 +38,7 @@ import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlOptions;
 
-import org.n52.iceland.coding.EncoderRepository;
+import org.n52.iceland.coding.encode.EncoderRepository;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.lifecycle.Constructable;

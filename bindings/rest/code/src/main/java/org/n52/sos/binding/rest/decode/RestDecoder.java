@@ -207,16 +207,6 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest>, Co
         return Collections.unmodifiableSet(decoderKeys);
     }
 
-    @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
     private Constants bindingConstants() {
         return this.constants;
     }

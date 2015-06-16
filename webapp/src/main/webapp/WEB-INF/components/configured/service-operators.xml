@@ -1,16 +1,24 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd" xmlns:util="http://www.springframework.org/schema/util">
 
-    <bean id="serviceOperatorRepository"
-          class="org.n52.iceland.service.operator.ServiceOperatorRepository" />
+    <!-- ServiceOperator implementations from operations/core-v20 -->
+    <bean class="org.n52.iceland.service.operator.GenericServiceOperator">
+        <property name="service" value="SOS" />
+        <property name="version" value="2.0.0" />
+    </bean>
 
     <!-- ServiceOperator implementations from operations/core-v100 -->
-    <bean class="org.n52.sos.service.operator.SosServiceOperatorV100"/>
-    <!-- ServiceOperator implementations from operations/core-v20 -->
-    <bean class="org.n52.sos.service.operator.SosServiceOperatorV20"/>
+    <bean class="org.n52.iceland.service.operator.GenericServiceOperator">
+        <property name="service" value="SOS" />
+        <property name="version" value="1.0.0" />
+    </bean>
+
     <!-- ServiceOperator implementations from extensions/aqd/operation -->
-    <bean class="org.n52.sos.service.operator.AqdServiceOperatorV10"/>
+    <bean class="org.n52.iceland.service.operator.GenericServiceOperator">
+        <property name="service" value="AQD" />
+        <property name="version" value="1.0.0" />
+    </bean>
 
 </beans>

@@ -8,5 +8,4 @@
 
     <!-- load the installer controllers -->
     <ctx:component-scan base-package="org.n52.sos.web.install" />
-
 </beans>

@@ -40,7 +40,7 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
-import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;

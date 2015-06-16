@@ -120,11 +120,6 @@ public abstract class JSONDecoder<T> implements Decoder<T, JsonNode> {
     }
 
     @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
     public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }

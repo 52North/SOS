@@ -29,7 +29,7 @@
 package org.n52.sos.ds;
 
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.sos.Sos1Constants;

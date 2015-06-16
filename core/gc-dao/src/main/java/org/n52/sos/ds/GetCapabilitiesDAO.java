@@ -48,10 +48,10 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.coding.DecoderRepository;
-import org.n52.iceland.coding.EncoderRepository;
-import org.n52.iceland.coding.ProcedureDescriptionFormatRepository;
-import org.n52.iceland.coding.ResponseFormatRepository;
+import org.n52.iceland.coding.decode.DecoderRepository;
+import org.n52.iceland.coding.encode.EncoderRepository;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
+import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.config.SettingsService;

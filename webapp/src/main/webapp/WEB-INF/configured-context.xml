@@ -44,7 +44,7 @@
 
     <bean id="icelandServlet" class="org.n52.iceland.service.Service" />
 
-    <bean id="configurator" class="org.n52.iceland.service.Configurator" />
+    <bean id="configurator" class="org.n52.sos.service.Configurator" />
 
     <bean id="serviceProviderFactory" class="org.n52.iceland.ogc.ows.ServiceProviderFactory" />
     <bean id="serviceIdentificationFactory" class="org.n52.iceland.ogc.ows.ServiceIdentificationFactory" />
@@ -61,13 +61,15 @@
     <bean class="org.n52.sos.converter.util.FlexibleIdentifierHelper" />
     <bean class="org.n52.sos.converter.util.PrefixedIdentifierHelper" />
 
-    <bean id="owsExtendedCapabilitiesRepository"
-          class="org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderRepository" />
-    <bean id="offeringExtensionRepository"
-          class="org.n52.iceland.ogc.swes.OfferingExtensionRepository" />
-    <bean id="capabilitiesExtensionRepository"
-          class="org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository" />
+    <bean id="bindingRepository" class="org.n52.iceland.binding.BindingRepository" />
+    <bean id="codingRepository" class="org.n52.iceland.coding.CodingRepository" />
+    <bean id="supportedTypeRepository" class="org.n52.iceland.coding.SupportedTypeRepository"/>
+    <bean id="xmlOptionsHelper" class="org.n52.sos.util.XmlOptionsHelper" />
 
+    <bean id="owsExtendedCapabilitiesRepository" class="org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderRepository" />
+    <bean id="offeringExtensionRepository" class="org.n52.iceland.ogc.swes.OfferingExtensionRepository" />
+    <bean id="capabilitiesExtensionRepository" class="org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository" />
+    <bean id="i18nDaoRepository" class="org.n52.iceland.i18n.I18NDAORepository" />
 
     <bean id="reportObligationRepository"
           class="org.n52.sos.inspire.aqd.ReportObligationRepository" />
@@ -86,26 +88,34 @@
         </property>
     </bean>
 
-    <bean id="additionalObservationCreatorRepository"
-          class="org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository" />
-    <bean id="hibernateProcedureDescriptionGeneratorFactoryRepository"
-          class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository" />
+    <bean id="additionalObservationCreatorRepository" class="org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository" />
+    <bean id="hibernateProcedureDescriptionGeneratorFactoryRepository" class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository" />
     <bean id="geometryHandler" class="org.n52.sos.util.GeometryHandler" />
 
-    <bean id="driverCleanupListener" class="org.n52.sos.service.DriverCleanupListener" />
 
-    <bean id="insertSensorCapabilitiesExtensionProvider"
-          class="org.n52.sos.ds.hibernate.InsertSensorCapabilitiesExtensionProvider" />
-    <bean id="insertResultCapabiltiesExtensionProvider"
-          class="org.n52.sos.ds.hibernate.InsertResultCapabiltiesExtensionProvider" />
-    <bean id="insertResultTemplateCapabilitiesExtensionProvider"
-          class="org.n52.sos.ds.hibernate.InsertResultTemplateCapabilitiesExtensionProvider" />
+    <!--<bean id="encoderRepository" class="org.n52.iceland.coding.EncoderRepository" />-->
+    <bean id="encoderRepository" class="org.n52.sos.coding.encode.SosEncoderRepository" />
+    <bean id="procedureDescriptionFormatRepository" class="org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository" />
+    <bean id="responseFormatRepository" class="org.n52.sos.coding.encode.ResponseFormatRepository"/>
+    <bean id="schemaRepository" class="org.n52.iceland.coding.encode.SchemaRepository"/>
+    <bean id="operationHandlerRepository" class="org.n52.iceland.ds.OperationHandlerRepository" />
+    <bean id="requestResponseModifierRepository" class="org.n52.iceland.convert.RequestResponseModifierRepository" />
+    <bean id="responseWriterRepository" class="org.n52.iceland.coding.encode.ResponseWriterRepository" />
+    <bean id="serviceOperatorRepository" class="org.n52.iceland.service.operator.ServiceOperatorRepository" />
+
+    <bean id="driverCleanupListener" class="org.n52.sos.service.DriverCleanupListener" />
+    <bean id="converterRepository" class="org.n52.iceland.convert.ConverterRepository" />
+    <bean id="decoderRepository" class="org.n52.iceland.coding.decode.DecoderRepository" />
+    <bean id="insertSensorCapabilitiesExtensionProvider" class="org.n52.sos.ds.hibernate.InsertSensorCapabilitiesExtensionProvider" />
+    <bean id="insertResultCapabiltiesExtensionProvider" class="org.n52.sos.ds.hibernate.InsertResultCapabiltiesExtensionProvider" />
+    <bean id="insertResultTemplateCapabilitiesExtensionProvider" class="org.n52.sos.ds.hibernate.InsertResultTemplateCapabilitiesExtensionProvider" />
 
 
     <import resource="components/configured/cache.xml" />
     <import resource="components/configured/events.xml" />
     <import resource="components/configured/bindings.xml" />
-    <import resource="components/configured/coding.xml" />
+    <import resource="components/configured/encoders.xml" />
+    <import resource="components/configured/decoders.xml" />
     <import resource="components/configured/converters.xml" />
     <import resource="components/configured/operation-handlers.xml" />
     <import resource="components/configured/request-operators.xml" />

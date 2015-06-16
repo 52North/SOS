@@ -4,19 +4,21 @@
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
     <bean id="contentCacheController"
-          class="org.n52.sos.cache.ctrl.ContentCacheControllerImpl"/>
+          class="org.n52.iceland.cache.ctrl.ContentCacheControllerImpl"/>
 
     <bean id="cacheFeederDao"
           class="org.n52.sos.ds.hibernate.SosCacheFeederDAO"/>
 
     <bean id="cachePersistenceStrategy"
-          class="org.n52.sos.cache.ctrl.persistence.AsyncCachePersistenceStrategy" />
+          class="org.n52.iceland.cache.ctrl.persistence.AsyncCachePersistenceStrategy" />
 
     <!-- ServiceEventListener implementations from extensions/do/core -->
     <bean id="deleteObservationContentModificationListener"
           class="org.n52.sos.ext.deleteobservation.DeleteObservationContentModificationListener"/>
 
-          <!-- ServiceEventListener implementations from core/cache -->
+    <!-- ServiceEventListener implementations from core/cache -->
     <bean id="contentModificationListener"
           class="org.n52.sos.cache.ctrl.DefaultContentModificationListener"/>
+
+    <bean class="org.n52.sos.cache.ContentCacheFactoryImpl"/>
 </beans>

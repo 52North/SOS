@@ -115,11 +115,6 @@ public class DeleteObservationDecoder implements Decoder<DeleteObservationReques
         return delObsRequest;
     }
 
-    @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
     public Set<String> getConformanceClasses(String service, String version) {
         if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);

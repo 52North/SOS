@@ -26,21 +26,50 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.service.operator;
+package org.n52.sos.coding.encode;
 
-import org.n52.iceland.service.operator.AbstractServiceOperator;
-import org.n52.sos.aqd.AqdConstants;
+import java.util.Set;
+
+import org.n52.iceland.coding.encode.Encoder;
 
 /**
- * Implementation of {@link AbstractServiceOperator} for Air Quality e-Reporting
- * AQD 1.0.0 requests.
+ * @since 4.0.0
  * 
- * @since 4.3.0
- * 
+ * @param <S>
+ * @param <T>
  */
-public class AqdServiceOperatorV10 extends AbstractServiceOperator {
+public interface ObservationEncoder<S, T> extends Encoder<S, T> {
 
-    public AqdServiceOperatorV10() {
-        super(AqdConstants.AQD, AqdConstants.VERSION);
-    }
+    /**
+     * Indicator whether the ObservationEncoder of type or subtype
+     * Observation&Measurement 2.0
+     * 
+     * @return Of type or not
+     */
+    boolean isObservationAndMeasurmentV20Type();
+
+    /**
+     * Indicator whether the single observations with the same procedure,
+     * observableProperty and featureOfInterest should be merged to one
+     * observation.
+     * 
+     * @return Merge or not
+     */
+    boolean shouldObservationsWithSameXBeMerged();
+    
+    boolean supportsResultStreamingForMergedValues();
+
+    /**
+     * Get the supported response formats for this
+     * {@linkplain ObservationEncoder} and the specified service and version.
+     * 
+     * @param service
+     *            the service
+     * @param version
+     *            the version
+     * 
+     * @return the response formats
+     */
+    Set<String> getSupportedResponseFormats(String service, String version);
+
 }

@@ -63,7 +63,6 @@ import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
 
 import com.google.common.base.Joiner;
 import com.vividsolutions.jts.geom.Geometry;
@@ -93,16 +92,6 @@ public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
     @Override
     public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
-    }
-
-    @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
     }
 
     @Override

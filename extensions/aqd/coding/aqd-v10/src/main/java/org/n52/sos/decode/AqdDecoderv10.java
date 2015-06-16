@@ -67,19 +67,9 @@ public class AqdDecoderv10 implements Decoder<AbstractServiceCommunicationObject
 	}
 
 	@Override
-	public Set<String> getConformanceClasses(String service, String version) {
-		 return Collections.emptySet();
-	}
-
-	@Override
 	public Set<DecoderKey> getKeys() {
 			return Collections.unmodifiableSet(DECODER_KEYS);
 	}
-
-    @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
 
 	@Override
 	public AbstractServiceCommunicationObject decode(XmlObject objectToDecode)

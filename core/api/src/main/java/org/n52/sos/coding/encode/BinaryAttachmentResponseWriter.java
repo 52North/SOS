@@ -28,6 +28,8 @@
  */
 package org.n52.sos.coding.encode;
 
+import org.n52.iceland.coding.encode.AbstractResponseWriter;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;

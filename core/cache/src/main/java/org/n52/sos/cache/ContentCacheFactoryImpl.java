@@ -10,11 +10,11 @@
  * the following licenses, the combination of the program with the linked
  * library is not considered a "derivative work" of the program:
  *
- * - Apache License, version 2.0
- * - Apache Software License, version 1.0
- * - GNU Lesser General Public License, version 3
- * - Mozilla Public License, versions 1.0, 1.1 and 2.0
- * - Common Development and Distribution License (CDDL), version 1.0
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
  * Therefore the distribution of the program linked with libraries licensed
  * under the aforementioned licenses, is permitted by the copyright holders
@@ -26,34 +26,22 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.coding.encode;
+package org.n52.sos.cache;
 
-import javax.inject.Inject;
 
-import org.n52.iceland.coding.EncoderRepository;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.cache.WritableContentCache;
+import org.n52.iceland.cache.ctrl.ContentCacheFactory;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public abstract class AbstractDelegatingEncoder<T, S> implements Encoder<T, S> {
+public class ContentCacheFactoryImpl implements ContentCacheFactory {
 
-    private EncoderRepository encoderRepository;
-
-    public EncoderRepository getEncoderRepository() {
-        return encoderRepository;
-    }
-
-    @Inject
-    public void setEncoderRepository(EncoderRepository encoderRepository) {
-        this.encoderRepository = encoderRepository;
-    }
-
-    public <T, S> Encoder<T, S> getEncoder(EncoderKey key, EncoderKey... others) {
-        return this.encoderRepository.getEncoder(key, others);
+    @Override
+    public WritableContentCache get() {
+        return new SosWritableContentCacheImpl();
     }
 
 }

@@ -32,8 +32,8 @@ import javax.inject.Inject;
 
 import org.hibernate.Session;
 
-import org.n52.iceland.coding.DecoderRepository;
-import org.n52.iceland.coding.EncoderRepository;
+import org.n52.iceland.coding.decode.DecoderRepository;
+import org.n52.iceland.coding.encode.EncoderRepository;
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.JsonDecoderKey;
 import org.n52.iceland.coding.encode.Encoder;

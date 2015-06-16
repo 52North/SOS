@@ -41,8 +41,9 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+
 import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.ObservationEncoder;
+import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
@@ -72,6 +73,7 @@ import org.n52.sos.ogc.sos.AbstractStreaming;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.Referenceable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

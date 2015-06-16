@@ -74,16 +74,6 @@ public class Iso19139GcoDecoder implements Decoder<Object, XmlObject> {
     }
 
     @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
     public Object decode(XmlObject element) throws OwsExceptionReport, UnsupportedDecoderInputException {
         if (element instanceof CodeListValueType) {
             return encodeCodeListValue((CodeListValueType) element);

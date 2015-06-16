@@ -47,7 +47,7 @@ import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.util.Producer;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.coding.encode.AbstractResponseWriter;
+import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.sos.exi.EXIObject;
 import org.n52.sos.exi.EXISettings;
 

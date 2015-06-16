@@ -36,7 +36,7 @@ import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 
-import org.n52.iceland.coding.ResponseFormatRepository;
+import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.ows.OwsOperation;

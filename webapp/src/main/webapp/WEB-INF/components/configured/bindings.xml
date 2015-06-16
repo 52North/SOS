@@ -3,20 +3,16 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
-    <bean id="bindingRepository" class="org.n52.iceland.binding.BindingRepository" />
-
     <!-- Binding implementations from iceland -->
     <bean id="kvpBinding" class="org.n52.iceland.binding.kvp.KvpBinding"/>
     <bean id="poxBinding" class="org.n52.iceland.binding.pox.PoxBinding"/>
     <bean id="jsonBinding" class="org.n52.iceland.binding.json.JSONBinding"/>
+    <bean id="soapBinding" class="org.n52.iceland.binding.soap.SoapBinding"/>
 
     <!-- Binding implementations from bindings/rest/code -->
     <bean id="restBinding" class="org.n52.sos.binding.rest.RestBinding"/>
 
     <!-- Binding implementations from bindings/exi -->
     <bean id="exiBinding" class="org.n52.sos.binding.EXIBinding"/>
-
-    <!-- Binding implementations from bindings/soap -->
-    <bean id="soapBinding" class="org.n52.sos.binding.SoapBinding"/>
 
 </beans>

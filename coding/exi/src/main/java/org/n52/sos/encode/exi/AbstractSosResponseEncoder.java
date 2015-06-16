@@ -51,7 +51,7 @@ import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.coding.encode.AbstractDelegatingEncoder;
+import org.n52.iceland.coding.encode.AbstractDelegatingEncoder;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.exi.EXIObject;
 import org.n52.sos.response.StreamingDataResponse;

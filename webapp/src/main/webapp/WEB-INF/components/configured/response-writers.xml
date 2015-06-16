@@ -3,9 +3,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
-    <bean id="responseWriterRepository"
-         class="org.n52.iceland.encode.ResponseWriterRepository" />
-
     <!-- ResponseWriterFactory implementations from bindings/soap -->
     <bean class="org.n52.sos.encode.SoapResponseWriterFactory"/>
     <bean class="org.n52.sos.encode.SoapChainResponseWriterFactory"/>
@@ -14,8 +11,8 @@
     <!-- ResponseWriterFactory implementations from coding/exi -->
     <bean class="org.n52.sos.encode.EXIResponseWriterFactory"/>
     <!-- ResponseWriterFactory implementations from core/api -->
-    <bean class="org.n52.sos.encode.XmlResponseWriterFactory"/>
-    <bean class="org.n52.sos.encode.AbstractServiceResponseWriterFactory"/>
-    <bean class="org.n52.sos.encode.BinaryAttachmentResponseWriterFactory"/>
+    <bean class="org.n52.sos.coding.encode.XmlResponseWriterFactory" />
+    <bean class="org.n52.sos.coding.encode.AbstractServiceResponseWriterFactory"/>
+    <bean class="org.n52.sos.coding.encode.BinaryAttachmentResponseWriterFactory"/>
 
 </beans>

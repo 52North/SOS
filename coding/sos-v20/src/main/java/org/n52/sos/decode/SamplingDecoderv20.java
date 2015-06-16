@@ -115,7 +115,6 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
         return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
 
-
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
         if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {

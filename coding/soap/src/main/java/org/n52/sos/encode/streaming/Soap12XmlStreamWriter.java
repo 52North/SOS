@@ -37,7 +37,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
-import org.n52.iceland.coding.EncoderRepository;
+import org.n52.iceland.coding.encode.EncoderRepository;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.coding.encode.OperationEncoderKey;

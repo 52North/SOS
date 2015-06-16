@@ -32,7 +32,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.coding.encode.ProcedureDescriptionFormatKey;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 import org.n52.iceland.coding.encode.ResponseFormatKey;
 import org.n52.iceland.ogc.swes.OfferingExtensionKey;
 import org.n52.iceland.util.activation.ActivationInitializer;

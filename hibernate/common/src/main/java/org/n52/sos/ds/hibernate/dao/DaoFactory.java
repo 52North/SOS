@@ -44,6 +44,8 @@ import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueTimeDAO;
+import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesValueDAO;
+import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
@@ -110,7 +112,7 @@ public class DaoFactory {
         }
     }
 
-    public AbstractValueDAO getValueDAO() throws CodedException {
+    public AbstractSeriesValueDAO getValueDAO() throws CodedException {
         if (HibernateHelper.isEntitySupported(AbstractValuedEReportingObservation.class)) {
             return new EReportingValueDAO();
         } else if (HibernateHelper.isEntitySupported(AbstractValuedSeriesObservation.class)) {
@@ -123,7 +125,7 @@ public class DaoFactory {
         }
     }
 
-    public AbstractValueTimeDAO getValueTimeDAO() throws CodedException {
+    public AbstractSeriesValueTimeDAO getValueTimeDAO() throws CodedException {
         if (HibernateHelper.isEntitySupported(TemporalReferencedEReportingObservation.class)) {
             return new EReportingValueTimeDAO();
         } else if (HibernateHelper.isEntitySupported(TemporalReferencedSeriesObservation.class)) {

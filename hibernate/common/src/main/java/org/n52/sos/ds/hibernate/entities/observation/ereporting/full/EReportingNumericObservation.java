@@ -37,7 +37,7 @@ import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class EReportingNumericObservation
-        extends AbstractEReportingObservation<BigDecimal>
+        extends AbstractEReportingObservation<Double>
         implements NumericObservation {
 
     private static final long serialVersionUID = -9136641539362661747L;

@@ -38,12 +38,11 @@ import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
@@ -73,7 +72,7 @@ public abstract class AbstractOmObservationCreator {
     private final Locale i18n;
 
     public AbstractOmObservationCreator(AbstractObservationRequest request, Session session) {
-        this(version, null, session);
+        this(request, null, session);
     }
 
     public AbstractOmObservationCreator(AbstractObservationRequest request, Locale i18n, Session session) {
@@ -211,7 +210,7 @@ public abstract class AbstractOmObservationCreator {
         return feature;
     }
 
-    protected void checkForAdditionalObservationCreator(AbstractObservation hObservation, OmObservation sosObservation) {
+    protected void checkForAdditionalObservationCreator(Observation<?> hObservation, OmObservation sosObservation) {
         AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass());
         if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
             AdditionalObservationCreator<?> creator = AdditionalObservationCreatorRepository.getInstance().get(key);

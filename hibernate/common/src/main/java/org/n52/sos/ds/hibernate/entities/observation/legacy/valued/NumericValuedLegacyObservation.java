@@ -42,7 +42,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
  * @author Christian Autermann
  */
 public class NumericValuedLegacyObservation
-        extends AbstractValuedLegacyObservation<BigDecimal>
+        extends AbstractValuedLegacyObservation<Double>
         implements NumericValuedObservation {
 
     private static final long serialVersionUID = 4104949732202796711L;

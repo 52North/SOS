@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.values;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +37,7 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
-
+import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
@@ -45,18 +46,29 @@ import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservati
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
+import org.n52.sos.ogc.gml.CodeWithAuthority;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.GmlHelper;
 import org.n52.sos.util.OMHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract class for Hibernate streaming values
@@ -65,7 +77,7 @@ import com.google.common.collect.Maps;
  * @since 4.1.0
  *
  */
-public abstract class AbstractHibernateStreamingValue extends StreamingValue<AbstractValue> {
+public abstract class AbstractHibernateStreamingValue extends StreamingValue<ValuedObservation<?>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHibernateStreamingValue.class);
 
@@ -84,7 +96,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
 
         Map<String, OmObservation> observations = Maps.newHashMap();
         while (hasNextValue()) {
-            AbstractValue nextEntity = nextEntity();
+            ValuedObservation<?> nextEntity = nextEntity();
             OmObservation observation = null;
             if (observations.containsKey(nextEntity.getDiscriminator())) {
                 observation = observations.get(nextEntity.getDiscriminator());
@@ -99,7 +111,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         return observations.values();
     }
 
-    private void addSpecificValuesToObservation(OmObservation observation, AbstractValue value, SwesExtensions swesExtensions) {
+    private void addSpecificValuesToObservation(OmObservation observation, ValuedObservation<?> value, SwesExtensions swesExtensions) {
         boolean newSession = false;
         try {
             if (session == null) {

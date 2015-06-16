@@ -28,13 +28,17 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasPrimaryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasValidation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasVerification;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.util.StringHelper;
 
 public class TemporalReferencedEReportingObservation
         extends TemporalReferencedSeriesObservation
-        implements HasEReportingSeries {
+        implements HasEReportingSeries, HasVerification, HasValidation, HasPrimaryObservation {
 
     private static final long serialVersionUID = -5055301771550925701L;
     
@@ -65,11 +69,10 @@ public class TemporalReferencedEReportingObservation
     }
 
     @Override
-    public EReportingObservationTime setVerification(Integer verification) {
+    public void setVerification(Integer verification) {
         this.verification = verification;
-        return this;
     }
-
+    
     @Override
     public boolean isSetVerification() {
         return getVerification() != null;
@@ -81,9 +84,8 @@ public class TemporalReferencedEReportingObservation
     }
 
     @Override
-    public EReportingObservationTime setValidation(Integer validation) {
+    public void setValidation(Integer validation) {
         this.validation = validation;
-        return this;
     }
 
     @Override
@@ -97,9 +99,8 @@ public class TemporalReferencedEReportingObservation
     }
 
     @Override
-    public EReportingObservationTime setPrimaryObservation(String primaryObservation) {
+    public void setPrimaryObservation(String primaryObservation) {
         this.primaryObservation = primaryObservation;
-        return this;
     }
 
     @Override

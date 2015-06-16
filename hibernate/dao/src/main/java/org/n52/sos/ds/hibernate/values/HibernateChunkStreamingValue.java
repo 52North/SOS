@@ -100,11 +100,11 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
 
         return next;
     }
-    
+
     @Override
-	public AbstractValue nextEntity() throws OwsExceptionReport {
-    	return (AbstractValue) valuesResult.next();
-	}
+    public ValuedObservation<?> nextEntity() throws OwsExceptionReport {
+        return (ValuedObservation<?>) valuesResult.next();
+    }
 
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
@@ -176,8 +176,8 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     }
 
     /**
-     * Check the queried {@link AbstractValuedLegacyObservation}s for null and set them as
-     * iterator to local variable.
+     * Check the queried {@link AbstractValuedLegacyObservation}s for null and
+     * set them as iterator to local variable.
      *
      * @param valuesResult
      *            Queried {@link AbstractValuedLegacyObservation}s

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.EReportingHelper;
 import org.n52.sos.ogc.gml.time.Time;
@@ -47,7 +48,7 @@ public abstract class AbstractValuedEReportingObservation<T>
         implements ValuedEReportingObservation<T> {
 
     private static final long serialVersionUID = 996063222630981539L;
-    private Integer validation;
+
     private Integer validation = EReportingValues.DEFAULT_VALIDATION;
 
     private Integer verification = EReportingValues.DEFAULT_VERIFICATION;
@@ -113,9 +114,8 @@ public abstract class AbstractValuedEReportingObservation<T>
     }
 
     @Override
-    public EReportingValue setPrimaryObservation(String primaryObservation) {
+    public void setPrimaryObservation(String primaryObservation) {
         this.primaryObservation = primaryObservation;
-        return this;
     }
 
     @Override
@@ -144,9 +144,8 @@ public abstract class AbstractValuedEReportingObservation<T>
     }
 
     @Override
-    public EReportingValue setDataCapture(Double dataCapture) {
+    public void setDataCapture(Double dataCapture) {
         this.dataCapture = dataCapture;
-        return this;
     }
 
     @Override

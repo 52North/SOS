@@ -30,8 +30,8 @@ package org.n52.sos.ds.hibernate.entities.ereporting;
 
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasAssessmentType;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasNetwork;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasStation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasNetwork;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasStation;
 
 /**
  * Entity for AQD e-Reporting SamplingPoint

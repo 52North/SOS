@@ -28,7 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasDataCapture;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasDataCaptureFlag;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasPrimaryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasTimeCoverageFlag;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasUncertaintyEstimation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasValidation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasVerification;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
@@ -41,6 +46,10 @@ public interface EReportingObservation<T>
         extends SeriesObservation<T>,
                 HasEReportingSeries,
                 HasValidation,
-                HasVerification {
-
+                HasVerification,
+                HasPrimaryObservation,
+                HasDataCaptureFlag,
+                HasDataCapture,
+                HasTimeCoverageFlag,
+                HasUncertaintyEstimation {
 }

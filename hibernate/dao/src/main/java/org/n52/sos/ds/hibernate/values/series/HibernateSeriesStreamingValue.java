@@ -30,15 +30,20 @@ package org.n52.sos.ds.hibernate.values.series;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.hibernate.Session;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueTimeDAO;
+import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesValueDAO;
+import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
+import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.util.GmlHelper;
 
 /**
  * Abstract Hibernate series streaming value class for the series concept

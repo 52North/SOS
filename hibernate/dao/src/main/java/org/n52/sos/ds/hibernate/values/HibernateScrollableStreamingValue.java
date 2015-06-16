@@ -87,14 +87,14 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     }
 
     @Override
-	public AbstractValue nextEntity() throws OwsExceptionReport {
-    	return (AbstractValue) scrollableResult.get()[0];
-	}
+    public ValuedObservation<?> nextEntity() throws OwsExceptionReport {
+        return (ValuedObservation<?>) scrollableResult.get()[0];
+    }
 
-	@Override
+    @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-            Observation<?> resultObject = nextEntity();
+            ValuedObservation<?> resultObject = nextEntity();
             TimeValuePair value = createTimeValuePairFrom(resultObject);
             session.evict(resultObject);
             return value;

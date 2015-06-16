@@ -45,7 +45,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
  * @author Christian Autermann
  */
 public class SeriesNumericObservation
-        extends AbstractSeriesObservation<BigDecimal>
+        extends AbstractSeriesObservation<Double>
         implements NumericObservation {
 
     private static final long serialVersionUID = -835034606459038907L;

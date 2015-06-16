@@ -28,11 +28,14 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
+import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingNetwork;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
-import org.n52.sos.ds.hibernate.entities.observation.series.HibernateSeriesRelations.HasSeries;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingStation;
+import org.n52.sos.ds.hibernate.entities.observation.series.HibernateSeriesRelations;
 
-public interface HiberanteEReportingRelations {
+public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
 
     interface HasEReportingSamplingPoint {
         String SAMPLING_POINT = "samplingPoint";
@@ -65,6 +68,8 @@ public interface HiberanteEReportingRelations {
     }
 
     interface HasVerification {
+        
+        Integer DEFAULT_VERIFICATION = 3;
         String VERIFICATION = "verification";
         Integer getVerification();
         void setVerification(Integer verification);
@@ -79,7 +84,7 @@ public interface HiberanteEReportingRelations {
 
         String getPrimaryObservation();
 
-        HasPrimaryObservation setPrimaryObservation(String primaryObservation);
+        void setPrimaryObservation(String primaryObservation);
 
         boolean isSetPrimaryObservation();
     }
@@ -110,7 +115,7 @@ public interface HiberanteEReportingRelations {
 
         Double getDataCapture();
 
-        HasDataCapture setDataCapture(Double dataCapture);
+        void setDataCapture(Double dataCapture);
 
         boolean isSetDataCapture();
     }

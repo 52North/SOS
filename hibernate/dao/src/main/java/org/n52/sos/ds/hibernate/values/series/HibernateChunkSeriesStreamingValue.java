@@ -104,8 +104,8 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     }
 
     @Override
-    public AbstractValue nextEntity() throws OwsExceptionReport {
-        return (AbstractValue) seriesValuesResult.next();
+    public ValuedSeriesObservation<?> nextEntity() throws OwsExceptionReport {
+        return (ValuedSeriesObservation<?>) seriesValuesResult.next();
     }
 
     @Override

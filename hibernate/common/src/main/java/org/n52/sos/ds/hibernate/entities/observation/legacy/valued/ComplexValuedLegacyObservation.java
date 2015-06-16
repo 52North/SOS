@@ -77,4 +77,10 @@ public class ComplexValuedLegacyObservation
             throws OwsExceptionReport {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getValueAsString() {
+        // TODO 
+        return null;
+    }
 }

@@ -38,7 +38,7 @@ import org.n52.sos.util.StringHelper;
 
 public abstract class AbstractEReportingObservation<T>
         extends AbstractSeriesObservation<T>
-        implements EReportingObservation<T>, HasDataCaptureFlag, HasDataCapture, HasTimeCoverageFlag, HasUncertaintyEstimation {
+        implements EReportingObservation<T>
 
     private static final long serialVersionUID = 2878044983511090422L;
 

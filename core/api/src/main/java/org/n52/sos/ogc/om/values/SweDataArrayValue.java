@@ -34,10 +34,10 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;

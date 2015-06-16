@@ -41,7 +41,6 @@ import java.util.Set;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.gml.time.Time;
@@ -114,6 +113,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     private final SetMultiMap<String,String> compositePhenomenonsForOffering = newSynchronizedSetMultiMap();
     private final SetMultiMap<String,String> observablePropertiesForCompositePhenomenon = newSynchronizedSetMultiMap();
     private final SetMultiMap<String,String> compositePhenomenonForObservableProperty = newSynchronizedSetMultiMap();
+    private Set<String> requestableProcedureDescriptionFormats = newSynchronizedSet();
     private int defaultEpsgCode = Constants.EPSG_WGS84;
     private SosEnvelope globalEnvelope = new SosEnvelope(null, defaultEpsgCode);
 
@@ -2487,4 +2487,23 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
         LOG.trace("Clearing composite phenomenon for observable property {}", observableProperty);
         this.compositePhenomenonForObservableProperty.remove(observableProperty);
     }
+
+    @Override
+    public Set<String> getRequestableProcedureDescriptionFormat() {
+        return this.requestableProcedureDescriptionFormats;
+    }
+    
+    @Override
+    public boolean hasRequestableProcedureDescriptionFormat(String format) {
+        return getRequestableProcedureDescriptionFormat().contains(format);
+    }
+
+    @Override
+    public void setRequestableProcedureDescriptionFormat(Collection<String> formats) {
+        LOG.trace("Adding requestable procedureDescriptionFormat");
+        getRequestableProcedureDescriptionFormat().addAll(formats);
+    }
+    
 }
+
+

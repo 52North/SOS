@@ -36,7 +36,10 @@ import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
+import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.StringHelper;
 
 /**
  * SOS internal representation of SensorML position

@@ -231,8 +231,6 @@ public class NcNameResolver {
             sb.append(c);
         } else {
             sb.append('_');
-        } else {
-            sb.append(c);
         }
 
         // Check the rest of the characters

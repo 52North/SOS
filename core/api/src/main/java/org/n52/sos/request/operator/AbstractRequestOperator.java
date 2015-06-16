@@ -711,7 +711,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         if (Strings.isNullOrEmpty(format)) {
             throw new MissingParameterValueException(parameter);
         } else {
-            return getCache().hasRequstableProcedureDescriptionFormat(format);
+            return getCache().hasRequestableProcedureDescriptionFormat(format);
         }
     }
 

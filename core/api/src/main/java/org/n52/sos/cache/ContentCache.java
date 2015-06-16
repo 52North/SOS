@@ -605,7 +605,7 @@ public interface ContentCache
      *
      * @return Supported requestable procedure description format
      */
-    public Set<String> getRequstableProcedureDescriptionFormat();
+    public Set<String> getRequestableProcedureDescriptionFormat();
     
     /**
      * Is the specific requestable procedure description format supported
@@ -614,7 +614,7 @@ public interface ContentCache
      *            format to check
      * @return <code>true</code>, if the specific format is supported
      */
-    public boolean hasRequstableProcedureDescriptionFormat(String format);
+    public boolean hasRequestableProcedureDescriptionFormat(String format);
     
     String getFeatureOfInterestIdentifierForHumanReadableName(String humanReadableName);
 

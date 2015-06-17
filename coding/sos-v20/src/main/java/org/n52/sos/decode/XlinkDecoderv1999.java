@@ -29,22 +29,21 @@
 package org.n52.sos.decode;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3.x1999.xlink.HrefAttribute;
+
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.w3c.W3CConstants;
 import org.n52.iceland.w3c.xlink.W3CHrefAttribute;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.util.CodingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3.x1999.xlink.HrefAttribute;
 
 public class XlinkDecoderv1999 implements Decoder<Object, XmlObject> {
 
@@ -64,18 +63,8 @@ public class XlinkDecoderv1999 implements Decoder<Object, XmlObject> {
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
     }
 
     @Override

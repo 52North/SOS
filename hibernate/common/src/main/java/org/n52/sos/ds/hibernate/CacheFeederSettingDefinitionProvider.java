@@ -28,35 +28,12 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.util.Collections;
-import java.util.Set;
-
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingDefinitionProvider;
-import org.n52.iceland.config.settings.IntegerSettingDefinition;
-import org.n52.iceland.service.ServiceSettings;
-
-import com.google.common.collect.ImmutableSet;
-
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
-public class CacheFeederSettingDefinitionProvider implements SettingDefinitionProvider {
+public interface CacheFeederSettingDefinitionProvider {
 
-    public static final String CACHE_THREAD_COUNT = "service.cacheThreadCount";
-
-    public static final IntegerSettingDefinition CACHE_THREAD_COUNT_DEFINITION = new IntegerSettingDefinition()
-            .setGroup(ServiceSettings.GROUP).setOrder(8).setKey(CACHE_THREAD_COUNT).setDefaultValue(5)
-            .setTitle("Cache Feeder Threads")
-            .setDescription("The number of threads used to fill the capabilities cache.");
-
-    private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet
-            .<SettingDefinition<?, ?>> of(CACHE_THREAD_COUNT_DEFINITION);
-
-    @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return Collections.unmodifiableSet(DEFINITIONS);
-    }
+    String CACHE_THREAD_COUNT = "service.cacheThreadCount";
 }

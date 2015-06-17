@@ -29,7 +29,6 @@
 package org.n52.sos.decode.json.impl;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import org.n52.iceland.exception.ows.OwsExceptionReport;
@@ -39,7 +38,8 @@ import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.ObservationType;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.JSONValidator;
 import org.n52.sos.coding.json.SchemaConstants;
@@ -61,25 +61,46 @@ import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class ObservationDecoder extends JSONDecoder<OmObservation> {
-    private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = ImmutableMap.of(
-            SupportedTypeKey.ObservationType, (Set<String>) ImmutableSet.of(
-                    // OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION,
-                    // OmConstants.OBS_TYPE_COMPLEX_OBSERVATION,
-                    OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION, OmConstants.OBS_TYPE_CATEGORY_OBSERVATION,
-                    OmConstants.OBS_TYPE_COUNT_OBSERVATION, OmConstants.OBS_TYPE_MEASUREMENT,
-                    OmConstants.OBS_TYPE_TEXT_OBSERVATION, OmConstants.OBS_TYPE_TRUTH_OBSERVATION));
+    //TODO move these to OMConstants
+    private static final ObservationType OBS_TYPE_GEOMETRY_OBSERVATION
+            = new ObservationType(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION);
+    private static final ObservationType OBS_TYPE_COUNT_OBSERVATION
+            = new ObservationType(OmConstants.OBS_TYPE_COUNT_OBSERVATION);
+    private static final ObservationType OBS_TYPE_MEASUREMENT
+            = new ObservationType(OmConstants.OBS_TYPE_MEASUREMENT);
+    private static final ObservationType OBS_TYPE_TEXT_OBSERVATION
+            = new ObservationType(OmConstants.OBS_TYPE_TEXT_OBSERVATION);
+    private static final ObservationType OBS_TYPE_TRUTH_OBSERVATION
+            = new ObservationType(OmConstants.OBS_TYPE_TRUTH_OBSERVATION);
+    private static final ObservationType OBS_TYPE_CATEGORY_OBSERVATION
+            = new ObservationType(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION);
+    private static final ObservationType OBS_TYPE_COMPLEX_OBSERVATION
+            = new ObservationType(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
+    private static final ObservationType OBS_TYPE_SWE_ARRAY_OBSERVATION
+            = new ObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+
+    private static final Set<SupportedType> SUPPORTED_TYPES = ImmutableSet
+            .<SupportedType>builder()
+//            .add(OBS_TYPE_SWE_ARRAY_OBSERVATION)
+//            .add(OBS_TYPE_COMPLEX_OBSERVATION)
+            .add(OBS_TYPE_GEOMETRY_OBSERVATION)
+            .add(OBS_TYPE_CATEGORY_OBSERVATION)
+            .add(OBS_TYPE_COUNT_OBSERVATION)
+            .add(OBS_TYPE_MEASUREMENT)
+            .add(OBS_TYPE_TEXT_OBSERVATION)
+            .add(OBS_TYPE_TRUTH_OBSERVATION)
+            .build();
 
     private final JSONDecoder<AbstractFeature> featureDecoder = new FeatureDecoder();
 
@@ -90,8 +111,8 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.unmodifiableMap(SUPPORTED_TYPES);
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
 
     @Override

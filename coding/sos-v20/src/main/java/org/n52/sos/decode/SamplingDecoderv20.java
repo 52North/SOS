@@ -31,7 +31,6 @@ package org.n52.sos.decode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.opengis.gml.x32.FeaturePropertyType;
@@ -42,6 +41,9 @@ import net.opengis.samplingSpatial.x20.ShapeType;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
@@ -54,17 +56,17 @@ import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.FeatureType;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Geometry;
@@ -74,17 +76,19 @@ import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SamplingDecoderv20.class);
 
-    private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
-            SupportedTypeKey.FeatureType, (Set<String>) Sets.newHashSet(OGCConstants.UNKNOWN,
-                    SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_POINT,
-                    SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_CURVE,
-                    SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_SURFACE));
+    private static final Set<SupportedType> SUPPORTED_TYPES = ImmutableSet
+            .<SupportedType>builder()
+            .add(new FeatureType(OGCConstants.UNKNOWN))
+            .add(new FeatureType(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_POINT))
+            .add(new FeatureType(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_CURVE))
+            .add(new FeatureType(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_SURFACE))
+            .build();
 
     private static final Set<String> CONFORMANCE_CLASSES = Sets.newHashSet(ConformanceClasses.OM_V2_SPATIAL_SAMPLING,
             ConformanceClasses.OM_V2_SAMPLING_POINT, ConformanceClasses.OM_V2_SAMPLING_CURVE,
@@ -102,13 +106,13 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.unmodifiableMap(SUPPORTED_TYPES);
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
 
     @Override
@@ -168,7 +172,7 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
     private List<CodeType> getNames(final SFSpatialSamplingFeatureType spatialSamplingFeature)
             throws OwsExceptionReport {
         final int length = spatialSamplingFeature.getNameArray().length;
-        final List<CodeType> names = new ArrayList<CodeType>(length);
+        final List<CodeType> names = new ArrayList<>(length);
         for (int i = 0; i < length; i++) {
             final Object decodedElement = CodingHelper.decodeXmlObject(spatialSamplingFeature.getNameArray(i));
             if (decodedElement instanceof CodeType) {
@@ -186,7 +190,7 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
     }
 
     /**
-     *  Parse {@link FeaturePropertyType} sampledFeatures to {@link AbstractFeature} list. 
+     *  Parse {@link FeaturePropertyType} sampledFeatures to {@link AbstractFeature} list.
      * @param sampledFeatureArray SampledFeatures to parse
      * @return List with the parsed sampledFeatures
      * @throws OwsExceptionReport If an error occurs
@@ -201,15 +205,15 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
     }
 
     /**
-     * Parse {@link FeaturePropertyType} sampledFeature to {@link AbstractFeature} list. 
-     * 
+     * Parse {@link FeaturePropertyType} sampledFeature to {@link AbstractFeature} list.
+     *
      * @param sampledFeature SampledFeature to parse
      * @return List with the parsed sampledFeature
      * @throws OwsExceptionReport If an error occurs
      */
     private List<AbstractFeature> getSampledFeatures(final FeaturePropertyType sampledFeature)
             throws OwsExceptionReport {
-        final List<AbstractFeature> sampledFeatures = new ArrayList<AbstractFeature>(1);
+        final List<AbstractFeature> sampledFeatures = new ArrayList<>(1);
         if (sampledFeature != null && !sampledFeature.isNil()) {
             // if xlink:href is set
             if (sampledFeature.getHref() != null && !sampledFeature.getHref().isEmpty()) {

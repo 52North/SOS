@@ -71,7 +71,7 @@ public class Soap11Encoder extends AbstractSoapEncoder<SOAPMessage, SoapResponse
     public Soap11Encoder() {
         super(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE);
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
-                Joiner.on(", ").join(getEncoderKeyType()));
+                Joiner.on(", ").join(getKeys()));
     }
 
     @Override

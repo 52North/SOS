@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
-import org.n52.iceland.convert.RequestResponseModifierKeyType;
+import org.n52.iceland.convert.RequestResponseModifierKey;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.sos.Sos1Constants;
@@ -69,14 +69,14 @@ import com.google.common.collect.Sets;
 public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
  // TODO add this class to org.n52.sos.convert.RequestResponseModifier file
 
-    private Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES;
+    private Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES;
 
     /**
      * Get the keys
-     * 
+     *
      * @return Set of keys
      */
-    private Set<RequestResponseModifierKeyType> getKeyTypes() {
+    private Set<RequestResponseModifierKey> getKeyTypes() {
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
         Map<AbstractServiceRequest<?>, AbstractServiceResponse> requestResponseMap = Maps.newHashMap();
@@ -88,12 +88,12 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
         requestResponseMap.put(new GetDataAvailabilityRequest(), new GetDataAvailabilityResponse());
         requestResponseMap.put(new GetResultTemplateRequest(), new GetResultTemplateResponse());
         requestResponseMap.put(new GetResultRequest(), new GetResultResponse());
-        Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
+        Set<RequestResponseModifierKey> keys = Sets.newHashSet();
         for (String service : services) {
             for (String version : versions) {
                 for (AbstractServiceRequest<?> request : requestResponseMap.keySet()) {
-                    keys.add(new RequestResponseModifierKeyType(service, version, request));
-                    keys.add(new RequestResponseModifierKeyType(service, version, request, requestResponseMap
+                    keys.add(new RequestResponseModifierKey(service, version, request));
+                    keys.add(new RequestResponseModifierKey(service, version, request, requestResponseMap
                             .get(request)));
                 }
             }
@@ -102,7 +102,7 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
     }
 
     @Override
-    public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
+    public Set<RequestResponseModifierKey> getKeys() {
         if (REQUEST_RESPONSE_MODIFIER_KEY_TYPES == null) {
             REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
         }
@@ -164,7 +164,7 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
         }
         return globalModified;
     }
-    
+
     private String checkGlobalPrefix(String identifier) {
         if (getPrefixedIdentifierHelper().isSetGlobalPrefix()) {
                StringBuilder builder = new StringBuilder();
@@ -218,7 +218,7 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
             checkAndChangeIdentifierOfAbstractFeature(abstractFeature);
         }
     }
-    
+
     private void checkAndChangeIdentifierOfAbstractFeature(AbstractFeature abstractFeature) {
         if (getPrefixedIdentifierHelper().isSetFeatureOfInterestPrefix()) {
             abstractFeature.setIdentifier(checkFeatureOfInterestIdentifier(abstractFeature
@@ -259,7 +259,7 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
     protected PrefixedIdentifierHelper getPrefixedIdentifierHelper() {
         return PrefixedIdentifierHelper.getInstance();
     }
-    
+
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {
         return super.getFacilitator();

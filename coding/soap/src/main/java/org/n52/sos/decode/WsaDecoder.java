@@ -31,15 +31,16 @@ package org.n52.sos.decode;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.xml.soap.Node;
 import javax.xml.soap.SOAPHeaderElement;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.w3c.wsa.WsaActionHeader;
 import org.n52.iceland.w3c.wsa.WsaConstants;
 import org.n52.iceland.w3c.wsa.WsaHeader;
@@ -47,15 +48,13 @@ import org.n52.iceland.w3c.wsa.WsaMessageIDHeader;
 import org.n52.iceland.w3c.wsa.WsaReplyToHeader;
 import org.n52.iceland.w3c.wsa.WsaToHeader;
 import org.n52.sos.coding.decode.XmlNamespaceDecoderKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class WsaDecoder implements Decoder<List<WsaHeader>, List<SOAPHeaderElement>> {
 
@@ -70,18 +69,8 @@ public class WsaDecoder implements Decoder<List<WsaHeader>, List<SOAPHeaderEleme
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
-    }
-
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
     }
 
     @Override

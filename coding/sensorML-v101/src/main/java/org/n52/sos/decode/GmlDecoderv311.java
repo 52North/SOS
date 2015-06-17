@@ -29,7 +29,6 @@
 package org.n52.sos.decode;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import net.opengis.gml.CodeType;
@@ -45,31 +44,32 @@ import net.opengis.gml.TimePeriodType;
 import net.opengis.gml.TimePositionType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.gml.GmlConstants;
+import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 
 import com.google.common.base.Joiner;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
     private static final Logger LOGGER = LoggerFactory.getLogger(GmlDecoderv311.class);
@@ -90,18 +90,8 @@ public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
-    }
-
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
     }
 
     @Override
@@ -226,7 +216,7 @@ public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
 
     /**
      * parses XmlBeans DirectPosition to a String with coordinates for WKT.
-     * 
+     *
      * @param xbPos
      *            XmlBeans generated DirectPosition.
      * @return Returns String with coordinates for WKT.
@@ -238,7 +228,7 @@ public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
     /**
      * parses XmlBeans Coordinates to a String with coordinates for WKT.
      * Replaces cs, decimal and ts if different from default.
-     * 
+     *
      * @param xbCoordinates
      *            XmlBeans generated Coordinates.
      * @return Returns String with coordinates for WKT.

@@ -67,13 +67,17 @@ import net.opengis.sos.x20.ResultTemplateType.ObservationTemplate;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
@@ -84,7 +88,6 @@ import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.service.AbstractServiceCommunicationObject;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.exception.ows.concrete.MissingResultValuesException;
@@ -109,16 +112,12 @@ import org.n52.sos.response.GetResultResponse;
 import org.n52.sos.response.GetResultTemplateResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.google.common.base.Joiner;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<AbstractServiceCommunicationObject, XmlObject> {
 
@@ -143,18 +142,8 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
-    }
-
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
     }
 
     @Override
@@ -192,18 +181,18 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
     /**
      * parses the XmlBean representing the getCapabilities request and creates a
      * SosGetCapabilities request
-     * 
+     *
      * @param getCapsDoc
      *            XmlBean created from the incoming request stream
      * @return Returns SosGetCapabilitiesRequest representing the request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * If parsing the XmlBean failed
      */
     private AbstractServiceRequest<?> parseGetCapabilities(final GetCapabilitiesDocument getCapsDoc)
             throws OwsExceptionReport {
-        
+
         final GetCapabilitiesType getCapsType = getCapsDoc.getGetCapabilities2();
         final GetCapabilitiesRequest request = new GetCapabilitiesRequest(getCapsType.getService());
 
@@ -218,7 +207,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
         if (getCapsType.getSections() != null && getCapsType.getSections().getSectionArray().length != 0) {
             request.setSections(Arrays.asList(getCapsType.getSections().getSectionArray()));
         }
-        
+
         if (getCapsType.getExtensionArray() != null && getCapsType.getExtensionArray().length > 0) {
         	request.setExtensions(parseExtensibleRequestExtension(getCapsType.getExtensionArray()));
         }
@@ -229,12 +218,12 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
     /**
      * parses the XmlBean representing the getObservation request and creates a
      * SoSGetObservation request
-     * 
+     *
      * @param getObsDoc
      *            XmlBean created from the incoming request stream
      * @return Returns SosGetObservationRequest representing the request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * If parsing the XmlBean failed
      */
@@ -269,7 +258,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
 //	{
 //		final SwesExtensions extensions = new SwesExtensions();
 //    	for (final XmlObject xbSwesExtension : extensionArray) {
-//    		
+//
 //    		final Object obj = CodingHelper.decodeXmlElement(xbSwesExtension);
 //			if (obj instanceof SwesExtension<?>) {
 //				extensions.addSwesExtension((SwesExtension<?>) obj);
@@ -281,13 +270,13 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
     /**
      * parses the passes XmlBeans document and creates a SOS
      * getFeatureOfInterest request
-     * 
+     *
      * @param getFoiDoc
      *            XmlBeans document representing the getFeatureOfInterest
      *            request
      * @return Returns SOS getFeatureOfInterest request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if validation of the request failed
      */
@@ -454,14 +443,14 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
 
     /**
      * Parses the spatial filter of a GetObservation request.
-     * 
+     *
      * @param spatialFilter
      *            XmlBean representing the spatial filter parameter of the
      *            request
      * @return Returns SpatialFilter created from the passed foi request
      *         parameter
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if creation of the SpatialFilter failed
      */
@@ -478,14 +467,14 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
 
     /**
      * Parses the spatial filters of a GetFeatureOfInterest request.
-     * 
+     *
      * @param spatialFilters
      *            XmlBean representing the spatial filter parameter of the
      *            request
      * @return Returns SpatialFilter created from the passed foi request
      *         parameter
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if creation of the SpatialFilter failed
      */
@@ -516,13 +505,13 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
     /**
      * parses the Time of the requests and returns an array representing the
      * temporal filters
-     * 
+     *
      * @param temporalFilters
      *            array of XmlObjects representing the Time element in the
      *            request
      * @return Returns array representing the temporal filters
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if parsing of the element failed
      */

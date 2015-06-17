@@ -29,14 +29,14 @@
 package org.n52.sos.ds.hibernate.cache;
 
 
-import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.service.Configurator;
-import org.n52.iceland.util.CompositeParallelAction;
-import org.n52.sos.ds.hibernate.ThreadLocalSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.util.action.CompositeParallelAction;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.sos.ds.hibernate.ThreadLocalSessionFactory;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -52,13 +52,12 @@ public abstract class AbstractQueueingDatasourceCacheUpdate<T extends AbstractTh
 
     private final String threadGroupName;
 
-    private final ConnectionProvider connectionProvider = Configurator.getInstance().getDataConnectionProvider();
+    private final ThreadLocalSessionFactory sessionFactory;
 
-    private final ThreadLocalSessionFactory sessionFactory = new ThreadLocalSessionFactory(connectionProvider);
-
-    public AbstractQueueingDatasourceCacheUpdate(int threads, String threadGroupName) {
+    public AbstractQueueingDatasourceCacheUpdate(int threads, String threadGroupName, ConnectionProvider connectionProvider) {
         this.threads = threads;
         this.threadGroupName = threadGroupName;
+        this.sessionFactory = new ThreadLocalSessionFactory(connectionProvider);
     }
 
     protected abstract T[] getUpdatesToExecute() throws OwsExceptionReport;
@@ -75,6 +74,7 @@ public abstract class AbstractQueueingDatasourceCacheUpdate<T extends AbstractTh
         }
         CompositeParallelAction<AbstractThreadableDatasourceCacheUpdate> compositeParallelAction =
                 new CompositeParallelAction<AbstractThreadableDatasourceCacheUpdate>(threads, threadGroupName, updatesToExecute) {
+
             @Override
             protected void pre(AbstractThreadableDatasourceCacheUpdate action) {
                 action.setCache(getCache());

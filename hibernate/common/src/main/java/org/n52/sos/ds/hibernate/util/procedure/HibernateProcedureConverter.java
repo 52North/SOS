@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.hibernate.Session;
+
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
@@ -54,7 +55,7 @@ import org.n52.sos.ds.hibernate.util.procedure.create.LinkedDescriptionCreationS
 import org.n52.sos.ds.hibernate.util.procedure.create.ValidProcedureTimeDescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.create.XmlStringDescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.enrich.ProcedureDescriptionEnrichments;
-import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorRepository;
+import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
 import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
@@ -242,7 +243,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
     }
     
     private boolean existsGenerator(String descriptionFormat) {
-        return HibernateProcedureDescriptionGeneratorRepository.getInstance()
+        return HibernateProcedureDescriptionGeneratorFactoryRepository.getInstance()
                 .hasHibernateProcedureDescriptionGeneratorFactory(descriptionFormat);
     }
 

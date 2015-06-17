@@ -45,14 +45,11 @@ import java.util.Set;
 import net.opengis.swes.x20.UpdateSensorDescriptionResponseDocument;
 
 import org.apache.xmlbeans.XmlObject;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.n52.iceland.coding.CodingRepository;
+
 import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.coding.encode.OperationEncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.sos.Sos2Constants;
@@ -66,26 +63,16 @@ import com.google.common.collect.Maps;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class UpdateSensorResponseEncoderTest {
 
-    @BeforeClass
-    public static void initDecoders() {
-        CodingRepository.getInstance();
-    }
-
-    @AfterClass
-    public static void cleanUp() {
-        SettingsManager.getInstance().cleanup();
-    }
-
     @Test
     public void should_return_correct_encoder_keys() {
-        Set<EncoderKey> returnedKeySet = new UpdateSensorResponseEncoder().getEncoderKeyType();
+        Set<EncoderKey> returnedKeySet = new UpdateSensorResponseEncoder().getKeys();
         assertThat(returnedKeySet.size(), is(3));
         assertThat(returnedKeySet, hasItem(new XmlEncoderKey(SwesConstants.NS_SWES_20, UpdateSensorResponse.class)));
         assertThat(returnedKeySet, hasItem(new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,

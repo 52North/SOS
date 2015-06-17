@@ -34,13 +34,19 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForResponseException;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.response.ServiceResponse;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.binding.rest.Constants;
@@ -73,8 +79,6 @@ import org.n52.sos.binding.rest.resources.sensors.SensorsPostResponse;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPutEncoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPutResponse;
 import org.n52.sos.util.CodingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -83,25 +87,38 @@ import com.google.common.collect.Sets;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
-public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
-    
-    protected Constants bindingConstants = Constants.getInstance();
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestEncoder.class);
-    
-    private final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(bindingConstants.getEncodingNamespace(),
-    		RestResponse.class);
+public class RestEncoder implements Encoder<ServiceResponse, RestResponse>, Constructable {
 
-    public RestEncoder() {
-    	LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(ENCODER_KEYS));
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestEncoder.class);
+    @Deprecated
+    protected Constants bindingConstants;
+
+    private Constants constants;
+    private Set<EncoderKey> encoderKeys ;
+
+    @Inject
+    public void setConstants(Constants constants) {
+        this.constants = constants;
+        this.bindingConstants = this.constants;
     }
-    
+
+    public Constants getConstants() {
+        return constants;
+    }
+
+    @Override
+    public void init() {
+        String namespace = this.constants.getEncodingNamespace();
+        this.encoderKeys = CodingHelper.encoderKeysForElements(namespace, RestResponse.class);
+        LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(encoderKeys));
+    }
+
     @Override
     public ServiceResponse encode(final RestResponse restResponse)
             throws OwsExceptionReport{
 
         // 0 variables
-        ServiceResponse encodedResponse = null;
+        ServiceResponse encodedResponse;
 
         // 1 get decoder for response
         final ResourceEncoder encoder = getRestEncoderForBindingResponse(restResponse);
@@ -112,7 +129,7 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
         // 3 return the results
         return encodedResponse;
     }
-    
+
     private ResourceEncoder getRestEncoderForBindingResponse(final RestResponse restResponse) throws OwsExceptionReport
     {
         if (restResponse != null) {
@@ -120,34 +137,34 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
             {
                 return new SensorsGetEncoder();
             }
-            else if (isObservationsGetResponse(restResponse)) 
+            else if (isObservationsGetResponse(restResponse))
             {
                 return new ObservationsGetEncoder();
             }
-            else if (restResponse instanceof CapabilitiesGetResponse) 
+            else if (restResponse instanceof CapabilitiesGetResponse)
             {
                 return new CapabilitiesGetEncoder();
-            } 
-            else if (restResponse instanceof ObservationsPostResponse) 
+            }
+            else if (restResponse instanceof ObservationsPostResponse)
             {
                 return new ObservationsPostEncoder();
-            } 
+            }
             else if (restResponse instanceof SensorsPostResponse)
             {
                 return new SensorsPostEncoder();
-            } 
-            else if (restResponse instanceof SensorsPutResponse) 
+            }
+            else if (restResponse instanceof SensorsPutResponse)
             {
                 return new SensorsPutEncoder();
-            } 
+            }
             else if (isOfferingsGetResponse(restResponse))
             {
                 return new OfferingsGetEncoder();
-            } 
+            }
             else if (isFeatureResponse(restResponse))
             {
                 return new FeaturesGetEncoder();
-            } 
+            }
             else if (restResponse instanceof ObservationsDeleteRespone)
             {
                 return new ObservationsDeleteEncoder();
@@ -197,17 +214,17 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
     {
         return encode(objectToEncode);
     }
-    
+
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
         return emptySet();
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
-        return Collections.unmodifiableSet(ENCODER_KEYS) ;
+    public Set<EncoderKey> getKeys() {
+        return Collections.unmodifiableSet(encoderKeys) ;
     }
-    
+
     @Override
 	public void addNamespacePrefixToMap(final Map<String, String> nameSpacePrefixMap){
     	if (nameSpacePrefixMap != null)
@@ -215,12 +232,12 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
     		nameSpacePrefixMap.put(bindingConstants.getEncodingNamespace(), bindingConstants.getEncodingPrefix());
     	}
     }
-    
+
     @Override
-	public Map<SupportedTypeKey, Set<String>> getSupportedTypes() { 
-    	return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
-    
+
     @Override
 	public MediaType getContentType()
     {
@@ -234,5 +251,5 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
         				bindingConstants.getEncodingNamespace(),
         				bindingConstants.getEncodingSchemaUrl().toString()));
     }
-    
+
 }

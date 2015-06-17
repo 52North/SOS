@@ -45,6 +45,7 @@ import net.opengis.waterml.x20.TVPDefaultMetadataPropertyType;
 import net.opengis.waterml.x20.TVPMeasurementMetadataType;
 
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
@@ -54,7 +55,7 @@ import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.w3c.SchemaLocation;
@@ -73,19 +74,23 @@ import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.wml.ConformanceClassesWML2;
 import org.n52.sos.ogc.wml.WaterMLConstants;
 import org.n52.sos.response.GetObservationResponse;
-import org.n52.sos.util.CodingHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.service.ServiceConstants.ObservationType;
+import org.n52.sos.util.CodingHelper;
+
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
  * Encoder class for WaterML 2.0 TimeseriesValuePair (TVP)
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
- * 
+ *
  */
 public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
 
@@ -95,14 +100,18 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     private static final Set<String> CONFORMANCE_CLASSES = Sets.newHashSet(
             ConformanceClassesWML2.UML_MEASUREMENT_TIMESERIES_TVP_OBSERVATION,
             ConformanceClassesWML2.UML_TIMESERIES_TVP_OBSERVATION,
-            ConformanceClassesWML2.UML_MEASUREMENT_TIMESERIES_TVP_OBSERVATION, ConformanceClassesWML2.XSD_XML_RULES,
-            ConformanceClassesWML2.XSD_TIMESERIES_OBSERVATION, ConformanceClassesWML2.XSD_TIMESERIES_TVP_OBSERVATION,
+            ConformanceClassesWML2.UML_MEASUREMENT_TIMESERIES_TVP_OBSERVATION,
+            ConformanceClassesWML2.XSD_XML_RULES,
+            ConformanceClassesWML2.XSD_TIMESERIES_OBSERVATION,
+            ConformanceClassesWML2.XSD_TIMESERIES_TVP_OBSERVATION,
             ConformanceClassesWML2.XSD_MEASUREMENT_TIMESERIES_TVP);
 
-    private static final Set<EncoderKey> ENCODER_KEYS = createEncoderKeys();
+    private static final ImmutableSet<SupportedType> SUPPORTED_TYPES
+            = ImmutableSet.<SupportedType>builder()
+                    .add(new ObservationType(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TVP))
+                    .build();
 
-    private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
-            SupportedTypeKey.ObservationType, Collections.singleton(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TVP));;
+    private static final Set<EncoderKey> ENCODER_KEYS = createEncoderKeys();
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
@@ -120,14 +129,17 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.unmodifiableMap(SUPPORTED_TYPES);
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
+
+
+
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
@@ -150,7 +162,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     public Set<SchemaLocation> getSchemaLocations() {
         return Sets.newHashSet(WaterMLConstants.WML_20_SCHEMA_LOCATION, WaterMLConstants.WML_20_TS_SCHEMA_LOCATION);
     }
-    
+
     @Override
     public boolean supportsResultStreamingForMergedValues() {
         return true;
@@ -167,7 +179,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         }
         return encodedObject;
     }
-    
+
     @Override
     public void encode(Object objectToEncode, OutputStream outputStream, EncodingValues encodingValues)
             throws OwsExceptionReport {
@@ -209,7 +221,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     /**
      * Create a XML MeasurementTimeseries object from SOS observation for
      * om:result
-     * 
+     *
      * @param sosObservation
      *            SOS observation
      * @return XML MeasurementTimeseries object
@@ -300,7 +312,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
 
     /**
      * Add a time an value to MeasureTVPType
-     * 
+     *
      * @param measurementTVP
      *            MeasureTVPType XML object
      * @param time
@@ -317,7 +329,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
             measurementTVP.addNewMetadata().addNewTVPMeasurementMetadata().addNewNilReason().setNilReason("missing");
         }
     }
-    
+
     private XmlObject createMeasurementTimeseries(AbstractObservationValue<?> observationValue) throws OwsExceptionReport {
         MeasurementTimeseriesDocument measurementTimeseriesDoc = MeasurementTimeseriesDocument.Factory.newInstance();
         MeasurementTimeseriesType measurementTimeseries = measurementTimeseriesDoc.addNewMeasurementTimeseries();

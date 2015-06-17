@@ -36,17 +36,16 @@ import java.util.Map;
 import net.opengis.sosREST.x10.LinkType;
 import net.opengis.sosREST.x10.ResourceCollectionType;
 
-
-
-
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.EncoderResponseUnsupportedException;
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.iceland.util.http.HTTPHeaders;
 import org.n52.iceland.util.http.HTTPMethods;
 import org.n52.iceland.util.http.HTTPStatus;
+import org.n52.sos.binding.rest.RestBinding;
 import org.n52.sos.binding.rest.requests.RestResponse;
 import org.n52.sos.exception.ows.concrete.ErrorWhileSavingResponseToOutputStreamException;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -58,15 +57,15 @@ import org.n52.sos.util.XmlOptionsHelper;
 public abstract class ResourceEncoder extends RestEncoder {
 
     public  abstract ServiceResponse encodeRestResponse(RestResponse objectToEncode) throws OwsExceptionReport;
-    
+
     protected String createHrefForResourceType(String resourceType)
     {
         return bindingConstants.getServiceUrl()
-                .concat(bindingConstants.getUrlPattern())
+                .concat(RestBinding.URI_PATTERN)
                 .concat("/")
                 .concat(resourceType);
     }
-    
+
     protected String createHrefForResourceAndIdentifier(String resourceType,
             String identifier)
     {
@@ -74,13 +73,13 @@ public abstract class ResourceEncoder extends RestEncoder {
                 .concat("/")
                 .concat(identifier);
     }
-    
+
     protected String createHrefForResourceTypeAndQueryString(String resourceType, String queryString) {
         return createHrefForResourceType(resourceType)
                 .concat("?")
                 .concat(queryString);
     }
-    
+
     protected void setValuesOfLinkToDynamicResource(LinkType xb_RestLink, String resourceQueryString, String relation, String resourceTypeIdentifier)
     {
         setLinkValues(xb_RestLink,
@@ -88,7 +87,7 @@ public abstract class ResourceEncoder extends RestEncoder {
                 createHrefForResourceTypeAndQueryString(resourceTypeIdentifier, resourceQueryString),
                 bindingConstants.getContentTypeDefault().toString());
     }
-    
+
     protected void setValuesOfLinkToGlobalResource(LinkType xb_Link,
             String relationIdentifier,
             String resourceType)
@@ -106,18 +105,18 @@ public abstract class ResourceEncoder extends RestEncoder {
                 createHrefForResourceAndIdentifier(resourceType, resourceId),
                 bindingConstants.getContentTypeDefault().toString());
     }
-    
+
     protected void setLinkValues(LinkType xb_Link, String rel, String href, String type) {
         xb_Link.setRel(rel);
         xb_Link.setHref(href);
         xb_Link.setType(type);
     }
-    
+
     protected String createRelationWithNamespace(String relation)
     {
         return bindingConstants.getEncodingNamespace().concat("/").concat(relation);
     }
-    
+
     protected void setOfferingLinks(XmlObject xb_AnyType,
             List<String> offeringIdentifiers)
     {
@@ -135,10 +134,10 @@ public abstract class ResourceEncoder extends RestEncoder {
                         bindingConstants.getResourceRelationOfferingGet(),
                         bindingConstants.getResourceOfferings());
             }
-            
+
         }
     }
-    
+
     protected ServiceResponse createServiceResponseFromXBDocument(XmlObject xb_RestDoc,
             String resourceType,
             HTTPStatus httpResponseCode,
@@ -196,7 +195,7 @@ public abstract class ResourceEncoder extends RestEncoder {
         response.setHeader(HTTPHeaders.ACCESS_CONTROL_ALLOW_METHODS, allowedMethods);
         response.setHeader(HTTPHeaders.ALLOW, allowedMethods);
     }
-    
+
     private String getAllowedHttpMethodsForResourceType(String bindingOperation,
             boolean isResourceCollection,
             boolean isGlobalResource)
@@ -204,7 +203,7 @@ public abstract class ResourceEncoder extends RestEncoder {
         StringBuffer allowedOperations = new StringBuffer("");
         allowHttpGet(allowedOperations);
         appendAllowHttpOptions(allowedOperations);
-        
+
         if (bindingOperation.equalsIgnoreCase(bindingConstants.getResourceObservations()))
         {
             if (isGlobalResource && !isResourceCollection)
@@ -230,7 +229,7 @@ public abstract class ResourceEncoder extends RestEncoder {
         }
         return allowedOperations.toString();
     }
-    
+
     private void appendAllowHttpDelete(StringBuffer allowedOperations) {
         allowedOperations.append(", ").append(HTTPMethods.DELETE);
     }
@@ -250,7 +249,7 @@ public abstract class ResourceEncoder extends RestEncoder {
     private void allowHttpGet(StringBuffer allowedOperations) {
         allowedOperations.append(HTTPMethods.GET);
     }
-    
+
     protected XmlOptions getDefaultXMLOptions()
     {
 
@@ -261,15 +260,15 @@ public abstract class ResourceEncoder extends RestEncoder {
         prefixes.put(bindingConstants.getEncodingNamespace(), bindingConstants.getEncodingPrefix());
         bindingXmlOptions.setSaveSuggestedPrefixes(prefixes);
         bindingXmlOptions.setSaveImplicitNamespaces(prefixes);
-        
+
         return bindingXmlOptions;
-                
+
     }
 
     protected OwsExceptionReport createResponseNotSupportedException(String expectedClassString, Object receivedObject)
     {
     	return new EncoderResponseUnsupportedException().
-    			withMessage("Received RestResponse is not a '%s' but of type '%s'", 
+    			withMessage("Received RestResponse is not a '%s' but of type '%s'",
                         expectedClassString,
                         receivedObject!=null?receivedObject.getClass().getName():"null");
     }
@@ -300,7 +299,7 @@ public abstract class ResourceEncoder extends RestEncoder {
     {
         return createContentlessResponse(resourceType, HTTPStatus.NO_CONTENT,isResourceCollection,isGlobalResource);
     }
-    
+
     protected ServiceResponse createContentlessResponse(String resourceType,
             HTTPStatus httpStatusCode,
             boolean isResourceCollection,
@@ -308,7 +307,7 @@ public abstract class ResourceEncoder extends RestEncoder {
     {
         ServiceResponse response = new ServiceResponse(bindingConstants.getContentTypeDefault(),httpStatusCode);
         setAllowHeadersForResourceType(response, resourceType, isResourceCollection, isGlobalResource);
-        return response; 
+        return response;
     }
 
 }

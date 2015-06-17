@@ -72,9 +72,9 @@ public class JSONEncoderTest {
 
     @Test
     public void testEncoderKeyTypes() {
-        assertThat(encoder.getEncoderKeyType(), is(notNullValue()));
-        assertThat(encoder.getEncoderKeyType(), hasSize(1));
-        assertThat(encoder.getEncoderKeyType(), hasItem(new JSONEncoderKey(String.class)));
+        assertThat(encoder.getKeys(), is(notNullValue()));
+        assertThat(encoder.getKeys(), hasSize(1));
+        assertThat(encoder.getKeys(), hasItem(new JSONEncoderKey(String.class)));
     }
 
     @Test

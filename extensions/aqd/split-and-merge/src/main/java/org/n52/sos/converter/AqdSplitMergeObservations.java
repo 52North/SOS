@@ -35,7 +35,7 @@ import java.util.Set;
 
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
-import org.n52.iceland.convert.RequestResponseModifierKeyType;
+import org.n52.iceland.convert.RequestResponseModifierKey;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
@@ -48,27 +48,26 @@ import org.n52.sos.response.GetObservationResponse;
 
 import com.google.common.collect.Sets;
 
-public class AqdSplitMergeObservations implements
-        RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+public class AqdSplitMergeObservations implements RequestResponseModifier {
 
-    private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
+    private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
     /**
      * Get the keys
-     * 
+     *
      * @return Set of keys
      */
-    private static Set<RequestResponseModifierKeyType> getKeyTypes() {
-        Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
-        keys.add(new RequestResponseModifierKeyType(AqdConstants.AQD, AqdConstants.VERSION,
+    private static Set<RequestResponseModifierKey> getKeyTypes() {
+        Set<RequestResponseModifierKey> keys = Sets.newHashSet();
+        keys.add(new RequestResponseModifierKey(AqdConstants.AQD, AqdConstants.VERSION,
                 new GetObservationRequest()));
-        keys.add(new RequestResponseModifierKeyType(AqdConstants.AQD, AqdConstants.VERSION,
+        keys.add(new RequestResponseModifierKey(AqdConstants.AQD, AqdConstants.VERSION,
                 new GetObservationRequest(), new GetObservationResponse()));
         return keys;
     }
 
     @Override
-    public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
+    public Set<RequestResponseModifierKey> getKeys() {
         return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
     }
 
@@ -99,7 +98,7 @@ public class AqdSplitMergeObservations implements
 
     private List<OmObservation> mergeObservations(List<OmObservation> observationCollection) {
         if (observationCollection != null) {
-            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
+            final List<OmObservation> mergedObservations = new LinkedList<>();
             int obsIdCounter = 1;
             for (final OmObservation sosObservation : observationCollection) {
                 if (mergedObservations.isEmpty()) {
@@ -140,7 +139,7 @@ public class AqdSplitMergeObservations implements
 
     /**
      * Merge result time with passed observation result time
-     * 
+     *
      * @param sosObservation
      *            Observation to merge
      * @param sosObservation2
@@ -154,7 +153,7 @@ public class AqdSplitMergeObservations implements
             combinedSosObs.setResultTime(sosObservation.getResultTime());
         }
     }
-    
+
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {
         return new RequestResponseModifierFacilitator().setMerger(true).setSplitter(true);

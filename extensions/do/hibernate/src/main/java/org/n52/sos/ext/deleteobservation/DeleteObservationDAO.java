@@ -30,14 +30,17 @@ package org.n52.sos.ext.deleteobservation;
 
 import java.util.Collections;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
 import org.n52.iceland.convert.ConverterException;
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.series.SeriesDAO;
@@ -52,12 +55,17 @@ import org.n52.sos.request.GetObservationRequest;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 1.0.0
  */
 public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
 
-    private HibernateSessionHolder hibernateSessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder hibernateSessionHolder;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.hibernateSessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
 
     @Override
     public synchronized DeleteObservationResponse deleteObservation(DeleteObservationRequest request)
@@ -117,14 +125,9 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
 		return (AbstractObservationRequest) new GetObservationRequest().setService(request.getService()).setVersion(request.getVersion());
 	}
 
-	@Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
-    }
-
 	/**
 	 * Check if {@link Series} should be updated
-	 * 
+	 *
 	 * @param observation
 	 *            Deleted observation
 	 * @param session

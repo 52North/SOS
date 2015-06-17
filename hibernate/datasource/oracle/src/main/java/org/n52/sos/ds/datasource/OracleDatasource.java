@@ -35,7 +35,7 @@ package org.n52.sos.ds.datasource;
  *
  */
 public class OracleDatasource extends AbstractOracleDatasource {
-    
+
     private static final String DIALECT_NAME = "Oracle Spatial";
 
     public OracleDatasource() {

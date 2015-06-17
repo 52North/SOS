@@ -28,16 +28,9 @@
  */
 package org.n52.sos.web.admin.caps;
 
+import javax.inject.Inject;
+
 import org.apache.xmlbeans.XmlException;
-import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.service.Configurator;
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.config.CapabilitiesExtensionManager;
-import org.n52.sos.exception.NoSuchExtensionException;
-import org.n52.sos.exception.NoSuchOfferingException;
-import org.n52.sos.web.AbstractController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -45,7 +38,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
+import org.n52.iceland.exception.ConfigurationError;
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.sos.config.CapabilitiesExtensionService;
+import org.n52.sos.exception.NoSuchExtensionException;
+import org.n52.sos.exception.NoSuchOfferingException;
+import org.n52.sos.web.admin.AbstractAdminController;
+
+public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractAdminController {
     private static final Logger log = LoggerFactory.getLogger(AbstractAdminCapabiltiesAjaxEndpoint.class);
     protected static final String OFFERING = "offeringId";
     protected static final String IDENTIFIER = "identifier";
@@ -55,12 +56,11 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
     protected static final String ERRORS_PROPERTY = "errors";
     protected static final String VALID_PROPERTY = "valid";
 
-    protected CapabilitiesExtensionManager getDao() {
-        return (CapabilitiesExtensionManager)getSettingsManager();
-    }
-    
-    protected ContentCache getCache() {
-        return Configurator.getInstance().getCache();
+    @Inject
+    private CapabilitiesExtensionService capabilitiesExtensionService;
+
+    protected CapabilitiesExtensionService getCapabilitiesExtensionService() {
+        return capabilitiesExtensionService;
     }
 
     @ResponseBody
@@ -93,9 +93,9 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
     }
 
     @ResponseBody
-    @ExceptionHandler(ConfigurationException.class)
+    @ExceptionHandler(ConfigurationError.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public String error(final ConfigurationException e) {
+    public String error(final ConfigurationError e) {
         return e.getMessage();
     }
 
@@ -107,13 +107,10 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
     }
 
     protected String getSelectedStaticCapabilities() throws OwsExceptionReport {
-        if (getSettingsManager() instanceof CapabilitiesExtensionManager) {
-            return ((CapabilitiesExtensionManager)getSettingsManager()).getActiveStaticCapabilities();
-        }
-        return null;
+        return this.capabilitiesExtensionService.getActiveStaticCapabilities();
     }
 
-    protected void setSelectedStaticCapabilities(String id) throws ConfigurationException,
+    protected void setSelectedStaticCapabilities(String id) throws ConfigurationError,
                                                                    OwsExceptionReport,
                                                                    NoSuchExtensionException {
         final String current = getSelectedStaticCapabilities();
@@ -135,11 +132,11 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
         }
 
         if (change) {
-            getDao().setActiveStaticCapabilities(id);
+            this.capabilitiesExtensionService.setActiveStaticCapabilities(id);
         }
     }
 
-    protected void showDynamicCapabilities() throws ConfigurationException, OwsExceptionReport, NoSuchExtensionException {
+    protected void showDynamicCapabilities() throws ConfigurationError, OwsExceptionReport, NoSuchExtensionException {
         setSelectedStaticCapabilities(null);
     }
 }

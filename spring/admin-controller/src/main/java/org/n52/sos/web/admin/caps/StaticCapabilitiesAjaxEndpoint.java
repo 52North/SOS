@@ -35,13 +35,11 @@ import net.opengis.sos.x20.CapabilitiesDocument;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ConfigurationException;
+
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.StaticCapabilities;
-import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.exception.NoSuchExtensionException;
 import org.n52.sos.exception.NoSuchIdentifierException;
-import org.n52.sos.web.ControllerConstants;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -51,6 +49,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import org.n52.iceland.exception.ConfigurationError;
+import org.n52.iceland.ogc.ows.StaticCapabilities;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.web.common.ControllerConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -70,7 +73,7 @@ public class StaticCapabilitiesAjaxEndpoint extends AbstractAdminCapabiltiesAjax
         ObjectNode response = JSONUtils.nodeFactory().objectNode();
         String current = getSelectedStaticCapabilities();
         ObjectNode staticCapabilities = response.putObject(STATIC_CAPABILITIES);
-        for (StaticCapabilities sc : getDao().getStaticCapabilities().values()) {
+        for (StaticCapabilities sc : getCapabilitiesExtensionService().getStaticCapabilities().values()) {
             staticCapabilities.put(sc.getIdentifier(), sc.getDocument());
         }
         if (current != null && !current.isEmpty()) {
@@ -83,7 +86,7 @@ public class StaticCapabilitiesAjaxEndpoint extends AbstractAdminCapabiltiesAjax
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void setCurrentCapabilities(@RequestBody String json) throws SQLException,
-                                                                        ConfigurationException,
+                                                                        ConfigurationError,
                                                                         OwsExceptionReport,
                                                                         NoSuchExtensionException,
                                                                         IOException {
@@ -104,17 +107,17 @@ public class StaticCapabilitiesAjaxEndpoint extends AbstractAdminCapabiltiesAjax
         if (!(xo instanceof CapabilitiesDocument)) {
             throw new XmlException("Not a Capabilities document!");
         }
-        getDao().saveStaticCapabilities(identifier.trim(), document);
+        getCapabilitiesExtensionService().saveStaticCapabilities(identifier.trim(), document);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value="/{identifier}", method = RequestMethod.DELETE)
     public void deleteStaticCapabilities(
-            @PathVariable("identifier") String identifier) throws SQLException, ConfigurationException,
+            @PathVariable("identifier") String identifier) throws SQLException, ConfigurationError,
                                                                   NoSuchIdentifierException, OwsExceptionReport {
         if (getSelectedStaticCapabilities() != null && getSelectedStaticCapabilities().equals(identifier)) {
             setSelectedStaticCapabilities(null);
         }
-        getDao().deleteStaticCapabilities(identifier.trim());
+        getCapabilitiesExtensionService().deleteStaticCapabilities(identifier.trim());
     }
 }

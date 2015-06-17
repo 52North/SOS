@@ -36,6 +36,7 @@ import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.util.Nillable;
 import org.n52.sos.util.Reference;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
@@ -54,7 +55,7 @@ public class Address {
     private Nillable<String> postCode = Nillable.missing();
     private final List<Nillable<GeographicalName>> thoroughfares = new LinkedList<>();
     private Nillable<Reference> addressFeature = Nillable.missing();
-    
+
     public List<GeographicalName> getAdminUnits() {
         if (CollectionHelper.isEmpty(adminUnits)) {
             addAdminUnit(new GeographicalName());
@@ -177,7 +178,7 @@ public class Address {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("adminUnits", getAdminUnits())
                 .add("locatorDesignator", getLocatorDesignators())
                 .add("locatorNames", getLocatorNames())

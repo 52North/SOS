@@ -32,6 +32,7 @@ import java.net.URI;
 
 import org.n52.sos.util.Nillable;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
@@ -78,7 +79,7 @@ public class Pronunciation {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("ipa", getIPA())
                 .add("soundLink", getSoundLink())
                 .toString();

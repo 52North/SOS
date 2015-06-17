@@ -28,10 +28,11 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
-import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.hibernate.Session;
+
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -52,13 +53,13 @@ import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
  *
  */
 public class HibernateProcedureDescriptionGeneratorFactorySml101 implements HibernateProcedureDescriptionGeneratorFactory {
-    
-    private static final List<HibernateProcedureDescriptionGeneratorFactoryKeyType> GENERATOR_KEY_TYPES = CollectionHelper.list(
-            new HibernateProcedureDescriptionGeneratorFactoryKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE), 
-            new HibernateProcedureDescriptionGeneratorFactoryKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL));
+
+    private static final Set<HibernateProcedureDescriptionGeneratorFactoryKey> GENERATOR_KEY_TYPES = CollectionHelper.set(
+            new HibernateProcedureDescriptionGeneratorFactoryKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE),
+            new HibernateProcedureDescriptionGeneratorFactoryKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL));
 
     @Override
-    public List<HibernateProcedureDescriptionGeneratorFactoryKeyType> getHibernateProcedureDescriptionGeneratorFactoryKeyTypes() {
+    public Set<HibernateProcedureDescriptionGeneratorFactoryKey> getKeys() {
         return GENERATOR_KEY_TYPES;
     }
 
@@ -69,7 +70,7 @@ public class HibernateProcedureDescriptionGeneratorFactorySml101 implements Hibe
 
 
     private class HibernateProcedureDescriptionGeneratorSml101 extends AbstractHibernateProcedureDescriptionGeneratorSml {
-    
+
         /**
          * Generate procedure description from Hibernate procedure entity if no
          * description (file, XML text) is available
@@ -99,7 +100,7 @@ public class HibernateProcedureDescriptionGeneratorFactorySml101 implements Hibe
             }
             return sml;
         }
-    
+
         /**
          * Create a SensorML ProcessModel from Hibernate procedure entity
          *
@@ -118,7 +119,7 @@ public class HibernateProcedureDescriptionGeneratorFactorySml101 implements Hibe
     //        processModel.setNames(createNames(procedure));
             return processModel;
         }
-    
+
         /**
          * Create a SensorML System from Hibernate procedure entity
          *
@@ -136,7 +137,7 @@ public class HibernateProcedureDescriptionGeneratorFactorySml101 implements Hibe
             smlSystem.setPosition(createPosition(procedure));
             return smlSystem;
         }
-    
+
         /**
          * Create a SensorML ProcessMethod for ProcessModel
          *
@@ -150,7 +151,7 @@ public class HibernateProcedureDescriptionGeneratorFactorySml101 implements Hibe
         private ProcessMethod createMethod(Procedure procedure, String[] observableProperties) {
             return new ProcessMethod(createRulesDefinition(procedure, observableProperties));
         }
-    
+
         /**
          * Create the rules definition for ProcessMethod
          *

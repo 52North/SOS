@@ -1,0 +1,109 @@
+/**
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ *
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+ *
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+ *
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ */
+package org.n52.sos.web.common;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toSet;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingDefinitionGroup;
+import org.n52.iceland.config.SettingsService;
+import org.n52.iceland.exception.ConfigurationError;
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.iceland.util.StringHelper;
+
+
+
+/**
+ * TODO JavaDoc
+ *
+ * @author Christian Autermann <c.autermann@52north.org>
+ *
+ * @since 4.0.0
+ */
+@Controller
+public class SettingDefinitonController extends AbstractController {
+
+    private static final SettingDefinitionGroup DEFAULT_SETTINGS_GROUP = new SettingDefinitionGroup().setTitle("Settings");
+
+    @Inject
+    private SettingsService settingsManager;
+
+    @ResponseBody
+    @RequestMapping(value = ControllerConstants.Paths.SETTING_DEFINITIONS, method = RequestMethod.GET, produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
+    public String get(@RequestParam(value = "showAll", defaultValue="true") boolean showAll ,
+                      @RequestParam(value = "only", required = false) String only)
+            throws ConfigurationError, JSONException {
+        Set<SettingDefinition<?, ?>> defs = this.settingsManager.getSettingDefinitions();
+        Map<SettingDefinitionGroup, Set<SettingDefinition<?,?>>> grouped;
+        if (StringHelper.isNotEmpty(only)) {
+            grouped = sortByGroup(defs, false, StringHelper.splitToSet(only));
+        } else {
+            grouped = sortByGroup(defs, showAll, Collections.emptySet());
+        }
+        return JSONUtils.print(getSettingsEncoder().encode(grouped));
+    }
+
+    protected Map<SettingDefinitionGroup, Set<SettingDefinition<?,?>>> sortByGroup(
+            Set<SettingDefinition<?, ?>> defs, boolean showAll, Set<String> only) {
+        return defs.stream()
+                .filter(def -> checkGroup(def, showAll, only))
+                .collect(groupingBy(this::getGroup, toSet()));
+    }
+
+    protected boolean checkGroup(SettingDefinition<?, ?> def, boolean showAll, Set<String> only) {
+        if (!showAll) {
+            SettingDefinitionGroup group = getGroup(def);
+            if (CollectionHelper.isEmpty(only)) {
+                return group.isShowInDefaultSettings();
+            }
+            return only.contains(group.getTitle());
+        }
+        return true;
+    }
+
+    protected SettingDefinitionGroup getGroup(SettingDefinition<?, ?> def) {
+        return def.getGroup(DEFAULT_SETTINGS_GROUP);
+    }
+
+}

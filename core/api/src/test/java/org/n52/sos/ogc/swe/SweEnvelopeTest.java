@@ -34,6 +34,7 @@ import static org.junit.Assert.assertThat;
 import java.util.List;
 
 import org.junit.Test;
+
 import org.n52.iceland.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
@@ -43,7 +44,7 @@ import com.vividsolutions.jts.geom.Envelope;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class SweEnvelopeTest {
@@ -63,12 +64,12 @@ public class SweEnvelopeTest {
         // srid
         assertThat(sweEnvelope.getReferenceFrame(), is(Integer.toString(srid)));
         // x1
-        final List<SweCoordinate<?>> lcCoordinates = sweEnvelope.getLowerCorner().getCoordinates();
+        final List<? extends SweCoordinate<?>> lcCoordinates = sweEnvelope.getLowerCorner().getCoordinates();
 		assertThat(((Double) lcCoordinates.get(0).getValue().getValue()).doubleValue(), is(x1));
         // y1
         assertThat(((Double) lcCoordinates.get(1).getValue().getValue()).doubleValue(), is(y1));
         // x2
-        final List<SweCoordinate<?>> ucCoordinates = sweEnvelope.getUpperCorner().getCoordinates();
+        final List<? extends SweCoordinate<?>> ucCoordinates = sweEnvelope.getUpperCorner().getCoordinates();
 		assertThat(((Double) ucCoordinates.get(0).getValue().getValue()).doubleValue(), is(x2));
         // y2
         assertThat(((Double) ucCoordinates.get(1).getValue().getValue()).doubleValue(), is(y2));

@@ -30,9 +30,9 @@ package org.n52.sos.coding.json;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public interface JSONConstants {
@@ -151,7 +151,7 @@ public interface JSONConstants {
     String EXCEPTIONS = "exceptions";
 
     String EXTENSIONS = "extensions";
-    
+
     String FEATURE_OF_INTEREST = "featureOfInterest";
 
     String FEATURE_OF_INTEREST_TYPE = "featureOfInterestType";

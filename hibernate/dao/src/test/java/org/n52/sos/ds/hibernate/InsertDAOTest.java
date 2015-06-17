@@ -45,7 +45,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.n52.iceland.config.SettingsManager;
+
+import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
@@ -57,9 +58,9 @@ import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.service.Configurator;
+import org.n52.iceland.ogc.swes.SwesExtension;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.cache.ContentCache;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
@@ -96,8 +97,6 @@ import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.ogc.swes.SwesExtension;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.DeleteSensorRequest;
 import org.n52.sos.request.GetObservationRequest;
@@ -123,11 +122,11 @@ import com.google.common.collect.Sets;
  * from the normal build and set up to run multiple (100) times. They can be run
  * directly from Eclipse or via Maven on the command line with the dao-test
  * profile (mvn -P dao-test clean install)
- * 
+ *
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 @RunWith(Parameterized.class)
 public class InsertDAOTest extends HibernateTestCase {
@@ -178,19 +177,13 @@ public class InsertDAOTest extends HibernateTestCase {
     private static final String TEMP_UNIT = "Cel";
 
     /* FIXTURES */
-    private InsertSensorDAO insertSensorDAO = new InsertSensorDAO();
-
-    private DeleteSensorDAO deleteSensorDAO = new DeleteSensorDAO();
-
-    private InsertObservationDAO insertObservationDAO = new InsertObservationDAO();
-
-    private InsertResultTemplateDAO insertResultTemplateDAO = new InsertResultTemplateDAO();
-
-    private InsertResultDAO insertResultDAO = new InsertResultDAO();
-
-    private GetObservationDAO getObsDAO = new GetObservationDAO();
-
-    private SosInsertObservationOperatorV20 insertObservationOperatorv2 = new SosInsertObservationOperatorV20();
+    private final InsertSensorDAO insertSensorDAO = new InsertSensorDAO();
+    private final DeleteSensorDAO deleteSensorDAO = new DeleteSensorDAO();
+    private final InsertObservationDAO insertObservationDAO = new InsertObservationDAO();
+    private final InsertResultTemplateDAO insertResultTemplateDAO = new InsertResultTemplateDAO();
+    private final InsertResultDAO insertResultDAO = new InsertResultDAO();
+    private final GetObservationDAO getObsDAO = new GetObservationDAO();
+    private final SosInsertObservationOperatorV20 insertObservationOperatorv2 = new SosInsertObservationOperatorV20();
 
     // optionally run these tests multiple times to expose intermittent faults
     // (use -DrepeatDaoTest=x)
@@ -223,7 +216,6 @@ public class InsertDAOTest extends HibernateTestCase {
     @AfterClass
     public static void cleanUp() {
         H2Configuration.recreate();
-        SettingsManager.getInstance().cleanup();
     }
 
     private void insertSensor(String procedure, String offering, String obsProp, String parentProcedure)
@@ -305,7 +297,7 @@ public class InsertDAOTest extends HibernateTestCase {
         ServiceEventBus.fire(new ResultTemplateInsertion(req, resp));
     }
 
-    private ContentCache getCache() {
+    private SosContentCache getCache() {
         return Configurator.getInstance().getCache();
     }
 
@@ -508,7 +500,7 @@ public class InsertDAOTest extends HibernateTestCase {
         req.setService(SosConstants.SOS);
         req.setVersion(Sos2Constants.SERVICEVERSION);
 
-        SwesExtension<SweBoolean> splitExt = new SwesExtensionImpl<SweBoolean>();
+        SwesExtension<SweBoolean> splitExt = new SwesExtension<>();
         splitExt.setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
         splitExt.setValue(new SweBoolean().setValue(Boolean.TRUE));
         SwesExtensions swesExtensions = new SwesExtensions();
@@ -667,6 +659,6 @@ public class InsertDAOTest extends HibernateTestCase {
             assertThat(quantityValue.getUnit(), is(obsUnit));
         }
 
-        
+
     }
 }

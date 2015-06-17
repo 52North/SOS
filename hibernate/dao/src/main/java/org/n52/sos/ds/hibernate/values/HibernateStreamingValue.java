@@ -28,17 +28,19 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.dao.ValueDAO;
 import org.n52.sos.ds.hibernate.dao.ValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.values.ObservationValueTime;
 import org.n52.sos.request.GetObservationRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract Hibernate streaming value class for old observation concept
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
@@ -61,7 +63,7 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
 
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param procedure
@@ -71,9 +73,9 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
      * @param featureOfInterest
      *            featureOfInterest procedure id
      */
-    public HibernateStreamingValue(GetObservationRequest request, long procedure, long observableProperty,
+    public HibernateStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest) {
-        super(request);
+        super(connectionProvider, request);
         this.procedure = procedure;
         this.observableProperty = observableProperty;
         this.featureOfInterest = featureOfInterest;

@@ -28,45 +28,49 @@
  */
 package org.n52.sos.ds.hibernate;
 
+
 import org.hibernate.Session;
+
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.service.Configurator;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class HibernateSessionHolder {
 
     private final ConnectionProvider connectionProvider;
 
-    public HibernateSessionHolder() {
-        this(Configurator.getInstance().getDataConnectionProvider());
-    }
-    
     public HibernateSessionHolder(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
     }
 
-    public static Session getSession(Object connection) throws OwsExceptionReport {
-        if (!(connection instanceof Session)) {
-            throw new NoApplicableCodeException().withMessage("The parameter connection is not an Hibernate Session!");
-        }
-        return (Session) connection;
+    public ConnectionProvider getConnectionProvider() {
+        return this.connectionProvider;
     }
 
     public Session getSession() throws OwsExceptionReport {
         try {
-            return getSession(connectionProvider.getConnection());
+            return getSession(getConnectionProvider().getConnection());
         } catch (ConnectionProviderException cpe) {
             throw new NoApplicableCodeException().causedBy(cpe).withMessage("Error while getting new Session!");
         }
     }
 
     public void returnSession(Session session) {
-        this.connectionProvider.returnConnection(session);
+        getConnectionProvider().returnConnection(session);
+    }
+
+    public static Session getSession(Object connection) throws OwsExceptionReport {
+        if (connection == null) {
+            throw new NoApplicableCodeException().withMessage("The parameter connection is null!");
+        }
+        if (!(connection instanceof Session)) {
+            throw new NoApplicableCodeException().withMessage("The parameter connection is not an Hibernate Session!");
+        }
+        return (Session) connection;
     }
 }

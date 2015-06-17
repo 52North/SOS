@@ -30,19 +30,20 @@ package org.n52.sos.web.install;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.install.InstallConstants.Step;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.sos.web.install.InstallConstants.Step;
+
 /**
  * @since 4.0.0
- * 
+ *
  */
 @Controller
 @RequestMapping({ ControllerConstants.Paths.INSTALL_ROOT, ControllerConstants.Paths.INSTALL_INDEX })
-public class InstallIndexController extends AbstractInstallController {
+public class InstallIndexController extends AbstractInstallStepController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String get(HttpServletRequest req) {

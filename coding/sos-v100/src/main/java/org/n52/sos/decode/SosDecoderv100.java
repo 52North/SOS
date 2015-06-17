@@ -34,7 +34,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.opengis.sos.x10.DescribeSensorDocument;
@@ -53,19 +52,20 @@ import net.opengis.sos.x10.ResponseModeType.Enum;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.service.AbstractServiceCommunicationObject;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
@@ -78,8 +78,6 @@ import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.XmlHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -87,7 +85,7 @@ import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObject, XmlObject> {
 
@@ -108,18 +106,8 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
-    }
-
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
     }
 
     @Override
@@ -181,17 +169,17 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
     /**
      * parses the XmlBean representing the getCapabilities request and creates a
      * SosGetCapabilities request
-     * 
+     *
      * @param getCapsDoc
      *            XmlBean created from the incoming request stream
      * @return Returns SosGetCapabilitiesRequest representing the request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * If parsing the XmlBean failed
      */
     private AbstractServiceRequest<?> parseGetCapabilities(GetCapabilitiesDocument getCapsDoc) throws OwsExceptionReport {
-       
+
         GetCapabilities getCaps = getCapsDoc.getGetCapabilities();
         GetCapabilitiesRequest request = new GetCapabilitiesRequest(getCaps.getService());
 
@@ -213,12 +201,12 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
     /**
      * parses the XmlBean representing the describeSensor request and creates a
      * DescribeSensor request
-     * 
+     *
      * @param descSensorDoc
      *            XmlBean created from the incoming request stream
      * @return Returns SosDescribeSensorRequest representing the request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * If parsing the XmlBean failed
      */
@@ -237,12 +225,12 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
     /**
      * parses the XmlBean representing the getObservation request and creates a
      * SoSGetObservation request
-     * 
+     *
      * @param getObsDoc
      *            XmlBean created from the incoming request stream
      * @return Returns SosGetObservationRequest representing the request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * If parsing the XmlBean failed
      */
@@ -272,7 +260,7 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
                    featureIdentifiers.add(string);
                 }
                 getObsRequest.setFeatureIdentifiers(Lists.newArrayList(featureIdentifiers));
-            } 
+            }
         }
 
         // TODO implement result filtering
@@ -303,13 +291,13 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
     /**
      * parses the passes XmlBeans document and creates a SOS
      * getFeatureOfInterest request
-     * 
+     *
      * @param getFoiDoc
      *            XmlBeans document representing the getFeatureOfInterest
      *            request
      * @return Returns SOS getFeatureOfInterest request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if validation of the request failed
      */
@@ -357,14 +345,14 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
 
     /**
      * Parses the spatial filters of a GetFeatureOfInterest request.
-     * 
+     *
      * @param location
      *            XmlBean representing the spatial filter parameter of the
      *            request
      * @return Returns SpatialFilter created from the passed foi request
      *         parameter
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if creation of the SpatialFilter failed
      */
@@ -383,13 +371,13 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
     /**
      * parses the Time of the requests and returns an array representing the
      * temporal filters
-     * 
+     *
      * @param temporalFilters
      *            array of XmlObjects representing the Time element in the
      *            request
      * @return Returns array representing the temporal filters
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if parsing of the element failed
      */

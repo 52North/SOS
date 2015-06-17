@@ -29,7 +29,6 @@
 package org.n52.sos.ext.deleteobservation;
 
 import static java.lang.String.format;
-import static java.util.Collections.emptyMap;
 import static org.n52.iceland.ogc.sos.SosConstants.SOS;
 import static org.n52.iceland.util.CollectionHelper.union;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.CONFORMANCE_CLASSES;
@@ -38,22 +37,23 @@ import static org.n52.sos.util.CodingHelper.decoderKeysForElements;
 import static org.n52.sos.util.CodingHelper.xmlDecoderKeysForOperation;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import net.opengis.sosdo.x10.DeleteObservationDocument;
 import net.opengis.sosdo.x10.DeleteObservationType;
 
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
+
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +62,7 @@ import com.google.common.base.Joiner;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 1.0.0
  */
 public class DeleteObservationDecoder implements Decoder<DeleteObservationRequest, XmlObject> {
@@ -79,7 +79,7 @@ public class DeleteObservationDecoder implements Decoder<DeleteObservationReques
         LOGGER.info("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(DECODER_KEYS));
     }
 
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 
@@ -113,10 +113,6 @@ public class DeleteObservationDecoder implements Decoder<DeleteObservationReques
         }
 
         return delObsRequest;
-    }
-
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return emptyMap();
     }
 
     public Set<String> getConformanceClasses(String service, String version) {

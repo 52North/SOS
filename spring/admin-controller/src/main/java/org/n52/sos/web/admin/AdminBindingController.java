@@ -30,15 +30,10 @@ package org.n52.sos.web.admin;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.n52.iceland.binding.Binding;
-import org.n52.iceland.binding.BindingKey;
-import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.JSONConstants;
+import javax.inject.Inject;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,6 +42,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import org.n52.iceland.binding.Binding;
+import org.n52.iceland.binding.BindingKey;
+import org.n52.iceland.binding.BindingRepository;
+import org.n52.iceland.binding.PathBindingKey;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.sos.web.common.JSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -58,6 +63,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 @Controller
 public class AdminBindingController extends AbstractAdminController {
+
+    @Inject
+    private BindingRepository bindingRepository;
 
     @ResponseBody
     @ExceptionHandler(JSONException.class)
@@ -74,37 +82,37 @@ public class AdminBindingController extends AbstractAdminController {
     }
 
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_BINDINGS, method = RequestMethod.GET)
-    public String view() throws ConnectionProviderException {
+    public String view() {
         return ControllerConstants.Views.ADMIN_BINDINGS;
     }
 
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_BINDINGS_JSON_ENDPOINT, method = RequestMethod.GET, produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
-    public String getAll() throws ConnectionProviderException {
+    public String getAll() {
         ObjectNode node = JSONUtils.nodeFactory().objectNode();
         node.set(JSONConstants.BINDINGS_KEY, getBindings());
         return JSONUtils.print(node);
     }
 
-    protected ArrayNode getBindings() throws ConnectionProviderException {
-        Map<String, Binding> bindings = BindingRepository.getInstance().getAllBindings();
+    protected ArrayNode getBindings() {
+        Map<String, Binding> bindings = bindingRepository.getAllBindingsByPath();
         ArrayNode a = JSONUtils.nodeFactory().arrayNode();
-        for (Binding binding : bindings.values()) {
-            String path = binding.getUrlPattern();
+        for (Entry<String, Binding> e : bindings.entrySet()) {
+            String path = e.getKey();
             a.addObject()
                     .put(JSONConstants.BINDING_KEY, path)
-                    .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isActive(new BindingKey(path)));
+                    .put(JSONConstants.ACTIVE_KEY, this.bindingRepository.isActive(new PathBindingKey(path)));
         }
         return a;
     }
 
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_BINDINGS_JSON_ENDPOINT, method = RequestMethod.POST, consumes = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
-    public void change(@RequestBody String request) throws ConnectionProviderException, IOException {
+    public void change(@RequestBody String request) throws IOException {
         JsonNode json = JSONUtils.loadString(request);
         if (json.has(JSONConstants.BINDING_KEY)) {
-            BindingKey key = new BindingKey(json.path(JSONConstants.BINDING_KEY).asText());
-            getSettingsManager().setActive(key, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
+            BindingKey key = new PathBindingKey(json.path(JSONConstants.BINDING_KEY).asText());
+            this.bindingRepository.setActive(key, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else {
             throw new JSONException("Invalid JSON");
         }

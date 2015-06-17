@@ -36,34 +36,34 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swes.SwesConstants;
+import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.coding.decode.AbstractXmlDecoder;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swes.SwesExtension;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XPathConstants;
 import org.n52.sos.util.XmlHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
 /**
  * {@code Decoder} to handle {@link GetDataAvailabilityRequest}s.
- * 
+ *
  * @author Christian Autermann
- * 
+ *
  * @since 4.0.0
  */
-public class GetDataAvailabilityXmlDecoder extends AbstractXmlDecoder<GetDataAvailabilityRequest> {
+public class GetDataAvailabilityXmlDecoder implements AbstractXmlDecoder<GetDataAvailabilityRequest> {
 
     private static final Logger LOG = LoggerFactory.getLogger(GetDataAvailabilityXmlDecoder.class);
 
@@ -97,7 +97,7 @@ public class GetDataAvailabilityXmlDecoder extends AbstractXmlDecoder<GetDataAva
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 
@@ -108,10 +108,10 @@ public class GetDataAvailabilityXmlDecoder extends AbstractXmlDecoder<GetDataAva
 
     /**
      * Parses a {@code GetDataAvailabilityRequest}.
-     * 
+     *
      * @param xml
      *            the request
-     * 
+     *
      * @return the parsed request
      * @throws OwsExceptionReport
      */
@@ -132,7 +132,7 @@ public class GetDataAvailabilityXmlDecoder extends AbstractXmlDecoder<GetDataAva
 
     /**
      * Parse the GetDataAvailability XML request
-     * 
+     *
      * @param xml
      *            GetDataAvailability XML request
      * @param basePath
@@ -184,7 +184,7 @@ public class GetDataAvailabilityXmlDecoder extends AbstractXmlDecoder<GetDataAva
         request.setExtensions(parseExtensions(xml));
         return request;
     }
-    
+
     private String parseStringValue(XmlObject xmlObject) {
         if (xmlObject instanceof XmlString) {
             return ((XmlString) xmlObject).getStringValue();
@@ -197,7 +197,7 @@ public class GetDataAvailabilityXmlDecoder extends AbstractXmlDecoder<GetDataAva
 
     /**
      * Parse swes:extensions
-     * 
+     *
      * @param xml
      *            swes:extension
      * @return parsed {@code SwesExtensions}
@@ -215,7 +215,7 @@ public class GetDataAvailabilityXmlDecoder extends AbstractXmlDecoder<GetDataAva
                                     .getDomNode().getChildNodes())));
                     SwesExtension<?> extension = null;
                     if (!(obj instanceof SwesExtension<?>)) {
-                        extension = new SwesExtensionImpl<Object>().setValue(obj);
+                        extension = new SwesExtension<>().setValue(obj);
                         if (isSweAbstractDataComponent(obj)) {
                             extension.setDefinition(((SweAbstractDataComponent) obj).getDefinition());
                         }
@@ -233,7 +233,7 @@ public class GetDataAvailabilityXmlDecoder extends AbstractXmlDecoder<GetDataAva
 
     /**
      * Check if the object is of type {@code SweAbstractDataComponent}
-     * 
+     *
      * @param object
      *            Object to check
      * @return <code>true</code>, if the object is of type
@@ -245,7 +245,7 @@ public class GetDataAvailabilityXmlDecoder extends AbstractXmlDecoder<GetDataAva
 
     /**
      * Create path from values
-     * 
+     *
      * @param xpathPrefix
      *            XPath prefix
      * @param prefix

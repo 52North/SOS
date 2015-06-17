@@ -28,56 +28,47 @@
  */
 package org.n52.sos.coding.encode;
 
-import java.util.Collections;
 import java.util.EnumMap;
-import java.util.Map;
-import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.encode.Encoder;
+import org.apache.xmlbeans.XmlOptions;
+
+import org.n52.iceland.coding.encode.AbstractDelegatingEncoder;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
-import org.n52.iceland.w3c.SchemaLocation;
-
-import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  * @param <S>
  */
-public abstract class AbstractXmlEncoder<S> implements Encoder<XmlObject, S> {
+public abstract class AbstractXmlEncoder<S> extends AbstractDelegatingEncoder<XmlObject, S> {
 
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    private Provider<XmlOptions> xmlOptions;
+
+    public XmlOptions getXmlOptions() {
+        return xmlOptions.get();
+    }
+
+    @Inject
+    public void setXmlOptions(Provider<XmlOptions> xmlOptions) {
+        this.xmlOptions = xmlOptions;
     }
 
     @Override
-    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
-    }
-
-    @Override
-    public XmlObject encode(S element) throws OwsExceptionReport {
-        return encode(element, new EnumMap<HelperValues, String>(HelperValues.class));
+    public XmlObject encode(S element)
+            throws OwsExceptionReport {
+        return encode(element, new EnumMap<>(HelperValues.class));
     }
 
     @Override
     public MediaType getContentType() {
         return MediaTypes.TEXT_XML;
-    }
-
-    @Override
-    public Set<SchemaLocation> getSchemaLocations() {
-        return Sets.newHashSet();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
     }
 
 }

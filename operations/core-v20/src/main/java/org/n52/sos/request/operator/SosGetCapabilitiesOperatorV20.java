@@ -44,7 +44,7 @@ import org.n52.sos.wsdl.WSDLOperation;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosGetCapabilitiesOperatorV20 extends
         AbstractV2RequestOperator<AbstractGetCapabilitiesHandler, GetCapabilitiesRequest, GetCapabilitiesResponse> {
@@ -59,7 +59,7 @@ public class SosGetCapabilitiesOperatorV20 extends
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();
@@ -67,7 +67,7 @@ public class SosGetCapabilitiesOperatorV20 extends
 
     @Override
     public GetCapabilitiesResponse receive(GetCapabilitiesRequest request) throws OwsExceptionReport {
-        return getDao().getCapabilities(request);
+        return getOperationHandler().getCapabilities(request);
     }
 
     @Override
@@ -81,5 +81,5 @@ public class SosGetCapabilitiesOperatorV20 extends
         checkExtensions(request, exceptions);
         exceptions.throwIfNotEmpty();
     }
- 
+
 }

@@ -41,7 +41,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract streaming value class
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
@@ -49,24 +49,17 @@ import com.vividsolutions.jts.geom.Geometry;
  *            Entity type
  */
 public abstract class StreamingValue<S> extends AbstractStreaming {
-
     private static final long serialVersionUID = -884370769373807775L;
-
     private Time phenomenonTime;
-
     private TimeInstant resultTime;
-
     private Time validTime;
-
     private String unit;
-
     private boolean unitQueried = false;
-
     protected OmObservation observationTemplate;
 
     /**
      * Get the next entity
-     * 
+     *
      * @return next entity object
      * @throws OwsExceptionReport
      *             If an error occurs
@@ -85,7 +78,7 @@ public abstract class StreamingValue<S> extends AbstractStreaming {
 
     /**
      * Get next {@link TimeValuePair} from entity
-     * 
+     *
      * @return Next {@link TimeValuePair}
      * @throws OwsExceptionReport
      *             If an error occurs
@@ -94,7 +87,7 @@ public abstract class StreamingValue<S> extends AbstractStreaming {
 
     /**
      * Set the observation template which contains all metadata
-     * 
+     *
      * @param observationTemplate
      *            Observation template to set
      */
@@ -175,7 +168,7 @@ public abstract class StreamingValue<S> extends AbstractStreaming {
     public boolean isSetValidTime() {
         return getValidTime() != null;
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     protected void checkForModifications(OmObservation observation) throws OwsExceptionReport {

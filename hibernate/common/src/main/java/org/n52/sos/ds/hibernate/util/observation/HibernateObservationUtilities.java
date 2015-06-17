@@ -69,7 +69,7 @@ public class HibernateObservationUtilities {
             Session s) throws OwsExceptionReport, ConverterException {
         List<OmObservation> c = new ObservationOmObservationCreator(Sets.newHashSet(o), r, s).create();
         if (CollectionHelper.isNotEmpty(c)) {
-            return (OmObservation) c.iterator().next();
+            return c.iterator().next();
         }
         return null;
     }
@@ -78,7 +78,7 @@ public class HibernateObservationUtilities {
             Locale l, Session s) throws OwsExceptionReport, ConverterException {
         List<OmObservation> c = new ObservationOmObservationCreator(Sets.newHashSet(o), r, s).create();
         if (CollectionHelper.isNotEmpty(c)) {
-            return (OmObservation) c.iterator().next();
+            return c.iterator().next();
         }
         return null;
     }

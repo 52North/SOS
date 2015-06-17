@@ -32,6 +32,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
@@ -39,13 +42,12 @@ import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.sos.ds.DatasourceCacheUpdate;
+import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.sos.SosEnvelope;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -79,7 +81,13 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      * Set of offering identifiers to keep track for which offerings we already
      * updated the spatial bounding box.
      */
-    private final Set<String> updatedOfferingBoundingBoxes = new HashSet<String>(0);
+    private final Set<String> updatedOfferingBoundingBoxes = new HashSet<>(0);
+
+    private FeatureQueryHandler featureQueryHandler;
+
+    public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
+        this.featureQueryHandler = featureQueryHandler;
+    }
 
     public void setDeletedObservation(OmObservation deletedObservation) {
         this.o = deletedObservation;
@@ -102,14 +110,14 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      *             if the FeatureQueryHandler fails
      */
     protected SosEnvelope getEnvelope(Set<String> features) throws OwsExceptionReport {
-        final Set<String> dbFeatures = new HashSet<String>(features.size());
+        final Set<String> dbFeatures = new HashSet<>(features.size());
         for (String feature : features) {
             dbFeatures.add(feature);
         }
         FeatureQueryHandlerQueryObject queryHandler =
                 new FeatureQueryHandlerQueryObject().setFeatureIdentifiers(dbFeatures)
                         .setConnection(getConnection());
-        return getFeatureQueryHandler().getEnvelopeForFeatureIDs(queryHandler);
+        return this.featureQueryHandler.getEnvelopeForFeatureIDs(queryHandler);
     }
 
     /**

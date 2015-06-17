@@ -30,7 +30,7 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesKey;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderKey;
 
 /**
  * Entity to store the active/inactive dynamic OWS ExtendedCapabilities extensions
@@ -55,9 +55,9 @@ public class DynamicOwsExtendedCapabilities extends Activatable<DynamicOwsExtend
      * constructor
      * 
      * @param oeck
-     *            the {@link OwsExtendedCapabilitiesKey} to set
+     *            the {@link OwsExtendedCapabilitiesProviderKey} to set
      */
-    public DynamicOwsExtendedCapabilities(OwsExtendedCapabilitiesKey oeck) {
+    public DynamicOwsExtendedCapabilities(OwsExtendedCapabilitiesProviderKey oeck) {
        super(new DynamicOwsExtendedCapabilitiesKey(oeck));
     }
     

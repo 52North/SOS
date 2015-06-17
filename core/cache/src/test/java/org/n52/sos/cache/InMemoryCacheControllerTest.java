@@ -63,18 +63,19 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.util.Constants;
-import org.n52.sos.cache.ctrl.ContentCacheControllerImpl;
 import org.n52.sos.cache.ctrl.action.ObservationInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultTemplateInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorDeletionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorInsertionUpdate;
+import org.n52.sos.ds.MockCacheFeederDAO;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.sos.SosEnvelope;
@@ -96,7 +97,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a> Test after DeleteObservation => not possible with
  *         InMemory because of bounding box issues, for example.
- * 
+ *
  * @since 4.0.0
  */
 public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
@@ -110,7 +111,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     private static final String OBSERVATION_TYPE_2 = "test-observation-type-2";
 
     private static final String OBSERVATION_TYPE = "test-observation-type";
-    
+
     private static final String FEATURE_OF_INTEREST_TYPE = "test-featureOfInterest-type";
 
     private static final String OFFERING_NAME_EXTENSION = "-offering-name";
@@ -135,7 +136,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
     private AbstractServiceRequest request;
 
-    private ContentCacheControllerImpl controller;
+    private TestableInMemoryCacheController controller;
 
     private AbstractServiceResponse response;
 
@@ -821,7 +822,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
     private boolean onlyValidRelatedFeaturesAreInRoleMap() {
         Set<String> allowedRelatedFeatures = getCache().getRelatedFeatures();
-        for (String relatedFeatureWithRole : ((WritableCache) getCache()).getRolesForRelatedFeaturesMap().keySet()) {
+        for (String relatedFeatureWithRole : ((SosWritableContentCacheImpl) getCache()).getRolesForRelatedFeaturesMap().keySet()) {
             if (!allowedRelatedFeatures.contains(relatedFeatureWithRole)) {
                 return false;
             }
@@ -840,7 +841,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
     private void updateCacheWithDeleteSensor() throws OwsExceptionReport {
         request = DeleteSensorRequestBuilder.aDeleteSensorRequest().setProcedure(PROCEDURE).build();
-        controller.update(new SensorDeletionUpdate(((DeleteSensorRequest) request)));
+        controller.update(new SensorDeletionUpdate(new MockCacheFeederDAO(), (DeleteSensorRequest) request));
     }
 
     private void updateCacheWithSingleObservation(String procedure) throws OwsExceptionReport {
@@ -979,7 +980,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
         return ((InsertSensorRequest) request).getProcedureDescription().getIdentifier();
     }
 
-    protected ContentCache getCache() {
+    protected SosContentCache getCache() {
         return controller.getCache();
     }
 

@@ -28,11 +28,8 @@
  */
 package org.n52.sos.web.admin;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.iceland.util.ServiceLoaderHelper;
-import org.n52.sos.ds.DeleteDeletedObservationDAO;
-import org.n52.sos.web.ControllerConstants;
+import javax.inject.Inject;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -41,19 +38,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
+import org.n52.sos.ds.DeleteDeletedObservationDAO;
+import org.n52.sos.web.common.ControllerConstants;
+
 /**
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
 @Controller
-@RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE_DELETE_DELETED_OBSERVATIONS)
+@RequestMapping(ControllerConstants.Paths.ADMIN_DATABASE_DELETE_DELETED_OBSERVATIONS)
 public class AdminDeleteDeletedObservationsController extends AbstractAdminController {
+    @Inject
     private DeleteDeletedObservationDAO dao;
 
-    private DeleteDeletedObservationDAO getDAO() throws NoImplementationFoundException {
-        if (this.dao == null) {
-            this.dao = ServiceLoaderHelper.loadImplementation(DeleteDeletedObservationDAO.class);
-        }
+    private DeleteDeletedObservationDAO getDAO()
+            throws NoImplementationFoundException {
         return this.dao;
     }
 

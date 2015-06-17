@@ -31,22 +31,50 @@ package org.n52.sos.ext.deleteobservation;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.cache.ContentCacheUpdate;
 import org.n52.iceland.event.ServiceEvent;
 import org.n52.iceland.event.ServiceEventListener;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.service.Configurator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.sos.ds.FeatureQueryHandler;
+import org.n52.sos.ogc.om.OmObservation;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 1.0.0
  */
-public class DeleteObservationContentModificationListener implements ServiceEventListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DeleteObservationContentModificationListener.class);
+public class DeleteObservationContentModificationListener implements
+        ServiceEventListener {
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(DeleteObservationContentModificationListener.class);
 
     private static final Set<Class<? extends ServiceEvent>> TYPES = Collections
-            .<Class<? extends ServiceEvent>> singleton(DeleteObservationEvent.class);
+            .<Class<? extends ServiceEvent>>singleton(DeleteObservationEvent.class);
+
+    private ContentCacheController contentCacheController;
+    private DeleteObservationCacheFeederDAO cacheFeederDAO;
+    private FeatureQueryHandler featureQueryHandler;
+
+    @Inject
+    public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
+        this.featureQueryHandler = featureQueryHandler;
+    }
+
+    @Inject
+    public void setCacheFeederDAO(DeleteObservationCacheFeederDAO cacheFeederDAO) {
+        this.cacheFeederDAO = cacheFeederDAO;
+    }
+
+    @Inject
+    public void setContentCacheController(
+            ContentCacheController contentCacheController) {
+        this.contentCacheController = contentCacheController;
+    }
 
     @Override
     public Set<Class<? extends ServiceEvent>> getTypes() {
@@ -57,16 +85,20 @@ public class DeleteObservationContentModificationListener implements ServiceEven
     public void handle(ServiceEvent event) {
         if (event instanceof DeleteObservationEvent) {
             DeleteObservationEvent e = (DeleteObservationEvent) event;
-            DeleteObservationCacheControllerUpdate update =
-                    new DeleteObservationCacheControllerUpdate(e.getDeletedObservation());
+            ContentCacheUpdate update = createUpdate(e.getDeletedObservation());
             LOGGER.debug("Updating Cache after content modification: {}", update);
             try {
-                Configurator.getInstance().getCacheController().update(update);
+                this.contentCacheController.update(update);
             } catch (OwsExceptionReport ex) {
                 LOGGER.error("Error processing Event", ex);
             }
         } else {
             LOGGER.debug("Can not handle modification event: {}", event);
         }
+    }
+
+    private DeleteObservationCacheControllerUpdate createUpdate(OmObservation e) {
+        return new DeleteObservationCacheControllerUpdate(
+                this.featureQueryHandler, this.cacheFeederDAO, e);
     }
 }

@@ -30,23 +30,33 @@ package org.n52.sos.encode.json;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Set;
 
+import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.ResponseProxy;
+import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.coding.encode.AbstractResponseWriter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class JSONResponseWriter extends AbstractResponseWriter<JsonNode> {
+
+    public static final ResponseWriterKey KEY = new ResponseWriterKey(JsonNode.class);
+
+    @Override
+    public Set<ResponseWriterKey> getKeys() {
+        return Collections.singleton(KEY);
+    }
 
     @Override
     public void write(JsonNode t, OutputStream out, ResponseProxy responseProxy) throws IOException {
@@ -60,7 +70,7 @@ public class JSONResponseWriter extends AbstractResponseWriter<JsonNode> {
 
     @Override
     public void setContentType(MediaType contentType) {
-        
+
     }
 
     @Override

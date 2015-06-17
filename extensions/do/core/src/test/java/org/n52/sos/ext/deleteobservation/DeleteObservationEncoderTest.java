@@ -47,6 +47,7 @@ import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.coding.encode.OperationEncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
@@ -102,17 +103,17 @@ public class DeleteObservationEncoderTest {
 
     @Test
     public void testGetEncoderKey() {
-        assertNotNull("DecoderKeyTypes is null", instance.getEncoderKeyType());
+        assertNotNull("DecoderKeyTypes is null", instance.getKeys());
         EncoderKey key = new XmlEncoderKey(NS_SOSDO_1_0, DeleteObservationResponse.class);
-        assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getEncoderKeyType().contains(key));
+        assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getKeys().contains(key));
         key =
                 new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                         DeleteObservationConstants.Operations.DeleteObservation, MediaTypes.TEXT_XML);
-        assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getEncoderKeyType().contains(key));
+        assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getKeys().contains(key));
         key =
                 new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                         DeleteObservationConstants.Operations.DeleteObservation, MediaTypes.APPLICATION_XML);
-        assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getEncoderKeyType().contains(key));
+        assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getKeys().contains(key));
     }
 
     @Test

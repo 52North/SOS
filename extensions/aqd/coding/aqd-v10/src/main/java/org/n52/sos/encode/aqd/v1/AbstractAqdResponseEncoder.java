@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
@@ -49,7 +50,7 @@ import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdHelper;

@@ -47,7 +47,9 @@ import net.opengis.sampling.x10.SamplingSurfaceType;
 
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
-import org.n52.iceland.coding.CodingRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
@@ -62,7 +64,8 @@ import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.FeatureType;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.AbstractXmlEncoder;
@@ -73,8 +76,6 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
@@ -86,7 +87,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
 
@@ -98,9 +99,13 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
 
     // TODO here also the question, sa:samplingPoint sampling/1.0 vs 2.0 mapping
     // or not and where and how to handle
-    private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
-            SupportedTypeKey.FeatureType, (Set<String>) ImmutableSet.of(OGCConstants.UNKNOWN,
-                    SfConstants.EN_SAMPLINGPOINT, SfConstants.EN_SAMPLINGSURFACE, SfConstants.EN_SAMPLINGCURVE));
+    private static final Set<SupportedType> SUPPORTED_TYPES
+            = ImmutableSet.<SupportedType>builder()
+            .add(new FeatureType(OGCConstants.UNKNOWN))
+            .add(new FeatureType(SfConstants.EN_SAMPLINGPOINT))
+            .add(new FeatureType(SfConstants.EN_SAMPLINGSURFACE))
+            .add(new FeatureType(SfConstants.EN_SAMPLINGCURVE))
+            .build();
 
     private static final Set<String> CONFORMANCE_CLASSES = ImmutableSet.of(ConformanceClasses.OM_V2_SPATIAL_SAMPLING,
             ConformanceClasses.OM_V2_SAMPLING_POINT, ConformanceClasses.OM_V2_SAMPLING_CURVE,
@@ -112,13 +117,13 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.unmodifiableMap(SUPPORTED_TYPES);
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
 
     @Override
@@ -191,9 +196,9 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
     private XmlObject getEncodedGeometry(Geometry geometry, String gmlId) throws UnsupportedEncoderInputException,
             OwsExceptionReport {
         Encoder<XmlObject, Geometry> encoder =
-                CodingRepository.getInstance().getEncoder(CodingHelper.getEncoderKey(GmlConstants.NS_GML, geometry));
+                getEncoderRepository().getEncoder(CodingHelper.getEncoderKey(GmlConstants.NS_GML, geometry));
         if (encoder != null) {
-            Map<HelperValues, String> additionalValues = new EnumMap<HelperValues, String>(HelperValues.class);
+            Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
             additionalValues.put(HelperValues.GMLID, gmlId);
             return encoder.encode(geometry, additionalValues);
         } else {

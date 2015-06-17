@@ -36,6 +36,7 @@ import static org.junit.Assert.assertThat;
 import java.util.Map;
 
 import org.junit.Test;
+
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.sos.request.GetObservationRequest;
@@ -46,7 +47,7 @@ import com.google.common.collect.Maps;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @since 4.0.0
- * 
+ *
  */
 public class GetObservationKvpDecoderv20Test {
 

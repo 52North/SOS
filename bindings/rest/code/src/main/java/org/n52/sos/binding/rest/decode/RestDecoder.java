@@ -32,10 +32,13 @@ import static org.n52.sos.util.CodingHelper.decoderKeysForElements;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
@@ -44,12 +47,14 @@ import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.OperationNotSupportedException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.ContentTypeNotSupportedException;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.lifecycle.Constructable;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.http.HTTPHeaders;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.iceland.util.http.HTTPUtils;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.sos.binding.rest.Constants;
+import org.n52.sos.binding.rest.RestBinding;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.ServiceEndpointDecoder;
 import org.n52.sos.binding.rest.resources.capabilities.CapabilitiesDecoder;
@@ -57,8 +62,6 @@ import org.n52.sos.binding.rest.resources.features.FeaturesDecoder;
 import org.n52.sos.binding.rest.resources.observations.ObservationsDecoder;
 import org.n52.sos.binding.rest.resources.offerings.OfferingsDecoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsDecoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
@@ -67,43 +70,36 @@ import com.google.common.base.Joiner;
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  *
  */
-public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
-    
+public class RestDecoder implements Decoder<RestRequest, HttpServletRequest>, Constructable {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(RestDecoder.class);
 
-    @SuppressWarnings("unchecked")
-	private final Set<DecoderKey> DECODER_KEYS = decoderKeysForElements(
-            Constants.getInstance().getEncodingNamespace(), HttpServletRequest.class);
-//            union(
-//    		decoderKeysForElements(Constants.getInstance().getEncodingNamespace(), HttpServletRequest.class),
-//    		CodingHelper.xmlDecoderKeysForOperation(SOS, Sos2Constants.SERVICEVERSION,
-//    				Sos2Constants.Operations.DeleteSensor,
-//    				Sos2Constants.Operations.InsertSensor,
-//    				Sos2Constants.Operations.UpdateSensorDescription,
-//    				SosConstants.Operations.DescribeSensor,
-//    				SosConstants.Operations.GetCapabilities,
-//    				SosConstants.Operations.GetFeatureOfInterest,
-//    				SosConstants.Operations.GetObservation,
-//    				SosConstants.Operations.GetObservationById,
-//    				DeleteObservationConstants.Operations.DeleteObservation));
+	private Set<DecoderKey> decoderKeys;
+    private Constants constants;
 
-    /**
-     * constructor called by the service loader of the SOS instance
-     */
-    public RestDecoder() {
-    	LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
-                    Joiner.on(", ").join(DECODER_KEYS));
+    @Inject
+    public void setConstants(Constants constants) {
+        this.constants = constants;
     }
-    
+
+    @Override
+    public void init() {
+        this.decoderKeys =  decoderKeysForElements(this.constants.getEncodingNamespace(),
+                                                   HttpServletRequest.class);
+        LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
+                    Joiner.on(", ").join(decoderKeys));
+    }
+
+
     @Override
     public RestRequest decode(final HttpServletRequest httpRequest)
             throws OwsExceptionReport{
-        
+
         // check requested content type
         if (!isAcceptHeaderOk(httpRequest))
         {
             throw new ContentTypeNotSupportedException(
-            		httpRequest.getContentType(), 
+            		httpRequest.getContentType(),
             		bindingConstants().getContentTypeDefault().toString());
         }
 
@@ -132,7 +128,7 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
         }
         return false;
     }
-    
+
     protected String getResourceTypeFromPathInfoWithWorkingUrl(String pathInfo)
     {
         /*
@@ -143,7 +139,7 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
             pathInfo = pathInfo.replaceAll("http:/", "http://");
             // use part from second slash "/" till end
             final int indexOfPotentialSecondSlash = pathInfo.indexOf("/", 1);
-            
+
             if (indexOfPotentialSecondSlash > 1) {
                 return pathInfo.substring(indexOfPotentialSecondSlash + 1);
             } else {
@@ -178,7 +174,7 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
 
     private boolean isServiceDefaultEndpoint(final String pathInfo) {
         return ((pathInfo != null) && pathInfo.isEmpty()) || ("/" + pathInfo)
-                .startsWith(Constants.getInstance().getUrlPattern());
+                .startsWith(RestBinding.URI_PATTERN);
     }
 
     private boolean isOfferingsRequest(final String pathInfo) {
@@ -207,22 +203,12 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
-        return Collections.unmodifiableSet(DECODER_KEYS);
-    }
-
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
+    public Set<DecoderKey> getKeys() {
+        return Collections.unmodifiableSet(decoderKeys);
     }
 
     private Constants bindingConstants() {
-        return Constants.getInstance();
+        return this.constants;
     }
 
 }

@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -41,17 +42,17 @@ import org.n52.iceland.config.AdministratorUser;
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingValue;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.iceland.util.StringHelper;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.auth.DefaultAdministratorUser;
-import org.n52.sos.web.auth.UserService;
+import org.n52.sos.web.common.AbstractController;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.sos.web.common.auth.DefaultAdministratorUser;
+import org.n52.sos.web.common.auth.SosAuthenticationProvider;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
@@ -64,6 +65,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import org.n52.iceland.config.SettingsService;
+
 
 
 
@@ -71,14 +74,17 @@ import org.springframework.web.servlet.ModelAndView;
 public class AdminSettingsController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(AdminSettingsController.class);
 
-    @Autowired
-    private UserService userService;
+    @Inject
+    private SosAuthenticationProvider userService;
 
-    public UserService getUserService() {
+    @Inject
+    private SettingsService settingsManager;
+
+    public SosAuthenticationProvider getUserService() {
         return userService;
     }
 
-    public void setUserService(UserService userService) {
+    public void setUserService(SosAuthenticationProvider userService) {
         this.userService = userService;
     }
 
@@ -90,8 +96,8 @@ public class AdminSettingsController extends AbstractController {
     }
 
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_SETTINGS, method = RequestMethod.GET)
-    public ModelAndView displaySettings(Principal user) throws ConfigurationException, JSONException, ConnectionProviderException {
-        Map<String, Object> model = new HashMap<String, Object>(2);
+    public ModelAndView displaySettings(Principal user) throws ConfigurationError, JSONException, ConnectionProviderException {
+        Map<String, Object> model = new HashMap<>(2);
         model.put(ControllerConstants.SETTINGS_MODEL_ATTRIBUTE, getSettingsJsonString());
         model.put(ControllerConstants.ADMIN_USERNAME_REQUEST_PARAMETER, user.getName());
         return new ModelAndView(ControllerConstants.Views.ADMIN_SETTINGS, model);
@@ -99,15 +105,10 @@ public class AdminSettingsController extends AbstractController {
 
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_SETTINGS_UPDATE, method = RequestMethod.POST)
     public void updateSettings(HttpServletRequest request, HttpServletResponse response, Principal user)
-            throws AuthenticationException, ConfigurationException {
+            throws AuthenticationException, ConfigurationError {
         LOG.info("Updating Settings");
-        try {
-            updateAdminUser(request, user);
-            updateSettings(request);
-        } catch (ConnectionProviderException e1) {
-            LOG.error("Error saving settings", e1);
-            throw new RuntimeException(e1.getMessage());
-        }
+        updateAdminUser(request, user);
+        updateSettings(request);
     }
 
     @ResponseBody
@@ -122,9 +123,9 @@ public class AdminSettingsController extends AbstractController {
     }
 
     private String getSettingsJsonString()
-            throws ConfigurationException, JSONException,
+            throws ConfigurationError, JSONException,
                    ConnectionProviderException {
-        return JSONUtils.print(toJSONValueMap(getSettingsManager().getSettings()));
+        return JSONUtils.print(encodeValues(settingsManager.getSettings()));
     }
 
     private void logSettings(Collection<SettingValue<?>> values) {
@@ -135,22 +136,21 @@ public class AdminSettingsController extends AbstractController {
         }
     }
 
-    private void updateSettings(HttpServletRequest request) throws ConnectionProviderException {
-        Map<SettingDefinition<?, ?>, SettingValue<?>> changedSettings =
-                new HashMap<SettingDefinition<?, ?>, SettingValue<?>>();
-        for (SettingDefinition<?, ?> def : getSettingsManager().getSettingDefinitions()) {
+    private void updateSettings(HttpServletRequest request) {
+        Map<SettingDefinition<?, ?>, SettingValue<?>> changedSettings = new HashMap<>();
+        for (SettingDefinition<?, ?> def : settingsManager.getSettingDefinitions()) {
             SettingValue<?> newValue =
-                    getSettingsManager().getSettingFactory().newSettingValue(def, request.getParameter(def.getKey()));
+                    settingsManager.getSettingFactory().newSettingValue(def, request.getParameter(def.getKey()));
             changedSettings.put(def, newValue);
         }
         logSettings(changedSettings.values());
         for (SettingValue<?> e : changedSettings.values()) {
-            getSettingsManager().changeSetting(e);
+            settingsManager.changeSetting(e);
         }
     }
 
     private void updateAdminUser(HttpServletRequest request, Principal user) throws AuthenticationException,
-            ConfigurationException {
+            ConfigurationError {
         String password = request.getParameter(ControllerConstants.ADMIN_PASSWORD_REQUEST_PARAMETER);
         String username = request.getParameter(ControllerConstants.ADMIN_USERNAME_REQUEST_PARAMETER);
         String currentPassword = request.getParameter(ControllerConstants.ADMIN_CURRENT_PASSWORD_REQUEST_PARAMETER);
@@ -158,7 +158,7 @@ public class AdminSettingsController extends AbstractController {
     }
 
     private void updateAdminUser(HttpServletRequest req, String newPassword, String newUsername,
-            String currentPassword, String currentUsername) throws AuthenticationException, ConfigurationException {
+            String currentPassword, String currentUsername) throws AuthenticationException, ConfigurationError {
         if (StringHelper.isNotEmpty(newPassword) || !currentUsername.equals(newUsername)) {
             if (currentPassword == null) {
                 throw new BadCredentialsException("You have to submit your current password.");

@@ -28,18 +28,19 @@
  */
 package org.n52.sos.web.admin.i18n.ajax;
 
-import org.n52.iceland.i18n.metadata.I18NObservablePropertyMetadata;
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.web.ControllerConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import org.n52.sos.cache.SosContentCache;
+import org.n52.iceland.i18n.metadata.I18NObservablePropertyMetadata;
+import org.n52.sos.web.common.ControllerConstants;
 
 @Controller
 @RequestMapping(ControllerConstants.Paths.OBSERVABLE_PROPERTY_I18N_AJAX_ENDPOINT)
 public class ObservablePropertyI18NAjaxEndpoint extends AbstractAdminI18NAjaxEndpoint<I18NObservablePropertyMetadata> {
 
     @Override
-    protected boolean isValid(ContentCache cache, String id) {
+    protected boolean isValid(SosContentCache cache, String id) {
         return cache.hasObservableProperty(id);
     }
 

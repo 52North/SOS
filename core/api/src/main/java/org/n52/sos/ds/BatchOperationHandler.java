@@ -49,11 +49,11 @@ import org.n52.sos.util.BatchConstants;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * Renamed, in version 4.x called BatchOperationDAO
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 5.0.0
  */
 public class BatchOperationHandler extends AbstractOperationHandler {
@@ -81,7 +81,7 @@ public class BatchOperationHandler extends AbstractOperationHandler {
     protected ServiceOperator getServiceOperator(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         checkServiceOperatorKeys(request);
         for (ServiceOperatorKey sokt : request.getServiceOperatorKeyType()) {
-            ServiceOperator so = ServiceOperatorRepository.getInstance().getServiceOperator(sokt);
+            ServiceOperator so = getServiceOperatorRepository().getServiceOperator(sokt);
             if (so != null) {
                 return so;
             }
@@ -92,6 +92,10 @@ public class BatchOperationHandler extends AbstractOperationHandler {
         } else {
             throw new InvalidServiceOrVersionException(request.getService(), request.getVersion());
         }
+    }
+
+    protected ServiceOperatorRepository getServiceOperatorRepository() {
+        return ServiceOperatorRepository.getInstance();
     }
 
     protected void checkServiceOperatorKeys(AbstractServiceRequest<?> request) throws OwsExceptionReport {
@@ -108,7 +112,7 @@ public class BatchOperationHandler extends AbstractOperationHandler {
     }
 
     protected boolean isVersionSupported(String service, String version) {
-        return ServiceOperatorRepository.getInstance().isVersionSupported(service, version);
+        return getServiceOperatorRepository().isVersionSupported(service, version);
     }
 
     @Override
@@ -146,14 +150,9 @@ public class BatchOperationHandler extends AbstractOperationHandler {
         if (sokt.hasService()) {
             if (sokt.getService().isEmpty()) {
                 exceptions.add(new MissingServiceParameterException());
-            } else if (!ServiceOperatorRepository.getInstance().isServiceSupported(sokt.getService())) {
+            } else if (!getServiceOperatorRepository().isServiceSupported(sokt.getService())) {
                 exceptions.add(new InvalidServiceParameterException(sokt.getService()));
             }
         }
-    }
-    
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return IDEPENDET_IDENTIFIER;
     }
 }

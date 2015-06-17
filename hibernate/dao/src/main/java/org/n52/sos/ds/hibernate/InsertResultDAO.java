@@ -35,11 +35,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
-import org.n52.iceland.coding.CodingRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
@@ -50,18 +55,12 @@ import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.sos.CapabilitiesExtension;
-import org.n52.iceland.ogc.sos.CapabilitiesExtensionKey;
-import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.ds.AbstractInsertResultHandler;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
@@ -84,7 +83,6 @@ import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sos.SosInsertionCapabilities;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
@@ -98,36 +96,35 @@ import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.request.InsertResultRequest;
 import org.n52.sos.response.InsertResultResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
  * Implementation of the abstract class AbstractInsertResultDAO
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
-public class InsertResultDAO extends AbstractInsertResultHandler implements CapabilitiesExtensionProvider {
+public class InsertResultDAO extends AbstractInsertResultHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InsertResultDAO.class);
-
     private static final int FLUSH_THRESHOLD = 50;
+    private HibernateSessionHolder sessionHolder;
+    private FeatureQueryHandler featureQueryHandler;
 
-    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
-
-    /**
-     * constructor
-     */
     public InsertResultDAO() {
         super(SosConstants.SOS);
     }
-    
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+
+    @Inject
+    public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
+        this.featureQueryHandler = featureQueryHandler;
+    }
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override
@@ -137,10 +134,11 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
         response.setVersion(request.getVersion());
         Session session = null;
         Transaction transaction = null;
-        
+
         Map<String,Codespace> codespaceCache = Maps.newHashMap();
         Map<String,Unit> unitCache = Maps.newHashMap();
-        
+
+
         try {
             session = sessionHolder.getSession();
             final ResultTemplate resultTemplate =
@@ -156,8 +154,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
                     Sets.newHashSet(new ObservationConstellationDAO().getObservationConstellation(
                             resultTemplate.getProcedure(),
                             resultTemplate.getObservableProperty(),
-                            Configurator.getInstance().getCache()
-                                    .getOfferingsForProcedure(resultTemplate.getProcedure().getIdentifier()), session));
+                            getCache().getOfferingsForProcedure(resultTemplate.getProcedure().getIdentifier()), session));
 
             int insertion = 0;
             final int size = observations.size();
@@ -188,7 +185,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Create OmObservation from result values
-     * 
+     *
      * @param version
      *            Service version
      * @param resultTemplate
@@ -217,7 +214,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Get internal feature from FeatureOfInterest entity
-     * 
+     *
      * @param featureOfInterest
      * @param version
      *            Service version
@@ -229,18 +226,17 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
      */
     protected AbstractFeature getSosAbstractFeature(final FeatureOfInterest featureOfInterest, final String version,
             final Session session) throws OwsExceptionReport {
-        final FeatureQueryHandler featureQueryHandler = Configurator.getInstance().getFeatureQueryHandler();
         FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject()
             .addFeatureIdentifier(featureOfInterest.getIdentifier())
             .setConnection(session)
             .setVersion(version);
-        return featureQueryHandler.getFeatureByID(queryObject);
+        return this.featureQueryHandler.getFeatureByID(queryObject);
     }
 
     /**
      * Unfold internal observation from result values to single internal
      * observations
-     * 
+     *
      * @param observation
      *            Internal observaiton to unfold
      * @return List with single interal observations
@@ -262,7 +258,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Get internal ObservationConstellation from result template
-     * 
+     *
      * @param resultTemplate
      * @param session
      *            Hibernate session
@@ -272,7 +268,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
             final Session session) {
         // get all offerings for procedure to match all parent procedure
         // offerings
-        Set<Offering> procedureOfferings = new HashSet<Offering>();
+        Set<Offering> procedureOfferings = new HashSet<>();
         procedureOfferings.add(resultTemplate.getOffering());
         Set<String> procedureOfferingIds =
                 getCache().getOfferingsForProcedure(resultTemplate.getProcedure().getIdentifier());
@@ -300,7 +296,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Create internal ProcedureDescription from Procedure entity
-     * 
+     *
      * @param hProcedure
      *            Procedure entity
      * @return Internal ProcedureDescription
@@ -313,7 +309,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Get internal observation
-     * 
+     *
      * @param resultTemplate
      *            Associated ResultTemplate
      * @param blockValues
@@ -336,14 +332,13 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
         final SweDataRecord record = setRecordFrom(resultStructure);
 
-        final Map<Integer, String> observedProperties = new HashMap<Integer, String>(record.getFields().size() - 1);
-        final Map<Integer, String> units = new HashMap<Integer, String>(record.getFields().size() - 1);
+        final Map<Integer, String> observedProperties = new HashMap<>(record.getFields().size() - 1);
+        final Map<Integer, String> units = new HashMap<>(record.getFields().size() - 1);
 
-        int j = 0;
+        int index = 0;
         for (final SweField swefield : record.getFields()) {
-            if (j != resultTimeIndex && j != phenomenonTimeIndex) {
+            if (index != resultTimeIndex && index != phenomenonTimeIndex) {
                 if (swefield.getElement() instanceof SweAbstractSimpleType<?>) {
-                    final Integer index = Integer.valueOf(j);
                     final SweAbstractSimpleType<?> sweAbstractSimpleType =
                             (SweAbstractSimpleType<?>) swefield.getElement();
                     if (sweAbstractSimpleType instanceof SweQuantity) {
@@ -355,7 +350,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
                     throw new NoApplicableCodeException().withMessage("The swe:Field element of type {} is not yet supported!", swefield.getElement().getClass().getName());
                 }
             }
-            ++j;
+            ++index;
         }
 
         // TODO support for compositePhenomenon
@@ -374,7 +369,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Create internal observation value
-     * 
+     *
      * @param blockValues
      *            Block values from result values
      * @param recordFromResultStructure
@@ -405,7 +400,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
                 dataArrayValue.addBlock(Arrays.asList(singleValues));
             }
         }
-        final MultiObservationValues<SweDataArray> sosValues = new MultiObservationValues<SweDataArray>();
+        final MultiObservationValues<SweDataArray> sosValues = new MultiObservationValues<>();
         sosValues.setValue(dataArrayValue);
         return sosValues;
     }
@@ -413,7 +408,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
     // TODO move to helper class
     /**
      * Get internal time object from time String
-     * 
+     *
      * @param timeString
      *            Time String to parse
      * @return Internal time object
@@ -440,7 +435,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Get single values from a block value
-     * 
+     *
      * @param block
      *            Block value
      * @param encoding
@@ -457,7 +452,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Get block values from result values
-     * 
+     *
      * @param resultValues
      *            Result values
      * @param encoding
@@ -476,7 +471,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
     /**
      * Check if the block values from result values contains a preceding count
      * value
-     * 
+     *
      * @param blockValues
      *            Block values from result values
      * @param tokenSeparator
@@ -498,7 +493,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
 
     /**
      * Separate values from String with separator
-     * 
+     *
      * @param values
      *            Value String
      * @param separator
@@ -507,33 +502,6 @@ public class InsertResultDAO extends AbstractInsertResultHandler implements Capa
      */
     private String[] separateValues(final String values, final String separator) {
         return values.split(separator);
-    }
-
-    @Override
-    public CapabilitiesExtension getExtension() {
-        final SosInsertionCapabilities insertionCapabilities = new SosInsertionCapabilities();
-        insertionCapabilities.addFeatureOfInterestTypes(getCache().getFeatureOfInterestTypes());
-        insertionCapabilities.addObservationTypes(getCache().getObservationTypes());
-        insertionCapabilities.addProcedureDescriptionFormats(CodingRepository.getInstance()
-                .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
-        // TODO dynamic
-        insertionCapabilities.addSupportedEncoding(SweConstants.ENCODING_TEXT);
-        return insertionCapabilities;
-    }
-
-    @Override
-    public CapabilitiesExtensionKey getCapabilitiesExtensionKey() {
-        return new CapabilitiesExtensionKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
-    }
-
-    @Override
-    public boolean hasRelatedOperation() {
-        return true;
-    }
-
-    @Override
-    public String getRelatedOperation() {
-        return getOperationName();
     }
 
 }

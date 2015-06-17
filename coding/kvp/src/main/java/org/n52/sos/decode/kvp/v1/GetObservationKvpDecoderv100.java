@@ -64,7 +64,7 @@ public class GetObservationKvpDecoderv100 extends AbstractKvpDecoder {
             Sos1Constants.SERVICEVERSION, SosConstants.Operations.GetObservation.name(), MediaTypes.APPLICATION_KVP);
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.singleton(KVP_DECODER_KEY_TYPE);
     }
 

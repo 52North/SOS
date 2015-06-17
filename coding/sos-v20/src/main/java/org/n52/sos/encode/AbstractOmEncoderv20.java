@@ -52,10 +52,11 @@ import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlString;
 import org.isotc211.x2005.gmd.AbstractDQElementDocument;
 import org.isotc211.x2005.gmd.DQElementPropertyType;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.ObservationEncoder;
+import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
@@ -72,7 +73,7 @@ import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.util.StringHelper;
@@ -407,7 +408,7 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
      * @return True or false
      */
     private boolean checkEncodProcedureForEncoderKeys() {
-        Set<EncoderKey> encoderKeyType = getEncoderKeyType();
+        Set<EncoderKey> encoderKeyType = getKeys();
         for (EncoderKey encoderKey : encoderKeyType) {
             if (encoderKey instanceof XmlEncoderKey) {
                 if (ProfileHandler.getInstance().getActiveProfile()

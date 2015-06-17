@@ -28,28 +28,14 @@
  */
 package org.n52.sos.coding.decode;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
 
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.service.AbstractServiceCommunicationObject;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 
 public abstract class AbstractStringRequestDecoder implements Decoder<AbstractServiceCommunicationObject, String> {
-    
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
 
     @Override
     public AbstractServiceCommunicationObject decode(String xmlString) throws OwsExceptionReport,

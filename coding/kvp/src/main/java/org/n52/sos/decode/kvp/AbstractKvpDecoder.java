@@ -31,20 +31,21 @@ package org.n52.sos.decode.kvp;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.RandomAccess;
-import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
@@ -60,9 +61,9 @@ import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.OWSConstants;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.service.ServiceConstants;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.KvpHelper;
@@ -72,16 +73,12 @@ import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swes.SwesExtension;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 @Configurable
 public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceRequest<?>, Map<String, String>> {
@@ -97,16 +94,6 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
     private int defaultResponseEPSG;
 
     private int defaultResponse3DEPSG;
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Map<ServiceConstants.SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
-    }
 
     public int getStorageEPSG() {
         return storageEPSG;
@@ -126,56 +113,56 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
 
     /**
      * Set storage EPSG code from settings
-     * 
+     *
      * @param epsgCode
      *            EPSG code from settings
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.STORAGE_EPSG)
-    public void setStorageEpsg(final int epsgCode) throws ConfigurationException {
+    public void setStorageEpsg(final int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Storage EPSG Code", epsgCode);
         storageEPSG = epsgCode;
     }
 
     /**
      * Set storage 3D EPSG code from settings
-     * 
+     *
      * @param epsgCode3D
      *            3D EPSG code from settings
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.STORAGE_3D_EPSG)
-    public void setStorage3DEpsg(final int epsgCode3D) throws ConfigurationException {
+    public void setStorage3DEpsg(final int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
         storage3DEPSG = epsgCode3D;
     }
 
     /**
      * Set default response EPSG code from settings
-     * 
+     *
      * @param epsgCode
      *            EPSG code from settings
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_EPSG)
-    public void setDefaultResponseEpsg(final int epsgCode) throws ConfigurationException {
+    public void setDefaultResponseEpsg(final int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Storage EPSG Code", epsgCode);
         defaultResponseEPSG = epsgCode;
     }
 
     /**
      * Set default response 3D EPSG code from settings
-     * 
+     *
      * @param epsgCode3D
      *            3D EPSG code from settings
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_3D_EPSG)
-    public void setDefaultResponse3DEpsg(final int epsgCode3D) throws ConfigurationException {
+    public void setDefaultResponse3DEpsg(final int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
         defaultResponse3DEPSG = epsgCode3D;
     }
@@ -226,7 +213,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
 
     /**
      * Check if service and version are contained in the request
-     * 
+     *
      * @param request
      *            Parsed request
      * @param exceptions
@@ -247,7 +234,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
             throws OwsExceptionReport {
         if (!parameterValues.isEmpty()) {
             if (!(parameterValues instanceof RandomAccess)) {
-                parameterValues = new ArrayList<String>(parameterValues);
+                parameterValues = new ArrayList<>(parameterValues);
             }
             SpatialFilter spatialFilter = new SpatialFilter();
 
@@ -434,12 +421,16 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
         SweBoolean bool =
                 (SweBoolean) new SweBoolean().setValue(Boolean.parseBoolean(returnHumanReadableIdentifier))
                         .setIdentifier(OWSConstants.AdditionalRequestParams.returnHumanReadableIdentifier.name());
-        return new SwesExtensionImpl<SweBoolean>().setValue(bool);
+        SwesExtension<SweBoolean> extension = new SwesExtension<>();
+        extension.setValue(bool);
+        return extension;
     }
 
     protected SwesExtension<SweText> getSweTextFor(String identifier, String value) {
         SweText text = (SweText) new SweText().setValue(value).setIdentifier(identifier);
-        return new SwesExtensionImpl<SweText>().setValue(text);
+        SwesExtension<SweText> extension = new SwesExtension<>();
+        extension.setValue(text);
+        return extension;
     }
 
 }

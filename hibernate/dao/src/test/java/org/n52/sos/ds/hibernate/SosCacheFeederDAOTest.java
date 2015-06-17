@@ -32,14 +32,15 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.cache.WritableCache;
-import org.n52.sos.cache.WritableContentCache;
+import org.n52.sos.cache.SosWritableContentCacheImpl;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class SosCacheFeederDAOTest extends HibernateTestCase {
@@ -53,7 +54,7 @@ public class SosCacheFeederDAOTest extends HibernateTestCase {
 
     @Test
     public void updateCacheFillsCapabilitiesCache() throws OwsExceptionReport {
-        WritableContentCache cache = new WritableCache();
+        SosWritableContentCache cache = new SosWritableContentCacheImpl();
         instance.updateCache(cache);
         testCacheResult(cache);
     }
@@ -64,7 +65,7 @@ public class SosCacheFeederDAOTest extends HibernateTestCase {
     }
 
     /* HELPER */
-    private void testCacheResult(WritableContentCache cache) {
+    private void testCacheResult(SosWritableContentCache cache) {
         assertNotNull("cache is null", cache);
         assertNotNull("envelope of features is null", cache.getGlobalEnvelope());
         assertNotNull("feature types is null", cache.getFeatureOfInterestTypes());

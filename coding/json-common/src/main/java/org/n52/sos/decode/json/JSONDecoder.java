@@ -32,10 +32,10 @@ import static org.n52.iceland.util.DateTimeHelper.parseIsoString2DateTime;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
@@ -51,7 +51,7 @@ import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.sos.coding.json.JSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -60,9 +60,9 @@ import com.google.common.collect.Lists;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class JSONDecoder<T> implements Decoder<T, JsonNode> {
@@ -110,18 +110,13 @@ public abstract class JSONDecoder<T> implements Decoder<T, JsonNode> {
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(decoderKeys);
     }
 
     @Override
     public T decode(JsonNode objectToDecode) throws OwsExceptionReport {
         return decodeJSON(objectToDecode, true);
-    }
-
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
     }
 
     @Override

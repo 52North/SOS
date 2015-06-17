@@ -42,7 +42,7 @@ import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
@@ -76,13 +76,13 @@ public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(encoderKeys);
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override

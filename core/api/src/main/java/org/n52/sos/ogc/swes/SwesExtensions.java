@@ -33,7 +33,7 @@ import org.n52.iceland.ogc.ows.Extensions;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class SwesExtensions extends Extensions {

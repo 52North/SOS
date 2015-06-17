@@ -44,6 +44,14 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+
+import org.n52.iceland.binding.BindingKey;
+import org.n52.iceland.binding.MediaTypeBindingKey;
+import org.n52.iceland.binding.PathBindingKey;
 import org.n52.iceland.binding.SimpleBinding;
 import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.coding.decode.Decoder;
@@ -59,11 +67,8 @@ import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.utils.EXIUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
 
+import com.google.common.collect.ImmutableSet;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.api.sax.EXISource;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -71,7 +76,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
 /**
  * Binding implementation for EXI - Efficient XML Interchange See See <a
  * href="http://www.w3.org/TR/exi/">http://www.w3.org/TR/exi/</a>
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
@@ -87,6 +92,11 @@ public class EXIBinding extends SimpleBinding {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EXIBinding.class);
 
+    private static final Set<BindingKey> KEYS = ImmutableSet.<BindingKey>builder()
+            .add(new PathBindingKey(URL_PATTERN))
+            .add(new MediaTypeBindingKey(MediaTypes.APPLICATION_EXI))
+            .build();
+
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
         if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
@@ -98,16 +108,6 @@ public class EXIBinding extends SimpleBinding {
     @Override
     protected MediaType getDefaultContentType() {
         return MediaTypes.APPLICATION_EXI;
-    }
-
-    @Override
-    public String getUrlPattern() {
-        return URL_PATTERN;
-    }
-    
-    @Override
-    public Set<MediaType> getSupportedEncodings() {
-        return Collections.singleton(MediaTypes.APPLICATION_EXI);
     }
 
     @Override
@@ -135,7 +135,7 @@ public class EXIBinding extends SimpleBinding {
 
     /**
      * Parse and decode the incoming EXI encoded {@link InputStream}
-     * 
+     *
      * @param request
      *            {@link HttpServletRequest} with EXI encoded
      *            {@link InputStream}
@@ -156,7 +156,7 @@ public class EXIBinding extends SimpleBinding {
     /**
      * Parse the incoming EXI encoded {@link InputStream} transform to
      * {@link XmlObject}
-     * 
+     *
      * @param request
      *            {@link HttpServletRequest} with EXI encoded
      *            {@link InputStream}
@@ -167,9 +167,9 @@ public class EXIBinding extends SimpleBinding {
      */
     protected XmlObject decode(HttpServletRequest request) throws OwsExceptionReport {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-            
+
             EXIFactory ef = EXI_UTILS.newEXIFactory();
-            
+
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
             if (ef.isFragment()) {
@@ -185,19 +185,32 @@ public class EXIBinding extends SimpleBinding {
             SAXSource saxSource = new SAXSource(inputSource);
             saxSource.setXMLReader(exiReader);
             transformer.transform(saxSource, new StreamResult(os));
-            
+
             // create XmlObject from OutputStream
             return XmlHelper.parseXmlString(os.toString());
-        } catch (IOException ioe) {
+        } catch (IOException | EXIException ioe) {
             throw new NoApplicableCodeException().causedBy(ioe).withMessage(
                     "Error while reading request! Message: %s", ioe.getMessage());
         } catch (TransformerException te) {
             throw new NoApplicableCodeException().causedBy(te).withMessage(
                     "Error while transforming request! Message: %s", te.getMessage());
-        } catch (EXIException exie) {
-            throw new NoApplicableCodeException().causedBy(exie).withMessage(
-                    "Error while reading request! Message: %s", exie.getMessage());
         }
     }
+
+    @Override
+    public Set<BindingKey> getKeys() {
+        return Collections.unmodifiableSet(KEYS);
+    }
+
+    @Override
+    public String getUrlPattern() {
+        return URL_PATTERN;
+    }
+
+    @Override
+    public Set<MediaType> getSupportedEncodings() {
+        return Collections.singleton(MediaTypes.APPLICATION_EXI);
+    }
+
 
 }

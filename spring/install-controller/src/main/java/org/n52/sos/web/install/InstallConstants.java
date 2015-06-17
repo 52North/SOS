@@ -28,11 +28,11 @@
  */
 package org.n52.sos.web.install;
 
-import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.common.ControllerConstants;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public interface InstallConstants {
     /* request parameters */
@@ -41,21 +41,24 @@ public interface InstallConstants {
     String CREATE_TEST_DATA_PARAMETER = "create_test_data";
 
     String CREATE_TABLES_PARAMETER = "create_tables";
-    
+
     String UPDATE_TABLES_PARAMETER = "update_tables";
 
     String DATASOURCE_PARAMETER = "datasource";
 
     enum Step {
         /* DECLARATION ORDER IS IMPORTANT! */
-        WELCOME(ControllerConstants.Paths.INSTALL_INDEX, ControllerConstants.Views.INSTALL_INDEX), DATASOURCE(
-                ControllerConstants.Paths.INSTALL_DATASOURCE, ControllerConstants.Views.INSTALL_DATASOURCE), SETTINGS(
-                ControllerConstants.Paths.INSTALL_SETTINGS, ControllerConstants.Views.INSTALL_SETTINGS), FINISH(
-                ControllerConstants.Paths.INSTALL_FINISH, ControllerConstants.Views.INSTALL_FINISH);
+        WELCOME(ControllerConstants.Paths.INSTALL_INDEX,
+                ControllerConstants.Views.INSTALL_INDEX),
+        DATASOURCE(ControllerConstants.Paths.INSTALL_DATASOURCE,
+                ControllerConstants.Views.INSTALL_DATASOURCE),
+        SETTINGS(ControllerConstants.Paths.INSTALL_SETTINGS,
+                ControllerConstants.Views.INSTALL_SETTINGS),
+        FINISH(ControllerConstants.Paths.INSTALL_FINISH,
+                ControllerConstants.Views.INSTALL_FINISH);
+
         private final String path;
-
         private final String view;
-
         private final String completionAttribute;
 
         private Step(String path, String view) {

@@ -42,10 +42,11 @@ import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.ObservationEncoder;
+import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
@@ -59,7 +60,7 @@ import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.JavaHelper;
@@ -634,7 +635,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
      * @return True or false
      */
     private boolean checkEncodProcedureForEncoderKeys(Encoder<?, ?> encoder) {
-        Set<EncoderKey> encoderKeyType = encoder.getEncoderKeyType();
+        Set<EncoderKey> encoderKeyType = encoder.getKeys();
         for (EncoderKey encoderKey : encoderKeyType) {
             if (encoderKey instanceof XmlEncoderKey) {
                 if (ProfileHandler.getInstance().getActiveProfile()

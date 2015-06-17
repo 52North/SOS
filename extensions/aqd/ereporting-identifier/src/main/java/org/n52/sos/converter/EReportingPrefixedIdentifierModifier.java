@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
-import org.n52.iceland.convert.RequestResponseModifierKeyType;
+import org.n52.iceland.convert.RequestResponseModifierKey;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.sos.SosConstants;
@@ -76,14 +76,14 @@ import com.google.common.collect.Sets;
 
 public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModifier {
 
-    private Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES;
+    private Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES;
 
     /**
      * Get the keys
-     * 
+     *
      * @return Set of keys
      */
-    private Set<RequestResponseModifierKeyType> getKeyTypes() {
+    private Set<RequestResponseModifierKey> getKeyTypes() {
         Set<String> services = Sets.newHashSet(AqdConstants.AQD);
         Set<String> versions = Sets.newHashSet(AqdConstants.VERSION);
         Map<AbstractServiceRequest<?>, AbstractServiceResponse> requestResponseMap = Maps.newHashMap();
@@ -95,12 +95,12 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
         requestResponseMap.put(new GetDataAvailabilityRequest(), new GetDataAvailabilityResponse());
         requestResponseMap.put(new GetResultTemplateRequest(), new GetResultTemplateResponse());
         requestResponseMap.put(new GetResultRequest(), new GetResultResponse());
-        Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
+        Set<RequestResponseModifierKey> keys = Sets.newHashSet();
         for (String service : services) {
             for (String version : versions) {
                 for (AbstractServiceRequest<?> request : requestResponseMap.keySet()) {
-                    keys.add(new RequestResponseModifierKeyType(service, version, request));
-                    keys.add(new RequestResponseModifierKeyType(service, version, request, requestResponseMap
+                    keys.add(new RequestResponseModifierKey(service, version, request));
+                    keys.add(new RequestResponseModifierKey(service, version, request, requestResponseMap
                             .get(request)));
                 }
             }
@@ -109,13 +109,13 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     }
 
     @Override
-    public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
+    public Set<RequestResponseModifierKey> getKeys() {
         if (REQUEST_RESPONSE_MODIFIER_KEY_TYPES == null) {
             REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
         }
         return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
     }
-    
+
     @Override
     protected AbstractServiceResponse changeAbstractObservationResponseIdentifier(AbstractObservationResponse response) {
         return changeOmParameterValues(super.changeAbstractObservationResponseIdentifier(response));
@@ -129,7 +129,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
                 checkOmParameterForEReporting(omObservation.getParameter());
             }
         }
-        
+
         return null;
     }
 
@@ -172,7 +172,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
         }
         return identifier;
     }
-    
+
     private String checkOmParameterForMonitoringStation(NamedValue<?> namedValue, String identifier) {
         if (ProcessParameter.MonitoringStation.getConceptURI().equals(namedValue.getName().getHref())) {
             if (getEReportingPrefixedIdentifierHelper().isSetStationPrefix()) {
@@ -192,7 +192,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
         }
         return identifier;
     }
-    
+
     @Override
     protected boolean checkForFlag(AbstractServiceRequest<?> request, AbstractServiceResponse response)
             throws InvalidParameterValueException {
@@ -248,7 +248,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
 //        }
         return parameterValue;
     }
-    
+
     private String checkNamespacePrefix(String identifier) {
         if (getEReportingPrefixedIdentifierHelper().isSetNamespacePrefix()) {
                StringBuilder builder = new StringBuilder();
@@ -301,7 +301,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     protected void checkAndChangeFeatureOfInterestIdentifier(AbstractFeature abstractFeature) {
             checkAndChangeIdentifierOfAbstractFeature(abstractFeature);
     }
-    
+
     private void checkAndChangeIdentifierOfAbstractFeature(AbstractFeature abstractFeature) {
         abstractFeature.setIdentifier(checkFeatureOfInterestIdentifier(abstractFeature
                     .getIdentifier()));
@@ -332,7 +332,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     protected EReportingPrefixedIdentifierHelper getEReportingPrefixedIdentifierHelper() {
         return EReportingPrefixedIdentifierHelper.getInstance();
     }
-    
+
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {
         return super.getFacilitator();

@@ -33,6 +33,9 @@ import java.util.Locale;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.AbstractFeature;
@@ -47,8 +50,6 @@ import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.AbstractObservationRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

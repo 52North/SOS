@@ -35,13 +35,21 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.binding.Binding;
-import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.binding.BindingKey;
+import org.n52.iceland.binding.PathBindingKey;
+import org.n52.iceland.coding.decode.DecoderRepository;
+import org.n52.iceland.coding.encode.EncoderRepository;
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
@@ -56,9 +64,11 @@ import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionCode;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.response.ServiceResponse;
+import org.n52.iceland.util.Producer;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.iceland.util.http.HTTPUtils;
 import org.n52.iceland.util.http.MediaTypes;
@@ -82,9 +92,6 @@ import org.n52.sos.binding.rest.resources.offerings.OfferingsRequest;
 import org.n52.sos.binding.rest.resources.offerings.OfferingsRequestHandler;
 import org.n52.sos.binding.rest.resources.sensors.ISensorsRequest;
 import org.n52.sos.binding.rest.resources.sensors.SensorsRequestHandler;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -92,15 +99,72 @@ import com.google.common.collect.Sets;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  */
-public class RestBinding extends Binding {
+public class RestBinding extends Binding implements Constructable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestBinding.class);
-    private final Set<String> conformanceClasses;
-    private final Constants bindingConstants;
+    public static final String URI_PATTERN = "/rest";
+    private static final Set<BindingKey> KEYS = Collections.<BindingKey>singleton(new PathBindingKey(URI_PATTERN));
+    private Set<String> conformanceClasses;
+    private Constants bindingConstants;
+    private ServiceEventBus eventBus;
+    private EncoderRepository encoderRepository;
+    private DecoderRepository decoderRepository;
 
-    public RestBinding() {
-        bindingConstants = Constants.getInstance();
-        conformanceClasses = Sets.newHashSet(bindingConstants.getConformanceClass());
+    private Producer<XmlOptions> xmlOptions;
+
+    public void setXmlOptions(Producer<XmlOptions> xmlOptions) {
+        this.xmlOptions = xmlOptions;
+    }
+
+    public XmlOptions getXmlOptions() {
+        return xmlOptions.get();
+    }
+
+    @Inject
+    public void setDecoderRepository(DecoderRepository decoderRepository) {
+        this.decoderRepository = decoderRepository;
+    }
+
+    public DecoderRepository getDecoderRepository() {
+        return decoderRepository;
+    }
+
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
+
+    public EncoderRepository getEncoderRepository() {
+        return encoderRepository;
+    }
+
+    @Inject
+    public void setEventBus(ServiceEventBus eventBus) {
+        this.eventBus = eventBus;
+    }
+
+    public ServiceEventBus getEventBus() {
+        return eventBus;
+    }
+
+    @Inject
+    public void setBindingConstants(Constants bindingConstants) {
+        this.bindingConstants = bindingConstants;
+    }
+
+    @Override
+    public void init() {
+        this.conformanceClasses = Sets.newHashSet(this.bindingConstants.getConformanceClass());
+    }
+
+    @Override
+    public Set<BindingKey> getKeys() {
+        return KEYS;
+    }
+
+    @Override
+    public String getUrlPattern() {
+        return URI_PATTERN;
     }
 
     @Override
@@ -109,11 +173,6 @@ public class RestBinding extends Binding {
             return Collections.unmodifiableSet(conformanceClasses);
         }
         return Collections.emptySet();
-    }
-
-    @Override
-    public String getUrlPattern() {
-        return bindingConstants.getUrlPattern();
     }
 
     @Override
@@ -177,7 +236,7 @@ public class RestBinding extends Binding {
         } catch (final OwsExceptionReport oer) {
             LOGGER.error("Error while processing rest request. Exception thrown: {}",
                          oer.getClass().getSimpleName());
-            ServiceEventBus.fire(new ExceptionEvent(oer));
+            this.eventBus.submit(new ExceptionEvent(oer));
             serviceResponse = encodeOwsExceptionReport(oer);
         }
         HTTPUtils.writeObject(request, response, serviceResponse);
@@ -187,14 +246,14 @@ public class RestBinding extends Binding {
         try {
             ExceptionEncoderKey key = new ExceptionEncoderKey(MediaTypes.TEXT_XML);
             Encoder<XmlObject, OwsExceptionReport> encoder =
-                    CodingRepository.getInstance().getEncoder(key);
+                    getEncoderRepository().getEncoder(key);
             if (encoder == null) {
                 throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR,
                         new NoEncoderForKeyException(key));
             }
             XmlObject encoded = encoder.encode(oer);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            encoded.save(baos, XmlOptionsHelper.getInstance().getXmlOptions());
+            encoded.save(baos, getXmlOptions());
             baos.flush();
             return new ServiceResponse(null, MediaTypes.TEXT_XML, getResponseCode(oer));
         } catch (OwsExceptionReport ex) {
@@ -212,7 +271,7 @@ public class RestBinding extends Binding {
         return owsE.hasMessage() &&
                owsE.getMessage().contains(bindingConstants.getHttpOperationNotAllowedForResourceTypeMessagePart());
     }
-    
+
     private RestRequest decodeHttpRequest(final HttpServletRequest request) throws OwsExceptionReport
     {
         final Decoder<RestRequest, HttpServletRequest> decoder = getDecoder();
@@ -246,7 +305,7 @@ public class RestBinding extends Binding {
             LOGGER.debug(exceptionText);
             throw new NoApplicableCodeException().withMessage(exceptionText);
         }
-        
+
         response = encoder.encode(restResponse);
 
         if (response == null) {
@@ -275,23 +334,18 @@ public class RestBinding extends Binding {
                 throw new NoApplicableCodeException().withMessage(exceptionText);
              }
             return sdcResponse;
-        }catch(final XmlException xe) {
+        } catch(XmlException | IOException xe) {
             final String exceptionText = String.format("Processing of rest request response failed. Exception thrown: %s",
                     xe.getMessage());
             LOGGER.debug(exceptionText,xe);
             throw new NoApplicableCodeException().withMessage(exceptionText).causedBy(xe);
-        } catch (final IOException e) {
-            final String exceptionText = String.format("Processing of rest request response failed. Exception thrown: %s",
-                    e.getMessage());
-            LOGGER.debug(exceptionText,e);
-            throw new NoApplicableCodeException().withMessage(exceptionText).causedBy(e);
         }
     }
 
     private RestEncoder getEncoder() throws OwsExceptionReport
     {
     	final EncoderKey key = new XmlEncoderKey(bindingConstants.getEncodingNamespace(), RestResponse.class);
-        final Encoder<?,?> encoder = CodingRepository.getInstance().getEncoder(key);
+        final Encoder<?,?> encoder = getEncoderRepository().getEncoder(key);
         if (encoder instanceof RestEncoder) {
             return (RestEncoder) encoder;
         }
@@ -321,7 +375,7 @@ public class RestBinding extends Binding {
     }
 
 	private RestDecoder getDecoder() throws OwsExceptionReport {
-        final Set<Decoder<?, ?>> decoders = CodingRepository.getInstance().getDecoders();
+        final Set<Decoder<?, ?>> decoders = this.decoderRepository.getDecoders();
         for (final Decoder<?,?> decoder : decoders) {
             if (decoder instanceof RestDecoder) {
                 return (RestDecoder) decoder;
@@ -360,7 +414,7 @@ public class RestBinding extends Binding {
     }
 
     private ServiceResponse handleRequest(HttpServletRequest request,
-                                          HttpServletResponse response) 
+                                          HttpServletResponse response)
             throws OwsExceptionReport {
         ServiceResponse serviceResponse;
         LOGGER.debug("Start handling of REST request. URI:{}",
@@ -377,8 +431,9 @@ public class RestBinding extends Binding {
         serviceResponse = encodeRestResponse(restResponse);
         LOGGER.debug("Rest response encoded. DeleteObservationResponse received: {}",
                      response != null ? response.getClass().getName() : null);
-        
+
         LOGGER.debug("Handling of REST request finished. Returning response to web tier");
         return serviceResponse;
     }
+
 }

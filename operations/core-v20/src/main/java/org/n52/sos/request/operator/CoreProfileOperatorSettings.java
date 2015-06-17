@@ -28,32 +28,12 @@
  */
 package org.n52.sos.request.operator;
 
-import java.util.Collections;
-import java.util.Set;
-
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingDefinitionProvider;
-import org.n52.iceland.config.settings.BooleanSettingDefinition;
-import org.n52.iceland.service.ServiceSettings;
-
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
-public class CoreProfileOperatorSettings implements SettingDefinitionProvider {
-    public static final String BLOCK_GET_OBSERVATION_REQUESTS_WITHOUT_RESTRICTION =
-            "service.blockGetObservationRequestsWithoutRestriction";
-
-    private static final BooleanSettingDefinition BLOCK_GET_OBSERVATION_REQUESTS_WITHOUT_RESTRICTION_DEFINITION =
-            new BooleanSettingDefinition().setGroup(ServiceSettings.GROUP).setDefaultValue(Boolean.FALSE)
-                    .setDescription("Should GetObservation requests without any restriction be blocked")
-                    .setTitle("Block restrictionless requests")
-                    .setKey(BLOCK_GET_OBSERVATION_REQUESTS_WITHOUT_RESTRICTION).setOrder(12);
-
-    @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return Collections
-                .<SettingDefinition<?, ?>> singleton(BLOCK_GET_OBSERVATION_REQUESTS_WITHOUT_RESTRICTION_DEFINITION);
-    }
+public interface CoreProfileOperatorSettings {
+    String BLOCK_GET_OBSERVATION_REQUESTS_WITHOUT_RESTRICTION
+            = "service.blockGetObservationRequestsWithoutRestriction";
 }

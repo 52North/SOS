@@ -62,9 +62,12 @@ import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.ObservationEncoder;
+import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
@@ -79,8 +82,7 @@ import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.service.Configurator;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.StringHelper;
@@ -113,8 +115,6 @@ import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SweHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -123,18 +123,23 @@ import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements ObservationEncoder<XmlObject, Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OmEncoderv100.class);
 
-    private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
-            SupportedTypeKey.ObservationType, (Set<String>) ImmutableSet.of(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION,
-                    OmConstants.OBS_TYPE_COUNT_OBSERVATION,
-                    // OMConstants.OBS_TYPE_GEOMETRY_OBSERVATION,
-                    OmConstants.OBS_TYPE_MEASUREMENT, OmConstants.OBS_TYPE_TEXT_OBSERVATION,
-                    OmConstants.OBS_TYPE_TRUTH_OBSERVATION, OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION));
+    private static final Set<SupportedType> SUPPORTED_TYPES = ImmutableSet
+            .<SupportedType>builder()
+            .add(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION_TYPE)
+            //.add(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION_TYPE)
+            //.add(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_COUNT_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_MEASUREMENT_TYPE)
+            .add(OmConstants.OBS_TYPE_TEXT_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_TRUTH_OBSERVATION_TYPE)
+            .build();
 
     // TODO: change to correct conformance class
     private static final Set<String> CONFORMANCE_CLASSES = ImmutableSet.of(
@@ -163,13 +168,13 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.unmodifiableMap(SUPPORTED_TYPES);
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
 
     @Override
@@ -550,13 +555,13 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
     /**
      * Encodes a SosAbstractFeature to an SpatialSamplingFeature under
      * consideration of duplicated SpatialSamplingFeature in the XML document.
-     * 
+     *
      * @param observation
      *            XmlObject O&M observation
      * @param feature
      *            SOS observation
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      */
     private void addFeatureOfInterest(ObservationType observation, AbstractFeature feature) throws OwsExceptionReport {

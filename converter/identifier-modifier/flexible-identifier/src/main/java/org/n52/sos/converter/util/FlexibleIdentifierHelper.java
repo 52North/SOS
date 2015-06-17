@@ -28,30 +28,25 @@
  */
 package org.n52.sos.converter.util;
 
-import java.util.concurrent.locks.ReentrantLock;
 
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.ows.Extension;
 import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Configurable
-public class FlexibleIdentifierHelper {
+public class FlexibleIdentifierHelper implements Constructable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FlexibleIdentifierHelper.class);
 
     public static final String RETURN_HUMAN_READABLE_IDENTIFIER = "returnHumanReadableIdentifier";
 
+    @Deprecated
     private static FlexibleIdentifierHelper instance;
-
-    private static ReentrantLock creationLock = new ReentrantLock();
 
     private boolean returnHumanReadableIdentifier = false;
 
@@ -63,36 +58,22 @@ public class FlexibleIdentifierHelper {
 
     private boolean includeFeatureOfInterest = true;
 
-    /**
-     * Private constructor
-     */
-    private FlexibleIdentifierHelper() {
+    @Override
+    public void init() {
+        FlexibleIdentifierHelper.instance = this;
     }
 
     /**
      * @return Returns a singleton instance of the GeometryHandler.
      */
+    @Deprecated
     public static FlexibleIdentifierHelper getInstance() {
-        if (instance == null) {
-            creationLock.lock();
-            try {
-                if (instance == null) {
-                    // don't set instance before configuring, or other threads
-                    // can get access to unconfigured instance!
-                    final FlexibleIdentifierHelper newInstance = new FlexibleIdentifierHelper();
-                    SettingsManager.getInstance().configure(newInstance);
-                    instance = newInstance;
-                }
-            } finally {
-                creationLock.unlock();
-            }
-        }
         return instance;
     }
 
     @Setting(FlexibleIdentifierSettings.RETURN_HUMAN_READABLE_IDENTIFIER_KEY)
     public void setReturnHumanReadableIdentifier(final boolean returnHumanReadableIdentifier)
-            throws ConfigurationException {
+            throws ConfigurationError {
         this.returnHumanReadableIdentifier = returnHumanReadableIdentifier;
     }
 
@@ -101,7 +82,7 @@ public class FlexibleIdentifierHelper {
     }
 
     @Setting(FlexibleIdentifierSettings.INCLUDE_OFFERING_KEY)
-    public void setIncludeOffering(final boolean includeOffering) throws ConfigurationException {
+    public void setIncludeOffering(final boolean includeOffering) throws ConfigurationError {
         this.includeOffering = includeOffering;
     }
 
@@ -110,7 +91,7 @@ public class FlexibleIdentifierHelper {
     }
 
     @Setting(FlexibleIdentifierSettings.INCLUDE_PROCEDURE_KEY)
-    public void setIncludeProcedure(final boolean includeProcedure) throws ConfigurationException {
+    public void setIncludeProcedure(final boolean includeProcedure) throws ConfigurationError {
         this.includeProcedure = includeProcedure;
     }
 
@@ -119,7 +100,7 @@ public class FlexibleIdentifierHelper {
     }
 
     @Setting(FlexibleIdentifierSettings.INCLUDE_OBSERVABLE_PROPERTY_KEY)
-    public void setIncludeObservableProperty(final boolean includeObservableProperty) throws ConfigurationException {
+    public void setIncludeObservableProperty(final boolean includeObservableProperty) throws ConfigurationError {
         this.includeObservableProperty = includeObservableProperty;
     }
 
@@ -128,7 +109,7 @@ public class FlexibleIdentifierHelper {
     }
 
     @Setting(FlexibleIdentifierSettings.INCLUDE_FEATURE_OF_INTEREST_KEY)
-    public void setIncludeFeatureOfInterest(final boolean includeFeatureOfInterest) throws ConfigurationException {
+    public void setIncludeFeatureOfInterest(final boolean includeFeatureOfInterest) throws ConfigurationError {
         this.includeFeatureOfInterest = includeFeatureOfInterest;
     }
 

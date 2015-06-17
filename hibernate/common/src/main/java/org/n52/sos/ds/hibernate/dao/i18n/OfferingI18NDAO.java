@@ -28,12 +28,16 @@
  */
 package org.n52.sos.ds.hibernate.dao.i18n;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.hibernate.Session;
+
+import org.n52.iceland.i18n.I18NDAOKey;
 import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NOfferingMetadata;
-
 
 public class OfferingI18NDAO extends AbstractHibernateI18NDAO<Offering, I18NOfferingMetadata, HibernateI18NOfferingMetadata> {
 
@@ -58,7 +62,7 @@ public class OfferingI18NDAO extends AbstractHibernateI18NDAO<Offering, I18NOffe
     }
 
     @Override
-    public Class<I18NOfferingMetadata> getType() {
-        return I18NOfferingMetadata.class;
+    public Set<I18NDAOKey> getKeys() {
+        return Collections.singleton(new I18NDAOKey(I18NOfferingMetadata.class));
     }
 }

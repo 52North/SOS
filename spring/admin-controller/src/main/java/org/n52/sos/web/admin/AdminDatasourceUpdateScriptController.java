@@ -32,10 +32,11 @@ import java.sql.SQLException;
 
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.sos.ds.hibernate.SessionFactoryProvider;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.common.AbstractController;
+import org.n52.sos.web.common.ControllerConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;

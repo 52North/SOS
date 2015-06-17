@@ -31,9 +31,10 @@ package org.n52.sos.encode.sos.v2;
 import java.io.OutputStream;
 
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.ObservationEncoder;
+import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;

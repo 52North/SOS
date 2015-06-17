@@ -61,6 +61,9 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlRuntimeException;
 import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
@@ -93,8 +96,6 @@ import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -106,7 +107,7 @@ import com.vividsolutions.jts.geom.util.PolygonExtracter;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
 
@@ -124,7 +125,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
 
@@ -197,13 +198,13 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
 
     /**
      * Creates a XML TimePeriod from the SOS time object.
-     * 
+     *
      * @param timePeriod
      *            SOS time object
      * @param timePeriodType
      * @return XML TimePeriod
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs.
      */
@@ -236,13 +237,13 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
 
     /**
      * Creates a XML TimeInstant from the SOS time object.
-     * 
+     *
      * @param timeInstant
      *            SOS time object
      * @param timeInstantType
      * @return XML TimeInstant
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs.
      */
@@ -312,7 +313,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
 
     /**
      * Creates a XML Point from a SOS Point.
-     * 
+     *
      * @param jtsPoint
      *            SOS Point
      * @param xbPoint
@@ -326,7 +327,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
 
     /**
      * Creates a XML LineString from a SOS LineString.
-     * 
+     *
      * @param jtsLineString
      *            SOS LineString
      * @param xbLst
@@ -341,7 +342,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
 
     /**
      * Creates a XML Polygon from a SOS Polygon.
-     * 
+     *
      * @param jtsPolygon
      *            SOS Polygon
      * @param xbPolType

@@ -38,7 +38,7 @@ import org.n52.iceland.response.AbstractServiceResponse;
 
 /**
  * @since 4.0.0
- * 
+ *
  * @param <D>
  *            The OperationDAO implementation class
  * @param <Q>
@@ -48,6 +48,7 @@ import org.n52.iceland.response.AbstractServiceResponse;
  */
 public abstract class AbstractV2TransactionalRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
         extends AbstractTransactionalRequestOperator<D, Q, A> implements WSDLAwareRequestOperator {
+
     public AbstractV2TransactionalRequestOperator(String operationName, Class<Q> requestType) {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, operationName, requestType);
     }

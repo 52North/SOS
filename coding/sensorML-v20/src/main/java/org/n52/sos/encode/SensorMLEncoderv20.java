@@ -28,7 +28,6 @@
  */
 package org.n52.sos.encode;
 
-import static java.util.Collections.singletonMap;
 import static org.n52.iceland.util.CollectionHelper.union;
 import static org.n52.sos.util.CodingHelper.encoderKeysForElements;
 
@@ -85,6 +84,9 @@ import net.opengis.sensorml.x20.TermType;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
@@ -101,7 +103,8 @@ import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.ProcedureDescriptionFormat;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.util.http.MediaType;
@@ -147,8 +150,6 @@ import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
@@ -160,7 +161,6 @@ import com.google.common.collect.Sets;
 
 /**
  * {@link AbstractSensorMLEncoder} class to encode OGC SensorML 2.0
- * 
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
@@ -168,20 +168,20 @@ import com.google.common.collect.Sets;
 public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorMLEncoderv20.class);
 
-    private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = singletonMap(
-            SupportedTypeKey.ProcedureDescriptionFormat, (Set<String>) ImmutableSet.of(
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL,
-                    SensorML20Constants.SENSORML_20_CONTENT_TYPE.toString()));
+
+    private static final ImmutableSet<SupportedType> SUPPORTED_TYPES
+            = ImmutableSet.<SupportedType>builder()
+            .add(new ProcedureDescriptionFormat(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL))
+            .add(new ProcedureDescriptionFormat(SensorML20Constants.SENSORML_20_CONTENT_TYPE.toString()))
+            .build();
 
     private static final Map<String, ImmutableMap<String, Set<String>>> SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS =
             ImmutableMap.of(
                     SosConstants.SOS,
                     ImmutableMap
                             .<String, Set<String>> builder()
-                            .put(Sos2Constants.SERVICEVERSION,
-                                    ImmutableSet.of(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL))
-                            .put(Sos1Constants.SERVICEVERSION,
-                                    ImmutableSet.of(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE)).build());
+                            .put(Sos2Constants.SERVICEVERSION, ImmutableSet.of(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL))
+                            .put(Sos1Constants.SERVICEVERSION, ImmutableSet.of(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE)).build());
 
     @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = union(
@@ -196,13 +196,13 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.unmodifiableMap(SUPPORTED_TYPES);
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
 
     @Override
@@ -222,11 +222,9 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     @Override
     public Set<String> getSupportedProcedureDescriptionFormats(final String service, final String version) {
-        if (SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS.containsKey(service)
-                && SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS.get(service).containsKey(version)) {
-            return SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS.get(service).get(version);
-        }
-        return Collections.emptySet();
+        return SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS
+                .getOrDefault(service, ImmutableMap.of())
+                .getOrDefault(version, Collections.emptySet());
     }
 
     @Override
@@ -540,7 +538,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             describedObject.setGmlId("do_" + JavaHelper.generateID(describedObject.toString()));
         }
         dot.setId(describedObject.getGmlId());
-        
+
         // update/set gml:identifier
         if (describedObject.isSetIdentifier()) {
             describedObject.getIdentifierCodeWithAuthority().setCodeSpace(OGCConstants.UNIQUE_ID);
@@ -553,7 +551,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                 }
             }
         }
-        
+
 
         // merge offerings if set
         if (describedObject.isSetOfferings()) {
@@ -951,7 +949,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                     XmlObject substituteElement =
                             XmlHelper.substituteElement(c.addNewAbstractDataComponent(), encodeObjectToXml);
                     substituteElement.set(encodeObjectToXml);
-                    
+
                 }
             } else if (capabilities.isSetAbstractDataComponents()) {
                 for (SweAbstractDataComponent component : capabilities.getAbstractDataComponents()) {
@@ -1014,7 +1012,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     /**
      * Creates the valueentification section of the SensorML description.
-     * 
+     *
      * @param identifications
      *            SOS valueentifications
      * @return XML Identification array
@@ -1037,7 +1035,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     /**
      * Creates the classification section of the SensorML description.
-     * 
+     *
      * @param classifications
      *            SOS classifications
      * @return XML Classification array
@@ -1063,7 +1061,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     /**
      * Creates the characteristics section of the SensorML description.
-     * 
+     *
      * @param smlCharacteristics
      *            SOS characteristics list
      * @return XML Characteristics array
@@ -1107,7 +1105,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     /**
      * Create XML Documentation array from SOS documentations
-     * 
+     *
      * @param sosDocumentation
      *            SOS documentation list
      * @return XML Documentation array
@@ -1130,7 +1128,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     /**
      * Create a XML Documentation element from SOS documentation
-     * 
+     *
      * @param sosDocumentation
      *            SOS documentation
      * @return XML Documentation element
@@ -1147,7 +1145,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     /**
      * Create a XML DocuemntList from SOS documentList
-     * 
+     *
      * @param sosDocumentationList
      *            SOS documentList
      * @return XML DocumentList element
@@ -1168,9 +1166,9 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     /**
      * Creates the position section of the SensorML description.
-     * 
+     *
      * @param pupt
-     * 
+     *
      * @param position
      *            SOS position
      * @return XML Position element
@@ -1192,7 +1190,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     /**
      * Creates the location section of the SensorML description.
-     * 
+     *
      * @param location
      *            SOS location representation.
      * @return XML SmlLocation2 element
@@ -1206,11 +1204,11 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     /**
      * Creates the inputs section of the SensorML description.
-     * 
+     *
      * @param inputs
      *            SOS SWE representation.
      * @return XML Inputs element
-     * 
+     *
      * @throws OwsExceptionReport
      *             if an error occurs
      */
@@ -1231,11 +1229,11 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     /**
      * Creates the outputs section of the SensorML description.
-     * 
+     *
      * @param sosOutputs
      *            SOS SWE representation.
      * @return XML Outputs element
-     * 
+     *
      * @throws OwsExceptionReport
      */
     private Outputs createOutputs(final List<SmlIo<?>> sosOutputs) throws OwsExceptionReport {
@@ -1279,7 +1277,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         }
         return null;
     }
-    
+
     private void addFeatures(FeatureListType featureList, SmlFeatureOfInterest feature) {
         Set<String> featuresToAdd = Sets.newHashSet();
         if (feature.isSetFeaturesOfInterest()) {
@@ -1299,7 +1297,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     /**
      * Creates the components section of the SensorML description.
-     * 
+     *
      * @param sosComponents
      *            SOS SWE representation.
      * @return encoded sml:components
@@ -1365,7 +1363,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     /**
      * Adds a SOS SWE simple type to a XML SML Input.
-     * 
+     *
      * @param input
      *            SML Input
      * @param sosSMLIO
@@ -1402,12 +1400,12 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     /**
      * Adds a SOS SWE simple type to a XML SML Output.
-     * 
+     *
      * @param output
      *            SML Output
      * @param sosSMLIO
      *            SOS SWE simple type.
-     * 
+     *
      * @throws OwsExceptionReport
      */
     private void addOutput(final Output output, final SmlIo<?> sosSMLIO) throws OwsExceptionReport {

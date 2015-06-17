@@ -112,8 +112,8 @@ public class DeleteObservationDecoderTest {
 
     @Test
     public void testGetDecoderKeyTypes() {
-        assertNotNull("DecoderKey is null", instance.getDecoderKeyTypes());
-        assertTrue("DecoderKey does NOT equal " + dkt, instance.getDecoderKeyTypes().equals(dkt));
+        assertNotNull("DecoderKey is null", instance.getKeys());
+        assertTrue("DecoderKey does NOT equal " + dkt, instance.getKeys().equals(dkt));
     }
 
     @Test

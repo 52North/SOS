@@ -33,7 +33,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.CodingRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
@@ -45,29 +47,28 @@ import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.ResponseFormat;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.iceland.coding.encode.AbstractDelegatingEncoder;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.exi.EXIObject;
 import org.n52.sos.response.StreamingDataResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
 /**
  * Abstract response encoder class for {@link EXIObject}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  * @param <T>
  *            concrete {@link AbstractServiceResponse}
  */
-public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> implements Encoder<EXIObject, T> {
+public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> extends AbstractDelegatingEncoder<EXIObject, T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSosResponseEncoder.class);
 
@@ -75,7 +76,7 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> imple
 
     /**
      * Constructor
-     * 
+     *
      * @param type
      *            Concrete {@link AbstractServiceResponse} class
      * @param operation
@@ -85,13 +86,13 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> imple
      */
     public AbstractSosResponseEncoder(Class<T> type, String operation, String version) {
         OperationKey key = new OperationKey(SosConstants.SOS, version, operation);
-        this.encoderKeys = Sets.newHashSet((EncoderKey) new OperationEncoderKey(key, MediaTypes.APPLICATION_EXI));
+        this.encoderKeys = Sets.<EncoderKey>newHashSet(new OperationEncoderKey(key, MediaTypes.APPLICATION_EXI));
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(encoderKeys));
     }
 
     /**
      * Constructor
-     * 
+     *
      * @param type
      *            Concrete {@link AbstractServiceResponse} class
      * @param operation
@@ -125,8 +126,8 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> imple
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override
@@ -135,8 +136,8 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> imple
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
-        return encoderKeys;
+    public Set<EncoderKey> getKeys() {
+        return Collections.unmodifiableSet(encoderKeys);
     }
 
     @Override
@@ -157,7 +158,7 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> imple
     /**
      * Get the {@link Encoder} for the {@link AbstractServiceResponse} and the
      * requested contentType
-     * 
+     *
      * @param asr
      *            {@link AbstractServiceResponse} to get {@link Encoder} for
      * @return {@link Encoder} for the {@link AbstractServiceResponse}
@@ -173,19 +174,8 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> imple
     }
 
     /**
-     * Getter for encoder, encapsulates the instance call
-     * 
-     * @param key
-     *            Encoder key
-     * @return Matching encoder
-     */
-    protected <D, S> Encoder<D, S> getEncoder(EncoderKey key) {
-        return CodingRepository.getInstance().getEncoder(key);
-    }
-
-    /**
      * Get encoding {@link MediaType} from {@link AbstractServiceResponse}
-     * 
+     *
      * @param asr
      *            {@link AbstractServiceResponse} to get content type from
      * @return Encoding {@link MediaType}
@@ -199,7 +189,7 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> imple
 
     /**
      * Get encoding {@link MediaType} from {@link ResponseFormat}
-     * 
+     *
      * @param responseFormat
      *            {@link ResponseFormat} to get content type from
      * @return Encoding {@link MediaType}

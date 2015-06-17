@@ -33,10 +33,10 @@ import static org.n52.sos.service.TransactionalSecuritySettings.TRANSACTIONAL_AC
 import static org.n52.sos.service.TransactionalSecuritySettings.TRANSACTIONAL_ALLOWED_IPS;
 import static org.n52.sos.service.TransactionalSecuritySettings.TRANSACTIONAL_TOKEN;
 
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.util.net.IPAddress;
@@ -47,11 +47,12 @@ import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
- * 
+ *
  * @since 4.0.0
  */
 @Configurable
-public class TransactionalSecurityConfiguration {
+public class TransactionalSecurityConfiguration implements Constructable {
+    @Deprecated
     private static TransactionalSecurityConfiguration instance;
 
     private boolean transactionalActive;
@@ -69,22 +70,18 @@ public class TransactionalSecurityConfiguration {
 
     private ImmutableSet<IPAddress> allowedProxies =  ImmutableSet.of();
 
+    @Override
+    public void init() {
+        TransactionalSecurityConfiguration.instance = this;
+    }
+
     /**
      * @return Returns a singleton instance of the
      *         TransactionalSecurityConfiguration.
      */
-    public static synchronized TransactionalSecurityConfiguration getInstance() {
-        if (instance == null) {
-            instance = new TransactionalSecurityConfiguration();
-            SettingsManager.getInstance().configure(instance);
-        }
+    @Deprecated
+    public static TransactionalSecurityConfiguration getInstance() {
         return instance;
-    }
-
-    /**
-     * private constructor for singleton
-     */
-    private TransactionalSecurityConfiguration() {
     }
 
     /**
@@ -112,7 +109,7 @@ public class TransactionalSecurityConfiguration {
     }
 
     @Setting(TRANSACTIONAL_ALLOWED_IPS)
-    public void setTransactionalAllowedIps(final String txAllowedIps) throws ConfigurationException {
+    public void setTransactionalAllowedIps(final String txAllowedIps) throws ConfigurationError {
         if (StringHelper.isNotEmpty(txAllowedIps)) {
             final Builder<IPAddressRange> builder = ImmutableSet.builder();
             for (final String splitted : txAllowedIps.split(",")) {
@@ -121,7 +118,7 @@ public class TransactionalSecurityConfiguration {
                 try {
                     builder.add(new IPAddressRange(cidrAddress));
                 } catch (final IllegalArgumentException e) {
-                    throw new ConfigurationException(
+                    throw new ConfigurationError(
                             "Transactional allowed address is not a valid CIDR range or IP address", e);
                 }
             }
@@ -139,7 +136,7 @@ public class TransactionalSecurityConfiguration {
                 try {
                     builder.add(new IPAddress(splitted.trim()));
                 } catch (final IllegalArgumentException e) {
-                    throw new ConfigurationException(
+                    throw new ConfigurationError(
                             "Allowed proxy address is not a valid IP address", e);
                 }
             }

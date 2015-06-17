@@ -29,8 +29,6 @@
 package org.n52.sos.decode;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import net.opengis.ogc.BBOXType;
@@ -45,12 +43,15 @@ import net.opengis.ogc.impl.BBOXTypeImpl;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.NodeList;
+
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.OGCConstants;
 import org.n52.iceland.ogc.filter.FilterConstants;
 import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
@@ -60,22 +61,18 @@ import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.NodeList;
 
 import com.google.common.base.Joiner;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
 
@@ -91,13 +88,8 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
     }
 
     @Override
@@ -136,20 +128,15 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
         // return error message
     }
 
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
-    }
-
     /**
      * parses a single temporal filter of the requests and returns SOS temporal
      * filter
-     * 
+     *
      * @param xbBinaryTemporalOp
      *            XmlObject representing the temporal filter
      * @return Returns SOS representation of temporal filter
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             if parsing of the element failed
      */
@@ -213,14 +200,14 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
 
     /**
      * Parses the spatial filter of a request.
-     * 
+     *
      * @param xbBBOX
      *            XmlBean representing the feature of interest parameter of the
      *            request
      * @return Returns SpatialFilter created from the passed foi request
      *         parameter
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if creation of the SpatialFilter failed
      */

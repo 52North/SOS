@@ -38,19 +38,22 @@ import com.google.common.base.Objects;
 
 /**
  * Interface for the SOS internal representation of SWE simpleTypes
- * 
+ *
  * @param <T>
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  */
-public abstract class SweAbstractSimpleType<T> extends SweAbstractDataComponent implements Value<T, SweAbstractSimpleType<T>> {
+public abstract class SweAbstractSimpleType<T>
+        extends SweAbstractDataComponent
+        implements Value<T, SweAbstractSimpleType<T>> {
 
-	// TODO quality needs to be a collection 
+	// TODO quality needs to be a collection
     private Collection<SweQuality> quality;
 
     /**
      * Get quality information
-     * 
+     *
      * @return Quality information
      */
     public Collection<SweQuality> getQuality() {
@@ -59,12 +62,12 @@ public abstract class SweAbstractSimpleType<T> extends SweAbstractDataComponent 
 
     /**
      * Set quality information
-     * 
+     *
      * @param quality
      *            quality information to set
      * @return This SweAbstractSimpleType
      */
-    public SweAbstractSimpleType<T> setQuality(final Collection<SweQuality> quality) {
+    public SweAbstractSimpleType<T> setQuality(Collection<SweQuality> quality) {
         this.quality = quality;
         return this;
     }
@@ -81,7 +84,7 @@ public abstract class SweAbstractSimpleType<T> extends SweAbstractDataComponent 
     public int hashCode() {
         return Objects.hashCode(super.hashCode(), getValue());
     }
-    
+
     @Override
     public String toString() {
         return String.format("%s [value=%s; quality=%s; simpleType=%s]", this.getClass().getSimpleName(), getValue(),

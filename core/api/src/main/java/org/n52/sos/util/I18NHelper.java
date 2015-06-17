@@ -30,13 +30,13 @@ package org.n52.sos.util;
 
 import java.util.Locale;
 
+import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.i18n.LocalizedString;
 import org.n52.iceland.i18n.MultilingualString;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.sos.cache.ContentCache;
 import org.n52.sos.ogc.sos.SosOffering;
 
 import com.google.common.base.Optional;
@@ -58,8 +58,13 @@ public class I18NHelper {
      * @param request
      *            Request with language
      */
+    @Deprecated
     public static void addOfferingNames(SosOffering sosOffering, AbstractServiceRequest<?> request) {
         addOfferingNames(sosOffering, LocaleHelper.fromString(request.getRequestedLanguage()));
+    }
+
+    public static void addOfferingNames(SosOffering sosOffering, AbstractServiceRequest<?> request,SosContentCache cache, Locale defaultLocale, boolean showAllLanguages) {
+        addOfferingNames(cache, sosOffering, LocaleHelper.fromString(request.getRequestedLanguage()), defaultLocale, showAllLanguages);
     }
 
     /**
@@ -71,29 +76,33 @@ public class I18NHelper {
      * @param requestedLocale
      *            the specific language
      */
+    @Deprecated
     public static void addOfferingNames(SosOffering offering, Locale requestedLocale) {
+        addOfferingNames(getCache(), offering, requestedLocale, getDefaultLanguage(),
+                        isShowAllLanguageValues());
+    }
+
+    public static void addOfferingNames(SosContentCache cache, SosOffering offering, Locale requestedLocale, Locale defaultLocale, boolean showAllLanguages) {
         String identifier = offering.getIdentifier();
-        Locale defaultLanguage = getDefaultLanguage();
-        if (requestedLocale != null && getCache().hasI18NNamesForOffering(identifier, requestedLocale)) {
-            offering.addName(getCache().getI18nNameForOffering(identifier, requestedLocale).asCodeType());
+        if (requestedLocale != null && cache.hasI18NNamesForOffering(identifier, requestedLocale)) {
+            offering.addName(cache.getI18nNameForOffering(identifier, requestedLocale).asCodeType());
         } else {
-            if (ServiceConfiguration.getInstance().isShowAllLanguageValues()) {
-                MultilingualString names = getCache().getI18nNamesForOffering(identifier);
+            if (showAllLanguages) {
+                MultilingualString names = cache.getI18nNamesForOffering(identifier);
                 if (names != null) {
                     for (LocalizedString name : names) {
                         offering.addName(name.asCodeType());
                     }
                 }
             } else {
-                LocalizedString name = getCache()
-                        .getI18nNameForOffering(identifier, defaultLanguage);
+                LocalizedString name = cache.getI18nNameForOffering(identifier, defaultLocale);
                 if (name != null) {
                     offering.addName(name.asCodeType());
                 }
             }
         }
         if (!offering.isSetName()) {
-            offering.addName(getCache().getNameForOffering(identifier));
+            offering.addName(cache.getNameForOffering(identifier));
         }
     }
 
@@ -106,6 +115,7 @@ public class I18NHelper {
      * @param request
      *            Request with language
      */
+    @Deprecated
     public static void addOfferingDescription(SosOffering sosOffering, AbstractServiceRequest<?> request) {
         addOfferingDescription(sosOffering, LocaleHelper.fromString(request.getRequestedLanguage()));
     }
@@ -119,12 +129,17 @@ public class I18NHelper {
      * @param locale
      *            the specific language
      */
+    @Deprecated
     public static void addOfferingDescription(SosOffering offering, Locale locale) {
-        MultilingualString descriptions = getCache()
+        addOfferingDescription(offering, locale, getDefaultLanguage(), getCache());
+    }
+
+    public static void addOfferingDescription(SosOffering offering, Locale locale, Locale defaultLocale, SosContentCache cache) {
+        MultilingualString descriptions = cache
                 .getI18nDescriptionsForOffering(offering.getIdentifier());
         if (descriptions != null) {
             Optional<LocalizedString> description = descriptions
-                    .getLocalizationOrDefault(locale);
+                    .getLocalizationOrDefault(locale, defaultLocale);
             if (description.isPresent()) {
                 offering.setDescription(description.get().getText());
             }
@@ -136,7 +151,8 @@ public class I18NHelper {
      *
      * @return Current cache
      */
-    protected static ContentCache getCache() {
+    @Deprecated
+    protected static SosContentCache getCache() {
         return Configurator.getInstance().getCache();
     }
 
@@ -145,8 +161,14 @@ public class I18NHelper {
      *
      * @return Default language
      */
+    @Deprecated
     protected static Locale getDefaultLanguage() {
         return ServiceConfiguration.getInstance().getDefaultLanguage();
+    }
+
+    @Deprecated
+    protected static boolean isShowAllLanguageValues() {
+        return ServiceConfiguration.getInstance().isShowAllLanguageValues();
     }
 
     /**

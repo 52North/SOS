@@ -51,14 +51,14 @@ public class AddressJSONEncoder extends JSONEncoder<Address> {
     public JsonNode encodeJSON(Address t)
             throws OwsExceptionReport {
         ObjectNode j = nodeFactory().objectNode();
-        j.put(AQDJSONConstants.ADDRESS_AREAS, encodeObjectToJson(t.getAddressAreas()));
-        j.put(AQDJSONConstants.ADDRESS_FEATURE, encodeObjectToJson(t.getAddressFeature()));
-        j.put(AQDJSONConstants.ADMIN_UNITS, encodeObjectToJson(t.getAdminUnits()));
-        j.put(AQDJSONConstants.LOCATOR_DESIGNATORS, encodeObjectToJson(t.getLocatorDesignators()));
-        j.put(AQDJSONConstants.LOCATOR_NAMES, encodeObjectToJson(t.getLocatorNames()));
-        j.put(AQDJSONConstants.POST_CODE, encodeObjectToJson(t.getPostCode()));
-        j.put(AQDJSONConstants.POST_NAMES, encodeObjectToJson(t.getPostNames()));
-        j.put(AQDJSONConstants.THOROUGHFARES, encodeObjectToJson(t.getThoroughfares()));
+        j.set(AQDJSONConstants.ADDRESS_AREAS, encodeObjectToJson(t.getAddressAreas()));
+        j.set(AQDJSONConstants.ADDRESS_FEATURE, encodeObjectToJson(t.getAddressFeature()));
+        j.set(AQDJSONConstants.ADMIN_UNITS, encodeObjectToJson(t.getAdminUnits()));
+        j.set(AQDJSONConstants.LOCATOR_DESIGNATORS, encodeObjectToJson(t.getLocatorDesignators()));
+        j.set(AQDJSONConstants.LOCATOR_NAMES, encodeObjectToJson(t.getLocatorNames()));
+        j.set(AQDJSONConstants.POST_CODE, encodeObjectToJson(t.getPostCode()));
+        j.set(AQDJSONConstants.POST_NAMES, encodeObjectToJson(t.getPostNames()));
+        j.set(AQDJSONConstants.THOROUGHFARES, encodeObjectToJson(t.getThoroughfares()));
         return j;
     }
 

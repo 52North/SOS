@@ -29,10 +29,10 @@
 package org.n52.sos.decode;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
@@ -40,43 +40,35 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.AbstractServiceCommunicationObject;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.coding.decode.XmlNamespaceDecoderKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
 public class AqdDecoderv10 implements Decoder<AbstractServiceCommunicationObject, XmlObject> {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(AqdDecoderv10.class);
-	
-	  private static final Set<DecoderKey> DECODER_KEYS = 
+
+	  private static final Set<DecoderKey> DECODER_KEYS =
 	            CodingHelper.xmlDecoderKeysForOperation(AqdConstants.AQD, AqdConstants.VERSION,
 	                    SosConstants.Operations.GetCapabilities, SosConstants.Operations.GetObservation,
 	                    SosConstants.Operations.DescribeSensor);
-	
+
 	public AqdDecoderv10() {
 		  LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
 	                .join(DECODER_KEYS));
 	}
 
 	@Override
-	public Set<String> getConformanceClasses(String service, String version) {
-		 return Collections.emptySet();
-	}
-
-	@Override
-	public Set<DecoderKey> getDecoderKeyTypes() {
+	public Set<DecoderKey> getKeys() {
 			return Collections.unmodifiableSet(DECODER_KEYS);
-	}
-
-	@Override
-	public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-		 return Collections.emptyMap();
 	}
 
 	@Override

@@ -30,15 +30,16 @@ package org.n52.sos.cache.ctrl.action;
 
 import java.util.Collection;
 
-import org.n52.iceland.util.Action;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.cache.WritableContentCache;
+import org.n52.iceland.util.action.Action;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.swes.SwesFeatureRelationship;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.response.InsertSensorResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * When executing this &auml;ction (see {@link Action}), the following relations
@@ -52,11 +53,11 @@ import org.slf4j.LoggerFactory;
  * <li>Offering &rarr; allowed observation type</li> <li>Offering &rarr; related
  * feature</li> <li>Related features &rarr; role</li> <li>Observable Property
  * &harr; Procedure</li> <li>Offering &harr; observable property</li>
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @since 4.0.0
- * 
+ *
  */
 public class SensorInsertionUpdate extends InMemoryCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorInsertionUpdate.class);
@@ -79,7 +80,7 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
 
     @Override
     public void execute() {
-        final WritableContentCache cache = getCache();
+        final SosWritableContentCache cache = getCache();
         final String procedure = response.getAssignedProcedure();
 
         // procedure relations

@@ -28,84 +28,79 @@
  */
 package org.n52.sos.cache.ctrl.action;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.sos.cache.ContentCacheUpdate;
-import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.sos.cache.SosContentCacheUpdate;
+import org.n52.sos.ogc.om.features.FeatureCollection;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * TODO add log statements to all protected methods! TODO extract sub classes
  * for insertion updates
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @since 4.0.0
- * 
+ *
  */
-public abstract class InMemoryCacheUpdate extends ContentCacheUpdate {
+public abstract class InMemoryCacheUpdate extends SosContentCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryCacheUpdate.class);
 
     /**
      * Get a list of all SosSamplingFeatures contained in the abstract feature.
-     * 
+     *
      * @param abstractFeature
      *            the abstract feature
-     * 
+     *
      * @return a list of all sampling features
      */
     protected List<SamplingFeature> sosFeaturesToList(AbstractFeature abstractFeature) {
-        if (abstractFeature instanceof FeatureCollection) {
-            return getAllFeaturesFrom((FeatureCollection) abstractFeature);
-        } else if (abstractFeature instanceof SamplingFeature) {
-            return Collections.singletonList((SamplingFeature) abstractFeature);
+        return asStream(abstractFeature).collect(Collectors.toList());
+    }
+
+    private Stream<SamplingFeature> asStream(FeatureCollection fc) {
+        return fc.getMembers().values().stream().flatMap(this::asStream);
+    }
+
+    private Stream<SamplingFeature> asStream(AbstractFeature f) {
+        if (f instanceof SamplingFeature) {
+            return Stream.of((SamplingFeature) f);
+        } else if (f instanceof FeatureCollection) {
+            return asStream((FeatureCollection) f);
         } else {
-            String errorMessage =
-                    String.format("Feature Type \"%s\" not supported.", abstractFeature != null ? abstractFeature
-                            .getClass().getName() : abstractFeature);
+            Object name = f != null ? f .getClass().getName() : f;
+            String errorMessage = String.format("Feature Type \"%s\" not supported.", name);
             LOGGER.error(errorMessage);
-            throw new IllegalArgumentException(errorMessage); // TODO change
-                                                              // type of
-                                                              // exception to
-                                                              // OER?
+            throw new IllegalArgumentException(errorMessage);
         }
     }
 
-    private List<SamplingFeature> getAllFeaturesFrom(FeatureCollection featureCollection) {
-        List<SamplingFeature> features = new ArrayList<SamplingFeature>(featureCollection.getMembers().size());
-        for (AbstractFeature abstractFeature : featureCollection.getMembers().values()) {
-            if (abstractFeature instanceof SamplingFeature) {
-                features.add((SamplingFeature) abstractFeature);
-            } else if (abstractFeature instanceof FeatureCollection) {
-                features.addAll(getAllFeaturesFrom((FeatureCollection) abstractFeature));
-            }
-        }
-        return features;
-    }
 
     /**
      * Creates the Envelope for all passed sampling features.
-     * 
+     *
      * @param samplingFeatures
      *            the sampling features
-     * 
+     *
      * @return the envelope for all features
      */
     protected Envelope createEnvelopeFrom(List<SamplingFeature> samplingFeatures) {
-        Envelope featureEnvelope = new Envelope();
-        for (SamplingFeature samplingFeature : samplingFeatures) {
-            if (samplingFeature.isSetGeometry()) {
-                    featureEnvelope.expandToInclude(samplingFeature.getGeometry().getEnvelopeInternal());
-            }
-        }
-        return featureEnvelope;
+        return samplingFeatures.stream()
+                .filter(SamplingFeature::isSetGeometry)
+                .map(SamplingFeature::getGeometry)
+                .map(Geometry::getEnvelopeInternal)
+                .collect(Envelope::new,
+                         Envelope::expandToInclude,
+                         Envelope::expandToInclude);
     }
 
     @Override

@@ -29,11 +29,11 @@
 package org.n52.sos.request.operator;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.CompositeOwsException;
@@ -48,11 +48,9 @@ import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
@@ -84,13 +82,13 @@ public class AqdGetObservationOperatorV10 extends
 
     @Override
     public GetObservationResponse receive(GetObservationRequest request) throws OwsExceptionReport {
-        ReportObligationType flow = AqdHelper.getInstance().getFlow(request.getExtensions());
+        ReportObligationType flow = getAqdHelper().getFlow(request.getExtensions());
         checkReportingHeader(flow);
         checkRequestForFlowAndTemporalFilter(request, flow);
         boolean checkForMergeObservationsInResponse = checkForMergeObservationsInResponse(request);
         request.setMergeObservationValues(checkForMergeObservationsInResponse);
         final GetObservationResponse response =
-                (GetObservationResponse) changeResponseServiceVersion(getDao().getObservation(
+                (GetObservationResponse) changeResponseServiceVersion(getOperationHandler().getObservation(
                         (GetObservationRequest) changeRequestServiceVersion(request)));
         changeRequestServiceVersionToAqd(request);
         response.setExtensions(request.getExtensions());
@@ -250,10 +248,10 @@ public class AqdGetObservationOperatorV10 extends
 
     /**
      * checks if mandatory parameter observed property is correct
-     * 
+     *
      * @param observedProperties
      *            list containing the observed properties of the request
-     * 
+     *
      * @throws OwsExceptionReport
      *             if the parameter does not containing any matching
      *             observedProperty for the requested offering
@@ -262,7 +260,7 @@ public class AqdGetObservationOperatorV10 extends
         if (observedProperties != null) {
             final CompositeOwsException exceptions = new CompositeOwsException();
             final Collection<String> validObservedProperties =
-                    Configurator.getInstance().getCache().getObservableProperties();
+                    getCache().getObservableProperties();
             for (final String obsProp : observedProperties) {
                 if (obsProp.isEmpty()) {
                     exceptions.add(new MissingObservedPropertyParameterException());
@@ -278,17 +276,17 @@ public class AqdGetObservationOperatorV10 extends
 
     /**
      * checks if the passed offeringId is supported
-     * 
+     *
      * @param offeringIds
      *            the offeringId to be checked
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             if the passed offeringId is not supported
      */
     private void checkOfferingId(final List<String> offeringIds) throws OwsExceptionReport {
         if (offeringIds != null) {
-            final Set<String> offerings = Configurator.getInstance().getCache().getOfferings();
+            final Set<String> offerings = getCache().getOfferings();
             final CompositeOwsException exceptions = new CompositeOwsException();
             for (final String offeringId : offeringIds) {
                 if (offeringId == null || offeringId.isEmpty()) {

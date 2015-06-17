@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
@@ -45,7 +47,7 @@ import org.n52.sos.request.GetObservationRequest;
 
 /**
  * Hibernate series streaming value implementation for chunk results
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.2
  *
@@ -63,18 +65,18 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     private boolean noChunk = false;
 
     private int currentResultSize = 0;
-    
+
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
      * @throws CodedException
      */
-    public HibernateChunkSeriesStreamingValue(GetObservationRequest request, long series) throws CodedException {
-        super(request, series);
+    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long series) throws CodedException {
+        super(connectionProvider, request, series);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
     }
 
@@ -95,14 +97,14 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         if (!next) {
             sessionHolder.returnSession(session);
         }
-        
+
 
         return next;
     }
 
     @Override
     public AbstractValue nextEntity() throws OwsExceptionReport {
-        return (AbstractValue) seriesValuesResult.next();
+        return seriesValuesResult.next();
     }
 
     @Override
@@ -143,7 +145,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
 
     /**
      * Get the next results from database
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs when querying the next results
      */
@@ -177,7 +179,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     /**
      * Check the queried {@link AbstractValue}s for null and set them as
      * iterator to local variable.
-     * 
+     *
      * @param seriesValuesResult
      *            Queried {@link AbstractValue}s
      */

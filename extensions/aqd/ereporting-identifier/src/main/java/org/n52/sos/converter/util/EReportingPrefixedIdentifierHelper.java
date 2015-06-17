@@ -28,15 +28,16 @@
  */
 package org.n52.sos.converter.util;
 
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.settings.EReportingSetting;
 
 @Configurable
-public class EReportingPrefixedIdentifierHelper {
+public class EReportingPrefixedIdentifierHelper implements Constructable {
 
+    @Deprecated
     private static EReportingPrefixedIdentifierHelper instance;
 
     private String namespacePrefix;
@@ -55,20 +56,18 @@ public class EReportingPrefixedIdentifierHelper {
 
     private String networkPrefix;
 
+    @Override
+    public void init() {
+        EReportingPrefixedIdentifierHelper.instance = this;
+    }
+
     /**
      * @return Returns a singleton instance of the
      *         EReportingPrefixedIdentifierHelper.
      */
-    public static synchronized EReportingPrefixedIdentifierHelper getInstance() {
-        if (instance == null) {
-            instance = new EReportingPrefixedIdentifierHelper();
-            SettingsManager.getInstance().configure(instance);
-        }
+    @Deprecated
+    public static EReportingPrefixedIdentifierHelper getInstance() {
         return instance;
-    }
-
-    private EReportingPrefixedIdentifierHelper() {
-
     }
 
     /**

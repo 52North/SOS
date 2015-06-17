@@ -59,7 +59,7 @@ public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder {
     );
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(KVP_DECODER_KEY_TYPE);
     }
 

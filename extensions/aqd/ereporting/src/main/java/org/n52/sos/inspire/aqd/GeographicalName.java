@@ -37,6 +37,7 @@ import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.util.Nillable;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
@@ -54,7 +55,7 @@ public class GeographicalName {
     private List<Spelling> spelling = new LinkedList<>();
     private Nillable<CodeType> grammaticalGender = Nillable.missing();
     private Nillable<CodeType> grammaticalNumber = Nillable.missing();
-    
+
     public Nillable<String> getLanguage() {
         return language;
     }
@@ -169,7 +170,7 @@ public class GeographicalName {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("language", getLanguage())
                 .add("nativeness", getNativeness())
                 .add("nameStatus", getNameStatus())

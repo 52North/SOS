@@ -31,6 +31,8 @@ package org.n52.sos.ds.hibernate.values;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.http.HTTPStatus;
@@ -42,7 +44,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Streaming observation class for old concept
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
@@ -61,12 +63,12 @@ public class HibernateStreamingObservation extends AbstractHibernateStreamingObs
 
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      */
-    public HibernateStreamingObservation(GetObservationRequest request) {
-        super(request);
+    public HibernateStreamingObservation(ConnectionProvider connectionProvider, GetObservationRequest request) {
+        super(connectionProvider, request);
     }
 
     @Override

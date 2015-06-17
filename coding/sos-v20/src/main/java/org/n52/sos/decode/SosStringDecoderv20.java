@@ -31,26 +31,27 @@ package org.n52.sos.decode;
 import java.util.Collections;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.coding.decode.AbstractStringRequestDecoder;
 import org.n52.sos.util.CodingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
 /**
  * String request {@link Decoder} for SOS 2.0 requests
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 5.0.0
  *
  */
 public class SosStringDecoderv20 extends AbstractStringRequestDecoder {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SosStringDecoderv20.class);
 
     private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.xmlDecoderKeysForOperation(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
@@ -59,14 +60,14 @@ public class SosStringDecoderv20 extends AbstractStringRequestDecoder {
                     SosConstants.Operations.InsertObservation, Sos2Constants.Operations.InsertResultTemplate,
                     Sos2Constants.Operations.InsertResult, Sos2Constants.Operations.GetResultTemplate,
                     SosConstants.Operations.GetResult);
-    
+
     public SosStringDecoderv20() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
                 .join(DECODER_KEYS));
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 

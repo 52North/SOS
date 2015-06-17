@@ -33,7 +33,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.iceland.event.ServiceEventBus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
@@ -47,11 +50,10 @@ import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.http.HTTPStatus;
-import org.n52.sos.cache.ContentCache;
 import org.n52.sos.ds.AbstractInsertObservationHandler;
 import org.n52.sos.event.events.ObservationInsertion;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
@@ -79,8 +81,6 @@ import org.n52.sos.response.InsertObservationResponse;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -116,8 +116,8 @@ public class SosInsertObservationOperatorV20 extends
         if (isSetExtensionSplitDataArrayIntoObservations(request)) {
             splitDataArrayIntoObservations(request);
         }
-        InsertObservationResponse response = getDao().insertObservation(request);
-        ServiceEventBus.fire(new ObservationInsertion(request, response));
+        InsertObservationResponse response = getOperationHandler().insertObservation(request);
+        getServiceEventBus().submit(new ObservationInsertion(request, response));
         return response;
     }
 
@@ -197,19 +197,19 @@ public class SosInsertObservationOperatorV20 extends
         ObservationValue<?> value = null;
 
         if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_TRUTH_OBSERVATION)) {
-            value = new SingleObservationValue<Boolean>(new BooleanValue(Boolean.parseBoolean(valueString)));
+            value = new SingleObservationValue<>(new BooleanValue(Boolean.parseBoolean(valueString)));
         } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_COUNT_OBSERVATION)) {
-            value = new SingleObservationValue<Integer>(new CountValue(Integer.parseInt(valueString)));
+            value = new SingleObservationValue<>(new CountValue(Integer.parseInt(valueString)));
         } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_MEASUREMENT)) {
             final QuantityValue quantity = new QuantityValue(Double.parseDouble(valueString));
             quantity.setUnit(getUom(resultDefinitionField));
-            value = new SingleObservationValue<Double>(quantity);
+            value = new SingleObservationValue<>(quantity);
         } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION)) {
             final CategoryValue cat = new CategoryValue(valueString);
             cat.setUnit(getUom(resultDefinitionField));
-            value = new SingleObservationValue<String>(cat);
+            value = new SingleObservationValue<>(cat);
         } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_TEXT_OBSERVATION)) {
-            value = new SingleObservationValue<String>(new TextValue(valueString));
+            value = new SingleObservationValue<>(new TextValue(valueString));
         }
         // TODO Check for missing types
         if (value != null) {
@@ -296,11 +296,11 @@ public class SosInsertObservationOperatorV20 extends
         }
         exceptions.throwIfNotEmpty();
     }
-    
+
     /**
      * Check if the observation contains more than one sampling geometry
      * definitions.
-     * 
+     *
      * @param request
      *            Request
      * @throws CodedException
@@ -350,7 +350,7 @@ public class SosInsertObservationOperatorV20 extends
         if (CollectionHelper.isEmpty(request.getObservations())) {
             throw new MissingObservationParameterException();
         } else {
-            final ContentCache cache = Configurator.getInstance().getCache();
+            final SosContentCache cache = Configurator.getInstance().getCache();
             final CompositeOwsException exceptions = new CompositeOwsException();
             for (final OmObservation observation : request.getObservations()) {
                 final OmObservationConstellation obsConstallation = observation.getObservationConstellation();

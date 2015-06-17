@@ -34,13 +34,14 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
+
+import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesExtensions;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class GetObservationRequestTest {
@@ -58,7 +59,7 @@ public class GetObservationRequestTest {
     public void isSetExtensions_should_return_true_if_a_extension_is_set() {
         final GetObservationRequest request = new GetObservationRequest();
         final SwesExtensions extensions = new SwesExtensions();
-        extensions.addExtension(new SwesExtensionImpl<Boolean>());
+        extensions.addExtension(new SwesExtension<>());
         request.setExtensions(extensions);
 
         assertThat(request.isSetExtensions(), is(TRUE));

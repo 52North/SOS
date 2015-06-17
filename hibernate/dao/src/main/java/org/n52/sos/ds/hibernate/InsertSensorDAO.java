@@ -32,22 +32,21 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.iceland.coding.CodingRepository;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.CapabilitiesExtension;
-import org.n52.iceland.ogc.sos.CapabilitiesExtensionKey;
-import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.ds.AbstractInsertSensorHandler;
-import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
@@ -68,7 +67,6 @@ import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.RelatedFeatureRole;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sos.SosInsertionCapabilities;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.swes.SwesFeatureRelationship;
@@ -77,24 +75,21 @@ import org.n52.sos.response.InsertSensorResponse;
 
 /**
  * Implementation of the abstract class AbstractInsertSensorHandler
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
-public class InsertSensorDAO extends AbstractInsertSensorHandler implements CapabilitiesExtensionProvider {
+public class InsertSensorDAO extends AbstractInsertSensorHandler {
 
-    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+private HibernateSessionHolder sessionHolder;
 
-    /**
-     * constructor
-     */
     public InsertSensorDAO() {
         super(SosConstants.SOS);
     }
-    
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override
@@ -128,14 +123,13 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler implements Capa
                 new ValidProcedureTimeDAO().insertValidProcedureTime(
                         hProcedure,
                         procedureDescriptionFormat,
-                        getSensorDescriptionFromProcedureDescription(request.getProcedureDescription(),
-                                assignedProcedureID), new DateTime(DateTimeZone.UTC), session);
+                        getSensorDescriptionFromProcedureDescription(request.getProcedureDescription()), new DateTime(DateTimeZone.UTC), session);
                 final List<ObservableProperty> hObservableProperties =
                         getOrInsertNewObservableProperties(request.getObservableProperty(), session);
                 final ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
                 final OfferingDAO offeringDAO = new OfferingDAO();
                 for (final SosOffering assignedOffering : request.getAssignedOfferings()) {
-                    final List<RelatedFeature> hRelatedFeatures = new LinkedList<RelatedFeature>();
+                    final List<RelatedFeature> hRelatedFeatures = new LinkedList<>();
                     if (request.getRelatedFeatures() != null && !request.getRelatedFeatures().isEmpty()) {
                         final RelatedFeatureDAO relatedFeatureDAO = new RelatedFeatureDAO();
                         final RelatedFeatureRoleDAO relatedFeatureRoleDAO = new RelatedFeatureRoleDAO();
@@ -183,7 +177,7 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler implements Capa
     /**
      * Create OmObservableProperty objects from observableProperty identifiers
      * and get or insert them into the database
-     * 
+     *
      * @param obsProps
      *            observableProperty identifiers
      * @param session
@@ -192,7 +186,7 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler implements Capa
      */
     private List<ObservableProperty> getOrInsertNewObservableProperties(final List<String> obsProps,
             final Session session) {
-        final List<OmObservableProperty> observableProperties = new ArrayList<OmObservableProperty>(obsProps.size());
+        final List<OmObservableProperty> observableProperties = new ArrayList<>(obsProps.size());
         for (final String observableProperty : obsProps) {
             observableProperties.add(new OmObservableProperty(observableProperty));
         }
@@ -201,15 +195,12 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler implements Capa
 
     /**
      * Get SensorDescription String from procedure description
-     * 
+     *
      * @param procedureDescription
      *            Procedure description
-     * @param procedureIdentifier
-     *            Procedure identifier
      * @return SensorDescription String
      */
-    private String getSensorDescriptionFromProcedureDescription(final SosProcedureDescription procedureDescription,
-            final String procedureIdentifier) {
+    private String getSensorDescriptionFromProcedureDescription(SosProcedureDescription procedureDescription ) {
         if (procedureDescription instanceof SensorML) {
             final SensorML sensorML = (SensorML) procedureDescription;
             // if SensorML is not a wrapper
@@ -228,31 +219,6 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler implements Capa
         else {
             return procedureDescription.getSensorDescriptionXmlString();
         }
-    }
-
-    @Override
-    public CapabilitiesExtension getExtension() {
-        final SosInsertionCapabilities insertionCapabilities = new SosInsertionCapabilities();
-        insertionCapabilities.addFeatureOfInterestTypes(getCache().getFeatureOfInterestTypes());
-        insertionCapabilities.addObservationTypes(getCache().getObservationTypes());
-        insertionCapabilities.addProcedureDescriptionFormats(CodingRepository.getInstance()
-                .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
-        return insertionCapabilities;
-    }
-
-    @Override
-    public CapabilitiesExtensionKey getCapabilitiesExtensionKey() {
-        return new CapabilitiesExtensionKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
-    }
-
-    @Override
-    public boolean hasRelatedOperation() {
-        return true;
-    }
-
-    @Override
-    public String getRelatedOperation() {
-        return getOperationName();
     }
 
 }

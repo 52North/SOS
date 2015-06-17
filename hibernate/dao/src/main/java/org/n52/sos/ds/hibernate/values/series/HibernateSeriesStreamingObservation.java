@@ -31,6 +31,8 @@ package org.n52.sos.ds.hibernate.values.series;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.http.HTTPStatus;
@@ -44,7 +46,7 @@ import org.n52.sos.request.GetObservationRequest;
 
 /**
  * Streaming observation class for series concept
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.2
  *
@@ -59,13 +61,13 @@ public class HibernateSeriesStreamingObservation extends AbstractHibernateStream
 
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
-     * @throws OwsExceptionReport 
+     * @throws OwsExceptionReport
      */
-    public HibernateSeriesStreamingObservation(GetObservationRequest request) throws OwsExceptionReport {
-        super(request);
+    public HibernateSeriesStreamingObservation(GetObservationRequest request, ConnectionProvider connectionProvider) throws OwsExceptionReport {
+        super(connectionProvider, request);
         AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
         if (observationDAO instanceof AbstractSeriesObservationDAO) {
             seriesObservationDAO = (AbstractSeriesObservationDAO) observationDAO;

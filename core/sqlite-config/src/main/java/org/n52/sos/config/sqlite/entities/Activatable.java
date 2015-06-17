@@ -34,7 +34,8 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
+import org.n52.iceland.ogc.swes.SwesExtension;
+
 
 /**
  * @param <K> the key type
@@ -43,15 +44,16 @@ import org.n52.sos.ogc.swes.SwesExtensionImpl;
  * @author Christian Autermann <c.autermann@52north.org>
  */
 @MappedSuperclass
-public class Activatable<K extends Serializable, T extends Activatable<K, T>> extends SwesExtensionImpl<String> implements Serializable{
+public class Activatable<K extends Serializable, T extends Activatable<K, T>>
+        extends SwesExtension<String> implements Serializable {
     private static final long serialVersionUID = -1470828735015412115L;
-	
+
 	public static final String ACTIVE = "active";
 	public static final String COMPOSITE_KEY = "id";
-	
+
     @Id
     private K key;
-	
+
 	@Column(name = ACTIVE)
     private boolean active;
 

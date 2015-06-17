@@ -31,13 +31,13 @@ package org.n52.sos.ds.datasource;
 import java.util.Properties;
 import java.util.Set;
 
-import org.n52.sos.config.SettingDefinition;
+import org.n52.iceland.config.SettingDefinition;
 
 import com.google.common.collect.ImmutableSet;
 
 /**
  * MS SQL Server datasource for core mapping
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *

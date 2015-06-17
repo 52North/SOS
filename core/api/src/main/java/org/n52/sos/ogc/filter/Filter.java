@@ -32,10 +32,10 @@ import org.n52.iceland.util.StringHelper;
 
 /**
  * SOS classf or FES FilterPredicates
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
- * 
+ *
  * @param <T>
  *            operator type, e.g.
  *            {@link org.n52.iceland.ogc.filter.FilterConstants.TimeOperator},
@@ -64,7 +64,7 @@ public abstract class Filter<T> implements AbstractSelectionClause {
 
     /**
      * Get value reference
-     * 
+     *
      * @return value reference
      */
     public String getValueReference() {
@@ -73,7 +73,7 @@ public abstract class Filter<T> implements AbstractSelectionClause {
 
     /**
      * Set value reference
-     * 
+     *
      * @param valueReference
      *            value reference
      * @return This filter
@@ -85,7 +85,7 @@ public abstract class Filter<T> implements AbstractSelectionClause {
 
     /**
      * Check if valueReference is set
-     * 
+     *
      * @return <code>true</code>, if valueReference is set
      */
     public boolean hasValueReference() {
@@ -94,22 +94,23 @@ public abstract class Filter<T> implements AbstractSelectionClause {
 
     /**
      * Get filter operator
-     * 
+     *
      * @return filter operator
      */
     public abstract T getOperator();
 
     /**
      * Set filter operator
-     * 
+     *
      * @param operator
      *            filter operator
+     * @return {@code this}
      */
     public abstract Filter<T> setOperator(T operator);
 
     /**
      * Check if operator is set
-     * 
+     *
      * @return <code>true</code>, if operator is set
      */
     public boolean isSetOperator() {

@@ -34,22 +34,27 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import javax.inject.Inject;
+
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.service.ServiceContextListener;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.inspire.aqd.persistence.ReportingHeaderSQLiteManager;
 
 public class ReportObligationRepository {
+    @Deprecated
+    private static ReportObligationRepository instance;
     private final ReadWriteLock reportingAuthorityLock = new ReentrantReadWriteLock();
     private final ReadWriteLock obligationsLock = new ReentrantReadWriteLock();
     private RelatedParty reportingAuthority;
     private final Map<ReportObligationType, ReportObligation> obligations;
-    private final ReportingHeaderSQLiteManager sqlite = new ReportingHeaderSQLiteManager();
+
+    @Inject
+    private ReportingHeaderSQLiteManager sqlite;
 
     private ReportObligationRepository() {
         this.obligations = new EnumMap<>(ReportObligationType.class);
-        ServiceContextListener.registerShutdownHook(sqlite);
+        ReportObligationRepository.instance = this;
     }
 
     public RelatedParty getReportingAuthority() {
@@ -161,15 +166,9 @@ public class ReportObligationRepository {
         return reportObligation;
     }
 
+
+    @Deprecated
     public static ReportObligationRepository getInstance() {
-        return InstanceHolder.INSTANCE;
-    }
-
-    private static class InstanceHolder {
-        private static ReportObligationRepository INSTANCE
-                = new ReportObligationRepository();
-
-        private InstanceHolder() {
-        }
+        return ReportObligationRepository.instance;
     }
 }

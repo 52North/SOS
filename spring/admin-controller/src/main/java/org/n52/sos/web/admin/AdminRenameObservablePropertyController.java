@@ -32,15 +32,8 @@ package org.n52.sos.web.admin;
 import java.util.Collections;
 import java.util.List;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.iceland.service.Configurator;
-import org.n52.iceland.util.ServiceLoaderHelper;
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.ds.RenameDAO;
-import org.n52.sos.exception.AlreadyUsedIdentifierException;
-import org.n52.sos.exception.NoSuchObservablePropertyException;
-import org.n52.sos.web.ControllerConstants;
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -53,6 +46,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
+import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.ds.RenameDAO;
+import org.n52.sos.exception.AlreadyUsedIdentifierException;
+import org.n52.sos.exception.NoSuchObservablePropertyException;
+import org.n52.sos.web.common.ControllerConstants;
+
 import com.google.common.collect.Lists;
 
 /**
@@ -64,39 +65,38 @@ public class AdminRenameObservablePropertyController extends AbstractAdminContro
     public static final String OLD_IDENTIFIER_REQUEST_PARAM = "old";
     public static final String NEW_IDENTIFIER_REQUEST_PARAM = "new";
     private static final Logger log = LoggerFactory.getLogger(AdminRenameObservablePropertyController.class);
+    @Inject
     private RenameDAO dao;
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() {
-        List<String> observableProperties = Lists.newArrayList(getCache().getObservableProperties());
+        SosContentCache cache = getCache();
+        List<String> observableProperties = Lists.newArrayList(cache.getObservableProperties());
         Collections.sort(observableProperties);
         return new ModelAndView(ControllerConstants.Views.ADMIN_RENAME_OBSERVABLE_PROPERTIES,
                                 "observableProperties", observableProperties);
     }
 
+
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(method = RequestMethod.POST)
     public void change(@RequestParam(OLD_IDENTIFIER_REQUEST_PARAM) String oldName,
                        @RequestParam(NEW_IDENTIFIER_REQUEST_PARAM) String newName)
-            throws NoSuchObservablePropertyException, OwsExceptionReport, NoImplementationFoundException,
-                   AlreadyUsedIdentifierException {
+            throws NoSuchObservablePropertyException, NoImplementationFoundException,
+                   AlreadyUsedIdentifierException, OwsExceptionReport {
         log.info("Changing observable property: {} -> {}", oldName, newName);
-        if (!getCache().hasObservableProperty(oldName)) {
+        SosContentCache cache = getCache();
+        if (!cache.hasObservableProperty(oldName)) {
             throw new NoSuchObservablePropertyException(oldName);
         }
-        if (getCache().hasObservableProperty(newName)) {
+        if (cache.hasObservableProperty(newName)) {
             throw new AlreadyUsedIdentifierException(newName);
         }
-        getRenameDao().renameObservableProperty(oldName, newName);
+        this.dao.renameObservableProperty(oldName, newName);
         updateCache();
 }
 
-    private RenameDAO getRenameDao() throws NoImplementationFoundException {
-        if (this.dao == null) {
-            this.dao = ServiceLoaderHelper.loadImplementation(RenameDAO.class);
-        }
-        return this.dao;
-    }
 
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -126,8 +126,5 @@ public class AdminRenameObservablePropertyController extends AbstractAdminContro
         return String.format("The identifier %s is not assigned!", e.getIdentifier());
     }
 
-    protected ContentCache getCache() {
-        return Configurator.getInstance().getCache();
-    }
 
 }

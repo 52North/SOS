@@ -32,53 +32,41 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.n52.iceland.service.Configurator;
-import org.n52.sos.cache.ContentCache;
+import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.service.Configurator;
 
 /**
  * Class to get a summary of the cache objects.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class CacheSummaryHandler {
     public static final String MIN_PHENOMENON_TIME = "min_phenomenon_time";
-
     public static final String MAX_PHENOMENON_TIME = "max_phenomenon_time";
-
     public static final String MIN_RESULT_TIME = "min_result_time";
-
     public static final String MAX_RESULT_TIME = "max_result_time";
-
     public static final String GLOBAL_ENVELOPE = "global_envelope";
-
     public static final String NUM_OFFERINGS = "num_offerings";
-
     public static final String NUM_PROCEDURES = "num_procedures";
-
     public static final String NUM_OBSERVABLE_PROPERTIES = "num_observable_properties";
-
     public static final String NUM_FEATURES_OF_INTEREST = "num_features_of_interest";
-
     public static final String NUM_FEATURE_OF_INTEREST_TYPES = "num_feature_of_interest_types";
-
     public static final String NUM_OBSERVATION_TYPES = "num_observation_types";
-
     public static final String NUM_RELATED_FEATURES = "num_related_features";
-
     public static final String NUM_RESULT_TEMPLATES = "num_result_templates";
-
     public static final String DEFAULT_EPSG = "default_epsg";
-
     public static final String NUM_EPSGS = "num_epsgs";
+
+
 
     private CacheSummaryHandler() {
 
     }
 
     public static Map<String, String> getCacheValues() {
-        ContentCache cache = Configurator.getInstance().getCache();
-        Map<String, String> values = new TreeMap<String, String>();
+        SosContentCache cache = Configurator.getInstance().getCache();
+        Map<String, String> values = new TreeMap<>();
         values.put(MIN_PHENOMENON_TIME, nullSafeToString(cache.getMinPhenomenonTime()));
         values.put(MAX_PHENOMENON_TIME, nullSafeToString(cache.getMaxPhenomenonTime()));
         values.put(MIN_RESULT_TIME, nullSafeToString(cache.getMinResultTime()));

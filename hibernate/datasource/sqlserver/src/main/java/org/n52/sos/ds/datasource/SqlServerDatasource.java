@@ -38,7 +38,7 @@ import org.n52.iceland.util.StringHelper;
 
 /**
  * MS SQL Server datasource
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
@@ -73,7 +73,7 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
 
     @Override
     public void executePostCreateSchema(Map<String, Object> databaseSettings) {
-        List<String> statements = new ArrayList<String>();
+        List<String> statements = new ArrayList<>();
         for (TableColumn tableColumn : getTableColumns()) {
             statements.add(getGetAndDropConstraint(tableColumn.getTable(), tableColumn.getColumn(), databaseSettings));
             statements
@@ -97,7 +97,7 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
     }
 
     private Set<TableColumn> getTableColumns() {
-        Set<TableColumn> tableColumns = new HashSet<SqlServerDatasource.TableColumn>();
+        Set<TableColumn> tableColumns = new HashSet<>();
         tableColumns.add(new TableColumn(TN_FEATURE_OF_INTEREST, CN_IDENTIFIER));
         tableColumns.add(new TableColumn(TN_FEATURE_OF_INTEREST, CN_URL));
         tableColumns.add(new TableColumn(TN_OBSERVATION, CN_IDENTIFIER));

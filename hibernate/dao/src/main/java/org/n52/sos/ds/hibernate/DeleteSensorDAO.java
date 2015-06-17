@@ -30,14 +30,17 @@ package org.n52.sos.ds.hibernate;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.ds.AbstractDeleteSensorHandler;
-import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
@@ -56,21 +59,18 @@ import org.n52.sos.response.DeleteSensorResponse;
 /**
  * Implementation of the abstract class AbstractDeleteSensorHandler
  * @since 4.0.0
- * 
+ *
  */
 public class DeleteSensorDAO extends AbstractDeleteSensorHandler {
-    private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder sessionHolder;
 
-    /**
-     * constructor
-     */
     public DeleteSensorDAO() {
         super(SosConstants.SOS);
     }
 
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class DeleteSensorDAO extends AbstractDeleteSensorHandler {
     /**
      * Set the deleted flag of the procedure and corresponding entities
      * (observations, series, obervationConstellation) to <code>true</code>
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param deleteFlag
@@ -129,7 +129,7 @@ public class DeleteSensorDAO extends AbstractDeleteSensorHandler {
                         DaoFactory.getInstance().getSeriesDAO().updateSeriesSetAsDeletedForProcedureAndGetSeries(identifier, deleteFlag,
                                 session);
                 getSeriesObservationDAO().updateObservationSetAsDeletedForSeries(series, deleteFlag, session);
-            } 
+            }
             // set deleted flag in Observation table for old concept to true
             else {
                 new ObservationDAO().updateObservationSetAsDeletedForProcedure(identifier, deleteFlag, session);
@@ -138,7 +138,7 @@ public class DeleteSensorDAO extends AbstractDeleteSensorHandler {
             throw new NoApplicableCodeException().withMessage("The requested identifier is not contained in database");
         }
     }
-    
+
     protected AbstractSeriesObservationDAO getSeriesObservationDAO() throws OwsExceptionReport {
         AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
         if (observationDAO instanceof AbstractSeriesObservationDAO) {

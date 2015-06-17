@@ -28,13 +28,16 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.ds.AbstractGetResultTemplateHandler;
-import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
@@ -45,21 +48,18 @@ import org.n52.sos.response.GetResultTemplateResponse;
 /**
  * Implementation of the abstract class AbstractGetResultTemplateHandler
  * @since 4.0.0
- * 
+ *
  */
 public class GetResultTemplateDAO extends AbstractGetResultTemplateHandler {
-    private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder sessionHolder;
 
-    /**
-     * constructor
-     */
     public GetResultTemplateDAO() {
         super(SosConstants.SOS);
     }
-    
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override

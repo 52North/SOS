@@ -30,7 +30,6 @@ package org.n52.sos.decode;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import net.opengis.fes.x20.BBOXType;
@@ -56,12 +55,12 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlObject.Factory;
+
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.filter.FilterConstants;
 import org.n52.iceland.ogc.filter.FilterConstants.BinaryLogicOperator;
 import org.n52.iceland.ogc.filter.FilterConstants.ComparisonOperator;
@@ -70,7 +69,7 @@ import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator2;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.ogc.filter.BinaryLogicFilter;
@@ -81,6 +80,7 @@ import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.filter.UnaryLogicFilter;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.NodeList;
@@ -90,7 +90,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class FesDecoderv20 implements Decoder<Object, XmlObject> {
 
@@ -111,18 +111,8 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
-    }
-
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
     }
 
     @Override
@@ -148,7 +138,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
 
     /**
      * Parse XML FilterType element
-     * 
+     *
      * @param filterType
      *            XML element to parse
      * @return SOS Filter object
@@ -175,14 +165,14 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
 
     /**
      * Parses the spatial filter of a request.
-     * 
+     *
      * @param xbSpatialOpsType
      *            XmlBean representing the feature of interest parameter of the
      *            request
      * @return Returns SpatialFilter created from the passed foi request
      *         parameter
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if creation of the SpatialFilter failed
      */
@@ -222,12 +212,12 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
     /**
      * parses a single temporal filter of the requests and returns SOS temporal
      * filter
-     * 
+     *
      * @param xbTemporalOpsType
      *            XmlObject representing the temporal filter
      * @return Returns SOS representation of temporal filter
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if parsing of the element failed
      */
@@ -302,7 +292,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
     /**
      * parses a single comparison filter of the requests and returns service
      * comparison filter
-     * 
+     *
      * @param comparisonOpsType
      *            XmlObject representing the comparison filter
      * @return Service representation of comparison filter
@@ -350,7 +340,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
 
     /**
      * Parse XML expression array
-     * 
+     *
      * @param expressionArray
      *            XML expression array
      * @param comparisonFilter
@@ -378,7 +368,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
 
     /**
      * Check if the XmlObject is a valueReference element
-     * 
+     *
      * @param xmlObject
      *            Element to check
      * @return <code>true</code>, if XmlObject is a valueReference element
@@ -389,7 +379,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
 
     /**
      * Parse XML valueReference element
-     * 
+     *
      * @param xmlObject
      *            XML valueReference
      * @return ValueReference string
@@ -403,7 +393,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
 
     /**
      * Parse XML propertyIsLike element
-     * 
+     *
      * @param comparisonOpsType
      *            XML propertyIsLike element
      * @return SOS comparison filter
@@ -422,7 +412,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
 
     /**
      * Parse XML propertyIsNull element
-     * 
+     *
      * @param comparisonOpsType
      *            XML propertyIsNull element
      * @return SOS comparison filter
@@ -439,7 +429,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
 
     /**
      * Parse XML propertyIsNil element
-     * 
+     *
      * @param comparisonOpsType
      *            XML propertyIsNil element
      * @return SOS comparison filter
@@ -456,7 +446,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
 
     /**
      * Parse XML propertyIsBetween element
-     * 
+     *
      * @param comparisonOpsType
      *            XML propertyIsBetween element
      * @return SOS comparison filter
@@ -475,7 +465,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
     /**
      * parses a single logic filter of the requests and returns service logic
      * filter
-     * 
+     *
      * @param logicOpsType
      *            XmlObject representing the logic filter
      * @return Service representation of logic filter
@@ -494,7 +484,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
     /**
      * parses a single unary logic filter of the requests and returns service
      * unary logic filter
-     * 
+     *
      * @param unaryLogicOpType
      *            XmlObject representing the unary logic filter
      * @return Service representation of unary logic filter
@@ -522,7 +512,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
     /**
      * parses a single binary logic filter of the requests and returns service
      * binary logic filter
-     * 
+     *
      * @param binaryLogicOpType
      *            XmlObject representing the binary logic filter
      * @return Service representation of binary logic filter
@@ -551,7 +541,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
 
     /**
      * Get the predicate filters from binary logic filter
-     * 
+     *
      * @param binaryLogicOpType
      *            XmlObject representing the binary logic filter
      * @return Predicate filters
@@ -586,7 +576,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
 
     /**
      * Parse single comparison filter from comparison filter array
-     * 
+     *
      * @param comparisonOpsArray
      *            XmlBeans comparison filter array
      * @return Service comparison filters
@@ -604,7 +594,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
 
     /**
      * Parse single logic filter from logic filter array
-     * 
+     *
      * @param logicOpsArray
      *            XmlBeans logic filter array
      * @return Service logic filters
@@ -622,7 +612,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
 
     /**
      * Parse single spatial filter from spatial filter array
-     * 
+     *
      * @param spatialOpsArray
      *            XmlBeans spatial filter array
      * @return Service spatial filters
@@ -640,7 +630,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
 
     /**
      * Parse single temporal filter from temporal filter array
-     * 
+     *
      * @param temporalOpsArray
      *            XmlBeans temporal filter array
      * @return Service temporal filters

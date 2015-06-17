@@ -28,13 +28,14 @@
  */
 package org.n52.sos.cache.ctrl.action;
 
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.util.Action;
-import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.request.InsertResultTemplateRequest;
-import org.n52.sos.response.InsertResultTemplateResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.sos.cache.SosWritableContentCache;
+import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.util.action.Action;
+import org.n52.sos.request.InsertResultTemplateRequest;
+import org.n52.sos.response.InsertResultTemplateResponse;
 
 /**
  * When executing this &auml;ction (see {@link Action}), the following relations
@@ -43,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * <li>Result template</li>
  * <li>Offering &rarr; Result template</li>
  * </ul>
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @since 4.0.0
@@ -69,7 +70,7 @@ public class ResultTemplateInsertionUpdate extends InMemoryCacheUpdate {
 
     @Override
     public void execute() {
-        final WritableContentCache cache = getCache();
+        final SosWritableContentCache cache = getCache();
         final String resultTemplate = response.getAcceptedTemplate();
         cache.addResultTemplate(resultTemplate);
         for (String offering : request.getObservationTemplate().getOfferings()) {

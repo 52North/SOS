@@ -31,7 +31,6 @@ package org.n52.sos.decode;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.xml.soap.SOAPException;
@@ -42,27 +41,27 @@ import javax.xml.soap.SOAPMessage;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.decode.Decoder;
-import org.n52.iceland.decode.DecoderKey;
-import org.n52.iceland.decode.XmlNamespaceDecoderKey;
+import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.LinkedListMultiMap;
-import org.n52.iceland.util.ListMultiMap;
+import org.n52.iceland.util.collections.LinkedListMultiMap;
+import org.n52.iceland.util.collections.ListMultiMap;
 import org.n52.iceland.w3c.soap.SoapHeader;
 import org.n52.iceland.w3c.soap.SoapRequest;
 import org.n52.iceland.w3c.wsa.WsaActionHeader;
 import org.n52.iceland.w3c.wsa.WsaConstants;
+import org.n52.sos.coding.decode.XmlNamespaceDecoderKey;
 import org.n52.sos.exception.swes.InvalidRequestException;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.W3cHelper;
 import org.n52.sos.util.XmlOptionsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 
 import com.google.common.collect.Lists;
 
@@ -80,18 +79,8 @@ public abstract class AbstractSoapDecoder implements Decoder<SoapRequest, XmlObj
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(decoderKeys);
-    }
-
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
     }
 
     @Override
@@ -109,13 +98,13 @@ public abstract class AbstractSoapDecoder implements Decoder<SoapRequest, XmlObj
 
     /**
      * Parses the SOAPBody content to a text representation
-     * 
+     *
      * @param message
      *            SOAP message
-     * 
+     *
      * @return SOAPBody content as text
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs.
      */

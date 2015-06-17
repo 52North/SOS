@@ -36,9 +36,7 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
+
 import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
@@ -46,17 +44,22 @@ import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.StreamingValue;
-import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GmlHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
 
 import com.google.common.collect.Maps;
 
 /**
  * Abstract class for Hibernate streaming values
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
@@ -67,13 +70,25 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
 
     private static final long serialVersionUID = -8355955808723620476L;
 
-    protected final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    protected final HibernateSessionHolder sessionHolder;
 
     protected Session session;
 
     protected GetObservationRequest request;
 
     protected Criterion temporalFilterCriterion;
+
+    /**
+     * constructor
+     *
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param connectionProvider the connection provider
+     */
+    public AbstractHibernateStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request) {
+        this.request = request;
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
 
     @Override
     public Collection<OmObservation> mergeObservation() throws OwsExceptionReport {
@@ -113,18 +128,8 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
     }
 
     /**
-     * constructor
-     * 
-     * @param request
-     *            {@link GetObservationRequest}
-     */
-    public AbstractHibernateStreamingValue(GetObservationRequest request) {
-        this.request = request;
-    }
-
-    /**
      * Set the temporal filter {@link Criterion}
-     * 
+     *
      * @param temporalFilterCriterion
      *            Temporal filter {@link Criterion}
      */
@@ -135,13 +140,13 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
 
     /**
      * Get the observation ids from {@link AbstractValue}s
-     * 
+     *
      * @param abstractValuesResult
      *            {@link AbstractValue}s to get ids from
      * @return Set with ids
      */
     protected Set<Long> getObservationIds(Collection<AbstractValue> abstractValuesResult) {
-        Set<Long> ids = new HashSet<Long>();
+        Set<Long> ids = new HashSet<>();
         for (AbstractValue abstractValue : abstractValuesResult) {
             ids.add(abstractValue.getObservationId());
         }
@@ -150,7 +155,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
 
     /**
      * Create phenomenon time from min and max {@link AbstractObservationTime}s
-     * 
+     *
      * @param minTime
      *            minimum {@link AbstractObservationTime}
      * @param maxTime
@@ -172,7 +177,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
 
     /**
      * Create result time from {@link AbstractObservationTime}
-     * 
+     *
      * @param maxTime
      *            {@link AbstractObservationTime} to create result time from
      * @return result time
@@ -184,7 +189,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
 
     /**
      * Create valid time from min and max {@link AbstractObservationTime}s
-     * 
+     *
      * @param minTime
      *            minimum {@link AbstractObservationTime}
      * @param maxTime

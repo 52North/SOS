@@ -28,10 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.Locale;
+import java.util.Set;
 
 import org.hibernate.Session;
+
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -44,7 +46,7 @@ import org.n52.sos.ogc.wml.WaterMLConstants;
 
 /**
  * Generator class for WaterML 2.0 procedure descriptions
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
@@ -52,13 +54,13 @@ import org.n52.sos.ogc.wml.WaterMLConstants;
 public class HibernateProcedureDescriptionGeneratorFactoryWml20 implements
         HibernateProcedureDescriptionGeneratorFactory {
 
-    private static final List<HibernateProcedureDescriptionGeneratorFactoryKeyType> GENERATOR_KEY_TYPES =
-            CollectionHelper.list(new HibernateProcedureDescriptionGeneratorFactoryKeyType(
+    private static final Set<HibernateProcedureDescriptionGeneratorFactoryKey> GENERATOR_KEY_TYPES =
+            CollectionHelper.set(new HibernateProcedureDescriptionGeneratorFactoryKey(
                     WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING));
 
     @Override
-    public List<HibernateProcedureDescriptionGeneratorFactoryKeyType> getHibernateProcedureDescriptionGeneratorFactoryKeyTypes() {
-        return GENERATOR_KEY_TYPES;
+    public Set<HibernateProcedureDescriptionGeneratorFactoryKey> getKeys() {
+        return Collections.unmodifiableSet(GENERATOR_KEY_TYPES);
     }
 
     @Override
@@ -101,7 +103,7 @@ public class HibernateProcedureDescriptionGeneratorFactoryWml20 implements
             op.addParameter(createName("shortName", name));
             op.addParameter(createName("longName", name));
         }
-        
+
         private NamedValue<String> createName(String type, String name) {
             final NamedValue<String> namedValueProperty = new NamedValue<String>();
             final ReferenceType refType = new ReferenceType(type);

@@ -28,21 +28,19 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.n52.iceland.coding.CodingRepository;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.sos.CapabilitiesExtension;
-import org.n52.iceland.ogc.sos.CapabilitiesExtensionKey;
-import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.sos.ds.AbstractInsertResultTemplateHandler;
-import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
@@ -51,7 +49,6 @@ import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
 import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.sos.SosInsertionCapabilities;
 import org.n52.sos.ogc.sos.SosResultStructure;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
@@ -62,22 +59,19 @@ import org.n52.sos.response.InsertResultTemplateResponse;
 /**
  * Implementation of the abstract class AbstractInsertResultTemplateDAO
  * @since 4.0.0
- * 
+ *
  */
-public class InsertResultTemplateDAO extends AbstractInsertResultTemplateHandler implements CapabilitiesExtensionProvider {
+public class InsertResultTemplateDAO extends AbstractInsertResultTemplateHandler {
 
-    private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder sessionHolder;
 
-    /**
-     * constructor
-     */
     public InsertResultTemplateDAO() {
         super(SosConstants.SOS);
     }
-    
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override
@@ -131,34 +125,6 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateHandler
         }
         return response;
     }
-
-    @Override
-    public CapabilitiesExtension getExtension() {
-        final SosInsertionCapabilities insertionCapabilities = new SosInsertionCapabilities();
-        insertionCapabilities.addFeatureOfInterestTypes(getCache().getFeatureOfInterestTypes());
-        insertionCapabilities.addObservationTypes(getCache().getObservationTypes());
-        insertionCapabilities.addProcedureDescriptionFormats(CodingRepository.getInstance()
-                .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
-        // TODO dynamic
-        insertionCapabilities.addSupportedEncoding(SweConstants.ENCODING_TEXT);
-        return insertionCapabilities;
-    }
-
-    @Override
-    public CapabilitiesExtensionKey getCapabilitiesExtensionKey() {
-        return new CapabilitiesExtensionKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
-    }
-
-    @Override
-    public boolean hasRelatedOperation() {
-        return true;
-    }
-
-    @Override
-    public String getRelatedOperation() {
-        return getOperationName();
-    }
-    
 
 	private void checkResultStructure(SosResultStructure resultStructure,
 			String observedProperty) throws OwsExceptionReport {

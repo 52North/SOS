@@ -41,14 +41,10 @@ import net.opengis.sosREST.x10.LinkType;
 import net.opengis.sosREST.x10.ObservationDocument;
 import net.opengis.sosREST.x10.ObservationType;
 
-
-
-
-
-
-
-
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OperationNotSupportedException;
@@ -56,6 +52,7 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.DateTimeException;
 import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
@@ -64,31 +61,27 @@ import org.n52.sos.binding.rest.resources.OptionsRestRequest;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
 import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.swes.SwesExtension;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
 public class ObservationsDecoder extends ResourceDecoder {
-    
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(ObservationsDecoder.class);
-	
+
     @Override
     protected RestRequest decodeGetRequest(HttpServletRequest httpRequest,
             String pathPayload) throws OwsExceptionReport, DateTimeException
     {
         // 0 variables
         RestRequest result = null;
-        
+
         // 1 identify type of request: by id OR search (OR atom feed)
         // 2.1 by id
         if (pathPayload != null && !pathPayload.isEmpty() && httpRequest.getQueryString() == null)
@@ -101,7 +94,7 @@ public class ObservationsDecoder extends ResourceDecoder {
             result = decodeObservationsSearchRequest(httpRequest);
         }
         /*
-        // 2.3 feed 
+        // 2.3 feed
         else if (pathPayload == null && httpRequest.getQueryString() == null)
         {
             // pathpayload and querystring == null. if paging is implemented the querystring will not be empty
@@ -113,7 +106,7 @@ public class ObservationsDecoder extends ResourceDecoder {
             BadRequestException bR = new BadRequestException(errorMsg);
             throw new NoApplicableCodeException().causedBy(bR).withMessage(errorMsg);
         }
-        
+
         return result;
     }
 
@@ -123,22 +116,22 @@ public class ObservationsDecoder extends ResourceDecoder {
     {
      // 0 variables
         RestRequest result = null;
-        
+
         if (pathPayload != null && !pathPayload.isEmpty()) {
              result = decodeObservationsDeleteRequest(pathPayload);
         }
-        
+
         return result;
     }
 
     private RestRequest decodeObservationsDeleteRequest(String pathPayload)
     {
         DeleteObservationRequest deleteObservationRequest = new DeleteObservationRequest();
-        
+
         deleteObservationRequest.setService(bindingConstants.getSosService());
         deleteObservationRequest.setVersion(bindingConstants.getSosVersion());
         deleteObservationRequest.setObservationIdentifier(pathPayload);
-        
+
         return new ObservationsDeleteRequest(deleteObservationRequest);
     }
 
@@ -153,16 +146,16 @@ public class ObservationsDecoder extends ResourceDecoder {
                 ObservationDocument xb_ObservationRestDoc = (ObservationDocument) requestDoc;
                 ObservationType xb_ObservationRest = xb_ObservationRestDoc.getObservation();
                 OMObservationType xb_OMObservation = xb_ObservationRest.getOMObservation();
-                
+
                 // 1 check for gml:identifier
                 if (!xb_OMObservation.isSetIdentifier()) {
-                    // 1.1 if not available set to newly generated UUID 
+                    // 1.1 if not available set to newly generated UUID
                     CodeWithAuthorityType xb_gmlIdentifier = CodeWithAuthorityType.Factory.newInstance();
                     xb_gmlIdentifier.setCodeSpace(UUID.class.getName());
                     xb_gmlIdentifier.setStringValue(UUID.randomUUID().toString());
                     xb_OMObservation.setIdentifier(xb_gmlIdentifier);
                 }
-                
+
                 // 2 get offering link
                 LinkType[] xb_links = xb_ObservationRest.getLinkArray();
                 List<String> offeringIds = new ArrayList<String>();
@@ -174,7 +167,7 @@ public class ObservationsDecoder extends ResourceDecoder {
                         offeringIds.add(offeringId);
                     }
                 }
-                
+
                 // 2.1 clean links to resources like procedure and feature
                 if (isProcedureReferenced(xb_OMObservation) && isProcedureReferencePoitingToMe(xb_OMObservation)) {
                     resetProcedureReference(xb_OMObservation);
@@ -182,7 +175,7 @@ public class ObservationsDecoder extends ResourceDecoder {
                 if (isFeatureReferenced(xb_OMObservation) && isFeatureReferencePointingToMe(xb_OMObservation)) {
                     resetFeatureOfInterstReference(xb_OMObservation);
                 }
-                
+
                 // 3 build insert observation request
                 InsertObservationRequest insertObservationRequest = new InsertObservationRequest();
                 insertObservationRequest.setService(bindingConstants.getSosService());
@@ -190,7 +183,7 @@ public class ObservationsDecoder extends ResourceDecoder {
                 insertObservationRequest.setOfferings(offeringIds);
                 OmObservation sosObs = createSosObservationFromOMObservation(xb_OMObservation);
                 insertObservationRequest.addObservation(sosObs);
-                
+
                 return new ObservationsPostRequest(insertObservationRequest,xb_OMObservation);
             }
         }
@@ -243,13 +236,13 @@ public class ObservationsDecoder extends ResourceDecoder {
     {
         // 2.2.1 get kvp encoded parameters from querystring
         Map<String,String> parameterMap = getKvPEncodedParameters(httpRequest);
-        
+
         // 2.2.2 build requests
         GetObservationRequest getObservationRequest = buildGetObservationSearchRequest(parameterMap);
-                
+
         String queryString = httpRequest.getQueryString();
-        
-        return new ObservationsSearchRequest(getObservationRequest,queryString);   
+
+        return new ObservationsSearchRequest(getObservationRequest,queryString);
     }
 
     private ObservationsGetRequest decodeObservationByIdRequest(String pathPayload)
@@ -259,7 +252,7 @@ public class ObservationsDecoder extends ResourceDecoder {
         // FIXME remove unused GetCapabilitiesRequest
         // build get capabilities request reduced to contents section
         GetCapabilitiesRequest getCapabilitesRequestOnlyContents = createGetCapabilitiesRequestWithContentSectionOnly();
-        
+
         return new ObservationsGetRequest(getObservationRequest,getCapabilitesRequestOnlyContents);
     }
 
@@ -269,13 +262,13 @@ public class ObservationsDecoder extends ResourceDecoder {
         request.setVersion(bindingConstants.getSosVersion());
         request.setService(bindingConstants.getSosService());
         request.setExtensions(createSubsettingExtension(true));
-        
+
         boolean parameterMapValid = false; // if at least one parameter is valid
-        
+
         // TODO add checking of parameters
-        
+
         for (String parameter : parameterMap.keySet()) {
-            
+
             String value = parameterMap.get(parameter);
             if (parameter.equalsIgnoreCase(bindingConstants.getHttpGetParameterNameFoi()) &&
                     value != null &&  value.length() > 0)
@@ -319,7 +312,7 @@ public class ObservationsDecoder extends ResourceDecoder {
                 request.setNamespaces(parseNamespaces(value));
                 parameterMapValid = true;
             }
-            else 
+            else
             {
                 throw new InvalidParameterValueException(parameter, value);
             }
@@ -330,7 +323,7 @@ public class ObservationsDecoder extends ResourceDecoder {
         }
         return request;
     }
-    
+
     private GetObservationByIdRequest buildGetObservationByIdRequest(String observationId)
     {
         GetObservationByIdRequest request = new GetObservationByIdRequest();
@@ -347,13 +340,13 @@ public class ObservationsDecoder extends ResourceDecoder {
 	private Extensions createSubsettingExtension(boolean enabled)
 	{
 		Boolean value = enabled?Boolean.TRUE:Boolean.FALSE;
-		
+
 		Extensions extensions = new Extensions();
-        SwesExtension<Boolean> antiSubsettingExtension = new SwesExtensionImpl<Boolean>();
+        SwesExtension<Boolean> antiSubsettingExtension = new SwesExtension<>();
         antiSubsettingExtension.setDefinition(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name());
         antiSubsettingExtension.setValue(value);
         extensions.addExtension(antiSubsettingExtension);
-		
+
 		return extensions;
 	}
 
@@ -367,12 +360,12 @@ public class ObservationsDecoder extends ResourceDecoder {
             throw new InvalidObservationTypeException(decodedObject!=null?decodedObject.getClass().getName():"null");
         }
     }
-    
+
     private boolean isOfferingLink(LinkType xb_Link)
     {
         return !xb_Link.isNil() && xb_Link.getRel().equalsIgnoreCase(getRelationIdentifierWithNamespace(bindingConstants.getResourceRelationOfferingGet()));
     }
-    
+
     @Override
     protected RestRequest decodeOptionsRequest(HttpServletRequest httpRequest,
             String pathPayload)
@@ -394,5 +387,5 @@ public class ObservationsDecoder extends ResourceDecoder {
         }
         return new OptionsRestRequest(bindingConstants.getResourceObservations(),isGlobal,isCollection);
     }
-    
+
 }

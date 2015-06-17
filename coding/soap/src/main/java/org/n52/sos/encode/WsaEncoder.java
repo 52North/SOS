@@ -33,12 +33,20 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3.x2005.x08.addressing.ActionDocument;
+import org.w3.x2005.x08.addressing.MessageIDDocument;
+import org.w3.x2005.x08.addressing.RelatesToDocument;
+import org.w3.x2005.x08.addressing.ReplyToDocument;
+import org.w3.x2005.x08.addressing.ToDocument;
+
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.iceland.w3c.SchemaLocation;
@@ -51,20 +59,13 @@ import org.n52.iceland.w3c.wsa.WsaReplyToHeader;
 import org.n52.iceland.w3c.wsa.WsaToHeader;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3.x2005.x08.addressing.ActionDocument;
-import org.w3.x2005.x08.addressing.MessageIDDocument;
-import org.w3.x2005.x08.addressing.RelatesToDocument;
-import org.w3.x2005.x08.addressing.ReplyToDocument;
-import org.w3.x2005.x08.addressing.ToDocument;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class WsaEncoder implements Encoder<XmlObject, WsaHeader> {
 
@@ -79,13 +80,13 @@ public class WsaEncoder implements Encoder<XmlObject, WsaHeader> {
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override

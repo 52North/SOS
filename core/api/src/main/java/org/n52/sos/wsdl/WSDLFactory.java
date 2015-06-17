@@ -37,12 +37,12 @@ import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.coding.OperationKey;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.Producer;
 import org.n52.sos.request.operator.WSDLAwareRequestOperator;
@@ -55,29 +55,18 @@ import org.n52.sos.request.operator.WSDLAwareRequestOperator;
  */
 public class WSDLFactory implements Producer<String> {
     @Override
-    public String get() throws ConfigurationException {
+    public String get() throws ConfigurationError {
         try {
             return getWSDL();
         } catch (final Exception ex) {
-            throw new ConfigurationException(ex);
+            throw new ConfigurationError(ex);
         }
-    }
-
-    @Override
-    public String get(Locale language) {
-        // No language support
-        return get();
-    }
-
-    @Override
-    public String get(String identification) {
-        return get();
     }
 
     private String getWSDL() throws Exception {
         final WSDLBuilder builder = new WSDLBuilder();
         if (Configurator.getInstance() != null) {
-            final Map<String, Binding> bindings = BindingRepository.getInstance().getBindings();
+            final Map<String, Binding> bindings = BindingRepository.getInstance().getBindingsByPath();
             final RequestOperatorRepository repo = RequestOperatorRepository.getInstance();
 
             final Set<RequestOperatorKey> requestOperators = repo.getActiveRequestOperatorKeys();

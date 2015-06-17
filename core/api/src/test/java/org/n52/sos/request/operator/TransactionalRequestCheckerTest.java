@@ -30,11 +30,10 @@ package org.n52.sos.request.operator;
 
 import static org.n52.iceland.util.HasStatusCode.hasStatusCode;
 
-import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.n52.iceland.config.SettingsManager;
+
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.request.RequestContext;
 import org.n52.iceland.util.http.HTTPStatus;
@@ -55,11 +54,6 @@ public class TransactionalRequestCheckerTest {
     private static final String NULL = null;
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
-
-    @AfterClass
-    public static void cleanUp() {
-        SettingsManager.getInstance().cleanup();
-    }
 
     @Test
     public void shouldPass_NotActive()

@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.namespace.QName;
 
@@ -44,7 +45,7 @@ import net.opengis.sensorML.x101.AbstractPureProcessType;
 import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
 import net.opengis.sensorML.x101.CharacteristicsDocument.Characteristics;
 import net.opengis.sensorML.x101.ClassificationDocument.Classification;
-import net.opengis.sensorML.x101.ClassificationDocument.Classification.ClassifierList.Classifier;
+import net.opengis.sensorML.x101.ClassificationDocument.Classification.ClassifierList;
 import net.opengis.sensorML.x101.ComponentType;
 import net.opengis.sensorML.x101.ComponentsDocument.Components;
 import net.opengis.sensorML.x101.ComponentsDocument.Components.ComponentList;
@@ -79,15 +80,18 @@ import net.opengis.sensorML.x101.ValidTimeDocument.ValidTime;
 
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.ProcedureDescriptionFormat;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.sos.encode.AbstractSensorMLDecoder;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.ogc.sensorML.AbstractComponent;
@@ -120,11 +124,10 @@ import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -132,7 +135,7 @@ import com.vividsolutions.jts.geom.Point;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
@@ -141,14 +144,16 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
     private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.decoderKeysForElements(SensorMLConstants.NS_SML,
             SensorMLDocument.class, SystemDocument.class, SystemType.class, ProcessModelType.class);
 
-    private static final Set<String> SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS = Collections
-            .singleton(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL);
-
     private static final Set<String> REMOVABLE_CAPABILITIES_NAMES = Sets.newHashSet(
             SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES, SensorMLConstants.ELEMENT_NAME_OFFERINGS);
 
     private static final Set<String> REMOVABLE_COMPONENTS_ROLES = Collections
             .singleton(SensorMLConstants.ELEMENT_NAME_CHILD_PROCEDURES);
+
+    private static final ImmutableSet<SupportedType> SUPPORTED_TYPES
+            = ImmutableSet.<SupportedType>builder()
+            .add(new ProcedureDescriptionFormat(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
+            .build();
 
     public SensorMLDecoderV101() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -156,14 +161,13 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.singletonMap(SupportedTypeKey.ProcedureDescriptionFormat,
-                SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS);
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
 
     @Override
@@ -231,10 +235,8 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
         }
         if (xbAbstractProcess.getCapabilitiesArray() != null) {
             parseCapabilities(abstractProcess, xbAbstractProcess.getCapabilitiesArray());
-            final List<Integer> capsToRemove = checkCapabilitiesForRemoval(xbAbstractProcess.getCapabilitiesArray());
-            for (final Integer integer : capsToRemove) {
-                xbAbstractProcess.removeCapabilities(integer);
-            }
+            checkCapabilitiesForRemoval(xbAbstractProcess.getCapabilitiesArray())
+                    .forEach(xbAbstractProcess::removeCapabilities);
         }
         if (xbAbstractProcess.isSetDescription()) {
             abstractProcess.addDescription(xbAbstractProcess.getDescription().getStringValue());
@@ -313,11 +315,8 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
         parseAbstractDerivableComponent(xbSystemType, system);
         if (xbSystemType.isSetComponents() && xbSystemType.getComponents().isSetComponentList()) {
             system.addComponents(parseComponents(xbSystemType.getComponents()));
-            final List<Integer> compsToRemove =
-                    checkComponentsForRemoval(xbSystemType.getComponents().getComponentList());
-            for (final Integer integer : compsToRemove) {
-                xbSystemType.getComponents().getComponentList().removeComponent(integer);
-            }
+            ComponentList componentList = xbSystemType.getComponents().getComponentList();
+            checkComponentsForRemoval(componentList).forEach(componentList::removeComponent);
             checkAndRemoveEmptyComponents(xbSystemType);
         }
         final String xmlDescription = addSensorMLWrapperForXmlDescription(xbSystemType);
@@ -380,7 +379,7 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
     /**
      * Parses the identifications and sets the AbstractProcess' identifiers
-     * 
+     *
      * @param abstractProcess
      *            The AbstractProcess to which identifiers are added
      * @param identificationArray
@@ -406,44 +405,44 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
     /**
      * Parses the classification
-     * 
+     *
      * @param classificationArray
      *            XML classification
      * @return SOS classification
      */
-    private List<SmlClassifier> parseClassification(final Classification[] classificationArray) {
-        final List<SmlClassifier> sosClassifiers = new ArrayList<SmlClassifier>(classificationArray.length);
-        for (final Classification xbClassification : classificationArray) {
-            for (final Classifier xbClassifier : xbClassification.getClassifierList().getClassifierArray()) {
-                final Term term = xbClassifier.getTerm();
-                final SmlClassifier smlClassifier =
-                        new SmlClassifier(xbClassifier.getName(),
-                                term.isSetDefinition() ? term.getDefinition() : null, term.isSetCodeSpace() ? term
-                                        .getCodeSpace().getHref() : null, term.getValue());
-                sosClassifiers.add(smlClassifier);
-            }
-        }
-        return sosClassifiers;
+    private List<SmlClassifier> parseClassification(Classification[] classificationArray) {
+        return Arrays.stream(classificationArray)
+                .map(Classification::getClassifierList)
+                .map(ClassifierList::getClassifierArray)
+                .flatMap(Arrays::stream)
+                .map(c -> {
+                    Term term = c.getTerm();
+                    String definition = term.isSetDefinition() ? term.getDefinition() : null;
+                    String codespace = term.isSetCodeSpace() ? term.getCodeSpace().getHref() : null;
+                    String value = term.getValue();
+                    return new SmlClassifier(c.getName(), definition, codespace, value);
+                })
+                .collect(Collectors.toList());
     }
 
     /**
      * Parses the characteristics
-     * 
+     *
      * @param characteristicsArray
      *            XML characteristics
      * @return SOS characteristics
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs
      */
     private List<SmlCharacteristics> parseCharacteristics(final Characteristics[] characteristicsArray)
             throws OwsExceptionReport {
         final List<SmlCharacteristics> sosCharacteristicsList =
-                new ArrayList<SmlCharacteristics>(characteristicsArray.length);
+                new ArrayList<>(characteristicsArray.length);
         final SmlCharacteristics sosCharacteristics = new SmlCharacteristics();
-        for (final Characteristics xbCharacteristics : characteristicsArray) {
-            final Object decodedObject = CodingHelper.decodeXmlElement(xbCharacteristics.getAbstractDataRecord());
+        for (Characteristics xbCharacteristics : characteristicsArray) {
+            Object decodedObject = CodingHelper.decodeXmlElement(xbCharacteristics.getAbstractDataRecord());
             if (decodedObject instanceof DataRecord) {
                 sosCharacteristics.setDataRecord((DataRecord) decodedObject);
             } else {
@@ -460,13 +459,13 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
     /**
      * Parses the capabilities, processing and removing special insertion
      * metadata
-     * 
+     *
      * @param abstractProcess
      *            The AbstractProcess to which capabilities and insertion
      *            metadata are added
      * @param capabilitiesArray
      *            XML capabilities
-     * 
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs
      */
@@ -498,7 +497,7 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
     /**
      * Process standard formatted capabilities insertion metadata into a map
      * (key=identifier, value=name)
-     * 
+     *
      * @param dataRecord
      *            The DataRecord to examine
      * @param xbCapabilities
@@ -508,7 +507,7 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
      * @throws CodedException
      *             thrown if the DataRecord fields are in an incorrect format
      */
-    private Map<String, String> parseCapabilitiesMetadata(final SmlCapabilities caps, final Capabilities xbCapabilities)
+    private Map<String, String> parseCapabilitiesMetadata(SmlCapabilities caps, Capabilities xbCapabilities)
             throws OwsExceptionReport {
         final Map<String, String> map = Maps.newHashMapWithExpectedSize(caps.getDataRecord().getFields().size());
         for (final SweField sosSweField : caps.getDataRecord().getFields()) {
@@ -529,29 +528,24 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
         }
         return map;
     }
-    
+
     /**
      * Parses the position
-     * 
+     *
      * @param position
      *            XML position
      * @return SOS position
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs
      */
-    private SmlPosition parsePosition(final Position position) throws OwsExceptionReport {
-        SmlPosition sosSMLPosition = null;
-        if (position.isSetPosition()) {
-            final Object pos = CodingHelper.decodeXmlElement(position.getPosition());
-            if (pos instanceof SmlPosition) {
-                sosSMLPosition = (SmlPosition) pos;
-            }
-        } else {
+    private SmlPosition parsePosition(Position position) throws OwsExceptionReport {
+        if (!position.isSetPosition()) {
             throw new InvalidParameterValueException().at(XmlHelper.getLocalName(position)).withMessage(
                     "Error while parsing the position of the SensorML (the position is not set)!");
         }
+        SmlPosition sosSMLPosition = (SmlPosition) CodingHelper.decodeXmlElement(position.getPosition());
         if (position.getName() != null) {
             sosSMLPosition.setName(position.getName());
         }
@@ -560,27 +554,25 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
     /**
      * Parses the location
-     * 
+     *
      * @param location
      *            XML location
      * @return SOS location
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs
      */
     private SmlLocation parseLocation(final SmlLocation2 location) throws OwsExceptionReport {
-        SmlLocation sosSmlLocation = null;
-        if (location.isSetPoint()) {
-            final Object point = CodingHelper.decodeXmlElement(location.getPoint());
-            if (point instanceof Point) {
-                sosSmlLocation = new SmlLocation((Point) point);
-            }
-        } else {
+        if (!location.isSetPoint()) {
             throw new InvalidParameterValueException()
                     .at(XmlHelper.getLocalName(location))
-                    .withMessage(
-                            "Error while parsing the sml:location of the SensorML (point is not set, only point is supported)!");
+                    .withMessage("Error while parsing the sml:location of the SensorML (point is not set, only point is supported)!");
+        }
+        SmlLocation sosSmlLocation = null;
+        final Object point = CodingHelper.decodeXmlElement(location.getPoint());
+        if (point instanceof Point) {
+            sosSmlLocation = new SmlLocation((Point) point);
         }
         return sosSmlLocation;
     }
@@ -754,12 +746,12 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
     /**
      * Parses the inputs
-     * 
+     *
      * @param inputs
      *            XML inputs
      * @return SOS inputs
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs
      */
@@ -773,12 +765,12 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
     /**
      * Parses the outputs
-     * 
+     *
      * @param outputs
      *            XML outputs
      * @return SOS outputs
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs
      */
@@ -819,12 +811,12 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
     /**
      * Parses the components
-     * 
+     *
      * @param xbIoCompPropType
      *            XML components
      * @return SOS components
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs
      */

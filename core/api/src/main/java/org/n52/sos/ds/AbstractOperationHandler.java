@@ -31,15 +31,22 @@ package org.n52.sos.ds;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.ds.OperationHandler;
-import org.n52.iceland.ds.OperationHandlerKeyType;
+import org.n52.iceland.ds.OperationHandlerKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.Constraint;
@@ -47,22 +54,20 @@ import org.n52.iceland.ogc.ows.DCP;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.ows.OwsParameterValuePossibleValues;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.MultiMaps;
-import org.n52.iceland.util.SetMultiMap;
+import org.n52.iceland.util.collections.MultiMaps;
+import org.n52.iceland.util.collections.SetMultiMap;
 import org.n52.iceland.util.http.HTTPHeaders;
 import org.n52.iceland.util.http.HTTPMethods;
 import org.n52.iceland.util.http.MediaType;
-import org.n52.sos.cache.ContentCache;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.SosHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Renamed, in version 4.x called AbstractOperationDAO
- * 
+ *
  * @since 5.0.0
  *
  */
@@ -70,30 +75,72 @@ public abstract class AbstractOperationHandler implements OperationHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractOperationHandler.class);
 
-    private final OperationHandlerKeyType operationHandlerIdentifier;
+    private final OperationHandlerKey key;
+    private ContentCacheController contentCacheController;
 
     public AbstractOperationHandler(String service, String operationName) {
-        operationHandlerIdentifier = new OperationHandlerKeyType(service, operationName);
+        this.key = new OperationHandlerKey(service, operationName);
+    }
+
+    @Inject
+    public void setContentCacheController(ContentCacheController contentCacheController) {
+        this.contentCacheController = contentCacheController;
+    }
+
+    protected ContentCacheController getCacheController() {
+        return this.contentCacheController;
+    }
+
+    @Deprecated
+    protected Configurator getConfigurator() {
+        // FIXME use @Inject
+        return Configurator.getInstance();
+    }
+
+
+    @Deprecated
+    protected BindingRepository getBindingRepository() {
+        // FIXME use @Inject
+        return BindingRepository.getInstance();
+    }
+
+    @Deprecated
+    protected ProfileHandler getProfileHandler() {
+        // FIXME use @Inject
+        return ProfileHandler.getInstance();
+    }
+
+    @Deprecated
+    protected ServiceConfiguration getServiceConfiguration() {
+        // FIXME use @Inject
+        return ServiceConfiguration.getInstance();
     }
 
     // TODO check if necessary in feature
     @Override
     public String getOperationName() {
-        return this.operationHandlerIdentifier.getOperationName();
+        return getKey().getOperationName();
+    }
+
+    @Deprecated
+    public OperationHandlerKey getOperationHandlerKey() {
+        return getKey();
     }
 
     @Override
-    public OperationHandlerKeyType getOperationHandlerKeyType() {
-        return this.operationHandlerIdentifier;
+    public Set<OperationHandlerKey> getKeys() {
+        return Collections.singleton(getKey());
+    }
+
+    public OperationHandlerKey getKey() {
+        return this.key;
     }
 
     @Override
     public OwsOperation getOperationsMetadata(String service, String version) throws OwsExceptionReport {
-        Map<String, Set<DCP>> dcp =
-                getDCP(new OperationKey(service, version, getOperationHandlerKeyType().getOperationName()));
+        Map<String, Set<DCP>> dcp = getDCP(new OperationKey(service, version, getKey().getOperationName()));
         if (dcp == null || dcp.isEmpty()) {
-            LOG.debug("Operation {} for Service {} not available due to empty DCP map.", getOperationName(),
-                    getOperationHandlerKeyType().getService());
+            LOG.debug("Operation {} for Service {} not available due to empty DCP map.", getOperationName(), getKey().getService());
             return null;
         }
         OwsOperation operation = new OwsOperation();
@@ -103,24 +150,8 @@ public abstract class AbstractOperationHandler implements OperationHandler {
         return operation;
     }
 
-    // @Override
-    // /* provide a default implementation for extension-less DAO's */
-    // public SosCapabilitiesExtension getExtension() throws OwsExceptionReport
-    // {
-    // return null;
-    // }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    protected ContentCache getCache() {
-        return getConfigurator().getCache();
-    }
-
-    protected Configurator getConfigurator() {
-        return Configurator.getInstance();
+    protected SosContentCache getCache() {
+        return (SosContentCache) getCacheController().getCache();
     }
 
     /**
@@ -134,15 +165,17 @@ public abstract class AbstractOperationHandler implements OperationHandler {
      */
     protected Map<String, Set<DCP>> getDCP(OperationKey decoderKey) throws OwsExceptionReport {
         SetMultiMap<String, DCP> dcps = MultiMaps.newSetMultiMap();
-        String serviceURL = ServiceConfiguration.getInstance().getServiceURL();
+        String serviceURL = getServiceConfiguration().getServiceURL();
+
         try {
             // TODO support for operation/method specific supported request and
             // response mediatypes
-            for (Binding binding : BindingRepository.getInstance().getBindings().values()) {
-                String url = serviceURL + binding.getUrlPattern();
+            for (Entry<String, Binding> entry : getBindingRepository().getBindingsByPath().entrySet()) {
+                String url = serviceURL + entry.getKey();
+                Binding binding = entry.getValue();
                 Constraint constraint = null;
                 if (binding.getSupportedEncodings() != null && !binding.getSupportedEncodings().isEmpty()) {
-                    SortedSet<String> ss = new TreeSet<String>();
+                    SortedSet<String> ss = new TreeSet<>();
                     for (MediaType mt : binding.getSupportedEncodings()) {
                         ss.add(mt.toString());
                     }
@@ -177,7 +210,7 @@ public abstract class AbstractOperationHandler implements OperationHandler {
     }
 
     protected void addProcedureParameter(OwsOperation opsMeta, Collection<String> procedures) {
-        if (ProfileHandler.getInstance().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
+        if (getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
             opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.procedure, procedures);
         } else {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.procedure);
@@ -189,7 +222,7 @@ public abstract class AbstractOperationHandler implements OperationHandler {
     }
 
     protected void addFeatureOfInterestParameter(OwsOperation opsMeta, Collection<String> featuresOfInterest) {
-        if (ProfileHandler.getInstance().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
+        if (getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.featureOfInterest, featuresOfInterest);
         } else {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.featureOfInterest);
@@ -201,7 +234,7 @@ public abstract class AbstractOperationHandler implements OperationHandler {
     }
 
     protected void addObservablePropertyParameter(OwsOperation opsMeta, Collection<String> observedProperties) {
-        if (ProfileHandler.getInstance().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
+        if (getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.observedProperty, observedProperties);
         } else {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.observedProperty);
@@ -213,7 +246,7 @@ public abstract class AbstractOperationHandler implements OperationHandler {
     }
 
     protected void addOfferingParameter(OwsOperation opsMeta, Collection<String> offerings) {
-        if (ProfileHandler.getInstance().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
+        if (getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.offering, offerings);
         } else {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.offering);

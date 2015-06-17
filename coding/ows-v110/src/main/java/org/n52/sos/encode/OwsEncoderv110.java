@@ -63,6 +63,12 @@ import net.opengis.ows.x11.ServiceProviderDocument.ServiceProvider;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3.x1999.xlink.ActuateType;
+import org.w3.x1999.xlink.ShowType;
+import org.w3.x1999.xlink.TypeType;
+
 import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.coding.encode.ExceptionEncoderKey;
 import org.n52.iceland.config.annotation.Configurable;
@@ -107,11 +113,6 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.N52XmlHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3.x1999.xlink.ActuateType;
-import org.w3.x1999.xlink.ShowType;
-import org.w3.x1999.xlink.TypeType;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -146,7 +147,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
 
@@ -456,7 +457,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
             exceptionText.append("[CAUSED BY]\n");
             addExceptionMessages(exceptionText, exception.getCause());
         }
-        
+
         //recurse SQLException if necessary
         if (exception instanceof SQLException) {
             SQLException sqlException = (SQLException) exception;
@@ -466,7 +467,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
             }
         }
     }
-    
+
     private ExceptionReportDocument encodeOwsExceptionReport(final OwsExceptionReport owsExceptionReport) {
         final ExceptionReportDocument erd =
                 ExceptionReportDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());

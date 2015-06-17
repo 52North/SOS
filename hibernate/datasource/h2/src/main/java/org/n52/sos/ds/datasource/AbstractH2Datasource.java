@@ -44,9 +44,10 @@ import java.util.regex.Pattern;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
+
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.ds.DatasourceCallback;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 
 
 
@@ -112,7 +113,7 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
             stmt.execute("set referential_integrity true");
             GeoDB.InitGeoDB(conn);
         } catch (SQLException ex) {
-            throw new ConfigurationException(ex);
+            throw new ConfigurationError(ex);
         } finally {
             close(stmt);
             close(conn);
@@ -136,11 +137,11 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
         });
     }
 
-    protected void initGeoDB(Map<String, Object> settings) throws ConfigurationException {
+    protected void initGeoDB(Map<String, Object> settings) throws ConfigurationError {
         try (Connection cx = openConnection(settings)) {
             GeoDB.InitGeoDB(cx);
         } catch (SQLException ex) {
-            throw new ConfigurationException("Could not init GeoDB", ex);
+            throw new ConfigurationError("Could not init GeoDB", ex);
         }
     }
 

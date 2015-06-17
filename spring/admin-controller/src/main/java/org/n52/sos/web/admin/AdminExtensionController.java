@@ -32,17 +32,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesKey;
-import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesRepository;
-import org.n52.iceland.ogc.swes.OfferingExtensionKey;
-import org.n52.iceland.ogc.swes.OfferingExtensionRepository;
-import org.n52.iceland.service.operator.ServiceOperatorKey;
-import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.JSONConstants;
+import javax.inject.Inject;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -51,6 +42,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.ConfigurationError;
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderKey;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderRepository;
+import org.n52.iceland.ogc.swes.OfferingExtensionKey;
+import org.n52.iceland.ogc.swes.OfferingExtensionRepository;
+import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.sos.web.common.JSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -64,6 +67,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 @Controller
 public class AdminExtensionController extends AbstractAdminController {
+
+
+    @Inject
+    private OfferingExtensionRepository offeringExtensionRepository;
+
+    @Inject
+    private OwsExtendedCapabilitiesProviderRepository owsExtendedCapabilitiesProviderRepository;
+
     @ResponseBody
     @ExceptionHandler(JSONException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -101,15 +112,15 @@ public class AdminExtensionController extends AbstractAdminController {
             ServiceOperatorKey sokt =
                     new ServiceOperatorKey(json.path(JSONConstants.SERVICE_KEY).asText(),
                             json.path(JSONConstants.VERSION_KEY).asText());
-            OwsExtendedCapabilitiesKey oeckt = new OwsExtendedCapabilitiesKey(sokt, json.path(JSONConstants.EXTENDED_CAPABILITIES_DOMAIN_KEY).asText());
+            OwsExtendedCapabilitiesProviderKey oeckt = new OwsExtendedCapabilitiesProviderKey(sokt, json.path(JSONConstants.EXTENDED_CAPABILITIES_DOMAIN_KEY).asText());
             if (json.path(JSONConstants.ACTIVE_KEY).asBoolean()) {
-                for (OwsExtendedCapabilitiesKey key : OwsExtendedCapabilitiesRepository.getInstance().getAllExtendedCapabilitiesProviders().keySet()) {
+                for (OwsExtendedCapabilitiesProviderKey key : owsExtendedCapabilitiesProviderRepository.getKeys()) {
                     if (key.getServiceOperatorKey().equals(sokt)) {
-                        getSettingsManager().setActive(key, false);
+                        owsExtendedCapabilitiesProviderRepository.deactivate(key);
                     }
                 }
             }
-            getSettingsManager().setActive(oeckt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
+            this.owsExtendedCapabilitiesProviderRepository.setActive(oeckt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else if (json.has(JSONConstants.OFFERING_EXTENSION_DOMAIN_KEY)) {
             ServiceOperatorKey sokt =
                     new ServiceOperatorKey(json.path(JSONConstants.SERVICE_KEY).asText(),
@@ -117,35 +128,33 @@ public class AdminExtensionController extends AbstractAdminController {
             OfferingExtensionKey oekt =
                     new OfferingExtensionKey(sokt,
                             json.path(JSONConstants.OFFERING_EXTENSION_DOMAIN_KEY).asText());
-            getSettingsManager().setActive(oekt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
+            this.offeringExtensionRepository.setActive(oekt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else {
             throw new JSONException("Invalid JSON");
         }
     }
 
-    protected ArrayNode getExtendedCapabilitiesExtensions() throws ConnectionProviderException, ConfigurationException,
+    protected ArrayNode getExtendedCapabilitiesExtensions() throws ConnectionProviderException, ConfigurationError,
             JSONException {
         ArrayNode jeces = JSONUtils.nodeFactory().arrayNode();
-        final Map<ServiceOperatorKey, Collection<String>> oes =
-                OwsExtendedCapabilitiesRepository.getInstance().getAllDomains();
+        Map<ServiceOperatorKey, Collection<String>> oes = this.owsExtendedCapabilitiesProviderRepository.getAllDomains();
         for (ServiceOperatorKey sokt : oes.keySet()) {
             for (String name : oes.get(sokt)) {
-                OwsExtendedCapabilitiesKey oeckt = new OwsExtendedCapabilitiesKey(sokt, name);
+                OwsExtendedCapabilitiesProviderKey oeckt = new OwsExtendedCapabilitiesProviderKey(sokt, name);
                 jeces.addObject()
                         .put(JSONConstants.SERVICE_KEY, oeckt.getService())
                         .put(JSONConstants.VERSION_KEY, oeckt.getVersion())
                         .put(JSONConstants.EXTENDED_CAPABILITIES_DOMAIN_KEY, oeckt.getDomain())
-                        .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isActive(oeckt));
+                        .put(JSONConstants.ACTIVE_KEY, this.owsExtendedCapabilitiesProviderRepository.isActive(oeckt));
             }
         }
         return jeces;
     }
 
     protected ArrayNode getOfferingExtensionExtensions() throws JSONException, ConnectionProviderException,
-            ConfigurationException {
+            ConfigurationError {
         ArrayNode joes = JSONUtils.nodeFactory().arrayNode();
-        final Map<ServiceOperatorKey, Collection<String>> oes =
-                OfferingExtensionRepository.getInstance().getAllDomains();
+        final Map<ServiceOperatorKey, Collection<String>> oes = this.offeringExtensionRepository.getAllDomains();
         for (ServiceOperatorKey sokt : oes.keySet()) {
             for (String name : oes.get(sokt)) {
                 OfferingExtensionKey oekt = new OfferingExtensionKey(sokt, name);
@@ -153,7 +162,7 @@ public class AdminExtensionController extends AbstractAdminController {
                         .put(JSONConstants.SERVICE_KEY, oekt.getService())
                         .put(JSONConstants.VERSION_KEY, oekt.getVersion())
                         .put(JSONConstants.OFFERING_EXTENSION_DOMAIN_KEY, oekt.getDomain())
-                        .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isActive(oekt));
+                        .put(JSONConstants.ACTIVE_KEY, this.offeringExtensionRepository.isActive(oekt));
             }
         }
         return joes;

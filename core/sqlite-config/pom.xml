@@ -40,6 +40,11 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 		</dependency>
+        <dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+            <version>1</version>
+		</dependency>
     </dependencies>
     <build>
         <plugins>
@@ -62,5 +67,5 @@
                 </executions>
             </plugin>
         </plugins>
-    </build>   
+    </build>
 </project>

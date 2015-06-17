@@ -35,7 +35,7 @@ import org.n52.iceland.util.StringHelper;
 
 /**
  * SOS class for result filter
- * 
+ *
  * @since 4.0.0
  */
 public class ComparisonFilter extends Filter<ComparisonOperator> {
@@ -78,7 +78,7 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
 
     /**
      * constructor
-     * 
+     *
      * @param operator
      *            Filter operator
      * @param valueReference
@@ -94,7 +94,7 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
 
     /**
      * constructor for {@link ComparisonOperator#PropertyIsBetween} filter
-     * 
+     *
      * @param operator
      *            Filter operator
      * @param valueReference
@@ -123,7 +123,7 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
 
     /**
      * constructor for {@link ComparisonOperator#PropertyIsLike} filter
-     * 
+     *
      * @param operator
      *            Filter operator
      * @param valueReference
@@ -164,7 +164,7 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
 
     /**
      * Get filter value
-     * 
+     *
      * @return filter value
      */
     public String getValue() {
@@ -173,7 +173,7 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
 
     /**
      * Get upper filter value
-     * 
+     *
      * @return upper filter value
      */
     public String getValueUpper() {
@@ -182,7 +182,7 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
 
     /**
      * Set filter value
-     * 
+     *
      * @param value
      *            filter value
      */
@@ -192,7 +192,7 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
 
     /**
      * Set upper filter value
-     * 
+     *
      * @param valueUpper
      *            upper filter value
      */
@@ -202,7 +202,7 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
 
     /**
      * Get escape characters
-     * 
+     *
      * @return escape characters
      */
     public String getEscapeString() {
@@ -211,7 +211,7 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
 
     /**
      * Set escape characters
-     * 
+     *
      * @param escapeString
      *            escape characters
      */
@@ -221,7 +221,7 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
 
     /**
      * Get wild card character
-     * 
+     *
      * @return wild card character
      */
     public String getWildCard() {
@@ -230,7 +230,7 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
 
     /**
      * Set wild card character
-     * 
+     *
      * @param wildCard
      *            wild card character
      */
@@ -240,7 +240,7 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
 
     /**
      * Get single char character
-     * 
+     *
      * @return single char character
      */
     public String getSingleChar() {
@@ -249,17 +249,17 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
 
     /**
      * Set single char character
-     * 
+     *
      * @param singleChar
      *            single char character
      */
     public void setSingleChar(String singleChar) {
         this.singleChar = singleChar;
     }
-    
+
     /**
      * Check if value is not null or empty
-     * 
+     *
      * @return <code>true</code>, if value is not empty
      */
     public boolean isSetValue() {
@@ -268,7 +268,7 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
 
     /**
      * Check if value upper is not null or empty
-     * 
+     *
      * @return <code>true</code>, if value upper is not empty
      */
     public boolean isSetValueUpper() {
@@ -277,31 +277,31 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
 
     /**
      * Check if escape string is not null or empty
-     * 
+     *
      * @return <code>true</code>, if escape string is not empty
      */
     public boolean isSetEscapeString() {
         return StringHelper.isNotEmpty(getEscapeString());
     }
-    
+
     /**
      * Check if wild card is not null or empty
-     * 
+     *
      * @return <code>true</code>, if wild card is not empty
      */
     public boolean isSetWildCard() {
         return StringHelper.isNotEmpty(getWildCard());
     }
-    
+
     /**
      * Check if single char is not null or empty
-     * 
+     *
      * @return <code>true</code>, if single char is not empty
      */
     public boolean isSetSingleChar() {
         return StringHelper.isNotEmpty(getSingleChar());
     }
-    
+
     @Override
     public String toString() {
         String result = "ComparisonFilter: ";

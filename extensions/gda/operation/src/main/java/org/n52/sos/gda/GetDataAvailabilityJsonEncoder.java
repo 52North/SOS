@@ -38,9 +38,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class GetDataAvailabilityJsonEncoder extends AbstractSosResponseEncoder<GetDataAvailabilityResponse> {
@@ -56,7 +56,7 @@ public class GetDataAvailabilityJsonEncoder extends AbstractSosResponseEncoder<G
             objectNode.put(JSONConstants.FEATURE_OF_INTEREST, da.getFeatureOfInterest().getHref())
                         .put(JSONConstants.PROCEDURE, da.getProcedure().getHref())
                         .put(JSONConstants.OBSERVED_PROPERTY, da.getObservedProperty().getHref())
-                        .put(JSONConstants.PHENOMENON_TIME, encodeObjectToJson(da.getPhenomenonTime()));
+                        .set(JSONConstants.PHENOMENON_TIME, encodeObjectToJson(da.getPhenomenonTime()));
             if (da.isSetCount()) {
                 objectNode.put(JSONConstants.COUNT, da.getCount());
             }

@@ -28,34 +28,25 @@
  */
 package org.n52.sos.service;
 
-import static java.lang.Boolean.TRUE;
 
-import java.util.Collections;
-import java.util.Set;
-
-import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingDefinitionGroup;
-import org.n52.iceland.config.SettingDefinitionProvider;
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.config.settings.BooleanSettingDefinition;
-import org.n52.iceland.config.settings.StringSettingDefinition;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.util.Validation;
 
-import com.google.common.collect.Sets;
 
 /**
  * This class provides all settings to configure the sensor description
  * generation.
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 @Configurable
-public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
+public class ProcedureDescriptionSettings implements Constructable {
 
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Procedure Description")
             .setDescription("Settings to configure the procedure description generation and enrichment feature.")
@@ -96,184 +87,6 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
 
     public static final String ENRICH_WITH_DISCOVERY_INFORMATION = "procedureDesc.ENRICH_WITH_DISCOVERY_INFORMATION";
 
-    public static final BooleanSettingDefinition ENRICH_WITH_OFFERINGS_DEFINITION =
-            new BooleanSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_0)
-                    .setKey(ENRICH_WITH_OFFERINGS)
-                    .setDefaultValue(TRUE)
-                    .setTitle("Enrich with offering information?")
-                    .setDescription(
-                            "If selected, the service enriches each procedure description with available offering information: "
-                                    + "listing all procedure related offering ids, for example. If disabled, the returned description of "
-                                    + "an DescribeSensor response might differ from the document used during the related InsertSensor call.");
-
-    public static final BooleanSettingDefinition ENRICH_WITH_FEATURES_DEFINITION =
-            new BooleanSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_1)
-                    .setKey(ENRICH_WITH_FEATURES)
-                    .setDefaultValue(TRUE)
-                    .setTitle("Enrich with feature information?")
-                    .setDescription(
-                            "If selected, the service enriches each procedure description with available observed feature "
-                                    + "information: listing all features observed by this procedure, for example. If disabled, "
-                                    + "the returned description of an DescribeSensor response might differ from the document "
-                                    + " used during the related InsertSensor call.");
-
-    public static final BooleanSettingDefinition ENRICH_WITH_DISCOVERY_INFORMATION_DEFINITION =
-            new BooleanSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_2)
-                    .setKey(ENRICH_WITH_DISCOVERY_INFORMATION)
-                    .setDefaultValue(TRUE)
-                    .setTitle("Enrich with discovery information?")
-                    .setDescription(
-                            "If selected, the service enriches each procedure description with discovery relevant information"
-                                    + " according to <a target=\"_blank\" href=\"https://portal.opengeospatial.org/files/?artifact_id=33284\">OGC#09-033 "
-                                    + "'SensorML Profile for Discovery'</a>.");
-
-    public static final StringSettingDefinition IDENTIFIER_LONG_NAME_DEFINITION_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_3)
-                    .setKey(IDENTIFIER_LONG_NAME_DEFINITION)
-                    .setDefaultValue("urn:ogc:def:identifier:OGC:1.0:longname")
-                    .setTitle("Identifier 'longname' definition")
-                    .setDescription(
-                            "The definition for the sml:identification holding the 'longname'. Used only if the procedure description is enriched according to OGC#09-033.");
-
-    public static final StringSettingDefinition IDENTIFIER_SHORT_NAME_DEFINITION_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_4)
-                    .setKey(IDENTIFIER_SHORT_NAME_DEFINITION)
-                    .setDefaultValue("urn:ogc:def:identifier:OGC:1.0:shortname")
-                    .setTitle("Identifier 'shortname' definition")
-                    .setDescription(
-                            "The definition for the sml:identification holding the 'shortname'. Used only if the sensor description is enriched according to OGC#09-033.");
-
-    public static final StringSettingDefinition DESCRIPTION_TEMPLATE_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_5)
-                    .setKey(DESCRIPTION_TEMPLATE)
-                    .setDefaultValue("The '%s' with the id '%s' observes the following properties: '%s'.")
-                    .setTitle("Description template")
-                    .setDescription(
-                            "The template used to generate a description using the sensor identifier and the observed properties "
-                                    + "related. The template MUST contain '%s' three times. The first one will be replaced with 'sensor system' or "
-                                    + "'procedure' depending if it's spatial or non-spatial. The second one will be replaced with the sensor id and"
-                                    + " the third with a comma separated list of properties: e.g. <i>The %s with the id '%s' observes the following "
-                                    + "properties: '%s'.</i>.");
-
-    public static final BooleanSettingDefinition GENERATE_CLASSIFICATION_DEFINITION =
-            new BooleanSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_6)
-                    .setKey(GENERATE_CLASSIFICATION)
-                    .setDefaultValue(TRUE)
-                    .setTitle("Generate classification")
-                    .setDescription(
-                            "Should the classifiers for 'intendedApplication' and/or 'sensorType' be generated using the values from the next two settings?");
-
-    public static final StringSettingDefinition CLASSIFIER_INTENDED_APPLICATION_DEFINITION_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_7)
-                    .setKey(CLASSIFIER_INTENDED_APPLICATION_DEFINITION)
-                    .setDefaultValue("urn:ogc:def:classifier:OGC:1.0:application")
-                    .setTitle("IntendedApplication definition")
-                    .setDescription(
-                            "The definition that will be used for all procedures/sensors of this SOS instance as definition for the classifier 'intendedApllication' if the classification generation is activated.");
-
-    public static final StringSettingDefinition CLASSIFIER_INTENDED_APPLICATION_VALUE_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_8)
-                    .setKey(CLASSIFIER_INTENDED_APPLICATION_VALUE)
-                    .setDefaultValue("")
-                    .setOptional(true)
-                    .setTitle("IntendedApplication Value")
-                    .setDescription(
-                            "The value that will be used for all procedures/sensors of this SOS instance as term for the classifier 'intendedApllication' if the classification generation is activated. In addition, if this field is <b>empty</b>, the classifier 'intendedApplication' will <b>not</b> be added.");
-
-    public static final StringSettingDefinition CLASSIFIER_PROCEDURE_TYPE_DEFINITION_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_9)
-                    .setKey(CLASSIFIER_PROCEDURE_TYPE_DEFINITION)
-                    .setDefaultValue("urn:ogc:def:classifier:OGC:1.0:procedureType")
-                    .setTitle("ProcedureType definition")
-                    .setDescription(
-                            "The definition that will be used for all procedures/sensors of this SOS instance as definition for the classifier 'procedureType' if the classification generation is activated.");
-
-    public static final StringSettingDefinition CLASSIFIER_PROCEDURE_TYPE_VALUE_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_10)
-                    .setKey(CLASSIFIER_PROCEDURE_TYPE_VALUE)
-                    .setDefaultValue("")
-                    .setOptional(true)
-                    .setTitle("ProcedureType Value")
-                    .setDescription(
-                            "The value that will be used for all procedures of this SOS instance as term for the classifier 'procedureType' if the classification generation is activated. In addition, if this field is <b>empty</b>, the classifier 'procedureType' will <b>not</b> be added.");
-
-    public static final BooleanSettingDefinition USE_SERVICE_CONTACT_AS_SENSOR_CONTACT_DEFINITION =
-            new BooleanSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_11)
-                    .setKey(USE_SERVICE_CONTACT_AS_PROCEDURE_CONTACT)
-                    .setDefaultValue(TRUE)
-                    .setTitle("Use service contact as procedure contact")
-                    .setDescription(
-                            "Should the service contact be encoded as procedure contact if procedure description enrichment is activated.");
-
-    public static final StringSettingDefinition LAT_LONG_UOM_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_12)
-                    .setOptional(false)
-                    .setKey(LAT_LONG_UOM)
-                    .setDefaultValue("degree")
-                    .setTitle("Latitude &amp; Longitude UOM")
-                    .setDescription(
-                            "The UOM for the latitude  &amp; longitude values of spatial procedures (e.g. sml:System). Something like 'degree', 'm'.");
-
-    public static final StringSettingDefinition ALTITUDE_UOM_DEFINITION = new StringSettingDefinition()
-            .setGroup(GROUP)
-            .setOrder(ORDER_13)
-            .setOptional(false)
-            .setKey(ALTITUDE_UOM)
-            .setDefaultValue("m")
-            .setTitle("Altitude UOM")
-            .setDescription(
-                    "The UOM for the altitude value of spatial procedures (e.g. sml:System). Something like 'm'.");
-
-    public static final StringSettingDefinition PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_14)
-                    .setKey(PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE)
-                    .setDefaultValue(
-                            "The procedure '%s' generates the following output(s): '%s'. The input(s) is/are unknown (this description is generated).")
-                    .setTitle("Description Template for the rules definition")
-                    .setDescription(
-                            "The template used to generate a description using the procedure identifier and the observed properties. "
-                                    + "The template MUST contain '%s' two times. The first one will be replaced with the sensor id and"
-                                    + " the second with a comma separated list of properties: e.g. <i>The procedure '%s' generates the following output(s): '%s'. The "
-                                    + "input(s) is/are unknown (this description is generated).</i>");
-
-    private static final Set<? extends SettingDefinition<?, ?>> DEFINITIONS = Sets
-            .<SettingDefinition<?, ?>> newHashSet(ENRICH_WITH_OFFERINGS_DEFINITION, ENRICH_WITH_FEATURES_DEFINITION,
-                    ENRICH_WITH_DISCOVERY_INFORMATION_DEFINITION, IDENTIFIER_LONG_NAME_DEFINITION_DEFINITION,
-                    IDENTIFIER_SHORT_NAME_DEFINITION_DEFINITION, DESCRIPTION_TEMPLATE_DEFINITION,
-                    GENERATE_CLASSIFICATION_DEFINITION, CLASSIFIER_INTENDED_APPLICATION_DEFINITION_DEFINITION,
-                    CLASSIFIER_INTENDED_APPLICATION_VALUE_DEFINITION, CLASSIFIER_PROCEDURE_TYPE_DEFINITION_DEFINITION,
-                    CLASSIFIER_PROCEDURE_TYPE_VALUE_DEFINITION, USE_SERVICE_CONTACT_AS_SENSOR_CONTACT_DEFINITION,
-                    LAT_LONG_UOM_DEFINITION, ALTITUDE_UOM_DEFINITION,
-                    PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE_DEFINITION);
-
     private String descriptionTemplate;
     private boolean generateClassification;
     private String classifierIntendedApplicationValue;
@@ -290,19 +103,17 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
     private boolean enrichWithFeatures;
     private boolean enrichWithDiscoveryInformation;
 
+    @Deprecated
     private static ProcedureDescriptionSettings instance = null;
 
-    public static synchronized ProcedureDescriptionSettings getInstance() {
-        if (instance == null) {
-            instance = new ProcedureDescriptionSettings();
-            SettingsManager.getInstance().configure(instance);
-        }
-        return instance;
+    @Override
+    public void init() {
+        ProcedureDescriptionSettings.instance = this;
     }
 
-    @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return Collections.unmodifiableSet(DEFINITIONS);
+    @Deprecated
+    public static ProcedureDescriptionSettings getInstance() {
+        return instance;
     }
 
     @Setting(DESCRIPTION_TEMPLATE)

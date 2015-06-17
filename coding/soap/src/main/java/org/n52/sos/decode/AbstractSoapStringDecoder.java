@@ -29,25 +29,24 @@
 package org.n52.sos.decode;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.coding.decode.XmlNamespaceOperationDecoderKey;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
 import org.n52.iceland.w3c.soap.SoapConstants;
 import org.n52.iceland.w3c.soap.SoapRequest;
 import org.n52.sos.util.CodingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
 /**
  * Abstract SOAP {@link Decoder} for {@link String} XML representation
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 1.0.0
  *
@@ -63,17 +62,12 @@ public abstract class AbstractSoapStringDecoder implements Decoder<SoapRequest, 
                 Collections.<DecoderKey> singleton(new XmlNamespaceOperationDecoderKey(namespace,
                         SoapConstants.EN_SOAP_ENVELOPE));
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
-                Joiner.on(", ").join(getDecoderKeyTypes()));
+                Joiner.on(", ").join(getKeys()));
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(decoderKeys);
-    }
-
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
     }
 
     @Override

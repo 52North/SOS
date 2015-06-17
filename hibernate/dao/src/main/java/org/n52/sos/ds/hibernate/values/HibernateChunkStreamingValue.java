@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.CollectionHelper;
@@ -43,7 +45,7 @@ import org.n52.sos.request.GetObservationRequest;
 
 /**
  * Hibernate streaming value implementation for chunk results
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
@@ -57,12 +59,12 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     private int chunkSize;
 
     private int currentRow;
-    
+
     private boolean noChunk = false;
 
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param procedure
@@ -72,9 +74,9 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
      * @param featureOfInterest
      *            Datasource featureOfInterest id
      */
-    public HibernateChunkStreamingValue(GetObservationRequest request, long procedure, long observableProperty,
+    public HibernateChunkStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest) {
-        super(request, procedure, observableProperty, featureOfInterest);
+        super(connectionProvider, request, procedure, observableProperty, featureOfInterest);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
     }
 
@@ -98,10 +100,10 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
 
         return next;
     }
-    
+
     @Override
 	public AbstractValue nextEntity() throws OwsExceptionReport {
-    	return (AbstractValue) valuesResult.next();
+    	return valuesResult.next();
 	}
 
     @Override
@@ -142,7 +144,7 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
 
     /**
      * Get the next results from database
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs when querying the next results
      */
@@ -176,7 +178,7 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     /**
      * Check the queried {@link AbstractValue}s for null and set them as
      * iterator to local variable.
-     * 
+     *
      * @param valuesResult
      *            Queried {@link AbstractValue}s
      */

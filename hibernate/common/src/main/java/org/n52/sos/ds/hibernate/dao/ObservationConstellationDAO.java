@@ -38,10 +38,11 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -51,6 +52,7 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 import org.n52.sos.ogc.om.OmObservationConstellation;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

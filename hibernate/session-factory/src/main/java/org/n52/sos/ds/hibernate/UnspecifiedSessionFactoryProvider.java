@@ -28,48 +28,63 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Properties;
+
+import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.jdbc.Work;
 import org.hibernate.service.ServiceRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.DataConnectionProvider;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.ds.DatasourceCallback;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
+import org.n52.iceland.lifecycle.Constructable;
+import org.n52.iceland.service.DatabaseSettingsHandler;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.type.UtcTimestampType;
 import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.sos.service.DriverCleanupListener;
 
-public abstract class UnspecifiedSessionFactoryProvider extends AbstractSessionFactoryProvider implements DataConnectionProvider,
-HibernateDatasourceConstants {
-    
+public abstract class UnspecifiedSessionFactoryProvider
+        extends AbstractSessionFactoryProvider
+        implements DataConnectionProvider,
+                   HibernateDatasourceConstants,
+                   Constructable {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryProvider.class);
 
-    /**
-     * SessionFactory instance
-     */
-    protected SessionFactory sessionFactory = null;
+    private SessionFactory sessionFactory = null;
+    private Configuration configuration = null;
+    private DriverCleanupListener driverCleanupListener;
+    private DatabaseSettingsHandler databaseSettingsHandler;
 
-    /**
-     * Configuration instance
-     */
-    protected Configuration configuration = null;
-    
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.n52.sos.ds.ConnectionProvider#getConnection()
-     */
+    @Inject
+    public void setDriverCleanupListener(DriverCleanupListener driverCleanupListener) {
+        this.driverCleanupListener = driverCleanupListener;
+    }
+
+    @Inject
+    public void setDatabaseSettingsHandler(DatabaseSettingsHandler databaseSettingsHandler) {
+        this.databaseSettingsHandler = databaseSettingsHandler;
+    }
+
+    protected Configuration getConfiguration() {
+        return configuration;
+    }
+
+    @Override
+    protected SessionFactory getSessionFactory() {
+        return this.sessionFactory;
+    }
+
     @Override
     public Session getConnection() throws ConnectionProviderException {
         try {
@@ -86,11 +101,6 @@ HibernateDatasourceConstants {
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.n52.sos.ds.ConnectionProvider#returnConnection(java.lang.Object)
-     */
     @Override
     public void returnConnection(Object connection) {
         try {
@@ -104,10 +114,8 @@ HibernateDatasourceConstants {
         } catch (HibernateException he) {
             LOGGER.error("Error while returning connection!", he);
         }
-
     }
-    
-    
+
     protected DatasourceCallback getDatasourceCallback(Properties properties) {
         if (properties.containsKey(Datasource.class.getName())) {
             try {
@@ -118,11 +126,9 @@ HibernateDatasourceConstants {
                 if (callback != null) {
                     return callback;
                 }
-            } catch (ClassNotFoundException ex) {
-                LOGGER.warn("Error instantiating Datasource", ex);
-            } catch (InstantiationException ex) {
-                LOGGER.warn("Error instantiating Datasource", ex);
-            } catch (IllegalAccessException ex) {
+            } catch (ClassNotFoundException |
+                     InstantiationException |
+                     IllegalAccessException ex) {
                 LOGGER.warn("Error instantiating Datasource", ex);
             }
         }
@@ -130,12 +136,17 @@ HibernateDatasourceConstants {
     }
 
     @Override
-    protected SessionFactory getSessionFactory() {
-        return this.sessionFactory;
+    public void init() {
+        String value = this.databaseSettingsHandler.get(HibernateDatasourceConstants.PROVIDED_JDBC);
+        if (driverCleanupListener != null && (value == null || value.equals("true"))) {
+            driverCleanupListener.addDriverClass(this.databaseSettingsHandler
+                    .get(HibernateDatasourceConstants.HIBERNATE_DRIVER_CLASS));
+        }
+        this.initialize(this.databaseSettingsHandler.getAll());
     }
-    
-    @Override
-    public void initialize(Properties properties) throws ConfigurationException {
+
+    private void initialize(Properties properties) throws ConfigurationError {
+
         final DatasourceCallback datasourceCallback
                 = getDatasourceCallback(properties);
         datasourceCallback.onInit(properties);
@@ -153,24 +164,18 @@ HibernateDatasourceConstants {
             Session s = this.sessionFactory.openSession();
             try {
                 HibernateMetadataCache.init(s);
-                s.doWork(new Work() {
-                    @Override
-                    public void execute(Connection connection)
-                            throws SQLException {
-                        datasourceCallback.onFirstConnection(connection);
-                    }
-                });
+                s.doWork(datasourceCallback::onFirstConnection);
             } finally {
                 returnConnection(s);
             }
         } catch (HibernateException he) {
             String exceptionText = "An error occurs during instantiation of the database connection pool!";
             LOGGER.error(exceptionText, he);
-            cleanup();
-            throw new ConfigurationException(exceptionText, he);
+            destroy();
+            throw new ConfigurationError(exceptionText, he);
         }
     }
-    
+
     protected abstract Configuration getConfiguration(Properties properties);
 
 }

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.inspire.aqd;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 
@@ -78,7 +79,7 @@ public class EReportingChange {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("change", isChange())
                 .add("description", getDescription())
                 .toString();

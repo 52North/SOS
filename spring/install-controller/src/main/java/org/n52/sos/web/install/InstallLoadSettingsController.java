@@ -31,15 +31,16 @@ package org.n52.sos.web.install;
 import java.io.IOException;
 import java.util.Iterator;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.settings.MultilingualStringSettingDefinition;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.common.ControllerConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -52,6 +53,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import org.n52.iceland.config.SettingsService;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 
@@ -61,15 +64,18 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.INSTALL_LOAD_CONFIGURATION)
-public class InstallLoadSettingsController extends AbstractController {
+public class InstallLoadSettingsController extends AbstractInstallController {
 
     private static final Logger LOG = LoggerFactory.getLogger(InstallLoadSettingsController.class);
 
+    @Inject
+    private SettingsService settingsManager;
+
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void post(@RequestBody String config, HttpServletRequest req) throws ConfigurationException, IOException {
+    public void post(@RequestBody String config, HttpServletRequest req) throws ConfigurationError, IOException {
         final HttpSession session = req.getSession();
-        InstallationConfiguration c = AbstractInstallController.getSettings(session);
+        InstallationConfiguration c = getSettings(session);
         JsonNode settings = JSONUtils.loadString(config);
         Iterator<String> i = settings.fieldNames();
         while (i.hasNext()) {
@@ -85,23 +91,23 @@ public class InstallLoadSettingsController extends AbstractController {
                 LOG.warn("Value for setting with key {} is null", key);
                 continue;
             }
-            SettingDefinition<?, ?> def = getSettingsManager().getDefinitionByKey(key);
+            SettingDefinition<?, ?> def = settingsManager.getDefinitionByKey(key);
             if (def == null) {
                 LOG.warn("No definition for setting with key {}", key);
                 continue;
             }
             if (def instanceof MultilingualStringSettingDefinition) {
-                c.setSetting(def, getSettingsManager().getSettingFactory().newMultiLingualStringValue((MultilingualStringSettingDefinition)def, value));
+                c.setSetting(def, settingsManager.getSettingFactory().newMultiLingualStringValue((MultilingualStringSettingDefinition)def, value));
             } else {
-                c.setSetting(def, getSettingsManager().getSettingFactory().newSettingValue(def, value));
+                c.setSetting(def, settingsManager.getSettingFactory().newSettingValue(def, value));
             }
         }
-        AbstractInstallController.setSettings(session, c);
+        setSettings(session, c);
     }
 
     @ResponseBody
-    @ExceptionHandler(ConfigurationException.class)
-    public String onConfigurationError(ConfigurationException e) {
+    @ExceptionHandler(ConfigurationError.class)
+    public String onConfigurationError(ConfigurationError e) {
         return e.getMessage();
     }
 }

@@ -30,26 +30,37 @@ package org.n52.sos.ds;
 
 import java.util.Collection;
 
-import org.n52.iceland.ds.DatasourceDaoIdentifier;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.cache.WritableContentCache;
+import org.n52.sos.cache.SosWritableContentCache;
 
 /**
  * Interface for implementations of cache feeder Handlers. Used to feed the
  * CapabilitiesCache with data from the data source.
- * 
+ *
  * @since 4.0.0
  */
-public interface CacheFeederHandler extends DatasourceDaoIdentifier {
-    void updateCache(WritableContentCache capabilitiesCache) throws OwsExceptionReport;
+public interface CacheFeederHandler {
 
     /**
-     * Reload all cache data for a list of offerings, for instance after a DeleteSensor event
-     * 
-     * @param capabilitiesCache The cache to update
+     * Reload all cache data for a list of offerings, for instance after a
+     * DeleteSensor event
+     *
+     * @param cache     The cache to update
      * @param offerings A list of offerings to update
+     *
      * @throws OwsExceptionReport
      */
-    void updateCacheOfferings(WritableContentCache capabilitiesCache, Collection<String> offerings)
+    void updateCacheOfferings(SosWritableContentCache cache,
+                              Collection<String> offerings)
+            throws OwsExceptionReport;
+
+    /**
+     * Updates the cached data.
+     *
+     * @param cache the cache to update
+     *
+     * @throws OwsExceptionReport if an occurs during the cache update
+     */
+    void updateCache(SosWritableContentCache cache)
             throws OwsExceptionReport;
 }

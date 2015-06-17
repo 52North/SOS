@@ -36,12 +36,13 @@ import static org.junit.Assert.assertThat;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class ReadableCacheTest {
 
@@ -49,7 +50,7 @@ public class ReadableCacheTest {
 
     @Test
     public final void should_return_true_if_min_resulttime_for_offering_is_available() {
-        final WritableCache cache = new WritableCache();
+        final SosWritableContentCacheImpl cache = new SosWritableContentCacheImpl();
         cache.setMinResultTimeForOffering(ReadableCacheTest.OFFERING_IDENTIFIER, new DateTime(52l));
 
         assertThat(cache.hasMinResultTimeForOffering(ReadableCacheTest.OFFERING_IDENTIFIER), is(TRUE));
@@ -57,11 +58,11 @@ public class ReadableCacheTest {
 
     @Test
     public void should_return_false_if_min_resulttime_for_offering_is_null() {
-        final ReadableCache readCache = new ReadableCache();
+        final SosContentCacheImpl readCache = new SosContentCacheImpl();
 
         assertThat(readCache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), is(FALSE));
 
-        final WritableCache cache = new WritableCache();
+        final SosWritableContentCacheImpl cache = new SosWritableContentCacheImpl();
         cache.setMinResultTimeForOffering(OFFERING_IDENTIFIER, null);
 
         assertThat(cache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), is(FALSE));
@@ -69,9 +70,9 @@ public class ReadableCacheTest {
 
     @Test
     public void should_return_false_if_relatedFeature_has_no_children() {
-        final ReadableCache readCache = new WritableCache();
+        final SosContentCacheImpl readCache = new SosWritableContentCacheImpl();
         final String relatedFeature = "test-feature";
-        ((WritableContentCache) readCache).addRelatedFeatureForOffering("test-offering", relatedFeature);
+        ((SosWritableContentCache) readCache).addRelatedFeatureForOffering("test-offering", relatedFeature);
 
         assertThat(readCache.isRelatedFeatureSampled(null), is(FALSE));
         assertThat(readCache.isRelatedFeatureSampled(""), is(FALSE));
@@ -80,13 +81,13 @@ public class ReadableCacheTest {
 
     @Test
     public void should_return_true_if_relatedFeature_has_one_or_more_children() {
-        final ReadableCache readCache = new WritableCache();
+        final SosContentCacheImpl readCache = new SosWritableContentCacheImpl();
         final String relatedFeature = "test-feature";
         final String relatedFeature2 = "test-feature-2";
         final String offering = "test-offering";
-        ((WritableContentCache) readCache).addRelatedFeatureForOffering(offering, relatedFeature);
-        ((WritableContentCache) readCache).addRelatedFeatureForOffering(offering, relatedFeature2);
-        ((WritableContentCache) readCache).addParentFeature(relatedFeature2, relatedFeature);
+        ((SosWritableContentCache) readCache).addRelatedFeatureForOffering(offering, relatedFeature);
+        ((SosWritableContentCache) readCache).addRelatedFeatureForOffering(offering, relatedFeature2);
+        ((SosWritableContentCache) readCache).addParentFeature(relatedFeature2, relatedFeature);
 
         assertThat(readCache.isRelatedFeatureSampled(relatedFeature), is(TRUE));
     }

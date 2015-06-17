@@ -44,10 +44,11 @@ import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingTextObservation;
+import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
 
-public class EReportingObservationCreator implements AdditionalObservationCreator<EReportingSeries> {
+public class EReportingObservationCreator implements AdditionalObservationCreator {
 
     @SuppressWarnings("unchecked")
     private static final Set<AdditionalObservationCreatorKey> KEYS = CollectionHelper.union(
@@ -82,8 +83,9 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
     }
 
     @Override
-    public OmObservation create(OmObservation omObservation, EReportingSeries series) {
-        for (NamedValue<?> namedValue : helper.createOmParameterForEReporting(series)) {
+    public OmObservation create(OmObservation omObservation, Series series) {
+        EReportingSeries ereportingSeries = (EReportingSeries) series;
+        for (NamedValue<?> namedValue : helper.createOmParameterForEReporting(ereportingSeries)) {
             omObservation.addParameter(namedValue);
         }
         return omObservation;

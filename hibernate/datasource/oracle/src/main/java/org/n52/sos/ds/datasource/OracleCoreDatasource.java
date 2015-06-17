@@ -31,7 +31,7 @@ package org.n52.sos.ds.datasource;
 import java.util.Properties;
 import java.util.Set;
 
-import org.n52.sos.config.SettingDefinition;
+import org.n52.iceland.config.SettingDefinition;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -44,22 +44,22 @@ import com.google.common.collect.ImmutableSet;
 public class OracleCoreDatasource extends AbstractOracleDatasource {
 
     private static final String DIALECT_NAME = "Oracle Spatial Core";
-    
+
     public OracleCoreDatasource() {
         super();
         super.setTransactional(false);
     }
-    
+
     @Override
     public String getDialectName() {
         return DIALECT_NAME;
     }
-    
+
     @Override
     public boolean supportsClear() {
         return false;
     }
-    
+
     @Override
     public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties current) {
         return filter(super.getChangableSettingDefinitions(current), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));

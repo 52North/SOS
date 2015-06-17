@@ -29,23 +29,24 @@
 package org.n52.sos.convert;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
-import org.n52.iceland.convert.Converter;
-import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.convert.ConverterKeyType;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.ogc.sensorML.SensorML20Constants;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.convert.Converter;
+import org.n52.iceland.convert.ConverterException;
+import org.n52.iceland.convert.ConverterKey;
+import org.n52.sos.ogc.sensorML.SensorML20Constants;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
+
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * {@link Converter} class to convert SensorML 2.0 URL to MimeType and the other
  * way round.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
@@ -54,11 +55,12 @@ public class SensorML20UrlMimeTypeConverter implements Converter<SosProcedureDes
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorML20UrlMimeTypeConverter.class);
 
-    private static final List<ConverterKeyType> CONVERTER_KEY_TYPES = CollectionHelper.list(
-            new ConverterKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL), new ConverterKeyType(
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL,
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE));
+    private static final Set<ConverterKey> CONVERTER_KEY_TYPES = ImmutableSet.<ConverterKey>builder()
+            .add(new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
+                                      SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL))
+            .add(new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL,
+                                      SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE))
+            .build();
 
     public SensorML20UrlMimeTypeConverter() {
         LOGGER.debug("Converter for the following keys initialized successfully: {}!",
@@ -66,8 +68,8 @@ public class SensorML20UrlMimeTypeConverter implements Converter<SosProcedureDes
     }
 
     @Override
-    public List<ConverterKeyType> getConverterKeyTypes() {
-        return Collections.unmodifiableList(CONVERTER_KEY_TYPES);
+    public Set<ConverterKey> getKeys() {
+        return Collections.unmodifiableSet(CONVERTER_KEY_TYPES);
     }
 
     @Override

@@ -30,6 +30,16 @@ package org.n52.sos.web.admin;
 
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.JsonDecoderKey;
@@ -42,16 +52,7 @@ import org.n52.sos.inspire.aqd.RelatedParty;
 import org.n52.sos.inspire.aqd.ReportObligation;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
 import org.n52.sos.util.AQDJSONConstants;
-import org.n52.sos.web.AbstractController;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.n52.sos.web.common.AbstractController;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -83,14 +84,14 @@ public class AdminEReportingHeaderController extends AbstractController {
         CodingRepository codingRepository = CodingRepository.getInstance();
         Encoder<JsonNode, ReportObligation> reportObligationEncoder = codingRepository.getEncoder(new JSONEncoderKey(ReportObligation.class));
         Encoder<JsonNode, RelatedParty> relatedPartyEncoder = codingRepository.getEncoder(new JSONEncoderKey(RelatedParty.class));
-        node.put(AQDJSONConstants.REPORTING_AUTHORITY, relatedPartyEncoder.encode(reportObligationRepository.getReportingAuthority()));
+        node.set(AQDJSONConstants.REPORTING_AUTHORITY, relatedPartyEncoder.encode(reportObligationRepository.getReportingAuthority()));
         ArrayNode ros = node.putArray(AQDJSONConstants.REPORT_OBLIGATIONS);
         for (ReportObligationType reportObligationType : ReportObligationType.values()) {
             ReportObligation reportObligation = reportObligationRepository.getReportObligation(reportObligationType);
             ros.addObject().put(AQDJSONConstants.ID, reportObligationType.name())
                     .put(AQDJSONConstants.NAME, reportObligationType.getTitle())
                     .put(AQDJSONConstants.DESCRIPTION, reportObligationType.getDescription())
-                    .put(AQDJSONConstants.VALUE, reportObligationEncoder.encode(reportObligation));
+                    .set(AQDJSONConstants.VALUE, reportObligationEncoder.encode(reportObligation));
         }
         return JSONUtils.print(node);
     }

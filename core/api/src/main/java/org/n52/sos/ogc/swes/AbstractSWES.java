@@ -30,15 +30,15 @@ package org.n52.sos.ogc.swes;
 
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.ows.Extension;
-import org.n52.iceland.ogc.ows.OWSConstants.HasExtension;
 import org.n52.iceland.ogc.ows.Extensions;
+import org.n52.iceland.ogc.ows.OWSConstants.HasExtension;
 
 /**
  * SOS internal representation of AbstractSWES element
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public abstract class AbstractSWES extends AbstractFeature implements HasExtension<AbstractSWES> {
 
@@ -68,7 +68,8 @@ public abstract class AbstractSWES extends AbstractFeature implements HasExtensi
     }
 
     @SuppressWarnings("rawtypes")
-    public AbstractSWES addExtension(final Extension extension) {
+    @Override
+    public AbstractSWES addExtension(Extension extension) {
         if (getExtensions() == null) {
             setExtensions(new Extensions());
         }

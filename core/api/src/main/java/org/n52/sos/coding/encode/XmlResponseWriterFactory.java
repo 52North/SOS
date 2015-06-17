@@ -28,28 +28,44 @@
  */
 package org.n52.sos.coding.encode;
 
+import javax.inject.Inject;
+
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+
+import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
+import org.n52.iceland.coding.encode.ResponseWriterKey;
+import org.n52.iceland.component.SingleTypeComponentFactory;
+import org.n52.iceland.util.Producer;
 
 /**
  * {@link ResponseWriterFactory} implementation for {@link XmlObject} and
  * {@link XmlResponseWriter}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
-public class XmlResponseWriterFactory implements
-		ResponseWriterFactory<XmlObject, XmlResponseWriter> {
+public class XmlResponseWriterFactory
+        implements ResponseWriterFactory,
+                   SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>> {
 
-	@Override
-	public Class<XmlObject> getType() {
-		return XmlObject.class;
-	}
+    private Producer<XmlOptions> xmlOptions;
 
-	@Override
-	public XmlResponseWriter getResponseWriter() {
-		return new XmlResponseWriter();
-	}
+    @Inject
+    public void setXmlOptions(Producer<XmlOptions> xmlOptions) {
+        this.xmlOptions = xmlOptions;
+    }
+
+    @Override
+    public ResponseWriterKey getKey() {
+        return XmlResponseWriter.KEY;
+    }
+
+    @Override
+    public XmlResponseWriter create() {
+        return new XmlResponseWriter(this.xmlOptions);
+    }
 
 }

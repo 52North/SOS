@@ -44,12 +44,13 @@ import org.n52.iceland.response.AbstractServiceResponse;
  *            the request type
  * @param <A>
  *            the response type
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
 public abstract class AbstractV2RequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
         extends AbstractRequestOperator<D, Q, A> implements WSDLAwareRequestOperator {
+
     public AbstractV2RequestOperator(String operationName, Class<Q> requestType) {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, operationName, requestType);
     }
@@ -63,7 +64,7 @@ public abstract class AbstractV2RequestOperator<D extends OperationHandler, Q ex
     public Map<String, String> getAdditionalPrefixes() {
         return null;
     }
-    
+
     protected void checkExtensions(final AbstractServiceRequest<?> request, final CompositeOwsException exceptions) {
         if (request.isSetExtensions()) {
             // currently nothing to check

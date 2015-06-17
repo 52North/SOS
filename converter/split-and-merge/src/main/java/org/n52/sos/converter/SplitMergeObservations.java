@@ -35,17 +35,17 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.encode.ObservationEncoder;
+
+import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
-import org.n52.iceland.convert.RequestResponseModifierKeyType;
+import org.n52.iceland.convert.RequestResponseModifierKey;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.service.Configurator;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.InsertObservationRequest;
@@ -58,29 +58,28 @@ import org.n52.sos.util.CodingHelper;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class SplitMergeObservations implements
-        RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+public class SplitMergeObservations implements RequestResponseModifier {
 
-    private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
+    private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
     /**
      * Get the keys
-     * 
+     *
      * @return Set of keys
      */
-    private static Set<RequestResponseModifierKeyType> getKeyTypes() {
+    private static Set<RequestResponseModifierKey> getKeyTypes() {
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
         Map<AbstractServiceRequest<?>, AbstractServiceResponse> requestResponseMap = Maps.newHashMap();
 
         requestResponseMap.put(new GetObservationRequest(), new GetObservationResponse());
         requestResponseMap.put(new InsertObservationRequest(), new InsertObservationResponse());
-        Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
+        Set<RequestResponseModifierKey> keys = Sets.newHashSet();
         for (String service : services) {
             for (String version : versions) {
                 for (AbstractServiceRequest<?> request : requestResponseMap.keySet()) {
-                    keys.add(new RequestResponseModifierKeyType(service, version, request));
-                    keys.add(new RequestResponseModifierKeyType(service, version, request, requestResponseMap
+                    keys.add(new RequestResponseModifierKey(service, version, request));
+                    keys.add(new RequestResponseModifierKey(service, version, request, requestResponseMap
                             .get(request)));
                 }
             }
@@ -89,7 +88,7 @@ public class SplitMergeObservations implements
     }
 
     @Override
-    public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
+    public Set<RequestResponseModifierKey> getKeys() {
         return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
     }
 
@@ -102,18 +101,16 @@ public class SplitMergeObservations implements
     }
 
     @Override
-    public AbstractServiceResponse modifyResponse(AbstractServiceRequest<?> request, AbstractServiceResponse response)
-            throws OwsExceptionReport {
+    public AbstractServiceResponse modifyResponse(AbstractServiceRequest<?> request, AbstractServiceResponse response) throws OwsExceptionReport{
         if (request instanceof GetObservationRequest && response instanceof GetObservationResponse) {
-            return mergeObservations((GetObservationRequest)request, (GetObservationResponse) response); 
-        }
-        if (response instanceof GetObservationResponse) {
+            return  mergeObservations((GetObservationRequest) request, (GetObservationResponse) response);
+        } else  if (response instanceof GetObservationResponse) {
             return mergeObservations((GetObservationResponse) response);
         }
         return response;
     }
-    
-    private AbstractServiceResponse mergeObservations(GetObservationRequest request, GetObservationResponse response) throws OwsExceptionReport {
+
+    private GetObservationResponse mergeObservations(GetObservationRequest request, GetObservationResponse response) throws OwsExceptionReport {
         boolean checkForMergeObservationsInResponse = checkForMergeObservationsInResponse(request);
         request.setMergeObservationValues(checkForMergeObservationsInResponse);
         boolean checkEncoderForMergeObservations = checkEncoderForMergeObservations(response);
@@ -122,17 +119,17 @@ public class SplitMergeObservations implements
                 mergeObservationsWithSameConstellation(response);
             }
             response.setMergeObservations(true);
-        }        
+        }
         return response;
     }
-    
+
     private void mergeObservationsWithSameConstellation(GetObservationResponse response) {
         // TODO merge all observations with the same observationContellation
         // FIXME Failed to set the observation type to sweArrayObservation for
         // the merged Observations
         // (proc, obsProp, foi)
         if (response.getObservationCollection() != null) {
-            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
+            final List<OmObservation> mergedObservations = new LinkedList<>();
             int obsIdCounter = 1;
             for (final OmObservation sosObservation : response.getObservationCollection()) {
                 if (mergedObservations.isEmpty()) {
@@ -179,7 +176,7 @@ public class SplitMergeObservations implements
         }
         return response;
     }
-    
+
     private boolean checkForMergeObservationsInResponse(GetObservationRequest sosRequest) {
         if (getActiveProfile().isMergeValues() || isSetExtensionMergeObservationsToSweDataArray(sosRequest)) {
             return true;
@@ -192,7 +189,7 @@ public class SplitMergeObservations implements
                 && sosRequest.getExtensions().isBooleanExtensionSet(
                         Sos2Constants.Extensions.MergeObservationsIntoDataArray.name());
     }
-    
+
     protected Profile getActiveProfile() {
         return ProfileHandler.getInstance().getActiveProfile();
     }

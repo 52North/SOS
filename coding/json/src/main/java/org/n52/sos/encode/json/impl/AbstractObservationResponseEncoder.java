@@ -50,7 +50,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public abstract class AbstractObservationResponseEncoder<T extends AbstractObservationResponse> extends
-        AbstractSosResponseEncoder<T> implements org.n52.iceland.coding.encode.ObservationEncoder<JsonNode, T>{
+        AbstractSosResponseEncoder<T> implements org.n52.sos.coding.encode.ObservationEncoder<JsonNode, T>{
     public AbstractObservationResponseEncoder(Class<T> type, String operation) {
         super(type, operation);
     }

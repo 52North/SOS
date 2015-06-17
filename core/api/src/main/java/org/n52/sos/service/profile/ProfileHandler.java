@@ -28,87 +28,41 @@
  */
 package org.n52.sos.service.profile;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.ServiceConfigurationError;
-import java.util.ServiceLoader;
-import java.util.concurrent.locks.ReentrantLock;
 
-import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.util.Comparables;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.iceland.exception.ConfigurationError;
+import org.n52.iceland.lifecycle.Constructable;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
-public abstract class ProfileHandler {
+//FIXME make this a interface
+public abstract class ProfileHandler implements Constructable {
 
-
-    private static final Logger LOG = LoggerFactory.getLogger(ProfileHandler.class);
-
-    private static final ReentrantLock creationLock = new ReentrantLock();
-
+    @Deprecated
     private static ProfileHandler instance;
-    
+
+    @Override
+    @Deprecated
+    public void init() {
+        ProfileHandler.instance = this;
+    }
+
     /**
      * Gets the singleton instance of the ProfileHandler.
      * <p/>
      *
      * @return the profile handler
      *         <p/>
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             if no implementation can be found
      */
-    public static ProfileHandler getInstance() throws ConfigurationException {
-        if (instance == null) {
-            creationLock.lock();
-            try {
-                if (instance == null) {
-                    instance = createInstance();
-                }
-            } finally {
-                creationLock.unlock();
-            }
-        }
-        return instance;
+    @Deprecated
+    public static ProfileHandler getInstance() throws ConfigurationError {
+        return ProfileHandler.instance;
     }
 
-    /**
-     * Creates a new {@code ProfileHandler} with the {@link ServiceLoader}
-     * interface.
-     * <p/>
-     *
-     * @return the implementation
-     *         <p/>
-     * @throws ConfigurationException
-     *             if no implementation can be found
-     */
-    private static ProfileHandler createInstance() throws ConfigurationException {
-        List<ProfileHandler> profileHandlers = new LinkedList<ProfileHandler>();
-        Iterator<ProfileHandler> it = ServiceLoader.load(ProfileHandler.class).iterator();
-        while(it.hasNext()) {
-            try {
-                profileHandlers.add(it.next());
-            } catch (ServiceConfigurationError e) {
-                LOG.error("Could not instantiate ProfileHandler", e);
-            }
-        }
-        if (profileHandlers.isEmpty()) {
-            return new DefaultProfileHandler();
-        } else {
-            try {
-                return Comparables.inheritance().min(profileHandlers);
-            } catch (NoSuchElementException e) {
-                throw new ConfigurationException("No ProfileHandler implementation loaded", e);
-            }
-        }
-    }
-    
     public abstract Profile getActiveProfile();
 
     public abstract Map<String, Profile> getAvailableProfiles();

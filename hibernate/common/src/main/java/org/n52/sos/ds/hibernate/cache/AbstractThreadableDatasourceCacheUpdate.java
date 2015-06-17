@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.cache;
 
 import org.hibernate.Session;
+
 import org.n52.sos.ds.hibernate.ThreadLocalSessionFactory;
 
 public abstract class AbstractThreadableDatasourceCacheUpdate extends AbstractDatasourceCacheUpdate {
@@ -41,7 +42,7 @@ public abstract class AbstractThreadableDatasourceCacheUpdate extends AbstractDa
     public void setSessionFactory(ThreadLocalSessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
-    
+
     @Override
     public Session getSession(){
         if (super.getSession() == null && sessionFactory != null) {

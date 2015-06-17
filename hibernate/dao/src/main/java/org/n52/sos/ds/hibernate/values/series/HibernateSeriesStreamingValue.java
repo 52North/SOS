@@ -29,6 +29,10 @@
 package org.n52.sos.ds.hibernate.values.series;
 
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
@@ -39,12 +43,10 @@ import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GmlHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract Hibernate series streaming value class for the series concept
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.2
  *
@@ -63,15 +65,16 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
 
     /**
      * constructor
-     * 
+     *
+     * @param connectionProvider the connection provider
      * @param request
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
      * @throws CodedException
      */
-    public HibernateSeriesStreamingValue(GetObservationRequest request, long series) throws CodedException {
-        super(request);
+    public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long series) throws CodedException {
+        super(connectionProvider, request);
         this.series = series;
         this.seriesValueDAO = (AbstractSeriesValueDAO) DaoFactory.getInstance().getValueDAO();
         this.seriesValueTimeDAO = (AbstractSeriesValueTimeDAO) DaoFactory.getInstance().getValueTimeDAO();

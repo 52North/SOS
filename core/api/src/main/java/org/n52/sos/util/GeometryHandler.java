@@ -30,6 +30,7 @@ package org.n52.sos.util;
 
 import static org.geotools.factory.Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER;
 import static org.geotools.referencing.ReferencingFactoryFinder.getCRSAuthorityFactory;
+import static org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator.BBOX;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -37,7 +38,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.JTS;
@@ -45,25 +45,6 @@ import org.geotools.referencing.CRS;
 import org.geotools.referencing.factory.AbstractAuthorityFactory;
 import org.geotools.referencing.factory.DeferredAuthorityFactory;
 import org.geotools.util.WeakCollectionCleaner;
-import org.n52.iceland.config.SettingsManager;
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.service.ServiceContextListener;
-import org.n52.iceland.util.Cleanupable;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.JavaHelper;
-import org.n52.iceland.util.Range;
-import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.util.Validation;
-import org.n52.sos.ds.FeatureQuerySettingsProvider;
-import org.n52.sos.ogc.filter.SpatialFilter;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -73,6 +54,25 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.config.annotation.Configurable;
+import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ConfigurationError;
+import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.lifecycle.Constructable;
+import org.n52.iceland.lifecycle.Destroyable;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.JavaHelper;
+import org.n52.iceland.util.Range;
+import org.n52.iceland.util.StringHelper;
+import org.n52.iceland.util.Validation;
+import org.n52.sos.ds.FeatureQuerySettingsProvider;
+import org.n52.sos.ogc.filter.SpatialFilter;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -84,93 +84,45 @@ import com.vividsolutions.jts.geom.Geometry;
 /**
  * Class to provide some methods for JTS Geometry which is used by
  * {@link org.n52.sos.ds.FeatureQueryHandler}.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 @Configurable
-public class GeometryHandler implements Cleanupable {
+public class GeometryHandler implements Constructable, Destroyable {
 
     /*
      * longitude = east-west latitude = north-south
      */
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GeometryHandler.class);
-
+    @Deprecated
     private static GeometryHandler instance;
-
-    private static ReentrantLock creationLock = new ReentrantLock();
-
-    private boolean datasoureUsesNorthingFirst;
-
-    private List<Range> epsgsWithNorthingFirstAxisOrder = Lists.newArrayList();
-
-    private int storageEPSG;
-
-    private int storage3DEPSG;
-
-    private int defaultResponseEPSG;
-
-    private int defaultResponse3DEPSG;
-
-    private Set<String> supportedCRS = Sets.newHashSet();
-
-    private boolean spatialDatasource;
-
-    private String authority;
-
-    private CRSAuthorityFactory crsAuthority;
-
-    private Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();
-    
     private static final String EPSG = "EPSG";
-
     private static final String EPSG_PREFIX = EPSG + Constants.COLON_STRING;
-    
+    private boolean datasoureUsesNorthingFirst;
+    private final List<Range> epsgsWithNorthingFirstAxisOrder = Lists.newArrayList();
+    private int storageEPSG;
+    private int storage3DEPSG;
+    private int defaultResponseEPSG;
+    private int defaultResponse3DEPSG;
+    private final Set<String> supportedCRS = Sets.newHashSet();
+    private boolean spatialDatasource;
+    private String authority;
+    private CRSAuthorityFactory crsAuthority;
+    private final Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();;
 
 
-    /**
-     * Private constructor
-     */
-    private GeometryHandler() {
-    }
-
-    /**
-     * @return Returns a singleton instance of the GeometryHandler.
-     */
-    public static GeometryHandler getInstance() {
-        init();
-        return instance;
-    }
-    
-    private static void init() {
-        if (instance == null) {
-            creationLock.lock();
-            try {
-                if (instance == null) {
-                    // don't set instance before configuring, or other threads
-                    // can get access to unconfigured instance!
-                    final GeometryHandler newInstance = new GeometryHandler();
-                    SettingsManager.getInstance().configure(newInstance);
-                    newInstance.initCrsAuthoritycrsAuthority();
-                    instance = newInstance;
-                    ServiceContextListener.registerShutdownHook(instance);
-                }
-            } finally {
-                creationLock.unlock();
-            }
-        }
-    }
-
-    private void initCrsAuthoritycrsAuthority() {
-        crsAuthority =
-                getCRSAuthorityFactory(authority, new Hints(FORCE_LONGITUDE_FIRST_AXIS_ORDER,
+    @Override
+    public void init() {
+        GeometryHandler.instance = this;
+        crsAuthority = getCRSAuthorityFactory(
+                authority, new Hints(FORCE_LONGITUDE_FIRST_AXIS_ORDER,
                         isEastingFirstEpsgCode(getStorageEPSG())));
-
     }
 
     @Override
-    public void cleanup() {
+    public void destroy() {
         if (getCrsAuthorityFactory() != null) {
             if (getCrsAuthorityFactory() instanceof DeferredAuthorityFactory) {
                 DeferredAuthorityFactory.exit();
@@ -184,14 +136,14 @@ public class GeometryHandler implements Cleanupable {
             }
         }
         /*
-         * close {@link WeakCollectionCleaner}
-         */
+        * close {@link WeakCollectionCleaner}
+        */
         WeakCollectionCleaner.DEFAULT.exit();
     }
 
     /**
      * Get configured storage EPSG code
-     * 
+     *
      * @return Storage EPSG code
      */
     public int getStorageEPSG() {
@@ -200,7 +152,7 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Get configured storage 3D EPSG code
-     * 
+     *
      * @return Storage 3D EPSG code
      */
     public int getStorage3DEPSG() {
@@ -209,7 +161,7 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Get configured default response EPSG code
-     * 
+     *
      * @return Default response EPSG code
      */
     public int getDefaultResponseEPSG() {
@@ -218,7 +170,7 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Get configured default response 3D EPSG code
-     * 
+     *
      * @return Default response 3D EPSG code
      */
     public int getDefaultResponse3DEPSG() {
@@ -227,14 +179,14 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Set storage EPSG code from settings
-     * 
+     *
      * @param epsgCode
      *            EPSG code from settings
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.STORAGE_EPSG)
-    public void setStorageEpsg(final int epsgCode) throws ConfigurationException {
+    public void setStorageEpsg(final int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Storage EPSG Code", epsgCode);
         storageEPSG = epsgCode;
         addToSupportedCrs(epsgCode);
@@ -242,14 +194,14 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Set storage 3D EPSG code from settings
-     * 
+     *
      * @param epsgCode3D
      *            3D EPSG code from settings
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.STORAGE_3D_EPSG)
-    public void setStorage3DEpsg(final int epsgCode3D) throws ConfigurationException {
+    public void setStorage3DEpsg(final int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
         storage3DEPSG = epsgCode3D;
         addToSupportedCrs(epsgCode3D);
@@ -257,14 +209,14 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Set default response EPSG code from settings
-     * 
+     *
      * @param epsgCode
      *            EPSG code from settings
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_EPSG)
-    public void setDefaultResponseEpsg(final int epsgCode) throws ConfigurationException {
+    public void setDefaultResponseEpsg(final int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Storage EPSG Code", epsgCode);
         defaultResponseEPSG = epsgCode;
         addToSupportedCrs(epsgCode);
@@ -272,14 +224,14 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Set default response 3D EPSG code from settings
-     * 
+     *
      * @param epsgCode3D
      *            3D EPSG code from settings
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_3D_EPSG)
-    public void setDefaultResponse3DEpsg(final int epsgCode3D) throws ConfigurationException {
+    public void setDefaultResponse3DEpsg(final int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
         defaultResponse3DEPSG = epsgCode3D;
         addToSupportedCrs(epsgCode3D);
@@ -287,16 +239,36 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Set the supported EPSG codes
-     * 
+     *
      * @param supportedCRS
      *            Supported EPSG codes
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      */
     @Setting(FeatureQuerySettingsProvider.SUPPORTED_CRS_KEY)
-    public void setSupportedCRS(final String supportedCRS) throws ConfigurationException {
+    public void setSupportedCRS(final String supportedCRS) throws ConfigurationError {
         // Validation.notNull("Supported CRS codes as CSV string",
         // supportedCRS);
         this.supportedCRS.addAll(StringHelper.splitToSet(supportedCRS, Constants.COMMA_STRING));
+    }
+
+    /**
+     * Get List of supported EPSG codes
+     *
+     * @return Supported EPSG codes
+     */
+    public Set<String> getSupportedCRS() {
+        try {
+            Set<String> authorityCodes = getCrsAuthorityFactory().getAuthorityCodes(CoordinateReferenceSystem.class);
+            if (CollectionHelper.isNotEmpty(authorityCodes) && CollectionHelper.isNotEmpty(this.supportedCRS)) {
+                return CollectionHelper.conjunctCollectionsToSet(authorityCodes, this.supportedCRS);
+            } else if (CollectionHelper.isEmpty(authorityCodes)) {
+                return Sets.newHashSet(Integer.toString(getStorageEPSG()), Integer.toString(getStorage3DEPSG()));
+            }
+            return authorityCodes;
+        } catch (FactoryException fe) {
+            LOGGER.warn("Error while querying supported EPSG codes", fe);
+        }
+        return Collections.emptySet();
     }
 
     @Setting(FeatureQuerySettingsProvider.AUTHORITY)
@@ -311,7 +283,7 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Add integer EPSG code to supported CRS set
-     * 
+     *
      * @param epsgCode
      *            Integer EPSG code
      */
@@ -321,7 +293,7 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Set the northing first indicator for the datasource
-     * 
+     *
      * @param datasoureUsesNorthingFirst
      *            Northing first indicator
      */
@@ -332,7 +304,7 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Check if the datasource uses northing first coordinates
-     * 
+     *
      * @return <code>true</code>, if the datasource uses northing first
      *         coordinates
      */
@@ -342,14 +314,14 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Set the EPSG code ranges for which the coordinates should be switched
-     * 
+     *
      * @param codes
      *            EPSG code ranges
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST)
-    public void setEpsgCodesWithNorthingFirstAxisOrder(final String codes) throws ConfigurationException {
+    public void setEpsgCodesWithNorthingFirstAxisOrder(final String codes) throws ConfigurationError {
         Validation.notNullOrEmpty("EPSG Codes to switch coordinates for", codes);
         final String[] splitted = codes.split(";");
         for (final String entry : splitted) {
@@ -360,7 +332,7 @@ public class GeometryHandler implements Cleanupable {
             } else if (splittedEntry.length == 2) {
                 r = new Range(Integer.parseInt(splittedEntry[0]), Integer.parseInt(splittedEntry[1]));
             } else {
-                throw new ConfigurationException(String.format("Invalid format of entry in '%s': %s",
+                throw new ConfigurationError(String.format("Invalid format of entry in '%s': %s",
                         FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST, entry));
             }
             epsgsWithNorthingFirstAxisOrder.add(r);
@@ -370,7 +342,7 @@ public class GeometryHandler implements Cleanupable {
     /**
      * Set flag if the used datasource is a spatial datasource (provides spatial
      * functions)
-     * 
+     *
      * @param spatialDatasource
      *            Flag if spatial datasource
      */
@@ -380,8 +352,17 @@ public class GeometryHandler implements Cleanupable {
     }
 
     /**
+     * Is datasource a spatial datasource
+     *
+     * @return Spatial datasource or not
+     */
+    public boolean isSpatialDatasource() {
+        return spatialDatasource;
+    }
+
+    /**
      * Check if the EPSG code is northing first
-     * 
+     *
      * @param epsgCode
      *            EPSG code to check
      * @return <code>true</code>, if the EPSG code is northing first
@@ -397,7 +378,7 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Check if the EPSG code is easting first
-     * 
+     *
      * @param epsgCode
      *            EPSG code to check
      * @return <code>true</code>, if the EPSG code is easting first
@@ -407,17 +388,8 @@ public class GeometryHandler implements Cleanupable {
     }
 
     /**
-     * Is datasource a spatial datasource
-     * 
-     * @return Spatial datasource or not
-     */
-    public boolean isSpatialDatasource() {
-        return spatialDatasource;
-    }
-
-    /**
      * Switch the coordinate axis of geometry from or for datasource
-     * 
+     *
      * @param geom
      *            Geometry to switch coordinate axis
      * @return Geometry with switched coordinate axis if needed
@@ -454,7 +426,7 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Get filter geometry for BBOX spatial filter and non spatial datasource
-     * 
+     *
      * @param filter
      *            SpatialFilter
      * @return SpatialFilter geometry
@@ -474,7 +446,7 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Get WKT string from longitude and latitude
-     * 
+     *
      * @param longitude
      *            Longitude coordinate
      * @param latitude
@@ -498,7 +470,7 @@ public class GeometryHandler implements Cleanupable {
     /**
      * Get WKT string from longitude and latitude with axis order as defined by
      * EPSG code.
-     * 
+     *
      * @param longitude
      *            Longitude coordinate
      * @param latitude
@@ -516,7 +488,7 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Check if geometry is in SpatialFilter envelopes
-     * 
+     *
      * @param geometry
      *            Geometry to check
      * @param envelopes
@@ -536,7 +508,7 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Transforms the geometry to the storage EPSG code
-     * 
+     *
      * @param geometry
      *            Geometry to transform
      * @return Transformed geometry
@@ -558,7 +530,7 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Transform geometry to this EPSG code
-     * 
+     *
      * @param geometry
      *            Geometry to transform
      * @param targetSRID
@@ -580,7 +552,7 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Transform geometry
-     * 
+     *
      * @param geometry
      *            Geometry to transform
      * @param targetSRID
@@ -604,21 +576,14 @@ public class GeometryHandler implements Cleanupable {
             Geometry transformed = JTS.transform(switchedCoordiantes, transform);
             transformed.setSRID(targetSRID);
             return transformed;
-        } catch (FactoryException fe) {
-            throw new NoApplicableCodeException().causedBy(fe).withMessage("The EPSG code '%s' is not supported!",
-                    switchedCoordiantes.getSRID());
-        } catch (MismatchedDimensionException mde) {
-            throw new NoApplicableCodeException().causedBy(mde).withMessage("The EPSG code '%s' is not supported!",
-                    switchedCoordiantes.getSRID());
-        } catch (TransformException te) {
-            throw new NoApplicableCodeException().causedBy(te).withMessage("The EPSG code '%s' is not supported!",
-                    switchedCoordiantes.getSRID());
+        } catch (FactoryException | MismatchedDimensionException | TransformException fe) {
+            throw new NoApplicableCodeException().causedBy(fe).withMessage("The EPSG code '%s' is not supported!", switchedCoordiantes.getSRID());
         }
     }
 
     /**
      * Get CRS from EPSG code
-     * 
+     *
      * @param epsgCode
      *            EPSG code to get CRS for
      * @return CRS fro EPSG code
@@ -636,7 +601,7 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Create CRS for EPSG code
-     * 
+     *
      * @param epsgCode
      *            EPSG code to create CRS for
      * @return Created CRS
@@ -657,7 +622,7 @@ public class GeometryHandler implements Cleanupable {
 
     /**
      * Get CSR authority
-     * 
+     *
      * @return CRS authority
      */
     private CRSAuthorityFactory getCrsAuthorityFactory() {
@@ -665,28 +630,8 @@ public class GeometryHandler implements Cleanupable {
     }
 
     /**
-     * Get List of supported EPSG codes
-     * 
-     * @return Supported EPSG codes
-     */
-    public Set<String> getSupportedCRS() {
-        try {
-            Set<String> authorityCodes = getCrsAuthorityFactory().getAuthorityCodes(CoordinateReferenceSystem.class);
-            if (CollectionHelper.isNotEmpty(authorityCodes) && CollectionHelper.isNotEmpty(this.supportedCRS)) {
-                return CollectionHelper.conjunctCollectionsToSet(authorityCodes, this.supportedCRS);
-            } else if (CollectionHelper.isEmpty(authorityCodes)) {
-                return Sets.newHashSet(Integer.toString(getStorageEPSG()), Integer.toString(getStorage3DEPSG()));
-            }
-            return authorityCodes;
-        } catch (FactoryException fe) {
-            LOGGER.warn("Error while querying supported EPSG codes", fe);
-        }
-        return Collections.emptySet();
-    }
-
-    /**
      * Transform envelope from source to target EPSG code
-     * 
+     *
      * @param envelope
      *            Envelope to transform
      * @param sourceSRID
@@ -707,7 +652,7 @@ public class GeometryHandler implements Cleanupable {
                 return transformed;
             } catch (FactoryException fe) {
                 throw new NoApplicableCodeException().causedBy(fe).withMessage("The EPSG code '%s' is not supported!",
-                        sourceSRID);
+                                                                               sourceSRID);
             } catch (MismatchedDimensionException mde) {
                 throw new NoApplicableCodeException().causedBy(mde).withMessage(
                         "Transformation from EPSG code '%s' to '%s' fails!", sourceSRID, targetSRID);
@@ -749,6 +694,14 @@ public class GeometryHandler implements Cleanupable {
 
     public String addOgcCrsPrefix(int crs) {
         return new StringBuilder(ServiceConfiguration.getInstance().getSrsNamePrefixSosV2()).append(crs).toString();
+    }
+
+    /**
+     * @return Returns a singleton instance of the GeometryHandler.
+     */
+    @Deprecated
+    public static GeometryHandler getInstance() {
+        return instance;
     }
 
 }

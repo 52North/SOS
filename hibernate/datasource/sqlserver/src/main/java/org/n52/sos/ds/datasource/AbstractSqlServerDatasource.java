@@ -45,10 +45,10 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+
 import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingDefinitionProvider;
 import org.n52.iceland.config.settings.StringSettingDefinition;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
@@ -144,9 +144,14 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     }
 
     protected StringSettingDefinition createInstanceDefinition(String instanceValue) {
-        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_2)
-                .setKey(INSTANCE_KEY).setTitle(INSTANCE_TITLE).setDescription(INSTANCE_DESCRIPTION)
-                .setDefaultValue(instanceValue == null ? "" : instanceValue).setOptional(true);
+        return new StringSettingDefinition()
+        	.setGroup(BASE_GROUP)
+        	.setOrder(2)
+            .setKey(INSTANCE_KEY)
+            .setTitle(INSTANCE_TITLE)
+            .setDescription(INSTANCE_DESCRIPTION)
+                .setDefaultValue(instanceValue == null ? "" : instanceValue)
+            .setOptional(true);
     }
 
     @Override
@@ -187,11 +192,11 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
         checkClasspath();
     }
 
-    private void checkClasspath() throws ConfigurationException {
+    private void checkClasspath() throws ConfigurationError {
         try {
             Class.forName(SQL_SERVER_DRIVER_CLASS);
         } catch (ClassNotFoundException e) {
-            throw new ConfigurationException("SQL Server jar file (sqljdbc.jar) must be "
+            throw new ConfigurationError("SQL Server jar file (sqljdbc.jar) must be "
                     + "included in the server classpath. ", e);
         }
     }
@@ -199,7 +204,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     /*
      * SQL-Server JDBC String specification:
      * https://msdn.microsoft.com/en-us/library/ms378428%28v=sql.110%29.aspx
-     * 
+     *
      * String url =
      * String.format("jdbc:sqlserver://%s:%d;instance=%s;databaseName=%s",
      * settings.get(HOST_KEY), settings.get(PORT_KEY),
@@ -210,9 +215,11 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
         StringBuilder builder = new StringBuilder("jdbc:sqlserver://");
         builder.append(settings.get(HOST_KEY)).append(Constants.COLON_CHAR);
         builder.append(settings.get(PORT_KEY)).append(Constants.SEMICOLON_CHAR);
-        if (settings.containsKey(INSTANCE_KEY) && settings.get(INSTANCE_KEY) != null
-                && settings.get(INSTANCE_KEY) instanceof String && !((String) settings.get(INSTANCE_KEY)).isEmpty()) {
-            builder.append(URL_INSTANCE).append(settings.get(INSTANCE_KEY)).append(Constants.SEMICOLON_CHAR);
+        if (settings.containsKey(INSTANCE_KEY) &&
+        		settings.get(INSTANCE_KEY) != null &&
+        		settings.get(INSTANCE_KEY) instanceof String &&
+        		!((String)settings.get(INSTANCE_KEY)).isEmpty()) {
+        	builder.append(URL_INSTANCE).append(settings.get(INSTANCE_KEY)).append(Constants.SEMICOLON_CHAR);
         }
         builder.append(URL_DATABASE_NAME).append(settings.get(DATABASE_KEY));
         return builder.toString();
@@ -237,7 +244,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
         final String[] parsed = parseURL(current.getProperty(HibernateConstants.CONNECTION_URL));
         // TODO what happens here
         if (parsed.length == 4) {
-            settings.put(INSTANCE_KEY, (String) parsed[3]);
+            settings.put(INSTANCE_KEY, parsed[3]);
         }
         return settings;
     }
@@ -252,7 +259,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
         Map<String, Object> settings = parseDatasourceProperties(properties);
         CustomConfiguration config = getConfig(settings);
         Iterator<Table> tables = config.getTableMappings();
-        List<String> names = new LinkedList<String>();
+        List<String> names = new LinkedList<>();
         while (tables.hasNext()) {
             Table table = tables.next();
             if (table.isPhysicalTable()) {
@@ -285,7 +292,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
                                 .append(");");
                 stmt.execute(statement.toString());
             } catch (SQLException ex) {
-                throw new ConfigurationException(ex);
+                throw new ConfigurationError(ex);
             } finally {
                 close(stmt);
                 close(conn);

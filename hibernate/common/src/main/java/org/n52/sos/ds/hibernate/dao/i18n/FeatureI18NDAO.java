@@ -28,7 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.dao.i18n;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.hibernate.Session;
+
+import org.n52.iceland.i18n.I18NDAOKey;
 import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
@@ -58,8 +63,7 @@ public class FeatureI18NDAO extends AbstractHibernateI18NDAO<FeatureOfInterest, 
     }
 
     @Override
-    public Class<I18NFeatureMetadata> getType() {
-        return I18NFeatureMetadata.class;
+    public Set<I18NDAOKey> getKeys() {
+        return Collections.singleton(new I18NDAOKey(I18NFeatureMetadata.class));
     }
-
 }

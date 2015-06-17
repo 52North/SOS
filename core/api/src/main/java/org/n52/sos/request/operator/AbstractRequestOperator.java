@@ -31,10 +31,19 @@ package org.n52.sos.request.operator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.sos.cache.SosContentCache;
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierRepository;
 import org.n52.iceland.ds.OperationHandler;
@@ -60,10 +69,8 @@ import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.service.Configurator;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.cache.ContentCache;
 import org.n52.sos.exception.ows.concrete.InvalidValueReferenceException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
 import org.n52.sos.ogc.filter.SpatialFilter;
@@ -73,8 +80,6 @@ import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -89,76 +94,153 @@ import com.google.common.collect.Sets;
  * @param <A>
  *            the response type
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
-public abstract class AbstractRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
-        implements RequestOperator {
+public abstract class AbstractRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse> implements RequestOperator {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRequestOperator.class);
 
     // TODO make supported ValueReferences dynamic
-    private static final Set<String> validTemporalFilterValueReferences = Sets.newHashSet("phenomenonTime",
-            "om:phenomenonTime", "resultTime", "om:resultTime", "validTime", "om:validTime");
+    private static final Set<String> validTemporalFilterValueReferences = Sets.newHashSet(
+            "phenomenonTime",
+            "om:phenomenonTime",
+            "resultTime",
+            "om:resultTime",
+            "validTime",
+            "om:validTime");
 
-    private final D dao;
-
-    private final String operationName;
-
-    private final RequestOperatorKey requestOperatorKeyType;
-
+    private final RequestOperatorKey requestOperatorKey;
     private final Class<Q> requestType;
+    private OperationHandlerRepository operationHandlerRepository;
+    private RequestResponseModifierRepository requestResponseModifierRepository;
+    private ContentCacheController contentCacheController;
+    private ProfileHandler profileHandler;
+    private ServiceOperatorRepository serviceOperatorRepository;
+    private ServiceEventBus serviceEventBus;
 
-    public AbstractRequestOperator(String service, String version, String operationName, Class<Q> requestType) {
+    public AbstractRequestOperator(String service,
+                                   String version,
+                                   String operationName,
+                                   Class<Q> requestType) {
         this(service, version, operationName, true, requestType);
     }
-    
-    @SuppressWarnings("unchecked")
-    public AbstractRequestOperator(String service, String version, String operationName, boolean defaultActive, Class<Q> requestType) {
-        this.operationName = operationName;
-        this.requestOperatorKeyType = new RequestOperatorKey(service, version, operationName, defaultActive);
+
+    public AbstractRequestOperator(String service,
+                                   String version,
+                                   String operationName,
+                                   boolean defaultActive,
+                                   Class<Q> requestType) {
+        this.requestOperatorKey = new RequestOperatorKey(service, version, operationName, defaultActive);
         this.requestType = requestType;
-        this.dao = initDAO(service, operationName);
         LOGGER.info("{} initialized successfully!", getClass().getSimpleName());
     }
 
-    @SuppressWarnings("unchecked")
-    protected D initDAO(String service, String operationName) {
-        D dao = (D) OperationHandlerRepository.getInstance().getOperationDAO(service, operationName);
-        if (dao == null) {
-            throw new NullPointerException(String.format("OperationDAO for Operation %s has no implementation!",
-                    operationName));
-        }
-        return dao;
+    @Inject
+    public void setOperationHandlerRepository(OperationHandlerRepository repo) {
+        this.operationHandlerRepository = repo;
     }
 
+    public OperationHandlerRepository getOperationHandlerRepository() {
+        return operationHandlerRepository;
+    }
+
+    @Inject
+    public void setRequestResponseModifierRepository(RequestResponseModifierRepository repo) {
+        this.requestResponseModifierRepository = repo;
+    }
+
+    public RequestResponseModifierRepository getRequestResponseModifierRepository() {
+        return requestResponseModifierRepository;
+    }
+
+    @Inject
+    public void setContentCacheController(ContentCacheController ctrl) {
+        this.contentCacheController = ctrl;
+    }
+
+    public ContentCacheController getContentCacheController() {
+        return contentCacheController;
+    }
+
+    @Inject
+    public void setProfileHandler(ProfileHandler profileHandler) {
+        this.profileHandler = profileHandler;
+    }
+
+    public ProfileHandler getProfileHandler() {
+        return profileHandler;
+    }
+
+    @Inject
+    public void setServiceOperatorRepository(ServiceOperatorRepository repo) {
+        this.serviceOperatorRepository = repo;
+    }
+
+    public ServiceOperatorRepository getServiceOperatorRepository() {
+        return serviceOperatorRepository;
+    }
+
+    @Inject
+    public void setServiceEventBus(ServiceEventBus serviceEventBus) {
+        this.serviceEventBus = serviceEventBus;
+    }
+
+    public ServiceEventBus getServiceEventBus() {
+        return serviceEventBus;
+    }
+
+    @Deprecated
     protected D getDao() {
-        return this.dao;
+        return getOperationHandler();
     }
 
-    // @Override
-    // public SosCapabilitiesExtension getExtension() throws OwsExceptionReport
-    // {
-    // return getDao().getExtension();
-    // }
+    protected D getOperationHandler() {
+        return getOptionalOperationHandler().orElseThrow(() ->
+                new NullPointerException(String.format("OperationDAO for Operation %s has no implementation!",
+                                                       requestOperatorKey.getOperationName())));
+    }
+
+    protected Optional<D> getOptionalOperationHandler() {
+        String service = this.requestOperatorKey.getService();
+        String operationName = this.requestOperatorKey.getOperationName();
+        return getOptionalOperationHandler(service, operationName);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Optional<D> getOptionalOperationHandler(String service, String operationName) {
+        return Optional.ofNullable(this.operationHandlerRepository.getOperationHandler(service, operationName))
+                .map(x -> (D) x);
+    }
 
     @Override
-    public OwsOperation getOperationMetadata(final String service, final String version) throws OwsExceptionReport {
-        return getDao().getOperationsMetadata(service, version);
+    public OwsOperation getOperationMetadata(String service, String version) throws OwsExceptionReport {
+        Optional<D> optionalOperationHandler = getOptionalOperationHandler();
+        if (optionalOperationHandler.isPresent()) {
+            return optionalOperationHandler.get().getOperationsMetadata(service, version);
+        } else {
+            return null;
+        }
     }
 
     protected String getOperationName() {
-        return this.operationName;
+        return this.requestOperatorKey.getOperationName();
     }
 
     @Override
+    @Deprecated
     public RequestOperatorKey getRequestOperatorKeyType() {
-        return requestOperatorKeyType;
+        return requestOperatorKey;
+    }
+
+    @Override
+    public Set<RequestOperatorKey> getKeys() {
+        return Collections.singleton(requestOperatorKey);
     }
 
     @Override
     public AbstractServiceResponse receiveRequest(final AbstractServiceRequest<?> abstractRequest)
             throws OwsExceptionReport {
-        ServiceEventBus.fire(new RequestEvent(abstractRequest));
+        this.serviceEventBus.submit(new RequestEvent(abstractRequest));
         if (requestType.isAssignableFrom(abstractRequest.getClass())) {
             Q request = requestType.cast(abstractRequest);
             checkForModifierAndProcess(request);
@@ -171,15 +253,11 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     }
 
     private void checkForModifierAndProcess(AbstractServiceRequest<?> request) throws OwsExceptionReport {
-        if (RequestResponseModifierRepository.getInstance().hasRequestResponseModifier(request)) {
-            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> splitter =
-                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
-            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> remover =
-                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
-            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> defaultMofifier =
-                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : RequestResponseModifierRepository
-                    .getInstance().getRequestResponseModifier(request)) {
+        if (this.requestResponseModifierRepository.hasRequestResponseModifier(request)) {
+            List<RequestResponseModifier> splitter = new ArrayList<>();
+            List<RequestResponseModifier> remover = new ArrayList<>();
+            List<RequestResponseModifier> defaultMofifier = new ArrayList<>();
+            for (RequestResponseModifier modifier : this.requestResponseModifierRepository.getRequestResponseModifier(request)) {
                 if (modifier.getFacilitator().isSplitter()) {
                     splitter.add(modifier);
                 } else if (modifier.getFacilitator().isAdderRemover()) {
@@ -189,15 +267,15 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
                 }
             }
             // execute adder/remover
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : remover) {
+            for (RequestResponseModifier modifier : remover) {
                 modifier.modifyRequest(request);
             }
             // execute default
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : defaultMofifier) {
+            for (RequestResponseModifier modifier : defaultMofifier) {
                 modifier.modifyRequest(request);
             }
             // execute splitter
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : splitter) {
+            for (RequestResponseModifier modifier : splitter) {
                 modifier.modifyRequest(request);
             }
         }
@@ -205,15 +283,11 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     private AbstractServiceResponse checkForModifierAndProcess(AbstractServiceRequest<?> request,
             AbstractServiceResponse response) throws OwsExceptionReport {
-        if (RequestResponseModifierRepository.getInstance().hasRequestResponseModifier(request, response)) {
-            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> defaultMofifier =
-                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
-            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> remover =
-                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
-            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> merger =
-                    new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : RequestResponseModifierRepository
-                    .getInstance().getRequestResponseModifier(request, response)) {
+        if (this.requestResponseModifierRepository.hasRequestResponseModifier(request, response)) {
+            List<RequestResponseModifier> defaultMofifier = new ArrayList<>();
+            List<RequestResponseModifier> remover = new ArrayList<>();
+            List<RequestResponseModifier> merger = new ArrayList<>();
+            for (RequestResponseModifier modifier : this.requestResponseModifierRepository.getRequestResponseModifier(request, response)) {
                 if (modifier.getFacilitator().isMerger()) {
                     merger.add(modifier);
                 } else if (modifier.getFacilitator().isAdderRemover()) {
@@ -224,16 +298,16 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
             }
             // execute merger
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : merger) {
+            for (RequestResponseModifier modifier : merger) {
                 modifier.modifyResponse(request, response);
             }
             // execute default
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : defaultMofifier) {
+            for (RequestResponseModifier modifier : defaultMofifier) {
                 modifier.modifyResponse(request, response);
             }
 
             // execute adder/remover
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : remover) {
+            for (RequestResponseModifier modifier : remover) {
                 modifier.modifyResponse(request, response);
             }
             return response;
@@ -245,38 +319,35 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     protected abstract void checkParameters(Q request) throws OwsExceptionReport;
 
-    protected ContentCache getCache() {
-        return Configurator.getInstance().getCache();
+    protected SosContentCache getCache() {
+        return (SosContentCache) this.contentCacheController.getCache();
     }
 
     protected Profile getActiveProfile() {
-        return ProfileHandler.getInstance().getActiveProfile();
+        return this.profileHandler.getActiveProfile();
     }
 
     /**
      * method checks whether this SOS supports the requested versions
-     * 
+     *
      * @param service
      *            requested service
-     * 
+     *
      * @param versions
      *            the requested versions of the SOS
-     * 
+     *
      * @throws OwsExceptionReport
      *             * if this SOS does not support the requested versions
      */
-    protected List<String> checkAcceptedVersionsParameter(final String service, final List<String> versions)
+    protected List<String> checkAcceptedVersionsParameter(String service, List<String> versions)
             throws OwsExceptionReport {
-
-        final List<String> validVersions = new LinkedList<String>();
         if (versions != null) {
-            final Set<String> supportedVersions =
-                    ServiceOperatorRepository.getInstance().getSupportedVersions(service);
-            for (final String version : versions) {
-                if (supportedVersions.contains(version)) {
-                    validVersions.add(version);
-                }
-            }
+            Set<String> supportedVersions = this.serviceOperatorRepository
+                    .getSupportedVersions(service);
+            List<String> validVersions = versions.stream()
+                    .filter(supportedVersions::contains)
+                    .collect(Collectors.toList());
+
             if (validVersions.isEmpty()) {
                 throw new VersionNegotiationFailedException().at(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions)
                         .withMessage("The parameter '%s' does not contain a supported Service version!",
@@ -290,11 +361,11 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     /**
      * method checks whether this SOS supports the single requested version
-     * 
+     *
      * @param request
      *            the request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if this SOS does not support the requested versions
      */
@@ -302,26 +373,24 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
         // if version is incorrect, throw exception
         if (request.getVersion() == null
-                || !ServiceOperatorRepository.getInstance().isVersionSupported(request.getService(),
-                        request.getVersion())) {
+                || !this.serviceOperatorRepository.isVersionSupported(request.getService(), request.getVersion())) {
             throw new InvalidParameterValueException().at(OWSConstants.RequestParams.version).withMessage(
                     "The parameter '%s' does not contain version(s) supported by this Service: '%s'!",
                     OWSConstants.RequestParams.version.name(),
-                    Joiner.on(", ").join(
-                            ServiceOperatorRepository.getInstance().getSupportedVersions(request.getService())));
+                    Joiner.on(", ").join(this.serviceOperatorRepository.getSupportedVersions(request.getService())));
         }
     }
 
     /**
      * method checks, whether the passed string containing the requested
      * versions of the SOS contains the versions, the 52n SOS supports
-     * 
+     *
      * @param service
      *            requested service
      * @param versionsString
      *            comma seperated list of requested service versions
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if the versions list is empty or no matching version is *
      *             contained
@@ -339,11 +408,11 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     /**
      * checks whether the required service parameter is correct
-     * 
+     *
      * @param service
      *            service parameter of the request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             if service parameter is incorrect
      */
@@ -358,13 +427,13 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     /**
      * checks whether the requested sensor ID is valid
-     * 
+     *
      * @param procedureID
      *            the sensor ID which should be checked
      * @param parameterName
      *            the parameter name
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if the value of the sensor ID parameter is incorrect
      */
@@ -376,14 +445,14 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkProcedureIDs(final Collection<String> procedureIDs, final String parameterName)
+    protected void checkProcedureIDs(Collection<String> procedureIDs, String parameterName)
             throws OwsExceptionReport {
         if (procedureIDs != null) {
-            final CompositeOwsException exceptions = new CompositeOwsException();
-            for (final String procedureID : procedureIDs) {
+            CompositeOwsException exceptions = new CompositeOwsException();
+            for (String procedureID : procedureIDs) {
                 try {
                     checkProcedureID(procedureID, parameterName);
-                } catch (final OwsExceptionReport owse) {
+                } catch (OwsExceptionReport owse) {
                     exceptions.add(owse);
                 }
             }
@@ -401,14 +470,14 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkObservationIDs(final Collection<String> observationIDs, final String parameterName)
+    protected void checkObservationIDs(Collection<String> observationIDs, String parameterName)
             throws OwsExceptionReport {
         if (CollectionHelper.isEmpty(observationIDs)) {
             throw new MissingParameterValueException(parameterName);
         }
         if (observationIDs != null) {
-            final CompositeOwsException exceptions = new CompositeOwsException();
-            for (final String observationID : observationIDs) {
+            CompositeOwsException exceptions = new CompositeOwsException();
+            for (String observationID : observationIDs) {
                 try {
                     checkObservationID(observationID, parameterName);
                 } catch (final OwsExceptionReport owse) {
@@ -419,14 +488,14 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkFeatureOfInterestIdentifiers(final List<String> featuresOfInterest, final String parameterName)
+    protected void checkFeatureOfInterestIdentifiers(List<String> featuresOfInterest, String parameterName)
             throws OwsExceptionReport {
         if (featuresOfInterest != null) {
-            final CompositeOwsException exceptions = new CompositeOwsException();
-            for (final String featureOfInterest : featuresOfInterest) {
+            CompositeOwsException exceptions = new CompositeOwsException();
+            for (String featureOfInterest : featuresOfInterest) {
                 try {
                     checkFeatureOfInterestIdentifier(featureOfInterest, parameterName);
-                } catch (final OwsExceptionReport e) {
+                } catch (OwsExceptionReport e) {
                     exceptions.add(e);
                 }
             }
@@ -629,36 +698,6 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     protected boolean hasLanguageExtension(SwesExtensions extensions) {
         return extensions != null && extensions.containsExtension(OWSConstants.AdditionalRequestParams.language);
     }
-
-    // protected void checkLanguageExtension(SwesExtensions extensions) throws
-    // OwsExceptionReport {
-    // checkLanguageExtension(extensions,
-    // ServiceConfiguration.getInstance().getSupportedLanguages());
-    // }
-    //
-    // protected void checkLanguageExtension(SwesExtensions extensions,
-    // Set<String> supportedLanguages)
-    // throws OwsExceptionReport {
-    // if (hasLanguageExtension(extensions)) {
-    // SwesExtension<?> extension =
-    // extensions.getExtension(SosConstants.InspireParams.language);
-    // String value = Constants.EMPTY_STRING;
-    // if (extension.getValue() instanceof String) {
-    // value = (String) extension.getValue();
-    // } else if (extension.getValue() instanceof SweText) {
-    // value = ((SweText) extension.getValue()).getValue();
-    // } else {
-    // throw new
-    // MissingParameterValueException(SosConstants.InspireParams.language)
-    // .withMessage("The language extension value should be of type 'swe:TextPropertytype'");
-    // }
-    // if (!supportedLanguages.contains(value)) {
-    // throw new
-    // InvalidParameterValueException(SosConstants.InspireParams.language,
-    // value);
-    // }
-    // }
-    // }
 
     private boolean checkFeatureValueReference(String valueReference) {
         return "sams:shape".equals(valueReference)

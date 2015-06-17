@@ -38,7 +38,13 @@ import javax.xml.soap.SOAPMessage;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.CodedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3.x2003.x05.soapEnvelope.Body;
+import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweConstants;
@@ -48,18 +54,12 @@ import org.n52.iceland.w3c.soap.SoapHelper;
 import org.n52.iceland.w3c.soap.SoapRequest;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3.x2003.x05.soapEnvelope.Body;
-import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.google.common.base.Joiner;
 
 /**
  * class encapsulates decoding methods for SOAP elements.
- * 
+ *
  * @since 4.0.0
  */
 public class Soap12Decoder extends AbstractSoapDecoder {
@@ -68,17 +68,17 @@ public class Soap12Decoder extends AbstractSoapDecoder {
     public Soap12Decoder() {
         super(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE);
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
-                Joiner.on(", ").join(getDecoderKeyTypes()));
+                Joiner.on(", ").join(getKeys()));
     }
 
     /**
      * Parses SOAP 1.2 Envelope to a SOS internal SOAP request.
-     * 
+     *
      * @param doc
      *            request as xml representation
-     * 
+     *
      * @return SOS internal SOAP request
-     * 
+     *
      * @throws OwsExceptionReport
      *             if an error occurs.
      */
@@ -125,7 +125,7 @@ public class Soap12Decoder extends AbstractSoapDecoder {
         return r;
     }
 
-    private AbstractServiceRequest<?> getBodyContent(EnvelopeDocument doc) throws CodedException {
+    private AbstractServiceRequest<?> getBodyContent(EnvelopeDocument doc) throws OwsExceptionReport {
         Body body = doc.getEnvelope().getBody();
         try {
             Node domNode = body.getDomNode();

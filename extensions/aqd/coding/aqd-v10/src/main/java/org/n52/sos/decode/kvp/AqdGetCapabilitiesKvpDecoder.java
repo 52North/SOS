@@ -50,7 +50,7 @@ public class AqdGetCapabilitiesKvpDecoder extends GetCapabilitiesKvpDecoder{
         );
     
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
     	return  Collections.unmodifiableSet(KVP_DECODER_KEY_TYPE);
     }
 

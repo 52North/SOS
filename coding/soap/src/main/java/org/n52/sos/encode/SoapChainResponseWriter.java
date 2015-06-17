@@ -30,65 +30,90 @@ package org.n52.sos.encode;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Set;
 
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+
+import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.coding.encode.EncoderRepository;
 import org.n52.iceland.coding.encode.ResponseProxy;
+import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
-import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.util.Producer;
 import org.n52.iceland.w3c.soap.SoapChain;
 import org.n52.iceland.w3c.soap.SoapResponse;
-import org.n52.sos.coding.encode.AbstractResponseWriter;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlOptionsHelper;
+
 
 /**
  * Streaming SOAP response writer implementation.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
 public class SoapChainResponseWriter extends AbstractResponseWriter<SoapChain> {
+    public static final ResponseWriterKey KEY = new ResponseWriterKey(SoapChain.class);
+
+    private final EncoderRepository encoderRepository;
+    private final Producer<XmlOptions> xmlOptions;
+    private final boolean forceStreamingEncoding;
+
+    public SoapChainResponseWriter(EncoderRepository encoderRepository, Producer<XmlOptions> xmlOptions, boolean forceStreamingEncoding) {
+        this.encoderRepository = encoderRepository;
+        this.xmlOptions = xmlOptions;
+        this.forceStreamingEncoding = forceStreamingEncoding;
+    }
+
+    @Override
+    public Set<ResponseWriterKey> getKeys() {
+        return Collections.singleton(KEY);
+    }
 
     @Override
     public void write(SoapChain chain, OutputStream out, ResponseProxy responseProxy) throws IOException {
         try {
-            Object o = encodeSoapResponse(chain, out);
-            if (o != null) {
-                if (o instanceof SOAPMessage) {
-                    ((SOAPMessage) o).writeTo(out);
-                } else if (o instanceof XmlObject) {
-                    ((XmlObject) o).save(out, XmlOptionsHelper.getInstance().getXmlOptions());
-                }
-            }
-        } catch (SOAPException soapex) {
-            throw new IOException(soapex);
-        } catch (OwsExceptionReport owsex) {
-            throw new IOException(owsex);
+            write(chain, out);
+        } catch (OwsExceptionReport ex) {
+            throw new IOException(ex);
         }
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Object encodeSoapResponse(SoapChain chain, OutputStream out) throws OwsExceptionReport {
-        EncoderKey key =
-                CodingHelper.getEncoderKey(chain.getSoapResponse().getSoapNamespace(), chain.getSoapResponse());
-        Encoder<?, SoapResponse> encoder = getEncoder(key);
-        if (encoder != null) {
-            if (ServiceConfiguration.getInstance().isForceStreamingEncoding() && encoder instanceof StreamingEncoder) {
-                ((StreamingEncoder) encoder).encode(chain.getSoapResponse(), out);
-                return null;
-            } else {
-                return encoder.encode(chain.getSoapResponse());
-            }
-        } else {
+    private void write(SoapChain chain, OutputStream out) throws OwsExceptionReport, IOException {
+        String namespace = chain.getSoapResponse().getSoapNamespace();
+        EncoderKey key = CodingHelper.getEncoderKey(namespace, chain.getSoapResponse());
+        Encoder<?, SoapResponse> encoder = this.encoderRepository.getEncoder(key);
+        if (encoder == null) {
             throw new NoEncoderForKeyException(key);
+        }
+        write(encoder, chain, out);
+    }
+
+    private void write(Encoder<?, SoapResponse> encoder, SoapChain chain, OutputStream out)
+            throws IOException, OwsExceptionReport {
+        if (this.forceStreamingEncoding && encoder instanceof StreamingEncoder) {
+            ((StreamingEncoder<?, ? super SoapResponse>) encoder)
+                    .encode(chain.getSoapResponse(), out);
+        } else {
+            try {
+                Object object = encoder.encode(chain.getSoapResponse());
+                if (object instanceof SOAPMessage) {
+                    ((SOAPMessage) object).writeTo(out);
+                } else if (object instanceof XmlObject) {
+                    ((XmlObject) object).save(out, this.xmlOptions.get());
+                }
+            } catch (SOAPException ex) {
+                throw new IOException(ex);
+            }
         }
     }
 

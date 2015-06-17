@@ -30,11 +30,11 @@ package org.n52.sos.aqd;
 
 import java.util.Set;
 
-import org.n52.iceland.config.SettingsManager;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
@@ -51,31 +51,30 @@ import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.settings.EReportingSetting;
 
 @Configurable
-public class AqdHelper {
-    
+public class AqdHelper implements Constructable {
+
+    @Deprecated
     private static AqdHelper instance;
-    
+
     private String namespace;
-    
+
     private String observationPrefix;
-    
+
     private Set<Integer> validityFlags;
-    
+
     private Set<Integer> verificationFlags;
-    
+
+    @Override
+    public void init() {
+        AqdHelper.instance = this;
+    }
+
     /**
      * @return Returns a singleton instance of the AqdHelper.
      */
-    public static synchronized AqdHelper getInstance() {
-        if (instance == null) {
-            instance = new AqdHelper();
-            SettingsManager.getInstance().configure(instance);
-        }
+    @Deprecated
+    public static AqdHelper getInstance() {
         return instance;
-    }
-
-    private AqdHelper() {
-
     }
 
     public boolean hasFlowExtension(Extensions extensions) {
@@ -99,33 +98,33 @@ public class AqdHelper {
         }
         return ReportObligationType.E2A;
     }
-    
+
     @Setting(EReportingSetting.EREPORTING_NAMESPACE)
-    public void setEReportingNamespace(final String namespace) throws ConfigurationException {
+    public void setEReportingNamespace(final String namespace) throws ConfigurationError {
         this.namespace = namespace;
     }
 
     public String getEReportingNamespace() {
         return namespace;
     }
-    
+
     public boolean isSetEReportingNamespace() {
         return StringHelper.isNotEmpty(getEReportingNamespace());
     }
-    
+
     @Setting(EReportingSetting.EREPORTING_OBSERVATION_PREFIX)
-    public void setEReportingObservationPrefix(final String observationPrefix) throws ConfigurationException {
+    public void setEReportingObservationPrefix(final String observationPrefix) throws ConfigurationError {
         this.observationPrefix = observationPrefix;
     }
 
     public String getEReportingObservationPrefix() {
         return observationPrefix;
     }
-    
+
     public boolean isSetEReportingObservationPrefix() {
         return StringHelper.isNotEmpty(getEReportingObservationPrefix());
     }
-    
+
     public void processObservation(OmObservation observation, TimePeriod timePeriod, TimeInstant resultTime,
             FeatureCollection featureCollection, AbstractEReportingHeader eReportingHeader, int counter) {
         if (observation.isSetPhenomenonTime()) {
@@ -151,7 +150,7 @@ public class AqdHelper {
         }
         id.append(gmlId);
         return id.toString();
-       
+
     }
 
     public String getObservationId(int counter) {
@@ -175,7 +174,7 @@ public class AqdHelper {
     public void setValidityFlags(String validityFlags) {
         this.validityFlags = JavaHelper.getIntegerSetFromString(validityFlags);
     }
-    
+
     public boolean isSetValidityFlags() {
         return CollectionHelper.isNotEmpty(getValidityFlags());
     }
@@ -194,9 +193,9 @@ public class AqdHelper {
     public void setVerificationFlags(String verificationFlags) {
         this.verificationFlags = JavaHelper.getIntegerSetFromString(verificationFlags);
     }
-    
+
     public boolean isSetVerificationFlags() {
         return CollectionHelper.isNotEmpty(getVerificationFlags());
     }
-    
+
 }

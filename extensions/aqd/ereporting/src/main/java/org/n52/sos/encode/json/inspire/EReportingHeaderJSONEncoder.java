@@ -47,12 +47,12 @@ public class EReportingHeaderJSONEncoder extends JSONEncoder<EReportingHeader> {
     public JsonNode encodeJSON(EReportingHeader header)
             throws OwsExceptionReport {
         ObjectNode j = JSONUtils.nodeFactory().objectNode();
-        j.put(AQDJSONConstants.CHANGE, encodeObjectToJson(header.getChange()));
-        j.put(AQDJSONConstants.DELETE, encodeObjectToJson(header.getDelete()));
-        j.put(AQDJSONConstants.CONTENT, encodeObjectToJson(header.getContent()));
-        j.put(AQDJSONConstants.INSPIRE_ID, encodeObjectToJson(header.getInspireID()));
-        j.put(AQDJSONConstants.REPORTING_AUTHORITY, encodeObjectToJson(header.getReportingAuthority()));
-        j.put(AQDJSONConstants.REPORTING_PERIOD, encodeObjectToJson(header.getReportingPeriod()));
+        j.set(AQDJSONConstants.CHANGE, encodeObjectToJson(header.getChange()));
+        j.set(AQDJSONConstants.DELETE, encodeObjectToJson(header.getDelete()));
+        j.set(AQDJSONConstants.CONTENT, encodeObjectToJson(header.getContent()));
+        j.set(AQDJSONConstants.INSPIRE_ID, encodeObjectToJson(header.getInspireID()));
+        j.set(AQDJSONConstants.REPORTING_AUTHORITY, encodeObjectToJson(header.getReportingAuthority()));
+        j.set(AQDJSONConstants.REPORTING_PERIOD, encodeObjectToJson(header.getReportingPeriod()));
         return j;
     }
 }

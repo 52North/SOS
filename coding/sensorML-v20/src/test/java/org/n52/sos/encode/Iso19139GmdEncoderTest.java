@@ -38,12 +38,11 @@ import javax.xml.namespace.NamespaceContext;
 import org.isotc211.x2005.gmd.DQDomainConsistencyDocument;
 import org.isotc211.x2005.gmd.DQDomainConsistencyPropertyType;
 import org.isotc211.x2005.gmd.DQDomainConsistencyType;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.config.SettingsManager;
+import org.w3c.dom.Node;
+
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
@@ -55,7 +54,6 @@ import org.n52.sos.iso.gmd.GmdDomainConsistency;
 import org.n52.sos.iso.gmd.GmdQuantitativeResult;
 import org.n52.sos.util.NamespaceContextBuilder;
 import org.n52.sos.util.XmlHelper;
-import org.w3c.dom.Node;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -72,17 +70,7 @@ public class Iso19139GmdEncoderTest {
             .add(GmdConstants.NS_GMD, GmdConstants.NS_GMD_PREFIX)
             .add(W3CConstants.NS_XLINK, W3CConstants.NS_XLINK_PREFIX)
             .build();
-    
-    
-    @BeforeClass
-    public static void initSettingsManager() {
-        SettingsManager.getInstance();
-    }
 
-    @AfterClass
-    public static void cleanupSettingManager() {
-        SettingsManager.getInstance().cleanup();
-    }
 
     @Rule
     public final ErrorCollector errors = new ErrorCollector();
@@ -101,7 +89,7 @@ public class Iso19139GmdEncoderTest {
         errors.checkThat(encoder.encode(qr, PROPERTY_TYPE), is(instanceOf(DQDomainConsistencyPropertyType.class)));
         errors.checkThat(encoder.encode(qr, TYPE), is(instanceOf(DQDomainConsistencyType.class)));
     }
-    
+
     @Test
     public void checkValidity() throws OwsExceptionReport {
         errors.checkThat(XmlHelper.validateDocument(encoder.encode(GmdDomainConsistency.dataCapture(GmlConstants.NilReason.unknown), DOCUMENT_TYPE)), is(true));

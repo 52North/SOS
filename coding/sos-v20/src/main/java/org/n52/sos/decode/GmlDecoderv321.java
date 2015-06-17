@@ -31,7 +31,6 @@ package org.n52.sos.decode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.opengis.gml.x32.AbstractGeometryType;
@@ -64,12 +63,12 @@ import net.opengis.gml.x32.TimePositionType;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
@@ -77,7 +76,7 @@ import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.DateTimeHelper;
@@ -89,6 +88,7 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +99,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
 
@@ -126,18 +126,8 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
-    }
-
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
     }
 
     @Override
@@ -231,13 +221,13 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
      * parses the BBOX element of the featureOfInterest element contained in the
      * GetObservation request and returns a String representing the BOX in
      * Well-Known-Text format
-     * 
+     *
      * @param envelopeDocument
      *            XmlBean representing the BBOX-element in the request
      * @return Returns WKT-String representing the BBOX as Multipoint with two
      *         elements
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if parsing the BBOX element failed
      */
@@ -251,7 +241,7 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
 
     /**
      * parses TimeInstant
-     * 
+     *
      * @param xbTimeIntant
      *            XmlBean representation of TimeInstant
      * @return Returns a TimeInstant created from the TimeInstantType
@@ -269,12 +259,12 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
     /**
      * creates SOS representation of time period from XMLBeans representation of
      * time period
-     * 
+     *
      * @param xbTimePeriod
      *            XMLBeans representation of time period
      * @return Returns SOS representation of time period
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      */
     private Object parseTimePeriod(TimePeriodType xbTimePeriod) throws OwsExceptionReport {
@@ -512,13 +502,13 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
     /**
      * method parses the passed linearRing(generated thru XmlBEans) and returns
      * a string containing the coordinate values of the passed ring
-     * 
+     *
      * @param xbLinearRing
      *            linearRing(generated thru XmlBEans)
      * @return Returns a string containing the coordinate values of the passed
      *         ring
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if parsing the linear Ring failed
      */
@@ -546,7 +536,7 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
 
     /**
      * parses XmlBeans DirectPosition to a String with coordinates for WKT.
-     * 
+     *
      * @param xbPos
      *            XmlBeans generated DirectPosition.
      * @return Returns String with coordinates for WKT.
@@ -557,7 +547,7 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
 
     /**
      * parses XmlBeans DirectPosition[] to a String with coordinates for WKT.
-     * 
+     *
      * @param xbPosArray
      *            XmlBeans generated DirectPosition[].
      * @return Returns String with coordinates for WKT.
@@ -577,12 +567,12 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
 
     /**
      * parses XmlBeans DirectPositionList to a String with coordinates for WKT.
-     * 
+     *
      * @param xbPosList
      *            XmlBeans generated DirectPositionList.
      * @return Returns String with coordinates for WKT.
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      */
     private String getString4PosList(DirectPositionListType xbPosList) throws OwsExceptionReport {
@@ -611,7 +601,7 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
     /**
      * parses XmlBeans Coordinates to a String with coordinates for WKT.
      * Replaces cs, decimal and ts if different from default.
-     * 
+     *
      * @param xbCoordinates
      *            XmlBeans generated Coordinates.
      * @return Returns String with coordinates for WKT.

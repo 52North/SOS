@@ -42,15 +42,10 @@ import com.vividsolutions.jts.geom.Geometry;
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
- * @param <T>
  */
 public abstract class StreamingObservation extends AbstractStreaming {
-
-    /**
-     * serial number
-     */
     private static final long serialVersionUID = -5759256296641975519L;
-    
+
     @Override
     public Time getPhenomenonTime() {
         // TODO Auto-generated method stub
@@ -72,11 +67,11 @@ public abstract class StreamingObservation extends AbstractStreaming {
     public void setValue(Value<OmObservation> value) {
         // TODO Auto-generated method stub
     }
-    
+
     /**
      * Check and modify observation for Spatial Filtering Profile and requested
      * crs
-     * 
+     *
      * @param observation
      *            {@link OmObservation} to check
      * @throws OwsExceptionReport
@@ -105,5 +100,5 @@ public abstract class StreamingObservation extends AbstractStreaming {
             }
         }
     }
-    
+
 }

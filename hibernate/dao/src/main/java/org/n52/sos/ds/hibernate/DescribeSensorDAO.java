@@ -35,12 +35,16 @@ import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.n52.iceland.coding.CodingRepository;
+
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
@@ -50,7 +54,6 @@ import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
 import org.n52.sos.ds.AbstractDescribeSensorHandler;
-import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -79,24 +82,22 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public class DescribeSensorDAO extends AbstractDescribeSensorHandler {
-    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder sessionHolder;
 
     private final HibernateProcedureConverter procedureConverter = new HibernateProcedureConverter();
 
-    /**
-     * constructor
-     */
     public DescribeSensorDAO() {
         super(SosConstants.SOS);
     }
-    
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override
-    public DescribeSensorResponse getSensorDescription(final DescribeSensorRequest request) throws OwsExceptionReport {
+    public DescribeSensorResponse getSensorDescription(final DescribeSensorRequest request)
+            throws OwsExceptionReport {
         // sensorDocument which should be returned
         Session session = null;
         try {
@@ -148,11 +149,11 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler {
         if (procedure == null) {
             throw new NoApplicableCodeException().causedBy(
                     new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
-                    INTERNAL_SERVER_ERROR);
+                            INTERNAL_SERVER_ERROR);
         }
 
         return procedureConverter.createSosProcedureDescription(procedure, request.getProcedureDescriptionFormat(),
-                request.getVersion(), LocaleHelper.fromRequest(request), session);
+                                                                           request.getVersion(), LocaleHelper.fromRequest(request), session);
     }
 
     /**
@@ -166,23 +167,22 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler {
      * @throws ConverterException
      *             If an error occurs
      */
-    private List<SosProcedureDescription> getProcedureDescriptions(DescribeSensorRequest request, Session session)
-            throws OwsExceptionReport {
+    private List<SosProcedureDescription> getProcedureDescriptions(DescribeSensorRequest request, Session session) throws OwsExceptionReport {
         Set<String> possibleProcedureDescriptionFormats =
                 getPossibleProcedureDescriptionFormats(request.getProcedureDescriptionFormat());
         final TProcedure procedure =
                 new ProcedureDAO().getTProcedureForIdentifier(request.getProcedure(),
-                        possibleProcedureDescriptionFormats, request.getValidTime(), session);
+                                                              possibleProcedureDescriptionFormats, request.getValidTime(), session);
         List<SosProcedureDescription> list = Lists.newLinkedList();
         if (procedure != null) {
             List<ValidProcedureTime> validProcedureTimes =
                     new ValidProcedureTimeDAO().getValidProcedureTimes(procedure, possibleProcedureDescriptionFormats,
-                            request.getValidTime(), session);
+                                                                                  request.getValidTime(), session);
             Locale requestedLanguage = LocaleHelper.fromRequest(request);
             for (ValidProcedureTime validProcedureTime : validProcedureTimes) {
                 SosProcedureDescription sosProcedureDescription =
                         procedureConverter.createSosProcedureDescriptionFromValidProcedureTime(procedure, request.getProcedureDescriptionFormat(),
-                                validProcedureTime, request.getVersion(), requestedLanguage, session);
+                                                                                                          validProcedureTime, request.getVersion(), requestedLanguage, session);
                 list.add(convertProcedureDescription(sosProcedureDescription, request));
             }
         } else {
@@ -193,7 +193,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler {
                 if (!request.isSetValidTime()) {
                     throw new NoApplicableCodeException().causedBy(
                             new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
-                            INTERNAL_SERVER_ERROR);
+                                    INTERNAL_SERVER_ERROR);
                 }
             }
         }
@@ -212,7 +212,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler {
         Set<String> possibleFormats = checkForUrlVsMimeType(procedureDescriptionFormat);
         String procedureDescriptionFormatMatchingString =
                 getProcedureDescriptionFormatMatchingString(procedureDescriptionFormat);
-        for (Entry<ServiceOperatorKey, Set<String>> pdfByServiceOperatorKey : CodingRepository.getInstance()
+        for (Entry<ServiceOperatorKey, Set<String>> pdfByServiceOperatorKey : ProcedureDescriptionFormatRepository.getInstance()
                 .getAllProcedureDescriptionFormats().entrySet()) {
             for (String pdfFromRepository : pdfByServiceOperatorKey.getValue()) {
                 if (procedureDescriptionFormatMatchingString
@@ -238,25 +238,27 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler {
         // match against lowercase string, ignoring whitespace
         return procedureDescriptionFormat.toLowerCase().replaceAll("\\s", "");
     }
-    
+
+
     private Set<String> checkForUrlVsMimeType(String procedureDescriptionFormat) {
-    	 Set<String> possibleFormats = Sets.newHashSet();
-    	 possibleFormats.add(procedureDescriptionFormat);
-         if (SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE.equalsIgnoreCase(procedureDescriptionFormat)) {
-             possibleFormats.add(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL);
+        Set<String> possibleFormats = Sets.newHashSet();
+        possibleFormats.add(procedureDescriptionFormat);
+        if (SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE.equalsIgnoreCase(procedureDescriptionFormat)) {
+            possibleFormats.add(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL);
          } else if (SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL.equalsIgnoreCase(procedureDescriptionFormat)) {
              possibleFormats.add(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE);
          }
-         return possibleFormats;
+        return possibleFormats;
     }
-    
 
-    private SosProcedureDescription convertProcedureDescription(SosProcedureDescription procedureDescription,
-            DescribeSensorRequest request) throws CodedException {
+    private SosProcedureDescription convertProcedureDescription(
+            SosProcedureDescription procedureDescription,
+                                                                DescribeSensorRequest request)
+            throws CodedException {
         if (!checkForUrlVsMimeType(procedureDescription.getDescriptionFormat()).contains(request.getProcedureDescriptionFormat())) {
             Converter<SosProcedureDescription, SosProcedureDescription> converter =
                     ConverterRepository.getInstance().getConverter(procedureDescription.getDescriptionFormat(),
-                            request.getProcedureDescriptionFormat());
+                                                                   request.getProcedureDescriptionFormat());
             if (converter != null) {
                 try {
                     return converter.convert(procedureDescription);

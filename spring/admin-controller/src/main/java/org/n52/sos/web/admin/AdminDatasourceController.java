@@ -28,19 +28,21 @@
  */
 package org.n52.sos.web.admin;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.ServiceLoader;
 
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.ds.GeneralQueryDAO;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.common.ControllerConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -62,23 +64,19 @@ import com.google.common.collect.Maps;
 @Controller
 public class AdminDatasourceController extends AbstractDatasourceController {
     private static final Logger LOG = LoggerFactory.getLogger(AdminDatasourceController.class);
-
     private static final String ROWS = "rows";
-
     private static final String NAMES = "names";
-
     private static final String SUPPORTS_CLEAR = "supportsClear";
-
     private static final String SUPPORTS_DELETE_DELETED = "supportsDeleteDeleted";
 
-    private ServiceLoader<GeneralQueryDAO> daoServiceLoader = ServiceLoader.load(GeneralQueryDAO.class);
+    @Autowired(required = false)
+    private GeneralQueryDAO generalQueryDAO;
 
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE)
     public ModelAndView index() throws SQLException, OwsExceptionReport {
         Map<String, Object> model = Maps.newHashMap();
         model.put(SUPPORTS_CLEAR, getDatasource().supportsClear());
-        model.put(SUPPORTS_DELETE_DELETED, daoServiceLoader.iterator().hasNext());
-
+        model.put(SUPPORTS_DELETE_DELETED, generalQueryDAO!=null);
         return new ModelAndView(ControllerConstants.Views.ADMIN_DATASOURCE, model);
     }
 
@@ -88,8 +86,7 @@ public class AdminDatasourceController extends AbstractDatasourceController {
         try {
             String q = URLDecoder.decode(querySQL, "UTF-8");
             LOG.info("Query: {}", q);
-            GeneralQueryDAO dao = daoServiceLoader.iterator().next();
-            GeneralQueryDAO.QueryResult rs = dao.query(q);
+            GeneralQueryDAO.QueryResult rs = this.generalQueryDAO.query(q);
             ObjectNode j = JSONUtils.nodeFactory().objectNode();
             if (rs.getMessage() != null) {
                 j.put(rs.isError() ? "error" : "message", rs.getMessage());
@@ -104,7 +101,7 @@ public class AdminDatasourceController extends AbstractDatasourceController {
         } catch (UnsupportedEncodingException ex) {
             LOG.error("Could not decode String", ex);
             return "Could not decode String: " + ex.getMessage();
-        } catch (Exception ex) {
+        } catch (SQLException | IOException ex) {
             LOG.error("Query unsuccesfull.", ex);
             return "Query unsuccesful. Cause: " + ex.getMessage();
         }

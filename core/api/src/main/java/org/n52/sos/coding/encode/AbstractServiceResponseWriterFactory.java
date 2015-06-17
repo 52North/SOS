@@ -28,28 +28,61 @@
  */
 package org.n52.sos.coding.encode;
 
+import javax.inject.Inject;
+
+import org.n52.iceland.coding.encode.EncoderRepository;
+import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
+import org.n52.iceland.coding.encode.ResponseWriterKey;
+import org.n52.iceland.coding.encode.ResponseWriterRepository;
+import org.n52.iceland.component.SingleTypeComponentFactory;
+import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.iceland.service.StreamingSettings;
 
 /**
- * {@link ResponseWriterFactory} implementation for {@link AbstractServiceResponse} and
+ * {@link ResponseWriterFactory} implementation for
+ * {@link AbstractServiceResponse} and
  * {@link AbstractServiceResponseWriter}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
-public class AbstractServiceResponseWriterFactory implements
-		ResponseWriterFactory<AbstractServiceResponse, AbstractServiceResponseWriter> {
+public class AbstractServiceResponseWriterFactory
+        implements SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>>, ResponseWriterFactory {
 
-	@Override
-	public Class<AbstractServiceResponse> getType() {
-		return AbstractServiceResponse.class;
-	}
+    protected static final ResponseWriterKey RESPONSE_WRITER_KEY
+            = new ResponseWriterKey(AbstractServiceResponse.class);
 
-	@Override
-	public AbstractServiceResponseWriter getResponseWriter() {
-		return new AbstractServiceResponseWriter();
-	}
+    private ResponseWriterRepository responseWriterRepository;
+    private EncoderRepository encoderRepository;
+    private boolean forceStreamingEncoding;
 
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
+
+    @Inject
+    public void setResponseWriterRepository(ResponseWriterRepository responseWriterRepository) {
+        this.responseWriterRepository = responseWriterRepository;
+    }
+
+    @Setting(StreamingSettings.FORCE_STREAMING_ENCODING)
+    public void setForceStreamingEncoding(boolean forceStreamingEncoding) {
+        this.forceStreamingEncoding = forceStreamingEncoding;
+    }
+
+    @Override
+    public ResponseWriterKey getKey() {
+        return RESPONSE_WRITER_KEY;
+    }
+
+    @Override
+    public AbstractServiceResponseWriter create() {
+        return new AbstractServiceResponseWriter(this.responseWriterRepository,
+                                                 this.encoderRepository,
+                                                 this.forceStreamingEncoding);
+    }
 }

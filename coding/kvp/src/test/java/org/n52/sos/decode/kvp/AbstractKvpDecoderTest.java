@@ -61,7 +61,7 @@ public class AbstractKvpDecoderTest extends AbstractKvpDecoder {
     
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return null;
     }
 

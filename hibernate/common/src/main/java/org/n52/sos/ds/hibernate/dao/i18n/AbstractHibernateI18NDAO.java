@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
@@ -40,8 +42,10 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.n52.iceland.ds.I18NDAO;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.LocalizedString;
 import org.n52.iceland.i18n.metadata.AbstractI18NMetadata;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
@@ -57,7 +61,12 @@ public abstract class AbstractHibernateI18NDAO<T extends AbstractIdentifierNameD
                                                H extends AbstractHibernateI18NMetadata>
         implements I18NDAO<S>, HibernateI18NDAO<S> {
 
-    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder sessionHolder;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
 
     @Override
     public S getMetadata(String id)

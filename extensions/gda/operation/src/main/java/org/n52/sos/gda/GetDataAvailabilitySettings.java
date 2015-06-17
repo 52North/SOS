@@ -28,35 +28,6 @@
  */
 package org.n52.sos.gda;
 
-import java.util.Collections;
-import java.util.Set;
-
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingDefinitionProvider;
-import org.n52.iceland.config.settings.BooleanSettingDefinition;
-import org.n52.iceland.service.MiscSettings;
-
-import com.google.common.collect.ImmutableSet;
-
-public class GetDataAvailabilitySettings implements SettingDefinitionProvider {
-
-
-    public static final String FORCE_GDA_VALUE_COUNT = "operation.gda.forceValueCount";
-    
-    public static final BooleanSettingDefinition FORCE_GDA_VALUE_COUNT_DEFINITION = new BooleanSettingDefinition()
-                .setGroup(MiscSettings.GROUP)
-                .setOrder(ORDER_17)
-                .setKey(FORCE_GDA_VALUE_COUNT)
-                .setDefaultValue(false)
-                .setTitle("Should the SOS include value count in GetDataAvailability response?")
-                .setDescription(
-                        "Should the SOS include the value count for each timeseries in the GetDataAvailability response?");
-    
-    private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet.<SettingDefinition<?, ?>> of(FORCE_GDA_VALUE_COUNT_DEFINITION);
-    
-    @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return Collections.unmodifiableSet(DEFINITIONS);
-    }
-
+public interface GetDataAvailabilitySettings {
+    String FORCE_GDA_VALUE_COUNT = "operation.gda.forceValueCount";
 }

@@ -43,7 +43,7 @@ import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;

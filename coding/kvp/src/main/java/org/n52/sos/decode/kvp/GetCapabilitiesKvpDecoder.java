@@ -69,7 +69,7 @@ public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder {
                     SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP));
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(KVP_DECODER_KEY_TYPE);
     }
 

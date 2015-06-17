@@ -34,8 +34,8 @@ import java.util.Properties;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.service.Configurator;
+
+import org.n52.iceland.exception.ConfigurationError;
 
 /**
  * @since 4.0.0
@@ -43,24 +43,24 @@ import org.n52.iceland.service.Configurator;
  */
 public class ConfiguratorTest {
 
-    @Test(expected = ConfigurationException.class)
-    public void createConfiguratorTest() throws ConfigurationException {
+    @Test(expected = ConfigurationError.class)
+    public void createConfiguratorTest() throws ConfigurationError {
         assertNotNull(Configurator.createInstance(null, null));
 
     }
 
-    @Test(expected = ConfigurationException.class)
-    public void createConfiguratorWithEmptyPropertiesTest() throws ConfigurationException {
+    @Test(expected = ConfigurationError.class)
+    public void createConfiguratorWithEmptyPropertiesTest() throws ConfigurationError {
         assertNotNull(Configurator.createInstance(new Properties(), null));
     }
 
-    @Test(expected = ConfigurationException.class)
-    public void createConfiguratorWithEmptyPropertieAndEmptyBasepathTest() throws ConfigurationException {
+    @Test(expected = ConfigurationError.class)
+    public void createConfiguratorWithEmptyPropertieAndEmptyBasepathTest() throws ConfigurationError {
         assertNotNull(Configurator.createInstance(new Properties(), ""));
     }
 
-    @Test(expected = ConfigurationException.class)
-    public void createConfiguratorWithNullPropertieAndEmptyBasepathTest() throws ConfigurationException {
+    @Test(expected = ConfigurationError.class)
+    public void createConfiguratorWithNullPropertieAndEmptyBasepathTest() throws ConfigurationError {
         assertNotNull(Configurator.createInstance(null, ""));
     }
 

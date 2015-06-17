@@ -50,7 +50,7 @@ public class StreamingSweDataArray extends SweAbstractDataComponent {
         private SweAbstractDataComponent elementType;
 
         /**
-         * 
+         *
          */
         private SweAbstractEncoding encoding;
 
@@ -64,7 +64,7 @@ public class StreamingSweDataArray extends SweAbstractDataComponent {
         }
 
         /**
-         * 
+         *
          * @param values
          *            the values to set
          * @return This SweDataArray

@@ -133,7 +133,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEY_TYPES);
     }
 

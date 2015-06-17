@@ -28,7 +28,10 @@
  */
 package org.n52.sos.inspire.capabilities;
 
+import java.util.Collections;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
@@ -37,15 +40,15 @@ import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.ows.OWSConstants;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilities;
-import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesKey;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProvider;
+import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderKey;
 import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.DateTimeHelper;
+import org.n52.iceland.util.Producer;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.inspire.AbstractInspireProvider;
@@ -54,7 +57,6 @@ import org.n52.sos.inspire.InspireConformity.InspireDegreeOfConformity;
 import org.n52.sos.inspire.InspireConformityCitation;
 import org.n52.sos.inspire.InspireConstants;
 import org.n52.sos.inspire.InspireDateOfCreation;
-import org.n52.sos.inspire.InspireHelper;
 import org.n52.sos.inspire.InspireLanguageISO6392B;
 import org.n52.sos.inspire.InspireMandatoryKeyword;
 import org.n52.sos.inspire.InspireMandatoryKeywordValue;
@@ -63,39 +65,38 @@ import org.n52.sos.inspire.InspireResourceLocator;
 import org.n52.sos.inspire.InspireTemporalReference;
 import org.n52.sos.inspire.InspireUniqueResourceIdentifier;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
 /**
  * Provider for the INSPIRE ExtendedCapabilities
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
-public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider implements
-        OwsExtendedCapabilitiesProvider {
+public class InspireExtendedCapabilitiesProvider
+        extends AbstractInspireProvider
+        implements OwsExtendedCapabilitiesProvider {
 
-    @SuppressWarnings("unused")
-    private static final Logger LOGGER = LoggerFactory.getLogger(InspireExtendedCapabilitiesProvider.class);
+    private final OwsExtendedCapabilitiesProviderKey key
+            = new OwsExtendedCapabilitiesProviderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, InspireConstants.INSPIRE);
 
-    Set<OwsExtendedCapabilitiesKey> providerKeys = Sets.newHashSet(new OwsExtendedCapabilitiesKey(SosConstants.SOS,
-            Sos2Constants.SERVICEVERSION, InspireConstants.INSPIRE));
+    private Producer<OwsServiceProvider> owsServiceProvider;
 
-    /**
-     * constructor
-     */
-    public InspireExtendedCapabilitiesProvider() {
-        InspireHelper.getInstance();
+    @Inject
+    public void setOwsServiceProvider(Producer<OwsServiceProvider> owsServiceProvider) {
+        this.owsServiceProvider = owsServiceProvider;
+    }
+
+    public OwsServiceProvider getOwsServiceProvider() {
+        return owsServiceProvider.get();
     }
 
     @Override
-    public Set<OwsExtendedCapabilitiesKey> getExtendedCapabilitiesKeyType() {
-        return providerKeys;
+    public Set<OwsExtendedCapabilitiesProviderKey> getKeys() {
+        return Collections.singleton(key);
     }
 
     @Override
@@ -118,7 +119,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
     /**
      * Get the SOS internal representation of the
      * {@link MinimalInspireExtendedCapabilities}
-     * 
+     *
      * @param language
      *            the requested language
      * @param crs
@@ -138,7 +139,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
     /**
      * Get the SOS internal representation of the
      * {@link FullInspireExtendedCapabilities}
-     * 
+     *
      * @param language
      *            the requested language
      * @param crs
@@ -207,7 +208,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
 
     /**
      * Get the resource locator
-     * 
+     *
      * @return the resource locator
      */
     private InspireResourceLocator getResourceLocator() {
@@ -218,20 +219,20 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
 
     /**
      * Get the metadata point of contact
-     * 
+     *
      * @return the metadata point of contact
      * @throws OwsExceptionReport
      *             If an error occurs when creating the metadata point of
      *             contact
      */
     private InspireMetadataPointOfContact getMetadataPointOfContact() throws OwsExceptionReport {
-        OwsServiceProvider serviceProvider = Configurator.getInstance().getServiceProvider();
+        OwsServiceProvider serviceProvider = getOwsServiceProvider();
         return new InspireMetadataPointOfContact(serviceProvider.getName(), serviceProvider.getMailAddress());
     }
 
     /**
      * Get the conformity
-     * 
+     *
      * @return the conformity
      * @throws CodedException
      */
@@ -248,7 +249,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
 
     /**
      * Get the temporal reference
-     * 
+     *
      * @return the temporal reference
      */
     private InspireTemporalReference getTemporalReference() {
@@ -257,7 +258,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
 
     /**
      * Get the spatial dataset identifiers
-     * 
+     *
      * @param version
      *            the service version
      * @return the spatial dataset identifiers
@@ -265,7 +266,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
     private Set<InspireUniqueResourceIdentifier> getSpatialDataSetIdentifier(String version) {
         Set<InspireUniqueResourceIdentifier> spatialDataSetIdentifier = Sets.newHashSet();
 
-        for (String offering : Configurator.getInstance().getCache().getOfferings()) {
+        for (String offering : getCache().getOfferings()) {
             InspireUniqueResourceIdentifier iuri = new InspireUniqueResourceIdentifier(offering);
 //            iuri.setNamespace(ServiceConfiguration.getInstance().getServiceURL());
             spatialDataSetIdentifier.add(iuri);
@@ -275,7 +276,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
 
     /**
      * Get the coordinate reference system from the request
-     * 
+     *
      * @param request
      *            the request
      * @return the coordinate reference system
@@ -295,10 +296,10 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
                 }
             }
         }
-        if (GeometryHandler.getInstance().getSupportedCRS().contains(Integer.toString(targetSrid))) {
+        if (getGeometryHandler().getSupportedCRS().contains(Integer.toString(targetSrid))) {
             return targetSrid;
         }
-        return GeometryHandler.getInstance().getDefaultResponseEPSG();
+        return getGeometryHandler().getDefaultResponseEPSG();
     }
 
 }

@@ -28,33 +28,47 @@
  */
 package org.n52.sos.coding.encode;
 
+import org.n52.iceland.coding.encode.AbstractResponseWriter;
+
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+
 import org.n52.iceland.coding.encode.ResponseProxy;
+import org.n52.iceland.coding.encode.ResponseWriterKey;
+import org.n52.iceland.util.Producer;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.sos.util.XmlOptionsHelper;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class XmlResponseWriter extends AbstractResponseWriter<XmlObject> {
-    
-    private MediaType contentType;
+    public static final ResponseWriterKey KEY = new ResponseWriterKey(XmlObject.class);
 
-//    @Override
-//    public Class<XmlObject> getType() {
-//        return XmlObject.class;
-//    }
+    private MediaType contentType;
+    private final Producer<XmlOptions> xmlOptions;
+
+    public XmlResponseWriter(Producer<XmlOptions> xmlOptions) {
+        this.xmlOptions = xmlOptions;
+    }
+
+    @Override
+    public Set<ResponseWriterKey> getKeys() {
+        return Collections.singleton(KEY);
+    }
 
     @Override
     public void write(XmlObject xml, OutputStream out, ResponseProxy responseProxy) throws IOException {
-        xml.save(out, XmlOptionsHelper.getInstance().getXmlOptions());
+        xml.save(out, this.xmlOptions.get());
     }
 
     @Override

@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.opengis.gml.x32.FeaturePropertyType;
@@ -53,6 +52,7 @@ import net.opengis.swes.x20.UpdateSensorDescriptionType.Description;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
@@ -60,7 +60,6 @@ import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.DecoderResponseUnsupportedException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.OGCConstants;
 import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
@@ -71,7 +70,13 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swes.SwesConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.service.AbstractServiceCommunicationObject;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.coding.decode.XmlNamespaceDecoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
@@ -86,17 +91,13 @@ import org.n52.sos.request.UpdateSensorRequest;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<AbstractServiceCommunicationObject, XmlObject> {
 
@@ -116,18 +117,8 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
-    }
-
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
     }
 
     @Override
@@ -150,12 +141,12 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
     /**
      * parses the passes XmlBeans document and creates a SOS describeSensor
      * request
-     * 
+     *
      * @param xbDescSenDoc
      *            XmlBeans document representing the describeSensor request
      * @return Returns SOS describeSensor request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if validation of the request failed
      */
@@ -244,12 +235,12 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
 
     /**
      * parses the Xmlbeans UpdateSensorDescription document to a SOS request.
-     * 
+     *
      * @param xbUpSenDoc
      *            UpdateSensorDescription document
      * @return SOS UpdateSensor request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs.
      */

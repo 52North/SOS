@@ -181,12 +181,12 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
     protected Series getSeries() {
         return series;
     }
-    
+
     @SuppressWarnings("unchecked")
     protected void checkForAdditionalObservationCreator(Series series, OmObservation sosObservation) {
         AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), series.getClass());
         if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
-            AdditionalObservationCreator<Series> creator = AdditionalObservationCreatorRepository.getInstance().get(key);
+            AdditionalObservationCreator creator = AdditionalObservationCreatorRepository.getInstance().get(key);
             creator.create(sosObservation, series);
         }
     }

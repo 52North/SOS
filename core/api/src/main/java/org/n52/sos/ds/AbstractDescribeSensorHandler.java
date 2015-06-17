@@ -30,7 +30,7 @@ package org.n52.sos.ds;
 
 import java.util.Set;
 
-import org.n52.iceland.coding.CodingRepository;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.sos.Sos1Constants;
@@ -42,9 +42,9 @@ import org.n52.sos.response.DescribeSensorResponse;
 /**
  * interface for getting procedure description for a passed DescribeSensor
  * request from the data source
- * 
+ *
  * Renamed, in version 4.x called AbstractDescribeSensorDAO
- * 
+ *
  * @since 5.0.0
  */
 public abstract class AbstractDescribeSensorHandler extends AbstractOperationHandler {
@@ -58,13 +58,11 @@ public abstract class AbstractDescribeSensorHandler extends AbstractOperationHan
         addProcedureParameter(opsMeta);
         Set<String> pdfs = getCache().getRequstableProcedureDescriptionFormat();
         if (version.equals(Sos1Constants.SERVICEVERSION)) {
-            pdfs.addAll(CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS,
-                    Sos1Constants.SERVICEVERSION));
+            pdfs.addAll(ProcedureDescriptionFormatRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos1Constants.SERVICEVERSION));
             opsMeta.addPossibleValuesParameter(
                     Sos1Constants.DescribeSensorParams.outputFormat, pdfs);
         } else if (version.equals(Sos2Constants.SERVICEVERSION)) {
-            pdfs.addAll( CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS,
-                    Sos2Constants.SERVICEVERSION));
+            pdfs.addAll( ProcedureDescriptionFormatRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
             opsMeta.addPossibleValuesParameter(
                     Sos2Constants.DescribeSensorParams.procedureDescriptionFormat, pdfs);
         }
@@ -72,12 +70,12 @@ public abstract class AbstractDescribeSensorHandler extends AbstractOperationHan
 
     /**
      * Get the procedure description for a procedure
-     * 
+     *
      * @param request
      *            the request
-     * 
+     *
      * @return Returns the DescribeSensor response
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs
      */

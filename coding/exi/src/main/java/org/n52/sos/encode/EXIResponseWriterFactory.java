@@ -28,25 +28,54 @@
  */
 package org.n52.sos.encode;
 
+import javax.inject.Inject;
+
+import org.apache.xmlbeans.XmlOptions;
+
+import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
+import org.n52.iceland.coding.encode.ResponseWriterKey;
+import org.n52.iceland.component.SingleTypeComponentFactory;
+import org.n52.iceland.util.Producer;
 import org.n52.sos.exi.EXIObject;
+
+import com.siemens.ct.exi.EXIFactory;
 
 /**
  * Writer factory class for {@link EXIObject} and {@link EXIResponseWriter}
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
-public class EXIResponseWriterFactory implements ResponseWriterFactory<EXIObject, EXIResponseWriter> {
+public class EXIResponseWriterFactory
+        implements ResponseWriterFactory,
+                   SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>> {
 
-    @Override
-    public Class<EXIObject> getType() {
-        return EXIObject.class;
+    private static final ResponseWriterKey RESPONSE_WRITER_KEY
+            = new ResponseWriterKey(EXIObject.class);
+
+    private Producer<EXIFactory> exiFactoryProducer;
+    private Producer<XmlOptions> xmlOptionsProducer;
+
+    @Inject
+    public void setExiFactoryProducer(Producer<EXIFactory> producer) {
+        this.exiFactoryProducer = producer;
+    }
+
+    @Inject
+    public void setXmlOptionsProducer(Producer<XmlOptions> producer) {
+        this.xmlOptionsProducer = producer;
     }
 
     @Override
-    public EXIResponseWriter getResponseWriter() {
-        return new EXIResponseWriter();
+    public ResponseWriterKey getKey() {
+        return RESPONSE_WRITER_KEY;
     }
 
+    @Override
+    public EXIResponseWriter create() {
+        return new EXIResponseWriter(this.exiFactoryProducer,
+                                     this.xmlOptionsProducer);
+    }
 }

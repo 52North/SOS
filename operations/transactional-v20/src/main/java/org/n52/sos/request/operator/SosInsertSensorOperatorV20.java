@@ -46,12 +46,12 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.MiscSettings;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.JavaHelper;
-import org.n52.sos.cache.ContentCache;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.AbstractInsertSensorHandler;
 import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.exception.ows.concrete.InvalidFeatureOfInterestTypeException;
@@ -122,8 +122,8 @@ public class SosInsertSensorOperatorV20 extends
 
     @Override
     public InsertSensorResponse receive(InsertSensorRequest request) throws OwsExceptionReport {
-        InsertSensorResponse response = getDao().insertSensor(request);
-        ServiceEventBus.fire(new SensorInsertion(request, response));
+        InsertSensorResponse response = getOperationHandler().insertSensor(request);
+        getServiceEventBus().submit(new SensorInsertion(request, response));
         return response;
     }
 
@@ -232,11 +232,11 @@ public class SosInsertSensorOperatorV20 extends
     }
 
     private void checkAndSetAssignedOfferings(InsertSensorRequest request) throws InvalidOfferingParameterException {
-        Set<SosOffering> sosOfferings = request.getProcedureDescription().getOfferings();        
-        ContentCache cache = Configurator.getInstance().getCache();
-        
+        Set<SosOffering> sosOfferings = request.getProcedureDescription().getOfferings();
+        SosContentCache cache = Configurator.getInstance().getCache();
+
         // add parent procedure offerings
-        if (request.getProcedureDescription().isSetParentProcedures()) {            
+        if (request.getProcedureDescription().isSetParentProcedures()) {
             Set<String> allParentProcedures = cache.getParentProcedures(
                     request.getProcedureDescription().getParentProcedures(), true, true);
             for (String parentProcedure : allParentProcedures) {
@@ -268,7 +268,7 @@ public class SosInsertSensorOperatorV20 extends
             }
         }
     }
-    
+
     private void checkParentChildProcedures(SosProcedureDescription procedureDescription, String assignedIdentifier) throws CodedException {
         if (procedureDescription.isSetChildProcedures()) {
             for (SosProcedureDescription child : procedureDescription.getChildProcedures()) {
@@ -290,7 +290,7 @@ public class SosInsertSensorOperatorV20 extends
                         procedureDescription.getIdentifier());
             }
         }
-        
+
     }
 
     private void getChildProcedures() {

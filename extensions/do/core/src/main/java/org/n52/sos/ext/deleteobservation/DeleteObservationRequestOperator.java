@@ -34,19 +34,18 @@ import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.CONFO
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.operator.RequestOperator;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.sos.request.operator.AbstractTransactionalRequestOperator;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 1.0.0
  */
 public class DeleteObservationRequestOperator
@@ -61,11 +60,12 @@ public class DeleteObservationRequestOperator
 
     @Override
     public DeleteObservationResponse receive(DeleteObservationRequest request) throws OwsExceptionReport {
-        DeleteObservationResponse response = getDao().deleteObservation(request);
-        ServiceEventBus.fire(new DeleteObservationEvent(request, response));
+        DeleteObservationResponse response = getOperationHandler().deleteObservation(request);
+        getServiceEventBus().submit(new DeleteObservationEvent(request, response));
         return response;
     }
 
+    @Deprecated
     protected Configurator getConfigurator() {
         return Configurator.getInstance();
     }

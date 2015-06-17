@@ -31,17 +31,19 @@ package org.n52.sos.web.install;
 import java.io.File;
 import java.util.Map;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingType;
-import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.config.SettingsManager;
-import org.n52.iceland.exception.ConfigurationException;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.install.InstallConstants.Step;
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingType;
+import org.n52.iceland.config.SettingValue;
+import org.n52.iceland.config.SettingsService;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.sos.web.install.InstallConstants.Step;
 
 /**
  * @since 4.0.0
@@ -51,6 +53,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(ControllerConstants.Paths.INSTALL_SETTINGS)
 public class InstallSettingsController extends AbstractProcessingInstallationController {
     private static final Logger LOG = LoggerFactory.getLogger(InstallSettingsController.class);
+
+    @Inject
+    private SettingsService settingsManager;
 
     @Override
     protected Step getStep() {
@@ -62,13 +67,12 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
                            InstallationConfiguration c)
             throws InstallationSettingsError {
         logSettings(parameters);
-        SettingsManager sm = getSettingsManager(c);
-        for (SettingDefinition<?, ?> def : sm.getSettingDefinitions()) {
+        for (SettingDefinition<?, ?> def : this.settingsManager.getSettingDefinitions()) {
             SettingValue<?> val = null;
             if (parameters.containsKey(def.getKey())) {
-                val = createSettingValue(sm, def, parameters.get(def.getKey()), c);
+                val = createSettingValue(this.settingsManager, def, parameters.get(def.getKey()), c);
             } else if (def.getType() == SettingType.BOOLEAN) {
-                val = createSettingValue(sm, def, String.valueOf(false), c);
+                val = createSettingValue(this.settingsManager, def, String.valueOf(false), c);
             }
             if (val == null) {
                 LOG.warn("No value for setting {}. Ignoring.", def.getKey());
@@ -91,19 +95,7 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
         }
     }
 
-    private SettingsManager getSettingsManager(InstallationConfiguration c)
-            throws InstallationSettingsError {
-        SettingsManager sm;
-        try {
-            sm = SettingsManager.getInstance();
-        } catch (ConfigurationException ex) {
-            throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_INSTANTIATE_SETTINGS_MANAGER,
-                                                                 ex.getMessage()), ex);
-        }
-        return sm;
-    }
-
-    protected SettingValue<?> createSettingValue(SettingsManager sm, SettingDefinition<?, ?> def, String stringValue,
+    protected SettingValue<?> createSettingValue(SettingsService sm, SettingDefinition<?, ?> def, String stringValue,
             InstallationConfiguration c) throws InstallationSettingsError {
         try {
             return sm.getSettingFactory().newSettingValue(def, stringValue);

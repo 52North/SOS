@@ -30,10 +30,13 @@ package org.n52.sos.ds.hibernate;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
@@ -48,8 +51,11 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.response.GetObservationByIdResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProvider;
 
 
 /**
@@ -62,18 +68,15 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationByIdDAO.class);
 
-    private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder sessionHolder;
 
-    /**
-     * constructor
-     */
     public GetObservationByIdDAO() {
         super(SosConstants.SOS);
     }
-    
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override

@@ -28,14 +28,15 @@
  */
 package org.n52.sos.ds;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import javax.xml.namespace.QName;
+import javax.inject.Inject;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.coding.CodingRepository;
+
+import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.ows.OwsOperation;
@@ -53,16 +54,23 @@ import org.n52.sos.util.SosHelper;
 /**
  * interface for getting observations for a passed getObservation request from
  * the data source
- * 
+ *
  * Renamed, in version 4.x called AbstractGetObservationDAO
- * 
+ *
  * @since 5.0.0
- * 
+ *
  */
 public abstract class AbstractGetObservationHandler extends AbstractOperationHandler {
 
+    private ResponseFormatRepository responseFormatRepository;
+
     public AbstractGetObservationHandler(final String service) {
         super(service, SosConstants.Operations.GetObservation.name());
+    }
+
+    @Inject
+    public void setResponseFormatRepository(ResponseFormatRepository responseFormatRepository) {
+        this.responseFormatRepository = responseFormatRepository;
     }
 
     @Override
@@ -72,8 +80,8 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
         final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version);
         addOfferingParameter(opsMeta);
         addProcedureParameter(opsMeta);
-        opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.responseFormat, CodingRepository
-                .getInstance().getSupportedResponseFormats(SosConstants.SOS, version));
+        opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.responseFormat,
+                                           getResponseFormatRepository().getSupportedResponseFormats(SosConstants.SOS, version));
 
         addObservablePropertyParameter(opsMeta);
         addFeatureOfInterestParameter(opsMeta, featureIDs);
@@ -101,12 +109,16 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
         }
     }
 
+    protected ResponseFormatRepository getResponseFormatRepository() {
+        return this.responseFormatRepository;
+    }
+
     /**
      * Get the min/max phenomenon time of contained observations
-     * 
+     *
      * @return min/max phenomenon time
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * If an error occurs.
      */
@@ -120,10 +132,10 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
 
     /**
      * Get the min/max result time of contained observations
-     * 
+     *
      * @return min/max result time
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * If an error occurs.
      */
@@ -136,23 +148,21 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
     }
 
     private List<String> getResultModels() {
-        final List<String> resultModelsList = new ArrayList<String>(OmConstants.RESULT_MODELS.size());
-        for (final QName qname : OmConstants.RESULT_MODELS) {
-            resultModelsList.add(qname.getPrefix() + ":" + qname.getLocalPart());
-        }
-        return resultModelsList;
+        return OmConstants.RESULT_MODELS.stream()
+                .map(qname -> qname.getPrefix() + ":" + qname.getLocalPart())
+                .collect(Collectors.toList());
     }
 
     /**
      * process the GetObservation query
-     * 
+     *
      * @param request
      *            GetObservation object which represents the getObservation
      *            request
-     * 
+     *
      * @return ObservationDocument representing the requested values in an OGC
      *         conform O&M observation document
-     * 
+     *
      * @throws OwsExceptionReport
      *             * if query of the database or creating the O&M document
      *             failed

@@ -41,17 +41,18 @@ import java.util.Properties;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ConfigurationException;
-import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.ConfigurationError;
 
 /**
  *
@@ -63,23 +64,18 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryProvider.class);
 
 
-    /**
-     * constructor. Opens a new Hibernate SessionFactory
-     */
-    public SessionFactoryProvider() {
-
-    }
-
     public String getUpdateScript() throws ConnectionProviderException, SQLException {
+        Configuration configuration = getConfiguration();
         if (configuration == null) {
-            throw new ConfigurationException("configuration is null");
+            throw new ConfigurationError("configuration is null");
         }
+        SessionFactory sessionFactory = getSessionFactory();
         if (sessionFactory == null) {
-            throw new ConfigurationException("sessionFactory is null");
+            throw new ConfigurationError("sessionFactory is null");
         }
         Dialect dialect = ((SessionFactoryImplementor) sessionFactory).getDialect();
         if (dialect == null) {
-            throw new ConfigurationException("dialect is null");
+            throw new ConfigurationError("dialect is null");
         }
         Session session = getConnection();
         Connection conn = ((SessionImplementor) session).connection();
@@ -88,14 +84,14 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
         returnConnection(session);
         StringBuilder updateSqlString = new StringBuilder();
         for (String sqlLine : udpateSql) {
-            updateSqlString.append(sqlLine + ";\n\n");
+            updateSqlString.append(sqlLine).append(";\n\n");
         }
         return updateSqlString.toString();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Configuration getConfiguration(Properties properties) throws ConfigurationException {
+    protected Configuration getConfiguration(Properties properties) throws ConfigurationError {
         try {
             Configuration configuration = new Configuration().configure("/sos-hibernate.cfg.xml");
             if (properties.containsKey(HIBERNATE_RESOURCES)) {
@@ -118,43 +114,29 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
                                         new File(URLDecoder.decode(dirUrl.getPath(), Charset.defaultCharset()
                                                 .toString()));
                             } catch (UnsupportedEncodingException e) {
-                                throw new ConfigurationException("Unable to encode directory URL " + dirUrl + "!");
+                                throw new ConfigurationError("Unable to encode directory URL " + dirUrl + "!");
                             }
                         }
                     }
                     if (!hibernateDir.exists()) {
-                        throw new ConfigurationException("Hibernate directory " + directory + " doesn't exist!");
+                        throw new ConfigurationError("Hibernate directory " + directory + " doesn't exist!");
                     }
                     configuration.addDirectory(hibernateDir);
                 }
             } else {
                 // keep this as default/fallback
                 configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_CORE_PATH).toURI()));
-                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH)
-                        .toURI()));
-                configuration.addDirectory(new File(getClass().getResource(
-                        HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH).toURI()));
-                configuration.addDirectory(new File(getClass().getResource(
-                        HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH).toURI()));
-                configuration.addDirectory(new File(getClass().getResource(
-                        HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH).toURI()));
+                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH).toURI()));
+                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH).toURI()));
+                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH).toURI()));
+                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH).toURI()));
             }
             return configuration;
-        } catch (HibernateException he) {
+        } catch (HibernateException | URISyntaxException he) {
             String exceptionText = "An error occurs during instantiation of the database connection pool!";
             LOGGER.error(exceptionText, he);
-            cleanup();
-            throw new ConfigurationException(exceptionText, he);
-        } catch (URISyntaxException urise) {
-            String exceptionText = "An error occurs during instantiation of the database connection pool!";
-            LOGGER.error(exceptionText, urise);
-            cleanup();
-            throw new ConfigurationException(exceptionText, urise);
+            destroy();
+            throw new ConfigurationError(exceptionText, he);
         }
-    }
-    
-    @Override
-    public String getConnectionProviderIdentifier() {
-        return HibernateDatasourceConstants.ORM_CONNECTION_PROVIDER_IDENTIFIER;
     }
 }

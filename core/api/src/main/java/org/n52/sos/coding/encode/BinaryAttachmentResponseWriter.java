@@ -30,57 +30,71 @@ package org.n52.sos.coding.encode;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
+import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.ResponseProxy;
+import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.sos.response.BinaryAttachmentResponse;
 
 import com.google.common.base.Strings;
 
 /**
  * Writer for ServiceResponse (containing ByteArrayOutputStream)
- * 
+ *
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
- * 
+ *
  * @since 4.1.0
  */
 public class BinaryAttachmentResponseWriter extends AbstractResponseWriter<BinaryAttachmentResponse> {
-    public class HeaderCode {
-        public static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
-        public static final String CONTENT_TRANSFER_ENCODING_BINARY = "binary";
-
-        public static final String CONTENT_DISPOSITION = "Content-Disposition";
-        public static final String CONTENT_ATTACHMENT_FILENAME_FORMAT = "attachment; filename=\"%s\"";
-    }
-
-//    @Override
-//    public Class<BinaryAttachmentResponse> getType() {
-//        return BinaryAttachmentResponse.class;
-//    }
+    public static final ResponseWriterKey KEY = new ResponseWriterKey(BinaryAttachmentResponse.class);
 
     @Override
-    public void write(BinaryAttachmentResponse binaryAttachmentResponse, OutputStream out, ResponseProxy responseProxy) throws IOException {
+    public Set<ResponseWriterKey> getKeys() {
+        return Collections.singleton(KEY);
+    }
+
+    @Override
+    public void write(BinaryAttachmentResponse response, OutputStream out, ResponseProxy responseProxy) throws IOException {
+
+        if (response == null) {
+            return;
+        }
+
+        byte[] bytes = response.getBytes();
+
         if (!(out instanceof GZIPOutputStream)) {
-            responseProxy.setContentLength(binaryAttachmentResponse.getBytes().length);
+            responseProxy.setContentLength(bytes.length);
         }
 
         //binary
-        responseProxy.addHeader(HeaderCode.CONTENT_TRANSFER_ENCODING, HeaderCode.CONTENT_TRANSFER_ENCODING_BINARY);
+        responseProxy.addHeader(HeaderCode.CONTENT_TRANSFER_ENCODING,
+                                HeaderCode.CONTENT_TRANSFER_ENCODING_BINARY);
 
-        if (binaryAttachmentResponse != null) {
-            //filename
-            if (!Strings.isNullOrEmpty(binaryAttachmentResponse.getFilename())) {
-                responseProxy.addHeader(HeaderCode.CONTENT_DISPOSITION, String.format(
-                        HeaderCode.CONTENT_ATTACHMENT_FILENAME_FORMAT, binaryAttachmentResponse.getFilename()));
-            }
+        String fileName = response.getFilename();
+
+        //filename
+        if (!Strings.isNullOrEmpty(fileName)) {
+            String value = String.format(HeaderCode.CONTENT_ATTACHMENT_FILENAME_FORMAT, fileName);
+            responseProxy.addHeader(HeaderCode.CONTENT_DISPOSITION, value);
         }
 
         //write output now that headers and content length are in place
-        out.write(binaryAttachmentResponse.getBytes());
+        out.write(bytes);
+
     }
 
     @Override
     public boolean supportsGZip(BinaryAttachmentResponse t) {
         return false;
+    }
+
+    public interface HeaderCode {
+        String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
+        String CONTENT_TRANSFER_ENCODING_BINARY = "binary";
+        String CONTENT_DISPOSITION = "Content-Disposition";
+        String CONTENT_ATTACHMENT_FILENAME_FORMAT = "attachment; filename=\"%s\"";
     }
 }

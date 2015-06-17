@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
-import org.n52.iceland.convert.RequestResponseModifierKeyType;
+import org.n52.iceland.convert.RequestResponseModifierKey;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.sos.Sos1Constants;
@@ -67,28 +67,28 @@ import com.google.common.collect.Sets;
 
 /**
  * Modifier for flexible identifier.
- * 
+ *
  * If the requests contain flexible identifier, the identifier would be replaced
  * with the default identifier.
- * 
+ *
  * If the global setting for flexible identifier is enabled or the request
  * contains the flexible identifier flag, the identifiers in the responses would
  * be replaced with the flexible identifier.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */
 public class FlexibleIdentifierModifier extends AbstractIdentifierModifier {
 
-    private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
+    private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
     /**
      * Get the keys
-     * 
+     *
      * @return Set of keys
      */
-    private static Set<RequestResponseModifierKeyType> getKeyTypes() {
+    private static Set<RequestResponseModifierKey> getKeyTypes() {
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
         Map<AbstractServiceRequest<?>, AbstractServiceResponse> requestResponseMap = Maps.newHashMap();
@@ -100,12 +100,12 @@ public class FlexibleIdentifierModifier extends AbstractIdentifierModifier {
         requestResponseMap.put(new GetDataAvailabilityRequest(), new GetDataAvailabilityResponse());
         requestResponseMap.put(new GetResultTemplateRequest(), new GetResultTemplateResponse());
         requestResponseMap.put(new GetResultRequest(), new GetResultResponse());
-        Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
+        Set<RequestResponseModifierKey> keys = Sets.newHashSet();
         for (String service : services) {
             for (String version : versions) {
                 for (AbstractServiceRequest<?> request : requestResponseMap.keySet()) {
-                    keys.add(new RequestResponseModifierKeyType(service, version, request));
-                    keys.add(new RequestResponseModifierKeyType(service, version, request, requestResponseMap
+                    keys.add(new RequestResponseModifierKey(service, version, request));
+                    keys.add(new RequestResponseModifierKey(service, version, request, requestResponseMap
                             .get(request)));
                 }
             }
@@ -114,7 +114,7 @@ public class FlexibleIdentifierModifier extends AbstractIdentifierModifier {
     }
 
     @Override
-    public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
+    public Set<RequestResponseModifierKey> getKeys() {
         return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
     }
 
@@ -386,7 +386,7 @@ public class FlexibleIdentifierModifier extends AbstractIdentifierModifier {
         return FlexibleIdentifierHelper.getInstance().isSetReturnHumanReadableIdentifier();
     }
 
-    
+
 
     private boolean checkResponseForReturnHumanReadableIdentifierFlag(AbstractServiceResponse response)
             throws InvalidParameterValueException {
@@ -506,7 +506,7 @@ public class FlexibleIdentifierModifier extends AbstractIdentifierModifier {
     protected FlexibleIdentifierHelper getFlexibleIdentifierHelper() {
         return FlexibleIdentifierHelper.getInstance();
     }
-    
+
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {
         return super.getFacilitator().setAdderRemover(false);

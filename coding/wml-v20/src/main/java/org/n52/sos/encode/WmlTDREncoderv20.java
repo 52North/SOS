@@ -46,6 +46,9 @@ import net.opengis.watermlDr.x20.TimePositionListDocument;
 import net.opengis.watermlDr.x20.TimePositionListType;
 
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
@@ -57,7 +60,8 @@ import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.ObservationType;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.w3c.SchemaLocation;
@@ -81,8 +85,6 @@ import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.wml.WaterMLConstants;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -93,10 +95,10 @@ import com.google.common.collect.Sets;
 
 /**
  * Encoder class for WaterML 2.0 TimeseriesDomainRange (TDR)
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
- * 
+ *
  */
 public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
 
@@ -107,8 +109,11 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
 
     private static final Set<EncoderKey> ENCODER_KEYS = createEncoderKeys();
 
-    private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
-            SupportedTypeKey.ObservationType, Collections.singleton(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TDR));;
+    private static final ImmutableSet<SupportedType> SUPPORTED_TYPES
+            = ImmutableSet.<SupportedType>builder()
+                    .add(new ObservationType(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TDR))
+                    .build();
+
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
@@ -128,18 +133,19 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.unmodifiableMap(SUPPORTED_TYPES);
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) &&
+            Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();
@@ -227,7 +233,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     /**
      * Create a XML MeasurementTimeseriesDomainRange object from SOS observation
      * for om:result
-     * 
+     *
      * @param sosObservation
      *            SOS observation
      * @return XML MeasurementTimeseriesDomainRange object for om:result
@@ -286,7 +292,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     /**
      * Create a SOS DataRecord object from SOS observation and encode to
      * XmlBeans object
-     * 
+     *
      * @param sosObservation
      *            SOS observation
      * @return XML DataRecord object
@@ -313,7 +319,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
 
     /**
      * Create a TimePositionList XML object from time values
-     * 
+     *
      * @param sosObservation
      *            SOS observation
      * @return XML TimePositionList object
@@ -334,7 +340,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
 
     /**
      * Create a array from time values
-     * 
+     *
      * @param sosObservationValues
      *            SOS multi value observation object
      * @return List with string representations of time values
@@ -353,7 +359,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
 
     /**
      * Get a value list from SOS TimeValuePair objects
-     * 
+     *
      * @param timeValuePairs
      *            SOS TimeValuePair objects
      * @return List with value objects

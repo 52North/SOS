@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.opengis.swe.x101.AbstractDataArrayType.ElementCount;
@@ -76,6 +75,9 @@ import net.opengis.swe.x101.VectorType.Coordinate;
 
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.CodedException;
@@ -84,7 +86,7 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
@@ -113,8 +115,6 @@ import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -143,18 +143,8 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
     }
 
     @Override
-    public Set<DecoderKey> getDecoderKeyTypes() {
+    public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
     }
 
     @Override
@@ -630,14 +620,14 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
         }
         return sosFields;
     }
-    
+
     private SweCount parseElementCount(final ElementCount elementCount) throws OwsExceptionReport {
         if (elementCount.isSetCount()) {
             return (SweCount) parseCount(elementCount.getCount());
         }
         return null;
     }
-    
+
     private SweAbstractEncoding parseEncoding(final BlockEncodingPropertyType abstractEncodingType) throws OwsExceptionReport {
         assert abstractEncodingType != null;
         if (abstractEncodingType.isSetTextBlock()) {
@@ -646,7 +636,7 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
         throw new NotYetSupportedException(SweConstants.EN_ENCODING_TYPE, abstractEncodingType,
                 TextBlock.type.getName());
     }
-    
+
     private SweTextEncoding parseTextEncoding(final TextBlock textEncoding) {
         final SweTextEncoding sosTextEncoding = new SweTextEncoding();
         sosTextEncoding.setBlockSeparator(textEncoding.getBlockSeparator());

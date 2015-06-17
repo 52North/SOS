@@ -36,16 +36,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.service.Configurator;
-import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.SettingDefinitionEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -53,6 +46,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.SettingValue;
+import org.n52.iceland.config.SettingValueFactory;
+import org.n52.iceland.config.json.JsonSettingsEncoder;
+import org.n52.iceland.exception.ConfigurationError;
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.context.ContextSwitcher;
+import org.n52.sos.web.common.ControllerConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -67,6 +70,12 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
     private static final Logger LOG = LoggerFactory.getLogger(AdminDatasourceSettingsController.class);
 
     public static final String SETTINGS = "settings";
+
+    @Inject
+    private ContextSwitcher contextSwitcher;
+
+    @Inject
+    private SettingValueFactory settingValueFactory;
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() {
@@ -99,7 +108,7 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
                     return error(newSettings, "No schema is present", null);
                 }
             }
-        } catch (ConfigurationException e) {
+        } catch (ConfigurationError e) {
             return error(newSettings, null, e);
         }
 
@@ -107,34 +116,29 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
         Properties datasourceProperties = getDatasource().getDatasourceProperties(settings, newSettings);
         getDatabaseSettingsHandler().saveAll(datasourceProperties);
 
-        // reinitialize
-        if (Configurator.getInstance() != null) {
-            Configurator.getInstance().cleanup();
-        }
-
-        Configurator.createInstance(getDatabaseSettingsHandler().getAll(), getBasePath());
+        this.contextSwitcher.reloadContext();
 
         return new ModelAndView(new RedirectView(ControllerConstants.Paths.ADMIN_DATABASE_SETTINGS, true));
     }
 
     protected Map<String, Object> parseDatasourceSettings(Set<SettingDefinition<?, ?>> defs, HttpServletRequest req) {
-        Map<String, String> parameters = new HashMap<String, String>(req.getParameterMap().size());
+        Map<String, String> parameters = new HashMap<>(req.getParameterMap().size());
         Enumeration<?> e = req.getParameterNames();
         while (e.hasMoreElements()) {
             String key = (String) e.nextElement();
             parameters.put(key, req.getParameter(key));
         }
-        Map<String, Object> parsedSettings = new HashMap<String, Object>(parameters.size());
+        Map<String, Object> parsedSettings = new HashMap<>(parameters.size());
         for (SettingDefinition<?, ?> def : defs) {
             SettingValue<?> newValue =
-                    getSettingsManager().getSettingFactory().newSettingValue(def, parameters.get(def.getKey()));
+                    this.settingValueFactory.newSettingValue(def, parameters.get(def.getKey()));
             parsedSettings.put(def.getKey(), newValue.getValue());
         }
         return parsedSettings;
     }
 
     private ModelAndView error(Map<String, Object> newSettings, String message, Throwable e) throws JSONException {
-        Map<String, Object> model = new HashMap<String, Object>(2);
+        Map<String, Object> model = new HashMap<>(2);
         model.put(ControllerConstants.ERROR_MODEL_ATTRIBUTE,
                 (message != null) ? message : (e != null) ? e.getMessage() : "Could not save settings");
         model.put(SETTINGS, encodeSettings(newSettings));
@@ -147,7 +151,7 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
     }
 
     private JsonNode encodeSettings(Properties p) throws JSONException {
-        SettingDefinitionEncoder enc = new SettingDefinitionEncoder();
+        JsonSettingsEncoder enc = getSettingsEncoder();
         Set<SettingDefinition<?, ?>> defs = getDatasource().getChangableSettingDefinitions(p);
         JsonNode settings = enc.encode(enc.sortByGroup(defs));
         ObjectNode node = JSONUtils.nodeFactory().objectNode();
@@ -156,7 +160,7 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
     }
 
     private JsonNode encodeSettings(Map<String, Object> p) throws JSONException {
-        SettingDefinitionEncoder enc = new SettingDefinitionEncoder();
+        JsonSettingsEncoder enc = getSettingsEncoder();
         Set<SettingDefinition<?, ?>> defs =
                 getDatasource().getChangableSettingDefinitions(
                         getDatasource().getDatasourceProperties(getSettings(), p));
@@ -171,7 +175,7 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
 
     protected void setDefaultValue(SettingDefinition<?, ?> def, String sval) {
         if (sval != null) {
-            Object val = getSettingsManager().getSettingFactory().newSettingValue(def, sval).getValue();
+            Object val = this.settingValueFactory.newSettingValue(def, sval).getValue();
             setDefaultValue(def, val);
         }
     }

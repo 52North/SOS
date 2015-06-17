@@ -30,30 +30,31 @@ package org.n52.sos.web.install;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.ds.Datasource;
-import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.SettingDefinitionEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import org.n52.iceland.config.SettingDefinition;
+import org.n52.iceland.config.json.JsonSettingsEncoder;
+import org.n52.iceland.ds.Datasource;
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.web.common.ControllerConstants;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -62,18 +63,22 @@ import com.google.common.collect.Maps;
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.INSTALL_DATASOURCE_DIALECTS)
-public class InstallDatasourceSettingsController extends AbstractController {
+public class InstallDatasourceSettingsController extends AbstractInstallController {
+
+    @Inject
+    private Collection<Datasource> datasources;
+
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
     public String get(HttpSession session) throws JSONException {
-        InstallationConfiguration c = AbstractInstallController.getSettings(session);
+        InstallationConfiguration c = getSettings(session);
         Map<String, Datasource> datasources = getDatasources();
         return JSONUtils.print(encode(c, datasources));
     }
 
     private JsonNode encode(InstallationConfiguration c, Map<String, Datasource> dialects) throws JSONException {
-        SettingDefinitionEncoder enc = new SettingDefinitionEncoder();
         ObjectNode node = JSONUtils.nodeFactory().objectNode();
+        JsonSettingsEncoder enc = getSettingsEncoder();
         List<String> orderedDialects = getOrderedDialects(dialects.keySet());
         for (String dialect : orderedDialects) {
             boolean selected = false;
@@ -89,7 +94,7 @@ public class InstallDatasourceSettingsController extends AbstractController {
             }
             JsonNode settings = enc.encode(enc.sortByGroup(defs));
             ObjectNode jsonObject = node.putObject(dialect);
-            jsonObject.put("settings", settings);
+            jsonObject.set("settings", settings);
             jsonObject.put("needsSchema", d.needsSchema());
             jsonObject.put("selected", selected);
         }
@@ -97,9 +102,8 @@ public class InstallDatasourceSettingsController extends AbstractController {
     }
 
     protected Map<String, Datasource> getDatasources() {
-        ServiceLoader<Datasource> load = ServiceLoader.load(Datasource.class);
-        Map<String, Datasource> dialects = Maps.newHashMap();
-        for (Datasource dd : load) {
+        Map<String, Datasource> dialects = new HashMap<>(this.datasources.size());
+        for (Datasource dd : this.datasources) {
             dialects.put(dd.getDialectName(), dd);
         }
         return dialects;

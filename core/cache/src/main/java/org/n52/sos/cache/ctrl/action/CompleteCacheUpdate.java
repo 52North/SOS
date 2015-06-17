@@ -29,20 +29,26 @@
 package org.n52.sos.cache.ctrl.action;
 
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.cache.ctrl.CacheFactory;
+import org.n52.sos.cache.SosWritableContentCacheImpl;
+import org.n52.sos.cache.SosWritableContentCache;
+import org.n52.sos.ds.CacheFeederHandler;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class CompleteCacheUpdate extends CacheFeederDAOCacheUpdate {
+
+    public CompleteCacheUpdate(CacheFeederHandler cacheFeederDAO) {
+        super(cacheFeederDAO);
+    }
+
     @Override
     public void execute() {
         try {
-            WritableContentCache cache = CacheFactory.getInstance().create();
-            getDao().updateCache(cache);
+            SosWritableContentCache cache = new SosWritableContentCacheImpl();
+            getCacheFeederDAO().updateCache(cache);
             setCache(cache);
         } catch (OwsExceptionReport ex) {
             fail(ex);

@@ -57,11 +57,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * 
  */
 public class CacheImplTest {
-    private static WritableCache instance;
+    private static SosWritableContentCacheImpl instance;
 
     @Before
     public void initInstance() {
-        instance = new WritableCache();
+        instance = new SosWritableContentCacheImpl();
     }
 
     @After
@@ -73,12 +73,12 @@ public class CacheImplTest {
     public void defaultConstructorReturnsObject() {
         initInstance();
         assertNotNull("instance is null", instance);
-        assertTrue("right class", instance instanceof ReadableCache);
+        assertTrue("right class", instance instanceof SosContentCacheImpl);
     }
 
     @Test
     public void equalsWithNewInstances() {
-        ReadableCache anotherInstance = new ReadableCache();
+        SosContentCacheImpl anotherInstance = new SosContentCacheImpl();
         assertEquals("equals failed", instance, anotherInstance);
     }
 
@@ -99,9 +99,9 @@ public class CacheImplTest {
 
     @Test
     public void should_return_different_hashCodes_for_different_instances() {
-        WritableCache cache = new WritableCache();
+        SosWritableContentCacheImpl cache = new SosWritableContentCacheImpl();
         cache.setProcedures(Collections.singleton("p_1"));
-        assertNotEquals("hashCode() of different caches are equal", cache.hashCode(), new ReadableCache());
+        assertNotEquals("hashCode() of different caches are equal", cache.hashCode(), new SosContentCacheImpl());
     }
 
     @Test

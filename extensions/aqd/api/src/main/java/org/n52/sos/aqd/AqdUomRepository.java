@@ -29,29 +29,23 @@
 package org.n52.sos.aqd;
 
 public class AqdUomRepository {
-    
+
     public static Uom getAqdUom(String v) {
         try {
             return UomConcentration.from(v);
         } catch (Exception e) {
-            
+            return null;
         }
-        
-        return null;
     }
-    
+
    public interface Uom {
-        
         String baseURI = "http://dd.eionet.europa.eu/vocabulary/uom/";
-        
         public String getId();
-        
         public String getNotation();
-        
         public String getConceptURI();
-        
+
     }
-    
+
     public enum UomConcentration implements Uom {
         MilligramsCubicMetre("mg.m-3", "mg/m3"),
         NanogramsSquareMetreDay("ng.m-2.day-1", "ng/m2/day"),
@@ -61,28 +55,31 @@ public class AqdUomRepository {
         MicrogramsCubicMetre("ug.m-3", "ug/m3"),
         MicrogramsCubicMetreDay("ug.m-3.day", "ug/m3·day"),
         MicrogramsCubicMetreHour("ug.m-3.h", "ug/m3·h");
-        
+
         private final String concentrationBaseURI = baseURI + "concentration/";
-        
+
         private final String conceptURI;
-        
+
         private final String id;
-        
+
         private final String notation;
-        
+
         UomConcentration(String id, String notation) {
             this.id = id;
             this.notation = notation;
             this.conceptURI = concentrationBaseURI + id;
         }
 
+        @Override
         public String getId() {
             return id;
         }
+
         @Override
         public String getNotation() {
             return notation;
         }
+
         @Override
         public String getConceptURI() {
             return conceptURI;

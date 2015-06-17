@@ -36,13 +36,15 @@ import java.util.TreeSet;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.OGCConstants;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.ogc.swe.SweConstants.SweCoordinateName;
-import org.n52.iceland.service.Configurator;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.util.StringHelper;
@@ -75,8 +77,6 @@ import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -84,8 +84,9 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * Abstract generator class for SensorML procedure descriptions
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ *
  * @since 4.2.0
  *
  */
@@ -206,20 +207,20 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
                     if (StringHelper.isNotEmpty(unit)) {
                         quantity.setUom(unit);
                     }
-                    return new SmlIo<Double>(quantity);
+                    return new SmlIo<>(quantity);
                 } else if (OmConstants.OBS_TYPE_CATEGORY_OBSERVATION.equals(observationType)) {
                     final SweCategory category = new SweCategory();
                     category.setDefinition(observableProperty);
                     if (StringHelper.isNotEmpty(unit)) {
                         category.setUom(unit);
                     }
-                    return new SmlIo<String>(category);
+                    return new SmlIo<>(category);
                 } else if (OmConstants.OBS_TYPE_COUNT_OBSERVATION.equals(observationType)) {
-                    return new SmlIo<String>(new SweCategory().setDefinition(observableProperty));
+                    return new SmlIo<>(new SweCategory().setDefinition(observableProperty));
                 } else if (OmConstants.OBS_TYPE_TEXT_OBSERVATION.equals(observationType)) {
-                    return new SmlIo<String>(new SweText().setDefinition(observableProperty));
+                    return new SmlIo<>(new SweText().setDefinition(observableProperty));
                 } else if (OmConstants.OBS_TYPE_TRUTH_OBSERVATION.equals(observationType)) {
-                    return new SmlIo<Boolean>(new SweBoolean().setDefinition(observableProperty));
+                    return new SmlIo<>(new SweBoolean().setDefinition(observableProperty));
                 } else if (OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION.equals(observationType)) {
                     // TODO implement GeometryObservation
                     logTypeNotSupported(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION);
@@ -305,7 +306,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
 
     private SmlIo<?> createOutputFromExampleObservation(String procedure, String observableProperty, Session session)
             throws OwsExceptionReport {
-        final AbstractObservation exampleObservation = getExampleObservation(procedure, observableProperty, session);
+        AbstractObservation exampleObservation = getExampleObservation(procedure, observableProperty, session);
         if (exampleObservation == null) {
             return null;
         }
@@ -313,16 +314,16 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
             // TODO implement BlobObservations
             logTypeNotSupported(BlobObservation.class);
         } else if (exampleObservation instanceof BooleanObservation) {
-            return new SmlIo<Boolean>(new SweBoolean().setDefinition(observableProperty));
+            return new SmlIo<>(new SweBoolean().setDefinition(observableProperty));
         } else if (exampleObservation instanceof CategoryObservation) {
             final SweCategory category = new SweCategory();
             category.setDefinition(observableProperty);
             if (exampleObservation.isSetUnit()) {
                 category.setUom(exampleObservation.getUnit().getUnit());
             }
-            return new SmlIo<String>(category);
+            return new SmlIo<>(category);
         } else if (exampleObservation instanceof CountObservation) {
-            return new SmlIo<Integer>(new SweCount().setDefinition(observableProperty));
+            return new SmlIo<>(new SweCount().setDefinition(observableProperty));
         } else if (exampleObservation instanceof GeometryObservation) {
             // TODO implement GeometryObservations
             logTypeNotSupported(GeometryObservation.class);
@@ -332,9 +333,9 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
             if (exampleObservation.isSetUnit()) {
                 quantity.setUom(exampleObservation.getUnit().getUnit());
             }
-            return new SmlIo<Double>(quantity);
+            return new SmlIo<>(quantity);
         } else if (exampleObservation instanceof TextObservation) {
-            return new SmlIo<String>(new SweText().setDefinition(observableProperty));
+            return new SmlIo<>(new SweText().setDefinition(observableProperty));
         }
         return null;
     }
@@ -384,14 +385,15 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
      *
      * @return List with SWE Coordinate
      */
-    private List<SweCoordinate<?>> createCoordinatesForPosition(Object longitude, Object latitude, Object altitude) {
+    private List<SweCoordinate<Double>> createCoordinatesForPosition(Object longitude, Object latitude, Object altitude) {
         SweQuantity yq = createSweQuantity(latitude, SweConstants.Y_AXIS, procedureSettings().getLatLongUom());
         SweQuantity xq = createSweQuantity(longitude, SweConstants.X_AXIS, procedureSettings().getLatLongUom());
         SweQuantity zq = createSweQuantity(altitude, SweConstants.Z_AXIS, procedureSettings().getAltitudeUom());
         // TODO add Integer: Which SweSimpleType to use?
-        return Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(SweCoordinateName.northing.name(), yq),
-                new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq), new SweCoordinate<Double>(
-                        SweCoordinateName.altitude.name(), zq));
+        return Lists.<SweCoordinate<Double>> newArrayList(
+                new SweCoordinate<>(SweCoordinateName.northing.name(), yq),
+                new SweCoordinate<>(SweCoordinateName.easting.name(), xq),
+                new SweCoordinate<>(SweCoordinateName.altitude.name(), zq));
     }
 
     /**

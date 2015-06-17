@@ -43,7 +43,6 @@ import net.opengis.gml.x32.CodeType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
 import org.isotc211.x2005.gco.CharacterStringPropertyType;
 import org.isotc211.x2005.gco.CodeListValueType;
 import org.isotc211.x2005.gco.UnitOfMeasurePropertyType;
@@ -62,12 +61,15 @@ import org.isotc211.x2005.gmd.DQDomainConsistencyPropertyType;
 import org.isotc211.x2005.gmd.DQDomainConsistencyType;
 import org.isotc211.x2005.gmd.DQQuantitativeResultType;
 import org.isotc211.x2005.gmd.DQResultPropertyType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.service.ServiceConstants.SupportedTypeKey;
+import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.AbstractXmlEncoder;
 import org.n52.sos.iso.GcoConstants;
@@ -82,9 +84,6 @@ import org.n52.sos.ogc.sensorML.Role;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -93,7 +92,7 @@ import com.google.common.collect.Sets;
 /**
  * {@link AbstractXmlEncoder} class to decode ISO TC211 Geographic MetaData
  * (GMD) extensible markup language.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
@@ -116,7 +115,7 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
     @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = union(
             encoderKeysForElements(GmdConstants.NS_GMD, SmlResponsibleParty.class, GmdQuantitativeResult.class,
-                    GmdConformanceResult.class), 
+                    GmdConformanceResult.class),
             encoderKeysForElements(null, GmdQuantitativeResult.class, GmdConformanceResult.class));
 
     public Iso19139GmdEncoder() {
@@ -125,13 +124,13 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
 
     @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
+    public Set<SupportedType> getSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override
@@ -171,7 +170,7 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
     private XmlObject encodeResponsibleParty(SmlResponsibleParty responsibleParty,
             Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
         CIResponsiblePartyType cirpt =
-                CIResponsiblePartyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                CIResponsiblePartyType.Factory.newInstance(getXmlOptions());
         if (responsibleParty.isSetIndividualName()) {
             cirpt.addNewIndividualName().setCharacterString(responsibleParty.getIndividualName());
         }
@@ -187,12 +186,12 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
         encodeRole(cirpt.addNewRole(), responsibleParty.getRoleObject());
         if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
             CIResponsiblePartyPropertyType cirppt =
-                    CIResponsiblePartyPropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                    CIResponsiblePartyPropertyType.Factory.newInstance(getXmlOptions());
             cirppt.setCIResponsibleParty(cirpt);
             return cirppt;
         } else if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
             CIResponsiblePartyDocument cirpd =
-                    CIResponsiblePartyDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                    CIResponsiblePartyDocument.Factory.newInstance(getXmlOptions());
             cirpd.setCIResponsibleParty(cirpt);
         }
         return cirpt;
@@ -261,18 +260,18 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
             DQDomainConsistencyDocument document =
                     DQDomainConsistencyDocument.Factory.newInstance(getXmlOptions());
             DQResultPropertyType addNewResult = document.addNewDQDomainConsistency().addNewResult();
-            encodeGmdDomainConsistency(addNewResult, (GmdDomainConsistency) element);
+            encodeGmdDomainConsistency(addNewResult, element);
             return document;
         } else if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
             DQDomainConsistencyPropertyType propertyType =
                     DQDomainConsistencyPropertyType.Factory.newInstance(getXmlOptions());
             DQResultPropertyType addNewResult = propertyType.addNewDQDomainConsistency().addNewResult();
-            encodeGmdDomainConsistency(addNewResult, (GmdDomainConsistency) element);
+            encodeGmdDomainConsistency(addNewResult, element);
             return propertyType;
         } else {
             DQDomainConsistencyType type = DQDomainConsistencyType.Factory.newInstance(getXmlOptions());
             DQResultPropertyType addNewResult = type.addNewResult();
-            encodeGmdDomainConsistency(addNewResult, (GmdDomainConsistency) element);
+            encodeGmdDomainConsistency(addNewResult, element);
             return type;
         }
     }
@@ -351,9 +350,4 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
         }
         return values.toArray(new CharacterStringPropertyType[0]);
     }
-
-    private static XmlOptions getXmlOptions() {
-        return XmlOptionsHelper.getInstance().getXmlOptions();
-    }
-
 }

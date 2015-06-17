@@ -33,12 +33,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.common.util.StringHelper;
 import org.hibernate.exception.ConstraintViolationException;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
@@ -50,7 +54,6 @@ import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.AbstractInsertObservationHandler;
-import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
@@ -75,38 +78,34 @@ import com.google.common.collect.Table;
 
 /**
  * Implementation of the abstract class AbstractInsertObservationHandler
- * 
+ *
  * @since 4.0.0
  *
  */
 public class InsertObservationDAO extends AbstractInsertObservationHandler {
-    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
-
-    private final ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
-
-    private final FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
 
     private static final int FLUSH_THRESHOLD = 50;
 
     private static final String CONSTRAINT_OBSERVATION_IDENTITY = "observationIdentity";
 
     private static final String CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY = "obsIdentifierUK";
+    private HibernateSessionHolder sessionHolder;
+    private final ObservationConstellationDAO observationConstellationDAO
+            = new ObservationConstellationDAO();
+    private final FeatureOfInterestDAO featureOfInterestDAO
+            = new FeatureOfInterestDAO();
 
-    /**
-     * constructor
-     */
     public InsertObservationDAO() {
         super(SosConstants.SOS);
     }
 
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override
-    public synchronized InsertObservationResponse insertObservation(final InsertObservationRequest request)
-            throws OwsExceptionReport {
+    public synchronized InsertObservationResponse insertObservation(final InsertObservationRequest request) throws OwsExceptionReport {
         final InsertObservationResponse response = new InsertObservationResponse();
         response.setService(request.getService());
         response.setVersion(request.getVersion());
@@ -137,7 +136,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler {
             for (final OmObservation sosObservation : request.getObservations()) {
                 // check strict spatial filtering profile
                 if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()
-                        && !sosObservation.isSetSpatialFilteringProfileParameter()) {
+                    && !sosObservation.isSetSpatialFilteringProfileParameter()) {
                     throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
                             .withMessage("The sampling geometry definition is missing in the observation because"
                                     + " the Spatial Filtering Profile is specification conformant. To use a less"
@@ -164,11 +163,11 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler {
                             try {
                                 hObservationConstellation =
                                         observationConstellationDAO.checkObservationConstellation(sosObsConst,
-                                                offeringID, session,
-                                                Sos2Constants.InsertObservationParams.observationType.name());
+                                                                                                  offeringID, session,
+                                                                                                  Sos2Constants.InsertObservationParams.observationType.name());
                                 // add to cache table
                                 obsConstOfferingHibernateObsConstTable.put(sosObsConst, offeringID,
-                                        hObservationConstellation);
+                                                                                        hObservationConstellation);
                             } catch (final OwsExceptionReport owse) {
                                 exceptions.add(owse);
                             }
@@ -184,7 +183,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler {
                         // AbstractFeature/offering combo
                         if (!relatedFeatureCheckedMap.containsEntry(sosObsConst.getFeatureOfInterest(), offeringID)) {
                             featureOfInterestDAO.checkOrInsertFeatureOfInterestRelatedFeatureRelation(hFeature,
-                                    hObservationConstellation.getOffering(), session);
+                                                                                                      hObservationConstellation.getOffering(), session);
                             relatedFeatureCheckedMap.put(sosObsConst.getFeatureOfInterest(), offeringID);
                         }
 
@@ -196,10 +195,10 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler {
                     final AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
                     if (sosObservation.getValue() instanceof SingleObservationValue) {
                         observationDAO.insertObservationSingleValue(hObservationConstellations, hFeature,
-                                sosObservation, codespaceCache, unitCache, session);
+                                                                                                sosObservation, codespaceCache, unitCache, session);
                     } else if (sosObservation.getValue() instanceof MultiObservationValues) {
                         observationDAO.insertObservationMultiValue(hObservationConstellations, hFeature,
-                                sosObservation, codespaceCache, unitCache, session);
+                                                                                               sosObservation, codespaceCache, unitCache, session);
                     }
                 }
 
@@ -247,15 +246,15 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler {
             sessionHolder.returnSession(session);
         }
         /*
-         * TODO: ... all the DS insertion stuff Requirement 68
-         * proc/obsProp/Offering same obsType;
-         */
+        * TODO: ... all the DS insertion stuff Requirement 68
+        * proc/obsProp/Offering same obsType;
+        */
 
         return response;
     }
 
     private void checkEqualsAndThrow(String constraintName, HibernateException he) throws OwsExceptionReport {
-        if (StringHelper.isNotEmpty(constraintName)) { 
+        if (StringHelper.isNotEmpty(constraintName)) {
             String exceptionMsg = null;
             if (constraintName.equalsIgnoreCase(CONSTRAINT_OBSERVATION_IDENTITY)) {
                 exceptionMsg = "Observation with same values already contained in database";
@@ -264,13 +263,13 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler {
             }
             if(StringHelper.isNotEmpty(exceptionMsg)) {
                 throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg)
-                .setStatus(HTTPStatus.BAD_REQUEST);
+                        .setStatus(HTTPStatus.BAD_REQUEST);
             }
         }
     }
 
     private void checkContainsAndThrow(String message, HibernateException he) throws OwsExceptionReport {
-        if (StringHelper.isNotEmpty(message)) { 
+        if (StringHelper.isNotEmpty(message)) {
             String exceptionMsg = null;
             if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTITY.toLowerCase())) {
                 exceptionMsg = "Observation with same values already contained in database";
@@ -279,7 +278,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler {
             }
             if (StringHelper.isNotEmpty(exceptionMsg)) {
                 throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg)
-                .setStatus(HTTPStatus.BAD_REQUEST);
+                        .setStatus(HTTPStatus.BAD_REQUEST);
             }
         }
     }
@@ -287,15 +286,14 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler {
     /**
      * Get the hibernate FeatureOfInterest object for an AbstractFeature,
      * returning it from the local cache if already requested
-     * 
+     *
      * @param sosObsConst
      * @param featureCache
      * @param session
      * @return hibernet FeatureOfInterest
      * @throws OwsExceptionReport
      */
-    private FeatureOfInterest getFeature(AbstractFeature abstractFeature,
-            Map<AbstractFeature, FeatureOfInterest> featureCache, Session session) throws OwsExceptionReport {
+    private FeatureOfInterest getFeature(AbstractFeature abstractFeature, Map<AbstractFeature, FeatureOfInterest> featureCache, Session session) throws OwsExceptionReport {
         FeatureOfInterest hFeature = featureCache.get(abstractFeature);
         if (hFeature == null) {
             hFeature = featureOfInterestDAO.checkOrInsertFeatureOfInterest(abstractFeature, session);
@@ -311,7 +309,8 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler {
      *            Requested observation constellation
      * @return Requested offering and valid parent procedure offerings.
      */
-    private Set<String> getParentProcedureOfferings(OmObservationConstellation sosObsConst) {
+    private Set<String> getParentProcedureOfferings(
+            OmObservationConstellation sosObsConst) {
         Set<String> offerings = Sets.newHashSet(sosObsConst.getOfferings());
         // get parent procedures
         Set<String> parentProcedures =
@@ -323,11 +322,11 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler {
                 if (CollectionHelper.isNotEmpty(offeringsForParentProcedure)) {
                     for (String offering : offeringsForParentProcedure) {
                         /*
-                         * get observable properties for offering and check if
-                         * observable property is contained in request and if
-                         * parent procedure offering is contained in procedure
-                         * offerings. If true, add offering to set.
-                         */
+                        * get observable properties for offering and check if
+                        * observable property is contained in request and if
+                        * parent procedure offering is contained in procedure
+                        * offerings. If true, add offering to set.
+                        */
                         Set<String> observablePropertiesForOffering =
                                 getCache().getObservablePropertiesForOffering(offering);
                         Set<String> offeringsForProcedure =

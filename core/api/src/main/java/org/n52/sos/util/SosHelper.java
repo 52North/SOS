@@ -39,10 +39,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.coding.CodingRepository;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
+import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
@@ -54,7 +59,7 @@ import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
 import org.n52.iceland.util.CollectionHelper;
@@ -70,8 +75,6 @@ import org.n52.sos.ogc.sensorML.elements.SmlIo;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -435,7 +438,7 @@ public class SosHelper implements Constants {
             throw new MissingResponseFormatParameterException();
         } else {
             final Collection<String> supportedResponseFormats =
-                    CodingRepository.getInstance().getSupportedResponseFormats(service, version);
+                    ResponseFormatRepository.getInstance().getSupportedResponseFormats(service, version);
             if (!supportedResponseFormats.contains(responseFormat)) {
                 throw new InvalidResponseFormatParameterException(responseFormat);
             }
@@ -497,7 +500,7 @@ public class SosHelper implements Constants {
             throw new MissingParameterValueException(parameter);
         } else {
             final Collection<String> supportedFormats =
-                    CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(serviceOperatorKey);
+                    ProcedureDescriptionFormatRepository.getInstance().getSupportedProcedureDescriptionFormats(serviceOperatorKey);
             if (!supportedFormats.contains(format)) {
                 throw new InvalidParameterValueException(parameter, format);
             }

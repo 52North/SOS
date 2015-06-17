@@ -31,7 +31,8 @@ package org.n52.sos.ds.hibernate.dao;
 import java.util.List;
 
 import org.hibernate.Session;
-import org.n52.iceland.ds.I18NDAO;
+
+import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
 import org.n52.iceland.ogc.OGCConstants;

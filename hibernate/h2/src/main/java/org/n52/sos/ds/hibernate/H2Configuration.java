@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import geodb.GeoDB;
-
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -51,19 +49,20 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.jdbc.Work;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.ds.Datasource;
-import org.n52.iceland.exception.ConfigurationException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.service.Configurator;
-import org.n52.iceland.service.ServiceContextListener;
-import org.n52.sos.cache.ctrl.ScheduledContentCacheControllerSettings;
-import org.n52.sos.config.sqlite.SQLiteSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.ds.Datasource;
+import org.n52.iceland.exception.ConfigurationError;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.sos.service.Configurator;
+import org.n52.sos.config.sqlite.SQLiteSessionFactory;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
+import geodb.GeoDB;
 
 /**
  * @since 4.0.0
@@ -164,11 +163,8 @@ public class H2Configuration {
             if (instance == null) {
                 try {
                     instance = new H2Configuration();
-                } catch (final IOException ex) {
-                    throw new RuntimeException(ex);
-                } catch (final OwsExceptionReport ex) {
-                    throw new RuntimeException(ex);
-                } catch (final ConnectionProviderException ex) {
+                } catch (IOException | OwsExceptionReport |
+                        ConnectionProviderException ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -200,24 +196,15 @@ public class H2Configuration {
             try {
                 session = getSession();
                 transaction = session.beginTransaction();
-                session.doWork(new Work() {
-                    @Override
-                    public void execute(final Connection connection) throws SQLException {
-                        Statement stmt = null;
-                        try {
-                            stmt = connection.createStatement();
-                            for (final String cmd : instance.getDropScript()) {
-                                stmt.addBatch(cmd);
-                            }
-                            for (final String cmd : instance.getCreateScript()) {
-                                stmt.addBatch(cmd);
-                            }
-                            stmt.executeBatch();
-                        } finally {
-                            if (stmt != null) {
-                                stmt.close();
-                            }
+                session.doWork(connection -> {
+                    try (Statement stmt = connection.createStatement()) {
+                        for (String cmd : instance.getDropScript()) {
+                            stmt.addBatch(cmd);
                         }
+                        for (String cmd : instance.getCreateScript()) {
+                            stmt.addBatch(cmd);
+                        }
+                        stmt.executeBatch();
                     }
                 });
                 transaction.commit();
@@ -238,7 +225,7 @@ public class H2Configuration {
                 throw new IllegalStateException("Database is not initialized");
             }
             final Iterator<Table> tableMappings = instance.getConfiguration().getTableMappings();
-            final List<String> tableNames = new LinkedList<String>();
+            final List<String> tableNames = new LinkedList<>();
             GeoDBDialect dialect = new GeoDBDialect();
             while (tableMappings.hasNext()) {
                 tableNames.add(tableMappings.next().getQuotedName(dialect));
@@ -248,23 +235,14 @@ public class H2Configuration {
             try {
                 session = getSession();
                 transaction = session.beginTransaction();
-                session.doWork(new Work() {
-                    @Override
-                    public void execute(final Connection connection) throws SQLException {
-                        Statement stmt = null;
-                        try {
-                            stmt = connection.createStatement();
-                            stmt.addBatch("SET REFERENTIAL_INTEGRITY FALSE");
-                            for (final String table : tableNames) {
-                                stmt.addBatch("DELETE FROM " + table);
-                            }
-                            stmt.addBatch("SET REFERENTIAL_INTEGRITY TRUE");
-                            stmt.executeBatch();
-                        } finally {
-                            if (stmt != null) {
-                                stmt.close();
-                            }
+                session.doWork(connection -> {
+                    try (Statement stmt = connection.createStatement()) {
+                        stmt.addBatch("SET REFERENTIAL_INTEGRITY FALSE");
+                        for (String table : tableNames) {
+                            stmt.addBatch("DELETE FROM " + table);
                         }
+                        stmt.addBatch("SET REFERENTIAL_INTEGRITY TRUE");
+                        stmt.executeBatch();
                     }
                 });
                 transaction.commit();
@@ -281,23 +259,10 @@ public class H2Configuration {
 
     private H2Configuration() throws IOException, OwsExceptionReport, ConnectionProviderException {
         init();
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                cleanup();
-            }
-        }));
+        Runtime.getRuntime().addShutdownHook(new Thread(this::cleanup));
     }
 
     private void cleanup() {
-        try {
-            final Configurator configurator = Configurator.getInstance();
-            if (configurator != null) {
-                configurator.cleanup();
-            }
-        } catch (final Exception ex) {
-            throw new RuntimeException(ex);
-        }
         try {
             final File directory = getTempDir();
             if (directory != null && directory.exists()) {
@@ -313,10 +278,6 @@ public class H2Configuration {
         }
     }
 
-    private void setDefaultSettings() {
-        ScheduledContentCacheControllerSettings.CACHE_UPDATE_INTERVAL_DEFINITION.setDefaultValue(0);
-    }
-
     private File getTempDir() {
         return tempDir;
     }
@@ -329,10 +290,9 @@ public class H2Configuration {
         setTempDir(File.createTempFile("hibernate-test-case", ""));
         getTempDir().delete();
         FileUtils.forceMkdir(getTempDir());
-        ServiceContextListener.setPath(getTempDir().getAbsolutePath());
     }
 
-    private void createConfigurator() throws ConfigurationException {
+    private void createConfigurator() throws ConfigurationError {
         Configurator.createInstance(properties, getTempDir().getAbsolutePath());
     }
 
@@ -357,11 +317,7 @@ public class H2Configuration {
                 LOG.debug("Executing {}", s);
                 stmt.execute(s);
             }
-        } catch (final ClassNotFoundException ex) {
-            throw new RuntimeException(ex);
-        } catch (final SQLException ex) {
-            throw new RuntimeException(ex);
-        } catch (MappingException ex) {
+        } catch (ClassNotFoundException | SQLException | MappingException ex) {
             throw new RuntimeException(ex);
         } finally {
             if (stmt != null) {
@@ -380,13 +336,13 @@ public class H2Configuration {
     }
 
     private String[] getCreateSrcipt(String[] generateSchemaCreationScript) {
-        List<String> finalScript = Lists.newArrayList(); 
+        List<String> finalScript = Lists.newArrayList();
         Set<String> nonDublicates = Sets.newHashSet();
         Set<String> nonDuplicateCreate = Sets.newHashSet();
         for (final String s : generateSchemaCreationScript) {
             if (!nonDublicates.contains(s)) {
                 if (s.toLowerCase().startsWith("create table")) {
-                    String substring = s.substring(0, s.indexOf("("));
+                    String substring = s.substring(0, s.indexOf('('));
                     if (!nonDuplicateCreate.contains(substring)) {
                         nonDuplicateCreate.add(substring);
                         LOG.debug("Executing {}", s);
@@ -414,8 +370,7 @@ public class H2Configuration {
         return finalScript.toArray(new String[finalScript.size()]);
     }
 
-    private void init() throws ConfigurationException, IOException {
-        setDefaultSettings();
+    private void init() throws ConfigurationError, IOException {
         createTempDir();
         prepareDatabase();
         createConfigurator();

@@ -28,10 +28,14 @@
  */
 package org.n52.sos.ds.hibernate.admin;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.ds.RenameDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
@@ -42,7 +46,12 @@ import org.n52.sos.exception.NoSuchObservablePropertyException;
  * @author Christian Autermann <c.autermann@52north.org>
  */
 public class HibernateRenameDAO implements RenameDAO {
-    private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder sessionHolder;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
 
     @Override
     public void renameObservableProperty(String oldName, String newName) throws OwsExceptionReport,

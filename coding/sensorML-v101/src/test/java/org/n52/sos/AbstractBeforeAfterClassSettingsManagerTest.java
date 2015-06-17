@@ -28,29 +28,16 @@
  */
 package org.n52.sos;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.n52.iceland.config.SettingsManager;
-
 /**
  * Abstract class to execute BeforeClass and AfterClass methods to init/cleanup
  * SettingsManager. This requires a SettingsManager implementation as test
  * dependency, e.g. sqlite-config module.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
+@Deprecated
 public abstract class AbstractBeforeAfterClassSettingsManagerTest {
-
-    @BeforeClass
-    public static void initSettingsManager() {
-        SettingsManager.getInstance();
-    }
-
-    @AfterClass
-    public static void cleanupSettingManager() {
-        SettingsManager.getInstance().cleanup();
-    }
 }

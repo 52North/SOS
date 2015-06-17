@@ -64,9 +64,9 @@ import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <autermann@uni-muenster.de>
- * 
+ *
  * @since 4.0.0
  */
 public class GeoJSONEncoder extends JSONEncoder<Geometry> {

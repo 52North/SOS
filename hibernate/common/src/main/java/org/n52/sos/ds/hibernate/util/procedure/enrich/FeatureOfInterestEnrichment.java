@@ -35,9 +35,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
+
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.service.Configurator;
+import org.n52.sos.service.Configurator;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.util.SosHelper;
 

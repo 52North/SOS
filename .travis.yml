@@ -8,6 +8,6 @@ notifications:
     channels:
       - "chat.freenode.net#52north"
     on_success: always
-    on_failure: always
+    on_failure: change
     use_notice: true
     skip_join: false

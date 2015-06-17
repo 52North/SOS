@@ -42,6 +42,7 @@ import org.n52.sos.ds.OperationDAO;
 import org.n52.sos.ds.OperationDAORepository;
 import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.RequestEvent;
+import org.n52.sos.event.events.ResponseEvent;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
@@ -164,6 +165,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
             checkForModifierAndProcess(request);
             checkParameters(request);
             A response = receive(request);
+            SosEventBus.fire(new ResponseEvent(response));
             return checkForModifierAndProcess(request, response);
         } else {
             throw new OperationNotSupportedException(abstractRequest.getOperationName());

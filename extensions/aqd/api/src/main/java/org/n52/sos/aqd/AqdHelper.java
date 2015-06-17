@@ -32,7 +32,7 @@ import java.util.Set;
 
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.gml.AbstractFeature;
@@ -100,7 +100,7 @@ public class AqdHelper implements Constructable {
     }
 
     @Setting(EReportingSetting.EREPORTING_NAMESPACE)
-    public void setEReportingNamespace(final String namespace) throws ConfigurationException {
+    public void setEReportingNamespace(final String namespace) throws ConfigurationError {
         this.namespace = namespace;
     }
 
@@ -113,7 +113,7 @@ public class AqdHelper implements Constructable {
     }
 
     @Setting(EReportingSetting.EREPORTING_OBSERVATION_PREFIX)
-    public void setEReportingObservationPrefix(final String observationPrefix) throws ConfigurationException {
+    public void setEReportingObservationPrefix(final String observationPrefix) throws ConfigurationError {
         this.observationPrefix = observationPrefix;
     }
 

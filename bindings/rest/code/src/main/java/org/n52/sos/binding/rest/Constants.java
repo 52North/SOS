@@ -34,7 +34,7 @@ import java.net.URI;
 
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.service.ServiceSettings;
 import org.n52.iceland.util.Validation;
@@ -546,7 +546,7 @@ public class Constants implements Constructable {
         try {
             return MediaType.parse(mediaType);
         } catch (IllegalArgumentException e) {
-            throw new ConfigurationException(String
+            throw new ConfigurationError(String
                     .format("%s is not a valid content type!", mediaType));
         }
     }

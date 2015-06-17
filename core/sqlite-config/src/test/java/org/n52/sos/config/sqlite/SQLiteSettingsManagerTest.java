@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 import org.n52.iceland.coding.encode.ResponseFormatKey;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.operator.RequestOperatorKey;
@@ -70,7 +70,7 @@ public class SQLiteSettingsManagerTest {
 
 
     @BeforeClass
-    public static void setUpClass() throws ConfigurationException, IOException {
+    public static void setUpClass() throws ConfigurationError, IOException {
         File directory = new File(System.getProperty("java.io.tmpdir"));
         databaseFile = File.createTempFile("configuration-test", ".db", directory);
         sessionFactory = new SQLiteSessionFactory();
@@ -92,7 +92,7 @@ public class SQLiteSettingsManagerTest {
     private SQLiteSettingsDao settingsManager;
 
     @Before
-    public void setUp() throws ConfigurationException {
+    public void setUp() throws ConfigurationError {
         SQLiteSettingsDao manager = new SQLiteSettingsDao();
         manager.setSessionFactory(sessionFactory);
         this.settingsManager = manager;

@@ -40,7 +40,7 @@ import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.DataConnectionProvider;
 import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.event.events.ConfiguratorInitializedEvent;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.lifecycle.Constructable;
@@ -137,7 +137,7 @@ public class Configurator implements Constructable {
     }
 
     @Override
-    public void init() throws ConfigurationException {
+    public void init() throws ConfigurationError {
         Configurator.instance = this;
         this.basepath = this.servletContext.getRealPath("/");
         if (featureConnectionProvider == null) {
@@ -226,7 +226,7 @@ public class Configurator implements Constructable {
      * @return Returns an instance of the SosConfigurator. This method is used
      *         to implement the singelton pattern
      *
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             if the initialization failed
      */
     public static Configurator createInstance(Properties connectionProviderConfig, String basepath) {

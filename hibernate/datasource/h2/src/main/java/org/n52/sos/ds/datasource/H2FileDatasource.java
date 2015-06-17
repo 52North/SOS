@@ -41,9 +41,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.settings.StringSettingDefinition;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
 import com.google.common.collect.Sets;
@@ -134,7 +135,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
                 }
                 return created;
             } catch (IOException ex) {
-                throw new ConfigurationException(ex);
+                throw new ConfigurationError(ex);
             }
         }
     }

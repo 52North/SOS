@@ -40,7 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.sos.wsdl.WSDLFactory;
 
 /**
@@ -55,7 +55,7 @@ public class WsdlController extends AbstractController {
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET)
-    public void get(HttpServletRequest req, HttpServletResponse res) throws IOException, ConfigurationException {
+    public void get(HttpServletRequest req, HttpServletResponse res) throws IOException, ConfigurationError {
         res.setContentType(MediaType.APPLICATION_XML_VALUE);
         res.setCharacterEncoding("UTF-8");
         IOUtils.write(new WSDLFactory().get(), res.getOutputStream());

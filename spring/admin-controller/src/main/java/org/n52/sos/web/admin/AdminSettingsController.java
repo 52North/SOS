@@ -42,7 +42,7 @@ import org.n52.iceland.config.AdministratorUser;
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingValue;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.iceland.util.StringHelper;
@@ -96,7 +96,7 @@ public class AdminSettingsController extends AbstractController {
     }
 
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_SETTINGS, method = RequestMethod.GET)
-    public ModelAndView displaySettings(Principal user) throws ConfigurationException, JSONException, ConnectionProviderException {
+    public ModelAndView displaySettings(Principal user) throws ConfigurationError, JSONException, ConnectionProviderException {
         Map<String, Object> model = new HashMap<>(2);
         model.put(ControllerConstants.SETTINGS_MODEL_ATTRIBUTE, getSettingsJsonString());
         model.put(ControllerConstants.ADMIN_USERNAME_REQUEST_PARAMETER, user.getName());
@@ -105,7 +105,7 @@ public class AdminSettingsController extends AbstractController {
 
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_SETTINGS_UPDATE, method = RequestMethod.POST)
     public void updateSettings(HttpServletRequest request, HttpServletResponse response, Principal user)
-            throws AuthenticationException, ConfigurationException {
+            throws AuthenticationException, ConfigurationError {
         LOG.info("Updating Settings");
         updateAdminUser(request, user);
         updateSettings(request);
@@ -123,7 +123,7 @@ public class AdminSettingsController extends AbstractController {
     }
 
     private String getSettingsJsonString()
-            throws ConfigurationException, JSONException,
+            throws ConfigurationError, JSONException,
                    ConnectionProviderException {
         return JSONUtils.print(encodeValues(settingsManager.getSettings()));
     }
@@ -150,7 +150,7 @@ public class AdminSettingsController extends AbstractController {
     }
 
     private void updateAdminUser(HttpServletRequest request, Principal user) throws AuthenticationException,
-            ConfigurationException {
+            ConfigurationError {
         String password = request.getParameter(ControllerConstants.ADMIN_PASSWORD_REQUEST_PARAMETER);
         String username = request.getParameter(ControllerConstants.ADMIN_USERNAME_REQUEST_PARAMETER);
         String currentPassword = request.getParameter(ControllerConstants.ADMIN_CURRENT_PASSWORD_REQUEST_PARAMETER);
@@ -158,7 +158,7 @@ public class AdminSettingsController extends AbstractController {
     }
 
     private void updateAdminUser(HttpServletRequest req, String newPassword, String newUsername,
-            String currentPassword, String currentUsername) throws AuthenticationException, ConfigurationException {
+            String currentPassword, String currentUsername) throws AuthenticationException, ConfigurationError {
         if (StringHelper.isNotEmpty(newPassword) || !currentUsername.equals(newUsername)) {
             if (currentPassword == null) {
                 throw new BadCredentialsException("You have to submit your current password.");

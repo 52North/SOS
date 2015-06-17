@@ -33,7 +33,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.MetaDataHandler;
@@ -72,7 +72,7 @@ public class AdminIndexController extends AbstractController {
             for (MetaDataHandler.Metadata m : MetaDataHandler.Metadata.values()) {
                 metadata.put(m.name(), getMetaDataHandler().get(m));
             }
-        } catch (ConfigurationException ex) {
+        } catch (ConfigurationError ex) {
             LOG.error("Error reading metadata properties", ex);
         }
         Map<String, Object> model = new HashMap<>(2);

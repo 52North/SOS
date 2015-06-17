@@ -42,7 +42,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import org.n52.iceland.config.SettingValue;
 import org.n52.iceland.config.SettingsService;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.service.ServiceSettings;
 
 /**
@@ -65,7 +65,7 @@ public class GetInvolvedController extends AbstractController {
         SettingValue<URI> setting = null;
         try {
             setting = this.settingsManager.getSetting(ServiceSettings.SERVICE_URL);
-        } catch (ConfigurationException ex) {
+        } catch (ConfigurationError ex) {
             LOG.error("Could not load service url", ex);
         }
         Serializable url = setting == null ? "" : setting.getValue() == null ? "" : setting.getValue();

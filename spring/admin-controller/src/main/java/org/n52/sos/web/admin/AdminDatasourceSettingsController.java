@@ -51,7 +51,7 @@ import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingValue;
 import org.n52.iceland.config.SettingValueFactory;
 import org.n52.iceland.config.json.JsonSettingsEncoder;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.context.ContextSwitcher;
@@ -108,7 +108,7 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
                     return error(newSettings, "No schema is present", null);
                 }
             }
-        } catch (ConfigurationException e) {
+        } catch (ConfigurationError e) {
             return error(newSettings, null, e);
         }
 

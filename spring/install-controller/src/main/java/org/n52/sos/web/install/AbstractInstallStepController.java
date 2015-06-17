@@ -43,7 +43,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.web.common.ControllerConstants;
@@ -57,7 +57,7 @@ import org.n52.sos.web.install.InstallConstants.Step;
 public abstract class AbstractInstallStepController extends AbstractInstallController {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractInstallStepController.class);
 
-    protected Map<String, Object> toModel(InstallationConfiguration c) throws ConfigurationException, JSONException {
+    protected Map<String, Object> toModel(InstallationConfiguration c) throws ConfigurationError, JSONException {
         Map<String, Object> model = new HashMap<>(4);
         model.put(ControllerConstants.SETTINGS_MODEL_ATTRIBUTE, JSONUtils.print(encodeValues(c.getSettings())));
         model.put(ControllerConstants.DATABASE_SETTINGS_MODEL_ATTRIBUTE, c.getDatabaseSettings());
@@ -114,7 +114,7 @@ public abstract class AbstractInstallStepController extends AbstractInstallContr
 
     @ExceptionHandler(InstallationSettingsError.class)
     public ModelAndView onError(HttpSession session, InstallationSettingsError e)
-            throws ConfigurationException, JSONException {
+            throws ConfigurationError, JSONException {
         if (e.getCause() != null) {
             LOG.error(e.getMessage(), e.getCause());
         } else {

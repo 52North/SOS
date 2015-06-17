@@ -37,7 +37,7 @@ import javax.servlet.http.HttpSession;
 
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.settings.MultilingualStringSettingDefinition;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.web.common.ControllerConstants;
 
@@ -73,7 +73,7 @@ public class InstallLoadSettingsController extends AbstractInstallController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void post(@RequestBody String config, HttpServletRequest req) throws ConfigurationException, IOException {
+    public void post(@RequestBody String config, HttpServletRequest req) throws ConfigurationError, IOException {
         final HttpSession session = req.getSession();
         InstallationConfiguration c = getSettings(session);
         JsonNode settings = JSONUtils.loadString(config);
@@ -106,8 +106,8 @@ public class InstallLoadSettingsController extends AbstractInstallController {
     }
 
     @ResponseBody
-    @ExceptionHandler(ConfigurationException.class)
-    public String onConfigurationError(ConfigurationException e) {
+    @ExceptionHandler(ConfigurationError.class)
+    public String onConfigurationError(ConfigurationError e) {
         return e.getMessage();
     }
 }

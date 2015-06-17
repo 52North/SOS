@@ -50,7 +50,7 @@ import org.n52.iceland.config.SettingValue;
 import org.n52.iceland.config.SettingsService;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.Datasource;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.sos.context.ContextSwitcher;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.MetaDataHandler;
@@ -164,7 +164,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
             throws InstallationSettingsError {
         try {
             getDatabaseSettingsHandler().saveAll(properties);
-        } catch (ConfigurationException e) {
+        } catch (ConfigurationError e) {
             /* TODO desctruct configurator? */
             throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_WRITE_DATASOURCE_CONFIG,
                     e.getMessage()), e);
@@ -179,7 +179,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
              */
             DateTimeFormatter f = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
             getMetaDataHandler().save(MetaDataHandler.Metadata.INSTALL_DATE, f.print(new DateTime()));
-        } catch (ConfigurationException ex) {
+        } catch (ConfigurationError ex) {
             /* don't fail on this one */
             LOG.error("Error saveing installation date", ex);
         }
@@ -190,7 +190,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
             for (SettingValue<?> e : c.getSettings().values()) {
                 this.settingsManager.changeSetting(e);
             }
-        } catch (ConfigurationException e) {
+        } catch (ConfigurationError e) {
             throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_INSERT_SETTINGS,
                     e.getMessage()), e);
         }

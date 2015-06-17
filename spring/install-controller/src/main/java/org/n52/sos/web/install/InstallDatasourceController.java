@@ -42,7 +42,7 @@ import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingValue;
 import org.n52.iceland.config.SettingValueFactory;
 import org.n52.iceland.ds.Datasource;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.install.InstallConstants.Step;
@@ -98,7 +98,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
                         } else {
                             try {
                                 datasource.validateSchema(c.getDatabaseSettings());
-                            } catch (ConfigurationException e) {
+                            } catch (ConfigurationError e) {
                                 throw new InstallationSettingsError(c, String.format(
                                         ErrorMessages.EXISTING_SCHEMA_DIFFERS_DROP_CREATE_SCHEMA, e.getMessage()), e);
                             }
@@ -113,7 +113,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
                 } else {
                     try {
                         datasource.validateSchema(c.getDatabaseSettings());
-                    } catch (ConfigurationException e) {
+                    } catch (ConfigurationError e) {
                         if (StringHelper.isNotEmpty(e.getMessage())
                                 && (e.getMessage().contains(ErrorMessages.TO_CHECK_ERROR_MESSAGE_FOI_COL_IN_OBS_TAB) || e
                                         .getMessage().contains(ErrorMessages.TO_CHECK_ERROR_MESSAGE_SERIES_COL_IN_OBS_TAB))) {
@@ -126,7 +126,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
                     }
                 }
             }
-        } catch (ConfigurationException e) {
+        } catch (ConfigurationError e) {
             throw new InstallationSettingsError(c, e.getMessage(), e);
         }
     }

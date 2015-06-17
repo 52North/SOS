@@ -44,7 +44,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderKey;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderRepository;
@@ -134,7 +134,7 @@ public class AdminExtensionController extends AbstractAdminController {
         }
     }
 
-    protected ArrayNode getExtendedCapabilitiesExtensions() throws ConnectionProviderException, ConfigurationException,
+    protected ArrayNode getExtendedCapabilitiesExtensions() throws ConnectionProviderException, ConfigurationError,
             JSONException {
         ArrayNode jeces = JSONUtils.nodeFactory().arrayNode();
         Map<ServiceOperatorKey, Collection<String>> oes = this.owsExtendedCapabilitiesProviderRepository.getAllDomains();
@@ -152,7 +152,7 @@ public class AdminExtensionController extends AbstractAdminController {
     }
 
     protected ArrayNode getOfferingExtensionExtensions() throws JSONException, ConnectionProviderException,
-            ConfigurationException {
+            ConfigurationError {
         ArrayNode joes = JSONUtils.nodeFactory().arrayNode();
         final Map<ServiceOperatorKey, Collection<String>> oes = this.offeringExtensionRepository.getAllDomains();
         for (ServiceOperatorKey sokt : oes.keySet()) {

@@ -47,7 +47,7 @@ import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAORepository;
@@ -109,7 +109,7 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
     }
 
     @Setting(CACHE_THREAD_COUNT)
-    public void setCacheThreadCount(int threads) throws ConfigurationException {
+    public void setCacheThreadCount(int threads) throws ConfigurationError {
         Validation.greaterZero("Cache Thread Count", threads);
         this.cacheThreadCount = threads;
     }

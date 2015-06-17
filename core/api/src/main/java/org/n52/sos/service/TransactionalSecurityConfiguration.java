@@ -35,7 +35,7 @@ import static org.n52.sos.service.TransactionalSecuritySettings.TRANSACTIONAL_TO
 
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.StringHelper;
@@ -109,7 +109,7 @@ public class TransactionalSecurityConfiguration implements Constructable {
     }
 
     @Setting(TRANSACTIONAL_ALLOWED_IPS)
-    public void setTransactionalAllowedIps(final String txAllowedIps) throws ConfigurationException {
+    public void setTransactionalAllowedIps(final String txAllowedIps) throws ConfigurationError {
         if (StringHelper.isNotEmpty(txAllowedIps)) {
             final Builder<IPAddressRange> builder = ImmutableSet.builder();
             for (final String splitted : txAllowedIps.split(",")) {
@@ -118,7 +118,7 @@ public class TransactionalSecurityConfiguration implements Constructable {
                 try {
                     builder.add(new IPAddressRange(cidrAddress));
                 } catch (final IllegalArgumentException e) {
-                    throw new ConfigurationException(
+                    throw new ConfigurationError(
                             "Transactional allowed address is not a valid CIDR range or IP address", e);
                 }
             }
@@ -136,7 +136,7 @@ public class TransactionalSecurityConfiguration implements Constructable {
                 try {
                     builder.add(new IPAddress(splitted.trim()));
                 } catch (final IllegalArgumentException e) {
-                    throw new ConfigurationException(
+                    throw new ConfigurationError(
                             "Allowed proxy address is not a valid IP address", e);
                 }
             }

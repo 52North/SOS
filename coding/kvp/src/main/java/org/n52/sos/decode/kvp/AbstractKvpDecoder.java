@@ -45,7 +45,7 @@ import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
@@ -116,11 +116,11 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
      *
      * @param epsgCode
      *            EPSG code from settings
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.STORAGE_EPSG)
-    public void setStorageEpsg(final int epsgCode) throws ConfigurationException {
+    public void setStorageEpsg(final int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Storage EPSG Code", epsgCode);
         storageEPSG = epsgCode;
     }
@@ -130,11 +130,11 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
      *
      * @param epsgCode3D
      *            3D EPSG code from settings
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.STORAGE_3D_EPSG)
-    public void setStorage3DEpsg(final int epsgCode3D) throws ConfigurationException {
+    public void setStorage3DEpsg(final int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
         storage3DEPSG = epsgCode3D;
     }
@@ -144,11 +144,11 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
      *
      * @param epsgCode
      *            EPSG code from settings
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_EPSG)
-    public void setDefaultResponseEpsg(final int epsgCode) throws ConfigurationException {
+    public void setDefaultResponseEpsg(final int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Storage EPSG Code", epsgCode);
         defaultResponseEPSG = epsgCode;
     }
@@ -158,11 +158,11 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
      *
      * @param epsgCode3D
      *            3D EPSG code from settings
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_3D_EPSG)
-    public void setDefaultResponse3DEpsg(final int epsgCode3D) throws ConfigurationException {
+    public void setDefaultResponse3DEpsg(final int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
         defaultResponse3DEPSG = epsgCode3D;
     }

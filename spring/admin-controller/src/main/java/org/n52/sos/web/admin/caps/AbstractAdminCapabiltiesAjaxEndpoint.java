@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.config.CapabilitiesExtensionService;
@@ -93,9 +93,9 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractAdminControlle
     }
 
     @ResponseBody
-    @ExceptionHandler(ConfigurationException.class)
+    @ExceptionHandler(ConfigurationError.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public String error(final ConfigurationException e) {
+    public String error(final ConfigurationError e) {
         return e.getMessage();
     }
 
@@ -110,7 +110,7 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractAdminControlle
         return this.capabilitiesExtensionService.getActiveStaticCapabilities();
     }
 
-    protected void setSelectedStaticCapabilities(String id) throws ConfigurationException,
+    protected void setSelectedStaticCapabilities(String id) throws ConfigurationError,
                                                                    OwsExceptionReport,
                                                                    NoSuchExtensionException {
         final String current = getSelectedStaticCapabilities();
@@ -136,7 +136,7 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractAdminControlle
         }
     }
 
-    protected void showDynamicCapabilities() throws ConfigurationException, OwsExceptionReport, NoSuchExtensionException {
+    protected void showDynamicCapabilities() throws ConfigurationError, OwsExceptionReport, NoSuchExtensionException {
         setSelectedStaticCapabilities(null);
     }
 }

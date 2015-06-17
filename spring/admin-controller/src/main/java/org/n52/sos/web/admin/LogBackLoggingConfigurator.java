@@ -65,7 +65,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.FileIOHelper;
 import org.n52.sos.web.admin.AbstractLoggingConfigurator.Appender;
@@ -108,24 +108,24 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
 
     private DelayedWriteThread delayedWriteThread = null;
 
-    public LogBackLoggingConfigurator() throws ConfigurationException {
+    public LogBackLoggingConfigurator() throws ConfigurationError {
         this(CONFIGURATION_FILE_NAME);
     }
 
-    public LogBackLoggingConfigurator(String filename) throws ConfigurationException {
+    public LogBackLoggingConfigurator(String filename) throws ConfigurationError {
         this(getFile(filename));
     }
 
-    public LogBackLoggingConfigurator(File file) throws ConfigurationException {
+    public LogBackLoggingConfigurator(File file) throws ConfigurationError {
         configuration = file;
         if (configuration == null || !configuration.exists()) {
             LOG.error(NOT_FOUND_ERROR_MESSAGE);
-            throw new ConfigurationException(NOT_FOUND_ERROR_MESSAGE);
+            throw new ConfigurationError(NOT_FOUND_ERROR_MESSAGE);
         }
         LOG.info("Using Logback Config File: {}", configuration.getAbsolutePath());
     }
 
-    private Document read() throws ConfigurationException {
+    private Document read() throws ConfigurationError {
         LOCK.readLock().lock();
         try {
             try {
@@ -135,7 +135,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                 return cache;
             } catch (ParserConfigurationException | SAXException | IOException ex) {
                 LOG.error(UNPARSABLE_ERROR_MESSAGE, ex);
-                throw new ConfigurationException(UNPARSABLE_ERROR_MESSAGE, ex);
+                throw new ConfigurationError(UNPARSABLE_ERROR_MESSAGE, ex);
             }
         } finally {
             LOCK.readLock().unlock();
@@ -179,7 +179,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                 }
             }
             write();
-        } catch (ConfigurationException e) {
+        } catch (ConfigurationError e) {
             LOG.error(UNPARSABLE_ERROR_MESSAGE, e);
             return false;
         } finally {
@@ -197,7 +197,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
             for (Element ref : refs) {
                 appender.add(Appender.byName(getAttribute(ref, AN_REF).getValue()));
             }
-        } catch (ConfigurationException e) {
+        } catch (ConfigurationError e) {
             LOG.error(UNPARSABLE_ERROR_MESSAGE, e);
             return Collections.emptySet();
         } finally {
@@ -242,7 +242,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                 write();
             }
             return true;
-        } catch (ConfigurationException e) {
+        } catch (ConfigurationError e) {
             LOG.error(UNPARSABLE_ERROR_MESSAGE, e);
             return false;
         } finally {
@@ -250,7 +250,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
         }
     }
 
-    private Element getSingleChildren(Node parent, String name) throws ConfigurationException {
+    private Element getSingleChildren(Node parent, String name) throws ConfigurationError {
         NodeList nl = parent.getChildNodes();
         for (int i = 0; i < nl.getLength(); ++i) {
             Node n = nl.item(i);
@@ -259,20 +259,20 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
             }
 
         }
-        throw new ConfigurationException("<" + name + "> not found!");
+        throw new ConfigurationError("<" + name + "> not found!");
     }
 
-    private Element getRoot(Node configuration) throws ConfigurationException {
+    private Element getRoot(Node configuration) throws ConfigurationError {
         return getSingleChildren(configuration, EN_ROOT);
     }
 
-    private Attr getAttribute(Node x, String name) throws ConfigurationException {
+    private Attr getAttribute(Node x, String name) throws ConfigurationError {
         NamedNodeMap attributes = x.getAttributes();
         Attr a = (Attr) attributes.getNamedItem(name);
         if (a != null) {
             return a;
         }
-        throw new ConfigurationException("Missing attribute: " + name);
+        throw new ConfigurationError("Missing attribute: " + name);
     }
 
     @Override
@@ -289,7 +289,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                 LOG.debug("Setting root logging level to {}", level);
                 root.setAttribute(AN_LEVEL, level.toString());
                 write();
-            } catch (ConfigurationException e) {
+            } catch (ConfigurationError e) {
                 LOG.error(UNPARSABLE_ERROR_MESSAGE, e);
                 return false;
             }
@@ -342,7 +342,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                 }
             }
             return true;
-        } catch (ConfigurationException e) {
+        } catch (ConfigurationError e) {
             LOG.error(UNPARSABLE_ERROR_MESSAGE, e);
             return false;
         } finally {
@@ -398,7 +398,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                 write();
             }
             return true;
-        } catch (ConfigurationException e) {
+        } catch (ConfigurationError e) {
             LOG.error(UNPARSABLE_ERROR_MESSAGE, e);
             return false;
         } finally {
@@ -416,7 +416,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                 Element root = getRoot(doc.getDocumentElement());
                 String currentLevel = getAttribute(root, AN_LEVEL).getValue();
                 level = Level.valueOf(currentLevel);
-            } catch (ConfigurationException e) {
+            } catch (ConfigurationError e) {
                 LOG.error(UNPARSABLE_ERROR_MESSAGE, e);
             }
             return level;
@@ -436,7 +436,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                     levels.put(getAttribute(logger, AN_NAME).getValue(),
                                Level.valueOf(getAttribute(logger, AN_LEVEL).getValue()));
                 }
-            } catch (ConfigurationException e) {
+            } catch (ConfigurationError e) {
                 LOG.error(UNPARSABLE_ERROR_MESSAGE, e);
             }
             return levels;
@@ -476,7 +476,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                         }
                     }
                 }
-            } catch (ConfigurationException e) {
+            } catch (ConfigurationError e) {
                 LOG.error(UNPARSABLE_ERROR_MESSAGE, e);
             }
             return max;
@@ -502,7 +502,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                                         .getTextContent();
                     }
                 }
-            } catch (ConfigurationException e) {
+            } catch (ConfigurationError e) {
                 LOG.error(UNPARSABLE_ERROR_MESSAGE, e);
             }
             return maxFileSize;
@@ -534,7 +534,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                 }
             }
             write();
-        } catch (ConfigurationException e) {
+        } catch (ConfigurationError e) {
             LOG.error(UNPARSABLE_ERROR_MESSAGE, e);
             return false;
         } finally {
@@ -599,7 +599,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                 return null;
             }
             return f;
-        } catch (ConfigurationException ex) {
+        } catch (ConfigurationError ex) {
             LOG.error(UNPARSABLE_ERROR_MESSAGE, ex);
             return null;
         } finally {
@@ -620,7 +620,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
         return null;
     }
 
-    private static File getFile(String name) throws ConfigurationException {
+    private static File getFile(String name) throws ConfigurationError {
         File f = new File(name);
         if (f.exists()) {
             return f;
@@ -630,7 +630,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
             return new File(url.toURI());
         } catch (Exception ex) {
             LOG.error(NOT_FOUND_ERROR_MESSAGE, ex);
-            throw new ConfigurationException(NOT_FOUND_ERROR_MESSAGE, ex);
+            throw new ConfigurationError(NOT_FOUND_ERROR_MESSAGE, ex);
         }
     }
 

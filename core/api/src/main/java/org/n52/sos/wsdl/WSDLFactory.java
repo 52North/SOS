@@ -37,7 +37,7 @@ import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.coding.OperationKey;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.iceland.request.operator.RequestOperatorKey;
@@ -55,11 +55,11 @@ import org.n52.sos.request.operator.WSDLAwareRequestOperator;
  */
 public class WSDLFactory implements Producer<String> {
     @Override
-    public String get() throws ConfigurationException {
+    public String get() throws ConfigurationError {
         try {
             return getWSDL();
         } catch (final Exception ex) {
-            throw new ConfigurationException(ex);
+            throw new ConfigurationError(ex);
         }
     }
 

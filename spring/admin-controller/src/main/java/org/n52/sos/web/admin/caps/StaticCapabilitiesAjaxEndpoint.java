@@ -50,7 +50,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.ogc.ows.StaticCapabilities;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.web.common.ControllerConstants;
@@ -86,7 +86,7 @@ public class StaticCapabilitiesAjaxEndpoint extends AbstractAdminCapabiltiesAjax
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void setCurrentCapabilities(@RequestBody String json) throws SQLException,
-                                                                        ConfigurationException,
+                                                                        ConfigurationError,
                                                                         OwsExceptionReport,
                                                                         NoSuchExtensionException,
                                                                         IOException {
@@ -113,7 +113,7 @@ public class StaticCapabilitiesAjaxEndpoint extends AbstractAdminCapabiltiesAjax
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value="/{identifier}", method = RequestMethod.DELETE)
     public void deleteStaticCapabilities(
-            @PathVariable("identifier") String identifier) throws SQLException, ConfigurationException,
+            @PathVariable("identifier") String identifier) throws SQLException, ConfigurationError,
                                                                   NoSuchIdentifierException, OwsExceptionReport {
         if (getSelectedStaticCapabilities() != null && getSelectedStaticCapabilities().equals(identifier)) {
             setSelectedStaticCapabilities(null);

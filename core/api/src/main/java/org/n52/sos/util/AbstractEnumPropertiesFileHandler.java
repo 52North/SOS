@@ -30,7 +30,7 @@ package org.n52.sos.util;
 
 import javax.servlet.ServletContext;
 
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.util.ServletContextPropertyFileHandler;
 
 /**
@@ -45,11 +45,11 @@ public abstract class AbstractEnumPropertiesFileHandler<E extends Enum<E>> exten
         super(ctx, name);
     }
 
-    public String get(E e) throws ConfigurationException {
+    public String get(E e) throws ConfigurationError {
         return get(e.name());
     }
 
-    public void save(E e, String value) throws ConfigurationException {
+    public void save(E e, String value) throws ConfigurationError {
         save(e.name(), value);
     }
 }

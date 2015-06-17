@@ -30,8 +30,7 @@ package org.n52.sos.service.profile;
 
 import java.util.Map;
 
-import org.n52.iceland.exception.ConfigurationException;
-
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.lifecycle.Constructable;
 
 /**
@@ -56,11 +55,11 @@ public abstract class ProfileHandler implements Constructable {
      *
      * @return the profile handler
      *         <p/>
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             if no implementation can be found
      */
     @Deprecated
-    public static ProfileHandler getInstance() throws ConfigurationException {
+    public static ProfileHandler getInstance() throws ConfigurationError {
         return ProfileHandler.instance;
     }
 

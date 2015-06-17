@@ -46,7 +46,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingDefinitionGroup;
 import org.n52.iceland.config.SettingsService;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.JSONUtils;
@@ -73,7 +73,7 @@ public class SettingDefinitonController extends AbstractController {
     @RequestMapping(value = ControllerConstants.Paths.SETTING_DEFINITIONS, method = RequestMethod.GET, produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public String get(@RequestParam(value = "showAll", defaultValue="true") boolean showAll ,
                       @RequestParam(value = "only", required = false) String only)
-            throws ConfigurationException, JSONException {
+            throws ConfigurationError, JSONException {
         Set<SettingDefinition<?, ?>> defs = this.settingsManager.getSettingDefinitions();
         Map<SettingDefinitionGroup, Set<SettingDefinition<?,?>>> grouped;
         if (StringHelper.isNotEmpty(only)) {

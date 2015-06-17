@@ -46,7 +46,7 @@ import org.hibernate.service.spi.Stoppable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.lifecycle.Destroyable;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
@@ -240,7 +240,7 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
         try {
             return getSessionFactory().getCurrentSession();
         } catch (HibernateException e) {
-            throw new ConfigurationException(e);
+            throw new ConfigurationError(e);
         }
     }
 

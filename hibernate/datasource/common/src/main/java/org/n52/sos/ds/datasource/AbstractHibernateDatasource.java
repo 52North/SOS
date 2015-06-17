@@ -60,7 +60,7 @@ import org.n52.iceland.config.settings.ChoiceSettingDefinition;
 import org.n52.iceland.config.settings.IntegerSettingDefinition;
 import org.n52.iceland.config.settings.StringSettingDefinition;
 import org.n52.iceland.ds.DatasourceCallback;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.SessionFactoryProvider;
@@ -452,7 +452,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         try {
             return new File(getClass().getResource(resource).toURI());
         } catch (URISyntaxException ex) {
-            throw new ConfigurationException(ex);
+            throw new ConfigurationError(ex);
         }
     }
 
@@ -479,7 +479,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                     checkDropSchema(getConfig(settings).generateDropSchemaScript(getDialectInternal(), metadata));
             return dropScript;
         } catch (SQLException ex) {
-            throw new ConfigurationException(ex);
+            throw new ConfigurationError(ex);
         } finally {
             close(conn);
         }
@@ -495,7 +495,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                     getConfig(settings).generateSchemaUpdateScriptList(getDialectInternal(), metadata);
             return SchemaUpdateScript.toStringArray(upSchema);
         } catch (SQLException ex) {
-            throw new ConfigurationException(ex);
+            throw new ConfigurationError(ex);
         } finally {
             close(conn);
         }
@@ -509,9 +509,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
             getConfig(settings).validateSchema(getDialectInternal(), metadata);
         } catch (SQLException ex) {
-            throw new ConfigurationException(ex);
+            throw new ConfigurationError(ex);
         } catch (HibernateException ex) {
-            throw new ConfigurationException(ex);
+            throw new ConfigurationError(ex);
         } finally {
             close(conn);
         }
@@ -542,7 +542,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             }
             return false;
         } catch (SQLException ex) {
-            throw new ConfigurationException(ex);
+            throw new ConfigurationError(ex);
         } finally {
             close(conn);
         }
@@ -558,7 +558,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 }
             }
             if (StringHelper.isNotEmpty(schema)) {
-                throw new ConfigurationException(String.format("Requested schema (%s) is not contained in the database!", schema));
+                throw new ConfigurationError(String.format("Requested schema (%s) is not contained in the database!", schema));
             }
         }
         return null;
@@ -575,7 +575,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             conn = openConnection(settings);
             execute(sql, conn);
         } catch (SQLException ex) {
-            throw new ConfigurationException(ex);
+            throw new ConfigurationError(ex);
         } finally {
             close(conn);
         }
@@ -587,7 +587,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         try {
             conn = openConnection(settings);
         } catch (SQLException ex) {
-            throw new ConfigurationException(ex);
+            throw new ConfigurationError(ex);
         } finally {
             close(conn);
         }
@@ -606,7 +606,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
             validatePrerequisites(conn, metadata, settings);
         } catch (SQLException ex) {
-            throw new ConfigurationException(ex);
+            throw new ConfigurationError(ex);
         } finally {
             close(conn);
         }
@@ -648,7 +648,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             try {
                 return new File(URLDecoder.decode(dirUrl.getPath(), Charset.defaultCharset().toString())).exists();
             } catch (UnsupportedEncodingException e) {
-                throw new ConfigurationException("Unable to encode directory URL " + dirUrl + "!");
+                throw new ConfigurationError("Unable to encode directory URL " + dirUrl + "!");
             }
         }
         return false;
@@ -699,9 +699,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             }
         } catch (SQLException ex) {
             if (lastCmd != null) {
-                throw new ConfigurationException(ex.getMessage() + ". Command: " + lastCmd, ex);
+                throw new ConfigurationError(ex.getMessage() + ". Command: " + lastCmd, ex);
             } else {
-                throw new ConfigurationException(ex);
+                throw new ConfigurationError(ex);
             }
         } finally {
             close(stmt);

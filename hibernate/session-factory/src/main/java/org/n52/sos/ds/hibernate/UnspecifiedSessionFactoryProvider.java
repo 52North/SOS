@@ -45,7 +45,7 @@ import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.DataConnectionProvider;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.ds.DatasourceCallback;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.service.DatabaseSettingsHandler;
 import org.n52.sos.ds.HibernateDatasourceConstants;
@@ -145,7 +145,7 @@ public abstract class UnspecifiedSessionFactoryProvider
         this.initialize(this.databaseSettingsHandler.getAll());
     }
 
-    private void initialize(Properties properties) throws ConfigurationException {
+    private void initialize(Properties properties) throws ConfigurationError {
 
         final DatasourceCallback datasourceCallback
                 = getDatasourceCallback(properties);
@@ -172,7 +172,7 @@ public abstract class UnspecifiedSessionFactoryProvider
             String exceptionText = "An error occurs during instantiation of the database connection pool!";
             LOGGER.error(exceptionText, he);
             destroy();
-            throw new ConfigurationException(exceptionText, he);
+            throw new ConfigurationError(exceptionText, he);
         }
     }
 

@@ -46,7 +46,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.n52.iceland.config.AdminUserService;
 import org.n52.iceland.config.AdministratorUser;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 
 /**
  * @since 4.0.0
@@ -118,11 +118,11 @@ public class SosAuthenticationProvider implements AuthenticationProvider, Serial
         this.adminUserService.saveAdminUser(user.setPassword(getPasswordEncoder().encode(password)));
     }
 
-    public AdministratorUser getAdmin(String username) throws ConfigurationException {
+    public AdministratorUser getAdmin(String username) throws ConfigurationError {
         return this.adminUserService.getAdminUser(username);
     }
 
-    public AdministratorUser getAdmin(Principal user) throws ConfigurationException {
+    public AdministratorUser getAdmin(Principal user) throws ConfigurationError {
         return this.adminUserService.getAdminUser(user.getName());
     }
 

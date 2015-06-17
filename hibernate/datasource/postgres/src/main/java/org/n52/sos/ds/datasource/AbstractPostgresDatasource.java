@@ -44,7 +44,8 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.postgis.PostgisDialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-import org.n52.iceland.exception.ConfigurationException;
+
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
 import com.google.common.base.Joiner;
@@ -154,7 +155,7 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
             stmt.execute(builder.toString());
             // TODO check PostGIS version
         } catch (SQLException ex) {
-            throw new ConfigurationException("PostGIS does not seem to be installed.", ex);
+            throw new ConfigurationError("PostGIS does not seem to be installed.", ex);
         } finally {
             close(stmt);
         }
@@ -164,7 +165,7 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
         Statement stmt = null;
         try {
             if (!metadata.isTable("spatial_ref_sys")) {
-                throw new ConfigurationException("Missing 'spatial_ref_sys' table.");
+                throw new ConfigurationError("Missing 'spatial_ref_sys' table.");
             }
             StringBuilder builder = new StringBuilder();
             builder.append(SELECT);
@@ -178,7 +179,7 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
             stmt = con.createStatement();
             stmt.execute(builder.toString());
         } catch (SQLException ex) {
-            throw new ConfigurationException("Can not read from table 'spatial_ref_sys'", ex);
+            throw new ConfigurationError("Can not read from table 'spatial_ref_sys'", ex);
         } finally {
             close(stmt);
         }
@@ -224,7 +225,7 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
                 stmt = conn.createStatement();
                 stmt.execute(String.format("truncate %s restart identity cascade", Joiner.on(", ").join(names)));
             } catch (SQLException ex) {
-                throw new ConfigurationException(ex);
+                throw new ConfigurationError(ex);
             } finally {
                 close(stmt);
                 close(conn);

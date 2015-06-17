@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.Datasource;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.config.sqlite.SQLiteSessionFactory;
@@ -292,7 +292,7 @@ public class H2Configuration {
         FileUtils.forceMkdir(getTempDir());
     }
 
-    private void createConfigurator() throws ConfigurationException {
+    private void createConfigurator() throws ConfigurationError {
         Configurator.createInstance(properties, getTempDir().getAbsolutePath());
     }
 
@@ -370,7 +370,7 @@ public class H2Configuration {
         return finalScript.toArray(new String[finalScript.size()]);
     }
 
-    private void init() throws ConfigurationException, IOException {
+    private void init() throws ConfigurationError, IOException {
         createTempDir();
         prepareDatabase();
         createConfigurator();

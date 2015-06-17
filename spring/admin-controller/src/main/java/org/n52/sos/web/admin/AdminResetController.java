@@ -42,7 +42,7 @@ import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.cache.ContentCachePersistenceStrategy;
 import org.n52.iceland.config.SettingsService;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.sos.context.ContextSwitcher;
 import org.n52.sos.web.common.ControllerConstants;
 
@@ -70,7 +70,7 @@ public class AdminResetController extends AbstractAdminController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public View post() throws ConfigurationException, ConnectionProviderException {
+    public View post() throws ConfigurationError, ConnectionProviderException {
         LOG.debug("Resetting Service.");
 
         getDatabaseSettingsHandler().delete();

@@ -52,7 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 
 /**
  *
@@ -67,15 +67,15 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
     public String getUpdateScript() throws ConnectionProviderException, SQLException {
         Configuration configuration = getConfiguration();
         if (configuration == null) {
-            throw new ConfigurationException("configuration is null");
+            throw new ConfigurationError("configuration is null");
         }
         SessionFactory sessionFactory = getSessionFactory();
         if (sessionFactory == null) {
-            throw new ConfigurationException("sessionFactory is null");
+            throw new ConfigurationError("sessionFactory is null");
         }
         Dialect dialect = ((SessionFactoryImplementor) sessionFactory).getDialect();
         if (dialect == null) {
-            throw new ConfigurationException("dialect is null");
+            throw new ConfigurationError("dialect is null");
         }
         Session session = getConnection();
         Connection conn = ((SessionImplementor) session).connection();
@@ -91,7 +91,7 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Configuration getConfiguration(Properties properties) throws ConfigurationException {
+    protected Configuration getConfiguration(Properties properties) throws ConfigurationError {
         try {
             Configuration configuration = new Configuration().configure("/sos-hibernate.cfg.xml");
             if (properties.containsKey(HIBERNATE_RESOURCES)) {
@@ -114,12 +114,12 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
                                         new File(URLDecoder.decode(dirUrl.getPath(), Charset.defaultCharset()
                                                 .toString()));
                             } catch (UnsupportedEncodingException e) {
-                                throw new ConfigurationException("Unable to encode directory URL " + dirUrl + "!");
+                                throw new ConfigurationError("Unable to encode directory URL " + dirUrl + "!");
                             }
                         }
                     }
                     if (!hibernateDir.exists()) {
-                        throw new ConfigurationException("Hibernate directory " + directory + " doesn't exist!");
+                        throw new ConfigurationError("Hibernate directory " + directory + " doesn't exist!");
                     }
                     configuration.addDirectory(hibernateDir);
                 }
@@ -136,7 +136,7 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
             String exceptionText = "An error occurs during instantiation of the database connection pool!";
             LOGGER.error(exceptionText, he);
             destroy();
-            throw new ConfigurationException(exceptionText, he);
+            throw new ConfigurationError(exceptionText, he);
         }
     }
 }

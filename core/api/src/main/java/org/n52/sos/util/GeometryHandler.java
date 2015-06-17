@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ConfigurationException;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
@@ -182,11 +182,11 @@ public class GeometryHandler implements Constructable, Destroyable {
      *
      * @param epsgCode
      *            EPSG code from settings
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.STORAGE_EPSG)
-    public void setStorageEpsg(final int epsgCode) throws ConfigurationException {
+    public void setStorageEpsg(final int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Storage EPSG Code", epsgCode);
         storageEPSG = epsgCode;
         addToSupportedCrs(epsgCode);
@@ -197,11 +197,11 @@ public class GeometryHandler implements Constructable, Destroyable {
      *
      * @param epsgCode3D
      *            3D EPSG code from settings
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.STORAGE_3D_EPSG)
-    public void setStorage3DEpsg(final int epsgCode3D) throws ConfigurationException {
+    public void setStorage3DEpsg(final int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
         storage3DEPSG = epsgCode3D;
         addToSupportedCrs(epsgCode3D);
@@ -212,11 +212,11 @@ public class GeometryHandler implements Constructable, Destroyable {
      *
      * @param epsgCode
      *            EPSG code from settings
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_EPSG)
-    public void setDefaultResponseEpsg(final int epsgCode) throws ConfigurationException {
+    public void setDefaultResponseEpsg(final int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Storage EPSG Code", epsgCode);
         defaultResponseEPSG = epsgCode;
         addToSupportedCrs(epsgCode);
@@ -227,11 +227,11 @@ public class GeometryHandler implements Constructable, Destroyable {
      *
      * @param epsgCode3D
      *            3D EPSG code from settings
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_3D_EPSG)
-    public void setDefaultResponse3DEpsg(final int epsgCode3D) throws ConfigurationException {
+    public void setDefaultResponse3DEpsg(final int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
         defaultResponse3DEPSG = epsgCode3D;
         addToSupportedCrs(epsgCode3D);
@@ -242,10 +242,10 @@ public class GeometryHandler implements Constructable, Destroyable {
      *
      * @param supportedCRS
      *            Supported EPSG codes
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      */
     @Setting(FeatureQuerySettingsProvider.SUPPORTED_CRS_KEY)
-    public void setSupportedCRS(final String supportedCRS) throws ConfigurationException {
+    public void setSupportedCRS(final String supportedCRS) throws ConfigurationError {
         // Validation.notNull("Supported CRS codes as CSV string",
         // supportedCRS);
         this.supportedCRS.addAll(StringHelper.splitToSet(supportedCRS, Constants.COMMA_STRING));
@@ -317,11 +317,11 @@ public class GeometryHandler implements Constructable, Destroyable {
      *
      * @param codes
      *            EPSG code ranges
-     * @throws ConfigurationException
+     * @throws ConfigurationError
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST)
-    public void setEpsgCodesWithNorthingFirstAxisOrder(final String codes) throws ConfigurationException {
+    public void setEpsgCodesWithNorthingFirstAxisOrder(final String codes) throws ConfigurationError {
         Validation.notNullOrEmpty("EPSG Codes to switch coordinates for", codes);
         final String[] splitted = codes.split(";");
         for (final String entry : splitted) {
@@ -332,7 +332,7 @@ public class GeometryHandler implements Constructable, Destroyable {
             } else if (splittedEntry.length == 2) {
                 r = new Range(Integer.parseInt(splittedEntry[0]), Integer.parseInt(splittedEntry[1]));
             } else {
-                throw new ConfigurationException(String.format("Invalid format of entry in '%s': %s",
+                throw new ConfigurationError(String.format("Invalid format of entry in '%s': %s",
                         FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST, entry));
             }
             epsgsWithNorthingFirstAxisOrder.add(r);

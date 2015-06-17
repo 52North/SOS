@@ -33,15 +33,15 @@ import java.util.Collections;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
@@ -73,25 +73,28 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
             String id = request.getObservationIdentifier();
             Observation<?> observation = null;
             try {
-                observation =
-                        DaoFactory.getInstance().getObservationDAO().getObservationByIdentifier(id, session);
+                observation = DaoFactory.getInstance().getObservationDAO().getObservationByIdentifier(id, session);
             } catch (HibernateException he) {
                 if (transaction != null) {
                     transaction.rollback();
                 }
-                throw new InvalidParameterValueException(DeleteObservationConstants.PARAMETER_NAME, request.getObservationIdentifier());
+                throw new InvalidParameterValueException(DeleteObservationConstants.PARAMETER_NAME,
+                        request.getObservationIdentifier());
             }
             OmObservation so = null;
             if (observation != null) {
                 so =
                         HibernateObservationUtilities
-                                .createSosObservationsFromObservations(Collections.<Observation<?>>singleton(observation), getRequest(request), null, session).iterator().next();
+                                .createSosObservationsFromObservations(
+                                        Collections.<Observation<?>> singleton(observation), getRequest(request),
+                                        null, session).iterator().next();
                 observation.setDeleted(true);
                 session.saveOrUpdate(observation);
                 checkSeriesForFirstLatest(observation, session);
                 session.flush();
             } else {
-                throw new InvalidParameterValueException(DeleteObservationConstants.PARAMETER_NAME, request.getObservationIdentifier());
+                throw new InvalidParameterValueException(DeleteObservationConstants.PARAMETER_NAME,
+                        request.getObservationIdentifier());
             }
             transaction.commit();
             response.setObservationId(request.getObservationIdentifier());
@@ -111,31 +114,34 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
         return response;
     }
 
-    private AbstractObservationRequest getRequest(
-			DeleteObservationRequest request) {
-		// TODO Auto-generated method stub
-		return (AbstractObservationRequest) new GetObservationRequest().setService(request.getService()).setVersion(request.getVersion());
-	}
+    private AbstractObservationRequest getRequest(DeleteObservationRequest request) {
+        // TODO Auto-generated method stub
+        return (AbstractObservationRequest) new GetObservationRequest().setService(request.getService()).setVersion(
+                request.getVersion());
+    }
 
-	@Override
+    @Override
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 
-	/**
-	 * Check if {@link Series} should be updated
-	 * 
-	 * @param observation
-	 *            Deleted observation
-	 * @param session
-	 *            Hibernate session
-	 */
-	private void checkSeriesForFirstLatest(AbstractObservation observation, Session session) {
-		if (observation instanceof SeriesObservation) {
-			Series series = ((SeriesObservation)observation).getSeries();
-			if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart()) || series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
-				new SeriesDAO().updateSeriesAfterObservationDeletion(series, (SeriesObservation)observation, session);
-			}
-		}
-	}
+    /**
+     * Check if {@link Series} should be updated
+     * 
+     * @param observation
+     *            Deleted observation
+     * @param session
+     *            Hibernate session
+     * @throws CodedException
+     */
+    private void checkSeriesForFirstLatest(Observation<?> observation, Session session) throws CodedException {
+        if (observation instanceof SeriesObservation) {
+            Series series = ((SeriesObservation<?>) observation).getSeries();
+            if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())
+                    || series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
+                DaoFactory.getInstance().getSeriesDAO()
+                        .updateSeriesAfterObservationDeletion(series, (SeriesObservation<?>) observation, session);
+            }
+        }
+    }
 }

@@ -80,4 +80,5 @@ public class BlobValuedLegacyObservation
 	public String getValueAsString() {
 		return getValue().toString();
 	}
+
 }

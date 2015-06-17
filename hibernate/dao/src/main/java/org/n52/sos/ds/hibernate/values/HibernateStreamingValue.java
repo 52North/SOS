@@ -28,14 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.ds.hibernate.dao.ValueDAO;
 import org.n52.sos.ds.hibernate.dao.ValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract Hibernate streaming value class for old observation concept

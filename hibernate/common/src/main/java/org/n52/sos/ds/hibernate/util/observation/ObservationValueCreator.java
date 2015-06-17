@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate.util.observation;
 
 import org.apache.xmlbeans.XmlObject;
-
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObservation;

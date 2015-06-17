@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.dao.observation;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;

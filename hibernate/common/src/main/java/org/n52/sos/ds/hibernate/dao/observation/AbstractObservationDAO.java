@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.dao.observation;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -47,9 +48,6 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.CodespaceDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
@@ -62,6 +60,7 @@ import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
@@ -107,6 +106,8 @@ import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Iterables;
 import com.vividsolutions.jts.geom.Envelope;

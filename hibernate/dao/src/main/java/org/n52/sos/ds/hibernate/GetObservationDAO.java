@@ -38,21 +38,21 @@ import java.util.Set;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
-
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.AbstractGetObservationDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
@@ -80,12 +80,8 @@ import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.HTTPStatus;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

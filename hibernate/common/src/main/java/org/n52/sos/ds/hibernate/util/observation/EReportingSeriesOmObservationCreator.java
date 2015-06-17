@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.hibernate.Session;
-
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 import org.n52.sos.ogc.om.OmObservation;

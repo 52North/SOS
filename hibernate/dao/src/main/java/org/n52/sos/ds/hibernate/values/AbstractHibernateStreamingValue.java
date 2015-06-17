@@ -41,7 +41,6 @@ import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
@@ -54,6 +53,7 @@ import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.Value;
@@ -77,7 +77,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.1.0
  *
  */
-public abstract class AbstractHibernateStreamingValue extends StreamingValue<ValuedObservation<?>> {
+public abstract class AbstractHibernateStreamingValue extends StreamingValue<AbstractValuedLegacyObservation<?>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHibernateStreamingValue.class);
 
@@ -96,7 +96,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Val
 
         Map<String, OmObservation> observations = Maps.newHashMap();
         while (hasNextValue()) {
-            ValuedObservation<?> nextEntity = nextEntity();
+            AbstractValuedLegacyObservation<?> nextEntity = nextEntity();
             OmObservation observation = null;
             if (observations.containsKey(nextEntity.getDiscriminator())) {
                 observation = observations.get(nextEntity.getDiscriminator());
@@ -111,7 +111,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Val
         return observations.values();
     }
 
-    private void addSpecificValuesToObservation(OmObservation observation, ValuedObservation<?> value, SwesExtensions swesExtensions) {
+    private void addSpecificValuesToObservation(OmObservation observation, AbstractValuedLegacyObservation<?> value, SwesExtensions swesExtensions) {
         boolean newSession = false;
         try {
             if (session == null) {

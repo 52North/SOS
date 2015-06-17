@@ -32,7 +32,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.hibernate.Session;
-
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ogc.gml.time.TimePeriod;

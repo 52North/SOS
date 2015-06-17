@@ -36,17 +36,16 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
-
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.I18NDAO;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.cache.ProcedureFlag;
-import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
@@ -65,7 +64,6 @@ import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CacheHelper;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

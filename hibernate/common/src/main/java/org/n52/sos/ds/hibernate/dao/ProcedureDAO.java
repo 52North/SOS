@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -50,29 +48,27 @@ import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
-import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
+import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
@@ -81,6 +77,8 @@ import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

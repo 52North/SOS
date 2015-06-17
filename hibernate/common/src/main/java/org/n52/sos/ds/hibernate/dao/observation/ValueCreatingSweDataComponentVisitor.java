@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation;
 
-import java.math.BigDecimal;
-
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
@@ -41,6 +39,8 @@ import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
+import org.n52.sos.ogc.sensorML.v20.SmlDataInterface;
+import org.n52.sos.ogc.sensorML.v20.SmlFeatureOfInterest;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.ogc.swe.SweDataComponentVisitor;
@@ -117,8 +117,7 @@ public class ValueCreatingSweDataComponentVisitor implements
 
     @Override
     public Value<?> visit(SweQuantity component) {
-        return new QuantityValue(BigDecimal.valueOf(component.getValue()),
-                                 component.getUom());
+        return new QuantityValue(component.getValue(), component.getUom());
     }
 
     @Override
@@ -177,6 +176,16 @@ public class ValueCreatingSweDataComponentVisitor implements
     @Override
     public Value<?> visit(SmlPosition component)
             throws OwsExceptionReport {
+        throw notSupported(component);
+    }
+
+    @Override
+    public Value<?> visit(SmlDataInterface component) throws OwsExceptionReport {
+        throw notSupported(component);
+    }
+
+    @Override
+    public Value<?> visit(SmlFeatureOfInterest component) throws OwsExceptionReport {
         throw notSupported(component);
     }
 

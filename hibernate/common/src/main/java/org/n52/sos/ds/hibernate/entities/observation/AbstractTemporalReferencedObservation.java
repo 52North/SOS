@@ -30,6 +30,11 @@ package org.n52.sos.ds.hibernate.entities.observation;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
+import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.util.GmlHelper;
+
 /**
  * Abstract implementation of {@link TemporalReferencedObservation}.
  *
@@ -104,5 +109,23 @@ public abstract class AbstractTemporalReferencedObservation
         return getValidTimeStart() != null && getValidTimeEnd() != null;
     }
 
+    /**
+     * Create the phenomenon time from {@link AbstractValue}
+     * 
+     * @param abstractValue
+     *            {@link AbstractValue} for get time from
+     * @return phenomenon time
+     */
+    public Time createPhenomenonTime() {
+        // create time element
+        final DateTime phenStartTime = DateTimeHelper.makeDateTime(getPhenomenonTimeStart());
+        DateTime phenEndTime;
+        if (getPhenomenonTimeEnd() != null) {
+            phenEndTime = DateTimeHelper.makeDateTime(getPhenomenonTimeEnd());
+        } else {
+            phenEndTime = phenStartTime;
+        }
+        return GmlHelper.createTime(phenStartTime, phenEndTime);
+    }
 
 }

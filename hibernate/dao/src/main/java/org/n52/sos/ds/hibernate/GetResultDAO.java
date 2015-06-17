@@ -41,9 +41,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.ds.AbstractGetResultDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -78,6 +75,8 @@ import org.n52.sos.response.GetResultResponse;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 

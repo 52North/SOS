@@ -28,6 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
+import org.hibernate.Session;
+import org.n52.sos.aqd.AqdConstants;
+import org.n52.sos.aqd.AqdHelper;
+import org.n52.sos.aqd.ReportObligationType;
+import org.n52.sos.ds.hibernate.dao.ereporting.EReportingQualityDAO;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingQuality;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.EReportingHelper;
@@ -45,7 +51,7 @@ import org.n52.sos.util.StringHelper;
 
 public abstract class AbstractValuedEReportingObservation<T>
         extends AbstractValuedSeriesObservation<T>
-        implements ValuedEReportingObservation<T> {
+        implements ValuedEReportingObservation<T>, EReportingValues {
 
     private static final long serialVersionUID = 996063222630981539L;
 
@@ -239,12 +245,6 @@ public abstract class AbstractValuedEReportingObservation<T>
     }
 
     @Override
-    protected void addValueSpecificDataToObservation(OmObservation observation, String responseFormat)
-            throws OwsExceptionReport {
-        // nothing to do
-    }
-
-    @Override
     public void addValueSpecificDataToObservation(OmObservation observation, Session session, SwesExtensions extensions)
             throws OwsExceptionReport {
         if (AqdHelper.getInstance().hasFlowExtension(extensions)) {
@@ -264,7 +264,7 @@ public abstract class AbstractValuedEReportingObservation<T>
     }
 
     @Override
-    protected void addObservationValueToObservation(OmObservation observation, Value<?> value, String responseFormat)
+    public void addObservationValueToObservation(OmObservation observation, Value<?> value, String responseFormat)
             throws OwsExceptionReport {
         if (checkResponseFormat(responseFormat)) {
             if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observation.getObservationConstellation()

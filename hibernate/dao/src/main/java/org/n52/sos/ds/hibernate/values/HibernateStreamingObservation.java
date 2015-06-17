@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate.values;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
-
 import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.exception.ows.NoApplicableCodeException;

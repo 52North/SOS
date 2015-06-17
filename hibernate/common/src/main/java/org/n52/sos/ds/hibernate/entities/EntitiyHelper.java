@@ -29,17 +29,17 @@
 package org.n52.sos.ds.hibernate.entities;
 
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.ContextualReferencedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 public class EntitiyHelper {

@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasPrimaryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingQualityData;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasPrimaryObservation;
 import org.n52.sos.util.StringHelper;
 
 public class EReportingQuality implements HasPrimaryObservation, EReportingQualityData {

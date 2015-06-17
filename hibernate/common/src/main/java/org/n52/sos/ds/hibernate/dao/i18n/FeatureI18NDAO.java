@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate.dao.i18n;
 
 import org.hibernate.Session;
-
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NFeatureOfInterestMetadata;

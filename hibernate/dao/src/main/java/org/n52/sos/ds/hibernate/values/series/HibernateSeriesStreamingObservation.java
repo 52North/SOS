@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate.values.series;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
-
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;

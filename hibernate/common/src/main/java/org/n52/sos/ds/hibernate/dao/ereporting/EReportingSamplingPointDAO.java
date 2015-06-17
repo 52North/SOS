@@ -31,13 +31,10 @@ package org.n52.sos.ds.hibernate.dao.ereporting;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-
 import org.n52.sos.aqd.AqdSamplingPoint;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
-import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

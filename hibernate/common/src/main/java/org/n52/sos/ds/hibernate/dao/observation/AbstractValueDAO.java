@@ -36,9 +36,9 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-
 import org.n52.sos.ds.hibernate.dao.TimeCreator;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.exception.CodedException;
@@ -167,11 +167,11 @@ public abstract class AbstractValueDAO extends TimeCreator {
     private String getOrderColumn(GetObservationRequest request) {
         if (request.isSetTemporalFilter()) {
             TemporalFilter filter = request.getTemporalFilters().iterator().next();
-            if (filter.getValueReference().contains(AbstractValue.RESULT_TIME)) {
-               return AbstractValue.RESULT_TIME;
+            if (filter.getValueReference().contains(AbstractTemporalReferencedObservation.RESULT_TIME)) {
+               return AbstractTemporalReferencedObservation.RESULT_TIME;
             }
         }
-        return AbstractValue.PHENOMENON_TIME_START;
+        return AbstractTemporalReferencedObservation.PHENOMENON_TIME_START;
     }
 
     protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException;

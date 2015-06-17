@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate.util.observation;
 
 import org.apache.xmlbeans.XmlObject;
-
 import org.n52.oxf.xml.NcNameResolver;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;

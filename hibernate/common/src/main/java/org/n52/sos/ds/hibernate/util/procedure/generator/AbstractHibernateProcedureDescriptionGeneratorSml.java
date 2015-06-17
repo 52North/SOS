@@ -36,17 +36,12 @@ import java.util.TreeSet;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.ds.I18NDAO;
-import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
-<<<<<<< HEAD:hibernate/common/src/main/java/org/n52/sos/ds/hibernate/util/procedure/HibernateProcedureDescriptionGenerator.java
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
@@ -54,22 +49,8 @@ import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
-=======
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.interfaces.BlobObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.BooleanObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.CategoryObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.CountObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
-import org.n52.sos.ds.hibernate.entities.series.Series;
->>>>>>> develop:hibernate/common/src/main/java/org/n52/sos/ds/hibernate/util/procedure/generator/AbstractHibernateProcedureDescriptionGeneratorSml.java
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.om.OmConstants;
@@ -224,20 +205,20 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
                     if (StringHelper.isNotEmpty(unit)) {
                         quantity.setUom(unit);
                     }
-                    return new SmlIo<>(quantity);
+                    return new SmlIo<Double>(quantity);
                 } else if (OmConstants.OBS_TYPE_CATEGORY_OBSERVATION.equals(observationType)) {
                     final SweCategory category = new SweCategory();
                     category.setDefinition(observableProperty);
                     if (StringHelper.isNotEmpty(unit)) {
                         category.setUom(unit);
                     }
-                    return new SmlIo<>(category);
+                    return new SmlIo<String>(category);
                 } else if (OmConstants.OBS_TYPE_COUNT_OBSERVATION.equals(observationType)) {
-                    return new SmlIo<>(new SweCategory().setDefinition(observableProperty));
+                    return new SmlIo<String>(new SweCategory().setDefinition(observableProperty));
                 } else if (OmConstants.OBS_TYPE_TEXT_OBSERVATION.equals(observationType)) {
-                    return new SmlIo<>(new SweText().setDefinition(observableProperty));
+                    return new SmlIo<String>(new SweText().setDefinition(observableProperty));
                 } else if (OmConstants.OBS_TYPE_TRUTH_OBSERVATION.equals(observationType)) {
-                    return new SmlIo<>(new SweBoolean().setDefinition(observableProperty));
+                    return new SmlIo<Boolean>(new SweBoolean().setDefinition(observableProperty));
                 } else if (OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION.equals(observationType)) {
                     // TODO implement GeometryObservation
                     logTypeNotSupported(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION);
@@ -323,7 +304,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
 
     private SmlIo<?> createOutputFromExampleObservation(String procedure, String observableProperty, Session session)
             throws OwsExceptionReport {
-        final Observation<?> exampleObservation = getExampleObservation(procedure, observableProperty, session);
+        final AbstractObservation exampleObservation = getExampleObservation(procedure, observableProperty, session);
         if (exampleObservation == null) {
             return null;
         }
@@ -331,16 +312,16 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
             // TODO implement BlobObservations
             logTypeNotSupported(BlobObservation.class);
         } else if (exampleObservation instanceof BooleanObservation) {
-            return new SmlIo<>(new SweBoolean().setDefinition(observableProperty));
+            return new SmlIo<Boolean>(new SweBoolean().setDefinition(observableProperty));
         } else if (exampleObservation instanceof CategoryObservation) {
             final SweCategory category = new SweCategory();
             category.setDefinition(observableProperty);
             if (exampleObservation.isSetUnit()) {
                 category.setUom(exampleObservation.getUnit().getUnit());
             }
-            return new SmlIo<>(category);
+            return new SmlIo<String>(category);
         } else if (exampleObservation instanceof CountObservation) {
-            return new SmlIo<>(new SweCount().setDefinition(observableProperty));
+            return new SmlIo<Integer>(new SweCount().setDefinition(observableProperty));
         } else if (exampleObservation instanceof GeometryObservation) {
             // TODO implement GeometryObservations
             logTypeNotSupported(GeometryObservation.class);
@@ -350,9 +331,9 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
             if (exampleObservation.isSetUnit()) {
                 quantity.setUom(exampleObservation.getUnit().getUnit());
             }
-            return new SmlIo<>(quantity);
+            return new SmlIo<Double>(quantity);
         } else if (exampleObservation instanceof TextObservation) {
-            return new SmlIo<>(new SweText().setDefinition(observableProperty));
+            return new SmlIo<String>(new SweText().setDefinition(observableProperty));
         }
         return null;
     }
@@ -407,10 +388,9 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
         SweQuantity xq = createSweQuantity(longitude, SweConstants.X_AXIS, procedureSettings().getLatLongUom());
         SweQuantity zq = createSweQuantity(altitude, SweConstants.Z_AXIS, procedureSettings().getAltitudeUom());
         // TODO add Integer: Which SweSimpleType to use?
-        return Lists.<SweCoordinate<?>> newArrayList(
-                new SweCoordinate<>(SweCoordinateName.northing.name(), yq),
-                new SweCoordinate<>(SweCoordinateName.easting.name(), xq),
-                new SweCoordinate<>(SweCoordinateName.altitude.name(), zq));
+        return Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(SweCoordinateName.northing.name(), yq),
+                new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq), new SweCoordinate<Double>(
+                        SweCoordinateName.altitude.name(), zq));
     }
 
     /**
@@ -438,69 +418,4 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
                 identifier);
     }
 
-<<<<<<< HEAD:hibernate/common/src/main/java/org/n52/sos/ds/hibernate/util/procedure/HibernateProcedureDescriptionGenerator.java
-
-    private Locale getLocale() {
-        return locale;
-    }
-
-    private boolean isSetLocale() {
-        return locale != null;
-    }
-
-    /**
-     * Get example observation for output list creation
-     *
-     * @param identifier
-     *            Procedure identifier
-     * @param observableProperty
-     *            ObservableProperty identifier
-     * @param session
-     *            the session
-     *
-     * @return Example observation
-     *
-     * @throws OwsExceptionReport
-     *             If an error occurs.
-     */
-    @VisibleForTesting
-    Observation<?> getExampleObservation(String identifier, String observableProperty, Session session)
-            throws OwsExceptionReport {
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-        final Criteria c = observationDAO.getObservationCriteriaFor(identifier, observableProperty, session);
-        c.setMaxResults(1);
-        LOGGER.debug("QUERY getExampleObservation(identifier, observableProperty): {}",
-                HibernateHelper.getSqlString(c));
-        final Observation<?> example = (Observation<?>) c.uniqueResult();
-        if (example == null) {
-            LOGGER.debug(
-                    "Could not receive example observation from database for procedure '{}' observing property '{}'.",
-                    identifier, observableProperty);
-        }
-        return example;
-    }
-
-    @VisibleForTesting
-    ServiceConfiguration getServiceConfig() {
-        return ServiceConfiguration.getInstance();
-    }
-
-    @VisibleForTesting
-    String[] getObservablePropertiesForProcedure(String identifier) {
-        Set<String> props = getCache().getObservablePropertiesForProcedure(identifier);
-        return props.toArray(new String[props.size()]);
-    }
-
-    @VisibleForTesting
-    ProcedureDescriptionSettings procedureSettings() {
-        return ProcedureDescriptionSettings.getInstance();
-    }
-
-    @VisibleForTesting
-    ContentCache getCache() {
-        return Configurator.getInstance().getCache();
-    }
-
-=======
->>>>>>> develop:hibernate/common/src/main/java/org/n52/sos/ds/hibernate/util/procedure/generator/AbstractHibernateProcedureDescriptionGeneratorSml.java
 }

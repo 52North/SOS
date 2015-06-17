@@ -34,9 +34,6 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.AbstractGetObservationByIdDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
@@ -52,6 +49,8 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.response.GetObservationByIdResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**

@@ -88,4 +88,5 @@ public class LegacyBlobObservation
             throws OwsExceptionReport {
         return visitor.visit(this);
     }
+
 }

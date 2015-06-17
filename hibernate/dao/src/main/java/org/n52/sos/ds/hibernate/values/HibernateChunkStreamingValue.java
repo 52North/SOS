@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
-
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -102,8 +101,8 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     }
 
     @Override
-    public ValuedObservation<?> nextEntity() throws OwsExceptionReport {
-        return (ValuedObservation<?>) valuesResult.next();
+    public AbstractValuedLegacyObservation<?> nextEntity() throws OwsExceptionReport {
+        return (AbstractValuedLegacyObservation<?>) valuesResult.next();
     }
 
     @Override

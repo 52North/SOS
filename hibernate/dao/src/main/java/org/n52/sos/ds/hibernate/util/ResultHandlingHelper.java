@@ -38,14 +38,13 @@ import java.util.TreeMap;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;

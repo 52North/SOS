@@ -43,9 +43,6 @@ import org.hibernate.criterion.HibernateCriterionHelper;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
@@ -76,6 +73,8 @@ import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;

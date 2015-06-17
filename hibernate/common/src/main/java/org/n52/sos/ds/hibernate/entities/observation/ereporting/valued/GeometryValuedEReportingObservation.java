@@ -30,12 +30,11 @@ package org.n52.sos.ds.hibernate.entities.observation.ereporting.valued;
 
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.vividsolutions.jts.geom.Geometry;
-
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class GeometryValuedEReportingObservation
         extends AbstractValuedEReportingObservation<Geometry>

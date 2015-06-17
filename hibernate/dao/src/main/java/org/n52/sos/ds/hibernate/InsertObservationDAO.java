@@ -40,7 +40,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.common.util.StringHelper;
 import org.hibernate.exception.ConstraintViolationException;
-
 import org.n52.sos.ds.AbstractInsertObservationDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;

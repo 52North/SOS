@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.dao.series;
+package org.n52.sos.ds.hibernate.entities.observation.series;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
@@ -123,13 +123,13 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      *             If an error occurs when querying the {@link AbstractValue}s
      */
     @SuppressWarnings("unchecked")
-    public List<AbstractValue> getStreamingSeriesValuesFor(GetObservationRequest request, long series,
+    public List<AbstractValuedLegacyObservation<?>> getStreamingSeriesValuesFor(GetObservationRequest request, long series,
             Criterion temporalFilterCriterion, int chunkSize, int currentRow, Session session)
             throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session);
         addChunkValuesToCriteria(c, chunkSize, currentRow, request);
         LOGGER.debug("QUERY getStreamingSeriesValuesFor(): {}", HibernateHelper.getSqlString(c));
-        return (List<AbstractValue>) c.list();
+        return (List<AbstractValuedLegacyObservation<?>>) c.list();
     }
 
     /**
@@ -150,12 +150,12 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      *             If an error occurs when querying the {@link AbstractValue}s
      */
     @SuppressWarnings("unchecked")
-    public List<AbstractValue> getStreamingSeriesValuesFor(GetObservationRequest request, long series, int chunkSize,
+    public List<AbstractValuedLegacyObservation<?>> getStreamingSeriesValuesFor(GetObservationRequest request, long series, int chunkSize,
             int currentRow, Session session) throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(request, series, null, session);
         addChunkValuesToCriteria(c, chunkSize, currentRow, request);
         LOGGER.debug("QUERY getStreamingSeriesValuesFor(): {}", HibernateHelper.getSqlString(c));
-        return (List<AbstractValue>) c.list();
+        return (List<AbstractValuedLegacyObservation<?>>) c.list();
     }
 
     /**
@@ -176,14 +176,14 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      */
     private Criteria getSeriesValueCriteriaFor(GetObservationRequest request, long series,
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
-        final Criteria c = getDefaultObservationCriteria(session).createAlias(SeriesValue.SERIES, "s");
+        final Criteria c = getDefaultObservationCriteria(session).createAlias(AbstractValuedSeriesObservation.SERIES, "s");
 
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
 
         c.add(Restrictions.eq("s." + Series.ID, series));
 
         if (CollectionHelper.isNotEmpty(request.getOfferings())) {
-            c.createCriteria(SeriesValue.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
+            c.createCriteria(AbstractValuedSeriesObservation.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
         }
 
         String logArgs = "request, series, offerings";
@@ -206,7 +206,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      * @return Default {@link Criteria}
      */
     protected Criteria getDefaultObservationCriteria(Session session) {
-        return session.createCriteria(getSeriesValueClass()).add(Restrictions.eq(SeriesValue.DELETED, false))
+        return session.createCriteria(getSeriesValueClass()).add(Restrictions.eq(AbstractValuedSeriesObservation.DELETED, false))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
@@ -225,7 +225,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      */
     public String getUnit(GetObservationRequest request, long series, Session session) throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(request, series, null, session);
-        Unit unit = (Unit) c.setMaxResults(1).setProjection(Projections.property(SeriesValue.UNIT)).uniqueResult();
+        Unit unit = (Unit) c.setMaxResults(1).setProjection(Projections.property(AbstractValuedSeriesObservation.UNIT)).uniqueResult();
         if (unit != null && unit.isSetUnit()) {
             return unit.getUnit();
         }

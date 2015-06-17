@@ -28,17 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.legacy;
 
-import org.hibernate.Session;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swes.SwesExtensions;
 
 /**
  * Abstract implementation of {@link LegacyObservation}.

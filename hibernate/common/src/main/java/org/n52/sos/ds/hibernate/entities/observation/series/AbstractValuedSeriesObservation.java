@@ -29,12 +29,6 @@
 package org.n52.sos.ds.hibernate.entities.observation.series;
 
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swes.SwesExtensions;
 
 /**
  * Abstract implementation of {@link ValuedSeriesObservation}.
@@ -64,47 +58,4 @@ public abstract class AbstractValuedSeriesObservation<T>
         return getSeries() != null;
     }
 
-    @Override
-    public OmObservation mergeValueToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport {
-        if (!observation.isSetValue()) {
-            addValuesToObservation(observation, responseFormat);
-        } else {
-            // TODO
-            if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observation.getObservationConstellation()
-                    .getObservationType())) {
-                observation.getObservationConstellation().setObservationType(
-                        OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
-            }
-            observation.mergeWithObservation(getSingleObservationValue(getValueFrom(this)));
-        }
-        return observation;
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private SingleObservationValue getSingleObservationValue(Value<?> value) throws OwsExceptionReport {
-        return new SingleObservationValue(createPhenomenonTime(), value);
-    }
-
-    @Override
-    protected void addValueSpecificDataToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport {
-        // nothing to do
-    }
-
-    @Override
-    public void addValueSpecificDataToObservation(OmObservation observation, Session session, SwesExtensions swesExtensions)
-            throws OwsExceptionReport {
-        // nothing to do
-        
-    }
-
-    @Override
-    protected void addObservationValueToObservation(OmObservation observation, Value<?> value, String responseFormat)
-            throws OwsExceptionReport {
-        observation.setValue(getSingleObservationValue(value));
-    }
-
-    @Override
-    public String getDiscriminator() {
-        return null;
-    }
 }

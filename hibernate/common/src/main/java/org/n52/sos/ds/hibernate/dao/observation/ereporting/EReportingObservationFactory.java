@@ -29,8 +29,6 @@
 package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationFactory;
-import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.ContextualReferencedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingObservation;

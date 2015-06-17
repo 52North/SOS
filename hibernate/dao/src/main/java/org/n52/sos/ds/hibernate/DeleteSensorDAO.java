@@ -33,15 +33,14 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-
 import org.n52.sos.ds.AbstractDeleteSensorDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
-import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;

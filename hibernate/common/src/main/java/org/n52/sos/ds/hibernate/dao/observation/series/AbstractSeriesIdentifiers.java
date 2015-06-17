@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
 import org.hibernate.Criteria;
-
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
 
 public interface AbstractSeriesIdentifiers {

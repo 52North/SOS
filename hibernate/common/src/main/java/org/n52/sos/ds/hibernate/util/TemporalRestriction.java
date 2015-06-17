@@ -34,7 +34,6 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.PropertyExpression;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
-
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;

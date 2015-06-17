@@ -36,5 +36,7 @@ package org.n52.sos.ds.hibernate.dao.observation;
  *
  */
 public abstract class AbstractValueTimeDAO extends AbstractValueDAO {
+    
+    
 
 }

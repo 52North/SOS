@@ -33,7 +33,6 @@ import java.util.Locale;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -47,7 +46,6 @@ import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.AbstractObservationRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

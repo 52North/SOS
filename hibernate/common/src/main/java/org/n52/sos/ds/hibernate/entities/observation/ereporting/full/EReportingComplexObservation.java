@@ -30,13 +30,13 @@ package org.n52.sos.ds.hibernate.entities.observation.ereporting.full;
 
 import java.util.Set;
 
-import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class EReportingComplexObservation

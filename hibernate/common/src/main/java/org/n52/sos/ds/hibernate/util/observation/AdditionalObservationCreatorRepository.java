@@ -33,11 +33,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.util.AbstractConfiguringServiceLoaderRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AdditionalObservationCreatorRepository extends AbstractConfiguringServiceLoaderRepository<AdditionalObservationCreator> {
 

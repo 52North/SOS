@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import org.n52.sos.aqd.AqdConstants;
@@ -48,7 +47,6 @@ import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingT
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.util.CollectionHelper;
 
 public class EReportingObservationCreator implements AdditionalObservationCreator<EReportingSeries> {
 

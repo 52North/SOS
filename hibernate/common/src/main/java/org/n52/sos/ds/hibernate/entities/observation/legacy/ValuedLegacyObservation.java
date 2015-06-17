@@ -28,8 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.legacy;
 
+import org.hibernate.Session;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.swes.SwesExtensions;
 
 /**
  * Extension of {@link ValuedObservation} for the legacy observation concept,
@@ -43,5 +48,14 @@ import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 public interface ValuedLegacyObservation<T>
         extends ValuedObservation<T>,
                 HasWriteableObservationContext {
-
+    
+    abstract OmObservation mergeValueToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport;
+    
+    abstract void addValueSpecificDataToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport;
+    
+    abstract void addValueSpecificDataToObservation(OmObservation observation, Session session, SwesExtensions swesExtensions) throws OwsExceptionReport;
+    
+    abstract void addObservationValueToObservation(OmObservation observation, Value<?> value, String responseFormat) throws OwsExceptionReport;
+    
+    abstract String getDiscriminator();
 }

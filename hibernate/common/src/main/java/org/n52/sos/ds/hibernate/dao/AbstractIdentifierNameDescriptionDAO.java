@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate.dao;
 import java.util.List;
 
 import org.hibernate.Session;
-
 import org.n52.sos.ds.I18NDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;

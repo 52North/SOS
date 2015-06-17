@@ -34,7 +34,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
-
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;

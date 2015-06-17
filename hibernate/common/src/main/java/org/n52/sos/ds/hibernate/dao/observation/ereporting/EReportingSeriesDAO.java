@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.dao.ereporting;
+package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
 import java.util.Collection;
 import java.util.List;
@@ -34,12 +34,11 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-
-import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
-import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
+import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;

@@ -34,7 +34,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation;

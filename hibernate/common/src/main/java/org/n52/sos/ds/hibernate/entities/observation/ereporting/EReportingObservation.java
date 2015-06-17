@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasDataCapture;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasDataCaptureFlag;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
@@ -51,5 +52,6 @@ public interface EReportingObservation<T>
                 HasDataCaptureFlag,
                 HasDataCapture,
                 HasTimeCoverageFlag,
-                HasUncertaintyEstimation {
+                HasUncertaintyEstimation,
+                EReportingValues {
 }

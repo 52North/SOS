@@ -30,9 +30,8 @@ package org.n52.sos.ds.hibernate.values;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
-
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -87,8 +86,8 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     }
 
     @Override
-    public ValuedObservation<?> nextEntity() throws OwsExceptionReport {
-        return (ValuedObservation<?>) scrollableResult.get()[0];
+    public AbstractValuedLegacyObservation<?> nextEntity() throws OwsExceptionReport {
+        return (AbstractValuedLegacyObservation<?>) scrollableResult.get()[0];
     }
 
     @Override

@@ -39,17 +39,16 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
-
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.ds.AbstractInsertResultDAO;
 import org.n52.sos.ds.FeatureQueryHandler;
-import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
+import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -99,7 +98,6 @@ import org.n52.sos.request.InsertResultRequest;
 import org.n52.sos.response.InsertResultResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.DateTimeHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

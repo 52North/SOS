@@ -26,21 +26,22 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.dao.ereporting;
+package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
 import org.hibernate.Criteria;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesValueTimeDAO;
-import org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValueTime;
+import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.request.GetObservationRequest;
 
-public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO {
+public class EReportingValueDAO extends AbstractSeriesValueDAO {
 
-        @Override
-        protected Class<?> getSeriesValueTimeClass() {
-            return EReportingValueTime.class;
-        }
-    
+	@Override
+	protected Class<?> getSeriesValueClass() {
+		return AbstractValuedEReportingObservation.class;
+	}
+	
         @Override
         protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
             // add quality restrictions

@@ -29,16 +29,14 @@
 package org.n52.sos.ds.hibernate.util;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
-
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.AfterRestriction;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.BeforeRestriction;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.BeginsRestriction;

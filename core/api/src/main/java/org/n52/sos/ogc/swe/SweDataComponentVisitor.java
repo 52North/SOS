@@ -30,6 +30,8 @@ package org.n52.sos.ogc.swe;
 
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
+import org.n52.sos.ogc.sensorML.v20.SmlDataInterface;
+import org.n52.sos.ogc.sensorML.v20.SmlFeatureOfInterest;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
@@ -100,6 +102,12 @@ public interface SweDataComponentVisitor<T> {
             throws OwsExceptionReport;
 
     T visit(SmlPosition component)
+            throws OwsExceptionReport;
+    
+    T visit(SmlDataInterface component)
+            throws OwsExceptionReport;
+
+    T visit(SmlFeatureOfInterest component)
             throws OwsExceptionReport;
 
 }

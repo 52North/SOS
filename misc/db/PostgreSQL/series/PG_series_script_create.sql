@@ -83,7 +83,7 @@ create index obsSeriesIdx on public.observation (seriesId);
 create index obsPhenTimeStartIdx on public.observation (phenomenonTimeStart);
 create index obsPhenTimeEndIdx on public.observation (phenomenonTimeEnd);
 create index obsResultTimeIdx on public.observation (resultTime);
-create index obsCodespaceIdx on public.codespace (codespaceId);
+create index obsCodespaceIdx on public.observation (codespace);
 alter table public.observationConstellation add constraint obsnConstellationIdentity unique (observablePropertyId, procedureId, offeringId);
 create index obsConstObsPropIdx on public.observationConstellation (observablePropertyId);
 create index obsConstProcedureIdx on public.observationConstellation (procedureId);

@@ -28,17 +28,16 @@
  */
 package org.n52.sos.coding.encode;
 
-import org.n52.iceland.coding.encode.OperationEncoderKey;
-import org.n52.iceland.coding.encode.AbstractResponseWriter;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.inject.Inject;
-
+import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.coding.encode.EncoderRepository;
+import org.n52.iceland.coding.encode.OperationEncoderKey;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
@@ -47,7 +46,6 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.request.ResponseFormat;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.StreamingEncoder;
@@ -64,23 +62,21 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
     private static final ResponseWriterKey KEY
             = new ResponseWriterKey(AbstractServiceResponse.class);
 
-    private ResponseWriterRepository responseWriterRepository;
+    private final ResponseWriterRepository responseWriterRepository;
+    private final EncoderRepository encoderRepository;
+    private final boolean forceStreamingEncoding;
 
-    @Inject
-    public void setResponseWriterRepository(ResponseWriterRepository repo) {
-        this.responseWriterRepository = repo;
+    public AbstractServiceResponseWriter(ResponseWriterRepository responseWriterRepository,
+                                         EncoderRepository encoderRepository,
+                                         boolean forceStreamingEncoding) {
+        this.responseWriterRepository = responseWriterRepository;
+        this.encoderRepository = encoderRepository;
+        this.forceStreamingEncoding = forceStreamingEncoding;
     }
 
     public ResponseWriterRepository getResponseWriterRepository() {
         return responseWriterRepository;
     }
-
-
-
-    // @Override
-    // public Class<AbstractServiceResponse> getType() {
-    // return AbstractServiceResponse.class;
-    // }
 
     @Override
     public void write(AbstractServiceResponse asr, OutputStream out, ResponseProxy responseProxy) throws IOException {
@@ -132,6 +128,17 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
         return encoder;
     }
 
+     /**
+     * Getter for encoder, encapsulates the instance call
+     *
+     * @param key
+     *            Encoder key
+     * @return Matching encoder
+     */
+    protected <D, S> Encoder<D, S> getEncoder(EncoderKey key) {
+        return this.encoderRepository.getEncoder(key);
+    }
+
     private MediaType getEncodedContentType(AbstractServiceResponse asr) {
         if (asr instanceof ResponseFormat) {
             return getEncodedContentType((ResponseFormat) asr);
@@ -151,9 +158,10 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
      *         {@link StreamingEncoder}
      */
     private boolean isStreaming(AbstractServiceResponse asr) {
-        if (getEncoder(asr) instanceof StreamingEncoder) {
-            return ServiceConfiguration.getInstance().isForceStreamingEncoding()
-                    || ((StreamingEncoder<?, ?>) getEncoder(asr)).forceStreaming();
+        Encoder<Object, AbstractServiceResponse> encoder = getEncoder(asr);
+        if (encoder instanceof StreamingEncoder) {
+            StreamingEncoder<?, ?> sencoder = (StreamingEncoder<?, ?>) getEncoder(asr);
+            return this.forceStreamingEncoding || sencoder.forceStreaming();
         }
         return false;
     }

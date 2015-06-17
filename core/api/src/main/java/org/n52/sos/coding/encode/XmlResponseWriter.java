@@ -36,9 +36,11 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
+import org.n52.iceland.util.Producer;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.sos.util.XmlOptionsHelper;
 
@@ -53,6 +55,11 @@ public class XmlResponseWriter extends AbstractResponseWriter<XmlObject> {
     public static final ResponseWriterKey KEY = new ResponseWriterKey(XmlObject.class);
 
     private MediaType contentType;
+    private final Producer<XmlOptions> xmlOptions;
+
+    public XmlResponseWriter(Producer<XmlOptions> xmlOptions) {
+        this.xmlOptions = xmlOptions;
+    }
 
     @Override
     public Set<ResponseWriterKey> getKeys() {
@@ -61,7 +68,7 @@ public class XmlResponseWriter extends AbstractResponseWriter<XmlObject> {
 
     @Override
     public void write(XmlObject xml, OutputStream out, ResponseProxy responseProxy) throws IOException {
-        xml.save(out, XmlOptionsHelper.getInstance().getXmlOptions());
+        xml.save(out, this.xmlOptions.get());
     }
 
     @Override

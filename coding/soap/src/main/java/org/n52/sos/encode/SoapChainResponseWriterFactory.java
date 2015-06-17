@@ -28,15 +28,24 @@
  */
 package org.n52.sos.encode;
 
+import javax.inject.Inject;
+
+import org.apache.xmlbeans.XmlOptions;
+
+import org.n52.iceland.coding.encode.EncoderRepository;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.component.SingleTypeComponentFactory;
+import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.service.StreamingSettings;
+import org.n52.iceland.util.Producer;
 import org.n52.iceland.w3c.soap.SoapChain;
 
 /**
  * {@link ResponseWriterFactory} implementation for {@link SoapChain} and
  * {@link SoapChainResponseWriter}
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
@@ -45,17 +54,35 @@ public class SoapChainResponseWriterFactory
         implements ResponseWriterFactory,
                    SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>> {
 
-    private static final ResponseWriterKey RESPONSE_WRITER_KEY
-            = new ResponseWriterKey(SoapChain.class);
+    private EncoderRepository encoderRepository;
+    private Producer<XmlOptions> xmlOptions;
+    private boolean forceStreamingEncoding;
+    
+    @Inject
+    public void setXmlOptions(Producer<XmlOptions> xmlOptions) {
+        this.xmlOptions = xmlOptions;
+    }
+
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
+
+    @Setting(StreamingSettings.FORCE_STREAMING_ENCODING)
+    public void setForceStreamingEncoding(boolean forceStreamingEncoding) {
+        this.forceStreamingEncoding = forceStreamingEncoding;
+    }
 
     @Override
     public ResponseWriterKey getKey() {
-        return RESPONSE_WRITER_KEY;
+        return SoapChainResponseWriter.KEY;
     }
 
     @Override
     public SoapChainResponseWriter create() {
-        return new SoapChainResponseWriter();
+        return new SoapChainResponseWriter(this.encoderRepository,
+                                           this.xmlOptions,
+                                           this.forceStreamingEncoding);
     }
 
 }

@@ -28,12 +28,16 @@
  */
 package org.n52.sos.coding.encode;
 
+import javax.inject.Inject;
+
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.component.SingleTypeComponentFactory;
+import org.n52.iceland.util.Producer;
 
 /**
  * {@link ResponseWriterFactory} implementation for {@link XmlObject} and
@@ -47,6 +51,13 @@ public class XmlResponseWriterFactory
         implements ResponseWriterFactory,
                    SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>> {
 
+    private Producer<XmlOptions> xmlOptions;
+
+    @Inject
+    public void setXmlOptions(Producer<XmlOptions> xmlOptions) {
+        this.xmlOptions = xmlOptions;
+    }
+
     @Override
     public ResponseWriterKey getKey() {
         return XmlResponseWriter.KEY;
@@ -54,7 +65,7 @@ public class XmlResponseWriterFactory
 
     @Override
     public XmlResponseWriter create() {
-        return new XmlResponseWriter();
+        return new XmlResponseWriter(this.xmlOptions);
     }
 
 }

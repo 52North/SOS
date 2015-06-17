@@ -28,14 +28,13 @@
  */
 package org.n52.sos.coding.encode;
 
-import org.n52.iceland.coding.encode.AbstractResponseWriter;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
+import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.sos.response.BinaryAttachmentResponse;
@@ -92,10 +91,10 @@ public class BinaryAttachmentResponseWriter extends AbstractResponseWriter<Binar
         return false;
     }
 
-    public static class HeaderCode {
-        public static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
-        public static final String CONTENT_TRANSFER_ENCODING_BINARY = "binary";
-        public static final String CONTENT_DISPOSITION = "Content-Disposition";
-        public static final String CONTENT_ATTACHMENT_FILENAME_FORMAT = "attachment; filename=\"%s\"";
+    public interface HeaderCode {
+        String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
+        String CONTENT_TRANSFER_ENCODING_BINARY = "binary";
+        String CONTENT_DISPOSITION = "Content-Disposition";
+        String CONTENT_ATTACHMENT_FILENAME_FORMAT = "attachment; filename=\"%s\"";
     }
 }

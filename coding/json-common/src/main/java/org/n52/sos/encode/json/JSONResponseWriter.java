@@ -33,12 +33,12 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Set;
 
+import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
-import org.n52.iceland.coding.encode.AbstractResponseWriter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

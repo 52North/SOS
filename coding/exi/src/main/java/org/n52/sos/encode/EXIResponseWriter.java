@@ -42,12 +42,12 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.util.Producer;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
-import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.sos.exi.EXIObject;
 import org.n52.sos.exi.EXISettings;
 
@@ -72,7 +72,8 @@ public class EXIResponseWriter extends AbstractResponseWriter<EXIObject> {
     private final Producer<XmlOptions> xmlOptions;
 
     // we can not use injection in this class as it is manually created by a factory
-    public EXIResponseWriter(Producer<EXIFactory> exiUtils, Producer<XmlOptions> xmlOptions) {
+    public EXIResponseWriter(Producer<EXIFactory> exiUtils,
+                             Producer<XmlOptions> xmlOptions) {
         this.exiFactory = exiUtils;
         this.xmlOptions = xmlOptions;
     }

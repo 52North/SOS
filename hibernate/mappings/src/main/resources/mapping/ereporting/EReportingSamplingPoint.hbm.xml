@@ -18,7 +18,7 @@
                  type="string">
             <column name="identifier"
                     not-null="true"
-                    unique-key="sampFeatIdentifierUK"/>
+                    unique-key="sampFeatIdentifierUK">
             	<comment>The identifier of the samplingPoint, gml:identifier. Used as parameter for queries. Optional but unique</comment>
             </column>
         </property>

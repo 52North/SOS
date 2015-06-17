@@ -98,12 +98,16 @@
         <property name="validTimeStart"
                   type="timestamp">
             <column name="validTimeStart"
-                    length="29" />
+                    length="29"
+                    not-null="false"
+                    default="NULL" />
         </property>
         <property name="validTimeEnd"
                   type="timestamp">
             <column name="validTimeEnd"
-                    length="29" />
+                    length="29"
+                    not-null="false"
+                    default="NULL" />
         </property>
         <many-to-one name="unit"
                      class="org.n52.sos.ds.hibernate.entities.Unit"
@@ -132,20 +136,42 @@
         </set>
         <property name="samplingGeometry"
                   type="org.hibernate.spatial.GeometryType">
-            <column name="samplingGeometry"
-                    index="samplingGeomidx" />
+            <column name="samplingGeometry" />
         </property>
-        <property name="validation"
-                  type="int">
-            <column name="validation"
-                    not-null="true"
-                    default="-1"/>
+		<property name="validation" type="int">
+            <column name="validation" not-null="true" default="-1">
+            	<comment>AQD e-Reporting validation flag, see http://dd.eionet.europa.eu/vocabulary/aq/observationvalidity/view</comment>
+            </column>
         </property>
-        <property name="verification"
-                  type="int">
-            <column name="verification"
-                    not-null="true"
-                    default="3"/>
+        <property name="verification" type="int">
+            <column name="verification" not-null="true" default="3">
+            	<comment>AQD e-Reporting verification flag, see http://dd.eionet.europa.eu/vocabulary/aq/observationverification/view</comment>
+            </column>
+        </property>
+        <property name="primaryObservation" type="string">
+            <column name="primaryObservation" not-null="true" default="'var'">
+            	<comment>AQD e-Reporting primaryObservation type, see http://dd.eionet.europa.eu/vocabulary/aq/primaryObservation/view</comment>
+            </column>
+        </property>
+        <property name="timeCoverageFlag" type="org.hibernate.type.TrueFalseType">
+            <column name="timeCoverageFlag" check="timeCoverageFlag in ('T','F')" length="1">
+            	<comment>AQD e-Reporting time coverage quality flag</comment>
+            </column>
+        </property>
+        <property name="dataCaptureFlag" type="org.hibernate.type.TrueFalseType">
+            <column name="dataCaptureFlag" check="dataCaptureFlag in ('T','F')" length="1">
+            	<comment>AQD e-Reporting data capture quality flag</comment>
+            </column>
+        </property>
+        <property name="dataCapture" type="double">
+            <column name="dataCapture" not-null="false">
+            	<comment>AQD e-Reporting data capture value, required for multiday observations</comment>
+            </column>
+        </property>
+        <property name="uncertaintyEstimation" type="double">
+            <column name="uncertaintyEstimation" not-null="false">
+            	<comment>AQD e-Reporting uncertainty estimation quality value</comment>
+            </column>
         </property>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingBlobObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation"
@@ -194,7 +220,7 @@
             <key column="observationId"
                  foreign-key="observationNumericValueFk" />
             <property name="value"
-                      type="big_decimal" />
+                      type="double" />
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingTextObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation"

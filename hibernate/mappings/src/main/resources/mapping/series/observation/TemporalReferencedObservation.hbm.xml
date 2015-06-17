@@ -52,12 +52,16 @@
         <property name="validTimeStart"
                   type="timestamp">
             <column name="validTimeStart"
-                    length="29" />
+                    length="29"
+                    not-null="false"
+                    default="NULL" />
         </property>
         <property name="validTimeEnd"
                   type="timestamp">
             <column name="validTimeEnd"
-                    length="29" />
+                    length="29"
+                    not-null="false"
+                    default="NULL" />
         </property>
         <set name="offerings"
              table="observationHasOffering"
@@ -101,8 +105,7 @@
         </property>
         <property name="samplingGeometry"
                   type="org.hibernate.spatial.GeometryType">
-            <column name="samplingGeometry"
-                    index="samplingGeomidx"/>
+            <column name="samplingGeometry" />
         </property>
     </class>
 </hibernate-mapping>

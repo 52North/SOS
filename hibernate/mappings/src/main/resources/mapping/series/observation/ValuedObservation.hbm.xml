@@ -209,6 +209,25 @@
                          table="complexValue">
             <key column="observationId"
                  foreign-key="observationComplexValueFk" />
+            <set name="value"
+                 table="compositeObservation"
+                 inverse="false"
+                 fetch="join">
+                <key column="parentObservationId"
+                     not-null="true"
+                     foreign-key="observationParentFK" />
+                <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
+                              foreign-key="observationChildFk">
+                    <column name="childObservationId" not-null="true" />
+                </many-to-many>
+            </set>
+        </joined-subclass>
+        <!-- old definition
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.ComplexValuedSeriesObservation"
+                         extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
+                         table="complexValue">
+            <key column="observationId"
+                 foreign-key="observationComplexValueFk" />
             <many-to-one name="value"
                          class="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
                          fetch="select"
@@ -216,6 +235,6 @@
                          foreign-key="complexValueObsIdentifierFk">
                 <column name="value" />
             </many-to-one>
-        </joined-subclass>
+        </joined-subclass> -->
     </class>
 </hibernate-mapping>

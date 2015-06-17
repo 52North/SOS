@@ -1,4 +1,3 @@
---
 -- Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
@@ -84,7 +83,7 @@ create index obsSeriesIdx on public.observation (seriesId);
 create index obsPhenTimeStartIdx on public.observation (phenomenonTimeStart);
 create index obsPhenTimeEndIdx on public.observation (phenomenonTimeEnd);
 create index obsResultTimeIdx on public.observation (resultTime);
-create index obsCodespaceIdx on public.observation (codespaceId);
+create index obsCodespaceIdx on public.codespace (codespaceId);
 alter table public.observationConstellation add constraint obsnConstellationIdentity unique (observablePropertyId, procedureId, offeringId);
 create index obsConstObsPropIdx on public.observationConstellation (observablePropertyId);
 create index obsConstProcedureIdx on public.observationConstellation (procedureId);
@@ -117,7 +116,7 @@ alter table public.compositePhenomenon add constraint observablePropertyParentFk
 alter table public.countValue add constraint observationCountValueFk foreign key (observationId) references public.observation;
 alter table public.featureOfInterest add constraint featureFeatureTypeFk foreign key (featureOfInterestTypeId) references public.featureOfInterestType;
 alter table public.featureOfInterest add constraint featureCodespaceIdentifierFk foreign key (codespace) references public.codespace;
-ALTER TABLE public.featureofinterest add constraint featureCodespaceNameFk foreign key (codespacename) references public.codespace
+ALTER TABLE public.featureofinterest add constraint featureCodespaceNameFk foreign key (codespacename) references public.codespace;
 alter table public.featureRelation add constraint featureOfInterestChildFk foreign key (childFeatureId) references public.featureOfInterest;
 alter table public.featureRelation add constraint featureOfInterestParentFk foreign key (parentFeatureId) references public.featureOfInterest;
 alter table public.geometryValue add constraint observationGeometryValueFk foreign key (observationId) references public.observation;

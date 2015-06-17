@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.convert.ConverterKeyType;
+import org.n52.iceland.convert.ConverterKey;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.values.TextValue;
@@ -79,11 +79,11 @@ public class WaterMLv20SensorMLv101Converter implements Converter<SosProcedureDe
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WaterMLv20SensorMLv101Converter.class);
 
-    private static final Set<ConverterKeyType> CONVERTER_KEY_TYPES = ImmutableSet.<ConverterKeyType>builder()
-            .add(new ConverterKeyType(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
-            .add(new ConverterKeyType(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
-            .add(new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
-            .add(new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
+    private static final Set<ConverterKey> CONVERTER_KEY_TYPES = ImmutableSet.<ConverterKey>builder()
+            .add(new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
+            .add(new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
+            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
+            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
             .build();
 
     public WaterMLv20SensorMLv101Converter() {
@@ -92,7 +92,7 @@ public class WaterMLv20SensorMLv101Converter implements Converter<SosProcedureDe
     }
 
     @Override
-    public Set<ConverterKeyType> getKeys() {
+    public Set<ConverterKey> getKeys() {
         return Collections.unmodifiableSet(CONVERTER_KEY_TYPES);
     }
 

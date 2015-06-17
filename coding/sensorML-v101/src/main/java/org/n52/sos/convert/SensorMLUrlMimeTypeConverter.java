@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.convert.ConverterKeyType;
+import org.n52.iceland.convert.ConverterKey;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 
@@ -54,11 +54,11 @@ public class SensorMLUrlMimeTypeConverter implements Converter<SosProcedureDescr
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorMLUrlMimeTypeConverter.class);
 
-    private static final Set<ConverterKeyType> CONVERTER_KEY_TYPES
-            = ImmutableSet.<ConverterKeyType>builder()
-            .add(new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
+    private static final Set<ConverterKey> CONVERTER_KEY_TYPES
+            = ImmutableSet.<ConverterKey>builder()
+            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
                                       SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
-            .add(new ConverterKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,
+            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,
                                       SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
             .build();
 
@@ -68,7 +68,7 @@ public class SensorMLUrlMimeTypeConverter implements Converter<SosProcedureDescr
     }
 
     @Override
-    public Set<ConverterKeyType> getKeys() {
+    public Set<ConverterKey> getKeys() {
         return Collections.unmodifiableSet(CONVERTER_KEY_TYPES);
     }
 

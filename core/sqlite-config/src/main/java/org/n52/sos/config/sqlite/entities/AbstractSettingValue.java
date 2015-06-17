@@ -29,6 +29,7 @@
 package org.n52.sos.config.sqlite.entities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -36,6 +37,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
 import org.n52.iceland.config.SettingValue;
+
+import com.google.common.base.MoreObjects;
 
 /**
  * @param <T> settings type
@@ -62,27 +65,28 @@ public abstract class AbstractSettingValue<T> implements SettingValue<T>, Serial
     }
 
     @Override
-    public String toString() {
-        return String.format("%s[type=%s, key=%s, value=%s]", getClass().getSimpleName(), getType(),
-        		getKey(), getValue());
+    public boolean equals(Object obj) {
+        if (!(obj instanceof SettingValue<?>)) {
+            return false;
+        }
+
+        SettingValue<?> that = (SettingValue<?>) obj;
+        return Objects.equals(this.getType(), that.getType()) &&
+               Objects.equals(this.getKey(), that.getKey()) &&
+               Objects.equals(this.getValue(), that.getValue());
     }
 
     @Override
     public int hashCode() {
-        final int prime = 79;
-        int hash = 7;
-        hash = prime * hash + (this.getKey() != null ? this.getKey().hashCode() : 0);
-        hash = prime * hash + (this.getValue() != null ? this.getValue().hashCode() : 0);
-        return hash;
+        return Objects.hash(getType(), getKey(), getValue());
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof SettingValue) {
-            final SettingValue<?> other = (SettingValue<?>) obj;
-            return (getKey() == null ? other.getKey() == null : getKey().equals(other.getKey()))
-                   && (getValue() == null ? other.getValue() == null : getValue().equals(other.getValue()));
-        }
-        return false;
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("type", getType())
+                .add("key", getKey())
+                .add("value", getValue())
+                .toString();
     }
 }

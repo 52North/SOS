@@ -43,7 +43,7 @@
         <description>Used to wire up activation persistence.</description>
         <property name="listeners">
             <map>
-                <entry key-ref="offeringExtensionRepository" value="#{sosActivationService.offeringExtensionListener}" />
+                <entry key-ref="offeringExtensionRepository" value="#{activationService.offeringExtensionListener}" />
                 <entry key-ref="bindingRepository" value="#{activationService.bindingListener}" />
                 <entry key-ref="owsExtendedCapabilitiesRepository" value="#{activationService.owsExtendedCapabiltiesListener}"/>
                 <entry key-ref="requestOperatorRepository" value="#{activationService.requestOperatorListener}"/>
@@ -51,7 +51,7 @@
         </property>
         <property name="initializers">
             <map>
-                <entry key-ref="offeringExtensionRepository" value="#{sosActivationService.offeringExtensionInitializer}" />
+                <entry key-ref="offeringExtensionRepository" value="#{activationService.offeringExtensionInitializer}" />
                 <entry key-ref="bindingRepository" value="#{activationService.bindingInitializer}" />
                 <entry key-ref="owsExtendedCapabilitiesRepository" value="#{activationService.owsExtendedCapabiltiesInitializer}"/>
                 <entry key-ref="requestOperatorRepository" value="#{activationService.requestOperatorInitializer}" />

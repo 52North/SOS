@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+    
+    <bean id="flexibleIdentifierSettingDefinitionGroup" class="org.n52.iceland.config.SettingDefinitionGroup">
+        <property name="title" value="FlexibleIdentifier" />
+        <property name="order" value="10.0" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+        <property name="key" value="sos.flexibleIdentifier.featureOfInterest" />
+        <property name="title" value="Should the SOS return human readable identifier for featureOfInterest?" />
+        <property name="description" value="Should the SOS return human readable identifier for featureOfInterest (gml:name as gml:identifier)?" />
+        <property name="order" value="4.0" />
+        <property name="group" ref="flexibleIdentifierSettingDefinitionGroup" />
+        <property name="defaultValue" value="true" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+        <property name="key" value="sos.flexibleIdentifier.offering" />
+        <property name="title" value="Should the SOS return human readable identifier for offering?" />
+        <property name="description" value="Should the SOS return human readable identifier for offering (gml:name as gml:identifier)?" />
+        <property name="order" value="1.0" />
+        <property name="group" ref="flexibleIdentifierSettingDefinitionGroup" />
+        <property name="defaultValue" value="true" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+        <property name="key" value="sos.flexibleIdentifier.obervableProperty" />
+        <property name="title" value="Should the SOS return human readable identifier for observableProperty?" />
+        <property name="description" value="Should the SOS return human readable identifier for observableProperty (gml:name as gml:identifier)?" />
+        <property name="order" value="3.0" />
+        <property name="group" ref="flexibleIdentifierSettingDefinitionGroup" />
+        <property name="defaultValue" value="true" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+        <property name="key" value="sos.flexibleIdentifier.procedure" />
+        <property name="title" value="Should the SOS return human readable identifier for procedure?" />
+        <property name="description" value="Should the SOS return human readable identifier for procedure (gml:name as gml:identifier)?" />
+        <property name="order" value="2.0" />
+        <property name="group" ref="flexibleIdentifierSettingDefinitionGroup" />
+        <property name="defaultValue" value="true" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+        <property name="key" value="sos.flexibleIdentifier" />
+        <property name="title" value="Should the SOS return human readable identifier?" />
+        <property name="description" value="Should the SOS return human readable identifier (gml:name as gml:identifier)?" />
+        <property name="order" value="0.0" />
+        <property name="group" ref="flexibleIdentifierSettingDefinitionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
+
+</beans>

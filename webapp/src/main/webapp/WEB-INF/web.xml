@@ -17,8 +17,10 @@
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-            /WEB-INF/contexts/root/*.xml
+            /WEB-INF/application-context.xml
+            /WEB-INF/settings-definitions/*.xml
             classpath*:contexts/root.xml
+            classpath*:root-context.xml
             classpath*:contexts/root/*.xml
         </param-value>
     </context-param>
@@ -26,8 +28,8 @@
     <context-param>
         <param-name>commonConfigLocation</param-name>
         <param-value>
-            /WEB-INF/contexts/common/*.xml
             classpath*:contexts/common.xml
+            classpath*:common-context.xml
             classpath*:contexts/common/*.xml
         </param-value>
     </context-param>
@@ -35,8 +37,8 @@
     <context-param>
         <param-name>unconfiguredConfigLocations</param-name>
         <param-value>
-            /WEB-INF/contexts/unconfigured/*.xml
             classpath*:contexts/unconfigured.xml
+            classpath*:unconfigured-context.xml
             classpath*:contexts/unconfigured/*.xml
         </param-value>
     </context-param>
@@ -44,8 +46,8 @@
     <context-param>
         <param-name>configuredConfigLocations</param-name>
         <param-value>
-            /WEB-INF/contexts/configured/*.xml
             classpath*:contexts/configured.xml
+            classpath*:configured-context.xml
             classpath:contexts/configured/*.xml
         </param-value>
     </context-param>

@@ -1,0 +1,19 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+    <ctx:annotation-config />
+
+
+    <bean class="org.n52.iceland.config.spring.LifecycleBeanPostProcessor">
+        <description>This calls Constructable#init and Destroyable#destroy for all beans.</description>
+    </bean>
+
+    <bean class="org.n52.iceland.config.spring.ConfiguringBeanPostProcessor">
+        <description>This calls SettingsManager#configure for all beans.</description>
+    </bean>
+
+</beans>

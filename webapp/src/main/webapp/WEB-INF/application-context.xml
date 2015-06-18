@@ -1,0 +1,70 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+                           http://www.springframework.org/schema/security
+                           http://www.springframework.org/schema/security/spring-security-4.0.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+
+    <!-- nothing to see here, move along -->
+    <ctx:annotation-config />
+
+    <bean id="contextSwitcherSwapper" class="org.springframework.aop.target.HotSwappableTargetSource">
+        <description>Placeholder for the ContextSwitcher. This will be substituted as soon as
+            the ApplicationContext is refreshed.</description>
+        <constructor-arg>
+            <bean class="org.n52.sos.context.ContextSwitcherDummy" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="contextSwitcher" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <description>contextSwitcher proxy that can be injected before the real
+            contextSwitcher is created. Allows switching and reloading the context</description>
+        <property name="targetSource">
+            <ref bean="contextSwitcherSwapper" />
+        </property>
+    </bean>
+
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+    <bean id="authenticationProvider" class="org.n52.sos.web.common.auth.SosAuthenticationProvider"/>
+
+    <sec:authentication-manager alias="authenticationManager">
+        <sec:authentication-provider ref="authenticationProvider" />
+    </sec:authentication-manager>
+
+    <bean id="httpBasicAuthenticationFilter" class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
+        <constructor-arg ref="authenticationManager" />
+        <constructor-arg>
+            <bean class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+                <property name="realmName" value="52North SOS" />
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <sec:http pattern="/static/**" security="none" />
+    <sec:http pattern="/install/**" security="none" />
+    <sec:http pattern="/service" security="none" />
+    <sec:http pattern="/sos" security="none" />
+
+    <sec:http auto-config="true" use-expressions="true" disable-url-rewriting="true">
+        <sec:csrf disabled="true" />
+        <sec:intercept-url pattern="/admin" access="hasRole('ROLE_ADMIN')" />
+        <sec:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
+        <sec:intercept-url pattern="/login" access="hasRole('ROLE_ANONYMOUS')" />
+        <sec:custom-filter before="SECURITY_CONTEXT_FILTER" ref="httpBasicAuthenticationFilter" />
+        <sec:form-login username-parameter="username"
+                        password-parameter="password"
+                        login-page="/login"
+                        default-target-url="/admin/index"
+                        authentication-failure-url="/login?error=true"
+                        login-processing-url="/login" />
+        <sec:logout invalidate-session="true"
+                    delete-cookies="true"
+                    logout-url="/logout"
+                    logout-success-url="/index" />
+    </sec:http>
+
+</beans>

@@ -1,0 +1,106 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+    <bean id="serviceSettingDefintionGroup" class="org.n52.iceland.config.SettingDefinitionGroup">
+        <property name="title" value="Service" />
+        <property name="order" value="2.0" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.UriSettingDefinition">
+        <property name="key" value="service.sosUrl" />
+        <property name="title" value="SOS URL" />
+        <property name="description" value="The endpoint URL of this sos which will be shown in the GetCapabilities response (e.g. &lt;code&gt;http://localhost:8080/52nSOS/sos&lt;/code&gt; or &lt;code&gt;http://localhost:8080/52nSOS/service&lt;/code&gt;). The path to a specific binding (like &lt;code&gt;/soap&lt;/code&gt;) will appended to this URL. For detailed information, please read the &lt;a href=&quot;https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation&quot;&gt;documentation&lt;/a&gt;" />
+        <property name="order" value="0.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+        <property name="key" value="service.strictSpatialFilteringProfile" />
+        <property name="title" value="Should this SOS support strict Spatial Filtering Profile?" />
+        <property name="description" value="Whether the SOS should support strict SOS 2.0 Spatial Filtering Profile. That means each observation should contain a om:parameter with sampling geometry. Else the SOS allows observations without om:parameter with sampling geometry!" />
+        <property name="order" value="15.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+        <property name="key" value="service.addOutputsToSensorML" />
+        <property name="title" value="Add outputs to DescribeSensor SensorML responses" />
+        <property name="description" value="Whether to query example observations and dynamically add outputs to DescribeSensor SensorML responses." />
+        <property name="order" value="14.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="true" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="service.sensorDirectory" />
+        <property name="title" value="Sensor Directory" />
+        <property name="description" value="The path to a directory with the sensor descriptions in SensorML format. It can be either an absolute path (like &lt;code&gt;/home/user/sosconfig/sensors&lt;/code&gt;) or a path relative to the web application classes directory (e.g. &lt;code&gt;WEB-INF/classes/sensors&lt;/code&gt;)." />
+        <property name="order" value="7.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="/sensors" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+        <property name="key" value="service.useDefaultPrefixes" />
+        <property name="title" value="Use default prefixes for offering, procedure, features" />
+        <property name="description" value="Use default prefixes for offering, procedure, features." />
+        <property name="order" value="11.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+        <property name="key" value="service.jdbc.deregister" />
+        <property name="title" value="Deregister JDBC driver" />
+        <property name="description" value="Should the service deregister all used JDBC driver (SQLite, PostgreSQL or H2) during shutdown process." />
+        <property name="order" value="13.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="true" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.IntegerSettingDefinition">
+        <property name="key" value="service.cachePersistenceDelay" />
+        <property name="title" value="Content cache persistence delay" />
+        <property name="description" value="The time in seconds, for which writing of an updated cache is delayed. Incremental cache updates that are executed during transactional operations are not immediately persistet, but are delayed to reduce write operations and to improve performance. The delay is the maximum time the persisted and in memory cache can diverge." />
+        <property name="order" value="6.1" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="30" />
+        <property name="minimum" value="1" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+        <property name="key" value="service.response.validate" />
+        <property name="title" value="Should this SOS validate the XML response in non debug mode?" />
+        <property name="description" value="Whether the SOS should validate the XML response when the debug mode is disables!" />
+        <property name="order" value="16.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+        <property name="key" value="service.blockGetObservationRequestsWithoutRestriction" />
+        <property name="title" value="Block restrictionless requests" />
+        <property name="description" value="Should GetObservation requests without any restriction be blocked" />
+        <property name="order" value="12.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+        <property name="key" value="service.encodeFullChildrenInDescribeSensor" />
+        <property name="title" value="Encode full for child procedure SensorML in parent DescribeSensor responses" />
+        <property name="description" value="Whether to encode full SensorML for each child procedures in a DescribeSensor response for a parent procedure." />
+        <property name="order" value="12.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="true" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.IntegerSettingDefinition">
+        <property name="key" value="service.cacheThreadCount" />
+        <property name="title" value="Cache Feeder Threads" />
+        <property name="description" value="The number of threads used to fill the capabilities cache." />
+        <property name="order" value="8.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="5" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.IntegerSettingDefinition">
+        <property name="key" value="service.capabilitiesCacheUpdateInterval" />
+        <property name="title" value="Content cache update interval" />
+        <property name="description" value="The update interval of the content cache in minutes. Set this to lower value if your database is externally modified frequently. Set to 0 to disable scheduled cache updates." />
+        <property name="order" value="6.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="120" />
+        <property name="minimum" value="0" />
+    </bean>
+</beans>

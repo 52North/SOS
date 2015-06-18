@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+
+    <bean id="inspireDefinitionGroup" class="org.n52.iceland.config.SettingDefinitionGroup">
+        <property name="title" value="INSPIRE" />
+        <property name="order" value="10.0" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+        <property name="key" value="inspire.fullExtendedCapabilities" />
+        <property name="title" value="Show full INSPIRE ExtendedCapabilities" />
+        <property name="description" value="Should the SOS show the full or the minimal INSPIRE ExtendedCapabilities" />
+        <property name="order" value="1.0" />
+        <property name="group" ref="inspireDefinitionGroup" />
+        <property name="defaultValue" value="true" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+        <property name="key" value="inspire.useAuthority" />
+        <property name="title" value="Use authority as CRS prefix " />
+        <property name="description" value="Should the SOS use the authority prefix (EPSG::) or the OGC CRS prefix (http://www.opengis.net/def/crs/EPSG/0/)?" />
+        <property name="order" value="11.0" />
+        <property name="group" ref="inspireDefinitionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="inspire.conformity.title" />
+        <property name="title" value="INSPIRE Conformity title" />
+        <property name="description" value="Set the INSPIRE extended capabilities Conformity title" />
+        <property name="order" value="4.0" />
+        <property name="group" ref="inspireDefinitionGroup" />
+        <property name="defaultValue" value="OGC SOS 2.0 for Inspire" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="inspire.metadataUrl.mediaType" />
+        <property name="title" value="INSPIRE MetadataUrl MediaType" />
+        <property name="description" value="Set the INSPIRE MetadataUrl MediaType" />
+        <property name="order" value="3.0" />
+        <property name="group" ref="inspireDefinitionGroup" />
+        <property name="defaultValue" value="application/xml" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="inspire.conformity.dateOfCreation" />
+        <property name="title" value="INSPIRE Conformity date of creation" />
+        <property name="description" value="Set the INSPIRE extended capabilities Conformity date of creation" />
+        <property name="order" value="5.0" />
+        <property name="group" ref="inspireDefinitionGroup" />
+        <property name="defaultValue" value="2008-06-01" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="inspire.metadataDate" />
+        <property name="title" value="INSPIRE Metadata date" />
+        <property name="description" value="Set the INSPIRE extended capabilities metadata date" />
+        <property name="order" value="6.0" />
+        <property name="group" ref="inspireDefinitionGroup" />
+        <property name="defaultValue" value="2008-06-01" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+        <property name="key" value="inspire.enabled" />
+        <property name="title" value="Enable INSPIRE extension" />
+        <property name="description" value="Indicator to enable/disable the INSPIRE extension" />
+        <property name="order" value="0.0" />
+        <property name="group" ref="inspireDefinitionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.UriSettingDefinition">
+        <property name="key" value="inspire.metadataUrl.url" />
+        <property name="title" value="INSPIRE MetadataUrl URLs" />
+        <property name="description" value="Set the INSPIRE MetadataUrl URL, required if full INSPIRE ExtendedCapabilities is disabled" />
+        <property name="order" value="2.0" />
+        <property name="group" ref="inspireDefinitionGroup" />
+        <property name="defaultValue" value="http://myserver.org/" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="inspire.namespace" />
+        <property name="title" value="INSPIRE namespace" />
+        <property name="description" value="Set the INSPIRE namespace for this service." />
+        <property name="order" value="12.0" />
+        <property name="group" ref="inspireDefinitionGroup" />
+        <property name="defaultValue" value="http://www.52north.org/" />
+    </bean>
+
+</beans>

@@ -1,0 +1,19 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+    <!-- Encoder implementations from extensions/aqd/coding/aqd-v10 -->
+    <bean class="org.n52.sos.encode.AqdEncoder"/>
+    <bean class="org.n52.sos.encode.aqd.v1.AqdGetObservationResponseEncoder"/>
+    <bean class="org.n52.sos.encode.aqd.v1.AqdGetCapabilitiesResponseEncoder"/>
+    <bean class="org.n52.sos.encode.aqd.v1.AqdDescribeSensorResponseEncoder"/>
+
+    <!-- Decoder implementations from extensions/aqd/coding/aqd-v10 -->
+    <bean class="org.n52.sos.decode.AqdDecoderv10"/>
+    <bean class="org.n52.sos.decode.kvp.AqdGetCapabilitiesKvpDecoder"/>
+    <bean class="org.n52.sos.decode.kvp.AqdDescribeSensorKvpDecoder"/>
+    <bean class="org.n52.sos.decode.kvp.AqdGetObservationKvpDecoder"/>
+
+
+</beans>

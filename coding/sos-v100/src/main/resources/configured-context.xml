@@ -1,0 +1,18 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+    <!-- Encoder implementations from coding/sos-v100 -->
+    <bean class="org.n52.sos.encode.OmEncoderv100"/>
+    <bean class="org.n52.sos.encode.SamplingEncoderv100"/>
+    <bean class="org.n52.sos.encode.sos.v1.DescribeSensorResponseEncoder"/>
+    <bean class="org.n52.sos.encode.sos.v1.GetCapabilitiesResponseEncoder"/>
+    <bean class="org.n52.sos.encode.sos.v1.GetFeatureOfInterestResponseEncoder"/>
+    <bean class="org.n52.sos.encode.sos.v1.GetObservationByIdResponseEncoder"/>
+    <bean class="org.n52.sos.encode.sos.v1.GetObservationResponseEncoder"/>
+
+    <!-- Decoder implementations from coding/sos-v100 -->
+    <bean class="org.n52.sos.decode.SosDecoderv100"/>
+    <bean class="org.n52.sos.decode.OgcDecoderv100"/>
+</beans>

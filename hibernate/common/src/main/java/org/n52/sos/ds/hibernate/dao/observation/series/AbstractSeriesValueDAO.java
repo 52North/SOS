@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.observation.series;
+package org.n52.sos.ds.hibernate.dao.observation.series;
 
 import java.util.List;
 
@@ -42,6 +42,8 @@ import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
@@ -206,8 +208,9 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      * @return Default {@link Criteria}
      */
     protected Criteria getDefaultObservationCriteria(Session session) {
-        return session.createCriteria(getSeriesValueClass()).add(Restrictions.eq(AbstractValuedSeriesObservation.DELETED, false))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return getDefaultCriteria(getSeriesValueClass(), session);
+//        return session.createCriteria(getSeriesValueClass()).add(Restrictions.eq(AbstractValuedSeriesObservation.DELETED, false))
+//                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
     /**

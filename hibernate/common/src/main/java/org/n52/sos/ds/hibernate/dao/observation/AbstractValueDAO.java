@@ -39,6 +39,7 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.dao.TimeCreator;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.exception.CodedException;
@@ -46,6 +47,7 @@ import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.GeometryHandler;
 
 /**
@@ -172,6 +174,24 @@ public abstract class AbstractValueDAO extends TimeCreator {
             }
         }
         return AbstractTemporalReferencedObservation.PHENOMENON_TIME_START;
+    }
+    
+    @SuppressWarnings("rawtypes")
+    protected Criteria getDefaultCriteria(Class clazz, Session session) {
+        Criteria criteria = session.createCriteria(clazz)
+                .add(Restrictions.eq(Observation.DELETED, false));
+
+        if (!isIncludeChildObservableProperties()) {
+            criteria.add(Restrictions.eq(Observation.CHILD, false));
+        } else {
+            criteria.add(Restrictions.eq(Observation.PARENT, false));
+        }
+
+        return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    }
+
+    protected boolean isIncludeChildObservableProperties() {
+        return ServiceConfiguration.getInstance().isIncludeChildObservableProperties();
     }
 
     protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException;

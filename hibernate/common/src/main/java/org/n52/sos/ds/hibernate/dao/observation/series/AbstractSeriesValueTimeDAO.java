@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.observation.series;
+package org.n52.sos.ds.hibernate.dao.observation.series;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -36,6 +36,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -201,9 +203,10 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
      *            Hibernate Session
      * @return Default {@link Criteria}
      */
-    public Criteria getDefaultObservationCriteria(Session session) {
-        return session.createCriteria(getSeriesValueTimeClass()).add(Restrictions.eq(TemporalReferencedSeriesObservation.DELETED, false))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    protected Criteria getDefaultObservationCriteria(Session session) {
+        return getDefaultCriteria(getSeriesValueTimeClass(), session);
+//        return session.createCriteria().add(Restrictions.eq(TemporalReferencedSeriesObservation.DELETED, false))
+//                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
     private void addMinMaxTimeProjection(Criteria c) {

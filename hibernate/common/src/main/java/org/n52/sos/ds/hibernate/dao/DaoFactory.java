@@ -37,6 +37,8 @@ import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingValueTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationTimeDAO;
@@ -47,8 +49,6 @@ import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedER
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesValueDAO;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;

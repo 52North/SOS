@@ -30,8 +30,8 @@ package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
 import org.hibernate.Criteria;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.request.GetObservationRequest;
 

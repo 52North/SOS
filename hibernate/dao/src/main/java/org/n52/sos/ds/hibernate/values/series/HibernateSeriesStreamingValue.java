@@ -30,8 +30,8 @@ package org.n52.sos.ds.hibernate.values.series;
 
 import org.hibernate.Session;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesValueDAO;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesValueTimeDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
 import org.n52.sos.exception.CodedException;

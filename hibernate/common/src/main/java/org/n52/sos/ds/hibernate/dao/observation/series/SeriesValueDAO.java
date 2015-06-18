@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.dao.observation.series;
 
 import org.hibernate.Criteria;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.request.GetObservationRequest;

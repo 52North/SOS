@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
 import org.hibernate.Criteria;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.request.GetObservationRequest;

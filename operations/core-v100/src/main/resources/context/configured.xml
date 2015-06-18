@@ -10,4 +10,10 @@
     <bean class="org.n52.sos.request.operator.SosGetObservationByIdOperatorV100"/>
     <bean class="org.n52.sos.request.operator.SosGetFeatureOfInterestOperatorV100"/>
 
+    <!-- ServiceOperator implementations from operations/core-v100 -->
+    <bean class="org.n52.iceland.service.operator.GenericServiceOperator">
+        <property name="service" value="SOS" />
+        <property name="version" value="1.0.0" />
+    </bean>
+
 </beans>

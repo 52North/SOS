@@ -8,4 +8,10 @@
     <bean class="org.n52.sos.request.operator.SosDescribeSensorOperatorV20"/>
     <bean class="org.n52.sos.request.operator.SosGetObservationOperatorV20"/>
 
+    <!-- ServiceOperator implementations from operations/core-v20 -->
+    <bean class="org.n52.iceland.service.operator.GenericServiceOperator">
+        <property name="service" value="SOS" />
+        <property name="version" value="2.0.0" />
+    </bean>
+
 </beans>

@@ -8,5 +8,10 @@
     <bean class="org.n52.sos.request.operator.AqdGetObservationOperatorV10"/>
     <bean class="org.n52.sos.request.operator.AqdDescribeSensorOperatorV10"/>
 
+    <!-- ServiceOperator implementations from extensions/aqd/operation -->
+    <bean class="org.n52.iceland.service.operator.GenericServiceOperator">
+        <property name="service" value="AQD" />
+        <property name="version" value="1.0.0" />
+    </bean>
 
 </beans>
